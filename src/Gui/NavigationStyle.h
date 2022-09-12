@@ -406,20 +406,6 @@ protected:
     SbBool processSoEvent(const SoEvent * const ev) override;
 };
 
-class GuiExport OpenSCADNavigationStyle : public UserNavigationStyle {
-    using inherited = UserNavigationStyle;
-
-    TYPESYSTEM_HEADER_WITH_OVERRIDE();
-
-public:
-    OpenSCADNavigationStyle();
-    ~OpenSCADNavigationStyle() override;
-    const char* mouseButtons(ViewerMode) override;
-
-protected:
-    SbBool processSoEvent(const SoEvent * const ev) override;
-};
-
 class GuiExport TinkerCADNavigationStyle : public UserNavigationStyle {
     using inherited = UserNavigationStyle;
 

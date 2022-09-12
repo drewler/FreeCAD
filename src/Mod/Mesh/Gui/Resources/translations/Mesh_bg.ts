@@ -2122,35 +2122,6 @@ to a smoother appearance.
     </message>
   </context>
   <context>
-    <name>Mesh_Union</name>
-    <message>
-      <location filename="../../Command.cpp" line="273"/>
-      <location filename="../../Command.cpp" line="278"/>
-      <location filename="../../Command.cpp" line="344"/>
-      <location filename="../../Command.cpp" line="349"/>
-      <location filename="../../Command.cpp" line="415"/>
-      <location filename="../../Command.cpp" line="420"/>
-      <source>OpenSCAD</source>
-      <translation>OpenSCAD</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="274"/>
-      <location filename="../../Command.cpp" line="345"/>
-      <location filename="../../Command.cpp" line="416"/>
-      <source>Unknown error occurred while running OpenSCAD.</source>
-      <translation>Възникна неизвестна грешка, изпълнявайки OpenSCAD.</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="279"/>
-      <location filename="../../Command.cpp" line="350"/>
-      <location filename="../../Command.cpp" line="421"/>
-      <source>OpenSCAD cannot be found on your system.
-Please visit http://www.openscad.org/index.html to install it.</source>
-      <translation>В системата ви няма открито приложение OpenSCAD.
-Изтеглете го от http://www.openscad.org/index.html и инсталирайте.</translation>
-    </message>
-  </context>
-  <context>
     <name>QDockWidget</name>
     <message>
       <location filename="../../DlgEvaluateMeshImp.cpp" line="1239"/>

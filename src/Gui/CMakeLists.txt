@@ -819,7 +819,6 @@ SET(View3D_CPP_SRCS
     BlenderNavigationStyle.cpp
     MayaGestureNavigationStyle.cpp
     OpenCascadeNavigationStyle.cpp
-    OpenSCADNavigationStyle.cpp
     TinkerCADNavigationStyle.cpp
     TouchpadNavigationStyle.cpp
     GestureNavigationStyle.cpp

@@ -236,52 +236,7 @@ CmdMeshUnion::CmdMeshUnion()
 
 void CmdMeshUnion::activated(int)
 {
-    std::vector<App::DocumentObject*> obj = Gui::Selection().getObjectsOfType(Mesh::Feature::getClassTypeId());
-    std::string name1 = obj.front()->getNameInDocument();
-    std::string name2 = obj.back()->getNameInDocument();
-    std::string name3 = getUniqueObjectName("Union");
-
-    try {
-        openCommand(QT_TRANSLATE_NOOP("Command", "Mesh union"));
-        doCommand(Doc,
-            "import OpenSCADUtils\n"
-            "mesh = OpenSCADUtils.meshoptempfile('union',(App.ActiveDocument.%s.Mesh,App.ActiveDocument.%s.Mesh))\n"
-            "App.ActiveDocument.addObject(\"Mesh::Feature\",\"%s\")\n"
-            "App.ActiveDocument.%s.Mesh = mesh\n",
-            name1.c_str(), name2.c_str(),
-            name3.c_str(), name3.c_str());
-
-        updateActive();
-        commitCommand();
-    }
-    catch (...) {
-        abortCommand();
-        Base::PyGILStateLocker lock;
-        PyObject* main = PyImport_AddModule("__main__");
-        PyObject* dict = PyModule_GetDict(main);
-        Py::Dict d(PyDict_Copy(dict), true);
-
-        const char* cmd = "import OpenSCADUtils\nopenscadfilename = OpenSCADUtils.getopenscadexe()";
-        PyObject* result = PyRun_String(cmd, Py_file_input, d.ptr(), d.ptr());
-        Py_XDECREF(result);
-
-        bool found = false;
-        if (d.hasKey("openscadfilename")) {
-            found = (bool)Py::Boolean(d.getItem("openscadfilename"));
-        }
-
-        if (found) {
-            QMessageBox::critical(Gui::getMainWindow(),
-                qApp->translate("Mesh_Union", "OpenSCAD"),
-                qApp->translate("Mesh_Union", "Unknown error occurred while running OpenSCAD."));
-        }
-        else {
-            QMessageBox::warning(Gui::getMainWindow(),
-                qApp->translate("Mesh_Union", "OpenSCAD"),
-                qApp->translate("Mesh_Union", "OpenSCAD cannot be found on your system.\n"
-                                              "Please visit http://www.openscad.org/index.html to install it."));
-        }
-    }
+    return;
 }
 
 bool CmdMeshUnion::isActive()
@@ -307,52 +262,7 @@ CmdMeshDifference::CmdMeshDifference()
 
 void CmdMeshDifference::activated(int)
 {
-    std::vector<App::DocumentObject*> obj = Gui::Selection().getObjectsOfType(Mesh::Feature::getClassTypeId());
-    std::string name1 = obj.front()->getNameInDocument();
-    std::string name2 = obj.back()->getNameInDocument();
-    std::string name3 = getUniqueObjectName("Difference");
-    openCommand(QT_TRANSLATE_NOOP("Command", "Mesh difference"));
-
-    try {
-        doCommand(Doc,
-            "import OpenSCADUtils\n"
-            "mesh = OpenSCADUtils.meshoptempfile('difference',(App.ActiveDocument.%s.Mesh,App.ActiveDocument.%s.Mesh))\n"
-            "App.ActiveDocument.addObject(\"Mesh::Feature\",\"%s\")\n"
-            "App.ActiveDocument.%s.Mesh = mesh\n",
-            name1.c_str(), name2.c_str(),
-            name3.c_str(), name3.c_str());
-
-        updateActive();
-        commitCommand();
-    }
-    catch (...) {
-        abortCommand();
-        Base::PyGILStateLocker lock;
-        PyObject* main = PyImport_AddModule("__main__");
-        PyObject* dict = PyModule_GetDict(main);
-        Py::Dict d(PyDict_Copy(dict), true);
-
-        const char* cmd = "import OpenSCADUtils\nopenscadfilename = OpenSCADUtils.getopenscadexe()";
-        PyObject* result = PyRun_String(cmd, Py_file_input, d.ptr(), d.ptr());
-        Py_XDECREF(result);
-
-        bool found = false;
-        if (d.hasKey("openscadfilename")) {
-            found = (bool)Py::Boolean(d.getItem("openscadfilename"));
-        }
-
-        if (found) {
-            QMessageBox::critical(Gui::getMainWindow(),
-                qApp->translate("Mesh_Union", "OpenSCAD"),
-                qApp->translate("Mesh_Union", "Unknown error occurred while running OpenSCAD."));
-        }
-        else {
-            QMessageBox::warning(Gui::getMainWindow(),
-                qApp->translate("Mesh_Union", "OpenSCAD"),
-                qApp->translate("Mesh_Union", "OpenSCAD cannot be found on your system.\n"
-                                              "Please visit http://www.openscad.org/index.html to install it."));
-        }
-    }
+    return;
 }
 
 bool CmdMeshDifference::isActive()
@@ -378,52 +288,7 @@ CmdMeshIntersection::CmdMeshIntersection()
 
 void CmdMeshIntersection::activated(int)
 {
-    std::vector<App::DocumentObject*> obj = Gui::Selection().getObjectsOfType(Mesh::Feature::getClassTypeId());
-    std::string name1 = obj.front()->getNameInDocument();
-    std::string name2 = obj.back()->getNameInDocument();
-    std::string name3 = getUniqueObjectName("Intersection");
-    openCommand(QT_TRANSLATE_NOOP("Command", "Mesh intersection"));
-
-    try {
-        doCommand(Doc,
-            "import OpenSCADUtils\n"
-            "mesh = OpenSCADUtils.meshoptempfile('intersection',(App.ActiveDocument.%s.Mesh,App.ActiveDocument.%s.Mesh))\n"
-            "App.ActiveDocument.addObject(\"Mesh::Feature\",\"%s\")\n"
-            "App.ActiveDocument.%s.Mesh = mesh\n",
-            name1.c_str(), name2.c_str(),
-            name3.c_str(), name3.c_str());
-
-        updateActive();
-        commitCommand();
-    }
-    catch (...) {
-        abortCommand();
-        Base::PyGILStateLocker lock;
-        PyObject* main = PyImport_AddModule("__main__");
-        PyObject* dict = PyModule_GetDict(main);
-        Py::Dict d(PyDict_Copy(dict), true);
-
-        const char* cmd = "import OpenSCADUtils\nopenscadfilename = OpenSCADUtils.getopenscadexe()";
-        PyObject* result = PyRun_String(cmd, Py_file_input, d.ptr(), d.ptr());
-        Py_XDECREF(result);
-
-        bool found = false;
-        if (d.hasKey("openscadfilename")) {
-            found = (bool)Py::Boolean(d.getItem("openscadfilename"));
-        }
-
-        if (found) {
-            QMessageBox::critical(Gui::getMainWindow(),
-                qApp->translate("Mesh_Union", "OpenSCAD"),
-                qApp->translate("Mesh_Union", "Unknown error occurred while running OpenSCAD."));
-        }
-        else {
-            QMessageBox::warning(Gui::getMainWindow(),
-                qApp->translate("Mesh_Union", "OpenSCAD"),
-                qApp->translate("Mesh_Union", "OpenSCAD cannot be found on your system.\n"
-                                              "Please visit http://www.openscad.org/index.html to install it."));
-        }
-    }
+    return;
 }
 
 bool CmdMeshIntersection::isActive()

@@ -76,7 +76,6 @@ JtReader    export-ignore
 # Idf/** -text
 # Fem/** -text
 # Material/** -text
-# OpenSCAD/** -text
 # Path/** -text
 # Show/** -text
 # Tux/** -text

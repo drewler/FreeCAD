@@ -2160,35 +2160,6 @@ to a smoother appearance.
     </message>
   </context>
   <context>
-    <name>Mesh_Union</name>
-    <message>
-      <location filename="../../Command.cpp" line="275"/>
-      <location filename="../../Command.cpp" line="280"/>
-      <location filename="../../Command.cpp" line="346"/>
-      <location filename="../../Command.cpp" line="351"/>
-      <location filename="../../Command.cpp" line="417"/>
-      <location filename="../../Command.cpp" line="422"/>
-      <source>OpenSCAD</source>
-      <translation>OpenSCAD</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="276"/>
-      <location filename="../../Command.cpp" line="347"/>
-      <location filename="../../Command.cpp" line="418"/>
-      <source>Unknown error occurred while running OpenSCAD.</source>
-      <translation>Ett okänt fel inträffade under körningen av OpenSCAD.</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="281"/>
-      <location filename="../../Command.cpp" line="352"/>
-      <location filename="../../Command.cpp" line="423"/>
-      <source>OpenSCAD cannot be found on your system.
-Please visit http://www.openscad.org/index.html to install it.</source>
-      <translation>OpenSCAD kunde inte hittas på datorn.
-Besök http://www.openscad.org/index.html för att installera det.</translation>
-    </message>
-  </context>
-  <context>
     <name>QDockWidget</name>
     <message>
       <location filename="../../DlgEvaluateMeshImp.cpp" line="1240"/>
