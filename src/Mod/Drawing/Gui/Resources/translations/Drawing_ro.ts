@@ -198,25 +198,6 @@
     </message>
   </context>
   <context>
-    <name>CmdDrawingSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="748"/>
-      <source>Drawing</source>
-      <translation>Desen</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="749"/>
-      <source>&amp;Spreadsheet View</source>
-      <translation>Vedere &amp; Foaie de calcul</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="750"/>
-      <location filename="../../Command.cpp" line="752"/>
-      <source>Inserts a view of a selected spreadsheet in the active drawing</source>
-      <translation>Introduceți o vedere cu o foaie de calcul selectată într-un desen activ</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdDrawingSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="571"/>

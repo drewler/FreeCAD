@@ -198,25 +198,6 @@
     </message>
   </context>
   <context>
-    <name>CmdDrawingSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="747"/>
-      <source>Drawing</source>
-      <translation>드로잉</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="748"/>
-      <source>&amp;Spreadsheet View</source>
-      <translation type="unfinished">&amp;Spreadsheet View</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="749"/>
-      <location filename="../../Command.cpp" line="751"/>
-      <source>Inserts a view of a selected spreadsheet in the active drawing</source>
-      <translation>활성화된 드로잉에 선택한 스프레드 시트의 화면을 추가</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdDrawingSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="570"/>
