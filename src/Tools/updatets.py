@@ -83,7 +83,6 @@ directories = [
         {"tsname":"TechDraw", "workingdir":"./src/Mod/TechDraw/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Test", "workingdir":"./src/Mod/Test/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Tux", "workingdir":"./src/Mod/Tux/", "tsdir":"Resources/translations"},
-        {"tsname":"Web", "workingdir":"./src/Mod/Web/", "tsdir":"Gui/Resources/translations"}
         ]
 
 QMAKE = ""
