@@ -2340,7 +2340,6 @@ PREDEFINED             = HAVE_SWIG \
                          SketcherExport= \
                          SketcherGuiExport= \
                          StartGuiExport= \
-                         WebGuiExport= \
                          WM4_MEMORY_MANAGER \
                          WM4_FOUNDATION_ITEM= \                       
                          IMETHOD=inline \

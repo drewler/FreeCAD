@@ -73,28 +73,6 @@ PyMOD_INIT_FUNC(StartGui)
         PyMOD_Return(nullptr);
     }
 
-    // load dependent module
-    try {
-        Base::Interpreter().runString("import WebGui");
-    }
-    catch(const Base::Exception& e) {
-        PyErr_SetString(PyExc_ImportError, e.what());
-        PyMOD_Return(nullptr);
-    }
-    catch (Py::Exception& e) {
-        Py::Object o = Py::type(e);
-        if (o.isString()) {
-            Py::String s(o);
-            Base::Console().Error("%s\n", s.as_std_string("utf-8").c_str());
-        }
-        else {
-            Py::String s(o.repr());
-            Base::Console().Error("%s\n", s.as_std_string("utf-8").c_str());
-        }
-        // Prints message to console window if we are in interactive mode
-        PyErr_Print();
-    }
-
     PyObject* mod = StartGui::initModule();
     Base::Console().Log("Loading GUI of Start module... done\n");
 
