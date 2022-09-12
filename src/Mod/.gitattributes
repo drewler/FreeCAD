@@ -111,8 +111,6 @@ Surface/** -text
 TechDraw/** -text
 TemplatePyMod/** -text
 Test/** -text
-Web/** -text
-
 
 # this would let git manage the file endings automatically
 # to be save this will be commented

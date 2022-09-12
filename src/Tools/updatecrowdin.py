@@ -108,7 +108,6 @@ locations = [["AddonManager","../Mod/AddonManager/Resources/translations","../Mo
              ["Sketcher","../Mod/Sketcher/Gui/Resources/translations","../Mod/Sketcher/Gui/Resources/Sketcher.qrc"],
              ["StartPage","../Mod/Start/Gui/Resources/translations","../Mod/Start/Gui/Resources/Start.qrc"],
              ["Test","../Mod/Test/Gui/Resources/translations","../Mod/Test/Gui/Resources/Test.qrc"],
-             ["Web","../Mod/Web/Gui/Resources/translations","../Mod/Web/Gui/Resources/Web.qrc"],
              ["Spreadsheet","../Mod/Spreadsheet/Gui/Resources/translations","../Mod/Spreadsheet/Gui/Resources/Spreadsheet.qrc"],
              ["Path","../Mod/Path/Gui/Resources/translations","../Mod/Path/Gui/Resources/Path.qrc"],
              ["Tux","../Mod/Tux/Resources/translations","../Mod/Tux/Resources/Tux.qrc"],
