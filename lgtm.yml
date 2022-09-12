@@ -13,9 +13,6 @@ path_classifiers:
   template:
   - "src/Tools/examplePy2wiki.py"
   - "src/Mode/TemplatePyMod/"
-  unmaintained:
-  - "src/Mod/Robot/"
-  - "src/Mod/Ship/"
   legacy:
   - "src/Mod/Assembly/"
   - "src/Mod/Drawing/"
