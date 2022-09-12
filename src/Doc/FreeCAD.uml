@@ -618,7 +618,6 @@
 <XPD:ATTR name="Text" type="string">Additional Std modules are:
 - Part
 - Points
-- Raytracing
 - Image
 </XPD:ATTR>
 </XPD:OBJ>
@@ -1281,18 +1280,6 @@
 <XPD:ATTR name="Distance" type="real">15</XPD:ATTR>
 <XPD:REF name="Model">vrQ533wvd0WerbrjcOjsPgAA</XPD:REF>
 </XPD:OBJ>
-</XPD:OBJ>
-<XPD:OBJ name="OwnedViews[18]" type="UMLPackageView" guid="nIzTGhnpAka+AD6bVRw5tgAA">
-<XPD:ATTR name="LineColor" type="string">clMaroon</XPD:ATTR>
-<XPD:ATTR name="FillColor" type="string">$00B9FFFF</XPD:ATTR>
-<XPD:ATTR name="Left" type="integer">920</XPD:ATTR>
-<XPD:ATTR name="Top" type="integer">296</XPD:ATTR>
-<XPD:ATTR name="Width" type="integer">120</XPD:ATTR>
-<XPD:ATTR name="Height" type="integer">70</XPD:ATTR>
-<XPD:REF name="Model">Po/V3dG5OEupQvm5QrayNAAA</XPD:REF>
-<XPD:OBJ name="NameCompartment" type="UMLNameCompartmentView" guid="S8IucYRzT0CmCJ7AFX4sbwAA">
-<XPD:OBJ name="NameLabel" type="LabelView" guid="YgGsqZbkM0K1kQ7JuSHtDQAA">
-<XPD:ATTR name="Text" type="string">Raytracing</XPD:ATTR>
 </XPD:OBJ>
 <XPD:OBJ name="StereotypeLabel" type="LabelView" guid="HgfytYg+XEagNw4odNVCtQAA">
 <XPD:ATTR name="Visible" type="boolean">False</XPD:ATTR>
@@ -2312,16 +2299,6 @@
 <XPD:REF name="ClientDependencies[0]">vrQ533wvd0WerbrjcOjsPgAA</XPD:REF>
 <XPD:ATTR name="#SupplierDependencies" type="integer">1</XPD:ATTR>
 <XPD:REF name="SupplierDependencies[0]">tbboMl12hk2UQ6cJJOUDJQAA</XPD:REF>
-</XPD:OBJ>
-<XPD:OBJ name="OwnedElements[9]" type="UMLPackage" guid="Po/V3dG5OEupQvm5QrayNAAA">
-<XPD:ATTR name="Name" type="string">Raytracing</XPD:ATTR>
-<XPD:REF name="Namespace">rF42qmbBS0OPcjU6ZI8+vwAA</XPD:REF>
-<XPD:ATTR name="#Views" type="integer">1</XPD:ATTR>
-<XPD:REF name="Views[0]">nIzTGhnpAka+AD6bVRw5tgAA</XPD:REF>
-<XPD:ATTR name="#ClientDependencies" type="integer">1</XPD:ATTR>
-<XPD:REF name="ClientDependencies[0]">9TF+E/FEwUKkdSw9521qzAAA</XPD:REF>
-<XPD:ATTR name="#SupplierDependencies" type="integer">1</XPD:ATTR>
-<XPD:REF name="SupplierDependencies[0]">LqxlWR2geUiWk++VBNts1wAA</XPD:REF>
 </XPD:OBJ>
 <XPD:OBJ name="OwnedElements[10]" type="UMLPackage" guid="bLIlem3kwEugtPYQrf13/wAA">
 <XPD:ATTR name="Name" type="string">Sketcher</XPD:ATTR>

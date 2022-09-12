@@ -78,10 +78,6 @@ if(BUILD_POINTS)
   add_subdirectory(Points)
 endif(BUILD_POINTS)
 
-if(BUILD_RAYTRACING)
-  add_subdirectory(Raytracing)
-endif(BUILD_RAYTRACING)
-
 if(BUILD_SANDBOX)
     add_subdirectory(Sandbox)
 endif(BUILD_SANDBOX)

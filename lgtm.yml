@@ -16,7 +16,6 @@ path_classifiers:
   legacy:
   - "src/Mod/Assembly/"
   - "src/Mod/Drawing/"
-  - "src/Mod/Raytracing/"
 
 extraction:
   javascript:
