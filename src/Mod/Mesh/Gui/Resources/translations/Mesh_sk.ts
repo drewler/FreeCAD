@@ -1638,30 +1638,6 @@ to a smoother appearance.
     </message>
   </context>
   <context>
-    <name>Mesh_BoundingBox</name>
-    <message>
-      <source>Boundings of %1:</source>
-      <translation type="unfinished">Boundings of %1:</translation>
-    </message>
-  </context>
-  <context>
-    <name>Mesh_Union</name>
-    <message>
-      <source>OpenSCAD</source>
-      <translation type="unfinished">OpenSCAD</translation>
-    </message>
-    <message>
-      <source>Unknown error occurred while running OpenSCAD.</source>
-      <translation type="unfinished">Unknown error occurred while running OpenSCAD.</translation>
-    </message>
-    <message>
-      <source>OpenSCAD cannot be found on your system.
-Please visit http://www.openscad.org/index.html to install it.</source>
-      <translation type="unfinished">OpenSCAD cannot be found on your system.
-Please visit http://www.openscad.org/index.html to install it.</translation>
-    </message>
-  </context>
-  <context>
     <name>QDockWidget</name>
     <message>
       <source>Evaluate &amp; Repair Mesh</source>

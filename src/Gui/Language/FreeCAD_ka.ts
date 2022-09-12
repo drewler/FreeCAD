@@ -7207,29 +7207,6 @@ How do you want to proceed?</source>
     </message>
   </context>
   <context>
-    <name>Gui::OpenSCADNavigationStyle</name>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="53"/>
-      <source>Press left mouse button</source>
-      <translation>დააჭირეთ თაგუნის მარცხენა ღილაკს</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="55"/>
-      <source>Press right mouse button and move mouse</source>
-      <translation>დააწექით თაგუნას მარჯვენა ღილაკს და გაამოძრავეთ თაგუნა</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="57"/>
-      <source>Press left mouse button and move mouse</source>
-      <translation>დააწექით თაგუნას მარცხენა ღილაკს და გაამოძრავეთ თაგუნა</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="59"/>
-      <source>Press middle mouse button or SHIFT and right mouse button</source>
-      <translation>დააჭირეთ თაგუნას შუა ღილაკს ან SHIFT-ს ან თაგუნას მარჯვენა ღილაკს</translation>
-    </message>
-  </context>
-  <context>
     <name>Gui::PrefQuantitySpinBox</name>
     <message>
       <location filename="../PrefWidgets.cpp" line="636"/>

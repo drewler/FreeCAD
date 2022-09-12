@@ -7217,29 +7217,6 @@ a jobboldali nézetben %2 pont lett jelölve.</translation>
     </message>
   </context>
   <context>
-    <name>Gui::OpenSCADNavigationStyle</name>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="53"/>
-      <source>Press left mouse button</source>
-      <translation>Nyomja meg a bal egérgombot</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="55"/>
-      <source>Press right mouse button and move mouse</source>
-      <translation>Nyomja meg a jobb egérgombot, és mozgassa a kurzort</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="57"/>
-      <source>Press left mouse button and move mouse</source>
-      <translation>Nyomja meg a bal egérgombot, és mozgassa a kurzort</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="59"/>
-      <source>Press middle mouse button or SHIFT and right mouse button</source>
-      <translation>Nyomja meg a középső egérgombot vagy a SHIFT billentyűt és a jobb egérgombot</translation>
-    </message>
-  </context>
-  <context>
     <name>Gui::PrefQuantitySpinBox</name>
     <message>
       <location filename="../PrefWidgets.cpp" line="636"/>

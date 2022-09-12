@@ -98,7 +98,6 @@ locations = [["AddonManager","../Mod/AddonManager/Resources/translations","../Mo
              ["Image","../Mod/Image/Gui/Resources/translations","../Mod/Image/Gui/Resources/Image.qrc"],
              ["Mesh","../Mod/Mesh/Gui/Resources/translations","../Mod/Mesh/Gui/Resources/Mesh.qrc"],
              ["MeshPart","../Mod/MeshPart/Gui/Resources/translations","../Mod/MeshPart/Gui/Resources/MeshPart.qrc"],
-             ["OpenSCAD","../Mod/OpenSCAD/Resources/translations","../Mod/OpenSCAD/Resources/OpenSCAD.qrc"],
              ["Part","../Mod/Part/Gui/Resources/translations","../Mod/Part/Gui/Resources/Part.qrc"],
              ["PartDesign","../Mod/PartDesign/Gui/Resources/translations","../Mod/PartDesign/Gui/Resources/PartDesign.qrc"],
              ["Points","../Mod/Points/Gui/Resources/translations","../Mod/Points/Gui/Resources/Points.qrc"],

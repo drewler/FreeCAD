@@ -7223,29 +7223,6 @@ Nola jarraitu nahi duzu?</translation>
     </message>
   </context>
   <context>
-    <name>Gui::OpenSCADNavigationStyle</name>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="53"/>
-      <source>Press left mouse button</source>
-      <translation>Sakatu saguaren ezkerreko botoia</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="55"/>
-      <source>Press right mouse button and move mouse</source>
-      <translation>Sakatu saguaren eskuineko botoia eta mugitu sagua</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="57"/>
-      <source>Press left mouse button and move mouse</source>
-      <translation>Sakatu saguaren ezkerreko botoia eta mugitu sagua</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="59"/>
-      <source>Press middle mouse button or SHIFT and right mouse button</source>
-      <translation>Sakatu saguaren erdiko botoia edo ⇧ eta saguaren eskuineko botoia</translation>
-    </message>
-  </context>
-  <context>
     <name>Gui::PrefQuantitySpinBox</name>
     <message>
       <location filename="../PrefWidgets.cpp" line="636"/>

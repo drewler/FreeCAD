@@ -123,7 +123,6 @@
 #include "QGVNavStyleInventor.h"
 #include "QGVNavStyleMaya.h"
 #include "QGVNavStyleOCC.h"
-#include "QGVNavStyleOpenSCAD.h"
 #include "QGVNavStyleRevit.h"
 
 // used SVG namespaces
@@ -316,7 +315,6 @@ void QGVPage::setNavigationStyle(std::string navParm)
     std::size_t foundGesture = navParm.find("Gui::Gesture");
     std::size_t foundMaya = navParm.find("Gui::Maya");
     std::size_t foundOCC = navParm.find("OpenCascade");
-    std::size_t foundOpenSCAD = navParm.find("OpenSCAD");
     std::size_t foundRevit = navParm.find("Revit");
 
     if (foundBlender != std::string::npos) {
@@ -335,8 +333,6 @@ void QGVPage::setNavigationStyle(std::string navParm)
         m_navStyle = static_cast<QGVNavStyle*>(new QGVNavStyleMaya(this));
     } else if (foundOCC != std::string::npos) {
         m_navStyle = static_cast<QGVNavStyle*>(new QGVNavStyleOCC(this));
-    } else if (foundOpenSCAD != std::string::npos) {
-        m_navStyle = static_cast<QGVNavStyle*>(new QGVNavStyleOpenSCAD(this));
     } else if (foundRevit != std::string::npos) {
         m_navStyle = static_cast<QGVNavStyle*>(new QGVNavStyleRevit(this));
     } else {

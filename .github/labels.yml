@@ -28,9 +28,6 @@ WB Mesh:
 WB MeshPart:
 - 'src/Mod/MeshPart/**/*'
 
-WB OpenSCAD:
-- 'src/Mod/OpenSCAD/**/*'
-
 WB Part:  
 - 'src/Mod/Part/**/*'
 

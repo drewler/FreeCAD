@@ -7208,29 +7208,6 @@ How do you want to proceed?</source>
     </message>
   </context>
   <context>
-    <name>Gui::OpenSCADNavigationStyle</name>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="53"/>
-      <source>Press left mouse button</source>
-      <translation>Pulsa el botón izquierdo del ratón</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="55"/>
-      <source>Press right mouse button and move mouse</source>
-      <translation>Pulse el botón derecho del ratón y mueva el ratón</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="57"/>
-      <source>Press left mouse button and move mouse</source>
-      <translation>Pulse el botón izquierdo del ratón y mueva el ratón</translation>
-    </message>
-    <message>
-      <location filename="../OpenSCADNavigationStyle.cpp" line="59"/>
-      <source>Press middle mouse button or SHIFT and right mouse button</source>
-      <translation>Pulse el botón central del ratón o SHIFT y el botón derecho del ratón</translation>
-    </message>
-  </context>
-  <context>
     <name>Gui::PrefQuantitySpinBox</name>
     <message>
       <location filename="../PrefWidgets.cpp" line="636"/>

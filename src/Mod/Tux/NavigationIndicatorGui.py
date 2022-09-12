@@ -237,26 +237,7 @@ def retranslateUi():
     <b>""" + text08 + ":</b> " + text10 + "</small></p>"
 
     global t7
-    t7 = "<p align='center'><b>OpenSCAD</b> " + text06 + """</p>
-    <table>
-     <tr>
-      <th><small>""" + text01 + """</small></th>
-      <th><small>""" + text02 + """</small></th>
-      <th><small>""" + text02 + """</small></th>
-      <th><small>""" + text03 + """</small></th>
-      <th><small>""" + text04 + """</small></th>
-     </tr>
-     <tr>
-      <td align='center'><img src=':/icons/NavigationOpenSCAD_Select.svg'></td>
-      <td align='center'><img src=':/icons/NavigationOpenSCAD_Zoom.svg'></td>
-      <td align='center'><img src=':/icons/NavigationOpenSCAD_ZoomAlt.svg'></td>
-      <td align='center'><img src=':/icons/NavigationOpenSCAD_Rotate.svg'></td>
-      <td align='center'><img src=':/icons/NavigationOpenSCAD_Pan.svg'></td>
-     </tr>
-    </table>"""
-
-    global t8
-    t8 = "<p align='center'><b>Revit</b> " + text06 + """</p>
+    t7 = "<p align='center'><b>Revit</b> " + text06 + """</p>
     <table>
      <tr>
       <th><small>""" + text01 + """</small></th>
@@ -275,8 +256,8 @@ def retranslateUi():
     </table>
     <b>""" + text08 + ":</b> " + text10 + "</small></p>"
 
-    global t9
-    t9 = "<p align='center'><b>TinkerCAD</b> " + text06 + """</p>
+    global t8
+    t8 = "<p align='center'><b>TinkerCAD</b> " + text06 + """</p>
     <table>
      <tr>
       <th><small>""" + text01 + """</small></th>
@@ -292,8 +273,8 @@ def retranslateUi():
      </tr>
     </table>"""
 
-    global t10
-    t10 = "<p align='center'><b>Touchpad</b> " + text06 + """</p>
+    global t9
+    t9 = "<p align='center'><b>Touchpad</b> " + text06 + """</p>
     <table>
      <tr>
       <th><small>""" + text01 + """</small></th>
@@ -414,28 +395,22 @@ a6.setData("Gui::InventorNavigationStyle")
 a6.setObjectName("Indicator_NavigationOpenInventor")
 
 a7 = QtGui.QAction(gStyle)
-a7.setIcon(QtGui.QIcon(":/icons/NavigationOpenSCAD_dark.svg"))
-a7.setText("OpenSCAD  ")
-a7.setData("Gui::OpenSCADNavigationStyle")
-a7.setObjectName("Indicator_NavigationOpenSCAD")
+a7.setIcon(QtGui.QIcon(":/icons/NavigationRevit_dark.svg"))
+a7.setText("Revit  ")
+a7.setData("Gui::RevitNavigationStyle")
+a7.setObjectName("Indicator_NavigationRevit")
 
 a8 = QtGui.QAction(gStyle)
-a8.setIcon(QtGui.QIcon(":/icons/NavigationRevit_dark.svg"))
-a8.setText("Revit  ")
-a8.setData("Gui::RevitNavigationStyle")
-a8.setObjectName("Indicator_NavigationRevit")
+a8.setIcon(QtGui.QIcon(":/icons/NavigationTinkerCAD_dark.svg"))
+a8.setText("TinkerCAD  ")
+a8.setData("Gui::TinkerCADNavigationStyle")
+a8.setObjectName("Indicator_NavigationTinkerCAD")
 
 a9 = QtGui.QAction(gStyle)
-a9.setIcon(QtGui.QIcon(":/icons/NavigationTinkerCAD_dark.svg"))
-a9.setText("TinkerCAD  ")
-a9.setData("Gui::TinkerCADNavigationStyle")
-a9.setObjectName("Indicator_NavigationTinkerCAD")
-
-a10 = QtGui.QAction(gStyle)
-a10.setIcon(QtGui.QIcon(":/icons/NavigationTouchpad_dark.svg"))
-a10.setText("Touchpad  ")
-a10.setData("Gui::TouchpadNavigationStyle")
-a10.setObjectName("Indicator_NavigationTouchpad")
+a9.setIcon(QtGui.QIcon(":/icons/NavigationTouchpad_dark.svg"))
+a9.setText("Touchpad  ")
+a9.setData("Gui::TouchpadNavigationStyle")
+a9.setObjectName("Indicator_NavigationTouchpad")
 
 menu.addMenu(menuSettings)
 menu.addSeparator()
@@ -449,7 +424,6 @@ menu.addAction(a6)
 menu.addAction(a7)
 menu.addAction(a8)
 menu.addAction(a9)
-menu.addAction(a10)
 
 pView.Attach(indicator)
 
@@ -489,7 +463,6 @@ def onTooltip():
         a7.setToolTip(t7)
         a8.setToolTip(t8)
         a9.setToolTip(t9)
-        a10.setToolTip(t10)
         p.SetBool("Tooltip", 1)
     else:
         for i in gStyle.actions():

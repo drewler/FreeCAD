@@ -69,7 +69,6 @@ directories = [
         {"tsname":"Material", "workingdir":"./src/Mod/Material/", "tsdir":"Resources/translations"},
         {"tsname":"Mesh", "workingdir":"./src/Mod/Mesh/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"MeshPart", "workingdir":"./src/Mod/MeshPart/", "tsdir":"Gui/Resources/translations"},
-        {"tsname":"OpenSCAD", "workingdir":"./src/Mod/OpenSCAD/", "tsdir":"Resources/translations"},
         {"tsname":"PartDesign", "workingdir":"./src/Mod/PartDesign/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Part", "workingdir":"./src/Mod/Part/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Path", "workingdir":"./src/Mod/Path/", "tsdir":"Gui/Resources/translations"},
