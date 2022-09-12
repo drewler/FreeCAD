@@ -86,10 +86,6 @@ if(BUILD_RAYTRACING)
   add_subdirectory(Raytracing)
 endif(BUILD_RAYTRACING)
 
-if(BUILD_REVERSEENGINEERING)
-  add_subdirectory(ReverseEngineering)
-endif(BUILD_REVERSEENGINEERING)
-
 if(BUILD_ROBOT)
     if(EIGEN3_FOUND)
       add_subdirectory(Robot)
