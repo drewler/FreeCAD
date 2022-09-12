@@ -675,11 +675,6 @@
       <translation>Bir geometrik yüzün üzerinde FEM kısıtlaması dönüşümü yapın</translation>
     </message>
     <message>
-      <location filename="../../Command.cpp" line="1002"/>
-      <source>Place robot</source>
-      <translation>Robot yerleştir</translation>
-    </message>
-    <message>
       <location filename="../../Command.cpp" line="1103"/>
       <source>Edit nodes set</source>
       <translation>Düğüm noktaları kümesini düzenle</translation>
