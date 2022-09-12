@@ -70,7 +70,6 @@ JtReader    export-ignore
 # line endings of the modules commented will be normalized
 
 # AddonManager/** -text
-# Arch/** -text
 # Complete/** -text
 # Draft/** -text
 # Idf/** -text

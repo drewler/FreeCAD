@@ -37,7 +37,6 @@ from addonmanager_utilities import construct_git_url
 translate = FreeCAD.Qt.translate
 
 INTERNAL_WORKBENCHES = {}
-INTERNAL_WORKBENCHES["arch"] = "Arch"
 INTERNAL_WORKBENCHES["draft"] = "Draft"
 INTERNAL_WORKBENCHES["fem"] = "FEM"
 INTERNAL_WORKBENCHES["mesh"] = "Mesh"

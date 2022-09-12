@@ -2,10 +2,6 @@ if(BUILD_ADDONMGR)
   add_subdirectory(AddonManager)
 endif(BUILD_ADDONMGR)
 
-if(BUILD_ARCH)
-  add_subdirectory(Arch)
-endif(BUILD_ARCH)
-
 if(BUILD_CLOUD)
     add_subdirectory(Cloud)
 endif(BUILD_CLOUD)

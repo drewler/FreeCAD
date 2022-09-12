@@ -47,7 +47,6 @@ from draftgeoutils.geometry import is_straight_line
 # Delay import of module until first use because it is heavy
 Part = lz.LazyLoader("Part", globals(), "Part")
 DraftGeomUtils = lz.LazyLoader("DraftGeomUtils", globals(), "DraftGeomUtils")
-Arch = lz.LazyLoader("Arch", globals(), "Arch")
 
 _DEBUG = False
 
@@ -193,14 +192,6 @@ def upgrade(objects, delete=False, force=None):
     def turnToParts(meshes):
         """Turn given meshes to parts."""
         result = False
-        for mesh in meshes:
-            sh = Arch.getShapeFromMesh(mesh.Mesh)
-            if sh:
-                newobj = doc.addObject("Part::Feature", "Shell")
-                newobj.Shape = sh
-                add_list.append(newobj)
-                delete_list.append(mesh)
-                result = True
         return result
 
     def makeFusion(obj1, obj2=None):
