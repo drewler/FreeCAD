@@ -32,7 +32,6 @@
 # define PartExport      __declspec(dllimport)
 # define MeasureExport   __declspec(dllimport)
 # define MeshExport      __declspec(dllimport)
-# define SpreadsheetExport     __declspec(dllimport)
 # define ImportExport    __declspec(dllimport)
 #else // for Linux
 # define TechDrawExport
@@ -40,7 +39,6 @@
 # define MeasureExport
 # define PartExport
 # define MeshExport
-# define SpreadsheetExport
 # define ImportExport
 #endif
 

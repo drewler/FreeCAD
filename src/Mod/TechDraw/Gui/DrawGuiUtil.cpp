@@ -70,7 +70,6 @@
 
 #include <Mod/Part/App/PartFeature.h>
 #include <Mod/Part/App/Part2DObject.h>
-#include <Mod/Spreadsheet/App/Sheet.h>
 
 #include <Mod/TechDraw/App/DrawPage.h>
 #include <Mod/TechDraw/App/DrawViewPart.h>

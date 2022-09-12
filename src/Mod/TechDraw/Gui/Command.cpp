@@ -67,7 +67,6 @@
 
 #include <Mod/Part/App/PartFeature.h>
 #include <Mod/Part/App/Part2DObject.h>
-#include <Mod/Spreadsheet/App/Sheet.h>
 
 #include <Mod/TechDraw/App/DrawPage.h>
 #include <Mod/TechDraw/App/DrawViewPart.h>
@@ -1314,66 +1313,6 @@ bool CmdTechDrawArchView::isActive()
 }
 
 //===========================================================================
-// TechDraw_SpreadsheetView
-//===========================================================================
-
-DEF_STD_CMD_A(CmdTechDrawSpreadsheetView)
-
-CmdTechDrawSpreadsheetView::CmdTechDrawSpreadsheetView()
-  : Command("TechDraw_SpreadsheetView")
-{
-    // setting the
-    sGroup        = QT_TR_NOOP("TechDraw");
-    sMenuText     = QT_TR_NOOP("Insert Spreadsheet View");
-    sToolTipText  = QT_TR_NOOP("Insert View to a spreadsheet");
-    sWhatsThis    = "TechDraw_SpreadsheetView";
-    sStatusTip    = sToolTipText;
-    sPixmap       = "actions/TechDraw_SpreadsheetView";
-}
-
-void CmdTechDrawSpreadsheetView::activated(int iMsg)
-{
-    Q_UNUSED(iMsg);
-    const std::vector<App::DocumentObject*> spreads = getSelection().getObjectsOfType(Spreadsheet::Sheet::getClassTypeId());
-    if (spreads.size() != 1) {
-        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
-            QObject::tr("Select exactly one Spreadsheet object."));
-        return;
-    }
-    std::string SpreadName = spreads.front()->getNameInDocument();
-
-    TechDraw::DrawPage* page = DrawGuiUtil::findPage(this);
-    if (!page) {
-        return;
-    }
-    std::string PageName = page->getNameInDocument();
-
-    openCommand(QT_TRANSLATE_NOOP("Command", "Create spreadsheet view"));
-    std::string FeatName = getUniqueObjectName("Sheet");
-    doCommand(Doc, "App.activeDocument().addObject('TechDraw::DrawViewSpreadsheet', '%s')", FeatName.c_str());
-    doCommand(Doc, "App.activeDocument().%s.Source = App.activeDocument().%s", FeatName.c_str(), SpreadName.c_str());
-    doCommand(Doc, "App.activeDocument().%s.addView(App.activeDocument().%s)", PageName.c_str(), FeatName.c_str());
-    updateActive();
-    commitCommand();
-}
-
-bool CmdTechDrawSpreadsheetView::isActive()
-{
-    //need a Page and a SpreadSheet::Sheet
-    bool havePage = DrawGuiUtil::needPage(this);
-    bool haveSheet = false;
-    if (havePage) {
-        auto spreadSheetType(Spreadsheet::Sheet::getClassTypeId());
-        auto selSheets = getDocument()->getObjectsOfType(spreadSheetType);
-        if (!selSheets.empty()) {
-            haveSheet = true;
-        }
-    }
-    return (havePage && haveSheet);
-}
-
-
-//===========================================================================
 // TechDraw_ExportPageSVG
 //===========================================================================
 
@@ -1537,7 +1476,6 @@ void CreateTechDrawCommands()
     rcCmdMgr.addCommand(new CmdTechDrawExportPageDXF());
     rcCmdMgr.addCommand(new CmdTechDrawDraftView());
     rcCmdMgr.addCommand(new CmdTechDrawArchView());
-    rcCmdMgr.addCommand(new CmdTechDrawSpreadsheetView());
     rcCmdMgr.addCommand(new CmdTechDrawBalloon());
     rcCmdMgr.addCommand(new CmdTechDrawProjectShape());
 }

@@ -48,7 +48,6 @@ class DrawViewAnnotation;
 class DrawViewSymbol;
 class DrawViewClip;
 class DrawViewCollection;
-class DrawViewSpreadsheet;
 class DrawViewImage;
 class DrawLeaderLine;
 class DrawViewBalloon;

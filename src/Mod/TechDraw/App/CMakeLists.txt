@@ -22,7 +22,6 @@ include_directories(
 set(TechDrawLIBS
     Measure
     Part
-    Spreadsheet
     Import
 )
 
@@ -83,8 +82,6 @@ SET(Draw_SRCS
     DrawViewAnnotation.h
     DrawViewSymbol.cpp
     DrawViewSymbol.h
-    DrawViewSpreadsheet.cpp
-    DrawViewSpreadsheet.h
     DrawViewClip.cpp
     DrawViewClip.h
     DrawProjGroup.cpp

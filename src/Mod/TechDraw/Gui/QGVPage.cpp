@@ -78,7 +78,6 @@
 #include <Mod/TechDraw/App/DrawViewSymbol.h>
 #include <Mod/TechDraw/App/DrawViewClip.h>
 #include <Mod/TechDraw/App/DrawHatch.h>
-#include <Mod/TechDraw/App/DrawViewSpreadsheet.h>
 #include <Mod/TechDraw/App/DrawViewImage.h>
 #include <Mod/TechDraw/App/DrawLeaderLine.h>
 #include <Mod/TechDraw/App/DrawRichAnno.h>
@@ -103,7 +102,6 @@
 #include "QGIViewAnnotation.h"
 #include "QGIViewSymbol.h"
 #include "QGIViewClip.h"
-#include "QGIViewSpreadsheet.h"
 #include "QGIViewImage.h"
 #include "QGIFace.h"
 #include "QGILeaderLine.h"

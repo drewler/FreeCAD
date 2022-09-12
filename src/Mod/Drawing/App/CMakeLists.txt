@@ -16,7 +16,6 @@ link_directories(${OCC_LIBRARY_DIR})
 
 set(Drawing_LIBS
     Part
-    Spreadsheet
     FreeCADApp
 )
 

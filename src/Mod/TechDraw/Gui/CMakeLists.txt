@@ -283,8 +283,6 @@ SET(TechDrawGuiView_SRCS
     QGIViewAnnotation.h
     QGIViewSymbol.cpp
     QGIViewSymbol.h
-    QGIViewSpreadsheet.cpp
-    QGIViewSpreadsheet.h
     QGIViewImage.cpp
     QGIViewImage.h
     QGIViewClip.cpp
@@ -372,8 +370,6 @@ SET(TechDrawGuiViewProvider_SRCS
     ViewProviderAnnotation.h
     ViewProviderSymbol.cpp
     ViewProviderSymbol.h
-    ViewProviderSpreadsheet.cpp
-    ViewProviderSpreadsheet.h
     ViewProviderViewClip.cpp
     ViewProviderViewClip.h
     ViewProviderGeomHatch.cpp

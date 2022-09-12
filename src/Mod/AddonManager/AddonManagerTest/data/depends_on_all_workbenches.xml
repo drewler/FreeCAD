@@ -26,7 +26,6 @@
 			<depend>RayTRAcing</depend>
 			<depend>ROBOTWB</depend>
 			<depend>Sketcher workbench</depend>
-			<depend>Spreadsheet</depend>
 			<depend>TechDraw</depend>
 		</workbench>
 	</content>

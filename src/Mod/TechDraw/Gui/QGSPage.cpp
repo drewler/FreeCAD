@@ -80,7 +80,6 @@
 #include <Mod/TechDraw/App/DrawViewImage.h>
 #include <Mod/TechDraw/App/DrawViewPart.h>
 #include <Mod/TechDraw/App/DrawViewSection.h>
-#include <Mod/TechDraw/App/DrawViewSpreadsheet.h>
 #include <Mod/TechDraw/App/DrawViewSymbol.h>
 #include <Mod/TechDraw/App/DrawWeldSymbol.h>
 #include <Mod/TechDraw/App/Geometry.h>
@@ -99,7 +98,6 @@
 #include "QGIViewAnnotation.h"
 #include "QGIViewSymbol.h"
 #include "QGIViewClip.h"
-#include "QGIViewSpreadsheet.h"
 #include "QGIViewImage.h"
 #include "QGILeaderLine.h"
 #include "QGIRichAnno.h"
@@ -391,9 +389,6 @@ bool QGSPage::attachView(App::DocumentObject *obj)
     } else if (typeId.isDerivedFrom(TechDraw::DrawViewClip::getClassTypeId()) ) {
         qview = addDrawViewClip( static_cast<TechDraw::DrawViewClip *>(obj) );
 
-    } else if (typeId.isDerivedFrom(TechDraw::DrawViewSpreadsheet::getClassTypeId()) ) {
-        qview = addDrawViewSpreadsheet( static_cast<TechDraw::DrawViewSpreadsheet *>(obj) );
-
     } else if (typeId.isDerivedFrom(TechDraw::DrawViewImage::getClassTypeId()) ) {
         qview = addDrawViewImage( static_cast<TechDraw::DrawViewImage *>(obj) );
 
@@ -491,16 +486,6 @@ QGIView * QGSPage::addDrawViewClip(TechDraw::DrawViewClip *view)
 
     qview->setPosition(Rez::guiX(view->X.getValue()), Rez::guiX(view->Y.getValue()));
     qview->setViewFeature(view);
-
-    addQView(qview);
-    return qview;
-}
-
-QGIView * QGSPage::addDrawViewSpreadsheet(TechDraw::DrawViewSpreadsheet *sheetFeat)
-{
-    auto qview( new QGIViewSpreadsheet );
-
-    qview->setViewFeature(sheetFeat);
 
     addQView(qview);
     return qview;

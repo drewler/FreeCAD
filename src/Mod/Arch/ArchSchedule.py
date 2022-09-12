@@ -101,51 +101,16 @@ class _ArchSchedule:
             obj.addProperty("App::PropertyStringList","Objects",           "Arch",QT_TRANSLATE_NOOP("App::Property","The objects column"))
         if not "Filter" in obj.PropertiesList:
             obj.addProperty("App::PropertyStringList","Filter",            "Arch",QT_TRANSLATE_NOOP("App::Property","The filter column"))
-        if not "CreateSpreadsheet" in obj.PropertiesList:
-            obj.addProperty("App::PropertyBool",      "CreateSpreadsheet", "Arch",QT_TRANSLATE_NOOP("App::Property","If True, a spreadsheet containing the results is recreated when needed"))
         if not "Result" in obj.PropertiesList:
             obj.addProperty("App::PropertyLink",      "Result",            "Arch",QT_TRANSLATE_NOOP("App::Property","The spreadsheet to print the results to"))
         if not "DetailedResults" in obj.PropertiesList:
             obj.addProperty("App::PropertyBool",      "DetailedResults", "Arch",QT_TRANSLATE_NOOP("App::Property","If True, additional lines with each individual object are added to the results"))
 
     def onChanged(self,obj,prop):
-
-        if (prop == "CreateSpreadsheet"):
-            if hasattr(obj,"CreateSpreadsheet") and obj.CreateSpreadsheet:
-                if not obj.Result:
-                    import Spreadsheet
-                    sp = FreeCAD.ActiveDocument.addObject("Spreadsheet::Sheet","Result")
-                    obj.Result = sp
+        pass
 
     def setSpreadsheetData(self,obj,force=False):
-
-        """Fills a spreadsheet with the stored data"""
-
-        if not hasattr(self,"data"):
-            self.execute(obj)
-        if not hasattr(self,"data"):
-            return
-        if not self.data:
-            return
-        if not obj.Result:
-            if obj.CreateSpreadsheet or force:
-                import Spreadsheet
-                sp = FreeCAD.ActiveDocument.addObject("Spreadsheet::Sheet","Result")
-                obj.Result = sp
-            else:
-                return
-        # clear spreadsheet
-        obj.Result.clearAll()
-        # set headers
-        obj.Result.set("A1","Description")
-        obj.Result.set("B1","Value")
-        obj.Result.set("C1","Unit")
-        obj.Result.setStyle('A1:C1', 'bold', 'add')
-        # write contents
-        for k,v in self.data.items():
-            obj.Result.set(k,v)
-        # recompute
-        obj.Result.recompute()
+        pass
 
     def execute(self,obj):
 
@@ -329,7 +294,6 @@ class _ArchSchedule:
                         else:
                             v = fs.format(val)
                             print("TOTAL:"+34*" "+v)
-        self.setSpreadsheetData(obj)
 
     def __getstate__(self):
 
@@ -340,64 +304,6 @@ class _ArchSchedule:
         if state:
             self.Type = state
 
-
-class _ViewProviderArchSchedule:
-
-    "A View Provider for Schedules"
-
-    def __init__(self,vobj):
-        vobj.Proxy = self
-
-    def getIcon(self):
-        import Arch_rc
-        return ":/icons/Arch_Schedule.svg"
-
-    def isShow(self):
-        return True
-
-    def attach(self, vobj):
-        self.Object = vobj.Object
-
-    def setEdit(self,vobj,mode=0):
-        if hasattr(self,"taskd"):
-            if self.taskd:
-                self.taskd.form.hide()
-        self.taskd = ArchScheduleTaskPanel(vobj.Object)
-        return True
-
-    def doubleClicked(self,vobj):
-        self.setEdit(vobj)
-
-    def unsetEdit(self,vobj,mode):
-        return True
-
-    def claimChildren(self):
-        if hasattr(self,"Object"):
-            return [self.Object.Result]
-
-    def __getstate__(self):
-        return None
-
-    def __setstate__(self,state):
-        return None
-
-    def getDisplayModes(self,vobj):
-        return ["Default"]
-
-    def getDefaultDisplayMode(self):
-        return "Default"
-
-    def setDisplayMode(self,mode):
-        return mode
-
-    def setupContextMenu(self,vobj,menu):
-        action1 = QtGui.QAction(QtGui.QIcon(":/icons/Arch_Schedule.svg"),"Attach spreadsheet",menu)
-        QtCore.QObject.connect(action1,QtCore.SIGNAL("triggered()"),self.attachSpreadsheet)
-        menu.addAction(action1)
-
-    def attachSpreadsheet(self):
-        if hasattr(self,"Object"):
-            self.Object.Proxy.setSpreadsheetData(self.Object,force=True)
 
 
 class ArchScheduleTaskPanel:
@@ -459,7 +365,6 @@ class ArchScheduleTaskPanel:
                     self.form.list.setItem(j,i,item)
             self.form.lineEditName.setText(self.obj.Label)
             self.form.checkDetailed.setChecked(self.obj.DetailedResults)
-            self.form.checkSpreadsheet.setChecked(self.obj.CreateSpreadsheet)
 
         # center over FreeCAD window
         mw = FreeCADGui.getMainWindow()
@@ -649,12 +554,6 @@ class ArchScheduleTaskPanel:
             self.obj = FreeCAD.ActiveDocument.addObject("App::FeaturePython","Schedule")
             self.obj.Label = translate("Arch","Schedule")
             _ArchSchedule(self.obj)
-            if FreeCAD.GuiUp:
-                _ViewProviderArchSchedule(self.obj.ViewObject)
-            if hasattr(self.obj,"CreateSpreadsheet") and self.obj.CreateSpreadsheet:
-                import Spreadsheet
-                sp = FreeCAD.ActiveDocument.addObject("Spreadsheet::Sheet","Result")
-                self.obj.Result = sp
         lists = [ [], [], [], [], [] ]
         for i in range(self.form.list.rowCount()):
             for j in range(5):

@@ -20,7 +20,6 @@ QGIViewAnnotation : 120
 QGIViewSymbol : 121
 QGIHatch : 122     //obsolete
 QGIClip : 123
-QGISpreadsheet : 124
 QGCustomText: 130
 QGCustomSvg: 131
 QGCustomClip: 132

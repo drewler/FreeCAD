@@ -106,16 +106,6 @@ Leave blank to use all objects from the document</string>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="Gui::PrefCheckBox" name="checkSpreadsheet">
-       <property name="toolTip">
-        <string>If this is enabled, an associated spreadsheet containing the results will be maintained together with this schedule object</string>
-       </property>
-       <property name="text">
-        <string>Associate spreadsheet</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="Gui::PrefCheckBox" name="checkDetailed">
        <property name="toolTip">
         <string>If this is turned on, additional lines will be filled with each object considered. If not, only the totals.</string>
