@@ -76,46 +76,6 @@ void StartGui::Workbench::loadStartPage()
             return;
         }
     }
-
-    try {
-        QByteArray utf8Title = title.toUtf8();
-        std::string escapedstr = Base::Tools::escapedUnicodeFromUtf8(utf8Title);
-        std::stringstream str;
-        str << "import WebGui,sys,Start\n"
-            << "from StartPage import StartPage\n\n"
-            << "class WebPage(object):\n"
-            << "    def __init__(self):\n"
-            << "        self.browser=WebGui.openBrowserWindow(u\"" << escapedstr.c_str() << "\")\n"
-#if defined(FC_OS_WIN32)
-            << "        self.browser.setHtml(StartPage.handle(), App.getResourceDir() + 'Mod/Start/StartPage/')\n"
-#else
-            << "        self.browser.setHtml(StartPage.handle(), 'file://' + App.getResourceDir() + 'Mod/Start/StartPage/')\n"
-#endif
-            << "    def onChange(self, par, reason):\n"
-            << "        try:\n"
-            << "            if reason == 'RecentFiles':\n"
-#if defined(FC_OS_WIN32)
-            << "                self.browser.setHtml(StartPage.handle(), App.getResourceDir() + 'Mod/Start/StartPage/')\n\n"
-#else
-            << "                self.browser.setHtml(StartPage.handle(), 'file://' + App.getResourceDir() + 'Mod/Start/StartPage/')\n\n"
-#endif
-            << "        except RuntimeError as e:\n"
-            << "            pass\n"
-            << "class WebView(object):\n"
-            << "    def __init__(self):\n"
-            << "        self.pargrp = FreeCAD.ParamGet('User parameter:BaseApp/Preferences/RecentFiles')\n"
-            << "        self.webPage = WebPage()\n"
-            << "        self.pargrp.Attach(self.webPage)\n"
-            << "    def __del__(self):\n"
-            << "        self.pargrp.Detach(self.webPage)\n\n"
-            << "webView = WebView()\n"
-            << "StartPage.checkPostOpenStartPage()\n";
-
-        Base::Interpreter().runString(str.str().c_str());
-    }
-    catch (const Base::Exception& e) {
-        Base::Console().Error("%s\n", e.what());
-    }
 }
 
 void StartGui::Workbench::setupContextMenu(const char* recipient, Gui::MenuItem* item) const
@@ -136,18 +96,9 @@ Gui::ToolBarItem* StartGui::Workbench::setupToolBars() const
     // web navigation toolbar
     Gui::ToolBarItem* navigation = new Gui::ToolBarItem(root);
     navigation->setCommand("Navigation");
-    *navigation << "Web_BrowserSetURL"
-                << "Separator"
-                << "Web_OpenWebsite"
+    *navigation << "Separator"
                 << "Start_StartPage"
-                << "Separator"
-                << "Web_BrowserBack"
-                << "Web_BrowserNext"
-                << "Web_BrowserRefresh"
-                << "Web_BrowserStop"
-                << "Separator"
-                << "Web_BrowserZoomIn"
-                << "Web_BrowserZoomOut";
+                << "Separator";
 
     return root;
 

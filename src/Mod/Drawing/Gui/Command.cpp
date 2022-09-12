@@ -426,45 +426,6 @@ bool CmdDrawingOrthoViews::isActive(void)
     return true;
 }
 
-
-//===========================================================================
-// Drawing_OpenBrowserView
-//===========================================================================
-
-DEF_STD_CMD_A(CmdDrawingOpenBrowserView)
-
-CmdDrawingOpenBrowserView::CmdDrawingOpenBrowserView()
-  : Command("Drawing_OpenBrowserView")
-{
-    // setting the
-    sGroup        = QT_TR_NOOP("Drawing");
-    sMenuText     = QT_TR_NOOP("Open &browser view");
-    sToolTipText  = QT_TR_NOOP("Opens the selected page in a browser view");
-    sWhatsThis    = "Drawing_OpenBrowserView";
-    sStatusTip    = QT_TR_NOOP("Opens the selected page in a browser view");
-    sPixmap       = "actions/drawing-openbrowser";
-}
-
-void CmdDrawingOpenBrowserView::activated(int iMsg)
-{
-    Q_UNUSED(iMsg);
-    unsigned int n = getSelection().countObjectsOfType(Drawing::FeaturePage::getClassTypeId());
-    if (n != 1) {
-        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
-            QObject::tr("Select one Page object."));
-        return;
-    }
-    std::vector<Gui::SelectionSingleton::SelObj> Sel = getSelection().getSelection();
-    doCommand(Doc,"PageName = App.activeDocument().%s.PageResult",Sel[0].FeatName);
-    doCommand(Doc,"import WebGui");
-    doCommand(Doc,"WebGui.openBrowser(PageName)");
-}
-
-bool CmdDrawingOpenBrowserView::isActive(void)
-{
-    return (getActiveGuiDocument() ? true : false);
-}
-
 //===========================================================================
 // Drawing_Annotation
 //===========================================================================
