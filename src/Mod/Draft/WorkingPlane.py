@@ -853,9 +853,7 @@ class Plane:
     def getRotation(self):
         """Return a placement describing the plane orientation only.
 
-        If `FreeCAD.GuiUp` is `True`, that is, if the graphical interface
-        is loaded, it will test if the active object is an `Arch` container
-        and will calculate the placement accordingly.
+        If `FreeCAD.GuiUp` is `True`, that is.
 
         Returns
         -------
@@ -865,15 +863,6 @@ class Plane:
         """
         m = DraftVecUtils.getPlaneRotation(self.u, self.v, self.axis)
         p = FreeCAD.Placement(m)
-        # Arch active container
-        if FreeCAD.GuiUp:
-            import FreeCADGui
-            if FreeCADGui.ActiveDocument:
-                view = FreeCADGui.ActiveDocument.ActiveView
-                if view and hasattr(view,"getActiveOject"):
-                    a = view.getActiveObject("Arch")
-                    if a:
-                        p = a.Placement.inverse().multiply(p)
         return p
 
     def getPlacement(self, rotated=False):
@@ -904,13 +893,6 @@ class Plane:
                 self.u.z, self.v.z, self.axis.z, self.position.z,
                 0.0, 0.0, 0.0, 1.0)
         p = FreeCAD.Placement(m)
-        # Arch active container if based on App Part
-        # if FreeCAD.GuiUp:
-        #    import FreeCADGui
-        #    view = FreeCADGui.ActiveDocument.ActiveView
-        #    a = view.getActiveObject("Arch")
-        #    if a:
-        #        p = a.Placement.inverse().multiply(p)
         return p
 
     def getNormal(self):
@@ -922,13 +904,6 @@ class Plane:
             The `axis` attribute of the plane.
         """
         n = self.axis
-        # Arch active container if based on App Part
-        # if FreeCAD.GuiUp:
-        #    import FreeCADGui
-        #    view = FreeCADGui.ActiveDocument.ActiveView
-        #    a = view.getActiveObject("Arch")
-        #    if a:
-        #        n = a.Placement.inverse().Rotation.multVec(n)
         return n
 
     def setFromPlacement(self, pl, rebase=False):

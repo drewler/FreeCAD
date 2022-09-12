@@ -29,7 +29,6 @@ body:
       label: Subproject(s) affected?
       options:
         - Addon Manager
-        - Arch
         - Core
         - Draft
         - Expressions

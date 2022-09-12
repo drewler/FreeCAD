@@ -35,8 +35,4 @@ The Draft Workbench is more intended to draw exclusively in a 2D plane
 placing points in a grid. Often this behavior is better suited for
 drawing architectural plans, or for quick "drafting" that doesn't need
 to keep mathematical constraints between its elements.
-
-Due to this reason, the Draft Workbench is the foundation on which
-the Arch Workbench sits. All tools of the Draft Workbench are available
-in the Arch Workbench.
 */

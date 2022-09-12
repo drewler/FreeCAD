@@ -46,7 +46,6 @@ import draftguitools.gui_trackers as trackers
 import draftguitools.gui_base_original as gui_base_original
 import draftguitools.gui_tool_utils as gui_tool_utils
 import draftguitools.gui_edit_draft_objects as edit_draft
-import draftguitools.gui_edit_arch_objects as edit_arch
 import draftguitools.gui_edit_part_objects as edit_part
 import draftguitools.gui_edit_sketcher_objects as edit_sketcher
 
@@ -252,13 +251,6 @@ class Edit(gui_base_original.Modifier):
         self.gui_tools_repository.add('Ellipse', edit_draft.DraftEllipseGuiTools())
         self.gui_tools_repository.add('Dimension', edit_draft.DraftDimensionGuiTools()) # Backward compatibility
         self.gui_tools_repository.add('LinearDimension', edit_draft.DraftDimensionGuiTools())
-
-        self.gui_tools_repository.add('Wall', edit_arch.ArchWallGuiTools())
-        self.gui_tools_repository.add('Window', edit_arch.ArchWindowGuiTools())
-        self.gui_tools_repository.add('Structure', edit_arch.ArchStructureGuiTools())
-        self.gui_tools_repository.add('Space', edit_arch.ArchSpaceGuiTools())
-        self.gui_tools_repository.add('PanelCut', edit_arch.ArchPanelCutGuiTools())
-        self.gui_tools_repository.add('PanelSheet', edit_arch.ArchPanelSheetGuiTools())
 
         self.gui_tools_repository.add('Part::Line', edit_part.PartLineGuiTools())
         self.gui_tools_repository.add('Part::Box', edit_part.PartBoxGuiTools())

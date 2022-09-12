@@ -13,9 +13,6 @@ Core:
 Addon Manager:
 - 'src/Mod/AddonManager/**/*'
 
-WB Arch:
-- 'src/Mod/Arch/**/*'
-
 WB Draft:
 - 'src/Mod/Draft/**/*'
 
