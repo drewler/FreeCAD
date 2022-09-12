@@ -1697,24 +1697,6 @@
     </message>
   </context>
   <context>
-    <name>CmdTechDrawSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="1306"/>
-      <source>TechDraw</source>
-      <translation>Технический чертёж</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1307"/>
-      <source>Insert Spreadsheet View</source>
-      <translation>Вставить вид Электронной Таблицы</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1308"/>
-      <source>Insert View to a spreadsheet</source>
-      <translation>Вставить Вид электронной таблицы</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdTechDrawSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="1120"/>
@@ -2547,11 +2529,6 @@
       <location filename="../../Command.cpp" line="1277"/>
       <source>No Arch Sections in selection.</source>
       <translation>Нет арочного сечения в  выборе</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1320"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>Выберите только один объект типа Таблица.</translation>
     </message>
     <message>
       <location filename="../../Command.cpp" line="1390"/>

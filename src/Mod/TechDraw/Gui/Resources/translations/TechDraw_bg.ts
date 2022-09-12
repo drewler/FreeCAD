@@ -792,24 +792,6 @@
     </message>
   </context>
   <context>
-    <name>CmdTechDrawSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="1242"/>
-      <source>TechDraw</source>
-      <translation>Технически чертеж</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1243"/>
-      <source>Insert Spreadsheet View</source>
-      <translation type="unfinished">Insert Spreadsheet View</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1244"/>
-      <source>Insert View to a spreadsheet</source>
-      <translation type="unfinished">Insert View to a spreadsheet</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdTechDrawSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="1056"/>
@@ -1448,11 +1430,6 @@
       <location filename="../../Command.cpp" line="1366"/>
       <source>Page contains DrawViewArch which will not be exported. Continue?</source>
       <translation type="unfinished">Page contains DrawViewArch which will not be exported. Continue?</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1256"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>Изберете само един елемент от таблицата.</translation>
     </message>
     <message>
       <location filename="../../Command.cpp" line="1325"/>

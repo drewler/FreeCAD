@@ -544,10 +544,6 @@ Chcete pokračovať?</translation>
       <translation>Export stránky</translation>
     </message>
     <message>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation type="unfinished">Select exactly one Spreadsheet object.</translation>
-    </message>
-    <message>
       <source>Make axonometric...</source>
       <translation type="unfinished">Make axonometric...</translation>
     </message>

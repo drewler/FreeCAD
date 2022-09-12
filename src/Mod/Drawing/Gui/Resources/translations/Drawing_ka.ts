@@ -717,11 +717,6 @@ Do you want to continue?</source>
       <translation>გვერდის გატანა</translation>
     </message>
     <message>
-      <location filename="../../Command.cpp" line="762"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>აირჩიეთ ელცხრილის ზუსტად ერთი ობიექტი.</translation>
-    </message>
-    <message>
       <location filename="../../TaskOrthoViews.cpp" line="50"/>
       <location filename="../../TaskOrthoViews.cpp" line="978"/>
       <source>Make axonometric...</source>

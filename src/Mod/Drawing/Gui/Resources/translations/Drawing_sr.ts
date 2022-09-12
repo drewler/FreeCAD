@@ -717,11 +717,6 @@ Do you want to continue?</source>
       <translation>Извоз странице</translation>
     </message>
     <message>
-      <location filename="../../Command.cpp" line="761"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>Изаберите само једну унакрсну табелу.</translation>
-    </message>
-    <message>
       <location filename="../../TaskOrthoViews.cpp" line="54"/>
       <location filename="../../TaskOrthoViews.cpp" line="982"/>
       <source>Make axonometric...</source>
