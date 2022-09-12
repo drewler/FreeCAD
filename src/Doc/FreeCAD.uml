@@ -1202,18 +1202,6 @@
 <XPD:REF name="Model">9zfleXNiR0WS3qX4FgYQIQAA</XPD:REF>
 </XPD:OBJ>
 </XPD:OBJ>
-<XPD:OBJ name="OwnedViews[14]" type="UMLPackageView" guid="e3k2UMOpzUWU8VXOY/jBqgAA">
-<XPD:ATTR name="LineColor" type="string">clMaroon</XPD:ATTR>
-<XPD:ATTR name="FillColor" type="string">$00B9FFFF</XPD:ATTR>
-<XPD:ATTR name="Left" type="integer">444</XPD:ATTR>
-<XPD:ATTR name="Top" type="integer">184</XPD:ATTR>
-<XPD:ATTR name="Width" type="integer">120</XPD:ATTR>
-<XPD:ATTR name="Height" type="integer">70</XPD:ATTR>
-<XPD:REF name="Model">apOak/kDeEKVZoZVjx72LAAA</XPD:REF>
-<XPD:OBJ name="NameCompartment" type="UMLNameCompartmentView" guid="H/t1HIw1KEG9MJm8qIRzBgAA">
-<XPD:OBJ name="NameLabel" type="LabelView" guid="4eWbJJMankKNXXpZzz0lHAAA">
-<XPD:ATTR name="Text" type="string">ReverseEngineering</XPD:ATTR>
-</XPD:OBJ>
 <XPD:OBJ name="StereotypeLabel" type="LabelView" guid="+/eUO4QqPEaprE+CYlGZfQAA">
 <XPD:ATTR name="Visible" type="boolean">False</XPD:ATTR>
 </XPD:OBJ>
@@ -2314,16 +2302,6 @@
 <XPD:REF name="ClientDependencies[0]">O3HInpSer0yM7s032zEfOgAA</XPD:REF>
 <XPD:ATTR name="#SupplierDependencies" type="integer">1</XPD:ATTR>
 <XPD:REF name="SupplierDependencies[0]">akWUE5IyIU6ZhYW83jkpMwAA</XPD:REF>
-</XPD:OBJ>
-<XPD:OBJ name="OwnedElements[7]" type="UMLPackage" guid="apOak/kDeEKVZoZVjx72LAAA">
-<XPD:ATTR name="Name" type="string">ReverseEngineering</XPD:ATTR>
-<XPD:REF name="Namespace">rF42qmbBS0OPcjU6ZI8+vwAA</XPD:REF>
-<XPD:ATTR name="#Views" type="integer">1</XPD:ATTR>
-<XPD:REF name="Views[0]">e3k2UMOpzUWU8VXOY/jBqgAA</XPD:REF>
-<XPD:ATTR name="#ClientDependencies" type="integer">1</XPD:ATTR>
-<XPD:REF name="ClientDependencies[0]">ZUzMhcPEn0KymnizYE2zzQAA</XPD:REF>
-<XPD:ATTR name="#SupplierDependencies" type="integer">1</XPD:ATTR>
-<XPD:REF name="SupplierDependencies[0]">bxcJbvpcRUey7r9IosZufAAA</XPD:REF>
 </XPD:OBJ>
 <XPD:OBJ name="OwnedElements[8]" type="UMLPackage" guid="AF44TV8fpEOE2F9sV0Ij3gAA">
 <XPD:ATTR name="Name" type="string">Drafting</XPD:ATTR>

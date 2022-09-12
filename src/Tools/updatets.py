@@ -75,7 +75,6 @@ directories = [
         {"tsname":"Path", "workingdir":"./src/Mod/Path/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Points", "workingdir":"./src/Mod/Points/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Raytracing", "workingdir":"./src/Mod/Raytracing/", "tsdir":"Gui/Resources/translations"},
-        {"tsname":"ReverseEngineering", "workingdir":"./src/Mod/ReverseEngineering/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Robot", "workingdir":"./src/Mod/Robot/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Sketcher", "workingdir":"./src/Mod/Sketcher/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Start", "workingdir":"./src/Mod/Start/", "tsdir":"Gui/Resources/translations"},

@@ -43,9 +43,6 @@ WB Path:
 WB Points:
 - 'src/Mod/Points/**/*'
 
-WB ReverseEngineering:
-- 'src/Mod/ReverseEngineering/**/*'
-
 WB Sketcher:
 - 'src/Mod/Sketcher/**/*'
 

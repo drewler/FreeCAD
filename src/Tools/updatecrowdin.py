@@ -103,7 +103,6 @@ locations = [["AddonManager","../Mod/AddonManager/Resources/translations","../Mo
              ["PartDesign","../Mod/PartDesign/Gui/Resources/translations","../Mod/PartDesign/Gui/Resources/PartDesign.qrc"],
              ["Points","../Mod/Points/Gui/Resources/translations","../Mod/Points/Gui/Resources/Points.qrc"],
              ["Raytracing","../Mod/Raytracing/Gui/Resources/translations","../Mod/Raytracing/Gui/Resources/Raytracing.qrc"],
-             ["ReverseEngineering","../Mod/ReverseEngineering/Gui/Resources/translations","../Mod/ReverseEngineering/Gui/Resources/ReverseEngineering.qrc"],
              ["Robot","../Mod/Robot/Gui/Resources/translations","../Mod/Robot/Gui/Resources/Robot.qrc"],
              ["Sketcher","../Mod/Sketcher/Gui/Resources/translations","../Mod/Sketcher/Gui/Resources/Sketcher.qrc"],
              ["StartPage","../Mod/Start/Gui/Resources/translations","../Mod/Start/Gui/Resources/Start.qrc"],

@@ -474,8 +474,6 @@ def handle():
             wn = "FCGear"
         elif wn == "frame_":
             wn = "frame"
-        elif wn == "ReverseEngineering":
-            wn = "Reverse_Engineering"
         elif wn == "None":
             continue
         wblist.append(wn.lower())
