@@ -61,7 +61,6 @@ locations = [["../Gui/Language","translation.qrc"," prefix=\"/translations\""],
              ["../Mod/Part/Gui/Resources","Part.qrc"],
              ["../Mod/PartDesign/Gui/Resources","PartDesign.qrc"],
              ["../Mod/Points/Gui/Resources","Points.qrc"],
-             ["../Mod/Raytracing/Gui/Resources","Raytracing.qrc"],
              ["../Mod/Sketcher/Gui/Resources","Sketcher.qrc"]]
 
 def main():

@@ -318,7 +318,6 @@ public:
      * It's an easy method to get a group:
      * \code
      * // getting standard parameter
-     * ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Raytracing");
      * std::string cDir             = hGrp->GetASCII("ProjectPath", "");
      * std::string cCameraName      = hGrp->GetASCII("CameraName", "TempCamera.inc");
      * \endcode
