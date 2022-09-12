@@ -198,25 +198,6 @@
     </message>
   </context>
   <context>
-    <name>CmdDrawingSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="747"/>
-      <source>Drawing</source>
-      <translation>Чертаене</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="748"/>
-      <source>&amp;Spreadsheet View</source>
-      <translation>&amp; Табличен изглед</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="749"/>
-      <location filename="../../Command.cpp" line="751"/>
-      <source>Inserts a view of a selected spreadsheet in the active drawing</source>
-      <translation>Вмъква изглед на избраната таблица в активната рисунка</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdDrawingSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="570"/>

@@ -49,9 +49,6 @@ WB ReverseEngineering:
 WB Sketcher:
 - 'src/Mod/Sketcher/**/*'
 
-WB Spreadsheet:
-- 'src/Mod/Spreadsheet/**/*'
-
 WB Surface:
 - 'src/Mod/Surface/**/*/'
 

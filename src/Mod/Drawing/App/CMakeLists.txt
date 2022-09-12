@@ -37,8 +37,6 @@ SET(Features_SRCS
     FeatureClip.h
     PageGroup.cpp
     PageGroup.h
-    FeatureViewSpreadsheet.cpp
-    FeatureViewSpreadsheet.h
 )
 
 SET(Drawing_SRCS

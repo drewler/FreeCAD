@@ -198,25 +198,6 @@
     </message>
   </context>
   <context>
-    <name>CmdDrawingSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="748"/>
-      <source>Drawing</source>
-      <translation>Tekening</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="749"/>
-      <source>&amp;Spreadsheet View</source>
-      <translation>&amp;Rekenbladweergave</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="750"/>
-      <location filename="../../Command.cpp" line="752"/>
-      <source>Inserts a view of a selected spreadsheet in the active drawing</source>
-      <translation>Voegt een weergave van een geselecteerd werkblad in de actieve tekening in</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdDrawingSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="571"/>

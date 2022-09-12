@@ -159,21 +159,6 @@
     </message>
   </context>
   <context>
-    <name>CmdDrawingSpreadsheetView</name>
-    <message>
-      <source>Drawing</source>
-      <translation>Výkres</translation>
-    </message>
-    <message>
-      <source>&amp;Spreadsheet View</source>
-      <translation>&amp;Tabuľkové zobrazenie</translation>
-    </message>
-    <message>
-      <source>Inserts a view of a selected spreadsheet in the active drawing</source>
-      <translation type="unfinished">Inserts a view of a selected spreadsheet in the active drawing</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdDrawingSymbol</name>
     <message>
       <source>Drawing</source>

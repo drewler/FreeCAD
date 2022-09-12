@@ -198,26 +198,6 @@
     </message>
   </context>
   <context>
-    <name>CmdDrawingSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="747"/>
-      <source>Drawing</source>
-      <translation>الرسم</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="748"/>
-      <source>&amp;Spreadsheet View</source>
-      <translation>عرض جدول البيانات
-</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="749"/>
-      <location filename="../../Command.cpp" line="751"/>
-      <source>Inserts a view of a selected spreadsheet in the active drawing</source>
-      <translation>يقوم بإدراج عرض لجدول البيانات الذي تم إختياره في الرسم النشط</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdDrawingSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="570"/>

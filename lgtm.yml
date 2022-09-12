@@ -20,7 +20,6 @@ path_classifiers:
   - "src/Mod/Assembly/"
   - "src/Mod/Drawing/"
   - "src/Mod/Raytracing/"
-  - "src/Mod/Spreadsheet/App/Spreadsheet_legacy.py"
   - "src/Mod/OpenSCAD/prototype.py"
 
 extraction:

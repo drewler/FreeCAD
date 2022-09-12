@@ -21,7 +21,6 @@
 #include "FeatureViewAnnotation.h"
 #include "FeatureViewSymbol.h"
 #include "FeatureProjection.h"
-#include "FeatureViewSpreadsheet.h"
 #include "FeatureClip.h"
 #include "PageGroup.h"
 
@@ -60,7 +59,6 @@ PyMOD_INIT_FUNC(Drawing)
     Drawing::FeatureViewAnnotation  ::init();
     Drawing::FeatureViewSymbol      ::init();
     Drawing::FeatureClip            ::init();
-    Drawing::FeatureViewSpreadsheet ::init();
 
     PyMOD_Return(mod);
 }

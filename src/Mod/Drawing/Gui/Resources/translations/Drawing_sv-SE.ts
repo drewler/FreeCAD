@@ -198,25 +198,6 @@
     </message>
   </context>
   <context>
-    <name>CmdDrawingSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="748"/>
-      <source>Drawing</source>
-      <translation>Ritning</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="749"/>
-      <source>&amp;Spreadsheet View</source>
-      <translation>Kalkylblad&amp;svy</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="750"/>
-      <location filename="../../Command.cpp" line="752"/>
-      <source>Inserts a view of a selected spreadsheet in the active drawing</source>
-      <translation>Lägger till en vy av valt Kalkylblad i den aktiva ritningen</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdDrawingSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="571"/>
