@@ -42,7 +42,6 @@ body:
         - Path
         - Project Tools & Websites
         - Sketcher
-        - Spreadsheet
         - Techdraw
         - Other (specify in description)
   - type: textarea

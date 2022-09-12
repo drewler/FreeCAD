@@ -37,7 +37,6 @@
 
 #include <Mod/Part/App/PartFeature.h>
 #include <Mod/Drawing/App/FeaturePage.h>
-#include <Mod/Spreadsheet/App/Sheet.h>
 
 
 #include "DrawingView.h"
@@ -705,7 +704,6 @@ void CreateDrawingCommands(void)
     rcCmdMgr.addCommand(new CmdDrawingNewA3Landscape());
     rcCmdMgr.addCommand(new CmdDrawingNewView());
     rcCmdMgr.addCommand(new CmdDrawingOrthoViews());
-    rcCmdMgr.addCommand(new CmdDrawingOpenBrowserView());
     rcCmdMgr.addCommand(new CmdDrawingAnnotation());
     rcCmdMgr.addCommand(new CmdDrawingClip());
     rcCmdMgr.addCommand(new CmdDrawingSymbol());

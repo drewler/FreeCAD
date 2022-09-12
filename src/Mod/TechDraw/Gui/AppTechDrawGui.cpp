@@ -59,7 +59,6 @@
 #include "ViewProviderViewClip.h"
 #include "ViewProviderHatch.h"
 #include "ViewProviderGeomHatch.h"
-#include "ViewProviderSpreadsheet.h"
 #include "ViewProviderImage.h"
 #include "ViewProviderRichAnno.h"
 #include "ViewProviderLeader.h"
@@ -147,7 +146,6 @@ PyMOD_INIT_FUNC(TechDrawGui)
     TechDrawGui::ViewProviderArch::init();
     TechDrawGui::ViewProviderHatch::init();
     TechDrawGui::ViewProviderGeomHatch::init();
-    TechDrawGui::ViewProviderSpreadsheet::init();
     TechDrawGui::ViewProviderImage::init();
     TechDrawGui::ViewProviderLeader::init();
     TechDrawGui::ViewProviderRichAnno::init();

@@ -29,8 +29,11 @@
 
 #include <App/DocumentObject.h>
 #include <App/PropertyStandard.h>
+#include <App/FeaturePython.h>
+#include <App/PropertyLinks.h>
 #include <Mod/TechDraw/App/DrawViewPart.h>
-#include <Mod/TechDraw/App/DrawViewSpreadsheet.h>
+
+#include "DrawViewSymbol.h"
 
 
 namespace TechDraw

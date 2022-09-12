@@ -192,7 +192,6 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     *draw << "Separator";
     *draw << "TechDraw_DraftView";
     *draw << "TechDraw_ArchView";
-    *draw << "TechDraw_SpreadsheetView";
     *draw << "Separator";
     *draw << "TechDraw_ClipGroup";
     *draw << "TechDraw_ClipGroupAdd";
@@ -248,7 +247,6 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
     *views << "TechDraw_DetailView";
     *views << "TechDraw_DraftView";
     *views << "TechDraw_ArchView";
-    *views << "TechDraw_SpreadsheetView";
     *views << "TechDraw_MoveView";
     *views << "TechDraw_ShareView";
     *views << "TechDraw_ProjectShape";
@@ -393,7 +391,6 @@ Gui::ToolBarItem* Workbench::setupCommandBars() const
     *views << "TechDraw_SectionView";
     *views << "TechDraw_DetailView";
     *views << "TechDraw_DraftView";
-    *views << "TechDraw_SpreadsheetView";
     *views << "TechDraw_MoveView";
     *views << "TechDraw_ShareView";
     *views << "TechDraw_ProjectShape";

@@ -825,41 +825,6 @@ def insert(srcfile, docname, skip=[], only=[], root=None, preferences=None):
                         obj.removeProperty("IfcProperties")
                         obj.addProperty("App::PropertyLink","IfcProperties","Component","Stores IFC properties as a spreadsheet")
 
-                    ifc_spreadsheet = Arch.makeIfcSpreadsheet()
-                    n = 2
-                    for c in psets.keys():
-                        o = ifcfile[c]
-                        if preferences['DEBUG']: print("propertyset Name",o.Name,type(o.Name))
-                        catname = o.Name
-                        for p in psets[c]:
-                            l = ifcfile[p]
-                            lname = l.Name
-                            if l.is_a("IfcPropertySingleValue"):
-                                if preferences['DEBUG']:
-                                    print("property name",l.Name,type(l.Name))
-                                if six.PY2:
-                                    catname = catname.encode("utf8")
-                                    lname = lname.encode("utf8")
-                                ifc_spreadsheet.set(str('A'+str(n)), catname)
-                                ifc_spreadsheet.set(str('B'+str(n)), lname)
-                                if l.NominalValue:
-                                    if preferences['DEBUG']:
-                                        print("property NominalValue",l.NominalValue.is_a(),type(l.NominalValue.is_a()))
-                                        print("property NominalValue.wrappedValue",l.NominalValue.wrappedValue,type(l.NominalValue.wrappedValue))
-                                        # print("l.NominalValue.Unit",l.NominalValue.Unit,type(l.NominalValue.Unit))
-                                    ifc_spreadsheet.set(str('C'+str(n)), l.NominalValue.is_a())
-                                    if l.NominalValue.is_a() in ['IfcLabel','IfcText','IfcIdentifier','IfcDescriptiveMeasure']:
-                                        if six.PY2:
-                                            ifc_spreadsheet.set(str('D'+str(n)), "'" + str(l.NominalValue.wrappedValue.encode("utf8")))
-                                        else:
-                                            ifc_spreadsheet.set(str('D'+str(n)), "'" + str(l.NominalValue.wrappedValue))
-                                    else:
-                                        ifc_spreadsheet.set(str('D'+str(n)), str(l.NominalValue.wrappedValue))
-                                    if hasattr(l.NominalValue,'Unit'):
-                                        ifc_spreadsheet.set(str('E'+str(n)), str(l.NominalValue.Unit))
-                                n += 1
-                        obj.IfcProperties = ifc_spreadsheet
-
                 elif hasattr(obj,"IfcProperties") and isinstance(obj.IfcProperties,dict):
 
                     # 0.18 behaviour: properties are saved as pset;;type;;value in IfcProperties

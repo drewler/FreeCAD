@@ -120,7 +120,6 @@ class ArchWorkbench(FreeCADGui.Workbench):
                           "Arch_Check",
                           "Arch_ToggleIfcBrepFlag",
                           "Arch_3Views",
-                          "Arch_IfcSpreadsheet",
                           "Arch_ToggleSubs"]
 
         # Add the rebar tools from the Reinforcement addon, if available

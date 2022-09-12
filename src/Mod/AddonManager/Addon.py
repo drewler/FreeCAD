@@ -50,7 +50,6 @@ INTERNAL_WORKBENCHES["points"] = "Points"
 INTERNAL_WORKBENCHES["raytracing"] = "Raytracing"
 INTERNAL_WORKBENCHES["robot"] = "Robot"
 INTERNAL_WORKBENCHES["sketcher"] = "Sketcher"
-INTERNAL_WORKBENCHES["spreadsheet"] = "Spreadsheet"
 INTERNAL_WORKBENCHES["techdraw"] = "TechDraw"
 
 

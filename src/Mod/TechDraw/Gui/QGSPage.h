@@ -48,7 +48,6 @@ class DrawViewAnnotation;
 class DrawViewSymbol;
 class DrawViewClip;
 class DrawViewCollection;
-class DrawViewSpreadsheet;
 class DrawViewImage;
 class DrawLeaderLine;
 class DrawViewBalloon;
@@ -87,7 +86,6 @@ public:
     QGIView * addDrawViewAnnotation(TechDraw::DrawViewAnnotation *annoFeat);
     QGIView * addDrawViewSymbol(TechDraw::DrawViewSymbol *symbolFeat);
     QGIView * addDrawViewClip(TechDraw::DrawViewClip *clipFeat);
-    QGIView * addDrawViewSpreadsheet(TechDraw::DrawViewSpreadsheet *sheetFeat);
     QGIView * addDrawViewImage(TechDraw::DrawViewImage *imageFeat);
     QGIView * addViewLeader(TechDraw::DrawLeaderLine* leaderFeat);
     QGIView * addRichAnno(TechDraw::DrawRichAnno* richFeat);

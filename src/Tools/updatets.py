@@ -78,7 +78,6 @@ directories = [
         {"tsname":"ReverseEngineering", "workingdir":"./src/Mod/ReverseEngineering/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Robot", "workingdir":"./src/Mod/Robot/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Sketcher", "workingdir":"./src/Mod/Sketcher/", "tsdir":"Gui/Resources/translations"},
-        {"tsname":"Spreadsheet", "workingdir":"./src/Mod/Spreadsheet/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Start", "workingdir":"./src/Mod/Start/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"TechDraw", "workingdir":"./src/Mod/TechDraw/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Test", "workingdir":"./src/Mod/Test/", "tsdir":"Gui/Resources/translations"},

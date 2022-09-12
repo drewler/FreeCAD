@@ -43,7 +43,6 @@
 #include "DrawGeomHatch.h"
 #include "DrawViewDraft.h"
 #include "DrawViewArch.h"
-#include "DrawViewSpreadsheet.h"
 #include "DrawViewMulti.h"
 #include "DrawViewImage.h"
 #include "DrawViewDetail.h"
@@ -88,7 +87,6 @@ PyMOD_INIT_FUNC(TechDraw)
     TechDraw::DrawViewPart        ::init();
     TechDraw::DrawViewAnnotation  ::init();
     TechDraw::DrawViewSymbol      ::init();
-    TechDraw::DrawViewSpreadsheet ::init();
 
     TechDraw::DrawViewSection     ::init();
     TechDraw::DrawViewMulti       ::init();
