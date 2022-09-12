@@ -715,11 +715,6 @@ Do you want to continue?</source>
       <translation>Exporter la page</translation>
     </message>
     <message>
-      <location filename="../../Command.cpp" line="762"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>Merci de sélectionner un seul objet Spreadsheet</translation>
-    </message>
-    <message>
       <location filename="../../TaskOrthoViews.cpp" line="50"/>
       <location filename="../../TaskOrthoViews.cpp" line="978"/>
       <source>Make axonometric...</source>

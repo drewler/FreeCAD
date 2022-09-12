@@ -4442,19 +4442,6 @@ La création du site est abandonnée.</translation>
     </message>
   </context>
   <context>
-    <name>Arch_IfcSpreadsheet</name>
-    <message>
-      <location filename="../../ArchCommands.py" line="1665"/>
-      <source>Create IFC spreadsheet...</source>
-      <translation>Créer une feuille de calcul Ifc...</translation>
-    </message>
-    <message>
-      <location filename="../../ArchCommands.py" line="1669"/>
-      <source>Creates a spreadsheet to store IFC properties of an object.</source>
-      <translation>Crée une feuille de calcul pour stocker les propriétés IFC d'un objet.</translation>
-    </message>
-  </context>
-  <context>
     <name>Arch_Material</name>
     <message>
       <location filename="../../ArchMaterial.py" line="116"/>

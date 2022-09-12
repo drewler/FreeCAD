@@ -3740,16 +3740,6 @@ Site creation aborted.</translation>
       <translation>Eenheid</translation>
     </message>
     <message>
-      <location filename="../../ArchCommands.py" line="1656"/>
-      <source>The object doesn't have an IfcProperties attribute. Cancel spreadsheet creation for object:</source>
-      <translation>Het object heeft geen IndustriesFoundationClassesProperties. Spreadsheet annuleren voor:</translation>
-    </message>
-    <message>
-      <location filename="../../ArchCommands.py" line="1674"/>
-      <source>Create IFC properties spreadsheet</source>
-      <translation>IFC eigenschappen werkblad maken</translation>
-    </message>
-    <message>
       <location filename="../../ArchEquipment.py" line="180"/>
       <source>You must select a base shape object and optionally a mesh object</source>
       <translation>U moet een basis vormobject en een optioneel netobject selecteren</translation>
@@ -4439,19 +4429,6 @@ Site creation aborted.</translation>
       <location filename="../../ArchGrid.py" line="121"/>
       <source>The indices of faces to hide</source>
       <translation>De indexcijfers van de te verbergen vlakken</translation>
-    </message>
-  </context>
-  <context>
-    <name>Arch_IfcSpreadsheet</name>
-    <message>
-      <location filename="../../ArchCommands.py" line="1665"/>
-      <source>Create IFC spreadsheet...</source>
-      <translation>IFC rekenblad aanmaken...</translation>
-    </message>
-    <message>
-      <location filename="../../ArchCommands.py" line="1669"/>
-      <source>Creates a spreadsheet to store IFC properties of an object.</source>
-      <translation>Maakt een rekenblad voor het bewaren van IFC eigenschappen van een object.</translation>
     </message>
   </context>
   <context>

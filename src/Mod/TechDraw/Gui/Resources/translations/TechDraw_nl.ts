@@ -1697,24 +1697,6 @@
     </message>
   </context>
   <context>
-    <name>CmdTechDrawSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="1306"/>
-      <source>TechDraw</source>
-      <translation>TechDraw</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1307"/>
-      <source>Insert Spreadsheet View</source>
-      <translation>Voeg een rekenbladweergave in</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1308"/>
-      <source>Insert View to a spreadsheet</source>
-      <translation>Weergave toevoegen aan een rekenblad</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdTechDrawSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="1120"/>
@@ -2547,11 +2529,6 @@
       <location filename="../../Command.cpp" line="1277"/>
       <source>No Arch Sections in selection.</source>
       <translation>Geen boogsecties in selectie.</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1320"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>Selecteer exact één Spreadsheet-object.</translation>
     </message>
     <message>
       <location filename="../../Command.cpp" line="1390"/>

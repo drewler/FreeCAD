@@ -715,11 +715,6 @@ Do you want to continue?</source>
       <translation>페이지 내보내기</translation>
     </message>
     <message>
-      <location filename="../../Command.cpp" line="761"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation type="unfinished">Select exactly one Spreadsheet object.</translation>
-    </message>
-    <message>
       <location filename="../../TaskOrthoViews.cpp" line="54"/>
       <location filename="../../TaskOrthoViews.cpp" line="982"/>
       <source>Make axonometric...</source>

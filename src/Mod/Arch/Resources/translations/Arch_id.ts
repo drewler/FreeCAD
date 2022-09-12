@@ -2008,11 +2008,6 @@
       <translation type="unfinished">If True, a spreadsheet containing the results is recreated when needed</translation>
     </message>
     <message>
-      <location filename="../../ArchSchedule.py" line="108"/>
-      <source>The spreadsheet to print the results to</source>
-      <translation>Spreadsheet untu mencetak hasil</translation>
-    </message>
-    <message>
       <location filename="../../ArchSchedule.py" line="110"/>
       <source>If True, additional lines with each individual object are added to the results</source>
       <translation type="unfinished">If True, additional lines with each individual object are added to the results</translation>
@@ -4440,19 +4435,6 @@ Site creation aborted.</translation>
       <location filename="../../ArchGrid.py" line="121"/>
       <source>The indices of faces to hide</source>
       <translation>Indeks wajah untuk disembunyikan</translation>
-    </message>
-  </context>
-  <context>
-    <name>Arch_IfcSpreadsheet</name>
-    <message>
-      <location filename="../../ArchCommands.py" line="1665"/>
-      <source>Create IFC spreadsheet...</source>
-      <translation>Buat spreadsheet IFC...</translation>
-    </message>
-    <message>
-      <location filename="../../ArchCommands.py" line="1669"/>
-      <source>Creates a spreadsheet to store IFC properties of an object.</source>
-      <translation type="unfinished">Creates a spreadsheet to store IFC properties of an object.</translation>
     </message>
   </context>
   <context>

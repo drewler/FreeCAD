@@ -4270,19 +4270,6 @@ Floor creation aborted.</translation>
     </message>
   </context>
   <context>
-    <name>Arch_IfcSpreadsheet</name>
-    <message>
-      <location filename="ArchCommands.py" line="1670"/>
-      <source>Create IFC spreadsheet...</source>
-      <translation>إنشاء جدول البيانات IFC...</translation>
-    </message>
-    <message>
-      <location filename="ArchCommands.py" line="1674"/>
-      <source>Creates a spreadsheet to store IFC properties of an object.</source>
-      <translation>يقوم بإنشاء جدول للبيانات لتخزين خصائص عنصر.</translation>
-    </message>
-  </context>
-  <context>
     <name>Arch_Material</name>
     <message>
       <location filename="ArchMaterial.py" line="119"/>

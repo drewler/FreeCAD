@@ -717,11 +717,6 @@ Bạn có muốn tiếp tục?</translation>
       <translation>Xuất trang</translation>
     </message>
     <message>
-      <location filename="../../Command.cpp" line="762"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>Chọn chính xác một đối tượng bảng tính.</translation>
-    </message>
-    <message>
       <location filename="../../TaskOrthoViews.cpp" line="50"/>
       <location filename="../../TaskOrthoViews.cpp" line="978"/>
       <source>Make axonometric...</source>

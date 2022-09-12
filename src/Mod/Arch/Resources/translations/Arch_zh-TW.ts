@@ -4444,19 +4444,6 @@ Site creation aborted.</translation>
     </message>
   </context>
   <context>
-    <name>Arch_IfcSpreadsheet</name>
-    <message>
-      <location filename="../../ArchCommands.py" line="1665"/>
-      <source>Create IFC spreadsheet...</source>
-      <translation>建立 IFC 試算表...</translation>
-    </message>
-    <message>
-      <location filename="../../ArchCommands.py" line="1669"/>
-      <source>Creates a spreadsheet to store IFC properties of an object.</source>
-      <translation>建立試算表以儲存物件之 IFC 屬性。</translation>
-    </message>
-  </context>
-  <context>
     <name>Arch_Material</name>
     <message>
       <location filename="../../ArchMaterial.py" line="116"/>

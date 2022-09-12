@@ -4443,19 +4443,6 @@ Site creation aborted.</translation>
     </message>
   </context>
   <context>
-    <name>Arch_IfcSpreadsheet</name>
-    <message>
-      <location filename="../../ArchCommands.py" line="1665"/>
-      <source>Create IFC spreadsheet...</source>
-      <translation>Creare foaie de calcul IFPC...</translation>
-    </message>
-    <message>
-      <location filename="../../ArchCommands.py" line="1669"/>
-      <source>Creates a spreadsheet to store IFC properties of an object.</source>
-      <translation>Creează o foaie de calcul pentru a stoca proprietățile IFC ale unui obiect.</translation>
-    </message>
-  </context>
-  <context>
     <name>Arch_Material</name>
     <message>
       <location filename="../../ArchMaterial.py" line="116"/>

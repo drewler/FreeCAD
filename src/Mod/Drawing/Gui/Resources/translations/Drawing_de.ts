@@ -198,25 +198,6 @@
     </message>
   </context>
   <context>
-    <name>CmdDrawingSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="748"/>
-      <source>Drawing</source>
-      <translation>Zeichnung</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="749"/>
-      <source>&amp;Spreadsheet View</source>
-      <translation>Tabellenan&amp;sicht</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="750"/>
-      <location filename="../../Command.cpp" line="752"/>
-      <source>Inserts a view of a selected spreadsheet in the active drawing</source>
-      <translation>Fügt eine Ansicht einer ausgewählte Kalkulationstabelle in die aktive Zeichnung ein</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdDrawingSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="571"/>
@@ -733,11 +714,6 @@ Do you want to continue?</source>
       <location filename="../../Command.cpp" line="650"/>
       <source>Export page</source>
       <translation>Seite exportieren</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="762"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>Wählen Sie genau ein Kalkulationstabellen-Objekt.</translation>
     </message>
     <message>
       <location filename="../../TaskOrthoViews.cpp" line="50"/>

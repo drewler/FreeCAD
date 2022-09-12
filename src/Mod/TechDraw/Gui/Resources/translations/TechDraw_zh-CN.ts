@@ -1697,24 +1697,6 @@
     </message>
   </context>
   <context>
-    <name>CmdTechDrawSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="1306"/>
-      <source>TechDraw</source>
-      <translation>制图</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1307"/>
-      <source>Insert Spreadsheet View</source>
-      <translation>插入数据表视图</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1308"/>
-      <source>Insert View to a spreadsheet</source>
-      <translation>将视图插入数据表</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdTechDrawSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="1120"/>
@@ -2547,11 +2529,6 @@
       <location filename="../../Command.cpp" line="1277"/>
       <source>No Arch Sections in selection.</source>
       <translation type="unfinished">No Arch Sections in selection.</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1320"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>选择一个电子表格对象。</translation>
     </message>
     <message>
       <location filename="../../Command.cpp" line="1390"/>

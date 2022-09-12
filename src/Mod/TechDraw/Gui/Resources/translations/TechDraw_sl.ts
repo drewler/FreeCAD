@@ -1697,24 +1697,6 @@
     </message>
   </context>
   <context>
-    <name>CmdTechDrawSpreadsheetView</name>
-    <message>
-      <location filename="../../Command.cpp" line="1306"/>
-      <source>TechDraw</source>
-      <translation>TehRisanje</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1307"/>
-      <source>Insert Spreadsheet View</source>
-      <translation>Vstavi pogled Preglednice</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1308"/>
-      <source>Insert View to a spreadsheet</source>
-      <translation>Vstavi Pogled v preglednico</translation>
-    </message>
-  </context>
-  <context>
     <name>CmdTechDrawSymbol</name>
     <message>
       <location filename="../../Command.cpp" line="1120"/>
@@ -2547,11 +2529,6 @@
       <location filename="../../Command.cpp" line="1277"/>
       <source>No Arch Sections in selection.</source>
       <translation>Nobenega prereza Arhitekture ni v izboru.</translation>
-    </message>
-    <message>
-      <location filename="../../Command.cpp" line="1320"/>
-      <source>Select exactly one Spreadsheet object.</source>
-      <translation>Izberite natanko eno preglednico.</translation>
     </message>
     <message>
       <location filename="../../Command.cpp" line="1390"/>
