@@ -709,17 +709,6 @@ void QGIViewBalloon::drawBalloon(bool dragged)
         }
         balloonPath.moveTo(lblCenter.x + (radius * cos(startAngle)), lblCenter.y + (radius * sin(startAngle)));
         balloonPath.addPolygon(triangle);
-    } else if (strcmp(balloonType, "Inspection") == 0) {
-        //Add some room
-        textWidth = (textWidth * scale) + Rez::guiX(2.0);
-        textHeight = (textHeight * scale) + Rez::guiX(1.0);
-        QPointF textBoxCorner(lblCenter.x - (textWidth / 2.0), lblCenter.y - (textHeight / 2.0));
-        balloonPath.moveTo(textBoxCorner);
-        balloonPath.lineTo(textBoxCorner.x() + textWidth, textBoxCorner.y());
-        balloonPath.arcTo(textBoxCorner.x() + textWidth - (textHeight / 2.0), textBoxCorner.y(), textHeight, textHeight, 90, -180);
-        balloonPath.lineTo(textBoxCorner.x(), textBoxCorner.y() + textHeight);
-        balloonPath.arcTo(textBoxCorner.x() - (textHeight / 2), textBoxCorner.y(), textHeight, textHeight, -90, -180);
-        offsetLR     = (textWidth / 2.0) + (textHeight / 2.0);
     } else if (strcmp(balloonType, "Square") == 0) {
         //Add some room
         textWidth = (textWidth * scale) + Rez::guiX(2.0);

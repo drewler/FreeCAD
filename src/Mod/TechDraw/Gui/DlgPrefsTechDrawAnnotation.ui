@@ -586,15 +586,6 @@
           </item>
           <item>
            <property name="text">
-            <string>Inspection</string>
-           </property>
-           <property name="icon">
-            <iconset resource="Resources/TechDraw.qrc">
-             <normaloff>:/icons/inspection.svg</normaloff>:/icons/inspection.svg</iconset>
-           </property>
-          </item>
-          <item>
-           <property name="text">
             <string>Hexagon</string>
            </property>
            <property name="icon">
