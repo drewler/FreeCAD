@@ -83,7 +83,6 @@ PROPERTY_SOURCE(TechDraw::DrawViewBalloon, TechDraw::DrawView)
 const char* DrawViewBalloon::balloonTypeEnums[]= {"Circular",
                                                   "None",
                                                   "Triangle",
-                                                  "Inspection",
                                                   "Hexagon",
                                                   "Square",
                                                   "Rectangle",

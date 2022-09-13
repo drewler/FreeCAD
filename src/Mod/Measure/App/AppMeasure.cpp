@@ -65,7 +65,7 @@ PyMOD_INIT_FUNC(Measure)
     PyObject* mod = Measure::initModule();
     // Add Types to module
     Base::Interpreter().addType(&Measure::MeasurementPy      ::Type,mod,"Measurement");
-    Base::Console().Log("Loading Inspection module... done\n");
+    Base::Console().Log("Loading Measurement module... done\n");
     Measure::Measurement         ::init();
     PyMOD_Return(mod);
 }

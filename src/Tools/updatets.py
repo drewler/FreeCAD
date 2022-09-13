@@ -63,7 +63,6 @@ directories = [
         {"tsname":"Drawing", "workingdir":"./src/Mod/Drawing/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Fem", "workingdir":"./src/Mod/Fem/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Image", "workingdir":"./src/Mod/Image/", "tsdir":"Gui/Resources/translations"},
-        {"tsname":"Inspection", "workingdir":"./src/Mod/Inspection/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"Material", "workingdir":"./src/Mod/Material/", "tsdir":"Resources/translations"},
         {"tsname":"Mesh", "workingdir":"./src/Mod/Mesh/", "tsdir":"Gui/Resources/translations"},
         {"tsname":"MeshPart", "workingdir":"./src/Mod/MeshPart/", "tsdir":"Gui/Resources/translations"},

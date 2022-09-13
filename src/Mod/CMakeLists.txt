@@ -34,10 +34,6 @@ if(BUILD_IMPORT)
   add_subdirectory(Import)
 endif(BUILD_IMPORT)
 
-if(BUILD_INSPECTION)
-  add_subdirectory(Inspection)
-endif(BUILD_INSPECTION)
-
 if(BUILD_JTREADER)
   add_subdirectory(JtReader)
 endif(BUILD_JTREADER)
@@ -61,10 +57,6 @@ endif(BUILD_PART)
 if(BUILD_PART_DESIGN)
   add_subdirectory(PartDesign)
 endif(BUILD_PART_DESIGN)
-
-if(BUILD_PATH)
-    add_subdirectory(Path)
-endif(BUILD_PATH)
 
 if(BUILD_PLOT)
   add_subdirectory(Plot)
