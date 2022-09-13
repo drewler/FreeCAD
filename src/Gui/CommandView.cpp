@@ -1715,35 +1715,6 @@ bool StdViewDockUndockFullscreen::isActive()
 
 
 //===========================================================================
-// Std_ViewVR
-//===========================================================================
-DEF_STD_CMD_A(StdCmdViewVR)
-
-StdCmdViewVR::StdCmdViewVR()
-  : Command("Std_ViewVR")
-{
-    sGroup        = "Standard-View";
-    sMenuText     = QT_TR_NOOP("FreeCAD-VR");
-    sToolTipText  = QT_TR_NOOP("Extend the FreeCAD 3D Window to a Oculus Rift");
-    sWhatsThis    = "Std_ViewVR";
-    sStatusTip    = QT_TR_NOOP("Extend the FreeCAD 3D Window to a Oculus Rift");
-    eType         = Alter3DView;
-}
-
-void StdCmdViewVR::activated(int iMsg)
-{
-   Q_UNUSED(iMsg);
-   doCommand(Command::Gui,"Gui.SendMsgToActiveView(\"ViewVR\")");
-}
-
-bool StdCmdViewVR::isActive()
-{
-   return getGuiApplication()->sendHasMsgToActiveView("ViewVR");
-}
-
-
-
-//===========================================================================
 // Std_ViewScreenShot
 //===========================================================================
 DEF_STD_CMD_A(StdViewScreenShot)
@@ -3637,7 +3608,6 @@ void CreateViewStdCommands()
     rcCmdMgr.addCommand(new StdCmdViewDimetric());
     rcCmdMgr.addCommand(new StdCmdViewTrimetric());
     rcCmdMgr.addCommand(new StdCmdViewFitAll());
-    rcCmdMgr.addCommand(new StdCmdViewVR());
     rcCmdMgr.addCommand(new StdCmdViewFitSelection());
     rcCmdMgr.addCommand(new StdCmdViewRotateLeft());
     rcCmdMgr.addCommand(new StdCmdViewRotateRight());
