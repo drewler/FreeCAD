@@ -85,7 +85,6 @@ JtReader    export-ignore
 
 Assembly/** -text
 Cam/** -text
-Cloud/** -text
 Drawing/** -text
 Image/** -text
 Import/** -text
