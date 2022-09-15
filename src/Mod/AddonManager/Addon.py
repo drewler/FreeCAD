@@ -38,7 +38,6 @@ translate = FreeCAD.Qt.translate
 
 INTERNAL_WORKBENCHES = {}
 INTERNAL_WORKBENCHES["draft"] = "Draft"
-INTERNAL_WORKBENCHES["fem"] = "FEM"
 INTERNAL_WORKBENCHES["mesh"] = "Mesh"
 INTERNAL_WORKBENCHES["part"] = "Part"
 INTERNAL_WORKBENCHES["partdesign"] = "PartDesign"

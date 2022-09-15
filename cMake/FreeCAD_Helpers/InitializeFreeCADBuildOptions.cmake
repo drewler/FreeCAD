@@ -106,7 +106,6 @@ macro(InitializeFreeCADBuildOptions)
         set(CMAKE_MACOSX_RPATH TRUE )
     endif(APPLE)
 
-    option(BUILD_FEM "Build the FreeCAD FEM module" ON)
     option(BUILD_SANDBOX "Build the FreeCAD Sandbox module which is only for testing purposes" OFF)
     option(BUILD_TEMPLATE "Build the FreeCAD template module which is only for testing purposes" OFF)
     option(BUILD_ADDONMGR "Build the FreeCAD addon manager module" ON)
@@ -135,7 +134,6 @@ macro(InitializeFreeCADBuildOptions)
     option(BUILD_CLOUD "Build the FreeCAD cloud module" OFF)
 
     if(MSVC)
-        option(BUILD_FEM_NETGEN "Build the FreeCAD FEM module with the NETGEN mesher" ON)
         option(FREECAD_USE_PCL "Build the features that use PCL libs" OFF) # 3/5/2021 current LibPack uses non-C++17 FLANN
         option(FREECAD_USE_3DCONNEXION "Use the 3D connexion SDK to support 3d mouse." ON)
     elseif(APPLE)
@@ -149,7 +147,6 @@ macro(InitializeFreeCADBuildOptions)
         set(FREECAD_USE_3DCONNEXION OFF )
     endif(MSVC)
     if(NOT MSVC)
-        option(BUILD_FEM_NETGEN "Build the FreeCAD FEM module with the NETGEN mesher" OFF)
         option(FREECAD_USE_PCL "Build the features that use PCL libs" OFF)
     endif(NOT MSVC)
 
@@ -159,10 +156,6 @@ macro(InitializeFreeCADBuildOptions)
         # A Debian package for SMESH doesn't exist
         #set(FREECAD_USE_EXTERNAL_SMESH ON )
     endif (FREECAD_BUILD_DEBIAN)
-
-    if(BUILD_FEM)
-        set(BUILD_SMESH ON )
-    endif()
 
     # force build directory to be different to source directory
     if (BUILD_FORCE_DIRECTORY)

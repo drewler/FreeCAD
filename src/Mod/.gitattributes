@@ -42,16 +42,6 @@ JtReader    export-ignore
 *.xml text
 *.yml text
 
-# Fem specific files
-*.dat text
-*.frd text
-*.geo text
-*.inp text
-*.sif text
-*.unv text
-*.vtk text
-*.z88 text
-
 # files which are human readable
 # but for which it is not sure if normalize is ok
 # emn

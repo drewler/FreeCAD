@@ -52,7 +52,6 @@ body:
         - Core
         - Draft
         - Expressions
-        - FEM
         - File formats
         - GCS
         - Part

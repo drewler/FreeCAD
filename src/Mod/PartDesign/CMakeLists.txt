@@ -165,30 +165,6 @@ INSTALL(
         ${CMAKE_INSTALL_DATADIR}/Mod/PartDesign/Resources/Hole
 )
 
-if(BUILD_FEM)
-    SET(WizardShaft_SRCS
-        ${PartDesign_WizardShaft}
-    )
-    SOURCE_GROUP("wizardshaft" FILES ${WizardShaft_SRCS})
-
-    SET(all_wizardshaft_files ${WizardShaft_SRCS})
-
-    ADD_CUSTOM_TARGET(WizardShaft ALL
-        SOURCES ${all_wizardshaft_files}
-    )
-
-    SET(all_files ${all_wizardshaft_files})
-
-    fc_copy_sources(WizardShaft "${CMAKE_BINARY_DIR}/Mod/PartDesign" ${all_files})
-
-    INSTALL(
-        FILES
-            ${WizardShaft_SRCS}
-        DESTINATION
-            Mod/PartDesign/WizardShaft
-    )
-endif(BUILD_FEM)
-
 SET(FeatureHole_SRCS
     FeatureHole/__init__.py
     FeatureHole/HoleGui.py
