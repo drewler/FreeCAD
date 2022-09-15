@@ -16,9 +16,6 @@ Addon Manager:
 WB Draft:
 - 'src/Mod/Draft/**/*'
 
-WB FEM:
-- 'src/Mod/Fem/**/*'
-
 WB Mesh:
 - 'src/Mod/Mesh/**/*'
 

@@ -69,5 +69,4 @@ extraction:
     configure:
       command: "cmake ./ -DPYTHON_EXECUTABLE=/usr/bin/python3 -DBUILD_GUI=OFF\
         \ -DBUILD_DRAWING=OFF -DBUILD_IMAGE=OFF\
-        \ -DBUILD_SURFACE=OFF -DBUILD_START=OFF\
-        \ -DBUILD_FEM=OFF"
+        \ -DBUILD_SURFACE=OFF -DBUILD_START=OFF

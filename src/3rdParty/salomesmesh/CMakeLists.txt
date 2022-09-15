@@ -91,35 +91,6 @@ include_directories(
 link_directories(${OCC_LIBRARY_DIR})
 
 if(MSVC)
-    if(BUILD_FEM_NETGEN)
-        set(SMESH_LIBS
-            debug     MSVCRTD.LIB
-            debug     MSVCPRTD.LIB
-            optimized MSVCRT.LIB
-            optimized MSVCPRT.LIB
-            Rpcrt4.lib
-            ${NGLIB_LIBRARIES}
-            ${NGLIB_DEBUG_LIBRARIES}
-            ${OCC_LIBRARIES}
-            ${OCC_DEBUG_LIBRARIES}
-            ${OCC_OCAF_DEBUG_LIBRARIES}
-            ${OCC_OCAF_LIBRARIES}
-        )
-        ADD_DEFINITIONS(${NETGEN_DEFINITIONS})
-    else(BUILD_FEM_NETGEN)
-        set(SMESH_LIBS
-            debug     MSVCRTD.LIB
-            debug     MSVCPRTD.LIB
-            optimized MSVCRT.LIB
-            optimized MSVCPRT.LIB
-            Rpcrt4.lib
-            ${OCC_LIBRARIES}
-            ${OCC_DEBUG_LIBRARIES}
-            ${OCC_OCAF_DEBUG_LIBRARIES}
-            ${OCC_OCAF_LIBRARIES}
-        )
-    endif(BUILD_FEM_NETGEN)
-
     #Universal C runtime introduced in VS 2015 (cl version 19)
     if (NOT (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19"))
         list(APPEND SMESH_LIBS
@@ -129,20 +100,6 @@ if(MSVC)
             optimized ucrt.lib
         )
     endif()
-else(MSVC)
-    if(BUILD_FEM_NETGEN)
-        set(SMESH_LIBS
-            ${NGLIB_LIBRARIES}
-            ${OCC_LIBRARIES}
-            ${OCC_OCAF_LIBRARIES}
-        )
-        ADD_DEFINITIONS(${NETGEN_DEFINITIONS})
-    else(BUILD_FEM_NETGEN)
-        set(SMESH_LIBS
-            ${OCC_LIBRARIES}
-            ${OCC_OCAF_LIBRARIES}
-        )
-    endif(BUILD_FEM_NETGEN)
 endif(MSVC)
 
 
@@ -417,32 +374,6 @@ endif(WIN32)
 #  SET_TARGET_PROPERTIES(StdMeshers PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #ENDIF(MINGW)
 
-# Disable for all other compilers but MSVC
-if (BUILD_FEM_NETGEN)
-
-################
-# NETGENPlugin #
-################
-FILE(GLOB NETGENPlugin_source_files src/NETGENPlugin/*.cpp inc/NETGENPlugin_*.h* )
-ADD_LIBRARY(NETGENPlugin SHARED ${NETGENPlugin_source_files})
-TARGET_LINK_LIBRARIES(NETGENPlugin SMDS SMESHDS SMESH StdMeshers ${SMESH_LIBS} )
-
-SET_BIN_DIR(NETGENPlugin NETGENPlugin)
-if(WIN32)
-    set_target_properties(NETGENPlugin PROPERTIES COMPILE_FLAGS "-DNETGENPLUGIN_EXPORTS -DNO_PARALLEL_THREADS -DOCCGEOMETRY -DNETGEN_VERSION=${NETGEN_VERSION_C}")
-else()
-    set_target_properties(NETGENPlugin PROPERTIES COMPILE_FLAGS "${NETGEN_CXX_FLAGS}")
-endif(WIN32)
-IF(NOT NETGEN_VERSION_C LESS NETGEN_VERSION_62_2004) # Version >= 6.2.2004
-    set_target_properties(NETGENPlugin PROPERTIES CXX_STANDARD_REQUIRED ON)
-    set_target_properties(NETGENPlugin PROPERTIES CXX_STANDARD 17) # Standard std=c++1y could work as well
-ELSEIF(NOT NETGEN_VERSION_C LESS NETGEN_VERSION_62) # Version >= 6.2
-    set_target_properties(NETGENPlugin PROPERTIES CXX_STANDARD_REQUIRED ON)
-    set_target_properties(NETGENPlugin PROPERTIES CXX_STANDARD 14) # Standard std=c++1y could work as ell
-ENDIF()
-
-endif (BUILD_FEM_NETGEN)
-
 #IF(WIN32)
 #  SET_TARGET_PROPERTIES(SMESH PROPERTIES COMPILE_FLAGS "-DNETGENPluginimpl_EXPORTS ")
 #ENDIF(WIN32)
@@ -461,17 +392,3 @@ else(WIN32)
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 endif(WIN32)
-
-if (BUILD_FEM_NETGEN)
-    if(WIN32)
-        INSTALL(TARGETS NETGENPlugin
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        )
-    else(WIN32)
-        INSTALL(TARGETS NETGENPlugin
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        )
-    endif(WIN32)
-endif (BUILD_FEM_NETGEN)
-

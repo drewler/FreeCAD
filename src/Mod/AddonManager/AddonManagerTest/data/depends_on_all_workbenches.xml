@@ -14,7 +14,6 @@
 			<classname>MyFirstWorkbench</classname>
 			<icon>Resources/icons/PackageIcon.svg</icon>
 			<depend>DraftWB</depend>
-			<depend>FEM WB</depend>
 			<depend>MeshWorkbench</depend>
 			<depend>Part WORKBENCH</depend>
 			<depend>PartDesign WB</depend>

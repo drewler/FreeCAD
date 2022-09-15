@@ -14,10 +14,6 @@ if(BUILD_DRAWING)
   add_subdirectory(Drawing)
 endif(BUILD_DRAWING)
 
-if(BUILD_FEM)
-    add_subdirectory(Fem)
-endif(BUILD_FEM)
-
 if(BUILD_IDF)
   add_subdirectory(Idf)
 endif(BUILD_IDF)
