@@ -5,10 +5,6 @@ SET(Examples_Files
     EngineBlock.FCStd
     PartDesignExample.FCStd
     RobotExample.FCStd
-    ArchDetail.FCStd
-    FemCalculixCantilever2D.FCStd
-    FemCalculixCantilever3D.FCStd
-    FemCalculixCantilever3D_newSolver.FCStd
 )
 
 ADD_CUSTOM_TARGET(Example_data ALL
