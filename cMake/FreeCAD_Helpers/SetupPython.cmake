@@ -40,7 +40,7 @@ macro(SetupPython)
         # The hopefully-normal case - one package manager identified
         else(DEFINED MACPORTS_PREFIX AND DEFINED HOMEBREW_PREFIX)
 
-            # Construct a list like python;python2.9;python2.8;...
+            # Construct a list like python;python3.8;python3.9;...
             set(Python_ADDITIONAL_VERSIONS_REV ${Python_ADDITIONAL_VERSIONS})
             list(REVERSE Python_ADDITIONAL_VERSIONS_REV)
             set(_PYTHON_NAMES "python")
