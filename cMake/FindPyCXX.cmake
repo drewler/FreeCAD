@@ -15,9 +15,6 @@
 #
 # The authors' example is to put it in "~\" [sic].
 #
-# Ubuntu puts the includes into /usr/include/python2.7/CXX and sources into
-# /usr/share/python2.7/CXX.
-#
 # The Zultron Fedora RPM does the same as Ubuntu.
 
 set(PYCXX_FOUND "YES")

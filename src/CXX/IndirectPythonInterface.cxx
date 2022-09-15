@@ -84,11 +84,7 @@ static HMODULE python_dll;
 #  define PYCXX_STANDARD_EXCEPTION( eclass, bclass ) \
     static PyObject *ptr_Exc_##eclass = NULL;
 
-#  if PY_MAJOR_VERSION == 2
-#   include "CXX/Python2/cxx_standard_exceptions.hxx"
-#  else
-#   include "CXX/Python3/cxx_standard_exceptions.hxx"
-#  endif
+#  include "CXX/Python3/cxx_standard_exceptions.hxx"
 
 #  undef PYCXX_STANDARD_EXCEPTION
 
@@ -258,11 +254,7 @@ bool InitialisePythonIndirectInterface()
 #  define PYCXX_STANDARD_EXCEPTION( eclass, bclass )
     ptr_Exc_#eclass = GetPyTypeObject_As_PyTypeObjectPointer( "PyExc_" #eclass );
 
-#  if PY_MAJOR_VERSION == 2
-#   include "CXX/Python2/cxx_standard_exceptions.hxx"
-#  else
-#   include "CXX/Python3/cxx_standard_exceptions.hxx"
-#  endif
+#  include "CXX/Python3/cxx_standard_exceptions.hxx"
 
 #  undef PYCXX_STANDARD_EXCEPTION
 
@@ -469,11 +461,7 @@ void _XDECREF( PyObject *op )
 # define PYCXX_STANDARD_EXCEPTION( eclass, bclass ) \
     PYCXX_EXPORT PyObject *_Exc_##eclass() { return ::PyExc_##eclass; }
 
-# if PY_MAJOR_VERSION == 2
-#  include "CXX/Python2/cxx_standard_exceptions.hxx"
-# else
-#  include "CXX/Python3/cxx_standard_exceptions.hxx"
-# endif
+# include "CXX/Python3/cxx_standard_exceptions.hxx"
 
 # undef PYCXX_STANDARD_EXCEPTION
 
