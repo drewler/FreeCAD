@@ -142,7 +142,7 @@ App::DocumentObjectExecReturn * DrawSVGTemplate::execute()
 	if (!fi.isReadable()) {
 		// non-empty template value, but can't read file
 		// if there is a old absolute template file set use a redirect
-		fi.setFile(App::Application::getResourceDir() + "Mod/Drawing/Templates/" + fi.fileName());
+		fi.setFile(App::Application::getResourceDir() + "Mod/TechDraw/Templates/Drawing/" + fi.fileName());
 		// try the redirect
 		if (!fi.isReadable()) {
 			Base::Console().Log("DrawSVGTemplate::execute() not able to open %s!\n", Template.getValue());
@@ -277,7 +277,7 @@ std::map<std::string, std::string> DrawSVGTemplate::getEditableTextsFromTemplate
     Base::FileInfo tfi(templateFilename);
     if (!tfi.isReadable()) {
         // if there is a old absolute template file set use a redirect
-        tfi.setFile(App::Application::getResourceDir() + "Mod/Drawing/Templates/" + tfi.fileName());
+        tfi.setFile(App::Application::getResourceDir() + "Mod/TechDraw/Templates/Drawing/" + tfi.fileName());
         // try the redirect
         if (!tfi.isReadable()) {
             Base::Console().Log("DrawSVGTemplate::getEditableTextsFromTemplate() not able to open %s!\n", Template.getValue());
