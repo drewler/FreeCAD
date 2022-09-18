@@ -1,7 +1,6 @@
 
 The files:
 
-DrawingExample.FCStd
 PartDesignExample.FCStd
 RobotExample.FCStd
 Schenkel.stp
