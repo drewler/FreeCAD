@@ -10,10 +10,6 @@ if(BUILD_DRAFT)
   add_subdirectory(Draft)
 endif(BUILD_DRAFT)
 
-if(BUILD_DRAWING)
-  add_subdirectory(Drawing)
-endif(BUILD_DRAWING)
-
 if(BUILD_IDF)
   add_subdirectory(Idf)
 endif(BUILD_IDF)
