@@ -555,7 +555,7 @@ class DraftModification(unittest.TestCase):
         _msg("  n_sides={}".format(prism.Polygon))
         _msg("  placement={}".format(prism.Placement))
 
-        svg_template = 'Mod/Drawing/Templates/A3_Landscape.svg'
+        svg_template = 'Mod/TechDraw/Templates/Drawing/A3_Landscape.svg'
         template = Draft.get_param("template",
                                    App.getResourceDir() + svg_template)
         try:
