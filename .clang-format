@@ -36,6 +36,7 @@ BreakInheritanceList: BeforeColon
 ColumnLimit: 100
 CompactNamespaces: false
 ContinuationIndentWidth: 4
+DerivePointerAlignment: false
 IndentCaseLabels: true
 IndentPPDirectives: None
 IndentWidth: 4
@@ -46,6 +47,7 @@ ObjCSpaceAfterProperty: false
 ObjCSpaceBeforeProtocolList: true
 PointerAlignment: Right
 ReflowComments: false
+SortIncludes: false
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: false
@@ -56,7 +58,7 @@ SpaceBeforeInheritanceColon: false
 SpaceBeforeParens: ControlStatements
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 0
+SpacesBeforeTrailingComments: 1
 SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInContainerLiterals: false
