@@ -34,23 +34,27 @@
 
 class SMDS_Mesh;
 
-class SMDS_EXPORT SMDS_MeshIDFactory:public SMDS_MeshObject
+class SMDS_EXPORT SMDS_MeshIDFactory: public SMDS_MeshObject
 {
 public:
-  int  GetFreeID();
-  virtual void ReleaseID(int ID, int vtkId = -1);
-  virtual void Clear();
+    int GetFreeID();
+    virtual void ReleaseID(int ID, int vtkId = -1);
+    virtual void Clear();
 
-  void SetMesh(SMDS_Mesh *mesh);
-  SMDS_Mesh* GetMesh();
-  inline bool isPoolIdEmpty() { return myPoolOfID.empty(); };
-  virtual void emptyPool(int maxId);
-  inline void adjustMaxId(int ID) { if (ID > myMaxID) myMaxID = ID;};
+    void SetMesh(SMDS_Mesh *mesh);
+    SMDS_Mesh *GetMesh();
+    inline bool isPoolIdEmpty() { return myPoolOfID.empty(); };
+    virtual void emptyPool(int maxId);
+    inline void adjustMaxId(int ID)
+    {
+        if (ID > myMaxID) myMaxID = ID;
+    };
+
 protected:
-  SMDS_MeshIDFactory();
-  int myMaxID;
-  std::set<int> myPoolOfID;
-  SMDS_Mesh *myMesh;
+    SMDS_MeshIDFactory();
+    int myMaxID;
+    std::set<int> myPoolOfID;
+    SMDS_Mesh *myMesh;
 };
 
 #endif

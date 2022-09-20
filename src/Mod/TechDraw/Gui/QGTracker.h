@@ -52,20 +52,32 @@ static constexpr int TRACKERCANCELEDIT(3);
 static constexpr int TRACKERFINISHED(4);
 static constexpr int TRACKERSAVE(5);
 
-class TechDrawGuiExport QGTracker : public QObject, public QGIPrimPath
+class TechDrawGuiExport QGTracker: public QObject, public QGIPrimPath
 {
     Q_OBJECT
 public:
-    enum TrackerMode { None, Line, Circle, Rectangle, Point };
+    enum TrackerMode
+    {
+        None,
+        Line,
+        Circle,
+        Rectangle,
+        Point
+    };
 
-    explicit QGTracker(QGSPage* scene = nullptr, QGTracker::TrackerMode m = QGTracker::TrackerMode::None);
+    explicit QGTracker(QGSPage *scene = nullptr,
+                       QGTracker::TrackerMode m = QGTracker::TrackerMode::None);
     ~QGTracker() override;
 
 
-    enum {Type = QGraphicsItem::UserType + 210};
+    enum
+    {
+        Type = QGraphicsItem::UserType + 210
+    };
 
-    int type() const override { return Type;}
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr ) override;
+    int type() const override { return Type; }
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget = nullptr) override;
     QPainterPath shape() const override;
     QRectF boundingRect() const override;
 
@@ -88,15 +100,15 @@ public:
     QPointF snapToAngle(QPointF pt);
 
 Q_SIGNALS:
-    void drawingFinished(std::vector<QPointF> pts, TechDrawGui::QGIView* qgParent);
-    void qViewPicked(QPointF pos, TechDrawGui::QGIView* qgParent);
+    void drawingFinished(std::vector<QPointF> pts, TechDrawGui::QGIView *qgParent);
+    void qViewPicked(QPointF pos, TechDrawGui::QGIView *qgParent);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverMoveEvent(QGraphicsSceneHoverEvent* event) override;
-    void keyPressEvent(QKeyEvent * event) override;
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
     void getPickedQGIV(QPointF pos);
 
@@ -104,18 +116,18 @@ protected:
     double getTrackerWeight();
 
 private:
-    QGraphicsPathItem* m_track;
+    QGraphicsPathItem *m_track;
     QPointF m_segBegin;
     QPointF m_segEnd;
     std::vector<QPointF> m_points;
     bool m_sleep;
-    QGIView* m_qgParent;
+    QGIView *m_qgParent;
     TrackerMode m_trackerMode;
     QPen m_trackPen;
     QPen m_tailPen;
     QPointF m_lastClick;
 };
 
-} // namespace
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_TRACKER_H

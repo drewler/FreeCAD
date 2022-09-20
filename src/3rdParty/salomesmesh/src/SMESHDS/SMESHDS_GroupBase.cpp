@@ -32,7 +32,7 @@
 
 using namespace std;
 
-Quantity_Color SMESHDS_GroupBase::myDefaultColor = Quantity_Color( 0.0, 0.0, 0.0, Quantity_TOC_RGB );
+Quantity_Color SMESHDS_GroupBase::myDefaultColor = Quantity_Color(0.0, 0.0, 0.0, Quantity_TOC_RGB);
 
 //=============================================================================
 /*!
@@ -40,13 +40,11 @@ Quantity_Color SMESHDS_GroupBase::myDefaultColor = Quantity_Color( 0.0, 0.0, 0.0
  */
 //=============================================================================
 
-SMESHDS_GroupBase::SMESHDS_GroupBase (const int                 theID,
-                                      const SMESHDS_Mesh*       theMesh,
-                                      const SMDSAbs_ElementType theType):
-       myID(theID), myMesh(theMesh), myType(theType), myStoreName(""),
-       myCurIndex(0), myCurID(-1)
+SMESHDS_GroupBase::SMESHDS_GroupBase(const int theID, const SMESHDS_Mesh *theMesh,
+                                     const SMDSAbs_ElementType theType)
+    : myID(theID), myMesh(theMesh), myType(theType), myStoreName(""), myCurIndex(0), myCurID(-1)
 {
-  myColor = myDefaultColor;
+    myColor = myDefaultColor;
 }
 
 //=============================================================================
@@ -55,18 +53,18 @@ SMESHDS_GroupBase::SMESHDS_GroupBase (const int                 theID,
  */
 //=============================================================================
 
-int SMESHDS_GroupBase::GetID (const int theIndex)
+int SMESHDS_GroupBase::GetID(const int theIndex)
 {
-  if (myCurIndex < 1 || myCurIndex > theIndex) {
-    myIterator = GetElements();
-    myCurIndex = 0;
-    myCurID = -1;
-  }
-  while (myCurIndex < theIndex && myIterator->more()) {
-    myCurIndex++;
-    myCurID = myIterator->next()->GetID();
-  }
-  return myCurIndex == theIndex ? myCurID : -1;
+    if (myCurIndex < 1 || myCurIndex > theIndex) {
+        myIterator = GetElements();
+        myCurIndex = 0;
+        myCurID = -1;
+    }
+    while (myCurIndex < theIndex && myIterator->more()) {
+        myCurIndex++;
+        myCurID = myIterator->next()->GetID();
+    }
+    return myCurIndex == theIndex ? myCurID : -1;
 }
 
 //=============================================================================
@@ -75,19 +73,16 @@ int SMESHDS_GroupBase::GetID (const int theIndex)
  */
 //=============================================================================
 
-const SMDS_MeshElement* SMESHDS_GroupBase::findInMesh (const int theID) const
+const SMDS_MeshElement *SMESHDS_GroupBase::findInMesh(const int theID) const
 {
-  SMDSAbs_ElementType aType = GetType();
-  const SMDS_MeshElement* aElem = NULL;
-  if (aType == SMDSAbs_Node) {
-    aElem = GetMesh()->FindNode(theID);
-  }
-  else if (aType != SMDSAbs_All) {
-    aElem = GetMesh()->FindElement(theID);
-    if (aElem && aType != aElem->GetType())
-      aElem = NULL;
-  }
-  return aElem;
+    SMDSAbs_ElementType aType = GetType();
+    const SMDS_MeshElement *aElem = NULL;
+    if (aType == SMDSAbs_Node) { aElem = GetMesh()->FindNode(theID); }
+    else if (aType != SMDSAbs_All) {
+        aElem = GetMesh()->FindElement(theID);
+        if (aElem && aType != aElem->GetType()) aElem = NULL;
+    }
+    return aElem;
 }
 
 //=============================================================================
@@ -98,113 +93,105 @@ const SMDS_MeshElement* SMESHDS_GroupBase::findInMesh (const int theID) const
 //=============================================================================
 void SMESHDS_GroupBase::resetIterator()
 {
-  myCurIndex = 0;
-  myCurID = -1;
+    myCurIndex = 0;
+    myCurID = -1;
 }
 
 //=======================================================================
 //function : Extent
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 int SMESHDS_GroupBase::Extent() const
 {
-  SMDS_ElemIteratorPtr it = GetElements();
-  int nb = 0;
-  if ( it )
-    for ( ; it->more(); it->next() ) 
-      nb++;
-  return nb;
+    SMDS_ElemIteratorPtr it = GetElements();
+    int nb = 0;
+    if (it)
+        for (; it->more(); it->next()) nb++;
+    return nb;
 }
 
 //=======================================================================
 //function : IsEmpty
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 bool SMESHDS_GroupBase::IsEmpty()
 {
-  SMDS_ElemIteratorPtr it = GetElements();
-  return ( !it || !it->more() );
+    SMDS_ElemIteratorPtr it = GetElements();
+    return (!it || !it->more());
 }
 
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMESHDS_GroupBase::Contains (const int theID)
+bool SMESHDS_GroupBase::Contains(const int theID)
 {
-  if ( SMDS_ElemIteratorPtr it = GetElements() ) {
-    while ( it->more() )
-      if ( it->next()->GetID() == theID )
-        return true;
-  }
-  return false;
+    if (SMDS_ElemIteratorPtr it = GetElements()) {
+        while (it->more())
+            if (it->next()->GetID() == theID) return true;
+    }
+    return false;
 }
 
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMESHDS_GroupBase::Contains (const SMDS_MeshElement* elem)
+bool SMESHDS_GroupBase::Contains(const SMDS_MeshElement *elem)
 {
-  if ( elem )
-    return Contains( elem->GetID() );
-  return false;
+    if (elem) return Contains(elem->GetID());
+    return false;
 }
 
 //=======================================================================
 //function : SetType
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-void SMESHDS_GroupBase::SetType(SMDSAbs_ElementType theType)
-{
-  myType = theType;
-}
+void SMESHDS_GroupBase::SetType(SMDSAbs_ElementType theType) { myType = theType; }
 
 //=======================================================================
 //function : SetType
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void SMESHDS_GroupBase::SetColorGroup(int theColorGroup)
 {
-  int aRed = ( theColorGroup/1000000 );
-  int aGreen = ( theColorGroup -aRed*1000000)/1000;
-  int aBlue = ( theColorGroup - aRed*1000000 - aGreen*1000 );
-  double aR = aRed/255.0;
-  double aG = aGreen/255.0;
-  double aB = aBlue/255.0;
-  if ( aR < 0. || aR > 1. || // PAL19395
-       aG < 0. || aG > 1. ||
-       aB < 0. || aB > 1. )
-// #ifdef _DEBUG_
-//     cout << "SMESHDS_GroupBase::SetColorGroup("<<theColorGroup<<"), invalid color ignored"<<endl;
-// #endif
-    return;
-  Quantity_Color aColor( aR, aG, aB, Quantity_TOC_RGB );
-  SetColor( aColor );
+    int aRed = (theColorGroup / 1000000);
+    int aGreen = (theColorGroup - aRed * 1000000) / 1000;
+    int aBlue = (theColorGroup - aRed * 1000000 - aGreen * 1000);
+    double aR = aRed / 255.0;
+    double aG = aGreen / 255.0;
+    double aB = aBlue / 255.0;
+    if (aR < 0. || aR > 1. || // PAL19395
+        aG < 0. || aG > 1. || aB < 0. || aB > 1.)
+        // #ifdef _DEBUG_
+        //     cout << "SMESHDS_GroupBase::SetColorGroup("<<theColorGroup<<"), invalid color ignored"<<endl;
+        // #endif
+        return;
+    Quantity_Color aColor(aR, aG, aB, Quantity_TOC_RGB);
+    SetColor(aColor);
 }
-  
+
 //=======================================================================
 //function : SetType
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 int SMESHDS_GroupBase::GetColorGroup() const
 {
-  Quantity_Color aColor = GetColor();
-  double aRed = aColor.Red();
-  double aGreen = aColor.Green();
-  double aBlue = aColor.Blue();
-  int aR = int( aRed  *255 );
-  int aG = int( aGreen*255 );
-  int aB = int( aBlue *255 );
-  int aRet = (int)(aR*1000000 + aG*1000 + aB);
+    Quantity_Color aColor = GetColor();
+    double aRed = aColor.Red();
+    double aGreen = aColor.Green();
+    double aBlue = aColor.Blue();
+    int aR = int(aRed * 255);
+    int aG = int(aGreen * 255);
+    int aB = int(aBlue * 255);
+    int aRet = (int)(aR * 1000000 + aG * 1000 + aB);
 
-  return aRet;
+    return aRet;
 }
-  

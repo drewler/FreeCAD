@@ -35,14 +35,22 @@
 
 #include "Basic.h"
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
-namespace Quarter {
-  void QUARTER_DLL_API init(bool initCoin = true);
-  void QUARTER_DLL_API clean();
-  void QUARTER_DLL_API setTimerEpsilon(double sec);
-}
+namespace Quarter
+{
+void QUARTER_DLL_API init(bool initCoin = true);
+void QUARTER_DLL_API clean();
+void QUARTER_DLL_API setTimerEpsilon(double sec);
+} // namespace Quarter
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_QUARTER_H

@@ -31,43 +31,34 @@ using zipios::FileCollection;
 using zipios::ZipHeader;
 
 
-ZipHeader::ZipHeader(std::istream &inp, int s_off, int e_off)
-    : _input(inp)
-    , _vs(s_off, e_off)
+ZipHeader::ZipHeader(std::istream &inp, int s_off, int e_off) : _input(inp), _vs(s_off, e_off)
 {
     init(_input);
 }
 
 /** Create a copy of this instance. */
-FileCollection *ZipHeader::clone() const
-{
-    return new ZipHeader(*this);
-}
+FileCollection *ZipHeader::clone() const { return new ZipHeader(*this); }
 
-void ZipHeader::close()
-{
-    _valid = false;
-}
+void ZipHeader::close() { _valid = false; }
 
 std::istream *ZipHeader::getInputStream(const ConstEntryPointer &entry)
 {
-    if (!_valid)
-        throw zipios::InvalidStateException("Attempt to use an invalid FileCollection");
+    if (!_valid) throw zipios::InvalidStateException("Attempt to use an invalid FileCollection");
     return getInputStream(entry->getName());
 }
 
 std::istream *ZipHeader::getInputStream(const std::string &entry_name, MatchPath matchpath)
 {
-    if (!_valid)
-        throw zipios::InvalidStateException("Attempt to use an invalid ZipHeader");
+    if (!_valid) throw zipios::InvalidStateException("Attempt to use an invalid ZipHeader");
 
     zipios::ConstEntryPointer ent = getEntry(entry_name, matchpath);
 
-    if (!ent)
-        return nullptr;
+    if (!ent) return nullptr;
     else
-        return new zipios::ZipInputStream(_input,
-                                          static_cast<const zipios::ZipCDirEntry *>(ent.get())->getLocalHeaderOffset() + _vs.startOffset());
+        return new zipios::ZipInputStream(
+            _input,
+            static_cast<const zipios::ZipCDirEntry *>(ent.get())->getLocalHeaderOffset()
+                + _vs.startOffset());
 }
 
 bool ZipHeader::init(std::istream &_zipfile)
@@ -100,11 +91,14 @@ bool ZipHeader::readCentralDirectory(std::istream &_zipfile)
         _zipfile >> *ent;
         if (!_zipfile) {
             if (_zipfile.bad())
-                throw zipios::IOException("Error reading zip file while reading zip file central directory");
+                throw zipios::IOException(
+                    "Error reading zip file while reading zip file central directory");
             else if (_zipfile.fail())
-                throw zipios::FCollException("Zip file consistency problem. Failure while reading zip file central directory");
+                throw zipios::FCollException("Zip file consistency problem. Failure while reading "
+                                             "zip file central directory");
             else if (_zipfile.eof())
-                throw zipios::IOException("Premature end of file while reading zip file central directory");
+                throw zipios::IOException(
+                    "Premature end of file while reading zip file central directory");
         }
         ++entry_num;
     }
@@ -115,12 +109,14 @@ bool ZipHeader::readCentralDirectory(std::istream &_zipfile)
     _vs.vseekg(_zipfile, 0, std::ios::end);
     int remaining = static_cast<int>(_vs.vtellg(_zipfile)) - pos;
     if (remaining != _eocd.eocdOffSetFromEnd())
-        throw zipios::FCollException("Zip file consistency problem. Zip file data fields are inconsistent with zip file layout");
+        throw zipios::FCollException("Zip file consistency problem. Zip file data fields are "
+                                     "inconsistent with zip file layout");
 
     // Consistency check 2, are local headers consistent with
     // cd headers
     if (!confirmLocalHeaders(_zipfile))
-        throw zipios::FCollException("Zip file consistency problem. Zip file data fields are inconsistent with zip file layout");
+        throw zipios::FCollException("Zip file consistency problem. Zip file data fields are "
+                                     "inconsistent with zip file layout");
 
     return true;
 }
@@ -165,7 +161,4 @@ bool ZipHeader::confirmLocalHeaders(std::istream &_zipfile)
     return !inconsistencies;
 }
 
-void ZipHeader::setError(std::string /*error_str*/)
-{
-    _valid = false;
-}
+void ZipHeader::setError(std::string /*error_str*/) { _valid = false; }

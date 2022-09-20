@@ -8,53 +8,45 @@
 
 using std::ostream;
 
-namespace zipios {
-
-GZIPOutputStream::GZIPOutputStream( std::ostream &os )
-  : ostream( nullptr ),
-    ofs( nullptr )
+namespace zipios
 {
-  ozf = new GZIPOutputStreambuf( os.rdbuf() ) ;
 
-  init( ozf ) ;
-}
-
-GZIPOutputStream::GZIPOutputStream( const std::string &filename )
-  : ostream( nullptr ),
-    ofs( nullptr )
+GZIPOutputStream::GZIPOutputStream(std::ostream &os) : ostream(nullptr), ofs(nullptr)
 {
-  ofs = new std::ofstream( filename.c_str(), std::ios::out | std::ios::binary ) ;
-  ozf = new GZIPOutputStreambuf( ofs->rdbuf() ) ;
-  init( ozf ) ;
+    ozf = new GZIPOutputStreambuf(os.rdbuf());
+
+    init(ozf);
 }
 
-void GZIPOutputStream::setFilename( const string &filename ) {
-  ozf->setFilename(filename);
+GZIPOutputStream::GZIPOutputStream(const std::string &filename) : ostream(nullptr), ofs(nullptr)
+{
+    ofs = new std::ofstream(filename.c_str(), std::ios::out | std::ios::binary);
+    ozf = new GZIPOutputStreambuf(ofs->rdbuf());
+    init(ozf);
 }
 
-void GZIPOutputStream::setComment( const string &comment ) {
-  ozf->setComment(comment);
-}
+void GZIPOutputStream::setFilename(const string &filename) { ozf->setFilename(filename); }
 
-void GZIPOutputStream::close() {
-  ozf->close() ;
-  if ( ofs )
-    ofs->close() ;
-}
+void GZIPOutputStream::setComment(const string &comment) { ozf->setComment(comment); }
 
-
-void GZIPOutputStream::finish() {
-  ozf->finish() ;
+void GZIPOutputStream::close()
+{
+    ozf->close();
+    if (ofs) ofs->close();
 }
 
 
-GZIPOutputStream::~GZIPOutputStream() {
-  // It's ok to call delete with a Null pointer.
-  delete ozf ;
-  delete ofs ;
+void GZIPOutputStream::finish() { ozf->finish(); }
+
+
+GZIPOutputStream::~GZIPOutputStream()
+{
+    // It's ok to call delete with a Null pointer.
+    delete ozf;
+    delete ofs;
 }
 
-} // namespace
+} // namespace zipios
 
 /** \file
     Implementation of GZIPOutputStream.

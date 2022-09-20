@@ -24,9 +24,9 @@
 #include "PreCompiled.h"
 #ifndef _PreComp_
 #ifdef FC_OS_LINUX
-# include <unistd.h>
+#include <unistd.h>
 #endif
-# include <sstream>
+#include <sstream>
 #endif
 
 
@@ -58,8 +58,7 @@ void PointsAlgos::Load(PointKernel &points, const char *FileName)
     if (!File.isReadable())
         throw Base::FileException("File to load not existing or not readable", FileName);
 
-    if (File.hasExtension("asc"))
-        LoadAscii(points,FileName);
+    if (File.hasExtension("asc")) LoadAscii(points, FileName);
     else
         throw Base::RuntimeError("Unknown ending");
 }
@@ -67,27 +66,26 @@ void PointsAlgos::Load(PointKernel &points, const char *FileName)
 void PointsAlgos::LoadAscii(PointKernel &points, const char *FileName)
 {
     boost::regex rx("^\\s*([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                     "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                     "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*$");
+                    "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                    "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*$");
     //boost::regex rx("(\\b[0-9]+\\.([0-9]+\\b)?|\\.[0-9]+\\b)");
     //boost::regex rx("^\\s*(-?[0-9]*)\\.([0-9]+)\\s+(-?[0-9]*)\\.([0-9]+)\\s+(-?[0-9]*)\\.([0-9]+)\\s*$");
     boost::cmatch what;
 
     Base::Vector3d pt;
-    int LineCnt=0;
+    int LineCnt = 0;
     std::string line;
     Base::FileInfo fi(FileName);
 
     Base::ifstream tmp_str(fi, std::ios::in);
 
     // estimating size
-    while (std::getline(tmp_str,line))
-        LineCnt++;
+    while (std::getline(tmp_str, line)) LineCnt++;
 
     // resize the PointKernel
     points.resize(LineCnt);
 
-    Base::SequencerLauncher seq( "Loading points...", LineCnt );
+    Base::SequencerLauncher seq("Loading points...", LineCnt);
 
     // again to the beginning
     Base::ifstream file(fi, std::ios::in);
@@ -101,7 +99,7 @@ void PointsAlgos::LoadAscii(PointKernel &points, const char *FileName)
                 pt.y = std::atof(what[4].first);
                 pt.z = std::atof(what[7].first);
 
-                points.setPoint(LineCnt,pt);
+                points.setPoint(LineCnt, pt);
                 seq.next();
                 LineCnt++;
             }
@@ -115,8 +113,7 @@ void PointsAlgos::LoadAscii(PointKernel &points, const char *FileName)
     // now remove the last points from the kernel
     // Note: first we allocate memory corresponding to the number of lines (points and comments)
     //       and read in the file twice. But then the size of the kernel is too high
-    if (LineCnt < (int)points.size())
-        points.erase(LineCnt, points.size());
+    if (LineCnt < (int)points.size()) points.erase(LineCnt, points.size());
 }
 
 // ----------------------------------------------------------------------------
@@ -127,9 +124,7 @@ Reader::Reader()
     height = 0;
 }
 
-Reader::~Reader()
-{
-}
+Reader::~Reader() {}
 
 void Reader::clear()
 {
@@ -138,97 +133,60 @@ void Reader::clear()
     normals.clear();
 }
 
-const PointKernel& Reader::getPoints() const
-{
-    return points;
-}
+const PointKernel &Reader::getPoints() const { return points; }
 
-bool Reader::hasProperties() const
-{
-    return (hasIntensities() || hasColors() || hasNormals());
-}
+bool Reader::hasProperties() const { return (hasIntensities() || hasColors() || hasNormals()); }
 
-const std::vector<float>& Reader::getIntensities() const
-{
-    return intensity;
-}
+const std::vector<float> &Reader::getIntensities() const { return intensity; }
 
-bool Reader::hasIntensities() const
-{
-    return (!intensity.empty());
-}
+bool Reader::hasIntensities() const { return (!intensity.empty()); }
 
-const std::vector<App::Color>& Reader::getColors() const
-{
-    return colors;
-}
+const std::vector<App::Color> &Reader::getColors() const { return colors; }
 
-bool Reader::hasColors() const
-{
-    return (!colors.empty());
-}
+bool Reader::hasColors() const { return (!colors.empty()); }
 
-const std::vector<Base::Vector3f>& Reader::getNormals() const
-{
-    return normals;
-}
+const std::vector<Base::Vector3f> &Reader::getNormals() const { return normals; }
 
-bool Reader::hasNormals() const
-{
-    return (!normals.empty());
-}
+bool Reader::hasNormals() const { return (!normals.empty()); }
 
-bool Reader::isStructured() const
-{
-    return (width > 1 && height > 1);
-}
+bool Reader::isStructured() const { return (width > 1 && height > 1); }
 
-int Reader::getWidth() const
-{
-    return width;
-}
+int Reader::getWidth() const { return width; }
 
-int Reader::getHeight() const
-{
-    return height;
-}
+int Reader::getHeight() const { return height; }
 
 // ----------------------------------------------------------------------------
 
-AscReader::AscReader()
-{
-}
+AscReader::AscReader() {}
 
-AscReader::~AscReader()
-{
-}
+AscReader::~AscReader() {}
 
-void AscReader::read(const std::string& filename)
-{
-    points.load(filename.c_str());
-}
+void AscReader::read(const std::string &filename) { points.load(filename.c_str()); }
 
 // ----------------------------------------------------------------------------
 
-namespace Points {
-class Converter {
+namespace Points
+{
+class Converter
+{
 public:
     Converter() = default;
     virtual ~Converter() = default;
     virtual std::string toString(double) const = 0;
-    virtual double toDouble(Base::InputStream&) const = 0;
+    virtual double toDouble(Base::InputStream &) const = 0;
     virtual int getSizeOf() const = 0;
 
 private:
-    Converter(const Converter&) = delete;
-    Converter(Converter&&) = delete;
-    Converter& operator= (const Converter&) = delete;
-    Converter& operator= (Converter&&) = delete;
+    Converter(const Converter &) = delete;
+    Converter(Converter &&) = delete;
+    Converter &operator=(const Converter &) = delete;
+    Converter &operator=(Converter &&) = delete;
 };
-template <typename T>
-class ConverterT : public Converter {
+template<typename T> class ConverterT: public Converter
+{
 public:
-    std::string toString(double f) const override {
+    std::string toString(double f) const override
+    {
         T c = static_cast<T>(f);
         std::ostringstream oss;
         oss.precision(7);
@@ -236,286 +194,299 @@ public:
         oss << c;
         return oss.str();
     }
-    double toDouble(Base::InputStream& str) const override {
+    double toDouble(Base::InputStream &str) const override
+    {
         T c;
         str >> c;
         return static_cast<double>(c);
     }
-    int getSizeOf() const override {
-        return sizeof(T);
-    }
+    int getSizeOf() const override { return sizeof(T); }
 };
 
 using ConverterPtr = std::shared_ptr<Converter>;
 
-class DataStreambuf : public std::streambuf
+class DataStreambuf: public std::streambuf
 {
 public:
-    explicit DataStreambuf(const std::vector<char>& data) : _buffer(data) {
+    explicit DataStreambuf(const std::vector<char> &data) : _buffer(data)
+    {
         _beg = 0;
         _end = data.size();
         _cur = 0;
     }
-    ~DataStreambuf() override {
-    }
+    ~DataStreambuf() override {}
 
 protected:
-    int_type uflow() override {
-        if (_cur == _end)
-            return traits_type::eof();
+    int_type uflow() override
+    {
+        if (_cur == _end) return traits_type::eof();
 
         return static_cast<DataStreambuf::int_type>(_buffer[_cur++]) & 0x000000ff;
     }
-    int_type underflow() override {
-        if (_cur == _end)
-            return traits_type::eof();
+    int_type underflow() override
+    {
+        if (_cur == _end) return traits_type::eof();
 
         return static_cast<DataStreambuf::int_type>(_buffer[_cur]) & 0x000000ff;
     }
-    int_type pbackfail(int_type ch) override {
-        if (_cur == _beg || (ch != traits_type::eof() && ch != _buffer[_cur-1]))
+    int_type pbackfail(int_type ch) override
+    {
+        if (_cur == _beg || (ch != traits_type::eof() && ch != _buffer[_cur - 1]))
             return traits_type::eof();
 
         return static_cast<DataStreambuf::int_type>(_buffer[--_cur]) & 0x000000ff;
     }
-    std::streamsize showmanyc() override {
-        return _end - _cur;
-    }
-    pos_type seekoff(std::streambuf::off_type off,
-        std::ios_base::seekdir way,
-        std::ios_base::openmode =
-            std::ios::in | std::ios::out) override {
-        int p_pos=-1;
-        if (way == std::ios_base::beg)
-            p_pos = _beg;
+    std::streamsize showmanyc() override { return _end - _cur; }
+    pos_type seekoff(std::streambuf::off_type off, std::ios_base::seekdir way,
+                     std::ios_base::openmode = std::ios::in | std::ios::out) override
+    {
+        int p_pos = -1;
+        if (way == std::ios_base::beg) p_pos = _beg;
         else if (way == std::ios_base::end)
             p_pos = _end;
         else if (way == std::ios_base::cur)
             p_pos = _cur;
 
-        if (p_pos > _end)
-            return traits_type::eof();
+        if (p_pos > _end) return traits_type::eof();
 
-        if (((p_pos + off) > _end) || ((p_pos + off) < _beg))
-            return traits_type::eof();
+        if (((p_pos + off) > _end) || ((p_pos + off) < _beg)) return traits_type::eof();
 
-        _cur = p_pos+ off;
+        _cur = p_pos + off;
 
-        return ((p_pos+off) - _beg);
+        return ((p_pos + off) - _beg);
     }
     pos_type seekpos(std::streambuf::pos_type pos,
-        std::ios_base::openmode which =
-        std::ios::in | std::ios::out) override {
+                     std::ios_base::openmode which = std::ios::in | std::ios::out) override
+    {
         (void)which;
         return seekoff(pos, std::ios_base::beg);
     }
 
 private:
-    DataStreambuf(const DataStreambuf&) = delete;
-    DataStreambuf(DataStreambuf&&) = delete;
-    DataStreambuf& operator=(const DataStreambuf&) = delete;
-    DataStreambuf& operator=(DataStreambuf&&) = delete;
+    DataStreambuf(const DataStreambuf &) = delete;
+    DataStreambuf(DataStreambuf &&) = delete;
+    DataStreambuf &operator=(const DataStreambuf &) = delete;
+    DataStreambuf &operator=(DataStreambuf &&) = delete;
 
 private:
-    const std::vector<char>& _buffer;
+    const std::vector<char> &_buffer;
     int _beg, _end, _cur;
 };
 
 //Taken from https://github.com/PointCloudLibrary/pcl/blob/master/io/src/lzf.cpp
-unsigned int
-lzfDecompress (const void *const in_data,  unsigned int in_len,
-                    void             *out_data, unsigned int out_len)
+unsigned int lzfDecompress(const void *const in_data, unsigned int in_len, void *out_data,
+                           unsigned int out_len)
 {
-  unsigned char const *ip = static_cast<const unsigned char *> (in_data);
-  unsigned char       *op = static_cast<unsigned char *> (out_data);
-  unsigned char const *const in_end  = ip + in_len;
-  unsigned char       *const out_end = op + out_len;
+    unsigned char const *ip = static_cast<const unsigned char *>(in_data);
+    unsigned char *op = static_cast<unsigned char *>(out_data);
+    unsigned char const *const in_end = ip + in_len;
+    unsigned char *const out_end = op + out_len;
 
-  do
-  {
-    unsigned int ctrl = *ip++;
+    do {
+        unsigned int ctrl = *ip++;
 
-    // Literal run
-    if (ctrl < (1 << 5))
-    {
-      ctrl++;
+        // Literal run
+        if (ctrl < (1 << 5)) {
+            ctrl++;
 
-      if (op + ctrl > out_end)
-      {
-        errno = E2BIG;
-        return (0);
-      }
+            if (op + ctrl > out_end) {
+                errno = E2BIG;
+                return (0);
+            }
 
-      // Check for overflow
-      if (ip + ctrl > in_end)
-      {
-        errno = EINVAL;
-        return (0);
-      }
-      switch (ctrl)
-      {
-      case 32: *op++ = *ip++;
-          /* FALLTHRU */
-      case 31: *op++ = *ip++;
-          /* FALLTHRU */
-      case 30: *op++ = *ip++;
-          /* FALLTHRU */
-      case 29: *op++ = *ip++;
-          /* FALLTHRU */
-      case 28: *op++ = *ip++;
-          /* FALLTHRU */
-      case 27: *op++ = *ip++;
-          /* FALLTHRU */
-      case 26: *op++ = *ip++;
-          /* FALLTHRU */
-      case 25: *op++ = *ip++;
-          /* FALLTHRU */
-      case 24: *op++ = *ip++;
-          /* FALLTHRU */
-      case 23: *op++ = *ip++;
-          /* FALLTHRU */
-      case 22: *op++ = *ip++;
-          /* FALLTHRU */
-      case 21: *op++ = *ip++;
-          /* FALLTHRU */
-      case 20: *op++ = *ip++;
-          /* FALLTHRU */
-      case 19: *op++ = *ip++;
-          /* FALLTHRU */
-      case 18: *op++ = *ip++;
-          /* FALLTHRU */
-      case 17: *op++ = *ip++;
-          /* FALLTHRU */
-      case 16: *op++ = *ip++;
-          /* FALLTHRU */
-      case 15: *op++ = *ip++;
-          /* FALLTHRU */
-      case 14: *op++ = *ip++;
-          /* FALLTHRU */
-      case 13: *op++ = *ip++;
-          /* FALLTHRU */
-      case 12: *op++ = *ip++;
-          /* FALLTHRU */
-      case 11: *op++ = *ip++;
-          /* FALLTHRU */
-      case 10: *op++ = *ip++;
-          /* FALLTHRU */
-      case  9: *op++ = *ip++;
-          /* FALLTHRU */
-      case  8: *op++ = *ip++;
-          /* FALLTHRU */
-      case  7: *op++ = *ip++;
-          /* FALLTHRU */
-      case  6: *op++ = *ip++;
-          /* FALLTHRU */
-      case  5: *op++ = *ip++;
-          /* FALLTHRU */
-      case  4: *op++ = *ip++;
-          /* FALLTHRU */
-      case  3: *op++ = *ip++;
-          /* FALLTHRU */
-      case  2: *op++ = *ip++;
-          /* FALLTHRU */
-      case  1: *op++ = *ip++;
-      }
-    }
-    // Back reference
-    else
-    {
-      unsigned int len = ctrl >> 5;
-
-      unsigned char *ref = op - ((ctrl & 0x1f) << 8) - 1;
-
-      // Check for overflow
-      if (ip >= in_end)
-      {
-        errno = EINVAL;
-        return (0);
-      }
-      if (len == 7)
-      {
-        len += *ip++;
-        // Check for overflow
-        if (ip >= in_end)
-        {
-          errno = EINVAL;
-          return (0);
+            // Check for overflow
+            if (ip + ctrl > in_end) {
+                errno = EINVAL;
+                return (0);
+            }
+            switch (ctrl) {
+                case 32:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 31:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 30:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 29:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 28:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 27:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 26:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 25:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 24:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 23:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 22:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 21:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 20:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 19:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 18:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 17:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 16:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 15:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 14:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 13:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 12:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 11:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 10:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 9:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 8:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 7:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 6:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 5:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 4:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 3:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 2:
+                    *op++ = *ip++;
+                    /* FALLTHRU */
+                case 1: *op++ = *ip++;
+            }
         }
-      }
-      ref -= *ip++;
+        // Back reference
+        else {
+            unsigned int len = ctrl >> 5;
 
-      if (op + len + 2 > out_end)
-      {
-        errno = E2BIG;
-        return (0);
-      }
+            unsigned char *ref = op - ((ctrl & 0x1f) << 8) - 1;
 
-      if (ref < static_cast<unsigned char *> (out_data))
-      {
-        errno = EINVAL;
-        return (0);
-      }
+            // Check for overflow
+            if (ip >= in_end) {
+                errno = EINVAL;
+                return (0);
+            }
+            if (len == 7) {
+                len += *ip++;
+                // Check for overflow
+                if (ip >= in_end) {
+                    errno = EINVAL;
+                    return (0);
+                }
+            }
+            ref -= *ip++;
 
-      switch (len)
-      {
-        default:
-        {
-          len += 2;
+            if (op + len + 2 > out_end) {
+                errno = E2BIG;
+                return (0);
+            }
 
-          if (op >= ref + len)
-          {
-            // Disjunct areas
-            memcpy (op, ref, len);
-            op += len;
-          }
-          else
-          {
-            // Overlapping, use byte by byte copying
-            do
-              *op++ = *ref++;
-            while (--len);
-          }
+            if (ref < static_cast<unsigned char *>(out_data)) {
+                errno = EINVAL;
+                return (0);
+            }
 
-          break;
+            switch (len) {
+                default: {
+                    len += 2;
+
+                    if (op >= ref + len) {
+                        // Disjunct areas
+                        memcpy(op, ref, len);
+                        op += len;
+                    }
+                    else {
+                        // Overlapping, use byte by byte copying
+                        do *op++ = *ref++;
+                        while (--len);
+                    }
+
+                    break;
+                }
+                case 9:
+                    *op++ = *ref++;
+                    /* FALLTHRU */
+                case 8:
+                    *op++ = *ref++;
+                    /* FALLTHRU */
+                case 7:
+                    *op++ = *ref++;
+                    /* FALLTHRU */
+                case 6:
+                    *op++ = *ref++;
+                    /* FALLTHRU */
+                case 5:
+                    *op++ = *ref++;
+                    /* FALLTHRU */
+                case 4:
+                    *op++ = *ref++;
+                    /* FALLTHRU */
+                case 3:
+                    *op++ = *ref++;
+                    /* FALLTHRU */
+                case 2:
+                    *op++ = *ref++;
+                    /* FALLTHRU */
+                case 1:
+                    *op++ = *ref++;
+                    /* FALLTHRU */
+                case 0:
+                    *op++ = *ref++; // two octets more
+                    *op++ = *ref++;
+            }
         }
-        case 9: *op++ = *ref++;
-          /* FALLTHRU */
-        case 8: *op++ = *ref++;
-          /* FALLTHRU */
-        case 7: *op++ = *ref++;
-          /* FALLTHRU */
-        case 6: *op++ = *ref++;
-          /* FALLTHRU */
-        case 5: *op++ = *ref++;
-          /* FALLTHRU */
-        case 4: *op++ = *ref++;
-          /* FALLTHRU */
-        case 3: *op++ = *ref++;
-          /* FALLTHRU */
-        case 2: *op++ = *ref++;
-          /* FALLTHRU */
-        case 1: *op++ = *ref++;
-          /* FALLTHRU */
-        case 0: *op++ = *ref++; // two octets more
-                *op++ = *ref++;
-      }
-    }
-  }
-  while (ip < in_end);
+    } while (ip < in_end);
 
-  return (static_cast<unsigned int> (op - static_cast<unsigned char*> (out_data)));
+    return (static_cast<unsigned int>(op - static_cast<unsigned char *>(out_data)));
 }
-}
+} // namespace Points
 
-PlyReader::PlyReader()
-{
-}
+PlyReader::PlyReader() {}
 
-PlyReader::~PlyReader()
-{
-}
+PlyReader::~PlyReader() {}
 
-void PlyReader::read(const std::string& filename)
+void PlyReader::read(const std::string &filename)
 {
     clear();
     this->width = 1;
@@ -532,9 +503,7 @@ void PlyReader::read(const std::string& filename)
     std::size_t numPoints = readHeader(inp, format, offset, fields, types, sizes);
 
     Eigen::MatrixXd data(numPoints, fields.size());
-    if (format == "ascii") {
-        readAscii(inp, offset, data);
-    }
+    if (format == "ascii") { readAscii(inp, offset, data); }
     else if (format == "binary_little_endian") {
         readBinary(false, inp, offset, types, sizes, data);
     }
@@ -548,68 +517,54 @@ void PlyReader::read(const std::string& filename)
     // x field
     std::size_t x = max_size;
     it = std::find(fields.begin(), fields.end(), "x");
-    if (it != fields.end())
-        x = std::distance(fields.begin(), it);
+    if (it != fields.end()) x = std::distance(fields.begin(), it);
 
     // y field
     std::size_t y = max_size;
     it = std::find(fields.begin(), fields.end(), "y");
-    if (it != fields.end())
-        y = std::distance(fields.begin(), it);
+    if (it != fields.end()) y = std::distance(fields.begin(), it);
 
     // z field
     std::size_t z = max_size;
     it = std::find(fields.begin(), fields.end(), "z");
-    if (it != fields.end())
-        z = std::distance(fields.begin(), it);
+    if (it != fields.end()) z = std::distance(fields.begin(), it);
 
     // normal x field
     std::size_t normal_x = max_size;
     it = std::find(fields.begin(), fields.end(), "normal_x");
-    if (it == fields.end())
-        it = std::find(fields.begin(), fields.end(), "nx");
-    if (it != fields.end())
-        normal_x = std::distance(fields.begin(), it);
+    if (it == fields.end()) it = std::find(fields.begin(), fields.end(), "nx");
+    if (it != fields.end()) normal_x = std::distance(fields.begin(), it);
 
     // normal y field
     std::size_t normal_y = max_size;
     it = std::find(fields.begin(), fields.end(), "normal_y");
-    if (it == fields.end())
-        it = std::find(fields.begin(), fields.end(), "ny");
-    if (it != fields.end())
-        normal_y = std::distance(fields.begin(), it);
+    if (it == fields.end()) it = std::find(fields.begin(), fields.end(), "ny");
+    if (it != fields.end()) normal_y = std::distance(fields.begin(), it);
 
     // normal z field
     std::size_t normal_z = max_size;
     it = std::find(fields.begin(), fields.end(), "normal_z");
-    if (it == fields.end())
-        it = std::find(fields.begin(), fields.end(), "nz");
-    if (it != fields.end())
-        normal_z = std::distance(fields.begin(), it);
+    if (it == fields.end()) it = std::find(fields.begin(), fields.end(), "nz");
+    if (it != fields.end()) normal_z = std::distance(fields.begin(), it);
 
     // intensity field
     std::size_t greyvalue = max_size;
     it = std::find(fields.begin(), fields.end(), "intensity");
-    if (it != fields.end())
-        greyvalue = std::distance(fields.begin(), it);
+    if (it != fields.end()) greyvalue = std::distance(fields.begin(), it);
 
     // rgb(a) field
     std::size_t red = max_size, green = max_size, blue = max_size, alpha = max_size;
     it = std::find(fields.begin(), fields.end(), "red");
-    if (it != fields.end())
-        red = std::distance(fields.begin(), it);
+    if (it != fields.end()) red = std::distance(fields.begin(), it);
 
     it = std::find(fields.begin(), fields.end(), "green");
-    if (it != fields.end())
-        green = std::distance(fields.begin(), it);
+    if (it != fields.end()) green = std::distance(fields.begin(), it);
 
     it = std::find(fields.begin(), fields.end(), "blue");
-    if (it != fields.end())
-        blue = std::distance(fields.begin(), it);
+    if (it != fields.end()) blue = std::distance(fields.begin(), it);
 
     it = std::find(fields.begin(), fields.end(), "alpha");
-    if (it != fields.end())
-        alpha = std::distance(fields.begin(), it);
+    if (it != fields.end()) alpha = std::distance(fields.begin(), it);
 
     // transfer the data
     bool hasData = (x != max_size && y != max_size && z != max_size);
@@ -619,66 +574,57 @@ void PlyReader::read(const std::string& filename)
 
     if (hasData) {
         points.reserve(numPoints);
-        for (std::size_t i=0; i<numPoints; i++) {
-            points.push_back(Base::Vector3d(data(i,x),data(i,y),data(i,z)));
+        for (std::size_t i = 0; i < numPoints; i++) {
+            points.push_back(Base::Vector3d(data(i, x), data(i, y), data(i, z)));
         }
     }
 
     if (hasData && hasNormal) {
         normals.reserve(numPoints);
-        for (std::size_t i=0; i<numPoints; i++) {
-            normals.emplace_back(data(i,normal_x),data(i,normal_y),data(i,normal_z));
+        for (std::size_t i = 0; i < numPoints; i++) {
+            normals.emplace_back(data(i, normal_x), data(i, normal_y), data(i, normal_z));
         }
     }
 
     if (hasData && hasIntensity) {
         intensity.reserve(numPoints);
-        for (std::size_t i=0; i<numPoints; i++) {
-            intensity.push_back(data(i,greyvalue));
-        }
+        for (std::size_t i = 0; i < numPoints; i++) { intensity.push_back(data(i, greyvalue)); }
     }
 
     if (hasData && hasColor) {
         colors.reserve(numPoints);
         float a = 1.0;
         if (types[red] == "uchar") {
-            for (std::size_t i=0; i<numPoints; i++) {
+            for (std::size_t i = 0; i < numPoints; i++) {
                 float r = data(i, red);
                 float g = data(i, green);
                 float b = data(i, blue);
-                if (alpha != max_size)
-                    a = data(i, alpha);
-                colors.emplace_back(static_cast<float>(r)/255.0f,
-                                    static_cast<float>(g)/255.0f,
-                                    static_cast<float>(b)/255.0f,
-                                    static_cast<float>(a)/255.0f);
+                if (alpha != max_size) a = data(i, alpha);
+                colors.emplace_back(static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f,
+                                    static_cast<float>(b) / 255.0f, static_cast<float>(a) / 255.0f);
             }
         }
         else if (types[red] == "float") {
-            for (std::size_t i=0; i<numPoints; i++) {
+            for (std::size_t i = 0; i < numPoints; i++) {
                 float r = data(i, red);
                 float g = data(i, green);
                 float b = data(i, blue);
-                if (alpha != max_size)
-                    a = data(i, alpha);
+                if (alpha != max_size) a = data(i, alpha);
                 colors.emplace_back(r, g, b, a);
             }
         }
     }
 }
 
-std::size_t PlyReader::readHeader(std::istream& in,
-                                  std::string& format,
-                                  std::size_t& offset,
-                                  std::vector<std::string>& fields,
-                                  std::vector<std::string>& types,
-                                  std::vector<int>& sizes)
+std::size_t PlyReader::readHeader(std::istream &in, std::string &format, std::size_t &offset,
+                                  std::vector<std::string> &fields, std::vector<std::string> &types,
+                                  std::vector<int> &sizes)
 {
     std::string line, element;
     std::vector<std::string> list;
     std::size_t numPoints = 0;
     // a pair of numbers of elements and the total size of the properties
-    std::vector<std::pair<std::size_t, std::size_t> > count_props;
+    std::vector<std::pair<std::size_t, std::size_t>> count_props;
 
     // read in the first three characters
     char ply[3];
@@ -688,12 +634,11 @@ std::size_t PlyReader::readHeader(std::istream& in,
         throw Base::BadFormatError("Not a ply file"); // wrong header
 
     while (std::getline(in, line)) {
-        if (line.empty())
-            continue;
+        if (line.empty()) continue;
 
         // since the file is loaded in binary mode we may get the CR at the end
         boost::trim(line);
-        boost::split(list, line, boost::is_any_of ("\t\r "), boost::token_compress_on);
+        boost::split(list, line, boost::is_any_of("\t\r "), boost::token_compress_on);
 
         std::istringstream str(line);
         str.imbue(std::locale::classic());
@@ -701,16 +646,12 @@ std::size_t PlyReader::readHeader(std::istream& in,
         std::string kw;
         str >> kw;
         if (kw == "format") {
-            if (list.size() != 3) {
-                throw Base::BadFormatError("Not a valid ply file");
-            }
+            if (list.size() != 3) { throw Base::BadFormatError("Not a valid ply file"); }
 
             std::string format_string = list[1];
             std::string version = list[2];
 
-            if (format_string == "ascii") {
-                format = format_string;
-            }
+            if (format_string == "ascii") { format = format_string; }
             else if (format_string == "binary_big_endian") {
                 format = format_string;
             }
@@ -727,9 +668,7 @@ std::size_t PlyReader::readHeader(std::istream& in,
             }
         }
         else if (kw == "element") {
-            if (list.size() != 3) {
-                throw Base::BadFormatError("Not a valid ply file");
-            }
+            if (list.size() != 3) { throw Base::BadFormatError("Not a valid ply file"); }
 
             std::string name = list[1];
             std::size_t count = boost::lexical_cast<std::size_t>(list[2]);
@@ -739,9 +678,7 @@ std::size_t PlyReader::readHeader(std::istream& in,
             }
             else {
                 // if another element than 'vertex' comes first then calculate the offset
-                if (numPoints == 0) {
-                    count_props.emplace_back(count, 0);
-                }
+                if (numPoints == 0) { count_props.emplace_back(count, 0); }
                 else {
                     // this happens for elements coming after 'vertex'
                     element.clear();
@@ -749,9 +686,7 @@ std::size_t PlyReader::readHeader(std::istream& in,
             }
         }
         else if (kw == "property") {
-            if (list.size() < 3) {
-                throw Base::BadFormatError("Not a valid ply file");
-            }
+            if (list.size() < 3) { throw Base::BadFormatError("Not a valid ply file"); }
 
             std::string name = list.back();
             std::list<std::string> number;
@@ -767,9 +702,7 @@ std::size_t PlyReader::readHeader(std::istream& in,
 
             for (std::list<std::string>::iterator it = number.begin(); it != number.end(); ++it) {
                 int size = 0;
-                if (*it == "char" || *it == "int8") {
-                    size = 1;
-                }
+                if (*it == "char" || *it == "int8") { size = 1; }
                 else if (*it == "uchar" || *it == "uint8") {
                     size = 1;
                 }
@@ -812,21 +745,18 @@ std::size_t PlyReader::readHeader(std::istream& in,
         }
     }
 
-    if (fields.size() != sizes.size() ||
-        fields.size() != types.size()) {
+    if (fields.size() != sizes.size() || fields.size() != types.size()) {
         throw Base::BadFormatError("");
     }
 
     offset = 0;
     if (format == "ascii") {
         // just sum up the number of lines to ignore
-        std::vector<std::pair<std::size_t, std::size_t> >::iterator it;
-        for (it = count_props.begin(); it != count_props.end(); ++it) {
-            offset += it->first;
-        }
+        std::vector<std::pair<std::size_t, std::size_t>>::iterator it;
+        for (it = count_props.begin(); it != count_props.end(); ++it) { offset += it->first; }
     }
     else {
-        std::vector<std::pair<std::size_t, std::size_t> >::iterator it;
+        std::vector<std::pair<std::size_t, std::size_t>>::iterator it;
         for (it = count_props.begin(); it != count_props.end(); ++it) {
             offset += it->first * it->second;
         }
@@ -835,7 +765,7 @@ std::size_t PlyReader::readHeader(std::istream& in,
     return numPoints;
 }
 
-void PlyReader::readAscii(std::istream& inp, std::size_t offset, Eigen::MatrixXd& data)
+void PlyReader::readAscii(std::istream &inp, std::size_t offset, Eigen::MatrixXd &data)
 {
     std::string line;
     std::size_t row = 0;
@@ -843,8 +773,7 @@ void PlyReader::readAscii(std::istream& inp, std::size_t offset, Eigen::MatrixXd
     std::size_t numFields = data.cols();
     std::vector<std::string> list;
     while (std::getline(inp, line) && row < numPoints) {
-        if (line.empty())
-            continue;
+        if (line.empty()) continue;
 
         if (offset > 0) {
             offset--;
@@ -853,7 +782,7 @@ void PlyReader::readAscii(std::istream& inp, std::size_t offset, Eigen::MatrixXd
 
         // since the file is loaded in binary mode we may get the CR at the end
         boost::trim(line);
-        boost::split(list, line, boost::is_any_of ("\t\r "), boost::token_compress_on);
+        boost::split(list, line, boost::is_any_of("\t\r "), boost::token_compress_on);
 
         std::istringstream str(line);
 
@@ -866,12 +795,9 @@ void PlyReader::readAscii(std::istream& inp, std::size_t offset, Eigen::MatrixXd
     }
 }
 
-void PlyReader::readBinary(bool swapByteOrder,
-                           std::istream& inp,
-                           std::size_t offset,
-                           const std::vector<std::string>& types,
-                           const std::vector<int>& sizes,
-                           Eigen::MatrixXd& data)
+void PlyReader::readBinary(bool swapByteOrder, std::istream &inp, std::size_t offset,
+                           const std::vector<std::string> &types, const std::vector<int> &sizes,
+                           Eigen::MatrixXd &data)
 {
     std::size_t numPoints = data.rows();
     std::size_t numFields = data.cols();
@@ -887,43 +813,38 @@ void PlyReader::readBinary(bool swapByteOrder,
     ConverterPtr convert_uint32(new ConverterT<uint32_t>);
 
     std::vector<ConverterPtr> converters;
-    for (std::size_t j=0; j<numFields; j++) {
+    for (std::size_t j = 0; j < numFields; j++) {
         std::string t = types[j];
         switch (sizes[j]) {
-        case 1:
-            if (t == "char" || t == "int8")
-                converters.push_back(convert_int8);
-            else if (t == "uchar" || t == "uint8")
-                converters.push_back(convert_uint8);
-            else
-                throw Base::BadFormatError("Unexpected type");
-            break;
-        case 2:
-            if (t == "short" || t == "int16")
-                converters.push_back(convert_int16);
-            else if (t == "ushort" || t == "uint16")
-                converters.push_back(convert_uint16);
-            else
-                throw Base::BadFormatError("Unexpected type");
-            break;
-        case 4:
-            if (t == "int" || t == "int32")
-                converters.push_back(convert_int32);
-            else if (t == "uint" || t == "uint32")
-                converters.push_back(convert_uint32);
-            else if (t == "float" || t == "float32")
-                converters.push_back(convert_float32);
-            else
-                throw Base::BadFormatError("Unexpected type");
-            break;
-        case 8:
-            if (t == "double" || t == "float64")
-                converters.push_back(convert_float64);
-            else
-                throw Base::BadFormatError("Unexpected type");
-            break;
-        default:
-            throw Base::BadFormatError("Unexpected type");
+            case 1:
+                if (t == "char" || t == "int8") converters.push_back(convert_int8);
+                else if (t == "uchar" || t == "uint8")
+                    converters.push_back(convert_uint8);
+                else
+                    throw Base::BadFormatError("Unexpected type");
+                break;
+            case 2:
+                if (t == "short" || t == "int16") converters.push_back(convert_int16);
+                else if (t == "ushort" || t == "uint16")
+                    converters.push_back(convert_uint16);
+                else
+                    throw Base::BadFormatError("Unexpected type");
+                break;
+            case 4:
+                if (t == "int" || t == "int32") converters.push_back(convert_int32);
+                else if (t == "uint" || t == "uint32")
+                    converters.push_back(convert_uint32);
+                else if (t == "float" || t == "float32")
+                    converters.push_back(convert_float32);
+                else
+                    throw Base::BadFormatError("Unexpected type");
+                break;
+            case 8:
+                if (t == "double" || t == "float64") converters.push_back(convert_float64);
+                else
+                    throw Base::BadFormatError("Unexpected type");
+                break;
+            default: throw Base::BadFormatError("Unexpected type");
         }
 
         neededSize += converters.back()->getSizeOf();
@@ -931,19 +852,19 @@ void PlyReader::readBinary(bool swapByteOrder,
 
     std::streamoff ulSize = 0;
     std::streamoff ulCurr = 0;
-    std::streambuf* buf = inp.rdbuf();
+    std::streambuf *buf = inp.rdbuf();
     if (buf) {
         ulCurr = buf->pubseekoff(static_cast<std::streamoff>(offset), std::ios::cur, std::ios::in);
         ulSize = buf->pubseekoff(0, std::ios::end, std::ios::in);
         buf->pubseekoff(ulCurr, std::ios::beg, std::ios::in);
-        if (ulCurr + neededSize*static_cast<std::streamoff>(numPoints) > ulSize)
+        if (ulCurr + neededSize * static_cast<std::streamoff>(numPoints) > ulSize)
             throw Base::BadFormatError("File expects too many elements");
     }
 
     Base::InputStream str(inp);
     str.setByteOrder(swapByteOrder ? Base::Stream::BigEndian : Base::Stream::LittleEndian);
-    for (std::size_t i=0; i<numPoints; i++) {
-        for (std::size_t j=0; j<numFields; j++) {
+    for (std::size_t i = 0; i < numPoints; i++) {
+        for (std::size_t j = 0; j < numFields; j++) {
             double value = converters[j]->toDouble(str);
             data(i, j) = value;
         }
@@ -952,15 +873,11 @@ void PlyReader::readBinary(bool swapByteOrder,
 
 // ----------------------------------------------------------------------------
 
-PcdReader::PcdReader()
-{
-}
+PcdReader::PcdReader() {}
 
-PcdReader::~PcdReader()
-{
-}
+PcdReader::~PcdReader() {}
 
-void PcdReader::read(const std::string& filename)
+void PcdReader::read(const std::string &filename)
 {
     clear();
     this->width = -1;
@@ -976,9 +893,7 @@ void PcdReader::read(const std::string& filename)
     std::size_t numPoints = readHeader(inp, format, fields, types, sizes);
 
     Eigen::MatrixXd data(numPoints, fields.size());
-    if (format == "ascii") {
-        readAscii(inp, data);
-    }
+    if (format == "ascii") { readAscii(inp, data); }
     else if (format == "binary") {
         readBinary(false, inp, types, sizes, data);
     }
@@ -1007,58 +922,46 @@ void PcdReader::read(const std::string& filename)
     // x field
     std::size_t x = max_size;
     it = std::find(fields.begin(), fields.end(), "x");
-    if (it != fields.end())
-        x = std::distance(fields.begin(), it);
+    if (it != fields.end()) x = std::distance(fields.begin(), it);
 
     // y field
     std::size_t y = max_size;
     it = std::find(fields.begin(), fields.end(), "y");
-    if (it != fields.end())
-        y = std::distance(fields.begin(), it);
+    if (it != fields.end()) y = std::distance(fields.begin(), it);
 
     // z field
     std::size_t z = max_size;
     it = std::find(fields.begin(), fields.end(), "z");
-    if (it != fields.end())
-        z = std::distance(fields.begin(), it);
+    if (it != fields.end()) z = std::distance(fields.begin(), it);
 
     // normal x field
     std::size_t normal_x = max_size;
     it = std::find(fields.begin(), fields.end(), "normal_x");
-    if (it == fields.end())
-        it = std::find(fields.begin(), fields.end(), "nx");
-    if (it != fields.end())
-        normal_x = std::distance(fields.begin(), it);
+    if (it == fields.end()) it = std::find(fields.begin(), fields.end(), "nx");
+    if (it != fields.end()) normal_x = std::distance(fields.begin(), it);
 
     // normal y field
     std::size_t normal_y = max_size;
     it = std::find(fields.begin(), fields.end(), "normal_y");
-    if (it == fields.end())
-        it = std::find(fields.begin(), fields.end(), "ny");
-    if (it != fields.end())
-        normal_y = std::distance(fields.begin(), it);
+    if (it == fields.end()) it = std::find(fields.begin(), fields.end(), "ny");
+    if (it != fields.end()) normal_y = std::distance(fields.begin(), it);
 
     // normal z field
     std::size_t normal_z = max_size;
     it = std::find(fields.begin(), fields.end(), "normal_z");
-    if (it == fields.end())
-        it = std::find(fields.begin(), fields.end(), "nz");
-    if (it != fields.end())
-        normal_z = std::distance(fields.begin(), it);
+    if (it == fields.end()) it = std::find(fields.begin(), fields.end(), "nz");
+    if (it != fields.end()) normal_z = std::distance(fields.begin(), it);
 
     // intensity field
     std::size_t greyvalue = max_size;
     it = std::find(fields.begin(), fields.end(), "intensity");
-    if (it != fields.end())
-        greyvalue = std::distance(fields.begin(), it);
+    if (it != fields.end()) greyvalue = std::distance(fields.begin(), it);
 
     // rgb(a) field
     std::size_t rgba = max_size;
     it = std::find(fields.begin(), fields.end(), "rgb");
-    if (it == fields.end())
-        it = std::find(fields.begin(), fields.end(), "rgba");
-    if (it != fields.end())
-        rgba = std::distance(fields.begin(), it);
+    if (it == fields.end()) it = std::find(fields.begin(), fields.end(), "rgba");
+    if (it != fields.end()) rgba = std::distance(fields.begin(), it);
 
     // transfer the data
     bool hasData = (x != max_size && y != max_size && z != max_size);
@@ -1068,64 +971,57 @@ void PcdReader::read(const std::string& filename)
 
     if (hasData) {
         points.reserve(numPoints);
-        for (std::size_t i=0; i<numPoints; i++) {
-            points.push_back(Base::Vector3d(data(i,x),data(i,y),data(i,z)));
+        for (std::size_t i = 0; i < numPoints; i++) {
+            points.push_back(Base::Vector3d(data(i, x), data(i, y), data(i, z)));
         }
     }
 
     if (hasData && hasNormal) {
         normals.reserve(numPoints);
-        for (std::size_t i=0; i<numPoints; i++) {
-            normals.emplace_back(data(i,normal_x),data(i,normal_y),data(i,normal_z));
+        for (std::size_t i = 0; i < numPoints; i++) {
+            normals.emplace_back(data(i, normal_x), data(i, normal_y), data(i, normal_z));
         }
     }
 
     if (hasData && hasIntensity) {
         intensity.reserve(numPoints);
-        for (std::size_t i=0; i<numPoints; i++) {
-            intensity.push_back(data(i,greyvalue));
-        }
+        for (std::size_t i = 0; i < numPoints; i++) { intensity.push_back(data(i, greyvalue)); }
     }
 
     if (hasData && hasColor) {
         colors.reserve(numPoints);
         if (types[rgba] == "U") {
-            for (std::size_t i=0; i<numPoints; i++) {
-                uint32_t packed = static_cast<uint32_t>(data(i,rgba));
+            for (std::size_t i = 0; i < numPoints; i++) {
+                uint32_t packed = static_cast<uint32_t>(data(i, rgba));
                 uint32_t a = (packed >> 24) & 0xff;
                 uint32_t r = (packed >> 16) & 0xff;
                 uint32_t g = (packed >> 8) & 0xff;
                 uint32_t b = packed & 0xff;
-                colors.emplace_back(static_cast<float>(r)/255.0f,
-                                    static_cast<float>(g)/255.0f,
-                                    static_cast<float>(b)/255.0f,
-                                    static_cast<float>(a)/255.0f);
+                colors.emplace_back(static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f,
+                                    static_cast<float>(b) / 255.0f, static_cast<float>(a) / 255.0f);
             }
         }
         else if (types[rgba] == "F") {
-            static_assert(sizeof(float) == sizeof(uint32_t), "float and uint32_t have different sizes");
-            for (std::size_t i=0; i<numPoints; i++) {
-                float f = static_cast<float>(data(i,rgba));
+            static_assert(sizeof(float) == sizeof(uint32_t),
+                          "float and uint32_t have different sizes");
+            for (std::size_t i = 0; i < numPoints; i++) {
+                float f = static_cast<float>(data(i, rgba));
                 uint32_t packed;
                 std::memcpy(&packed, &f, sizeof(packed));
                 uint32_t a = (packed >> 24) & 0xff;
                 uint32_t r = (packed >> 16) & 0xff;
                 uint32_t g = (packed >> 8) & 0xff;
                 uint32_t b = packed & 0xff;
-                colors.emplace_back(static_cast<float>(r)/255.0f,
-                                    static_cast<float>(g)/255.0f,
-                                    static_cast<float>(b)/255.0f,
-                                    static_cast<float>(a)/255.0f);
+                colors.emplace_back(static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f,
+                                    static_cast<float>(b) / 255.0f, static_cast<float>(a) / 255.0f);
             }
         }
     }
 }
 
-std::size_t PcdReader::readHeader(std::istream& in,
-                                  std::string& format,
-                                  std::vector<std::string>& fields,
-                                  std::vector<std::string>& types,
-                                  std::vector<int>& sizes)
+std::size_t PcdReader::readHeader(std::istream &in, std::string &format,
+                                  std::vector<std::string> &fields, std::vector<std::string> &types,
+                                  std::vector<int> &sizes)
 {
     std::string line;
     std::vector<std::string> counts;
@@ -1133,12 +1029,11 @@ std::size_t PcdReader::readHeader(std::istream& in,
     std::size_t points = 0;
 
     while (std::getline(in, line)) {
-        if (line.empty())
-            continue;
+        if (line.empty()) continue;
 
         // since the file is loaded in binary mode we may get the CR at the end
         boost::trim(line);
-        boost::split(list, line, boost::is_any_of ("\t\r "), boost::token_compress_on);
+        boost::split(list, line, boost::is_any_of("\t\r "), boost::token_compress_on);
 
         std::istringstream str(line);
         str.imbue(std::locale::classic());
@@ -1146,24 +1041,18 @@ std::size_t PcdReader::readHeader(std::istream& in,
         std::string kw;
         str >> kw;
         if (kw == "FIELDS") {
-            for (std::size_t i=1; i<list.size(); i++) {
-                fields.push_back(list[i]);
-            }
+            for (std::size_t i = 1; i < list.size(); i++) { fields.push_back(list[i]); }
         }
         else if (kw == "SIZE") {
-            for (std::size_t i=1; i<list.size(); i++) {
+            for (std::size_t i = 1; i < list.size(); i++) {
                 sizes.push_back(boost::lexical_cast<int>(list[i]));
             }
         }
         else if (kw == "TYPE") {
-            for (std::size_t i=1; i<list.size(); i++) {
-                types.push_back(list[i]);
-            }
+            for (std::size_t i = 1; i < list.size(); i++) { types.push_back(list[i]); }
         }
         else if (kw == "COUNT") {
-            for (std::size_t i=1; i<list.size(); i++) {
-                counts.push_back(list[i]);
-            }
+            for (std::size_t i = 1; i < list.size(); i++) { counts.push_back(list[i]); }
         }
         else if (kw == "WIDTH") {
             str >> std::ws >> this->width;
@@ -1183,17 +1072,15 @@ std::size_t PcdReader::readHeader(std::istream& in,
     std::size_t w = static_cast<std::size_t>(this->width);
     std::size_t h = static_cast<std::size_t>(this->height);
     std::size_t size = w * h;
-    if (fields.size() != sizes.size() ||
-        fields.size() != types.size() ||
-        fields.size() != counts.size() ||
-        points != size) {
+    if (fields.size() != sizes.size() || fields.size() != types.size()
+        || fields.size() != counts.size() || points != size) {
         throw Base::BadFormatError("");
     }
 
     return points;
 }
 
-void PcdReader::readAscii(std::istream& inp, Eigen::MatrixXd& data)
+void PcdReader::readAscii(std::istream &inp, Eigen::MatrixXd &data)
 {
     std::string line;
     std::size_t row = 0;
@@ -1201,12 +1088,11 @@ void PcdReader::readAscii(std::istream& inp, Eigen::MatrixXd& data)
     std::size_t numFields = data.cols();
     std::vector<std::string> list;
     while (std::getline(inp, line) && row < numPoints) {
-        if (line.empty())
-            continue;
+        if (line.empty()) continue;
 
         // since the file is loaded in binary mode we may get the CR at the end
         boost::trim(line);
-        boost::split(list, line, boost::is_any_of ("\t\r "), boost::token_compress_on);
+        boost::split(list, line, boost::is_any_of("\t\r "), boost::token_compress_on);
 
         std::istringstream str(line);
 
@@ -1219,11 +1105,8 @@ void PcdReader::readAscii(std::istream& inp, Eigen::MatrixXd& data)
     }
 }
 
-void PcdReader::readBinary(bool transpose,
-                           std::istream& inp,
-                           const std::vector<std::string>& types,
-                           const std::vector<int>& sizes,
-                           Eigen::MatrixXd& data)
+void PcdReader::readBinary(bool transpose, std::istream &inp, const std::vector<std::string> &types,
+                           const std::vector<int> &sizes, Eigen::MatrixXd &data)
 {
     std::size_t numPoints = data.rows();
     std::size_t numFields = data.cols();
@@ -1239,43 +1122,38 @@ void PcdReader::readBinary(bool transpose,
     ConverterPtr convert_uint32(new ConverterT<uint32_t>);
 
     std::vector<ConverterPtr> converters;
-    for (std::size_t j=0; j<numFields; j++) {
+    for (std::size_t j = 0; j < numFields; j++) {
         char t = types[j][0];
         switch (sizes[j]) {
-        case 1:
-            if (t == 'I')
-                converters.push_back(convert_int8);
-            else if (t == 'U')
-                converters.push_back(convert_uint8);
-            else
-                throw Base::BadFormatError("Unexpected type");
-            break;
-        case 2:
-            if (t == 'I')
-                converters.push_back(convert_int16);
-            else if (t == 'U')
-                converters.push_back(convert_uint16);
-            else
-                throw Base::BadFormatError("Unexpected type");
-            break;
-        case 4:
-            if (t == 'I')
-                converters.push_back(convert_int32);
-            else if (t == 'U')
-                converters.push_back(convert_uint32);
-            else if (t == 'F')
-                converters.push_back(convert_float32);
-            else
-                throw Base::BadFormatError("Unexpected type");
-            break;
-        case 8:
-            if (t == 'F')
-                converters.push_back(convert_float64);
-            else
-                throw Base::BadFormatError("Unexpected type");
-            break;
-        default:
-            throw Base::BadFormatError("Unexpected type");
+            case 1:
+                if (t == 'I') converters.push_back(convert_int8);
+                else if (t == 'U')
+                    converters.push_back(convert_uint8);
+                else
+                    throw Base::BadFormatError("Unexpected type");
+                break;
+            case 2:
+                if (t == 'I') converters.push_back(convert_int16);
+                else if (t == 'U')
+                    converters.push_back(convert_uint16);
+                else
+                    throw Base::BadFormatError("Unexpected type");
+                break;
+            case 4:
+                if (t == 'I') converters.push_back(convert_int32);
+                else if (t == 'U')
+                    converters.push_back(convert_uint32);
+                else if (t == 'F')
+                    converters.push_back(convert_float32);
+                else
+                    throw Base::BadFormatError("Unexpected type");
+                break;
+            case 8:
+                if (t == 'F') converters.push_back(convert_float64);
+                else
+                    throw Base::BadFormatError("Unexpected type");
+                break;
+            default: throw Base::BadFormatError("Unexpected type");
         }
 
         neededSize += converters.back()->getSizeOf();
@@ -1283,27 +1161,27 @@ void PcdReader::readBinary(bool transpose,
 
     std::streamoff ulSize = 0;
     std::streamoff ulCurr = 0;
-    std::streambuf* buf = inp.rdbuf();
+    std::streambuf *buf = inp.rdbuf();
     if (buf) {
         ulCurr = buf->pubseekoff(0, std::ios::cur, std::ios::in);
         ulSize = buf->pubseekoff(0, std::ios::end, std::ios::in);
         buf->pubseekoff(ulCurr, std::ios::beg, std::ios::in);
-        if (ulCurr + neededSize*static_cast<std::streamoff>(numPoints) > ulSize)
+        if (ulCurr + neededSize * static_cast<std::streamoff>(numPoints) > ulSize)
             throw Base::BadFormatError("File expects too many elements");
     }
 
     Base::InputStream str(inp);
     if (transpose) {
-        for (std::size_t j=0; j<numFields; j++) {
-            for (std::size_t i=0; i<numPoints; i++) {
+        for (std::size_t j = 0; j < numFields; j++) {
+            for (std::size_t i = 0; i < numPoints; i++) {
                 double value = converters[j]->toDouble(str);
                 data(i, j) = value;
             }
         }
     }
     else {
-        for (std::size_t i=0; i<numPoints; i++) {
-            for (std::size_t j=0; j<numFields; j++) {
+        for (std::size_t i = 0; i < numPoints; i++) {
+            for (std::size_t j = 0; j < numFields; j++) {
                 double value = converters[j]->toDouble(str);
                 data(i, j) = value;
             }
@@ -1313,18 +1191,16 @@ void PcdReader::readBinary(bool transpose,
 
 // ----------------------------------------------------------------------------
 
-E57Reader::E57Reader(const bool& Color, const bool& State, const float& Distance)
+E57Reader::E57Reader(const bool &Color, const bool &State, const float &Distance)
 {
     useColor = Color;
     checkState = State;
     minDistance = Distance;
 }
 
-E57Reader::~E57Reader()
-{
-}
+E57Reader::~E57Reader() {}
 
-void E57Reader::read(const std::string& filename)
+void E57Reader::read(const std::string &filename)
 {
     try {
         // read file
@@ -1333,9 +1209,9 @@ void E57Reader::read(const std::string& filename)
         if (root.isDefined("data3D")) {
             e57::VectorNode data3D(root.get("data3D"));
             for (int child = 0; child < data3D.childCount(); ++child) {
-                e57::StructureNode            scan_data(data3D.get(child));
-                e57::CompressedVectorNode     cvn(scan_data.get("points"));
-                e57::StructureNode            prototype(cvn.prototype());
+                e57::StructureNode scan_data(data3D.get(child));
+                e57::CompressedVectorNode cvn(scan_data.get("points"));
+                e57::StructureNode prototype(cvn.prototype());
                 // create buffers for the compressed vector reader
                 const size_t buf_size = 1024;
                 double xyz[buf_size * 3];
@@ -1357,122 +1233,67 @@ void E57Reader::read(const std::string& filename)
                     if ((n.type() == e57::E57_FLOAT) || (n.type() == e57::E57_SCALED_INTEGER)) {
                         if (n.elementName() == "cartesianX") {
                             ptr_xyz[0] = cnt_xyz++;
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(xyz[0])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(xyz[0]), buf_size, true, true
 
                             );
                         }
                         else if (n.elementName() == "cartesianY") {
                             ptr_xyz[1] = cnt_xyz++;
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(xyz[buf_size])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(xyz[buf_size]), buf_size,
+                                             true, true
 
                             );
                         }
                         else if (n.elementName() == "cartesianZ") {
                             ptr_xyz[2] = cnt_xyz++;
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(xyz[2 * buf_size])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(xyz[2 * buf_size]), buf_size,
+                                             true, true
 
                             );
                         }
                         else if (n.elementName() == "intensity") {
                             inty = true;
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(intensity[0])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(intensity[0]), buf_size, true,
+                                             true
 
                             );
                         }
                         else {
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(nil[0])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(nil[0]), buf_size, true, true
 
                             );
                         }
-
                     }
                     else if (n.type() == e57::E57_INTEGER) {
                         if (n.elementName() == "colorRed") {
                             ptr_rgb[0] = cnt_rgb++;
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(rgb[0])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(rgb[0]), buf_size, true, true
 
                             );
                         }
                         else if (n.elementName() == "colorGreen") {
                             ptr_rgb[1] = cnt_rgb++;
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(rgb[buf_size])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(rgb[buf_size]), buf_size,
+                                             true, true
 
                             );
                         }
                         else if (n.elementName() == "colorBlue") {
                             ptr_rgb[2] = cnt_rgb++;
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(rgb[2 * buf_size])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(rgb[2 * buf_size]), buf_size,
+                                             true, true
 
                             );
                         }
                         else if (n.elementName() == "cartesianInvalidState") {
                             inv_state = true;
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(state[0])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(state[0]), buf_size, true,
+                                             true
 
                             );
                         }
                         else {
-                            sdb.emplace_back(
-                                    imfi
-                                    , n.elementName()
-                                    , &(nil[0])
-                                    , buf_size
-                                    , true
-                                    , true
+                            sdb.emplace_back(imfi, n.elementName(), &(nil[0]), buf_size, true, true
 
                             );
                         }
@@ -1500,9 +1321,7 @@ void E57Reader::read(const std::string& filename)
                             pt.y = xyz[ptr_xyz[1] * buf_size + i];
                             pt.z = xyz[ptr_xyz[2] * buf_size + i];
                             if ((!filter) && (cnt_pts > 0)) {
-                                if (Base::Distance(last, pt) < minDistance) {
-                                    filter = true;
-                                }
+                                if (Base::Distance(last, pt) < minDistance) { filter = true; }
                             }
                             if (!filter) {
                                 cnt_pts++;
@@ -1510,9 +1329,12 @@ void E57Reader::read(const std::string& filename)
                                 last = pt;
                                 if (hasColor) {
                                     App::Color c;
-                                    c.r = static_cast<float>(rgb[ptr_rgb[0] * buf_size + i]) / 255.0f;
-                                    c.g = static_cast<float>(rgb[ptr_rgb[1] * buf_size + i]) / 255.0f;
-                                    c.b = static_cast<float>(rgb[ptr_rgb[2] * buf_size + i]) / 255.0f;
+                                    c.r =
+                                        static_cast<float>(rgb[ptr_rgb[0] * buf_size + i]) / 255.0f;
+                                    c.g =
+                                        static_cast<float>(rgb[ptr_rgb[1] * buf_size + i]) / 255.0f;
+                                    c.b =
+                                        static_cast<float>(rgb[ptr_rgb[2] * buf_size + i]) / 255.0f;
                                     if (inty) { c.a = intensity[i]; }
                                     colors.push_back(c);
                                 }
@@ -1534,61 +1356,35 @@ void E57Reader::read(const std::string& filename)
 
 // ----------------------------------------------------------------------------
 
-Writer::Writer(const PointKernel& p) : points(p)
+Writer::Writer(const PointKernel &p) : points(p)
 {
     width = p.size();
     height = 1;
 }
 
-Writer::~Writer()
-{
-}
+Writer::~Writer() {}
 
-void Writer::setIntensities(const std::vector<float>& i)
-{
-    intensity = i;
-}
+void Writer::setIntensities(const std::vector<float> &i) { intensity = i; }
 
-void Writer::setColors(const std::vector<App::Color>& c)
-{
-    colors = c;
-}
+void Writer::setColors(const std::vector<App::Color> &c) { colors = c; }
 
-void Writer::setNormals(const std::vector<Base::Vector3f>& n)
-{
-    normals = n;
-}
+void Writer::setNormals(const std::vector<Base::Vector3f> &n) { normals = n; }
 
-void Writer::setWidth(int w)
-{
-    width = w;
-}
+void Writer::setWidth(int w) { width = w; }
 
-void Writer::setHeight(int h)
-{
-    height = h;
-}
+void Writer::setHeight(int h) { height = h; }
 
-void Writer::setPlacement(const Base::Placement& p)
-{
-    placement = p;
-}
+void Writer::setPlacement(const Base::Placement &p) { placement = p; }
 
 // ----------------------------------------------------------------------------
 
-AscWriter::AscWriter(const PointKernel& p) : Writer(p)
-{
-}
+AscWriter::AscWriter(const PointKernel &p) : Writer(p) {}
 
-AscWriter::~AscWriter()
-{
-}
+AscWriter::~AscWriter() {}
 
-void AscWriter::write(const std::string& filename)
+void AscWriter::write(const std::string &filename)
 {
-    if (placement.isIdentity()) {
-        points.save(filename.c_str());
-    }
+    if (placement.isIdentity()) { points.save(filename.c_str()); }
     else {
         PointKernel copy = points;
         copy.transformGeometry(placement.toMatrix());
@@ -1598,15 +1394,11 @@ void AscWriter::write(const std::string& filename)
 
 // ----------------------------------------------------------------------------
 
-PlyWriter::PlyWriter(const PointKernel& p) : Writer(p)
-{
-}
+PlyWriter::PlyWriter(const PointKernel &p) : Writer(p) {}
 
-PlyWriter::~PlyWriter()
-{
-}
+PlyWriter::~PlyWriter() {}
 
-void PlyWriter::write(const std::string& filename)
+void PlyWriter::write(const std::string &filename)
 {
     std::list<std::string> properties;
     properties.emplace_back("float x");
@@ -1652,56 +1444,54 @@ void PlyWriter::write(const std::string& filename)
 
     std::size_t numPoints = points.size();
     std::size_t numValid = 0;
-    const std::vector<Base::Vector3f>& pts = points.getBasicPoints();
-    for (std::size_t i=0; i<numPoints; i++) {
-        const Base::Vector3f& p = pts[i];
-        if (!boost::math::isnan(p.x) &&
-            !boost::math::isnan(p.y) &&
-            !boost::math::isnan(p.z))
+    const std::vector<Base::Vector3f> &pts = points.getBasicPoints();
+    for (std::size_t i = 0; i < numPoints; i++) {
+        const Base::Vector3f &p = pts[i];
+        if (!boost::math::isnan(p.x) && !boost::math::isnan(p.y) && !boost::math::isnan(p.z))
             numValid++;
     }
 
     Eigen::MatrixXf data(numPoints, properties.size());
 
     if (placement.isIdentity()) {
-        for (std::size_t i=0; i<numPoints; i++) {
-            data(i,0) = pts[i].x;
-            data(i,1) = pts[i].y;
-            data(i,2) = pts[i].z;
+        for (std::size_t i = 0; i < numPoints; i++) {
+            data(i, 0) = pts[i].x;
+            data(i, 1) = pts[i].y;
+            data(i, 2) = pts[i].z;
         }
     }
     else {
         Base::Vector3d tmp;
-        for (std::size_t i=0; i<numPoints; i++) {
+        for (std::size_t i = 0; i < numPoints; i++) {
             tmp = Base::convertTo<Base::Vector3d>(pts[i]);
             placement.multVec(tmp, tmp);
-            data(i,0) = static_cast<float>(tmp.x);
-            data(i,1) = static_cast<float>(tmp.y);
-            data(i,2) = static_cast<float>(tmp.z);
+            data(i, 0) = static_cast<float>(tmp.x);
+            data(i, 1) = static_cast<float>(tmp.y);
+            data(i, 2) = static_cast<float>(tmp.z);
         }
     }
 
     std::size_t col = 3;
     if (hasNormals) {
         int col0 = col;
-        int col1 = col+1;
-        int col2 = col+2;
+        int col1 = col + 1;
+        int col2 = col + 2;
         Base::Rotation rot = placement.getRotation();
         if (rot.isIdentity()) {
-            for (std::size_t i=0; i<numPoints; i++) {
-                data(i,col0) = normals[i].x;
-                data(i,col1) = normals[i].y;
-                data(i,col2) = normals[i].z;
+            for (std::size_t i = 0; i < numPoints; i++) {
+                data(i, col0) = normals[i].x;
+                data(i, col1) = normals[i].y;
+                data(i, col2) = normals[i].z;
             }
         }
         else {
             Base::Vector3d tmp;
-            for (std::size_t i=0; i<numPoints; i++) {
+            for (std::size_t i = 0; i < numPoints; i++) {
                 tmp = Base::convertTo<Base::Vector3d>(normals[i]);
                 rot.multVec(tmp, tmp);
-                data(i,col0) = static_cast<float>(tmp.x);
-                data(i,col1) = static_cast<float>(tmp.y);
-                data(i,col2) = static_cast<float>(tmp.z);
+                data(i, col0) = static_cast<float>(tmp.x);
+                data(i, col1) = static_cast<float>(tmp.y);
+                data(i, col2) = static_cast<float>(tmp.z);
             }
         }
         col += 3;
@@ -1709,23 +1499,21 @@ void PlyWriter::write(const std::string& filename)
 
     if (hasColors) {
         int col0 = col;
-        int col1 = col+1;
-        int col2 = col+2;
-        int col3 = col+3;
-        for (std::size_t i=0; i<numPoints; i++) {
+        int col1 = col + 1;
+        int col2 = col + 2;
+        int col3 = col + 3;
+        for (std::size_t i = 0; i < numPoints; i++) {
             App::Color c = colors[i];
-            data(i,col0) = (c.r*255.0f + 0.5f);
-            data(i,col1) = (c.g*255.0f + 0.5f);
-            data(i,col2) = (c.b*255.0f + 0.5f);
-            data(i,col3) = (c.a*255.0f + 0.5f);
+            data(i, col0) = (c.r * 255.0f + 0.5f);
+            data(i, col1) = (c.g * 255.0f + 0.5f);
+            data(i, col2) = (c.b * 255.0f + 0.5f);
+            data(i, col3) = (c.a * 255.0f + 0.5f);
         }
         col += 4;
     }
 
     if (hasIntensity) {
-        for (std::size_t i=0; i<numPoints; i++) {
-            data(i,col) = intensity[i];
-        }
+        for (std::size_t i = 0; i < numPoints; i++) { data(i, col) = intensity[i]; }
         col += 1;
     }
 
@@ -1740,15 +1528,12 @@ void PlyWriter::write(const std::string& filename)
         out << "property " << *it << std::endl;
     out << "end_header" << std::endl;
 
-    for (std::size_t r=0; r<numPoints; r++) {
-        if (boost::math::isnan(data(r,0)))
-            continue;
-        if (boost::math::isnan(data(r,1)))
-            continue;
-        if (boost::math::isnan(data(r,2)))
-            continue;
-        for (std::size_t c=0; c<col; c++) {
-            float value = data(r,c);
+    for (std::size_t r = 0; r < numPoints; r++) {
+        if (boost::math::isnan(data(r, 0))) continue;
+        if (boost::math::isnan(data(r, 1))) continue;
+        if (boost::math::isnan(data(r, 2))) continue;
+        for (std::size_t c = 0; c < col; c++) {
+            float value = data(r, c);
             out << converters[c]->toString(value) << " ";
         }
         out << std::endl;
@@ -1757,15 +1542,11 @@ void PlyWriter::write(const std::string& filename)
 
 // ----------------------------------------------------------------------------
 
-PcdWriter::PcdWriter(const PointKernel& p) : Writer(p)
-{
-}
+PcdWriter::PcdWriter(const PointKernel &p) : Writer(p) {}
 
-PcdWriter::~PcdWriter()
-{
-}
+PcdWriter::~PcdWriter() {}
 
-void PcdWriter::write(const std::string& filename)
+void PcdWriter::write(const std::string &filename)
 {
     std::list<std::string> fields;
     fields.emplace_back("x");
@@ -1814,79 +1595,76 @@ void PcdWriter::write(const std::string& filename)
     }
 
     std::size_t numPoints = points.size();
-    const std::vector<Base::Vector3f>& pts = points.getBasicPoints();
+    const std::vector<Base::Vector3f> &pts = points.getBasicPoints();
 
     Eigen::MatrixXd data(numPoints, fields.size());
 
     if (placement.isIdentity()) {
-        for (std::size_t i=0; i<numPoints; i++) {
-            data(i,0) = pts[i].x;
-            data(i,1) = pts[i].y;
-            data(i,2) = pts[i].z;
+        for (std::size_t i = 0; i < numPoints; i++) {
+            data(i, 0) = pts[i].x;
+            data(i, 1) = pts[i].y;
+            data(i, 2) = pts[i].z;
         }
     }
     else {
         Base::Vector3d tmp;
-        for (std::size_t i=0; i<numPoints; i++) {
+        for (std::size_t i = 0; i < numPoints; i++) {
             tmp = Base::convertTo<Base::Vector3d>(pts[i]);
             placement.multVec(tmp, tmp);
-            data(i,0) = static_cast<float>(tmp.x);
-            data(i,1) = static_cast<float>(tmp.y);
-            data(i,2) = static_cast<float>(tmp.z);
+            data(i, 0) = static_cast<float>(tmp.x);
+            data(i, 1) = static_cast<float>(tmp.y);
+            data(i, 2) = static_cast<float>(tmp.z);
         }
     }
 
     std::size_t col = 3;
     if (hasNormals) {
         int col0 = col;
-        int col1 = col+1;
-        int col2 = col+2;
+        int col1 = col + 1;
+        int col2 = col + 2;
         Base::Rotation rot = placement.getRotation();
         if (rot.isIdentity()) {
-            for (std::size_t i=0; i<numPoints; i++) {
-                data(i,col0) = normals[i].x;
-                data(i,col1) = normals[i].y;
-                data(i,col2) = normals[i].z;
+            for (std::size_t i = 0; i < numPoints; i++) {
+                data(i, col0) = normals[i].x;
+                data(i, col1) = normals[i].y;
+                data(i, col2) = normals[i].z;
             }
         }
         else {
             Base::Vector3d tmp;
-            for (std::size_t i=0; i<numPoints; i++) {
+            for (std::size_t i = 0; i < numPoints; i++) {
                 tmp = Base::convertTo<Base::Vector3d>(normals[i]);
                 rot.multVec(tmp, tmp);
-                data(i,col0) = static_cast<float>(tmp.x);
-                data(i,col1) = static_cast<float>(tmp.y);
-                data(i,col2) = static_cast<float>(tmp.z);
+                data(i, col0) = static_cast<float>(tmp.x);
+                data(i, col1) = static_cast<float>(tmp.y);
+                data(i, col2) = static_cast<float>(tmp.z);
             }
         }
         col += 3;
     }
 
     if (hasColors) {
-        for (std::size_t i=0; i<numPoints; i++) {
+        for (std::size_t i = 0; i < numPoints; i++) {
             App::Color c = colors[i];
             // http://docs.pointclouds.org/1.3.0/structpcl_1_1_r_g_b.html
-            uint32_t packed = static_cast<uint32_t>(c.a*255.0f + 0.5f) << 24 |
-                              static_cast<uint32_t>(c.r*255.0f + 0.5f) << 16 |
-                              static_cast<uint32_t>(c.g*255.0f + 0.5f) << 8  |
-                              static_cast<uint32_t>(c.b*255.0f + 0.5f);
+            uint32_t packed = static_cast<uint32_t>(c.a * 255.0f + 0.5f) << 24
+                | static_cast<uint32_t>(c.r * 255.0f + 0.5f) << 16
+                | static_cast<uint32_t>(c.g * 255.0f + 0.5f) << 8
+                | static_cast<uint32_t>(c.b * 255.0f + 0.5f);
 
-            data(i,col) = packed;
+            data(i, col) = packed;
         }
         col += 1;
     }
 
     if (hasIntensity) {
-        for (std::size_t i=0; i<numPoints; i++) {
-            data(i,col) = intensity[i];
-        }
+        for (std::size_t i = 0; i < numPoints; i++) { data(i, col) = intensity[i]; }
         col += 1;
     }
 
     std::size_t numFields = fields.size();
     Base::ofstream out(filename, std::ios::out);
-    out << "# .PCD v0.7 - Point Cloud Data file format" << std::endl
-        << "VERSION 0.7" << std::endl;
+    out << "# .PCD v0.7 - Point Cloud Data file format" << std::endl << "VERSION 0.7" << std::endl;
 
     // the fields
     out << "FIELDS";
@@ -1896,8 +1674,7 @@ void PcdWriter::write(const std::string& filename)
 
     // the sizes
     out << "SIZE";
-    for (std::size_t i=0; i<numFields; i++)
-        out << " 4";
+    for (std::size_t i = 0; i < numFields; i++) out << " 4";
     out << std::endl;
 
     // the types
@@ -1908,8 +1685,7 @@ void PcdWriter::write(const std::string& filename)
 
     // the count
     out << "COUNT";
-    for (std::size_t i=0; i<numFields; i++)
-        out << " 1";
+    for (std::size_t i = 0; i < numFields; i++) out << " 1";
     out << std::endl;
 
     out << "WIDTH " << width << std::endl;
@@ -1918,18 +1694,17 @@ void PcdWriter::write(const std::string& filename)
     Base::Placement plm;
     Base::Vector3d p = plm.getPosition();
     Base::Rotation o = plm.getRotation();
-    double x,y,z,w; o.getValue(x,y,z,w);
-    out << "VIEWPOINT " << p.x << " " << p.y << " " << p.z
-        << " " << w << " " << x << " " << y << " " << z << std::endl;
+    double x, y, z, w;
+    o.getValue(x, y, z, w);
+    out << "VIEWPOINT " << p.x << " " << p.y << " " << p.z << " " << w << " " << x << " " << y
+        << " " << z << std::endl;
 
-    out << "POINTS " << numPoints << std::endl
-        << "DATA ascii" << std::endl;
+    out << "POINTS " << numPoints << std::endl << "DATA ascii" << std::endl;
 
-    for (std::size_t r=0; r<numPoints; r++) {
-        for (std::size_t c=0; c<col; c++) {
-            double value = data(r,c);
-            if (boost::math::isnan(value))
-                out << "nan ";
+    for (std::size_t r = 0; r < numPoints; r++) {
+        for (std::size_t c = 0; c < col; c++) {
+            double value = data(r, c);
+            if (boost::math::isnan(value)) out << "nan ";
             else
                 out << converters[c]->toString(value) << " ";
         }

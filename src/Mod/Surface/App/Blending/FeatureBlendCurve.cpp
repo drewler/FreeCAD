@@ -66,41 +66,35 @@ FeatureBlendCurve::FeatureBlendCurve() : lockOnChangeMutex(false)
 
 short FeatureBlendCurve::mustExecute() const
 {
-    if (StartEdge.isTouched())
-        return 1;
-    if (StartParameter.isTouched())
-        return 1;
-    if (StartContinuity.isTouched())
-        return 1;
-    if (StartSize.isTouched())
-        return 1;
-    if (EndEdge.isTouched())
-        return 1;
-    if (EndParameter.isTouched())
-        return 1;
-    if (EndContinuity.isTouched())
-        return 1;
-    if (EndSize.isTouched())
-        return 1;
+    if (StartEdge.isTouched()) return 1;
+    if (StartParameter.isTouched()) return 1;
+    if (StartContinuity.isTouched()) return 1;
+    if (StartSize.isTouched()) return 1;
+    if (EndEdge.isTouched()) return 1;
+    if (EndParameter.isTouched()) return 1;
+    if (EndContinuity.isTouched()) return 1;
+    if (EndSize.isTouched()) return 1;
     return 0;
 }
 
-BlendPoint FeatureBlendCurve::GetBlendPoint(App::PropertyLinkSub &link, App::PropertyFloatConstraint &param, App::PropertyIntegerConstraint &continuity)
+BlendPoint FeatureBlendCurve::GetBlendPoint(App::PropertyLinkSub &link,
+                                            App::PropertyFloatConstraint &param,
+                                            App::PropertyIntegerConstraint &continuity)
 {
     auto linked = link.getValue();
 
     TopoDS_Shape axEdge;
     if (link.getSubValues().size() > 0 && link.getSubValues()[0].length() > 0) {
-        axEdge = Feature::getTopoShape(linked, link.getSubValues()[0].c_str(), true /*need element*/).getShape();
+        axEdge =
+            Feature::getTopoShape(linked, link.getSubValues()[0].c_str(), true /*need element*/)
+                .getShape();
     }
     else {
         axEdge = Feature::getShape(linked);
     }
 
-    if (axEdge.IsNull())
-        throw Base::ValueError("DirLink shape is null");
-    if (axEdge.ShapeType() != TopAbs_EDGE)
-        throw Base::TypeError("DirLink shape is not an edge");
+    if (axEdge.IsNull()) throw Base::ValueError("DirLink shape is null");
+    if (axEdge.ShapeType() != TopAbs_EDGE) throw Base::TypeError("DirLink shape is not an edge");
     const TopoDS_Edge &e = TopoDS::Edge(axEdge);
     BRepAdaptor_Curve adapt(e);
     double fp = adapt.FirstParameter();
@@ -157,8 +151,7 @@ double FeatureBlendCurve::RelativeToRealParameters(double relativeValue, double 
 void FeatureBlendCurve::onChanged(const App::Property *prop)
 {
     // using a mutex and lock to protect a recursive calling when setting the new values
-    if (lockOnChangeMutex)
-        return;
+    if (lockOnChangeMutex) return;
     Base::StateLocker lock(lockOnChangeMutex);
 
     if (prop == &StartContinuity) {

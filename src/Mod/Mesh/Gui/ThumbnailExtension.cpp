@@ -43,11 +43,11 @@ using namespace MeshGui;
 
 Mesh::Extension3MF::Resource ThumbnailExtension3MF::addMesh(const Mesh::MeshObject &mesh)
 {
-    SoCoordinate3* coord = new SoCoordinate3();
-    SoIndexedFaceSet* faces = new SoIndexedFaceSet();
+    SoCoordinate3 *coord = new SoCoordinate3();
+    SoIndexedFaceSet *faces = new SoIndexedFaceSet();
 
-    SoOrthographicCamera* cam = new SoOrthographicCamera();
-    SoSeparator* root = new SoSeparator();
+    SoOrthographicCamera *cam = new SoOrthographicCamera();
+    SoSeparator *root = new SoSeparator();
     root->ref();
     root->addChild(cam);
     root->addChild(new SoDirectionalLight);
@@ -77,7 +77,8 @@ Mesh::Extension3MF::Resource ThumbnailExtension3MF::addMesh(const Mesh::MeshObje
     Mesh::Extension3MF::Resource res;
     res.extension = "png";
     res.contentType = "image/png";
-    res.relationshipType = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail";
+    res.relationshipType =
+        "http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail";
     res.fileContent = std::string(data.data(), data.size());
     setContentName(res);
 
@@ -85,7 +86,7 @@ Mesh::Extension3MF::Resource ThumbnailExtension3MF::addMesh(const Mesh::MeshObje
     return res;
 }
 
-void ThumbnailExtension3MF::setContentName(Mesh::Extension3MF::Resource& res)
+void ThumbnailExtension3MF::setContentName(Mesh::Extension3MF::Resource &res)
 {
     if (index == 0) {
         res.relationshipTarget = "/Metadata/thumbnail.png";

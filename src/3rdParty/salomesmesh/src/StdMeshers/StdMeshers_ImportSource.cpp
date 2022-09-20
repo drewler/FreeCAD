@@ -48,15 +48,11 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_ImportSource1D::StdMeshers_ImportSource1D(int         hypId,
-                                                     int         studyId,
-                                                     SMESH_Gen * gen)
-  :SMESH_Hypothesis(hypId, studyId, gen),
-   _toCopyMesh(false),
-   _toCopyGroups(false)
+StdMeshers_ImportSource1D::StdMeshers_ImportSource1D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen), _toCopyMesh(false), _toCopyGroups(false)
 {
-  _name = "ImportSource1D";
-  _param_algo_dim = 1; // is used by StdMeshers_Import_1D;
+    _name = "ImportSource1D";
+    _param_algo_dim = 1; // is used by StdMeshers_Import_1D;
 }
 
 //=============================================================================
@@ -65,13 +61,11 @@ StdMeshers_ImportSource1D::StdMeshers_ImportSource1D(int         hypId,
  */
 //=============================================================================
 
-StdMeshers_ImportSource2D::StdMeshers_ImportSource2D(int         hypId,
-                                                     int         studyId,
-                                                     SMESH_Gen * gen)
-  :StdMeshers_ImportSource1D(hypId, studyId, gen)
+StdMeshers_ImportSource2D::StdMeshers_ImportSource2D(int hypId, int studyId, SMESH_Gen *gen)
+    : StdMeshers_ImportSource1D(hypId, studyId, gen)
 {
-  _name = "ImportSource2D";
-  _param_algo_dim = 2; // is used by StdMeshers_Import_2D;
+    _name = "ImportSource2D";
+    _param_algo_dim = 2; // is used by StdMeshers_Import_2D;
 }
 
 //=============================================================================
@@ -80,120 +74,104 @@ StdMeshers_ImportSource2D::StdMeshers_ImportSource2D(int         hypId,
  */
 //=============================================================================
 
-StdMeshers_ImportSource1D::~StdMeshers_ImportSource1D()
-{
-}
+StdMeshers_ImportSource1D::~StdMeshers_ImportSource1D() {}
 //=============================================================================
 /*!
  *  Sets groups to import elements from
  */
 //=============================================================================
 
-void StdMeshers_ImportSource1D::SetGroups(const std::vector<SMESH_Group*>& groups)
+void StdMeshers_ImportSource1D::SetGroups(const std::vector<SMESH_Group *> &groups)
 {
-  if (_groups != groups)
-  {
-    _groups = groups;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (_groups != groups) {
+        _groups = groups;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 void StdMeshers_ImportSource1D::SetCopySourceMesh(bool toCopyMesh, bool toCopyGroups)
 {
-  if ( !toCopyMesh ) toCopyGroups = false;
-  if ( _toCopyMesh != toCopyMesh || _toCopyGroups != toCopyGroups )
-  {
-    _toCopyMesh = toCopyMesh; _toCopyGroups = toCopyGroups;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (!toCopyMesh) toCopyGroups = false;
+    if (_toCopyMesh != toCopyMesh || _toCopyGroups != toCopyGroups) {
+        _toCopyMesh = toCopyMesh;
+        _toCopyGroups = toCopyGroups;
+        NotifySubMeshesHypothesisModification();
+    }
 }
-void StdMeshers_ImportSource1D::GetCopySourceMesh(bool& toCopyMesh, bool& toCopyGroups) const
+void StdMeshers_ImportSource1D::GetCopySourceMesh(bool &toCopyMesh, bool &toCopyGroups) const
 {
-  toCopyMesh = _toCopyMesh; toCopyGroups = _toCopyGroups;
+    toCopyMesh = _toCopyMesh;
+    toCopyGroups = _toCopyGroups;
 }
-  
+
 namespace
 {
-  //================================================================================
-  /*!
+//================================================================================
+/*!
    * \brief Return only alive groups
    */
-  //================================================================================
+//================================================================================
 
-  vector<SMESH_Group*> getValidGroups(const vector<SMESH_Group*>& groups,
-                                      StudyContextStruct*         studyContext,
-                                      bool                        loaded=false)
-  {
-    vector<SMESH_Group*> okGroups;
-    for ( int i = 0; i < groups.size(); ++i )
-    {
-      try
-      {
-        // we expect SIGSEGV on a dead group
-        OCC_CATCH_SIGNALS;
-        SMESH_Group* okGroup = 0;
-        map<int, SMESH_Mesh*>::iterator itm = studyContext->mapMesh.begin();
-        for ( ; !okGroup && itm != studyContext->mapMesh.end(); itm++)
-        {
-          SMESH_Mesh::GroupIteratorPtr gIt = itm->second->GetGroups();
-          while ( gIt->more() && !okGroup )
-            if ( gIt->next() == groups[i] )
-            {
-              okGroup = groups[i];
-              if ( loaded )
-                itm->second->Load();
+vector<SMESH_Group *> getValidGroups(const vector<SMESH_Group *> &groups,
+                                     StudyContextStruct *studyContext, bool loaded = false)
+{
+    vector<SMESH_Group *> okGroups;
+    for (int i = 0; i < groups.size(); ++i) {
+        try {
+            // we expect SIGSEGV on a dead group
+            OCC_CATCH_SIGNALS;
+            SMESH_Group *okGroup = 0;
+            map<int, SMESH_Mesh *>::iterator itm = studyContext->mapMesh.begin();
+            for (; !okGroup && itm != studyContext->mapMesh.end(); itm++) {
+                SMESH_Mesh::GroupIteratorPtr gIt = itm->second->GetGroups();
+                while (gIt->more() && !okGroup)
+                    if (gIt->next() == groups[i]) {
+                        okGroup = groups[i];
+                        if (loaded) itm->second->Load();
+                    }
             }
+            if (okGroup) okGroups.push_back(okGroup);
         }
-        if ( okGroup )
-          okGroups.push_back( okGroup );
-      }
-      catch(...)
-      {
-      }
+        catch (...) {
+        }
     }
     return okGroups;
-  }
-  //================================================================================
-  /*!
+}
+//================================================================================
+/*!
    * \brief Pack meshes into a pair of ints
    */
-  //================================================================================
+//================================================================================
 
-  pair<int, int> getResMapKey(const SMESHDS_Mesh& srcMesh, const SMESHDS_Mesh& tgtMesh)
-  {
-    return make_pair( srcMesh.GetPersistentId() , tgtMesh.GetPersistentId() );
-  }
-  //================================================================================
-  /*!
+pair<int, int> getResMapKey(const SMESHDS_Mesh &srcMesh, const SMESHDS_Mesh &tgtMesh)
+{
+    return make_pair(srcMesh.GetPersistentId(), tgtMesh.GetPersistentId());
+}
+//================================================================================
+/*!
    * \brief Return a target mesh by a pair of ints
    */
-  //================================================================================
+//================================================================================
 
-  SMESH_Mesh* getTgtMeshByKey( const pair<int, int> & resMapKey,
-                               StudyContextStruct*    studyContext)
-  {
+SMESH_Mesh *getTgtMeshByKey(const pair<int, int> &resMapKey, StudyContextStruct *studyContext)
+{
     int tgtID = resMapKey.second;
-    SMESH_Mesh* tgtMesh = 0;
-    map<int, SMESH_Mesh*>::iterator itm = studyContext->mapMesh.begin();
-    for ( ; !tgtMesh && itm != studyContext->mapMesh.end(); itm++)
-    {
-      tgtMesh = (*itm).second;
-      if ( tgtMesh->GetMeshDS()->GetPersistentId() != tgtID )
-        tgtMesh = 0;
+    SMESH_Mesh *tgtMesh = 0;
+    map<int, SMESH_Mesh *>::iterator itm = studyContext->mapMesh.begin();
+    for (; !tgtMesh && itm != studyContext->mapMesh.end(); itm++) {
+        tgtMesh = (*itm).second;
+        if (tgtMesh->GetMeshDS()->GetPersistentId() != tgtID) tgtMesh = 0;
     }
     return tgtMesh;
-  }
-  //================================================================================
-  /*!
+}
+//================================================================================
+/*!
    * \brief Return a target mesh by a pair of ints
    */
-  //================================================================================
+//================================================================================
 
-  int getSrcMeshID( const pair<int, int> & resMapKey )
-  {
-    return resMapKey.first;
-  }
-}
+int getSrcMeshID(const pair<int, int> &resMapKey) { return resMapKey.first; }
+} // namespace
 
 //=============================================================================
 /*!
@@ -202,16 +180,14 @@ namespace
  */
 //=============================================================================
 
-const std::vector<SMESH_Group*>&  StdMeshers_ImportSource1D::GetGroups(bool loaded) const
+const std::vector<SMESH_Group *> &StdMeshers_ImportSource1D::GetGroups(bool loaded) const
 {
-  // filter off deleted groups
-  vector<SMESH_Group*> okGroups = getValidGroups( _groups,
-                                                  _gen->GetStudyContext(_studyId),
-                                                  loaded);
-  if ( okGroups.size() != _groups.size() )
-    ((StdMeshers_ImportSource1D*)this)->_groups = okGroups;
+    // filter off deleted groups
+    vector<SMESH_Group *> okGroups =
+        getValidGroups(_groups, _gen->GetStudyContext(_studyId), loaded);
+    if (okGroups.size() != _groups.size()) ((StdMeshers_ImportSource1D *)this)->_groups = okGroups;
 
-  return _groups;
+    return _groups;
 }
 
 //================================================================================
@@ -220,49 +196,41 @@ const std::vector<SMESH_Group*>&  StdMeshers_ImportSource1D::GetGroups(bool load
  */
 //================================================================================
 
-std::vector<SMESH_Mesh*> StdMeshers_ImportSource1D::GetSourceMeshes() const
+std::vector<SMESH_Mesh *> StdMeshers_ImportSource1D::GetSourceMeshes() const
 {
-  // GetPersistentId()'s of meshes
-  set<int> meshIDs;
-  const vector<SMESH_Group*>& groups = GetGroups();
-  if ( !groups.empty() )
-  {
-    for ( unsigned i = 0; i < groups.size(); ++i )
-    {
-      const SMESHDS_GroupBase* gDS = groups[i]->GetGroupDS();
-      int id = gDS->GetMesh()->GetPersistentId();
-      meshIDs.insert( id );
-    }
-  }
-  else
-  {
-    if ( _resultGroups.empty() )
-      ((StdMeshers_ImportSource1D*)this)->RestoreGroups(_groups);
-    TResGroupMap::const_iterator key_groups = _resultGroups.begin();
-    for ( ; key_groups != _resultGroups.end(); ++key_groups )
-      meshIDs.insert( getSrcMeshID( key_groups->first ));
-  }
-
-  // Find corresponding meshes
-  vector<SMESH_Mesh*> meshes;
-  if ( !meshIDs.empty() )
-  {
-    StudyContextStruct* studyContext = _gen->GetStudyContext(_studyId);
-    for ( set<int>::iterator id = meshIDs.begin(); id != meshIDs.end(); ++id )
-    {
-      map<int, SMESH_Mesh*>::iterator itm = studyContext->mapMesh.begin();
-      for ( ; itm != studyContext->mapMesh.end(); itm++)
-      {
-        SMESH_Mesh* mesh = (*itm).second;
-        if ( mesh->GetMeshDS()->GetPersistentId() == *id )
-        {
-          meshes.push_back( mesh );
-          break;
+    // GetPersistentId()'s of meshes
+    set<int> meshIDs;
+    const vector<SMESH_Group *> &groups = GetGroups();
+    if (!groups.empty()) {
+        for (unsigned i = 0; i < groups.size(); ++i) {
+            const SMESHDS_GroupBase *gDS = groups[i]->GetGroupDS();
+            int id = gDS->GetMesh()->GetPersistentId();
+            meshIDs.insert(id);
         }
-      }
     }
-  }
-  return meshes;
+    else {
+        if (_resultGroups.empty()) ((StdMeshers_ImportSource1D *)this)->RestoreGroups(_groups);
+        TResGroupMap::const_iterator key_groups = _resultGroups.begin();
+        for (; key_groups != _resultGroups.end(); ++key_groups)
+            meshIDs.insert(getSrcMeshID(key_groups->first));
+    }
+
+    // Find corresponding meshes
+    vector<SMESH_Mesh *> meshes;
+    if (!meshIDs.empty()) {
+        StudyContextStruct *studyContext = _gen->GetStudyContext(_studyId);
+        for (set<int>::iterator id = meshIDs.begin(); id != meshIDs.end(); ++id) {
+            map<int, SMESH_Mesh *>::iterator itm = studyContext->mapMesh.begin();
+            for (; itm != studyContext->mapMesh.end(); itm++) {
+                SMESH_Mesh *mesh = (*itm).second;
+                if (mesh->GetMeshDS()->GetPersistentId() == *id) {
+                    meshes.push_back(mesh);
+                    break;
+                }
+            }
+        }
+    }
+    return meshes;
 }
 
 //================================================================================
@@ -271,45 +239,38 @@ std::vector<SMESH_Mesh*> StdMeshers_ImportSource1D::GetSourceMeshes() const
  */
 //================================================================================
 
-std::vector<SMESH_subMesh*>
-StdMeshers_ImportSource1D::GetSourceSubMeshes(const SMESH_Mesh* srcMesh) const
+std::vector<SMESH_subMesh *>
+StdMeshers_ImportSource1D::GetSourceSubMeshes(const SMESH_Mesh *srcMesh) const
 {
-  if ( !srcMesh->HasShapeToMesh() )
-  {
-    SMESH_Mesh* srcM = const_cast< SMESH_Mesh* >( srcMesh );
-    return vector<SMESH_subMesh*>(1, srcM->GetSubMesh( srcM->GetShapeToMesh()));
-  }
-  set<int> shapeIDs;
-  const vector<SMESH_Group*>& groups = GetGroups();
-  const SMESHDS_Mesh * srcMeshDS = srcMesh->GetMeshDS();
-  for ( size_t i = 0; i < groups.size(); ++i )
-  {
-    SMESHDS_GroupBase * grDS = groups[i]->GetGroupDS();
-    if ( grDS->GetMesh() != srcMeshDS )
-      continue;
-    if ( SMESHDS_GroupOnGeom* gog = dynamic_cast<SMESHDS_GroupOnGeom*>( grDS ))
-    {
-      shapeIDs.insert( srcMeshDS->ShapeToIndex( gog->GetShape() ));
+    if (!srcMesh->HasShapeToMesh()) {
+        SMESH_Mesh *srcM = const_cast<SMESH_Mesh *>(srcMesh);
+        return vector<SMESH_subMesh *>(1, srcM->GetSubMesh(srcM->GetShapeToMesh()));
     }
-    else
-    {
-      SMDS_ElemIteratorPtr elIt = grDS->GetElements();
-      while ( elIt->more() )
-        shapeIDs.insert( elIt->next()->getshapeId() );
+    set<int> shapeIDs;
+    const vector<SMESH_Group *> &groups = GetGroups();
+    const SMESHDS_Mesh *srcMeshDS = srcMesh->GetMeshDS();
+    for (size_t i = 0; i < groups.size(); ++i) {
+        SMESHDS_GroupBase *grDS = groups[i]->GetGroupDS();
+        if (grDS->GetMesh() != srcMeshDS) continue;
+        if (SMESHDS_GroupOnGeom *gog = dynamic_cast<SMESHDS_GroupOnGeom *>(grDS)) {
+            shapeIDs.insert(srcMeshDS->ShapeToIndex(gog->GetShape()));
+        }
+        else {
+            SMDS_ElemIteratorPtr elIt = grDS->GetElements();
+            while (elIt->more()) shapeIDs.insert(elIt->next()->getshapeId());
+        }
     }
-  }
-  if ( !shapeIDs.empty() && *shapeIDs.begin() < 1 )
-  {
-    shapeIDs.erase( shapeIDs.begin() );
-    shapeIDs.insert( 1 );
-  }
+    if (!shapeIDs.empty() && *shapeIDs.begin() < 1) {
+        shapeIDs.erase(shapeIDs.begin());
+        shapeIDs.insert(1);
+    }
 
-  vector<SMESH_subMesh*> smVec( shapeIDs.size());
-  set<int>::iterator sID = shapeIDs.begin();
-  for ( int i = 0; sID != shapeIDs.end(); ++sID, ++i )
-    smVec[i] = srcMesh->GetSubMeshContaining( *sID );
+    vector<SMESH_subMesh *> smVec(shapeIDs.size());
+    set<int>::iterator sID = shapeIDs.begin();
+    for (int i = 0; sID != shapeIDs.end(); ++sID, ++i)
+        smVec[i] = srcMesh->GetSubMeshContaining(*sID);
 
-  return smVec;
+    return smVec;
 }
 
 //=============================================================================
@@ -318,16 +279,16 @@ StdMeshers_ImportSource1D::GetSourceSubMeshes(const SMESH_Mesh* srcMesh) const
  */
 //=============================================================================
 
-ostream & StdMeshers_ImportSource1D::SaveTo(ostream & save)
+ostream &StdMeshers_ImportSource1D::SaveTo(ostream &save)
 {
-  resultGroupsToIntVec();
+    resultGroupsToIntVec();
 
-  save << " " << _toCopyMesh << " " << _toCopyGroups;
-  save << " " << _resultGroupsStorage.size();
-  for ( unsigned i = 0; i < _resultGroupsStorage.size(); ++i )
-    save << " " << _resultGroupsStorage[i];
+    save << " " << _toCopyMesh << " " << _toCopyGroups;
+    save << " " << _resultGroupsStorage.size();
+    for (unsigned i = 0; i < _resultGroupsStorage.size(); ++i)
+        save << " " << _resultGroupsStorage[i];
 
-  return save;
+    return save;
 }
 
 //=============================================================================
@@ -336,19 +297,18 @@ ostream & StdMeshers_ImportSource1D::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_ImportSource1D::LoadFrom(istream & load)
+istream &StdMeshers_ImportSource1D::LoadFrom(istream &load)
 {
-  load >> _toCopyMesh >> _toCopyGroups;
+    load >> _toCopyMesh >> _toCopyGroups;
 
-  _resultGroupsStorage.clear();
-  int val;
-  if ( load >> val )
-  {
-    _resultGroupsStorage.reserve(val);
-    while ( _resultGroupsStorage.size() < _resultGroupsStorage.capacity() && load >> val )
-      _resultGroupsStorage.push_back( val );
-  }
-  return load;
+    _resultGroupsStorage.clear();
+    int val;
+    if (load >> val) {
+        _resultGroupsStorage.reserve(val);
+        while (_resultGroupsStorage.size() < _resultGroupsStorage.capacity() && load >> val)
+            _resultGroupsStorage.push_back(val);
+    }
+    return load;
 }
 
 //================================================================================
@@ -359,28 +319,25 @@ istream & StdMeshers_ImportSource1D::LoadFrom(istream & load)
 
 void StdMeshers_ImportSource1D::resultGroupsToIntVec()
 {
-  _resultGroupsStorage.clear();
-  
-  // store result groups
-  TResGroupMap::iterator key2groups = _resultGroups.begin();
-  for ( ; key2groups != _resultGroups.end(); ++key2groups )
-  {
-    const pair<int, int>&          key = key2groups->first;
-    const vector<SMESH_Group*>& groups = key2groups->second;
-    // mesh ids, nb groups
-    _resultGroupsStorage.push_back( key.first );
-    _resultGroupsStorage.push_back( key.second );
-    _resultGroupsStorage.push_back( groups.size() );
-    for ( unsigned i = 0; i < groups.size(); ++i )
-    {
-      // store group names as sequence of ints each standing for a char
-      // of a name; that is to avoid pb with names containing white spaces
-      string name = groups[i]->GetGroupDS()->GetStoreName();
-      _resultGroupsStorage.push_back( name.size() );
-      for ( unsigned j = 0; j < name.size(); ++j )
-        _resultGroupsStorage.push_back( name[j] );
+    _resultGroupsStorage.clear();
+
+    // store result groups
+    TResGroupMap::iterator key2groups = _resultGroups.begin();
+    for (; key2groups != _resultGroups.end(); ++key2groups) {
+        const pair<int, int> &key = key2groups->first;
+        const vector<SMESH_Group *> &groups = key2groups->second;
+        // mesh ids, nb groups
+        _resultGroupsStorage.push_back(key.first);
+        _resultGroupsStorage.push_back(key.second);
+        _resultGroupsStorage.push_back(groups.size());
+        for (unsigned i = 0; i < groups.size(); ++i) {
+            // store group names as sequence of ints each standing for a char
+            // of a name; that is to avoid pb with names containing white spaces
+            string name = groups[i]->GetGroupDS()->GetStoreName();
+            _resultGroupsStorage.push_back(name.size());
+            for (unsigned j = 0; j < name.size(); ++j) _resultGroupsStorage.push_back(name[j]);
+        }
     }
-  }
 }
 
 //================================================================================
@@ -389,45 +346,39 @@ void StdMeshers_ImportSource1D::resultGroupsToIntVec()
  */
 //================================================================================
 
-void StdMeshers_ImportSource1D::RestoreGroups(const std::vector<SMESH_Group*>& groups)
+void StdMeshers_ImportSource1D::RestoreGroups(const std::vector<SMESH_Group *> &groups)
 {
-  _groups = groups;
+    _groups = groups;
 
-  _resultGroups.clear();
-  int i = 0;
-  while ( i < _resultGroupsStorage.size() )
-  {
-    int key1 = _resultGroupsStorage[i++];
-    int key2 = _resultGroupsStorage[i++];
-    pair<int, int> resMapKey( key1, key2 );
-    SMESH_Mesh* mesh = getTgtMeshByKey( resMapKey, _gen->GetStudyContext(_studyId));
-    // restore mesh ids at least
-    _resultGroups.insert( make_pair (resMapKey,vector<SMESH_Group*>() )); 
+    _resultGroups.clear();
+    int i = 0;
+    while (i < _resultGroupsStorage.size()) {
+        int key1 = _resultGroupsStorage[i++];
+        int key2 = _resultGroupsStorage[i++];
+        pair<int, int> resMapKey(key1, key2);
+        SMESH_Mesh *mesh = getTgtMeshByKey(resMapKey, _gen->GetStudyContext(_studyId));
+        // restore mesh ids at least
+        _resultGroups.insert(make_pair(resMapKey, vector<SMESH_Group *>()));
 
-    int nbGroups = _resultGroupsStorage[i++];
-    for ( int j = 0; j < nbGroups; ++j )
-    {
-      string::size_type nameSize = _resultGroupsStorage[i++];
-      string groupName(nameSize, '\0');
-      for ( unsigned k = 0; k < nameSize; ++k )
-        groupName[k] = (char) _resultGroupsStorage[i++];
+        int nbGroups = _resultGroupsStorage[i++];
+        for (int j = 0; j < nbGroups; ++j) {
+            string::size_type nameSize = _resultGroupsStorage[i++];
+            string groupName(nameSize, '\0');
+            for (unsigned k = 0; k < nameSize; ++k) groupName[k] = (char)_resultGroupsStorage[i++];
 
-      // find a group by name
-      if ( mesh )
-      {
-        SMESH_Group* group = 0;
-        SMESH_Mesh::GroupIteratorPtr gIt = mesh->GetGroups();
-        while ( !group && gIt->more() )
-        {
-          group = gIt->next();
-          if ( !group->GetGroupDS() || groupName != group->GetGroupDS()->GetStoreName() )
-            group = 0;
+            // find a group by name
+            if (mesh) {
+                SMESH_Group *group = 0;
+                SMESH_Mesh::GroupIteratorPtr gIt = mesh->GetGroups();
+                while (!group && gIt->more()) {
+                    group = gIt->next();
+                    if (!group->GetGroupDS() || groupName != group->GetGroupDS()->GetStoreName())
+                        group = 0;
+                }
+                if (group) _resultGroups[resMapKey].push_back(group);
+            }
         }
-        if ( group )
-          _resultGroups[ resMapKey ].push_back( group );
-      }
     }
-  }
 }
 
 //================================================================================
@@ -439,11 +390,11 @@ void StdMeshers_ImportSource1D::RestoreGroups(const std::vector<SMESH_Group*>& g
  */
 //================================================================================
 
-void StdMeshers_ImportSource1D::StoreResultGroups(const std::vector<SMESH_Group*>& groups,
-                                                  const SMESHDS_Mesh&              srcMesh,
-                                                  const SMESHDS_Mesh&              tgtMesh)
+void StdMeshers_ImportSource1D::StoreResultGroups(const std::vector<SMESH_Group *> &groups,
+                                                  const SMESHDS_Mesh &srcMesh,
+                                                  const SMESHDS_Mesh &tgtMesh)
 {
-  _resultGroups[ getResMapKey(srcMesh,tgtMesh) ] = groups;
+    _resultGroups[getResMapKey(srcMesh, tgtMesh)] = groups;
 }
 
 //================================================================================
@@ -455,19 +406,16 @@ void StdMeshers_ImportSource1D::StoreResultGroups(const std::vector<SMESH_Group*
  */
 //================================================================================
 
-std::vector<SMESH_Group*>*
-StdMeshers_ImportSource1D::GetResultGroups(const SMESHDS_Mesh& srcMesh,
-                                           const SMESHDS_Mesh& tgtMesh) 
+std::vector<SMESH_Group *> *StdMeshers_ImportSource1D::GetResultGroups(const SMESHDS_Mesh &srcMesh,
+                                                                       const SMESHDS_Mesh &tgtMesh)
 {
-  TResGroupMap::iterator key2groups = _resultGroups.find( getResMapKey(srcMesh,tgtMesh ));
-  if ( key2groups == _resultGroups.end() )
-    return 0;
-  vector<SMESH_Group*> vec = getValidGroups((*key2groups).second,
-                                            _gen->GetStudyContext(_studyId) );
-  if ( vec.size() != key2groups->second.size())
-    key2groups->second = vec;
+    TResGroupMap::iterator key2groups = _resultGroups.find(getResMapKey(srcMesh, tgtMesh));
+    if (key2groups == _resultGroups.end()) return 0;
+    vector<SMESH_Group *> vec =
+        getValidGroups((*key2groups).second, _gen->GetStudyContext(_studyId));
+    if (vec.size() != key2groups->second.size()) key2groups->second = vec;
 
-  return & key2groups->second;
+    return &key2groups->second;
 }
 
 //================================================================================
@@ -479,9 +427,9 @@ StdMeshers_ImportSource1D::GetResultGroups(const SMESHDS_Mesh& srcMesh,
  */
 //================================================================================
 
-bool StdMeshers_ImportSource1D::SetParametersByMesh(const SMESH_Mesh*, const TopoDS_Shape&)
+bool StdMeshers_ImportSource1D::SetParametersByMesh(const SMESH_Mesh *, const TopoDS_Shape &)
 {
-  return false;
+    return false;
 }
 
 //================================================================================
@@ -491,7 +439,7 @@ bool StdMeshers_ImportSource1D::SetParametersByMesh(const SMESH_Mesh*, const Top
  */
 //================================================================================
 
-bool StdMeshers_ImportSource1D::SetParametersByDefaults(const TDefaults&, const SMESH_Mesh* )
+bool StdMeshers_ImportSource1D::SetParametersByDefaults(const TDefaults &, const SMESH_Mesh *)
 {
-  return false;
+    return false;
 }

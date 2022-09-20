@@ -6,84 +6,85 @@
 #include <stdexcept>
 #include <string>
 
-namespace zipios {
+namespace zipios
+{
 
-using namespace std    ;
+using namespace std;
 
 /** FilePath represents a path to a file or directory name. FilePath has
     member functions to check if the file path is a valid file system entity,
     and to check what kind of file system entity it is, e.g. is it a file, a 
     directory, a pipe etc.
 */
-class FilePath {
+class FilePath
+{
 public:
-  /** Constructor.
+    /** Constructor.
       @param path A string representation of the path.
       @param check_exists If true is specified the constructor will
       check the existence and type of the path immediately, instead of
       deferring that task until it is needed. */
-  FilePath( const string &path = "", bool check_exists = false ) ;
+    FilePath(const string &path = "", bool check_exists = false);
 
-  inline FilePath &operator= ( const string &rhs ) ;
+    inline FilePath &operator=(const string &rhs);
 
-  inline operator string() const ;
+    inline operator string() const;
 
-  /** Concatenates FilePath objects. A file separator is inserted
+    /** Concatenates FilePath objects. A file separator is inserted
       if appropriate. */
-  inline FilePath operator+ ( const FilePath &name ) const ;
+    inline FilePath operator+(const FilePath &name) const;
 
-  /** Returns filename of the FilePath object by pruning the path
+    /** Returns filename of the FilePath object by pruning the path
       off. */
-  inline FilePath filename() const ;
+    inline FilePath filename() const;
 
 
-  /** @return true If the path is a valid file system entity. */
-  inline bool exists()         const ;
+    /** @return true If the path is a valid file system entity. */
+    inline bool exists() const;
 
-  /** @return true if the path is a regular file. */
-  inline bool isRegular()      const ;
+    /** @return true if the path is a regular file. */
+    inline bool isRegular() const;
 
-  /** @return true if the path is a directory. */
-  inline bool isDirectory()    const ;
+    /** @return true if the path is a directory. */
+    inline bool isDirectory() const;
 
-  /** @return true if the path is character special (a character
+    /** @return true if the path is character special (a character
       device file).  */
-  inline bool isCharSpecial()  const ;
+    inline bool isCharSpecial() const;
 
-  /** @return true if the path is block special (a block device
+    /** @return true if the path is block special (a block device
       file). */
-  inline bool isBlockSpecial() const ;
+    inline bool isBlockSpecial() const;
 
-  /** @return true if the path is a socket. */
-  inline bool isSocket()       const ;
+    /** @return true if the path is a socket. */
+    inline bool isSocket() const;
 
-  /** @return true if the path is a Fifo (a pipe). */
-  inline bool isFifo()         const ;
+    /** @return true if the path is a Fifo (a pipe). */
+    inline bool isFifo() const;
 
 protected:
+    /** Prunes the trailing separator of a specified path. */
+    inline void pruneTrailingSeparator();
 
-  /** Prunes the trailing separator of a specified path. */
-  inline void pruneTrailingSeparator() ;
-
-  /** This function sets _checked to true, stats the path, to see if
+    /** This function sets _checked to true, stats the path, to see if
   it exists and to determine what type of file it is. All the query
   functions check if _checked is true, and if it isn't they call
   check(). This means stat'ing is deferred until it becomes
   necessary. */
-  void check() const ;
+    void check() const;
 
-  static const char _separator;
+    static const char _separator;
 
-  // FIXME: Should be bitfield
-  mutable bool   _checked   ;
-  mutable bool   _exists    ;
-  mutable bool   _is_reg    ;
-  mutable bool   _is_dir    ;
-  mutable bool   _is_char   ;
-  mutable bool   _is_block  ;
-  mutable bool   _is_socket ;
-  mutable bool   _is_fifo   ;
-  string _path              ;
+    // FIXME: Should be bitfield
+    mutable bool _checked;
+    mutable bool _exists;
+    mutable bool _is_reg;
+    mutable bool _is_dir;
+    mutable bool _is_char;
+    mutable bool _is_block;
+    mutable bool _is_socket;
+    mutable bool _is_fifo;
+    string _path;
 };
 
 
@@ -91,91 +92,90 @@ protected:
 // Inline member functions
 //
 
-FilePath &FilePath::operator= ( const string &rhs ) {
-  _path = rhs ;
-  pruneTrailingSeparator() ;
-  return *this ;
+FilePath &FilePath::operator=(const string &rhs)
+{
+    _path = rhs;
+    pruneTrailingSeparator();
+    return *this;
 }
 
-void FilePath::pruneTrailingSeparator() {
-  if ( _path.size() > 0 )
-    if ( _path[ _path.size() -1 ] == _separator )
-      _path.erase( _path.size() - 1 ) ; 
+void FilePath::pruneTrailingSeparator()
+{
+    if (_path.size() > 0)
+        if (_path[_path.size() - 1] == _separator) _path.erase(_path.size() - 1);
 }
 
-FilePath::operator string() const { 
-  return _path ;
-} 
+FilePath::operator string() const { return _path; }
 
 
-FilePath FilePath::operator+ ( const FilePath &name ) const { 
-  if ( _path.size() > 0 )
-    return _path + _separator + name._path ; 
-  else
-    return name._path ;
-}
-
-
-FilePath FilePath::filename() const {
-  string::size_type pos ;
-  pos = _path.find_last_of( _separator ) ;
-  if ( pos != string::npos )
-    return _path.substr( pos + 1);
-  else 
-    return _path ;
+FilePath FilePath::operator+(const FilePath &name) const
+{
+    if (_path.size() > 0) return _path + _separator + name._path;
+    else
+        return name._path;
 }
 
 
-bool FilePath::exists() const {
-  if ( ! _checked )
-    check() ;
-  return _exists ;
+FilePath FilePath::filename() const
+{
+    string::size_type pos;
+    pos = _path.find_last_of(_separator);
+    if (pos != string::npos) return _path.substr(pos + 1);
+    else
+        return _path;
 }
 
 
-bool FilePath::isRegular() const {
-  if ( ! _checked )
-    check() ;
-  return _is_reg ;
+bool FilePath::exists() const
+{
+    if (!_checked) check();
+    return _exists;
 }
 
 
-bool FilePath::isDirectory() const {
-  if ( ! _checked )
-    check() ;
-  return _is_dir ;
+bool FilePath::isRegular() const
+{
+    if (!_checked) check();
+    return _is_reg;
 }
 
 
-bool FilePath::isCharSpecial() const {
-  if ( ! _checked )
-    check() ;
-  return _is_char ;
+bool FilePath::isDirectory() const
+{
+    if (!_checked) check();
+    return _is_dir;
 }
 
 
-bool FilePath::isBlockSpecial() const {
-  if ( ! _checked )
-    check() ;
-  return _is_block ;
+bool FilePath::isCharSpecial() const
+{
+    if (!_checked) check();
+    return _is_char;
 }
 
 
-bool FilePath::isSocket() const {
-  if ( ! _checked )
-    check() ;
-  return _is_socket ;
+bool FilePath::isBlockSpecial() const
+{
+    if (!_checked) check();
+    return _is_block;
 }
 
 
-bool FilePath::isFifo() const {
-  if ( ! _checked )
-    check() ;
-  return _is_fifo ;
+bool FilePath::isSocket() const
+{
+    if (!_checked) check();
+    return _is_socket;
 }
 
 
-} // namespace
+bool FilePath::isFifo() const
+{
+    if (!_checked) check();
+    return _is_fifo;
+}
+
+
+} // namespace zipios
 #endif
 
 /** \file

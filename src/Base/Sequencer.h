@@ -128,7 +128,7 @@ public:
      * But in cases FreeCAD is running with GUI the @ref Gui::ProgressBar is taken instead.
      * @see Sequencer
      */
-    static SequencerBase& Instance();
+    static SequencerBase &Instance();
     /**
      * Returns true if the running sequencer is blocking any user input.
      * This might be only of interest of the GUI where the progress bar or dialog
@@ -159,7 +159,7 @@ protected:
      * otherwise it returns true.
      * In this method startStep() gets invoked that can be reimplemented in sub-classes.
      */
-    bool start(const char* pszStr, size_t steps);
+    bool start(const char *pszStr, size_t steps);
     /** Returns the number of steps. */
     size_t numberOfSteps() const;
     /** Returns the current state of progress in percent. */
@@ -206,15 +206,15 @@ protected:
 protected:
     /** construction */
     SequencerBase();
-    SequencerBase(const SequencerBase&) = default;
-    SequencerBase& operator=(const SequencerBase&) = default;
+    SequencerBase(const SequencerBase &) = default;
+    SequencerBase &operator=(const SequencerBase &) = default;
     /** Destruction */
     virtual ~SequencerBase();
     /**
      * Sets a text what the pending operation is doing. The default implementation
      * does nothing.
      */
-    virtual void setText (const char* pszTxt);
+    virtual void setText(const char *pszTxt);
     /**
      * This method can be reimplemented in sub-classes to give the user a feedback
      * when a new sequence starts. The default implementation does nothing.
@@ -239,19 +239,19 @@ protected:
     virtual void resetData();
 
 protected:
-    size_t nProgress; /**< Stores the current amount of progress.*/
+    size_t nProgress;   /**< Stores the current amount of progress.*/
     size_t nTotalSteps; /**< Stores the total number of steps */
 
 private:
-    bool _bLocked; /**< Lock/unlock sequencer. */
-    bool _bCanceled; /**< Is set to true if the last pending operation was canceled */
+    bool _bLocked;        /**< Lock/unlock sequencer. */
+    bool _bCanceled;      /**< Is set to true if the last pending operation was canceled */
     int _nLastPercentage; /**< Progress in percent. */
 };
 
 /** This special sequencer might be useful if you want to suppress any indication
  * of the progress to the user.
  */
-class BaseExport EmptySequencer : public Base::SequencerBase
+class BaseExport EmptySequencer: public Base::SequencerBase
 {
 public:
     /** construction */
@@ -261,11 +261,11 @@ public:
 /**
  * \brief This class writes the progress to the console window.
  */
-class BaseExport ConsoleSequencer : public SequencerBase
+class BaseExport ConsoleSequencer: public SequencerBase
 {
 public:
     /** construction */
-    ConsoleSequencer () = default;
+    ConsoleSequencer() = default;
 
 protected:
     /** Starts the sequencer */
@@ -275,7 +275,7 @@ protected:
 
 private:
     /** Puts text to the console window */
-    void setText (const char* pszTxt) override;
+    void setText(const char *pszTxt) override;
     /** Resets the sequencer */
     void resetData() override;
 };
@@ -365,38 +365,35 @@ private:
 class BaseExport SequencerLauncher
 {
 public:
-    SequencerLauncher(const char* pszStr, size_t steps);
+    SequencerLauncher(const char *pszStr, size_t steps);
     ~SequencerLauncher();
     size_t numberOfSteps() const;
-    void setText (const char* pszTxt);
+    void setText(const char *pszTxt);
     bool next(bool canAbort = false);
     void setProgress(size_t);
     bool wasCanceled() const;
 
 private:
-    SequencerLauncher(const SequencerLauncher&);
-    void operator=(const SequencerLauncher&);
+    SequencerLauncher(const SequencerLauncher &);
+    void operator=(const SequencerLauncher &);
 };
 
 /** Access to the only SequencerBase instance */
-inline SequencerBase& Sequencer ()
-{
-    return SequencerBase::Instance();
-}
+inline SequencerBase &Sequencer() { return SequencerBase::Instance(); }
 
-class BaseExport ProgressIndicatorPy : public Py::PythonExtension<ProgressIndicatorPy>
+class BaseExport ProgressIndicatorPy: public Py::PythonExtension<ProgressIndicatorPy>
 {
 public:
-    static void init_type();    // announce properties and methods
+    static void init_type(); // announce properties and methods
 
     ProgressIndicatorPy();
     ~ProgressIndicatorPy() override;
 
     Py::Object repr() override;
 
-    Py::Object start(const Py::Tuple&);
-    Py::Object next(const Py::Tuple&);
-    Py::Object stop(const Py::Tuple&);
+    Py::Object start(const Py::Tuple &);
+    Py::Object next(const Py::Tuple &);
+    Py::Object stop(const Py::Tuple &);
 
 private:
     static PyObject *PyMake(struct _typeobject *, PyObject *, PyObject *);

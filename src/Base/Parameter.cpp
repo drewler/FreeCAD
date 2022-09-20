@@ -25,23 +25,23 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-#   include <cassert>
-#   include <memory>
-#   include <xercesc/dom/DOM.hpp>
-#   include <xercesc/framework/LocalFileFormatTarget.hpp>
-#   include <xercesc/framework/LocalFileInputSource.hpp>
-#   include <xercesc/framework/MemBufFormatTarget.hpp>
-#   include <xercesc/framework/MemBufInputSource.hpp>
-#   include <xercesc/parsers/XercesDOMParser.hpp>
-#   include <xercesc/sax/ErrorHandler.hpp>
-#   include <xercesc/sax/SAXParseException.hpp>
-#   include <sstream>
-#   include <string>
-#   include <utility>
+#include <cassert>
+#include <memory>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/framework/LocalFileFormatTarget.hpp>
+#include <xercesc/framework/LocalFileInputSource.hpp>
+#include <xercesc/framework/MemBufFormatTarget.hpp>
+#include <xercesc/framework/MemBufInputSource.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/sax/ErrorHandler.hpp>
+#include <xercesc/sax/SAXParseException.hpp>
+#include <sstream>
+#include <string>
+#include <utility>
 #endif
 
 #ifdef FC_OS_LINUX
-#   include <unistd.h>
+#include <unistd.h>
 #endif
 
 #include "Parameter.h"
@@ -71,15 +71,13 @@ using namespace Base;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-class DOMTreeErrorReporter : public ErrorHandler
+class DOMTreeErrorReporter: public ErrorHandler
 {
 public:
     // -----------------------------------------------------------------------
     //  Constructors and Destructor
     // -----------------------------------------------------------------------
-    DOMTreeErrorReporter() :
-            fSawErrors(false) {
-    }
+    DOMTreeErrorReporter() : fSawErrors(false) {}
 
     ~DOMTreeErrorReporter() override = default;
 
@@ -87,9 +85,9 @@ public:
     // -----------------------------------------------------------------------
     //  Implementation of the error handler interface
     // -----------------------------------------------------------------------
-    void warning(const SAXParseException& toCatch) override;
-    void error(const SAXParseException& toCatch) override;
-    void fatalError(const SAXParseException& toCatch) override;
+    void warning(const SAXParseException &toCatch) override;
+    void error(const SAXParseException &toCatch) override;
+    void fatalError(const SAXParseException &toCatch) override;
     void resetErrors() override;
 
     // -----------------------------------------------------------------------
@@ -105,14 +103,13 @@ public:
     //      method. Its used by the main code to suppress output if there are
     //      errors.
     // -----------------------------------------------------------------------
-    bool    fSawErrors;
+    bool fSawErrors;
 };
 
 
-class DOMPrintFilter : public DOMLSSerializerFilter
+class DOMPrintFilter: public DOMLSSerializerFilter
 {
 public:
-
     /** @name Constructors */
     DOMPrintFilter(ShowType whatToShow = DOMNodeFilter::SHOW_ALL);
     //@{
@@ -122,43 +119,36 @@ public:
     //@{
 
     /** @ interface from DOMWriterFilter */
-    FilterAction acceptNode(const XERCES_CPP_NAMESPACE_QUALIFIER DOMNode*) const override;
+    FilterAction acceptNode(const XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *) const override;
     //@{
 
-    ShowType getWhatToShow() const override {
-        return fWhatToShow;
-    }
+    ShowType getWhatToShow() const override { return fWhatToShow; }
 
 private:
     // unimplemented copy ctor and assignment operator
-    DOMPrintFilter(const DOMPrintFilter&) = delete;
-    DOMPrintFilter & operator = (const DOMPrintFilter&);
+    DOMPrintFilter(const DOMPrintFilter &) = delete;
+    DOMPrintFilter &operator=(const DOMPrintFilter &);
 
-   ShowType fWhatToShow;
+    ShowType fWhatToShow;
 };
-class DOMPrintErrorHandler : public DOMErrorHandler
+class DOMPrintErrorHandler: public DOMErrorHandler
 {
 public:
-
     DOMPrintErrorHandler() = default;
     ~DOMPrintErrorHandler() override = default;
 
     /** @name The error handler interface */
-    bool handleError(const DOMError& domError) override;
+    bool handleError(const DOMError &domError) override;
     void resetErrors() {}
 
-private :
+private:
     /* Unimplemented constructors and operators */
-    DOMPrintErrorHandler(const DOMErrorHandler&);
-    void operator=(const DOMErrorHandler&);
-
+    DOMPrintErrorHandler(const DOMErrorHandler &);
+    void operator=(const DOMErrorHandler &);
 };
 
 
-inline bool DOMTreeErrorReporter::getSawErrors() const
-{
-    return fSawErrors;
-}
+inline bool DOMTreeErrorReporter::getSawErrors() const { return fSawErrors; }
 
 
 //**************************************************************************
@@ -173,10 +163,10 @@ inline bool DOMTreeErrorReporter::getSawErrors() const
 
 /** Default construction
   */
-ParameterGrp::ParameterGrp(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *GroupNode,const char* sName)
-        : Base::Handled(), Subject<const char*>(),_pGroupNode(GroupNode)
+ParameterGrp::ParameterGrp(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *GroupNode, const char *sName)
+    : Base::Handled(), Subject<const char *>(), _pGroupNode(GroupNode)
 {
-    if (sName) _cName=sName;
+    if (sName) _cName = sName;
 }
 
 
@@ -200,43 +190,43 @@ void ParameterGrp::copyTo(Base::Reference<ParameterGrp> Grp)
 void ParameterGrp::insertTo(Base::Reference<ParameterGrp> Grp)
 {
     // copy group
-    std::vector<Base::Reference<ParameterGrp> > Grps = GetGroups();
-    std::vector<Base::Reference<ParameterGrp> >::iterator It1;
-    for (It1 = Grps.begin();It1 != Grps.end();++It1)
+    std::vector<Base::Reference<ParameterGrp>> Grps = GetGroups();
+    std::vector<Base::Reference<ParameterGrp>>::iterator It1;
+    for (It1 = Grps.begin(); It1 != Grps.end(); ++It1)
         (*It1)->insertTo(Grp->GetGroup((*It1)->GetGroupName()));
 
     // copy strings
-    std::vector<std::pair<std::string,std::string> > StringMap = GetASCIIMap();
-    std::vector<std::pair<std::string,std::string> >::iterator It2;
-    for (It2 = StringMap.begin();It2 != StringMap.end();++It2)
-        Grp->SetASCII(It2->first.c_str(),It2->second.c_str());
+    std::vector<std::pair<std::string, std::string>> StringMap = GetASCIIMap();
+    std::vector<std::pair<std::string, std::string>>::iterator It2;
+    for (It2 = StringMap.begin(); It2 != StringMap.end(); ++It2)
+        Grp->SetASCII(It2->first.c_str(), It2->second.c_str());
 
     // copy bool
-    std::vector<std::pair<std::string,bool> > BoolMap = GetBoolMap();
-    std::vector<std::pair<std::string,bool> >::iterator It3;
-    for (It3 = BoolMap.begin();It3 != BoolMap.end();++It3)
-        Grp->SetBool(It3->first.c_str(),It3->second);
+    std::vector<std::pair<std::string, bool>> BoolMap = GetBoolMap();
+    std::vector<std::pair<std::string, bool>>::iterator It3;
+    for (It3 = BoolMap.begin(); It3 != BoolMap.end(); ++It3)
+        Grp->SetBool(It3->first.c_str(), It3->second);
 
     // copy int
-    std::vector<std::pair<std::string,long> > IntMap = GetIntMap();
-    std::vector<std::pair<std::string,long> >::iterator It4;
-    for (It4 = IntMap.begin();It4 != IntMap.end();++It4)
-        Grp->SetInt(It4->first.c_str(),It4->second);
+    std::vector<std::pair<std::string, long>> IntMap = GetIntMap();
+    std::vector<std::pair<std::string, long>>::iterator It4;
+    for (It4 = IntMap.begin(); It4 != IntMap.end(); ++It4)
+        Grp->SetInt(It4->first.c_str(), It4->second);
 
     // copy float
-    std::vector<std::pair<std::string,double> > FloatMap = GetFloatMap();
-    std::vector<std::pair<std::string,double> >::iterator It5;
-    for (It5 = FloatMap.begin();It5 != FloatMap.end();++It5)
-        Grp->SetFloat(It5->first.c_str(),It5->second);
+    std::vector<std::pair<std::string, double>> FloatMap = GetFloatMap();
+    std::vector<std::pair<std::string, double>>::iterator It5;
+    for (It5 = FloatMap.begin(); It5 != FloatMap.end(); ++It5)
+        Grp->SetFloat(It5->first.c_str(), It5->second);
 
     // copy uint
-    std::vector<std::pair<std::string,unsigned long> > UIntMap = GetUnsignedMap();
-    std::vector<std::pair<std::string,unsigned long> >::iterator It6;
-    for (It6 = UIntMap.begin();It6 != UIntMap.end();++It6)
-        Grp->SetUnsigned(It6->first.c_str(),It6->second);
+    std::vector<std::pair<std::string, unsigned long>> UIntMap = GetUnsignedMap();
+    std::vector<std::pair<std::string, unsigned long>>::iterator It6;
+    for (It6 = UIntMap.begin(); It6 != UIntMap.end(); ++It6)
+        Grp->SetUnsigned(It6->first.c_str(), It6->second);
 }
 
-void ParameterGrp::exportTo(const char* FileName)
+void ParameterGrp::exportTo(const char *FileName)
 {
     ParameterManager Mngr;
 
@@ -248,7 +238,7 @@ void ParameterGrp::exportTo(const char* FileName)
     Mngr.SaveDocument(FileName);
 }
 
-void ParameterGrp::importFrom(const char* FileName)
+void ParameterGrp::importFrom(const char *FileName)
 {
     ParameterManager Mngr;
 
@@ -258,7 +248,7 @@ void ParameterGrp::importFrom(const char* FileName)
     Mngr.GetGroup("BaseApp")->copyTo(Base::Reference<ParameterGrp>(this));
 }
 
-void ParameterGrp::insert(const char* FileName)
+void ParameterGrp::insert(const char *FileName)
 {
     ParameterManager Mngr;
 
@@ -268,79 +258,74 @@ void ParameterGrp::insert(const char* FileName)
     Mngr.GetGroup("root")->insertTo(Base::Reference<ParameterGrp>(this));
 }
 
-Base::Reference<ParameterGrp> ParameterGrp::GetGroup(const char* Name)
+Base::Reference<ParameterGrp> ParameterGrp::GetGroup(const char *Name)
 {
     std::string cName = Name;
-    if (cName.empty())
-        throw Base::ValueError("Empty group name");
+    if (cName.empty()) throw Base::ValueError("Empty group name");
 
     // Remove all leading slashes
     std::string::size_type beg = cName.find_first_not_of('/');
-    if (beg > 0) {
-        cName.erase(0, beg);
-    }
+    if (beg > 0) { cName.erase(0, beg); }
 
     // Remove all trailing slashes
     std::string::size_type end = cName.find_last_not_of('/');
-    if (end+1 < cName.size()) {
-        cName.erase(end+1);
-    }
+    if (end + 1 < cName.size()) { cName.erase(end + 1); }
 
     std::string::size_type pos = cName.find('/');
 
     // is there a path separator ?
-    if (pos == std::string::npos) {
-        return _GetGroup(cName.c_str());
-    }
+    if (pos == std::string::npos) { return _GetGroup(cName.c_str()); }
     else {
         // path, split the first path
         std::string cTemp;
         // getting the first part
         cTemp.assign(cName, 0, pos);
         // removing the first part from the original
-        cName.erase(0, pos+1);
+        cName.erase(0, pos + 1);
         //subsequent call
         return _GetGroup(cTemp.c_str())->GetGroup(cName.c_str());
     }
 }
 
-Base::Reference<ParameterGrp> ParameterGrp::_GetGroup(const char* Name)
+Base::Reference<ParameterGrp> ParameterGrp::_GetGroup(const char *Name)
 {
     Base::Reference<ParameterGrp> rParamGrp;
 
     // already created?
-    if ((rParamGrp=_GroupMap[Name]).isValid()) {
+    if ((rParamGrp = _GroupMap[Name]).isValid()) {
         // just return the already existing Group handle
         return rParamGrp;
     }
 
     // search if Group node already there
-    DOMElement *pcTemp = FindOrCreateElement(_pGroupNode,"FCParamGroup",Name);
+    DOMElement *pcTemp = FindOrCreateElement(_pGroupNode, "FCParamGroup", Name);
 
     // create and register handle
-    rParamGrp = Base::Reference<ParameterGrp> (new ParameterGrp(pcTemp,Name));
+    rParamGrp = Base::Reference<ParameterGrp>(new ParameterGrp(pcTemp, Name));
     _GroupMap[Name] = rParamGrp;
 
     return rParamGrp;
 }
 
-std::vector<Base::Reference<ParameterGrp> > ParameterGrp::GetGroups()
+std::vector<Base::Reference<ParameterGrp>> ParameterGrp::GetGroups()
 {
     Base::Reference<ParameterGrp> rParamGrp;
-    std::vector<Base::Reference<ParameterGrp> >  vrParamGrp;
+    std::vector<Base::Reference<ParameterGrp>> vrParamGrp;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCParamGroup");
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCParamGroup");
     while (pcTemp) {
-        Name = StrX(pcTemp->getAttributes()->getNamedItem(XStr("Name").unicodeForm())->getNodeValue()).c_str();
+        Name =
+            StrX(pcTemp->getAttributes()->getNamedItem(XStr("Name").unicodeForm())->getNodeValue())
+                .c_str();
         // already created?
-        if (!(rParamGrp=_GroupMap[Name]).isValid()) {
-            rParamGrp = Base::Reference<ParameterGrp> (new ParameterGrp(pcTemp,Name.c_str()));
+        if (!(rParamGrp = _GroupMap[Name]).isValid()) {
+            rParamGrp = Base::Reference<ParameterGrp>(new ParameterGrp(pcTemp, Name.c_str()));
             _GroupMap[Name] = rParamGrp;
         }
-        vrParamGrp.push_back( rParamGrp );
+        vrParamGrp.push_back(rParamGrp);
         // go to next
-        pcTemp = FindNextElement(pcTemp,"FCParamGroup");
+        pcTemp = FindNextElement(pcTemp, "FCParamGroup");
     }
 
     return vrParamGrp;
@@ -349,294 +334,293 @@ std::vector<Base::Reference<ParameterGrp> > ParameterGrp::GetGroups()
 /// test if this group is empty
 bool ParameterGrp::IsEmpty() const
 {
-    if (_pGroupNode->getFirstChild())
-        return false;
+    if (_pGroupNode->getFirstChild()) return false;
     else
         return true;
 }
 
 /// test if a special sub group is in this group
-bool ParameterGrp::HasGroup(const char* Name) const
+bool ParameterGrp::HasGroup(const char *Name) const
 {
-    if (_GroupMap.find(Name) != _GroupMap.end())
-        return true;
+    if (_GroupMap.find(Name) != _GroupMap.end()) return true;
 
-    if (FindElement(_pGroupNode,"FCParamGroup",Name))
-        return true;
+    if (FindElement(_pGroupNode, "FCParamGroup", Name)) return true;
 
     return false;
 }
 
-bool ParameterGrp::GetBool(const char* Name, bool bPreset) const
+bool ParameterGrp::GetBool(const char *Name, bool bPreset) const
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCBool",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCBool", Name);
     // if not return preset
-    if (!pcElem)
-        return bPreset;
+    if (!pcElem) return bPreset;
     // if yes check the value and return
-    if (strcmp(StrX(pcElem->getAttribute(XStr("Value").unicodeForm())).c_str(),"1"))
-        return false;
+    if (strcmp(StrX(pcElem->getAttribute(XStr("Value").unicodeForm())).c_str(), "1")) return false;
     else
         return true;
 }
 
-void  ParameterGrp::SetBool(const char* Name, bool bValue)
+void ParameterGrp::SetBool(const char *Name, bool bValue)
 {
     // find or create the Element
-    DOMElement *pcElem = FindOrCreateElement(_pGroupNode,"FCBool",Name);
+    DOMElement *pcElem = FindOrCreateElement(_pGroupNode, "FCBool", Name);
     if (pcElem) {
         // and set the value
-        pcElem->setAttribute(XStr("Value").unicodeForm(), XStr(bValue?"1":"0").unicodeForm());
+        pcElem->setAttribute(XStr("Value").unicodeForm(), XStr(bValue ? "1" : "0").unicodeForm());
         // trigger observer
         Notify(Name);
     }
 }
 
-std::vector<bool> ParameterGrp::GetBools(const char * sFilter) const
+std::vector<bool> ParameterGrp::GetBools(const char *sFilter) const
 {
-    std::vector<bool>  vrValues;
+    std::vector<bool> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCBool");
-    while ( pcTemp) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCBool");
+    while (pcTemp) {
         Name = StrX(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
-        if (!sFilter || Name.find(sFilter)!= std::string::npos) {
-            if (strcmp(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str(),"1"))
+        if (!sFilter || Name.find(sFilter) != std::string::npos) {
+            if (strcmp(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str(), "1"))
                 vrValues.push_back(false);
             else
                 vrValues.push_back(true);
         }
-        pcTemp = FindNextElement(pcTemp,"FCBool");
+        pcTemp = FindNextElement(pcTemp, "FCBool");
     }
 
     return vrValues;
 }
 
-std::vector<std::pair<std::string,bool> > ParameterGrp::GetBoolMap(const char * sFilter) const
+std::vector<std::pair<std::string, bool>> ParameterGrp::GetBoolMap(const char *sFilter) const
 {
-    std::vector<std::pair<std::string,bool> >  vrValues;
+    std::vector<std::pair<std::string, bool>> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCBool");
-    while ( pcTemp) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCBool");
+    while (pcTemp) {
         Name = StrX(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
         if (!sFilter || Name.find(sFilter) != std::string::npos) {
-            if (strcmp(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str(),"1"))
+            if (strcmp(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str(), "1"))
                 vrValues.emplace_back(Name, false);
             else
                 vrValues.emplace_back(Name, true);
         }
-        pcTemp = FindNextElement(pcTemp,"FCBool");
+        pcTemp = FindNextElement(pcTemp, "FCBool");
     }
 
     return vrValues;
 }
 
-long ParameterGrp::GetInt(const char* Name, long lPreset) const
+long ParameterGrp::GetInt(const char *Name, long lPreset) const
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCInt",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCInt", Name);
     // if not return preset
-    if (!pcElem)
-        return lPreset;
+    if (!pcElem) return lPreset;
     // if yes check the value and return
-    return atol (StrX(pcElem->getAttribute(XStr("Value").unicodeForm())).c_str());
+    return atol(StrX(pcElem->getAttribute(XStr("Value").unicodeForm())).c_str());
 }
 
-void  ParameterGrp::SetInt(const char* Name, long lValue)
+void ParameterGrp::SetInt(const char *Name, long lValue)
 {
     char cBuf[256];
     // find or create the Element
-    DOMElement *pcElem = FindOrCreateElement(_pGroupNode,"FCInt",Name);
+    DOMElement *pcElem = FindOrCreateElement(_pGroupNode, "FCInt", Name);
     if (pcElem) {
         // and set the value
-        sprintf(cBuf,"%li",lValue);
+        sprintf(cBuf, "%li", lValue);
         pcElem->setAttribute(XStr("Value").unicodeForm(), XStr(cBuf).unicodeForm());
         // trigger observer
         Notify(Name);
     }
 }
 
-std::vector<long> ParameterGrp::GetInts(const char * sFilter) const
+std::vector<long> ParameterGrp::GetInts(const char *sFilter) const
 {
-    std::vector<long>  vrValues;
+    std::vector<long> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCInt") ;
-    while ( pcTemp ) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCInt");
+    while (pcTemp) {
         Name = StrX(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
         if (!sFilter || Name.find(sFilter) != std::string::npos) {
-            vrValues.push_back(atol(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str()) );
+            vrValues.push_back(
+                atol(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str()));
         }
-        pcTemp = FindNextElement(pcTemp,"FCInt") ;
+        pcTemp = FindNextElement(pcTemp, "FCInt");
     }
 
     return vrValues;
 }
 
-std::vector<std::pair<std::string,long> > ParameterGrp::GetIntMap(const char * sFilter) const
+std::vector<std::pair<std::string, long>> ParameterGrp::GetIntMap(const char *sFilter) const
 {
-    std::vector<std::pair<std::string,long> > vrValues;
+    std::vector<std::pair<std::string, long>> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCInt") ;
-    while ( pcTemp ) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCInt");
+    while (pcTemp) {
         Name = StrX(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
         if (!sFilter || Name.find(sFilter) != std::string::npos) {
-            vrValues.emplace_back(Name,
-                               ( atol (StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str())));
+            vrValues.emplace_back(
+                Name, (atol(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str())));
         }
-        pcTemp = FindNextElement(pcTemp,"FCInt") ;
+        pcTemp = FindNextElement(pcTemp, "FCInt");
     }
 
     return vrValues;
 }
 
-unsigned long ParameterGrp::GetUnsigned(const char* Name, unsigned long lPreset) const
+unsigned long ParameterGrp::GetUnsigned(const char *Name, unsigned long lPreset) const
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCUInt",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCUInt", Name);
     // if not return preset
-    if (!pcElem)
-        return lPreset;
+    if (!pcElem) return lPreset;
     // if yes check the value and return
-    return strtoul (StrX(pcElem->getAttribute(XStr("Value").unicodeForm())).c_str(),nullptr,10);
+    return strtoul(StrX(pcElem->getAttribute(XStr("Value").unicodeForm())).c_str(), nullptr, 10);
 }
 
-void  ParameterGrp::SetUnsigned(const char* Name, unsigned long lValue)
+void ParameterGrp::SetUnsigned(const char *Name, unsigned long lValue)
 {
     char cBuf[256];
     // find or create the Element
-    DOMElement *pcElem = FindOrCreateElement(_pGroupNode,"FCUInt",Name);
+    DOMElement *pcElem = FindOrCreateElement(_pGroupNode, "FCUInt", Name);
     if (pcElem) {
         // and set the value
-        sprintf(cBuf,"%lu",lValue);
+        sprintf(cBuf, "%lu", lValue);
         pcElem->setAttribute(XStr("Value").unicodeForm(), XStr(cBuf).unicodeForm());
         // trigger observer
         Notify(Name);
     }
 }
 
-std::vector<unsigned long> ParameterGrp::GetUnsigneds(const char * sFilter) const
+std::vector<unsigned long> ParameterGrp::GetUnsigneds(const char *sFilter) const
 {
-    std::vector<unsigned long>  vrValues;
+    std::vector<unsigned long> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCUInt");
-    while ( pcTemp ) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCUInt");
+    while (pcTemp) {
         Name = StrX(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
         if (!sFilter || Name.find(sFilter) != std::string::npos) {
-            vrValues.push_back( strtoul (StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str(),nullptr,10) );
+            vrValues.push_back(strtoul(
+                StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str(), nullptr, 10));
         }
-        pcTemp = FindNextElement(pcTemp,"FCUInt") ;
+        pcTemp = FindNextElement(pcTemp, "FCUInt");
     }
 
     return vrValues;
 }
 
-std::vector<std::pair<std::string,unsigned long> > ParameterGrp::GetUnsignedMap(const char * sFilter) const
+std::vector<std::pair<std::string, unsigned long>>
+ParameterGrp::GetUnsignedMap(const char *sFilter) const
 {
-    std::vector<std::pair<std::string,unsigned long> > vrValues;
+    std::vector<std::pair<std::string, unsigned long>> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCUInt");
-    while ( pcTemp ) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCUInt");
+    while (pcTemp) {
         Name = StrX(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
         if (!sFilter || Name.find(sFilter) != std::string::npos) {
-            vrValues.emplace_back(Name,
-                               ( strtoul (StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str(),nullptr,10) ));
+            vrValues.emplace_back(
+                Name,
+                (strtoul(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str(), nullptr,
+                         10)));
         }
-        pcTemp = FindNextElement(pcTemp,"FCUInt");
+        pcTemp = FindNextElement(pcTemp, "FCUInt");
     }
 
     return vrValues;
 }
 
-double ParameterGrp::GetFloat(const char* Name, double dPreset) const
+double ParameterGrp::GetFloat(const char *Name, double dPreset) const
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCFloat",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCFloat", Name);
     // if not return preset
-    if (!pcElem)
-        return dPreset;
+    if (!pcElem) return dPreset;
     // if yes check the value and return
-    return atof (StrX(pcElem->getAttribute(XStr("Value").unicodeForm())).c_str());
+    return atof(StrX(pcElem->getAttribute(XStr("Value").unicodeForm())).c_str());
 }
 
-void  ParameterGrp::SetFloat(const char* Name, double dValue)
+void ParameterGrp::SetFloat(const char *Name, double dValue)
 {
     char cBuf[256];
     // find or create the Element
-    DOMElement *pcElem = FindOrCreateElement(_pGroupNode,"FCFloat",Name);
+    DOMElement *pcElem = FindOrCreateElement(_pGroupNode, "FCFloat", Name);
     if (pcElem) {
         // and set the value
-        sprintf(cBuf,"%.12f",dValue); // use %.12f instead of %f to handle values < 1.0e-6
+        sprintf(cBuf, "%.12f", dValue); // use %.12f instead of %f to handle values < 1.0e-6
         pcElem->setAttribute(XStr("Value").unicodeForm(), XStr(cBuf).unicodeForm());
         // trigger observer
         Notify(Name);
     }
 }
 
-std::vector<double> ParameterGrp::GetFloats(const char * sFilter) const
+std::vector<double> ParameterGrp::GetFloats(const char *sFilter) const
 {
-    std::vector<double>  vrValues;
+    std::vector<double> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCFloat") ;
-    while ( pcTemp ) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCFloat");
+    while (pcTemp) {
         Name = StrX(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
         if (!sFilter || Name.find(sFilter) != std::string::npos) {
-            vrValues.push_back( atof (StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str()) );
+            vrValues.push_back(
+                atof(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str()));
         }
-        pcTemp = FindNextElement(pcTemp,"FCFloat");
+        pcTemp = FindNextElement(pcTemp, "FCFloat");
     }
 
     return vrValues;
 }
 
-std::vector<std::pair<std::string,double> > ParameterGrp::GetFloatMap(const char * sFilter) const
+std::vector<std::pair<std::string, double>> ParameterGrp::GetFloatMap(const char *sFilter) const
 {
-    std::vector<std::pair<std::string,double> > vrValues;
+    std::vector<std::pair<std::string, double>> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCFloat") ;
-    while ( pcTemp ) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCFloat");
+    while (pcTemp) {
         Name = StrX(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
         if (!sFilter || Name.find(sFilter) != std::string::npos) {
-            vrValues.emplace_back(Name,
-                               ( atof (StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str())));
+            vrValues.emplace_back(
+                Name, (atof(StrX(pcTemp->getAttribute(XStr("Value").unicodeForm())).c_str())));
         }
-        pcTemp = FindNextElement(pcTemp,"FCFloat");
+        pcTemp = FindNextElement(pcTemp, "FCFloat");
     }
 
     return vrValues;
 }
 
-void  ParameterGrp::SetBlob(const char* /*Name*/, void* /*pValue*/, long /*lLength*/)
+void ParameterGrp::SetBlob(const char * /*Name*/, void * /*pValue*/, long /*lLength*/)
 {
     // not implemented so far
     assert(0);
 }
 
-void ParameterGrp::GetBlob(const char* /*Name*/, void* /*pBuf*/, long /*lMaxLength*/, void* /*pPreset*/) const
+void ParameterGrp::GetBlob(const char * /*Name*/, void * /*pBuf*/, long /*lMaxLength*/,
+                           void * /*pPreset*/) const
 {
     // not implemented so far
     assert(0);
 }
 
-void  ParameterGrp::SetASCII(const char* Name, const char *sValue)
+void ParameterGrp::SetASCII(const char *Name, const char *sValue)
 {
     // find or create the Element
-    DOMElement *pcElem = FindOrCreateElement(_pGroupNode,"FCText",Name);
+    DOMElement *pcElem = FindOrCreateElement(_pGroupNode, "FCText", Name);
     if (pcElem) {
         // and set the value
         DOMNode *pcElem2 = pcElem->getFirstChild();
@@ -653,55 +637,53 @@ void  ParameterGrp::SetASCII(const char* Name, const char *sValue)
     }
 }
 
-std::string ParameterGrp::GetASCII(const char* Name, const char * pPreset) const
+std::string ParameterGrp::GetASCII(const char *Name, const char *pPreset) const
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCText",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCText", Name);
     // if not return preset
     if (!pcElem) {
-        if (!pPreset)
-            return std::string("");
+        if (!pPreset) return std::string("");
         else
             return std::string(pPreset);
     }
     // if yes check the value and return
     DOMNode *pcElem2 = pcElem->getFirstChild();
-    if (pcElem2)
-        return std::string(StrXUTF8(pcElem2->getNodeValue()).c_str());
+    if (pcElem2) return std::string(StrXUTF8(pcElem2->getNodeValue()).c_str());
     else
         return std::string("");
 }
 
-std::vector<std::string> ParameterGrp::GetASCIIs(const char * sFilter) const
+std::vector<std::string> ParameterGrp::GetASCIIs(const char *sFilter) const
 {
-    std::vector<std::string>  vrValues;
+    std::vector<std::string> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCText");
-    while ( pcTemp  ) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCText");
+    while (pcTemp) {
         Name = StrXUTF8(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
         if (!sFilter || Name.find(sFilter) != std::string::npos) {
             // retrieve the text element
             DOMNode *pcElem2 = pcTemp->getFirstChild();
-            if (pcElem2)
-                vrValues.emplace_back(StrXUTF8(pcElem2->getNodeValue()).c_str() );
+            if (pcElem2) vrValues.emplace_back(StrXUTF8(pcElem2->getNodeValue()).c_str());
             else
                 vrValues.emplace_back(""); // For a string, an empty value is possible and allowed
         }
-        pcTemp = FindNextElement(pcTemp,"FCText");
+        pcTemp = FindNextElement(pcTemp, "FCText");
     }
 
     return vrValues;
 }
 
-std::vector<std::pair<std::string,std::string> > ParameterGrp::GetASCIIMap(const char * sFilter) const
+std::vector<std::pair<std::string, std::string>>
+ParameterGrp::GetASCIIMap(const char *sFilter) const
 {
-    std::vector<std::pair<std::string,std::string> >  vrValues;
+    std::vector<std::pair<std::string, std::string>> vrValues;
     std::string Name;
 
-    DOMElement *pcTemp = FindElement(_pGroupNode,"FCText");
-    while ( pcTemp) {
+    DOMElement *pcTemp = FindElement(_pGroupNode, "FCText");
+    while (pcTemp) {
         Name = StrXUTF8(pcTemp->getAttribute(XStr("Name").unicodeForm())).c_str();
         // check on filter condition
         if (!sFilter || Name.find(sFilter) != std::string::npos) {
@@ -710,9 +692,10 @@ std::vector<std::pair<std::string,std::string> > ParameterGrp::GetASCIIMap(const
             if (pcElem2)
                 vrValues.emplace_back(Name, std::string(StrXUTF8(pcElem2->getNodeValue()).c_str()));
             else
-                vrValues.emplace_back(Name, std::string()); // For a string, an empty value is possible and allowed
+                vrValues.emplace_back(
+                    Name, std::string()); // For a string, an empty value is possible and allowed
         }
-        pcTemp = FindNextElement(pcTemp,"FCText");
+        pcTemp = FindNextElement(pcTemp, "FCText");
     }
 
     return vrValues;
@@ -721,37 +704,35 @@ std::vector<std::pair<std::string,std::string> > ParameterGrp::GetASCIIMap(const
 //**************************************************************************
 // Access methods
 
-void ParameterGrp::RemoveASCII(const char* Name)
+void ParameterGrp::RemoveASCII(const char *Name)
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCText",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCText", Name);
     // if not return
-    if (!pcElem)
-        return;
+    if (!pcElem) return;
 
-    DOMNode* node = _pGroupNode->removeChild(pcElem);
+    DOMNode *node = _pGroupNode->removeChild(pcElem);
     node->release();
 
     // trigger observer
     Notify(Name);
 }
 
-void ParameterGrp::RemoveBool(const char* Name)
+void ParameterGrp::RemoveBool(const char *Name)
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCBool",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCBool", Name);
     // if not return
-    if (!pcElem)
-        return;
+    if (!pcElem) return;
 
-    DOMNode* node = _pGroupNode->removeChild(pcElem);
+    DOMNode *node = _pGroupNode->removeChild(pcElem);
     node->release();
 
     // trigger observer
     Notify(Name);
 }
 
-void ParameterGrp::RemoveBlob(const char* /*Name*/)
+void ParameterGrp::RemoveBlob(const char * /*Name*/)
 {
     /* not implemented yet
     // check if Element in group
@@ -764,75 +745,68 @@ void ParameterGrp::RemoveBlob(const char* /*Name*/)
     */
 }
 
-void ParameterGrp::RemoveFloat(const char* Name)
+void ParameterGrp::RemoveFloat(const char *Name)
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCFloat",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCFloat", Name);
     // if not return
-    if (!pcElem)
-        return;
+    if (!pcElem) return;
 
-    DOMNode* node = _pGroupNode->removeChild(pcElem);
+    DOMNode *node = _pGroupNode->removeChild(pcElem);
     node->release();
 
     // trigger observer
     Notify(Name);
 }
 
-void ParameterGrp::RemoveInt(const char* Name)
+void ParameterGrp::RemoveInt(const char *Name)
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCInt",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCInt", Name);
     // if not return
-    if (!pcElem)
-        return;
+    if (!pcElem) return;
 
-    DOMNode* node = _pGroupNode->removeChild(pcElem);
+    DOMNode *node = _pGroupNode->removeChild(pcElem);
     node->release();
 
     // trigger observer
     Notify(Name);
 }
 
-void ParameterGrp::RemoveUnsigned(const char* Name)
+void ParameterGrp::RemoveUnsigned(const char *Name)
 {
     // check if Element in group
-    DOMElement *pcElem = FindElement(_pGroupNode,"FCUInt",Name);
+    DOMElement *pcElem = FindElement(_pGroupNode, "FCUInt", Name);
     // if not return
-    if (!pcElem)
-        return;
+    if (!pcElem) return;
 
-    DOMNode* node = _pGroupNode->removeChild(pcElem);
+    DOMNode *node = _pGroupNode->removeChild(pcElem);
     node->release();
 
     // trigger observer
     Notify(Name);
 }
 
-void ParameterGrp::RemoveGrp(const char* Name)
+void ParameterGrp::RemoveGrp(const char *Name)
 {
     auto it = _GroupMap.find(Name);
-    if (it == _GroupMap.end())
-        return;
+    if (it == _GroupMap.end()) return;
 
-    // if this or any of its children is referenced by an observer
-    // it cannot be deleted
+        // if this or any of its children is referenced by an observer
+        // it cannot be deleted
 #if 1
-    if (!it->second->ShouldRemove()) {
-        it->second->Clear();
-    }
+    if (!it->second->ShouldRemove()) { it->second->Clear(); }
     else {
 #endif
         // check if Element in group
-        DOMElement *pcElem = FindElement(_pGroupNode,"FCParamGroup",Name);
+        DOMElement *pcElem = FindElement(_pGroupNode, "FCParamGroup", Name);
         // if not return
-        if (!pcElem)
-            return;
+        if (!pcElem) return;
 
         // remove group handle
         _GroupMap.erase(Name);
 
-        DOMNode* node = _pGroupNode->removeChild(pcElem);
+        DOMNode *node = _pGroupNode->removeChild(pcElem);
         node->release();
 #if 1
     }
@@ -842,14 +816,12 @@ void ParameterGrp::RemoveGrp(const char* Name)
     Notify(Name);
 }
 
-bool ParameterGrp::RenameGrp(const char* OldName, const char* NewName)
+bool ParameterGrp::RenameGrp(const char *OldName, const char *NewName)
 {
     auto it = _GroupMap.find(OldName);
-    if (it == _GroupMap.end())
-        return false;
+    if (it == _GroupMap.end()) return false;
     auto jt = _GroupMap.find(NewName);
-    if (jt != _GroupMap.end())
-        return false;
+    if (jt != _GroupMap.end()) return false;
 
     // rename group handle
     _GroupMap[NewName] = _GroupMap[OldName];
@@ -858,38 +830,36 @@ bool ParameterGrp::RenameGrp(const char* OldName, const char* NewName)
 
     // check if Element in group
     DOMElement *pcElem = FindElement(_pGroupNode, "FCParamGroup", OldName);
-    if (pcElem)
-        pcElem-> setAttribute(XStr("Name").unicodeForm(), XStr(NewName).unicodeForm());
+    if (pcElem) pcElem->setAttribute(XStr("Name").unicodeForm(), XStr(NewName).unicodeForm());
 
     return true;
 }
 
 void ParameterGrp::Clear()
 {
-    std::vector<DOMNode*> vecNodes;
+    std::vector<DOMNode *> vecNodes;
 
     // checking on references
     std::vector<std::string> removeGrp;
-    for (auto it = _GroupMap.begin();it!=_GroupMap.end();++it) {
+    for (auto it = _GroupMap.begin(); it != _GroupMap.end(); ++it) {
         // If a group is referenced by some observer then do not remove it
         // but clear it
-        if (!it->second->ShouldRemove()) {
-            it->second->Clear();
-        }
+        if (!it->second->ShouldRemove()) { it->second->Clear(); }
         else {
             removeGrp.push_back(it->first);
         }
     }
 
     // remove group handles
-    for (const auto& it : removeGrp) {
+    for (const auto &it : removeGrp) {
         auto pos = _GroupMap.find(it);
         vecNodes.push_back(pos->second->_pGroupNode);
         _GroupMap.erase(pos->first);
     }
 
     // searching all non-group nodes
-    for (DOMNode *child = _pGroupNode->getFirstChild(); child != nullptr;  child = child->getNextSibling()) {
+    for (DOMNode *child = _pGroupNode->getFirstChild(); child != nullptr;
+         child = child->getNextSibling()) {
         if (XMLString::compareString(child->getNodeName(), XStr("FCParamGroup").unicodeForm()) != 0)
             vecNodes.push_back(child);
     }
@@ -909,36 +879,38 @@ void ParameterGrp::Clear()
 
 bool ParameterGrp::ShouldRemove() const
 {
-    if (this->getRefCount() > 1)
-        return false;
-    for (const auto& it : _GroupMap) {
+    if (this->getRefCount() > 1) return false;
+    for (const auto &it : _GroupMap) {
         bool ok = it.second->ShouldRemove();
-        if (!ok)
-            return false;
+        if (!ok) return false;
     }
     return true;
 }
 
-XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *ParameterGrp::FindElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *Start, const char* Type, const char* Name) const
+XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *
+ParameterGrp::FindElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *Start, const char *Type,
+                          const char *Name) const
 {
-    if (XMLString::compareString(Start->getNodeName(), XStr("FCParamGroup").unicodeForm()) != 0 &&
-        XMLString::compareString(Start->getNodeName(), XStr("FCParameters").unicodeForm()) != 0) {
-        Base::Console().Warning("FindElement: %s cannot have the element %s of type %s\n", StrX(Start->getNodeName()).c_str(), Name, Type);
+    if (XMLString::compareString(Start->getNodeName(), XStr("FCParamGroup").unicodeForm()) != 0
+        && XMLString::compareString(Start->getNodeName(), XStr("FCParameters").unicodeForm())
+            != 0) {
+        Base::Console().Warning("FindElement: %s cannot have the element %s of type %s\n",
+                                StrX(Start->getNodeName()).c_str(), Name, Type);
         return nullptr;
     }
-    for (DOMNode *clChild = Start->getFirstChild(); clChild != nullptr;  clChild = clChild->getNextSibling()) {
+    for (DOMNode *clChild = Start->getFirstChild(); clChild != nullptr;
+         clChild = clChild->getNextSibling()) {
         if (clChild->getNodeType() == DOMNode::ELEMENT_NODE) {
             // the right node Type
-            if (!strcmp(Type,StrX(clChild->getNodeName()).c_str())) {
+            if (!strcmp(Type, StrX(clChild->getNodeName()).c_str())) {
                 if (clChild->getAttributes()->getLength() > 0) {
                     if (Name) {
-                        DOMNode* attr = FindAttribute(clChild, "Name");
-                        if (attr && !strcmp(Name,StrX(attr->getNodeValue()).c_str()))
-                            return static_cast<DOMElement*>(clChild);
+                        DOMNode *attr = FindAttribute(clChild, "Name");
+                        if (attr && !strcmp(Name, StrX(attr->getNodeValue()).c_str()))
+                            return static_cast<DOMElement *>(clChild);
                     }
                     else
-                        return static_cast<DOMElement*>(clChild);
-
+                        return static_cast<DOMElement *>(clChild);
                 }
             }
         }
@@ -946,79 +918,86 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *ParameterGrp::FindElement(XERCES_CPP_
     return nullptr;
 }
 
-XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *ParameterGrp::FindNextElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *Prev, const char* Type) const
+XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *
+ParameterGrp::FindNextElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *Prev, const char *Type) const
 {
     DOMNode *clChild = Prev;
-    if (!clChild)
-        return nullptr;
+    if (!clChild) return nullptr;
 
     while ((clChild = clChild->getNextSibling()) != nullptr) {
         if (clChild->getNodeType() == DOMNode::ELEMENT_NODE) {
             // the right node Type
-            if (!strcmp(Type,StrX(clChild->getNodeName()).c_str())) {
-                return static_cast<DOMElement*>(clChild);
+            if (!strcmp(Type, StrX(clChild->getNodeName()).c_str())) {
+                return static_cast<DOMElement *>(clChild);
             }
         }
     }
     return nullptr;
 }
 
-XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *ParameterGrp::FindOrCreateElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *Start, const char* Type, const char* Name) const
+XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *
+ParameterGrp::FindOrCreateElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *Start,
+                                  const char *Type, const char *Name) const
 {
     // first try to find it
-    DOMElement *pcElem = FindElement(Start,Type,Name);
-    if (pcElem)
-        return pcElem;
+    DOMElement *pcElem = FindElement(Start, Type, Name);
+    if (pcElem) return pcElem;
 
-    if (XMLString::compareString(Start->getNodeName(), XStr("FCParamGroup").unicodeForm()) != 0 &&
-        XMLString::compareString(Start->getNodeName(), XStr("FCParameters").unicodeForm()) != 0) {
-        Base::Console().Warning("FindOrCreateElement: %s cannot have the element %s of type %s\n", StrX(Start->getNodeName()).c_str(), Name, Type);
+    if (XMLString::compareString(Start->getNodeName(), XStr("FCParamGroup").unicodeForm()) != 0
+        && XMLString::compareString(Start->getNodeName(), XStr("FCParameters").unicodeForm())
+            != 0) {
+        Base::Console().Warning("FindOrCreateElement: %s cannot have the element %s of type %s\n",
+                                StrX(Start->getNodeName()).c_str(), Name, Type);
         return nullptr;
     }
 
     XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument *pDocument = _pGroupNode->getOwnerDocument();
 
     pcElem = pDocument->createElement(XStr(Type).unicodeForm());
-    pcElem-> setAttribute(XStr("Name").unicodeForm(), XStr(Name).unicodeForm());
+    pcElem->setAttribute(XStr("Name").unicodeForm(), XStr(Name).unicodeForm());
     Start->appendChild(pcElem);
 
     return pcElem;
 }
 
-XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *ParameterGrp::FindAttribute(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *Node, const char* Name) const
+XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *
+ParameterGrp::FindAttribute(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *Node, const char *Name) const
 {
-    DOMNamedNodeMap* attr = Node->getAttributes();
-    if (attr) {
-        return attr->getNamedItem(XStr(Name).unicodeForm());
-    }
+    DOMNamedNodeMap *attr = Node->getAttributes();
+    if (attr) { return attr->getNamedItem(XStr(Name).unicodeForm()); }
     return nullptr;
 }
 
 void ParameterGrp::NotifyAll()
 {
     // get all ints and notify
-    std::vector<std::pair<std::string,long> > IntMap = GetIntMap();
-    for (std::vector<std::pair<std::string,long> >::iterator It1= IntMap.begin(); It1 != IntMap.end(); ++It1)
+    std::vector<std::pair<std::string, long>> IntMap = GetIntMap();
+    for (std::vector<std::pair<std::string, long>>::iterator It1 = IntMap.begin();
+         It1 != IntMap.end(); ++It1)
         Notify(It1->first.c_str());
 
     // get all booleans and notify
-    std::vector<std::pair<std::string,bool> > BoolMap = GetBoolMap();
-    for (std::vector<std::pair<std::string,bool> >::iterator It2= BoolMap.begin(); It2 != BoolMap.end(); ++It2)
+    std::vector<std::pair<std::string, bool>> BoolMap = GetBoolMap();
+    for (std::vector<std::pair<std::string, bool>>::iterator It2 = BoolMap.begin();
+         It2 != BoolMap.end(); ++It2)
         Notify(It2->first.c_str());
 
     // get all Floats and notify
-    std::vector<std::pair<std::string,double> > FloatMap  = GetFloatMap();
-    for (std::vector<std::pair<std::string,double> >::iterator It3= FloatMap.begin(); It3 != FloatMap.end(); ++It3)
+    std::vector<std::pair<std::string, double>> FloatMap = GetFloatMap();
+    for (std::vector<std::pair<std::string, double>>::iterator It3 = FloatMap.begin();
+         It3 != FloatMap.end(); ++It3)
         Notify(It3->first.c_str());
 
     // get all strings and notify
-    std::vector<std::pair<std::string,std::string> > StringMap = GetASCIIMap();
-    for (std::vector<std::pair<std::string,std::string> >::iterator It4= StringMap.begin(); It4 != StringMap.end(); ++It4)
+    std::vector<std::pair<std::string, std::string>> StringMap = GetASCIIMap();
+    for (std::vector<std::pair<std::string, std::string>>::iterator It4 = StringMap.begin();
+         It4 != StringMap.end(); ++It4)
         Notify(It4->first.c_str());
 
     // get all uints and notify
-    std::vector<std::pair<std::string,unsigned long> > UIntMap = GetUnsignedMap();
-    for (std::vector<std::pair<std::string,unsigned long> >::iterator It5= UIntMap.begin(); It5 != UIntMap.end(); ++It5)
+    std::vector<std::pair<std::string, unsigned long>> UIntMap = GetUnsignedMap();
+    for (std::vector<std::pair<std::string, unsigned long>>::iterator It5 = UIntMap.begin();
+         It5 != UIntMap.end(); ++It5)
         Notify(It5->first.c_str());
 }
 
@@ -1026,24 +1005,21 @@ void ParameterGrp::NotifyAll()
 //**************************************************************************
 // ParameterSerializer
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-ParameterSerializer::ParameterSerializer(const std::string& fn)
-  : filename(fn)
-{
-}
+ParameterSerializer::ParameterSerializer(const std::string &fn) : filename(fn) {}
 
 ParameterSerializer::~ParameterSerializer() = default;
 
-void ParameterSerializer::SaveDocument(const ParameterManager& mgr)
+void ParameterSerializer::SaveDocument(const ParameterManager &mgr)
 {
     mgr.SaveDocument(filename.c_str());
 }
 
-int ParameterSerializer::LoadDocument(ParameterManager& mgr)
+int ParameterSerializer::LoadDocument(ParameterManager &mgr)
 {
     return mgr.LoadDocument(filename.c_str());
 }
 
-bool ParameterSerializer::LoadOrCreateDocument(ParameterManager& mgr)
+bool ParameterSerializer::LoadOrCreateDocument(ParameterManager &mgr)
 {
     return mgr.LoadOrCreateDocument(filename.c_str());
 }
@@ -1053,72 +1029,71 @@ bool ParameterSerializer::LoadOrCreateDocument(ParameterManager& mgr)
 // ParameterManager
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-static XercesDOMParser::ValSchemes    gValScheme       = XercesDOMParser::Val_Auto;
+static XercesDOMParser::ValSchemes gValScheme = XercesDOMParser::Val_Auto;
 
 //**************************************************************************
 // Construction/Destruction
 
 /** Default construction
   */
-ParameterManager::ParameterManager()
-  : ParameterGrp(), _pDocument(nullptr), paramSerializer(nullptr)
+ParameterManager::ParameterManager() : ParameterGrp(), _pDocument(nullptr), paramSerializer(nullptr)
 {
     // initialize the XML system
     Init();
 
-// ---------------------------------------------------------------------------
-//  Local data
-//
-//  gXmlFile
-//      The path to the file to parser. Set via command line.
-//
-//  gDoNamespaces
-//      Indicates whether namespace processing should be done.
-//
-//  gDoSchema
-//      Indicates whether schema processing should be done.
-//
-//  gSchemaFullChecking
-//      Indicates whether full schema constraint checking should be done.
-//
-//  gDoCreate
-//      Indicates whether entity reference nodes needs to be created or not.
-//      Defaults to false.
-//
-//  gOutputEncoding
-//      The encoding we are to output in. If not set on the command line,
-//      then it is defaults to the encoding of the input XML file.
-//
-//  gMyEOLSequence
-//      The end of line sequence we are to output.
-//
-//  gSplitCdataSections
-//      Indicates whether split-cdata-sections is to be enabled or not.
-//
-//  gDiscardDefaultContent
-//      Indicates whether default content is discarded or not.
-//
-//  gUseFilter
-//      Indicates if user wants to plug in the DOMPrintFilter.
-//
-//  gValScheme
-//      Indicates what validation scheme to use. It defaults to 'auto', but
-//      can be set via the -v= command.
-//
-// ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    //  Local data
+    //
+    //  gXmlFile
+    //      The path to the file to parser. Set via command line.
+    //
+    //  gDoNamespaces
+    //      Indicates whether namespace processing should be done.
+    //
+    //  gDoSchema
+    //      Indicates whether schema processing should be done.
+    //
+    //  gSchemaFullChecking
+    //      Indicates whether full schema constraint checking should be done.
+    //
+    //  gDoCreate
+    //      Indicates whether entity reference nodes needs to be created or not.
+    //      Defaults to false.
+    //
+    //  gOutputEncoding
+    //      The encoding we are to output in. If not set on the command line,
+    //      then it is defaults to the encoding of the input XML file.
+    //
+    //  gMyEOLSequence
+    //      The end of line sequence we are to output.
+    //
+    //  gSplitCdataSections
+    //      Indicates whether split-cdata-sections is to be enabled or not.
+    //
+    //  gDiscardDefaultContent
+    //      Indicates whether default content is discarded or not.
+    //
+    //  gUseFilter
+    //      Indicates if user wants to plug in the DOMPrintFilter.
+    //
+    //  gValScheme
+    //      Indicates what validation scheme to use. It defaults to 'auto', but
+    //      can be set via the -v= command.
+    //
+    // ---------------------------------------------------------------------------
 
-    gDoNamespaces          = false;
-    gDoSchema              = false;
-    gSchemaFullChecking    = false;
-    gDoCreate              = true;
+    gDoNamespaces = false;
+    gDoSchema = false;
+    gSchemaFullChecking = false;
+    gDoCreate = true;
 
-    gOutputEncoding        = nullptr;
-    gMyEOLSequence         = nullptr;
+    gOutputEncoding = nullptr;
+    gMyEOLSequence = nullptr;
 
-    gSplitCdataSections    = true;
+    gSplitCdataSections = true;
     gDiscardDefaultContent = true;
-    gUseFilter             = true;
-    gFormatPrettyPrint     = true;
+    gUseFilter = true;
+    gFormatPrettyPrint = true;
 }
 
 /** Destruction
@@ -1137,7 +1112,7 @@ void ParameterManager::Init()
         try {
             XMLPlatformUtils::Initialize();
         }
-        catch (const XMLException& toCatch) {
+        catch (const XMLException &toCatch) {
 #if defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN)
             std::ostringstream err;
 #else
@@ -1145,8 +1120,7 @@ void ParameterManager::Init()
 #endif
             char *pMsg = XMLString::transcode(toCatch.getMessage());
             err << "Error during Xerces-c Initialization.\n"
-                << "  Exception message:"
-                << pMsg;
+                << "  Exception message:" << pMsg;
             XMLString::release(&pMsg);
             throw XMLBaseException(err.str().c_str());
         }
@@ -1163,44 +1137,37 @@ void ParameterManager::Terminate()
 //**************************************************************************
 // Serializer handling
 
-void ParameterManager::SetSerializer(ParameterSerializer* ps)
+void ParameterManager::SetSerializer(ParameterSerializer *ps)
 {
-    if (paramSerializer != ps)
-        delete paramSerializer;
+    if (paramSerializer != ps) delete paramSerializer;
     paramSerializer = ps;
 }
 
-bool ParameterManager::HasSerializer() const
-{
-    return (paramSerializer != nullptr);
-}
+bool ParameterManager::HasSerializer() const { return (paramSerializer != nullptr); }
 
 int ParameterManager::LoadDocument()
 {
-    if (paramSerializer)
-        return paramSerializer->LoadDocument(*this);
+    if (paramSerializer) return paramSerializer->LoadDocument(*this);
     else
         return -1;
 }
 
 bool ParameterManager::LoadOrCreateDocument()
 {
-    if (paramSerializer)
-        return paramSerializer->LoadOrCreateDocument(*this);
+    if (paramSerializer) return paramSerializer->LoadOrCreateDocument(*this);
     else
         return false;
 }
 
 void ParameterManager::SaveDocument() const
 {
-    if (paramSerializer)
-        paramSerializer->SaveDocument(*this);
+    if (paramSerializer) paramSerializer->SaveDocument(*this);
 }
 
 //**************************************************************************
 // Document handling
 
-bool ParameterManager::LoadOrCreateDocument(const char* sFileName)
+bool ParameterManager::LoadOrCreateDocument(const char *sFileName)
 {
     Base::FileInfo file(sFileName);
     if (file.exists()) {
@@ -1213,19 +1180,20 @@ bool ParameterManager::LoadOrCreateDocument(const char* sFileName)
     }
 }
 
-int  ParameterManager::LoadDocument(const char* sFileName)
+int ParameterManager::LoadDocument(const char *sFileName)
 {
     Base::FileInfo file(sFileName);
 
     try {
-#if defined (FC_OS_WIN32)
-        LocalFileInputSource inputSource(reinterpret_cast<const XMLCh*>(file.toStdWString().c_str()));
+#if defined(FC_OS_WIN32)
+        LocalFileInputSource inputSource(
+            reinterpret_cast<const XMLCh *>(file.toStdWString().c_str()));
 #else
         LocalFileInputSource inputSource(XStr(file.filePath().c_str()).unicodeForm());
 #endif
         return LoadDocument(inputSource);
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         std::cerr << e.what() << std::endl;
         throw;
     }
@@ -1235,7 +1203,7 @@ int  ParameterManager::LoadDocument(const char* sFileName)
     }
 }
 
-int ParameterManager::LoadDocument(const XERCES_CPP_NAMESPACE_QUALIFIER InputSource& inputSource)
+int ParameterManager::LoadDocument(const XERCES_CPP_NAMESPACE_QUALIFIER InputSource &inputSource)
 {
     //
     //  Create our parser, then attach an error handler to the parser.
@@ -1261,15 +1229,15 @@ int ParameterManager::LoadDocument(const XERCES_CPP_NAMESPACE_QUALIFIER InputSou
         parser->parse(inputSource);
     }
 
-    catch (const XMLException& e) {
-        std::cerr << "An error occurred during parsing\n   Message: "
-        << StrX(e.getMessage()) << std::endl;
+    catch (const XMLException &e) {
+        std::cerr << "An error occurred during parsing\n   Message: " << StrX(e.getMessage())
+                  << std::endl;
         errorsOccured = true;
     }
 
-    catch (const DOMException& e) {
-        std::cerr << "A DOM error occurred during parsing\n   DOMException code: "
-        << e.code << std::endl;
+    catch (const DOMException &e) {
+        std::cerr << "A DOM error occurred during parsing\n   DOMException code: " << e.code
+                  << std::endl;
         errorsOccured = true;
     }
 
@@ -1288,22 +1256,19 @@ int ParameterManager::LoadDocument(const XERCES_CPP_NAMESPACE_QUALIFIER InputSou
     delete parser;
     delete errReporter;
 
-    if (!_pDocument)
-        throw XMLBaseException("Malformed Parameter document: Invalid document");
+    if (!_pDocument) throw XMLBaseException("Malformed Parameter document: Invalid document");
 
-    DOMElement* rootElem = _pDocument->getDocumentElement();
-    if (!rootElem)
-        throw XMLBaseException("Malformed Parameter document: Root group not found");
+    DOMElement *rootElem = _pDocument->getDocumentElement();
+    if (!rootElem) throw XMLBaseException("Malformed Parameter document: Root group not found");
 
-    _pGroupNode = FindElement(rootElem,"FCParamGroup","Root");
+    _pGroupNode = FindElement(rootElem, "FCParamGroup", "Root");
 
-    if (!_pGroupNode)
-        throw XMLBaseException("Malformed Parameter document: Root group not found");
+    if (!_pGroupNode) throw XMLBaseException("Malformed Parameter document: Root group not found");
 
     return 1;
 }
 
-void  ParameterManager::SaveDocument(const char* sFileName) const
+void ParameterManager::SaveDocument(const char *sFileName) const
 {
     Base::FileInfo file(sFileName);
 
@@ -1315,32 +1280,33 @@ void  ParameterManager::SaveDocument(const char* sFileName) const
         // LocalFileFormatTarget prints the resultant XML stream
         // to a file once it receives any thing from the serializer.
         //
-#if defined (FC_OS_WIN32)
-        XMLFormatTarget *myFormTarget = new LocalFileFormatTarget (reinterpret_cast<const XMLCh*>(file.toStdWString().c_str()));
+#if defined(FC_OS_WIN32)
+        XMLFormatTarget *myFormTarget =
+            new LocalFileFormatTarget(reinterpret_cast<const XMLCh *>(file.toStdWString().c_str()));
 #else
-        XMLFormatTarget *myFormTarget = new LocalFileFormatTarget (file.filePath().c_str());
+        XMLFormatTarget *myFormTarget = new LocalFileFormatTarget(file.filePath().c_str());
 #endif
         SaveDocument(myFormTarget);
         delete myFormTarget;
     }
-    catch (XMLException& e) {
-        std::cerr << "An error occurred during creation of output transcoder. Msg is:"
-        << std::endl
-        << StrX(e.getMessage()) << std::endl;
+    catch (XMLException &e) {
+        std::cerr << "An error occurred during creation of output transcoder. Msg is:" << std::endl
+                  << StrX(e.getMessage()) << std::endl;
     }
 }
 
-void  ParameterManager::SaveDocument(XMLFormatTarget* pFormatTarget) const
+void ParameterManager::SaveDocument(XMLFormatTarget *pFormatTarget) const
 {
     try {
-        std::unique_ptr<DOMPrintFilter>   myFilter;
-        std::unique_ptr<DOMErrorHandler>  myErrorHandler;
+        std::unique_ptr<DOMPrintFilter> myFilter;
+        std::unique_ptr<DOMErrorHandler> myErrorHandler;
 
         // get a serializer, an instance of DOMWriter
         XMLCh tempStr[100];
         XMLString::transcode("LS", tempStr, 99);
-        DOMImplementation *impl          = DOMImplementationRegistry::getDOMImplementation(tempStr);
-        DOMLSSerializer   *theSerializer = static_cast<DOMImplementationLS*>(impl)->createLSSerializer();
+        DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(tempStr);
+        DOMLSSerializer *theSerializer =
+            static_cast<DOMImplementationLS *>(impl)->createLSSerializer();
 
         // set user specified end of line sequence and output encoding
         theSerializer->setNewLine(gMyEOLSequence);
@@ -1350,27 +1316,27 @@ void  ParameterManager::SaveDocument(XMLFormatTarget* pFormatTarget) const
         // do the serialization through DOMWriter::writeNode();
         //
         if (_pDocument) {
-            DOMLSOutput *theOutput = static_cast<DOMImplementationLS*>(impl)->createLSOutput();
+            DOMLSOutput *theOutput = static_cast<DOMImplementationLS *>(impl)->createLSOutput();
             theOutput->setEncoding(gOutputEncoding);
 
             if (gUseFilter) {
-                myFilter.reset(new DOMPrintFilter(DOMNodeFilter::SHOW_ELEMENT   |
-                                                  DOMNodeFilter::SHOW_ATTRIBUTE |
-                                                  DOMNodeFilter::SHOW_DOCUMENT_TYPE
-                                                  ));
+                myFilter.reset(new DOMPrintFilter(DOMNodeFilter::SHOW_ELEMENT
+                                                  | DOMNodeFilter::SHOW_ATTRIBUTE
+                                                  | DOMNodeFilter::SHOW_DOCUMENT_TYPE));
                 theSerializer->setFilter(myFilter.get());
             }
 
             // plug in user's own error handler
             myErrorHandler.reset(new DOMPrintErrorHandler());
-            DOMConfiguration* config = theSerializer->getDomConfig();
+            DOMConfiguration *config = theSerializer->getDomConfig();
             config->setParameter(XMLUni::fgDOMErrorHandler, myErrorHandler.get());
 
             // set feature if the serializer supports the feature/mode
             if (config->canSetParameter(XMLUni::fgDOMWRTSplitCdataSections, gSplitCdataSections))
                 config->setParameter(XMLUni::fgDOMWRTSplitCdataSections, gSplitCdataSections);
 
-            if (config->canSetParameter(XMLUni::fgDOMWRTDiscardDefaultContent, gDiscardDefaultContent))
+            if (config->canSetParameter(XMLUni::fgDOMWRTDiscardDefaultContent,
+                                        gDiscardDefaultContent))
                 config->setParameter(XMLUni::fgDOMWRTDiscardDefaultContent, gDiscardDefaultContent);
 
             if (config->canSetParameter(XMLUni::fgDOMWRTFormatPrettyPrint, gFormatPrettyPrint))
@@ -1384,34 +1350,32 @@ void  ParameterManager::SaveDocument(XMLFormatTarget* pFormatTarget) const
 
         theSerializer->release();
     }
-    catch (XMLException& e) {
-        std::cerr << "An error occurred during creation of output transcoder. Msg is:"
-        << std::endl
-        << StrX(e.getMessage()) << std::endl;
+    catch (XMLException &e) {
+        std::cerr << "An error occurred during creation of output transcoder. Msg is:" << std::endl
+                  << StrX(e.getMessage()) << std::endl;
     }
 }
 
-void  ParameterManager::CreateDocument()
+void ParameterManager::CreateDocument()
 {
     // creating a document from screatch
-    DOMImplementation* impl =  DOMImplementationRegistry::getDOMImplementation(XStr("Core").unicodeForm());
+    DOMImplementation *impl =
+        DOMImplementationRegistry::getDOMImplementation(XStr("Core").unicodeForm());
     delete _pDocument;
-    _pDocument = impl->createDocument(
-                     nullptr,                                    // root element namespace URI.
-                     XStr("FCParameters").unicodeForm(),         // root element name
-                     nullptr);                                   // document type object (DTD).
+    _pDocument = impl->createDocument(nullptr, // root element namespace URI.
+                                      XStr("FCParameters").unicodeForm(), // root element name
+                                      nullptr); // document type object (DTD).
 
     // creating the node for the root group
-    DOMElement* rootElem = _pDocument->getDocumentElement();
+    DOMElement *rootElem = _pDocument->getDocumentElement();
     _pGroupNode = _pDocument->createElement(XStr("FCParamGroup").unicodeForm());
     _pGroupNode->setAttribute(XStr("Name").unicodeForm(), XStr("Root").unicodeForm());
     rootElem->appendChild(_pGroupNode);
 }
 
-void  ParameterManager::CheckDocument() const
+void ParameterManager::CheckDocument() const
 {
-    if (!_pDocument)
-        return;
+    if (!_pDocument) return;
 
     try {
         //
@@ -1431,12 +1395,13 @@ void  ParameterManager::CheckDocument() const
         // Either load the XSD file from disk or use the built-in string
         // const char* xsdFile = "...";
         std::string xsdStr(xmlSchemeString);
-        MemBufInputSource xsdFile(reinterpret_cast<const XMLByte*>(xsdStr.c_str()), xsdStr.size(), "Parameter.xsd");
+        MemBufInputSource xsdFile(reinterpret_cast<const XMLByte *>(xsdStr.c_str()), xsdStr.size(),
+                                  "Parameter.xsd");
 
         // See http://apache-xml-project.6118.n7.nabble.com/validating-xml-with-xsd-schema-td17515.html
         //
         XercesDOMParser parser;
-        Grammar* grammar = parser.loadGrammar(xsdFile, Grammar::SchemaGrammarType, true);
+        Grammar *grammar = parser.loadGrammar(xsdFile, Grammar::SchemaGrammarType, true);
         if (!grammar) {
             Base::Console().Error("Grammar file cannot be loaded.\n");
             return;
@@ -1455,13 +1420,13 @@ void  ParameterManager::CheckDocument() const
         parser.parse(xmlFile);
 
         if (parser.getErrorCount() > 0) {
-            Base::Console().Error("Unexpected XML structure detected: %zu errors\n", parser.getErrorCount());
+            Base::Console().Error("Unexpected XML structure detected: %zu errors\n",
+                                  parser.getErrorCount());
         }
     }
-    catch (XMLException& e) {
-        std::cerr << "An error occurred while checking document. Msg is:"
-        << std::endl
-        << StrX(e.getMessage()) << std::endl;
+    catch (XMLException &e) {
+        std::cerr << "An error occurred while checking document. Msg is:" << std::endl
+                  << StrX(e.getMessage()) << std::endl;
     }
 }
 
@@ -1471,29 +1436,27 @@ void  ParameterManager::CheckDocument() const
 // DOMTreeErrorReporter
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-void DOMTreeErrorReporter::warning(const SAXParseException&)
+void DOMTreeErrorReporter::warning(const SAXParseException &)
 {
     //
     // Ignore all warnings.
     //
 }
 
-void DOMTreeErrorReporter::error(const SAXParseException& toCatch)
+void DOMTreeErrorReporter::error(const SAXParseException &toCatch)
 {
     fSawErrors = true;
-    std::cerr << "Error at file \"" << StrX(toCatch.getSystemId())
-    << "\", line " << toCatch.getLineNumber()
-    << ", column " << toCatch.getColumnNumber()
-    << "\n   Message: " << StrX(toCatch.getMessage()) << std::endl;
+    std::cerr << "Error at file \"" << StrX(toCatch.getSystemId()) << "\", line "
+              << toCatch.getLineNumber() << ", column " << toCatch.getColumnNumber()
+              << "\n   Message: " << StrX(toCatch.getMessage()) << std::endl;
 }
 
-void DOMTreeErrorReporter::fatalError(const SAXParseException& toCatch)
+void DOMTreeErrorReporter::fatalError(const SAXParseException &toCatch)
 {
     fSawErrors = true;
-    std::cerr << "Fatal Error at file \"" << StrX(toCatch.getSystemId())
-    << "\", line " << toCatch.getLineNumber()
-    << ", column " << toCatch.getColumnNumber()
-    << "\n   Message: " << StrX(toCatch.getMessage()) << std::endl;
+    std::cerr << "Fatal Error at file \"" << StrX(toCatch.getSystemId()) << "\", line "
+              << toCatch.getLineNumber() << ", column " << toCatch.getColumnNumber()
+              << "\n   Message: " << StrX(toCatch.getMessage()) << std::endl;
 }
 
 void DOMTreeErrorReporter::resetErrors()
@@ -1506,19 +1469,16 @@ void DOMTreeErrorReporter::resetErrors()
 //**************************************************************************
 // DOMPrintFilter
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-DOMPrintFilter::DOMPrintFilter(ShowType whatToShow)
-    : fWhatToShow(whatToShow)
-{
-}
+DOMPrintFilter::DOMPrintFilter(ShowType whatToShow) : fWhatToShow(whatToShow) {}
 
-DOMPrintFilter::FilterAction DOMPrintFilter::acceptNode(const DOMNode* node) const
+DOMPrintFilter::FilterAction DOMPrintFilter::acceptNode(const DOMNode *node) const
 {
     if (XMLString::compareString(node->getNodeName(), XStr("FCParameters").unicodeForm()) == 0) {
         // This node is supposed to have a single FCParamGroup and two text nodes.
         // Over time it can happen that the text nodes collect extra newlines.
-        const DOMNodeList*  children =  node->getChildNodes();
-        for (XMLSize_t i=0; i<children->getLength(); i++) {
-            DOMNode* child = children->item(i);
+        const DOMNodeList *children = node->getChildNodes();
+        for (XMLSize_t i = 0; i < children->getLength(); i++) {
+            DOMNode *child = children->item(i);
             if (child->getNodeType() == DOMNode::TEXT_NODE) {
                 child->setNodeValue(XStr("\n").unicodeForm());
             }
@@ -1526,31 +1486,31 @@ DOMPrintFilter::FilterAction DOMPrintFilter::acceptNode(const DOMNode* node) con
     }
 
     switch (node->getNodeType()) {
-    case DOMNode::ELEMENT_NODE: {
-        return DOMNodeFilter::FILTER_ACCEPT;
+        case DOMNode::ELEMENT_NODE: {
+            return DOMNodeFilter::FILTER_ACCEPT;
 
-        break;
-    }
-    case DOMNode::COMMENT_NODE: {
-        return DOMNodeFilter::FILTER_ACCEPT;
-        break;
-    }
-    case DOMNode::TEXT_NODE: {
-        return DOMNodeFilter::FILTER_ACCEPT;
-        break;
-    }
-    case DOMNode::DOCUMENT_TYPE_NODE: {
-        return DOMNodeFilter::FILTER_REJECT;  // no effect
-        break;
-    }
-    case DOMNode::DOCUMENT_NODE: {
-        return DOMNodeFilter::FILTER_REJECT;  // no effect
-        break;
-    }
-    default : {
-        return DOMNodeFilter::FILTER_ACCEPT;
-        break;
-    }
+            break;
+        }
+        case DOMNode::COMMENT_NODE: {
+            return DOMNodeFilter::FILTER_ACCEPT;
+            break;
+        }
+        case DOMNode::TEXT_NODE: {
+            return DOMNodeFilter::FILTER_ACCEPT;
+            break;
+        }
+        case DOMNode::DOCUMENT_TYPE_NODE: {
+            return DOMNodeFilter::FILTER_REJECT; // no effect
+            break;
+        }
+        case DOMNode::DOCUMENT_NODE: {
+            return DOMNodeFilter::FILTER_REJECT; // no effect
+            break;
+        }
+        default: {
+            return DOMNodeFilter::FILTER_ACCEPT;
+            break;
+        }
     }
 
     return DOMNodeFilter::FILTER_ACCEPT;
@@ -1566,7 +1526,7 @@ bool DOMPrintErrorHandler::handleError(const DOMError &domError)
 {
     // Display whatever error message passed from the serializer
     char *msg = XMLString::transcode(domError.getMessage());
-    std::cout<<msg<<std::endl;
+    std::cout << msg << std::endl;
     XMLString::release(&msg);
 
     // Instructs the serializer to continue serialization if possible.

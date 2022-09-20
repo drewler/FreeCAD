@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-#   include <cassert>
+#include <cassert>
 #endif
 
 /// Here the FreeCAD includes sorted by Base, App, Gui......
@@ -56,28 +56,20 @@ TYPESYSTEM_SOURCE(TechDraw::PropertyCenterLineList, App::PropertyLists)
 // Construction/Destruction
 
 
-PropertyCenterLineList::PropertyCenterLineList()
-{
+PropertyCenterLineList::PropertyCenterLineList() {}
 
-}
-
-PropertyCenterLineList::~PropertyCenterLineList()
-{
-}
+PropertyCenterLineList::~PropertyCenterLineList() {}
 
 void PropertyCenterLineList::setSize(int newSize)
 {
-//    for (unsigned int i = newSize; i < _lValueList.size(); i++)
-//        delete _lValueList[i];
+    //    for (unsigned int i = newSize; i < _lValueList.size(); i++)
+    //        delete _lValueList[i];
     _lValueList.resize(newSize);
 }
 
-int PropertyCenterLineList::getSize() const
-{
-    return static_cast<int>(_lValueList.size());
-}
+int PropertyCenterLineList::getSize() const { return static_cast<int>(_lValueList.size()); }
 
-void PropertyCenterLineList::setValue(CenterLine* lValue)
+void PropertyCenterLineList::setValue(CenterLine *lValue)
 {
     if (lValue) {
         aboutToSetValue();
@@ -87,20 +79,18 @@ void PropertyCenterLineList::setValue(CenterLine* lValue)
     }
 }
 
-void PropertyCenterLineList::setValues(const std::vector<CenterLine*>& lValue)
+void PropertyCenterLineList::setValues(const std::vector<CenterLine *> &lValue)
 {
     aboutToSetValue();
     _lValueList.resize(lValue.size());
-    for (unsigned int i = 0; i < lValue.size(); i++)
-        _lValueList[i] = lValue[i];
+    for (unsigned int i = 0; i < lValue.size(); i++) _lValueList[i] = lValue[i];
     hasSetValue();
 }
 
 PyObject *PropertyCenterLineList::getPyObject()
 {
-    PyObject* list = PyList_New(getSize());
-    for (int i = 0; i < getSize(); i++)
-        PyList_SetItem( list, i, _lValueList[i]->getPyObject());
+    PyObject *list = PyList_New(getSize());
+    for (int i = 0; i < getSize(); i++) PyList_SetItem(list, i, _lValueList[i]->getPyObject());
     return list;
 }
 
@@ -108,24 +98,24 @@ void PropertyCenterLineList::setPyObject(PyObject *value)
 {
     if (PySequence_Check(value)) {
         Py_ssize_t nSize = PySequence_Size(value);
-        std::vector<CenterLine*> values;
+        std::vector<CenterLine *> values;
         values.resize(nSize);
 
-        for (Py_ssize_t i=0; i < nSize; ++i) {
-            PyObject* item = PySequence_GetItem(value, i);
+        for (Py_ssize_t i = 0; i < nSize; ++i) {
+            PyObject *item = PySequence_GetItem(value, i);
             if (!PyObject_TypeCheck(item, &(CenterLinePy::Type))) {
                 std::string error = std::string("types in list must be 'CenterLine', not ");
                 error += item->ob_type->tp_name;
                 throw Base::TypeError(error);
             }
 
-            values[i] = static_cast<CenterLinePy*>(item)->getCenterLinePtr();
+            values[i] = static_cast<CenterLinePy *>(item)->getCenterLinePtr();
         }
 
         setValues(values);
     }
     else if (PyObject_TypeCheck(value, &(CenterLinePy::Type))) {
-        CenterLinePy  *pcObject = static_cast<CenterLinePy*>(value);
+        CenterLinePy *pcObject = static_cast<CenterLinePy *>(value);
         setValue(pcObject->getCenterLinePtr());
     }
     else {
@@ -137,7 +127,7 @@ void PropertyCenterLineList::setPyObject(PyObject *value)
 
 void PropertyCenterLineList::Save(Writer &writer) const
 {
-    writer.Stream() << writer.ind() << "<CenterLineList count=\"" << getSize() <<"\">" << endl;
+    writer.Stream() << writer.ind() << "<CenterLineList count=\"" << getSize() << "\">" << endl;
     writer.incInd();
     for (int i = 0; i < getSize(); i++) {
         writer.Stream() << writer.ind() << "<CenterLine  type=\""
@@ -148,7 +138,7 @@ void PropertyCenterLineList::Save(Writer &writer) const
         writer.Stream() << writer.ind() << "</CenterLine>" << endl;
     }
     writer.decInd();
-    writer.Stream() << writer.ind() << "</CenterLineList>" << endl ;
+    writer.Stream() << writer.ind() << "</CenterLineList>" << endl;
 }
 
 void PropertyCenterLineList::Restore(Base::XMLReader &reader)
@@ -158,17 +148,19 @@ void PropertyCenterLineList::Restore(Base::XMLReader &reader)
     reader.readElement("CenterLineList");
     // get the value of my attribute
     int count = reader.getAttributeAsInteger("count");
-    std::vector<CenterLine*> values;
+    std::vector<CenterLine *> values;
     values.reserve(count);
     for (int i = 0; i < count; i++) {
         reader.readElement("CenterLine");
-        const char* TypeName = reader.getAttribute("type");
+        const char *TypeName = reader.getAttribute("type");
         CenterLine *newG = (CenterLine *)Base::Type::fromName(TypeName).createInstance();
         newG->Restore(reader);
 
-        if(reader.testStatus(Base::XMLReader::ReaderStatus::PartialRestoreInObject)) {
-            Base::Console().Error("CenterLine \"%s\" within a PropertyCenterLineList was subject to a partial restore.\n", reader.localName());
-            if(isOrderRelevant()) {
+        if (reader.testStatus(Base::XMLReader::ReaderStatus::PartialRestoreInObject)) {
+            Base::Console().Error("CenterLine \"%s\" within a PropertyCenterLineList was subject "
+                                  "to a partial restore.\n",
+                                  reader.localName());
+            if (isOrderRelevant()) {
                 // Pushes the best try by the CenterLine class
                 values.push_back(newG);
             }
@@ -199,14 +191,13 @@ App::Property *PropertyCenterLineList::Copy() const
 
 void PropertyCenterLineList::Paste(const Property &from)
 {
-    const PropertyCenterLineList& FromList = dynamic_cast<const PropertyCenterLineList&>(from);
+    const PropertyCenterLineList &FromList = dynamic_cast<const PropertyCenterLineList &>(from);
     setValues(FromList._lValueList);
 }
 
 unsigned int PropertyCenterLineList::getMemSize() const
 {
     int size = sizeof(PropertyCenterLineList);
-    for (int i = 0; i < getSize(); i++)
-        size += _lValueList[i]->getMemSize();
+    for (int i = 0; i < getSize(); i++) size += _lValueList[i]->getMemSize();
     return size;
 }

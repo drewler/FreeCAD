@@ -23,18 +23,18 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
-# include <cstring>
-# include <cstdlib>
-# include <exception>
-# include <boost/regex.hpp>
-# include <QComboBox>
-# include <QString>
-# include <QStringList>
-# include <QRegExp>
-# include <QMessageBox>
-# include <QRectF>
-# include <QPointF>
+#include <sstream>
+#include <cstring>
+#include <cstdlib>
+#include <exception>
+#include <boost/regex.hpp>
+#include <QComboBox>
+#include <QString>
+#include <QStringList>
+#include <QRegExp>
+#include <QMessageBox>
+#include <QRectF>
+#include <QPointF>
 #endif
 
 #include <gp_Vec.hxx>
@@ -87,7 +87,7 @@
 using namespace TechDrawGui;
 using namespace TechDraw;
 
-void DrawGuiUtil::loadArrowBox(QComboBox* qcb)
+void DrawGuiUtil::loadArrowBox(QComboBox *qcb)
 {
     qcb->clear();
     int i = 0;
@@ -103,15 +103,15 @@ void DrawGuiUtil::loadArrowBox(QComboBox* qcb)
 //===========================================================================
 
 //find a page in Selection, Document or CurrentWindow.
-TechDraw::DrawPage* DrawGuiUtil::findPage(Gui::Command* cmd)
+TechDraw::DrawPage *DrawGuiUtil::findPage(Gui::Command *cmd)
 {
-    TechDraw::DrawPage* page = nullptr;
+    TechDraw::DrawPage *page = nullptr;
     std::vector<std::string> names;
     std::vector<std::string> labels;
 
     //check Selection for a page
-    std::vector<App::DocumentObject*> selPages = cmd->getSelection().
-                                                 getObjectsOfType(TechDraw::DrawPage::getClassTypeId());
+    std::vector<App::DocumentObject *> selPages =
+        cmd->getSelection().getObjectsOfType(TechDraw::DrawPage::getClassTypeId());
     if (selPages.empty()) {
         //no page in selection, try document
         selPages = cmd->getDocument()->getObjectsOfType(TechDraw::DrawPage::getClassTypeId());
@@ -123,11 +123,11 @@ TechDraw::DrawPage* DrawGuiUtil::findPage(Gui::Command* cmd)
         else if (selPages.size() > 1) {
             //multiple pages in document, but none selected
             //use active page if there is one
-            Gui::MainWindow* w = Gui::getMainWindow();
-            Gui::MDIView* mv = w->activeWindow();
-            MDIViewPage* mvp = dynamic_cast<MDIViewPage*>(mv);
+            Gui::MainWindow *w = Gui::getMainWindow();
+            Gui::MDIView *mv = w->activeWindow();
+            MDIViewPage *mvp = dynamic_cast<MDIViewPage *>(mv);
             if (mvp) {
-                QGSPage* qp = mvp->getViewProviderPage()->getQGSPage();
+                QGSPage *qp = mvp->getViewProviderPage()->getQGSPage();
                 page = qp->getDrawPage();
             }
             else {
@@ -141,14 +141,14 @@ TechDraw::DrawPage* DrawGuiUtil::findPage(Gui::Command* cmd)
                 DlgPageChooser dlg(labels, names, Gui::getMainWindow());
                 if (dlg.exec() == QDialog::Accepted) {
                     std::string selName = dlg.getSelection();
-                    App::Document* doc = cmd->getDocument();
-                    page = static_cast<TechDraw::DrawPage*>(doc->getObject(selName.c_str()));
+                    App::Document *doc = cmd->getDocument();
+                    page = static_cast<TechDraw::DrawPage *>(doc->getObject(selName.c_str()));
                 }
             }
         }
         else {
             //only 1 page in document - use it
-            page = static_cast<TechDraw::DrawPage*>(selPages.front());
+            page = static_cast<TechDraw::DrawPage *>(selPages.front());
         }
     }
     else if (selPages.size() > 1) {
@@ -162,22 +162,23 @@ TechDraw::DrawPage* DrawGuiUtil::findPage(Gui::Command* cmd)
         DlgPageChooser dlg(labels, names, Gui::getMainWindow());
         if (dlg.exec() == QDialog::Accepted) {
             std::string selName = dlg.getSelection();
-            App::Document* doc = cmd->getDocument();
-            page = static_cast<TechDraw::DrawPage*>(doc->getObject(selName.c_str()));
+            App::Document *doc = cmd->getDocument();
+            page = static_cast<TechDraw::DrawPage *>(doc->getObject(selName.c_str()));
         }
     }
     else {
         //exactly 1 page in selection, use it
-        page = static_cast<TechDraw::DrawPage*>(selPages.front());
+        page = static_cast<TechDraw::DrawPage *>(selPages.front());
     }
 
     return page;
 }
 
-bool DrawGuiUtil::isDraftObject(App::DocumentObject* obj)
+bool DrawGuiUtil::isDraftObject(App::DocumentObject *obj)
 {
     bool result = false;
-    App::PropertyPythonObject* proxy = dynamic_cast<App::PropertyPythonObject*>(obj->getPropertyByName("Proxy"));
+    App::PropertyPythonObject *proxy =
+        dynamic_cast<App::PropertyPythonObject *>(obj->getPropertyByName("Proxy"));
 
     if (proxy) {
         //if no proxy, can not be Draft obj
@@ -189,15 +190,13 @@ bool DrawGuiUtil::isDraftObject(App::DocumentObject* obj)
             if (proxyObj.hasAttr("__module__")) {
                 Py::String mod(proxyObj.getAttr("__module__"));
                 ss << (std::string)mod;
-                if (ss.str().find("Draft") != std::string::npos) {
-                    result = true;
-                }
+                if (ss.str().find("Draft") != std::string::npos) { result = true; }
                 else if (ss.str().find("draft") != std::string::npos) {
                     result = true;
                 }
             }
         }
-        catch (Py::Exception&) {
+        catch (Py::Exception &) {
             Base::PyException e; // extract the Python error text
             e.ReportException();
             result = false;
@@ -206,10 +205,11 @@ bool DrawGuiUtil::isDraftObject(App::DocumentObject* obj)
     return result;
 }
 
-bool DrawGuiUtil::isArchObject(App::DocumentObject* obj)
+bool DrawGuiUtil::isArchObject(App::DocumentObject *obj)
 {
     bool result = false;
-    App::PropertyPythonObject* proxy = dynamic_cast<App::PropertyPythonObject*>(obj->getPropertyByName("Proxy"));
+    App::PropertyPythonObject *proxy =
+        dynamic_cast<App::PropertyPythonObject *>(obj->getPropertyByName("Proxy"));
 
     if (proxy) {
         //if no proxy, can not be Arch obj
@@ -222,12 +222,10 @@ bool DrawGuiUtil::isArchObject(App::DocumentObject* obj)
                 Py::String mod(proxyObj.getAttr("__module__"));
                 ss << (std::string)mod;
                 //does this have to be an ArchSection, or can it be any Arch object?
-                if (ss.str().find("Arch") != std::string::npos) {
-                    result = true;
-                }
+                if (ss.str().find("Arch") != std::string::npos) { result = true; }
             }
         }
-        catch (Py::Exception&) {
+        catch (Py::Exception &) {
             Base::PyException e; // extract the Python error text
             e.ReportException();
             result = false;
@@ -236,10 +234,11 @@ bool DrawGuiUtil::isArchObject(App::DocumentObject* obj)
     return result;
 }
 
-bool DrawGuiUtil::isArchSection(App::DocumentObject* obj)
+bool DrawGuiUtil::isArchSection(App::DocumentObject *obj)
 {
     bool result = false;
-    App::PropertyPythonObject* proxy = dynamic_cast<App::PropertyPythonObject*>(obj->getPropertyByName("Proxy"));
+    App::PropertyPythonObject *proxy =
+        dynamic_cast<App::PropertyPythonObject *>(obj->getPropertyByName("Proxy"));
 
     if (proxy) {
         //if no proxy, can not be Arch obj
@@ -252,12 +251,10 @@ bool DrawGuiUtil::isArchSection(App::DocumentObject* obj)
                 Py::String mod(proxyObj.getAttr("__module__"));
                 ss << (std::string)mod;
                 //does this have to be an ArchSection, or can it be other Arch objects?
-                if (ss.str().find("ArchSectionPlane") != std::string::npos) {
-                    result = true;
-                }
+                if (ss.str().find("ArchSectionPlane") != std::string::npos) { result = true; }
             }
         }
-        catch (Py::Exception&) {
+        catch (Py::Exception &) {
             Base::PyException e; // extract the Python error text
             e.ReportException();
             result = false;
@@ -266,55 +263,50 @@ bool DrawGuiUtil::isArchSection(App::DocumentObject* obj)
     return result;
 }
 
-bool DrawGuiUtil::needPage(Gui::Command* cmd)
+bool DrawGuiUtil::needPage(Gui::Command *cmd)
 {
     //need a Document and a Page
     bool active = false;
     if (cmd->hasActiveDocument()) {
         auto drawPageType(TechDraw::DrawPage::getClassTypeId());
         auto selPages = cmd->getDocument()->getObjectsOfType(drawPageType);
-        if (!selPages.empty()) {
-            active = true;
-        }
+        if (!selPages.empty()) { active = true; }
     }
     return active;
 }
 
-bool DrawGuiUtil::needView(Gui::Command* cmd, bool partOnly)
+bool DrawGuiUtil::needView(Gui::Command *cmd, bool partOnly)
 {
     bool haveView = false;
     if (cmd->hasActiveDocument()) {
         if (partOnly) {
             auto drawPartType(TechDraw::DrawViewPart::getClassTypeId());
             auto selParts = cmd->getDocument()->getObjectsOfType(drawPartType);
-            if (!selParts.empty()) {
-                haveView = true;
-            }
+            if (!selParts.empty()) { haveView = true; }
         }
         else {
             auto drawViewType(TechDraw::DrawView::getClassTypeId());
             auto selParts = cmd->getDocument()->getObjectsOfType(drawViewType);
-            if (!selParts.empty()) {
-                haveView = true;
-            }
+            if (!selParts.empty()) { haveView = true; }
         }
     }
     return haveView;
 }
 
-void DrawGuiUtil::dumpRectF(const char* text, const QRectF& r)
+void DrawGuiUtil::dumpRectF(const char *text, const QRectF &r)
 {
     Base::Console().Message("DUMP - dumpRectF - %s\n", text);
     double left = r.left();
     double right = r.right();
     double top = r.top();
     double bottom = r.bottom();
-    Base::Console().Message("Extents: L: %.3f, R: %.3f, T: %.3f, B: %.3f\n", left, right, top, bottom);
+    Base::Console().Message("Extents: L: %.3f, R: %.3f, T: %.3f, B: %.3f\n", left, right, top,
+                            bottom);
     Base::Console().Message("Size: W: %.3f H: %.3f\n", r.width(), r.height());
     Base::Console().Message("Centre: (%.3f, %.3f)\n", r.center().x(), r.center().y());
 }
 
-void DrawGuiUtil::dumpPointF(const char* text, const QPointF& p)
+void DrawGuiUtil::dumpPointF(const char *text, const QPointF &p)
 {
     Base::Console().Message("DUMP - dumpPointF - %s\n", text);
     Base::Console().Message("Point: (%.3f, %.3f)\n", p.x(), p.y());
@@ -323,14 +315,14 @@ void DrawGuiUtil::dumpPointF(const char* text, const QPointF& p)
 std::pair<Base::Vector3d, Base::Vector3d> DrawGuiUtil::get3DDirAndRot()
 {
     std::pair<Base::Vector3d, Base::Vector3d> result;
-    Base::Vector3d viewDir(0.0, -1.0, 0.0);                                       //default to front
-    Base::Vector3d viewUp(0.0, 0.0, 1.0);                                         //default to top
-    Base::Vector3d viewRight(1.0, 0.0, 0.0);                                      //default to right
-    std::list<Gui::MDIView*> mdis = Gui::Application::Instance->activeDocument()->getMDIViews();
-    Gui::View3DInventor* view;
-    Gui::View3DInventorViewer* viewer = nullptr;
-    for (auto& m : mdis) {                                                       //find the 3D viewer
-        view = dynamic_cast<Gui::View3DInventor*>(m);
+    Base::Vector3d viewDir(0.0, -1.0, 0.0);  //default to front
+    Base::Vector3d viewUp(0.0, 0.0, 1.0);    //default to top
+    Base::Vector3d viewRight(1.0, 0.0, 0.0); //default to right
+    std::list<Gui::MDIView *> mdis = Gui::Application::Instance->activeDocument()->getMDIViews();
+    Gui::View3DInventor *view;
+    Gui::View3DInventorViewer *viewer = nullptr;
+    for (auto &m : mdis) { //find the 3D viewer
+        view = dynamic_cast<Gui::View3DInventor *>(m);
         if (view) {
             viewer = view->getViewer();
             break;
@@ -341,12 +333,12 @@ std::pair<Base::Vector3d, Base::Vector3d> DrawGuiUtil::get3DDirAndRot()
         return std::make_pair(viewDir, viewRight);
     }
 
-    SbVec3f dvec  = viewer->getViewDirection();
+    SbVec3f dvec = viewer->getViewDirection();
     SbVec3f upvec = viewer->getUpDirection();
 
     viewDir = Base::Vector3d(dvec[0], dvec[1], dvec[2]);
-    viewDir = viewDir * (-1.0);        // Inventor dir is opposite TD projection dir
-    viewUp  = Base::Vector3d(upvec[0], upvec[1], upvec[2]);
+    viewDir = viewDir * (-1.0); // Inventor dir is opposite TD projection dir
+    viewUp = Base::Vector3d(upvec[0], upvec[1], upvec[2]);
 
     //    Base::Vector3d dirXup = viewDir.Cross(viewUp);
     Base::Vector3d right = viewUp.Cross(viewDir);
@@ -355,12 +347,13 @@ std::pair<Base::Vector3d, Base::Vector3d> DrawGuiUtil::get3DDirAndRot()
     return result;
 }
 
-std::pair<Base::Vector3d, Base::Vector3d> DrawGuiUtil::getProjDirFromFace(App::DocumentObject* obj, std::string faceName)
+std::pair<Base::Vector3d, Base::Vector3d> DrawGuiUtil::getProjDirFromFace(App::DocumentObject *obj,
+                                                                          std::string faceName)
 {
     std::pair<Base::Vector3d, Base::Vector3d> d3Dirs = get3DDirAndRot();
     Base::Vector3d d3Up = (d3Dirs.first).Cross(d3Dirs.second);
     std::pair<Base::Vector3d, Base::Vector3d> dirs;
-    dirs.first = Base::Vector3d(0.0, 0.0, 1.0);                 //set a default
+    dirs.first = Base::Vector3d(0.0, 0.0, 1.0); //set a default
     dirs.second = Base::Vector3d(1.0, 0.0, 0.0);
     Base::Vector3d projDir, rotVec;
     projDir = d3Dirs.first;
@@ -372,7 +365,7 @@ std::pair<Base::Vector3d, Base::Vector3d> DrawGuiUtil::getProjDirFromFace(App::D
         return dirs;
     }
 
-    const TopoDS_Face& face = TopoDS::Face(ts);
+    const TopoDS_Face &face = TopoDS::Face(ts);
     TopAbs_Orientation orient = face.Orientation();
     BRepAdaptor_Surface adapt(face);
 
@@ -388,9 +381,7 @@ std::pair<Base::Vector3d, Base::Vector3d> DrawGuiUtil::getProjDirFromFace(App::D
         gp_Dir vec = props.Normal();
         projDir = Base::Vector3d(vec.X(), vec.Y(), vec.Z());
         rotVec = projDir.Cross(d3Up);
-        if (orient != TopAbs_FORWARD) {
-            projDir = projDir * (-1.0);
-        }
+        if (orient != TopAbs_FORWARD) { projDir = projDir * (-1.0); }
     }
     else {
         Base::Console().Log("Selected Face has no normal at midpoint\n");

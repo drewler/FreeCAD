@@ -37,9 +37,8 @@ using namespace Gui::Dialog;
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  true to construct a modal dialog.
  */
-DlgReportViewImp::DlgReportViewImp( QWidget* parent )
-  : PreferencePage(parent)
-  , ui(new Ui_DlgReportView)
+DlgReportViewImp::DlgReportViewImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgReportView)
 {
     ui->setupUi(this);
 }
@@ -47,9 +46,7 @@ DlgReportViewImp::DlgReportViewImp( QWidget* parent )
 /**
  *  Destroys the object and frees any allocated resources
  */
-DlgReportViewImp::~DlgReportViewImp()
-{
-}
+DlgReportViewImp::~DlgReportViewImp() {}
 
 void DlgReportViewImp::saveSettings()
 {
@@ -98,9 +95,7 @@ void DlgReportViewImp::loadSettings()
  */
 void DlgReportViewImp::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }

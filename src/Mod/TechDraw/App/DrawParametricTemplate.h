@@ -34,7 +34,7 @@
 
 namespace TechDraw
 {
-    class BaseGeom;
+class BaseGeom;
 }
 
 //TODO: DrawParametricTemplate class is obsolete
@@ -62,9 +62,7 @@ public:
     short mustExecute() const;
 
     /// returns the type name of the ViewProvider
-    virtual const char* getViewProviderName() const {
-        return "TechDrawGui::ViewProviderTemplate";
-    }
+    virtual const char *getViewProviderName() const { return "TechDrawGui::ViewProviderTemplate"; }
 
     // from base class
     virtual PyObject *getPyObject();
@@ -81,19 +79,18 @@ public:
     double getWidth() const;
 
 protected:
-    void onChanged(const App::Property* prop);
+    void onChanged(const App::Property *prop);
 
 protected:
     std::vector<TechDraw::BaseGeomPtr> geom;
 
 private:
-    static const char* OrientationEnums[];
+    static const char *OrientationEnums[];
 };
 
 using DrawParametricTemplatePython = App::FeaturePythonT<DrawParametricTemplate>;
 
 } //namespace TechDraw
-
 
 
 #endif //_TECHDRAW_DrawParametricTemplate_h_

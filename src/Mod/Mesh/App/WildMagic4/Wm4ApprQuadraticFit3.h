@@ -32,7 +32,7 @@ namespace Wm4
 // and M = (sum_i V_i)(sum_i V_i)^t where
 //
 //   V = (1, X, Y, Z, X^2, Y^2, Z^2, X*Y, X*Z, Y*Z)
-//         
+//
 // Minimum value is the smallest eigenvalue of M and C is a corresponding
 // unit length eigenvector.
 //
@@ -56,9 +56,9 @@ namespace Wm4
 //   d0 v0^2 + d1 v1^2 + d2 v^2 + e0 v0 + e1 v1 + e2 v2 + f = 0
 //
 // Characterization depends on the signs of the d_i.
-template <class Real> WM4_FOUNDATION_ITEM
-Real QuadraticFit3 (int iQuantity, const Vector3<Real>* akPoint,
-    Real afCoeff[10]);
+template<class Real>
+WM4_FOUNDATION_ITEM Real QuadraticFit3(int iQuantity, const Vector3<Real> *akPoint,
+                                       Real afCoeff[10]);
 
 // If you think your points are nearly spherical, use this.  Sphere is of form
 // C'[0]+C'[1]*X+C'[2]*Y+C'[3]*Z+C'[4]*(X^2+Y^2+Z^2) where Length(C') = 1.
@@ -66,10 +66,10 @@ Real QuadraticFit3 (int iQuantity, const Vector3<Real>* akPoint,
 // fitted sphere is C[0]+C[1]*X+C[2]*Y+C[3]*Z+X^2+Y^2+Z^2.  Center is
 // (xc,yc,zc) = -0.5*(C[1],C[2],C[3]) and radius is rad =
 // sqrt(xc*xc+yc*yc+zc*zc-C[0]).
-template <class Real> WM4_FOUNDATION_ITEM
-Real QuadraticSphereFit3 (int iQuantity, const Vector3<Real>* akPoint,
-    Vector3<Real>& rkCenter, Real& rfRadius);
+template<class Real>
+WM4_FOUNDATION_ITEM Real QuadraticSphereFit3(int iQuantity, const Vector3<Real> *akPoint,
+                                             Vector3<Real> &rkCenter, Real &rfRadius);
 
-}
+} // namespace Wm4
 
 #endif

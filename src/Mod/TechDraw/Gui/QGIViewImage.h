@@ -27,7 +27,8 @@
 
 #include "QGIView.h"
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawViewImage;
 }
 
@@ -36,14 +37,17 @@ namespace TechDrawGui
 class QGCustomImage;
 class QGCustomClip;
 
-class TechDrawGuiExport QGIViewImage : public QGIView
+class TechDrawGuiExport QGIViewImage: public QGIView
 {
 public:
     QGIViewImage();
     ~QGIViewImage() override;
 
-    enum {Type = QGraphicsItem::UserType + 200};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 200
+    };
+    int type() const override { return Type; }
 
     void updateView(bool update = false) override;
     void setViewImageFeature(TechDraw::DrawViewImage *obj);
@@ -54,9 +58,9 @@ public:
 protected:
     virtual void drawImage();
 
-    QGCustomImage* m_imageItem;
-    QGCustomClip*  m_cliparea;
+    QGCustomImage *m_imageItem;
+    QGCustomClip *m_cliparea;
 };
 
-} // namespace
+} // namespace TechDrawGui
 #endif // DRAWINGGUI_QGRAPHICSITEMVIEWIMAGE_H

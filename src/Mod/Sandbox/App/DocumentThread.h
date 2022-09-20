@@ -29,36 +29,38 @@
 #include <Base/Handle.h>
 #include <App/DocumentObject.h>
 
-namespace Mesh {
-    class MeshObject;
+namespace Mesh
+{
+class MeshObject;
 }
 
-namespace Sandbox {
+namespace Sandbox
+{
 
-class SandboxAppExport DocumentThread : public QThread
+class SandboxAppExport DocumentThread: public QThread
 {
 public:
-    DocumentThread(QObject* parent=0);
+    DocumentThread(QObject *parent = 0);
     ~DocumentThread();
 
 protected:
     void run();
 };
 
-class SandboxAppExport WorkerThread : public QThread
+class SandboxAppExport WorkerThread: public QThread
 {
 public:
-    WorkerThread(QObject* parent=0);
+    WorkerThread(QObject *parent = 0);
     ~WorkerThread();
 
 protected:
     void run();
 };
 
-class SandboxAppExport PythonThread : public QThread
+class SandboxAppExport PythonThread: public QThread
 {
 public:
-    PythonThread(QObject* parent=0);
+    PythonThread(QObject *parent = 0);
     ~PythonThread();
 
 protected:
@@ -66,10 +68,10 @@ protected:
     static QMutex mutex;
 };
 
-class SandboxAppExport MeshLoaderThread : public QThread
+class SandboxAppExport MeshLoaderThread: public QThread
 {
 public:
-    MeshLoaderThread(const QString&, QObject* parent=0);
+    MeshLoaderThread(const QString &, QObject *parent = 0);
     ~MeshLoaderThread();
 
     Base::Reference<Mesh::MeshObject> getMesh() const;
@@ -82,7 +84,7 @@ private:
     Base::Reference<Mesh::MeshObject> mesh;
 };
 
-class SandboxObject : public App::DocumentObject
+class SandboxObject: public App::DocumentObject
 {
     PROPERTY_HEADER(SandboxObject);
 
@@ -94,39 +96,36 @@ public:
 
     short mustExecute(void) const;
     App::DocumentObjectExecReturn *execute(void);
-    void onChanged(const App::Property* prop);
-    const char* getViewProviderName(void) const {
-        return "Gui::ViewProviderDocumentObject";
-    }
+    void onChanged(const App::Property *prop);
+    const char *getViewProviderName(void) const { return "Gui::ViewProviderDocumentObject"; }
 
     void setIntValue(int);
     void resetValue();
 };
 
-class SandboxAppExport DocumentTestThread : public QThread
+class SandboxAppExport DocumentTestThread: public QThread
 {
 public:
-    DocumentTestThread(QObject* parent=0);
+    DocumentTestThread(QObject *parent = 0);
     ~DocumentTestThread();
 
 protected:
     void run();
 };
 
-class SandboxAppExport DocumentSaverThread : public QThread
+class SandboxAppExport DocumentSaverThread: public QThread
 {
 public:
-    DocumentSaverThread(App::Document* doc, QObject* parent=0);
+    DocumentSaverThread(App::Document *doc, QObject *parent = 0);
     ~DocumentSaverThread();
 
 protected:
     void run();
 
 private:
-    App::Document* doc;
+    App::Document *doc;
 };
 
-}
+} // namespace Sandbox
 
 #endif // SANDBOX_DOCUMENTTHREAD_H
-

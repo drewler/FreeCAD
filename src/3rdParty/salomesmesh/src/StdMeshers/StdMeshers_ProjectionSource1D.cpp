@@ -44,13 +44,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_ProjectionSource1D::StdMeshers_ProjectionSource1D(int hypId, int studyId,
-                                                             SMESH_Gen * gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_ProjectionSource1D::StdMeshers_ProjectionSource1D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "ProjectionSource1D"; // used by Projection_1D
-  _param_algo_dim = 1; // 1D
-  _sourceMesh = 0;
+    _name = "ProjectionSource1D"; // used by Projection_1D
+    _param_algo_dim = 1;          // 1D
+    _sourceMesh = 0;
 }
 
 //=============================================================================
@@ -63,29 +62,27 @@ StdMeshers_ProjectionSource1D::StdMeshers_ProjectionSource1D(int hypId, int stud
 
 StdMeshers_ProjectionSource1D::~StdMeshers_ProjectionSource1D()
 {
-  MESSAGE( "StdMeshers_ProjectionSource1D::~StdMeshers_ProjectionSource1D" );
+    MESSAGE("StdMeshers_ProjectionSource1D::~StdMeshers_ProjectionSource1D");
 }
 
 //=============================================================================
-  /*!
+/*!
    * Sets source <edge> to take a mesh pattern from
    */
 //=============================================================================
 
-void StdMeshers_ProjectionSource1D::SetSourceEdge(const TopoDS_Shape& edge)
+void StdMeshers_ProjectionSource1D::SetSourceEdge(const TopoDS_Shape &edge)
 {
-  if ( edge.IsNull() )
-    throw SALOME_Exception(LOCALIZED("Null edge is not allowed"));
+    if (edge.IsNull()) throw SALOME_Exception(LOCALIZED("Null edge is not allowed"));
 
-  if ( edge.ShapeType() != TopAbs_EDGE && edge.ShapeType() != TopAbs_COMPOUND )
-    throw SALOME_Exception(LOCALIZED("Wrong shape type"));
+    if (edge.ShapeType() != TopAbs_EDGE && edge.ShapeType() != TopAbs_COMPOUND)
+        throw SALOME_Exception(LOCALIZED("Wrong shape type"));
 
-  if ( !_sourceEdge.IsSame( edge ) )
-  {
-    _sourceEdge = edge;
+    if (!_sourceEdge.IsSame(edge)) {
+        _sourceEdge = edge;
 
-    NotifySubMeshesHypothesisModification();
-  }
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -95,26 +92,23 @@ void StdMeshers_ProjectionSource1D::SetSourceEdge(const TopoDS_Shape& edge)
  */
 //=============================================================================
 
-void StdMeshers_ProjectionSource1D::SetVertexAssociation(const TopoDS_Shape& sourceVertex,
-                                                         const TopoDS_Shape& targetVertex)
+void StdMeshers_ProjectionSource1D::SetVertexAssociation(const TopoDS_Shape &sourceVertex,
+                                                         const TopoDS_Shape &targetVertex)
 {
-  if ( sourceVertex.IsNull() != targetVertex.IsNull() )
-    throw SALOME_Exception(LOCALIZED("Two or none vertices must be provided"));
+    if (sourceVertex.IsNull() != targetVertex.IsNull())
+        throw SALOME_Exception(LOCALIZED("Two or none vertices must be provided"));
 
-  if ( !sourceVertex.IsNull() ) {
-    if ( sourceVertex.ShapeType() != TopAbs_VERTEX ||
-         targetVertex.ShapeType() != TopAbs_VERTEX )
-      throw SALOME_Exception(LOCALIZED("Wrong shape type"));
-  }
+    if (!sourceVertex.IsNull()) {
+        if (sourceVertex.ShapeType() != TopAbs_VERTEX || targetVertex.ShapeType() != TopAbs_VERTEX)
+            throw SALOME_Exception(LOCALIZED("Wrong shape type"));
+    }
 
-  if ( !_sourceVertex.IsSame( sourceVertex ) ||
-       !_targetVertex.IsSame( targetVertex ) )
-  {
-    _sourceVertex = TopoDS::Vertex( sourceVertex );
-    _targetVertex = TopoDS::Vertex( targetVertex );
+    if (!_sourceVertex.IsSame(sourceVertex) || !_targetVertex.IsSame(targetVertex)) {
+        _sourceVertex = TopoDS::Vertex(sourceVertex);
+        _targetVertex = TopoDS::Vertex(targetVertex);
 
-    NotifySubMeshesHypothesisModification();
-  }
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -123,12 +117,12 @@ void StdMeshers_ProjectionSource1D::SetVertexAssociation(const TopoDS_Shape& sou
  */
 //=============================================================================
 
-void StdMeshers_ProjectionSource1D::SetSourceMesh(SMESH_Mesh* mesh)
+void StdMeshers_ProjectionSource1D::SetSourceMesh(SMESH_Mesh *mesh)
 {
-  if ( _sourceMesh != mesh ) {
-    _sourceMesh = mesh;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (_sourceMesh != mesh) {
+        _sourceMesh = mesh;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -137,14 +131,14 @@ void StdMeshers_ProjectionSource1D::SetSourceMesh(SMESH_Mesh* mesh)
  */
 //=============================================================================
 
-ostream & StdMeshers_ProjectionSource1D::SaveTo(ostream & save)
+ostream &StdMeshers_ProjectionSource1D::SaveTo(ostream &save)
 {
-  // we store it in order to be able to detect that hypo is really modified
-  save << " " << _sourceEdge.TShape().operator->()  ;
-  save << " " << _sourceVertex.TShape().operator->();
-  save << " " << _targetVertex.TShape().operator->();
-  save << " " << ( _sourceMesh ? _sourceMesh->GetId() : -1 );
-  return save;
+    // we store it in order to be able to detect that hypo is really modified
+    save << " " << _sourceEdge.TShape().operator->();
+    save << " " << _sourceVertex.TShape().operator->();
+    save << " " << _targetVertex.TShape().operator->();
+    save << " " << (_sourceMesh ? _sourceMesh->GetId() : -1);
+    return save;
 }
 
 //=============================================================================
@@ -153,10 +147,10 @@ ostream & StdMeshers_ProjectionSource1D::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_ProjectionSource1D::LoadFrom(istream & load)
+istream &StdMeshers_ProjectionSource1D::LoadFrom(istream &load)
 {
-  // impossible to restore w/o any context
-  return load;
+    // impossible to restore w/o any context
+    return load;
 }
 
 //=============================================================================
@@ -165,10 +159,7 @@ istream & StdMeshers_ProjectionSource1D::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_ProjectionSource1D & hyp)
-{
-  return hyp.SaveTo( save );
-}
+ostream &operator<<(ostream &save, StdMeshers_ProjectionSource1D &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -176,9 +167,9 @@ ostream & operator <<(ostream & save, StdMeshers_ProjectionSource1D & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_ProjectionSource1D & hyp)
+istream &operator>>(istream &load, StdMeshers_ProjectionSource1D &hyp)
 {
-  return hyp.LoadFrom( load );
+    return hyp.LoadFrom(load);
 }
 
 //================================================================================
@@ -190,10 +181,9 @@ istream & operator >>(istream & load, StdMeshers_ProjectionSource1D & hyp)
  */
 //================================================================================
 
-bool StdMeshers_ProjectionSource1D::SetParametersByMesh(const SMESH_Mesh*   ,
-                                                        const TopoDS_Shape& )
+bool StdMeshers_ProjectionSource1D::SetParametersByMesh(const SMESH_Mesh *, const TopoDS_Shape &)
 {
-  return false;
+    return false;
 }
 
 //================================================================================
@@ -202,13 +192,12 @@ bool StdMeshers_ProjectionSource1D::SetParametersByMesh(const SMESH_Mesh*   ,
  */
 //================================================================================
 
-void StdMeshers_ProjectionSource1D::GetStoreParams(TopoDS_Shape& s1,
-                                                   TopoDS_Shape& s2,
-                                                   TopoDS_Shape& s3) const
+void StdMeshers_ProjectionSource1D::GetStoreParams(TopoDS_Shape &s1, TopoDS_Shape &s2,
+                                                   TopoDS_Shape &s3) const
 {
-  s1 = _sourceEdge;
-  s2 = _sourceVertex;
-  s3 = _targetVertex;
+    s1 = _sourceEdge;
+    s2 = _sourceVertex;
+    s3 = _targetVertex;
 }
 
 //================================================================================
@@ -217,15 +206,13 @@ void StdMeshers_ProjectionSource1D::GetStoreParams(TopoDS_Shape& s1,
  */
 //================================================================================
 
-void StdMeshers_ProjectionSource1D::RestoreParams(const TopoDS_Shape& s1,
-                                                  const TopoDS_Shape& s2,
-                                                  const TopoDS_Shape& s3,
-                                                  SMESH_Mesh*         mesh)
+void StdMeshers_ProjectionSource1D::RestoreParams(const TopoDS_Shape &s1, const TopoDS_Shape &s2,
+                                                  const TopoDS_Shape &s3, SMESH_Mesh *mesh)
 {
-  _sourceEdge   = s1;
-  _sourceVertex = TopoDS::Vertex( s2 );
-  _targetVertex = TopoDS::Vertex( s3 );
-  _sourceMesh   = mesh;
+    _sourceEdge = s1;
+    _sourceVertex = TopoDS::Vertex(s2);
+    _targetVertex = TopoDS::Vertex(s3);
+    _sourceMesh = mesh;
 }
 
 //================================================================================
@@ -235,9 +222,8 @@ void StdMeshers_ProjectionSource1D::RestoreParams(const TopoDS_Shape& s1,
  */
 //================================================================================
 
-bool StdMeshers_ProjectionSource1D::SetParametersByDefaults(const TDefaults&  /*dflts*/,
-                                                            const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_ProjectionSource1D::SetParametersByDefaults(const TDefaults & /*dflts*/,
+                                                            const SMESH_Mesh * /*theMesh*/)
 {
-  return false;
+    return false;
 }
-

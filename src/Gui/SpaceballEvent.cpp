@@ -30,38 +30,37 @@ using namespace Spaceball;
 int MotionEvent::MotionEventType = -1;
 int ButtonEvent::ButtonEventType = -1;
 
-EventBase::EventBase(QEvent::Type event) : QInputEvent(static_cast<QEvent::Type>(event)), handled(false)
-{
+EventBase::EventBase(QEvent::Type event)
+    : QInputEvent(static_cast<QEvent::Type>(event)), handled(false)
+{}
 
-}
+MotionEvent::MotionEvent()
+    : EventBase(static_cast<QEvent::Type>(MotionEventType)), xTrans(0), yTrans(0), zTrans(0),
+      xRot(0), yRot(0), zRot(0)
+{}
 
-MotionEvent::MotionEvent() : EventBase(static_cast<QEvent::Type>(MotionEventType)),
-    xTrans(0), yTrans(0), zTrans(0), xRot(0), yRot(0), zRot(0)
+MotionEvent::MotionEvent(const MotionEvent &in)
+    : EventBase(static_cast<QEvent::Type>(MotionEventType))
 {
-}
-
-MotionEvent::MotionEvent(const MotionEvent& in) : EventBase(static_cast<QEvent::Type>(MotionEventType))
-{
-    xTrans  = in.xTrans;
-    yTrans  = in.yTrans;
-    zTrans  = in.zTrans;
-    xRot    = in.xRot;
-    yRot    = in.yRot;
-    zRot    = in.zRot;
+    xTrans = in.xTrans;
+    yTrans = in.yTrans;
+    zTrans = in.zTrans;
+    xRot = in.xRot;
+    yRot = in.yRot;
+    zRot = in.zRot;
     handled = in.handled;
 }
 
-MotionEvent& MotionEvent::operator= (const MotionEvent& in)
+MotionEvent &MotionEvent::operator=(const MotionEvent &in)
 {
-    if (this == &in)
-        return *this;
+    if (this == &in) return *this;
 
-    xTrans  = in.xTrans;
-    yTrans  = in.yTrans;
-    zTrans  = in.zTrans;
-    xRot    = in.xRot;
-    yRot    = in.yRot;
-    zRot    = in.zRot;
+    xTrans = in.xTrans;
+    yTrans = in.yTrans;
+    zTrans = in.zTrans;
+    xRot = in.xRot;
+    yRot = in.yRot;
+    zRot = in.zRot;
     handled = in.handled;
     return *this;
 }
@@ -95,22 +94,21 @@ void MotionEvent::setRotations(const int &xRotIn, const int &yRotIn, const int &
 }
 
 
-ButtonEvent::ButtonEvent() : EventBase(static_cast<QEvent::Type>(ButtonEventType)),
-    buttonState(BUTTON_NONE), button(0)
-{
-}
+ButtonEvent::ButtonEvent()
+    : EventBase(static_cast<QEvent::Type>(ButtonEventType)), buttonState(BUTTON_NONE), button(0)
+{}
 
-ButtonEvent::ButtonEvent(const ButtonEvent& in) : EventBase(static_cast<QEvent::Type>(ButtonEventType))
+ButtonEvent::ButtonEvent(const ButtonEvent &in)
+    : EventBase(static_cast<QEvent::Type>(ButtonEventType))
 {
     buttonState = in.buttonState;
     button = in.button;
     handled = in.handled;
 }
 
-ButtonEvent& ButtonEvent::operator= (const ButtonEvent& in)
+ButtonEvent &ButtonEvent::operator=(const ButtonEvent &in)
 {
-    if (this == &in)
-        return *this;
+    if (this == &in) return *this;
 
     buttonState = in.buttonState;
     button = in.button;
@@ -118,22 +116,13 @@ ButtonEvent& ButtonEvent::operator= (const ButtonEvent& in)
     return *this;
 }
 
-ButtonStateType ButtonEvent::buttonStatus()
-{
-    return buttonState;
-}
+ButtonStateType ButtonEvent::buttonStatus() { return buttonState; }
 
 void ButtonEvent::setButtonStatus(const ButtonStateType &buttonStatusIn)
 {
     buttonState = buttonStatusIn;
 }
 
-int ButtonEvent::buttonNumber()
-{
-    return button;
-}
+int ButtonEvent::buttonNumber() { return button; }
 
-void ButtonEvent::setButtonNumber(const int &buttonNumberIn)
-{
-    button = buttonNumberIn;
-}
+void ButtonEvent::setButtonNumber(const int &buttonNumberIn) { button = buttonNumberIn; }

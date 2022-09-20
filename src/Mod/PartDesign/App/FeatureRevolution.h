@@ -30,7 +30,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Revolution : public ProfileBased
+class PartDesignExport Revolution: public ProfileBased
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Revolution);
 
@@ -39,7 +39,7 @@ public:
 
     App::PropertyVector Base;
     App::PropertyVector Axis;
-    App::PropertyAngle  Angle;
+    App::PropertyAngle Angle;
 
     /** if this property is set to a valid link, both Axis and Base properties
      *  are calculated according to the linked line
@@ -58,13 +58,15 @@ public:
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "PartDesignGui::ViewProviderRevolution";
     }
     //@}
 
     /// suggests a value for Reversed flag so that material is always added to the support
     bool suggestReversed();
+
 protected:
     /// updates Axis from ReferenceAxis
     void updateAxis();

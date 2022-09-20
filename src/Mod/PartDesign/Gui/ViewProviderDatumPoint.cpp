@@ -25,9 +25,9 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/nodes/SoMarkerSet.h>
-# include <Inventor/nodes/SoVertexProperty.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoMarkerSet.h>
+#include <Inventor/nodes/SoVertexProperty.h>
 #endif
 
 #include <App/Application.h>
@@ -38,46 +38,48 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderDatumPoint,PartDesignGui::ViewProviderDatum)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderDatumPoint, PartDesignGui::ViewProviderDatum)
 
 ViewProviderDatumPoint::ViewProviderDatumPoint()
 {
     sPixmap = "PartDesign_Point.svg";
 
     // SoMarkerSet won't be drawn if transparency is nonzero, so disabble it
-    Transparency.setValue (0);
+    Transparency.setValue(0);
     Transparency.setStatus(App::Property::Hidden, true); //< make transparency hidden
 }
 
-ViewProviderDatumPoint::~ViewProviderDatumPoint()
-{
-}
+ViewProviderDatumPoint::~ViewProviderDatumPoint() {}
 
-void ViewProviderDatumPoint::attach ( App::DocumentObject *obj ) {
-    ViewProviderDatum::attach ( obj );
+void ViewProviderDatumPoint::attach(App::DocumentObject *obj)
+{
+    ViewProviderDatum::attach(obj);
 
     SoMFVec3f v;
     v.setNum(1);
-    v.set1Value(0, 0,0,0);
+    v.set1Value(0, 0, 0, 0);
 
-    SoVertexProperty* vprop = new SoVertexProperty();
+    SoVertexProperty *vprop = new SoVertexProperty();
     vprop->vertex = v;
 
     // Using a marker gives a larger point but it doesn't do highlighting automatically like the SoBrepPointSet
     // TODO Fix the highlight (may be via additional pcHighlight node?) (2015-09-09, Fat-Zer)
-    SoMarkerSet* marker = new SoMarkerSet();
+    SoMarkerSet *marker = new SoMarkerSet();
     marker->vertexProperty = vprop;
     marker->numPoints = 1;
-    marker->markerIndex = Gui::Inventor::MarkerBitmaps::getMarkerIndex("DIAMOND_FILLED", App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View")->GetInt("MarkerSize", 9));
+    marker->markerIndex = Gui::Inventor::MarkerBitmaps::getMarkerIndex(
+        "DIAMOND_FILLED",
+        App::GetApplication()
+            .GetParameterGroupByPath("User parameter:BaseApp/Preferences/View")
+            ->GetInt("MarkerSize", 9));
 
-    getShapeRoot ()->addChild(marker);
+    getShapeRoot()->addChild(marker);
 }
 
-void ViewProviderDatumPoint::onChanged (const App::Property* prop) {
+void ViewProviderDatumPoint::onChanged(const App::Property *prop)
+{
     // Forbid to set trancparency
-    if (prop == &Transparency && Transparency.getValue() != 0) {
-        Transparency.setValue (0);
-    }
+    if (prop == &Transparency && Transparency.getValue() != 0) { Transparency.setValue(0); }
 
-    ViewProviderDatum::onChanged (prop);
+    ViewProviderDatum::onChanged(prop);
 }

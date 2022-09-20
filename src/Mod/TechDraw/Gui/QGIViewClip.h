@@ -32,31 +32,32 @@ namespace TechDrawGui
 class QGCustomRect;
 class QGCustomClip;
 
-class TechDrawGuiExport QGIViewClip : public QGIView
+class TechDrawGuiExport QGIViewClip: public QGIView
 {
 public:
-
     QGIViewClip();
     ~QGIViewClip() override = default;
 
-    enum {Type = QGraphicsItem::UserType + 123};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 123
+    };
+    int type() const override { return Type; }
 
     void updateView(bool update = false) override;
 
     void draw() override;
-    QGCustomRect* getFrame() {return m_frame;}
-    QGCustomClip* getClipArea() {return m_cliparea;}
+    QGCustomRect *getFrame() { return m_frame; }
+    QGCustomClip *getClipArea() { return m_cliparea; }
 
 protected:
     void drawClip();
 
 private:
-    QGCustomRect* m_frame;
-    QGCustomClip* m_cliparea;
-
+    QGCustomRect *m_frame;
+    QGCustomClip *m_cliparea;
 };
 
-} // namespace MDIViewPageGui
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMCLIP_H

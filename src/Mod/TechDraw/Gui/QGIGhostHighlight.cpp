@@ -61,30 +61,26 @@ QGIGhostHighlight::QGIGhostHighlight()
     setStyle(Qt::SolidLine);
     setColor(prefSelectColor());
     setWidth(Rez::guiX(1.0));
-    setRadius(10.0);         //placeholder
+    setRadius(10.0); //placeholder
 }
 
-QGIGhostHighlight::~QGIGhostHighlight()
-{
+QGIGhostHighlight::~QGIGhostHighlight() {}
 
-}
-
-void QGIGhostHighlight::mousePressEvent(QGraphicsSceneMouseEvent * event)
+void QGIGhostHighlight::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-//    Base::Console().Message("QGIGhostHighlight::mousePress() - %X\n", this);
-    if ( (event->button() == Qt::LeftButton) &&
-        (flags() & QGraphicsItem::ItemIsMovable) ) {
-            m_dragging = true;
-            event->accept();
+    //    Base::Console().Message("QGIGhostHighlight::mousePress() - %X\n", this);
+    if ((event->button() == Qt::LeftButton) && (flags() & QGraphicsItem::ItemIsMovable)) {
+        m_dragging = true;
+        event->accept();
     }
     QGIHighlight::mousePressEvent(event);
 }
 
-void QGIGhostHighlight::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
+void QGIGhostHighlight::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-//    Base::Console().Message("QGIGhostHighlight::mouseRelease() - pos: %s scenePos: %s\n",
-//                                 DrawUtil::formatVector(pos()).c_str(),
-//                                 DrawUtil::formatVector(mapToScene(pos())).c_str());
+    //    Base::Console().Message("QGIGhostHighlight::mouseRelease() - pos: %s scenePos: %s\n",
+    //                                 DrawUtil::formatVector(pos()).c_str(),
+    //                                 DrawUtil::formatVector(mapToScene(pos())).c_str());
     if (m_dragging) {
         m_dragging = false;
         Q_EMIT positionChange(scenePos());
@@ -102,9 +98,6 @@ void QGIGhostHighlight::setInteractive(bool state)
 }
 
 //radius should scaled, but not Rez::guix()
-void QGIGhostHighlight::setRadius(double r)
-{
-    setBounds(-r, r, r, -r);
-}
+void QGIGhostHighlight::setRadius(double r) { setBounds(-r, r, r, -r); }
 
 #include <Mod/TechDraw/Gui/moc_QGIGhostHighlight.cpp>

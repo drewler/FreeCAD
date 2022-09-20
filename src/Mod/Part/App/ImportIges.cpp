@@ -22,22 +22,22 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <fcntl.h>
-# include <BRep_Builder.hxx>
-# include <IGESBasic_Group.hxx>
-# include <IGESBasic_SingularSubfigure.hxx>
-# include <IGESControl_Controller.hxx>
-# include <IGESControl_Reader.hxx>
-# include <IGESSolid_ManifoldSolid.hxx>
-# include <Message_MsgFile.hxx>
-# include <Standard_Version.hxx>
-# include <TColStd_HSequenceOfTransient.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Compound.hxx>
-# include <TopoDS_Shape.hxx>
-# include <Transfer_TransientProcess.hxx>
-# include <XSControl_TransferReader.hxx>
-# include <XSControl_WorkSession.hxx>
+#include <fcntl.h>
+#include <BRep_Builder.hxx>
+#include <IGESBasic_Group.hxx>
+#include <IGESBasic_SingularSubfigure.hxx>
+#include <IGESControl_Controller.hxx>
+#include <IGESControl_Reader.hxx>
+#include <IGESSolid_ManifoldSolid.hxx>
+#include <Message_MsgFile.hxx>
+#include <Standard_Version.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopoDS_Shape.hxx>
+#include <Transfer_TransientProcess.hxx>
+#include <XSControl_TransferReader.hxx>
+#include <XSControl_WorkSession.hxx>
 #endif
 
 #include <App/Document.h>
@@ -50,7 +50,7 @@
 
 using namespace Part;
 
-int Part::ImportIgesParts(App::Document *pcDoc, const char* FileName)
+int Part::ImportIgesParts(App::Document *pcDoc, const char *FileName)
 {
     try {
         Base::FileInfo fi(FileName);
@@ -58,10 +58,10 @@ int Part::ImportIgesParts(App::Document *pcDoc, const char* FileName)
         IGESControl_Controller::Init();
 
         // load data exchange message files
-        Message_MsgFile::LoadFromEnv("CSF_XSMessage","IGES");
+        Message_MsgFile::LoadFromEnv("CSF_XSMessage", "IGES");
 
         // load shape healing message files
-        Message_MsgFile::LoadFromEnv("CSF_SHMessageStd","SHAPEStd");
+        Message_MsgFile::LoadFromEnv("CSF_SHMessageStd", "SHAPEStd");
 
         IGESControl_Reader aReader;
         if (aReader.ReadFile((Standard_CString)FileName) != IFSelect_RetDone)
@@ -72,7 +72,7 @@ int Part::ImportIgesParts(App::Document *pcDoc, const char* FileName)
         aReader.SetReadVisible(Standard_True);
 
         // check file conformity and output stats
-        aReader.PrintCheckLoad(Standard_True,IFSelect_GeneralInfo);
+        aReader.PrintCheckLoad(Standard_True, IFSelect_GeneralInfo);
 
 #if 1
         std::string aName = fi.fileNamePure();
@@ -98,14 +98,13 @@ int Part::ImportIgesParts(App::Document *pcDoc, const char* FileName)
         builder.MakeCompound(comp);
 
         Standard_Integer nbShapes = aReader.NbShapes();
-        for (Standard_Integer i=1; i<=nbShapes; i++) {
+        for (Standard_Integer i = 1; i <= nbShapes; i++) {
             TopoDS_Shape aShape = aReader.Shape(i);
             if (!aShape.IsNull()) {
-                if (aShape.ShapeType() == TopAbs_SOLID ||
-                    aShape.ShapeType() == TopAbs_COMPOUND ||
-                    aShape.ShapeType() == TopAbs_SHELL) {
-                        App::DocumentObject* obj = pcDoc->addObject("Part::Feature", aName.c_str());
-                        static_cast<Part::Feature*>(obj)->Shape.setValue(aShape);
+                if (aShape.ShapeType() == TopAbs_SOLID || aShape.ShapeType() == TopAbs_COMPOUND
+                    || aShape.ShapeType() == TopAbs_SHELL) {
+                    App::DocumentObject *obj = pcDoc->addObject("Part::Feature", aName.c_str());
+                    static_cast<Part::Feature *>(obj)->Shape.setValue(aShape);
                 }
                 else {
                     builder.Add(comp, aShape);
@@ -115,8 +114,8 @@ int Part::ImportIgesParts(App::Document *pcDoc, const char* FileName)
         }
         if (!emptyComp) {
             std::string name = fi.fileNamePure();
-            Part::Feature *pcFeature = static_cast<Part::Feature*>(pcDoc->addObject
-                ("Part::Feature", name.c_str()));
+            Part::Feature *pcFeature =
+                static_cast<Part::Feature *>(pcDoc->addObject("Part::Feature", name.c_str()));
             pcFeature->Shape.setValue(comp);
         }
 #else
@@ -127,12 +126,14 @@ int Part::ImportIgesParts(App::Document *pcDoc, const char* FileName)
         builder.MakeCompound(comp);
 
         // get all entities
-        Handle(TColStd_HSequenceOfTransient) aRootList=aReader.GiveList("xst-transferrable-roots");
+        Handle(TColStd_HSequenceOfTransient) aRootList =
+            aReader.GiveList("xst-transferrable-roots");
         Base::SequencerLauncher seq("Reading IGES file...", aRootList->Length());
         Standard_Integer j;
-        for (j=1; j<=aRootList->Length(); j++) {
+        for (j = 1; j <= aRootList->Length(); j++) {
             seq.next();
-            Handle(IGESData_IGESEntity) igesEntity = Handle(IGESData_IGESEntity)::DownCast(aRootList->Value(j));
+            Handle(IGESData_IGESEntity) igesEntity =
+                Handle(IGESData_IGESEntity)::DownCast(aRootList->Value(j));
             if (igesEntity.IsNull()) continue;
             // clear any old shape
             aReader.ClearShapes();
@@ -143,26 +144,25 @@ int Part::ImportIgesParts(App::Document *pcDoc, const char* FileName)
 #endif
 
             // is it a group, singular sub-figure or solid?
-            if (igesEntity->IsKind(STANDARD_TYPE(IGESBasic_Group)) ||
-                igesEntity->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure)) ||
-                igesEntity->IsKind(STANDARD_TYPE(IGESSolid_ManifoldSolid))) {
+            if (igesEntity->IsKind(STANDARD_TYPE(IGESBasic_Group))
+                || igesEntity->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure))
+                || igesEntity->IsKind(STANDARD_TYPE(IGESSolid_ManifoldSolid))) {
                 try {
                     if (aReader.TransferEntity(igesEntity)) {
-                        if (aReader.NbShapes()>0) {
+                        if (aReader.NbShapes() > 0) {
                             // get the shape
                             std::string aName = fi.fileNamePure();
                             if (igesEntity->HasShortLabel()) {
-                                Handle(TCollection_HAsciiString) aLabel=igesEntity->ShortLabel();
+                                Handle(TCollection_HAsciiString) aLabel = igesEntity->ShortLabel();
                                 aName = aLabel->ToCString();
                             }
-                            TopoDS_Shape aShape=aReader.OneShape();
-                            App::DocumentObject* obj = pcDoc->addObject("Part::Feature", aName.c_str());
+                            TopoDS_Shape aShape = aReader.OneShape();
+                            App::DocumentObject *obj =
+                                pcDoc->addObject("Part::Feature", aName.c_str());
                             obj->Label.setValue(aName);
-                            static_cast<Part::Feature*>(obj)->Shape.setValue(aShape);
+                            static_cast<Part::Feature *>(obj)->Shape.setValue(aShape);
                             int iColor;
-                            if (igesEntity->RankColor()>-1) {
-                                iColor = igesEntity->RankColor();
-                            }
+                            if (igesEntity->RankColor() > -1) { iColor = igesEntity->RankColor(); }
                         }
                     }
                 }
@@ -173,8 +173,8 @@ int Part::ImportIgesParts(App::Document *pcDoc, const char* FileName)
             else {
                 try {
                     if (aReader.TransferEntity(igesEntity)) {
-                        if (aReader.NbShapes()>0) {
-                            TopoDS_Shape aShape=aReader.OneShape();
+                        if (aReader.NbShapes() > 0) {
+                            TopoDS_Shape aShape = aReader.OneShape();
                             builder.Add(comp, aShape);
                             emptyComp = Standard_False;
                         }
@@ -187,13 +187,13 @@ int Part::ImportIgesParts(App::Document *pcDoc, const char* FileName)
 
         if (!emptyComp) {
             std::string name = fi.fileNamePure();
-            Part::Feature *pcFeature = static_cast<Part::Feature*>(pcDoc->addObject
-                ("Part::Feature", name.c_str()));
+            Part::Feature *pcFeature =
+                static_cast<Part::Feature *>(pcDoc->addObject("Part::Feature", name.c_str()));
             pcFeature->Shape.setValue(comp);
         }
 #endif
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         throw Base::CADKernelError(e.GetMessageString());
     }
 

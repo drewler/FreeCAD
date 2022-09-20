@@ -23,7 +23,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMenu>
+#include <QMenu>
 #endif
 
 #include <App/Document.h>
@@ -55,22 +55,22 @@ ViewProviderPart::ViewProviderPart()
     aPixmap = "Geoassembly.svg";
 }
 
-ViewProviderPart::~ViewProviderPart()
-{ }
+ViewProviderPart::~ViewProviderPart() {}
 
 /**
  * TODO
  * Whenever a property of the group gets changed then the same property of all
  * associated view providers of the objects of the object group get changed as well.
  */
-void ViewProviderPart::onChanged(const App::Property* prop) {
+void ViewProviderPart::onChanged(const App::Property *prop)
+{
     ViewProviderDragger::onChanged(prop);
 }
 
-void ViewProviderPart::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderPart::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     auto func = new Gui::ActionFunction(menu);
-    QAction* act = menu->addAction(QObject::tr("Toggle active part"));
+    QAction *act = menu->addAction(QObject::tr("Toggle active part"));
     func->trigger(act, std::bind(&ViewProviderPart::doubleClicked, this));
 
     ViewProviderDragger::setupContextMenu(menu, receiver, member);
@@ -81,28 +81,27 @@ bool ViewProviderPart::doubleClicked()
     //make the part the active one
 
     //first, check if the part is already active.
-    App::DocumentObject* activePart = nullptr;
+    App::DocumentObject *activePart = nullptr;
     auto activeDoc = Gui::Application::Instance->activeDocument();
-    if(!activeDoc)
-        activeDoc = getDocument();
+    if (!activeDoc) activeDoc = getDocument();
     auto activeView = activeDoc->setActiveView(this);
-    if(!activeView)
-        return false;
+    if (!activeView) return false;
 
-    activePart = activeView->getActiveObject<App::DocumentObject*> (PARTKEY);
+    activePart = activeView->getActiveObject<App::DocumentObject *>(PARTKEY);
 
-    if (activePart == this->getObject()){
+    if (activePart == this->getObject()) {
         //active part double-clicked. Deactivate.
         Gui::Command::doCommand(Gui::Command::Gui,
-                "Gui.ActiveDocument.ActiveView.setActiveObject('%s', None)",
-                PARTKEY);
-    } else {
+                                "Gui.ActiveDocument.ActiveView.setActiveObject('%s', None)",
+                                PARTKEY);
+    }
+    else {
         //set new active part
         Gui::Command::doCommand(Gui::Command::Gui,
-                "Gui.ActiveDocument.ActiveView.setActiveObject('%s', App.getDocument('%s').getObject('%s'))",
-                PARTKEY,
-                this->getObject()->getDocument()->getName(),
-                this->getObject()->getNameInDocument());
+                                "Gui.ActiveDocument.ActiveView.setActiveObject('%s', "
+                                "App.getDocument('%s').getObject('%s'))",
+                                PARTKEY, this->getObject()->getDocument()->getName(),
+                                this->getObject()->getNameInDocument());
     }
 
     return true;
@@ -111,23 +110,24 @@ bool ViewProviderPart::doubleClicked()
 QIcon ViewProviderPart::getIcon() const
 {
     // the original Part object for this ViewProviderPart
-    auto part = static_cast<App::Part*>(this->getObject());
+    auto part = static_cast<App::Part *>(this->getObject());
     // the normal case for Std_Part
-    const char* pixmap = sPixmap;
+    const char *pixmap = sPixmap;
     // if it's flagged as an Assembly in its Type, it gets another icon
     if (part->Type.getStrValue() == "Assembly") { pixmap = aPixmap; }
-    
-    return mergeGreyableOverlayIcons (Gui::BitmapFactory().pixmap(pixmap));
+
+    return mergeGreyableOverlayIcons(Gui::BitmapFactory().pixmap(pixmap));
 }
 
 
 // Python feature -----------------------------------------------------------------------
 
-namespace Gui {
+namespace Gui
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(Gui::ViewProviderPartPython, Gui::ViewProviderPart)
 /// @endcond
 
 // explicit template instantiation
 template class GuiExport ViewProviderPythonFeatureT<ViewProviderPart>;
-}
+} // namespace Gui

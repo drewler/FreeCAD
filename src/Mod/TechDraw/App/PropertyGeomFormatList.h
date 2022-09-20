@@ -28,7 +28,8 @@
 #include <vector>
 #include <App/Property.h>
 
-namespace Base {
+namespace Base
+{
 class Writer;
 }
 
@@ -58,17 +59,13 @@ public:
 
     /** Sets the property
      */
-    void setValue(const GeomFormat*);
-    void setValues(const std::vector<GeomFormat*>&);
+    void setValue(const GeomFormat *);
+    void setValues(const std::vector<GeomFormat *> &);
 
     /// index operator
-    const GeomFormat *operator[] (const int idx) const {
-        return _lValueList[idx];
-    }
+    const GeomFormat *operator[](const int idx) const { return _lValueList[idx]; }
 
-    const std::vector<GeomFormat*> &getValues(void) const {
-        return _lValueList;
-    }
+    const std::vector<GeomFormat *> &getValues(void) const { return _lValueList; }
 
     virtual PyObject *getPyObject(void);
     virtual void setPyObject(PyObject *);
@@ -82,7 +79,7 @@ public:
     virtual unsigned int getMemSize(void) const;
 
 private:
-    std::vector<GeomFormat*> _lValueList;
+    std::vector<GeomFormat *> _lValueList;
 };
 
 } // namespace TechDraw

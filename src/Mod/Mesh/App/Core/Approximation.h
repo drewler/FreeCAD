@@ -49,55 +49,51 @@ namespace Wm4
  * To use Wm3 routines for implicit surfaces we can write the surface also as F(x,y,z) = f(x,y) - z = 0.
  * @author Werner Mayer
  */
-template <class Real>
-class PolynomialSurface : public ImplicitSurface<Real>
+template<class Real> class PolynomialSurface: public ImplicitSurface<Real>
 {
 public:
-  explicit PolynomialSurface (const Real afCoeff[6])
-  { for (int i=0; i<6; i++) m_afCoeff[i] = afCoeff[i]; }
+    explicit PolynomialSurface(const Real afCoeff[6])
+    {
+        for (int i = 0; i < 6; i++) m_afCoeff[i] = afCoeff[i];
+    }
 
-  virtual ~PolynomialSurface () {}
+    virtual ~PolynomialSurface() {}
 
-  // the function
-  virtual Real F (const Vector3<Real>& rkP) const
-  { 
-    return ( m_afCoeff[0]*rkP.X()*rkP.X() + 
-             m_afCoeff[1]*rkP.Y()*rkP.Y() + 
-             m_afCoeff[2]*rkP.X()         + 
-             m_afCoeff[3]*rkP.Y()         + 
-             m_afCoeff[4]*rkP.X()*rkP.Y() + 
-             m_afCoeff[5]-rkP.Z())        ;
-  }
+    // the function
+    virtual Real F(const Vector3<Real> &rkP) const
+    {
+        return (m_afCoeff[0] * rkP.X() * rkP.X() + m_afCoeff[1] * rkP.Y() * rkP.Y()
+                + m_afCoeff[2] * rkP.X() + m_afCoeff[3] * rkP.Y() + m_afCoeff[4] * rkP.X() * rkP.Y()
+                + m_afCoeff[5] - rkP.Z());
+    }
 
-  // first-order partial derivatives
-  virtual Real FX (const Vector3<Real>& rkP) const
-  { return (Real)(2.0*m_afCoeff[0]*rkP.X() + m_afCoeff[2] + m_afCoeff[4]*rkP.Y()); }
-  virtual Real FY (const Vector3<Real>& rkP) const
-  { return (Real)(2.0*m_afCoeff[1]*rkP.Y() + m_afCoeff[3] + m_afCoeff[4]*rkP.X()); }
-  virtual Real FZ (const Vector3<Real>& /*rkP*/) const
-  { return (Real)-1.0; }
+    // first-order partial derivatives
+    virtual Real FX(const Vector3<Real> &rkP) const
+    {
+        return (Real)(2.0 * m_afCoeff[0] * rkP.X() + m_afCoeff[2] + m_afCoeff[4] * rkP.Y());
+    }
+    virtual Real FY(const Vector3<Real> &rkP) const
+    {
+        return (Real)(2.0 * m_afCoeff[1] * rkP.Y() + m_afCoeff[3] + m_afCoeff[4] * rkP.X());
+    }
+    virtual Real FZ(const Vector3<Real> & /*rkP*/) const { return (Real)-1.0; }
 
-  // second-order partial derivatives
-  virtual Real FXX (const Vector3<Real>& /*rkP*/) const
-  { return (Real)(2.0*m_afCoeff[0]); }
-  virtual Real FXY (const Vector3<Real>& /*rkP*/) const
-  { return (Real)(m_afCoeff[4]); }
-  virtual Real FXZ (const Vector3<Real>& /*rkP*/) const
-  { return (Real)0.0; }
-  virtual Real FYY (const Vector3<Real>& /*rkP*/) const
-  { return (Real)(2.0*m_afCoeff[1]); }
-  virtual Real FYZ (const Vector3<Real>& /*rkP*/) const
-  { return (Real)0.0; }
-  virtual Real FZZ (const Vector3<Real>& /*rkP*/) const
-  { return (Real)0.0; }
+    // second-order partial derivatives
+    virtual Real FXX(const Vector3<Real> & /*rkP*/) const { return (Real)(2.0 * m_afCoeff[0]); }
+    virtual Real FXY(const Vector3<Real> & /*rkP*/) const { return (Real)(m_afCoeff[4]); }
+    virtual Real FXZ(const Vector3<Real> & /*rkP*/) const { return (Real)0.0; }
+    virtual Real FYY(const Vector3<Real> & /*rkP*/) const { return (Real)(2.0 * m_afCoeff[1]); }
+    virtual Real FYZ(const Vector3<Real> & /*rkP*/) const { return (Real)0.0; }
+    virtual Real FZZ(const Vector3<Real> & /*rkP*/) const { return (Real)0.0; }
 
 protected:
-  Real m_afCoeff[6];
+    Real m_afCoeff[6];
 };
 
-}
+} // namespace Wm4
 
-namespace MeshCore {
+namespace MeshCore
+{
 class MeshPointArray;
 
 /**
@@ -137,7 +133,7 @@ public:
     /**
      * Get all added points.
      */
-    const std::list<Base::Vector3f>& GetPoints() const { return _vPoints; }
+    const std::list<Base::Vector3f> &GetPoints() const { return _vPoints; }
     /**
      * Returns the center of gravity of the current added points.
      * @return Base::Vector3f
@@ -171,12 +167,12 @@ protected:
     /**
      * Creates a vector of Wm4::Vector3 elements.
      */
-    void GetMgcVectorArray( std::vector< Wm4::Vector3<double> >& rcPts ) const;
+    void GetMgcVectorArray(std::vector<Wm4::Vector3<double>> &rcPts) const;
 
 protected:
-    std::list< Base::Vector3f > _vPoints; /**< Holds the points for the fit algorithm.  */
-    bool _bIsFitted; /**< Flag, whether the fit has been called. */
-    float _fLastResult; /**< Stores the last result of the fit */
+    std::list<Base::Vector3f> _vPoints; /**< Holds the points for the fit algorithm.  */
+    bool _bIsFitted;                    /**< Flag, whether the fit has been called. */
+    float _fLastResult;                 /**< Stores the last result of the fit */
 };
 
 // -------------------------------------------------------------------------------
@@ -184,7 +180,7 @@ protected:
 /**
  * Approximation of a plane into a given set of points.
  */
-class MeshExport PlaneFit : public Approximation
+class MeshExport PlaneFit: public Approximation
 {
 public:
     /**
@@ -211,7 +207,7 @@ public:
     /** 
      * Returns the distance from the point \a rcPoint to the fitted plane. If Fit() has not been
      * called FLOAT_MAX is returned.
-     */ 
+     */
     float GetDistanceToPlane(const Base::Vector3f &rcPoint) const;
     /**
      * Returns the standard deviation from the points to the fitted plane. If Fit() has not been
@@ -230,7 +226,7 @@ public:
     /**
      * Get the dimension of the fitted plane.
      */
-    void Dimension(float& length, float& width) const;
+    void Dimension(float &length, float &width) const;
     /**
      * Returns an array of the transformed points relative to the coordinate system
      * of the plane. If this method is called before the plane is computed an empty
@@ -262,19 +258,17 @@ protected:
  * Depending on the parameters (a,..,k) this surface defines a sphere, ellipsoid, cylinder, cone
  * and so on.
  */
-class MeshExport QuadraticFit : public Approximation
+class MeshExport QuadraticFit: public Approximation
 {
 public:
     /**
      * Construction
      */
-    QuadraticFit() : Approximation() {
-        std::fill(_fCoeff, _fCoeff+10, 0.0);
-    }
+    QuadraticFit() : Approximation() { std::fill(_fCoeff, _fCoeff + 10, 0.0); }
     /**
      * Destruction
      */
-    ~QuadraticFit() override{}
+    ~QuadraticFit() override {}
     /**
      * Get the quadric coefficients
      * @param ulIndex Number of coefficient (0..9)
@@ -286,7 +280,7 @@ public:
      * internal array
      * @return const double& Reference to the double array
      */
-    const double& GetCoeffArray() const;
+    const double &GetCoeffArray() const;
     /**
      * Invocation of fitting algorithm
      * @return float Quality of fit.
@@ -306,12 +300,10 @@ public:
      * @param dDistance
      * @return bool Success = true, otherwise false
      */
-    bool GetCurvatureInfo(double x, double y, double z,
-                          double &rfCurv0, double &rfCurv1,
+    bool GetCurvatureInfo(double x, double y, double z, double &rfCurv0, double &rfCurv1,
                           Base::Vector3f &rkDir0, Base::Vector3f &rkDir1, double &dDistance);
 
-    bool GetCurvatureInfo(double x, double y, double z,
-                          double &rfCurv0, double &rfcurv1);
+    bool GetCurvatureInfo(double x, double y, double z, double &rfCurv0, double &rfcurv1);
     /**
      * Compute form matrix A and calculate Eigenvalues.
      * @param dLambda1 Eigenvalue 1
@@ -325,7 +317,7 @@ public:
                          Base::Vector3f &clEV1, Base::Vector3f &clEV2, Base::Vector3f &clEV3) const;
 
 protected:
-    double _fCoeff[ 10 ];  /**< Coefficients of the fit */
+    double _fCoeff[10]; /**< Coefficients of the fit */
 };
 
 // -------------------------------------------------------------------------------
@@ -339,7 +331,7 @@ protected:
  * This approach was developed as an alternative for the 3D approach with quadrics because
  * the latter suffers from strange artifacts in planar areas.
  */
-class MeshExport SurfaceFit : public PlaneFit
+class MeshExport SurfaceFit: public PlaneFit
 {
 public:
     /**
@@ -349,20 +341,20 @@ public:
     /**
      * Destruction
      */
-    ~SurfaceFit() override{}
+    ~SurfaceFit() override {}
 
     bool GetCurvatureInfo(double x, double y, double z, double &rfCurv0, double &rfCurv1,
                           Base::Vector3f &rkDir0, Base::Vector3f &rkDir1, double &dDistance);
     bool GetCurvatureInfo(double x, double y, double z, double &rfCurv0, double &rfcurv1);
     float Fit() override;
     double Value(double x, double y) const;
-    void GetCoefficients(double& a,double& b,double& c,double& d,double& e,double& f) const;
+    void GetCoefficients(double &a, double &b, double &c, double &d, double &e, double &f) const;
     /**
      * @brief Transform
      * Transforms points from the local coordinate system to the world coordinate system
      */
-    void Transform(std::vector<Base::Vector3f>&) const;
-    void Transform(std::vector<Base::Vector3d>&) const;
+    void Transform(std::vector<Base::Vector3f> &) const;
+    void Transform(std::vector<Base::Vector3d> &) const;
     /**
      * @brief toBezier
      * @param umin Parameter range
@@ -371,11 +363,12 @@ public:
      * @param vmax Parameter range
      * @return control points of the Bezier surface
      */
-    std::vector<Base::Vector3d> toBezier(double umin=0.0, double umax=1.0, double vmin=0.0, double vmax=1.0) const;
+    std::vector<Base::Vector3d> toBezier(double umin = 0.0, double umax = 1.0, double vmin = 0.0,
+                                         double vmax = 1.0) const;
 
 protected:
     double PolynomFit();
-    double _fCoeff[ 10 ];  /**< Ziel der Koeffizienten aus dem Fit */
+    double _fCoeff[10]; /**< Ziel der Koeffizienten aus dem Fit */
 };
 
 // -------------------------------------------------------------------------------
@@ -383,7 +376,7 @@ protected:
 /**
  * Approximation of a cylinder into a given set of points.
  */
-class MeshExport CylinderFit : public Approximation
+class MeshExport CylinderFit: public Approximation
 {
 public:
     /**
@@ -396,7 +389,7 @@ public:
     ~CylinderFit() override;
     float GetRadius() const;
     Base::Vector3f GetBase() const;
-    void SetInitialValues(const Base::Vector3f&, const Base::Vector3f&);
+    void SetInitialValues(const Base::Vector3f &, const Base::Vector3f &);
     /**
      * Returns the axis of the fitted cylinder. If Fit() has not been called the null vector is
      * returned.
@@ -405,7 +398,7 @@ public:
     /**
      * Returns an initial axis based on point normals.
      */
-    Base::Vector3f GetInitialAxisFromNormals(const std::vector<Base::Vector3f>& n) const;
+    Base::Vector3f GetInitialAxisFromNormals(const std::vector<Base::Vector3f> &n) const;
     /**
      * Fit a cylinder into the given points. If the fit fails FLOAT_MAX is returned.
      */
@@ -428,12 +421,12 @@ public:
      * Get the bottom and top points of the cylinder. The distance of these
      * points gives the height of the cylinder.
      */
-    void GetBounding(Base::Vector3f& bottom, Base::Vector3f& top) const;
+    void GetBounding(Base::Vector3f &bottom, Base::Vector3f &top) const;
 
 protected:
     Base::Vector3f _vBase; /**< Base vector of the cylinder. */
     Base::Vector3f _vAxis; /**< Axis of the cylinder. */
-    float _fRadius; /**< Radius of the cylinder. */
+    float _fRadius;        /**< Radius of the cylinder. */
     bool _initialGuess;
 };
 
@@ -442,7 +435,7 @@ protected:
 /**
  * Approximation of a sphere into a given set of points.
  */
-class MeshExport SphereFit : public Approximation
+class MeshExport SphereFit: public Approximation
 {
 public:
     /**
@@ -476,7 +469,7 @@ public:
 
 protected:
     Base::Vector3f _vCenter; /**< Center of the sphere. */
-    float _fRadius; /**< Radius of the cylinder. */
+    float _fRadius;          /**< Radius of the cylinder. */
 };
 
 // -------------------------------------------------------------------------------
@@ -492,7 +485,7 @@ public:
     /**
      * WildMagic library uses function with this interface
      */
-    using Function = double (*)(double,double,double);
+    using Function = double (*)(double, double, double);
     /**
      * The constructor expects an array of quadric coefficients.
      * @param pKoef Pointer to the quadric coefficients
@@ -500,30 +493,29 @@ public:
      */
     explicit FunctionContainer(const double *pKoef)
     {
-        Assign( pKoef );
-        pImplSurf = new Wm4::QuadricSurface<double>( dKoeff );
+        Assign(pKoef);
+        pImplSurf = new Wm4::QuadricSurface<double>(dKoeff);
     }
     /**
      * Apply quadric coefficients
      * @param pKoef Pointer to the quadric coefficients
      *        (double [10])
      */
-    void Assign( const double *pKoef )
+    void Assign(const double *pKoef)
     {
-        for (long ct=0; ct < 10; ct++)
-            dKoeff[ ct ] = pKoef[ ct ];
+        for (long ct = 0; ct < 10; ct++) dKoeff[ct] = pKoef[ct];
     }
     /**
      * Destructor. Deletes the ImpicitSurface instance
      * of the WildMagic library
      */
-    ~FunctionContainer(){ delete pImplSurf; }
+    ~FunctionContainer() { delete pImplSurf; }
     /** 
      * Access to the quadric coefficients
      * @param idx Index to coefficient
      * @return double& coefficient
      */
-    double& operator[](int idx){ return dKoeff[ idx ]; }
+    double &operator[](int idx) { return dKoeff[idx]; }
     /**
      * Redirector to a method of the WildMagic library. Determines
      * the principal curvatures and their directions at the given point.
@@ -537,49 +529,57 @@ public:
      * @param dDistance Gives distances from the point to the quadric.
      * @return bool Success = true, otherwise false
      */
-    bool CurvatureInfo(double x, double y, double z, 
-                       double &rfCurv0, double &rfCurv1,
-                       Wm4::Vector3<double> &rkDir0,  Wm4::Vector3<double> &rkDir1, double &dDistance)
+    bool CurvatureInfo(double x, double y, double z, double &rfCurv0, double &rfCurv1,
+                       Wm4::Vector3<double> &rkDir0, Wm4::Vector3<double> &rkDir1,
+                       double &dDistance)
     {
         (void)dDistance;
-        return pImplSurf->ComputePrincipalCurvatureInfo( Wm4::Vector3<double>(x, y, z),rfCurv0, rfCurv1, rkDir0, rkDir1 );
+        return pImplSurf->ComputePrincipalCurvatureInfo(Wm4::Vector3<double>(x, y, z), rfCurv0,
+                                                        rfCurv1, rkDir0, rkDir1);
     }
 
-    Base::Vector3f GetGradient( double x, double y, double z ) const
+    Base::Vector3f GetGradient(double x, double y, double z) const
     {
-        Wm4::Vector3<double> grad = pImplSurf->GetGradient( Wm4::Vector3<double>(x, y, z) );
-        return Base::Vector3f(static_cast<float>(grad.X()),
-                              static_cast<float>(grad.Y()),
+        Wm4::Vector3<double> grad = pImplSurf->GetGradient(Wm4::Vector3<double>(x, y, z));
+        return Base::Vector3f(static_cast<float>(grad.X()), static_cast<float>(grad.Y()),
                               static_cast<float>(grad.Z()));
     }
 
-    Base::Matrix4D GetHessian( double x, double y, double z ) const
+    Base::Matrix4D GetHessian(double x, double y, double z) const
     {
-        Wm4::Matrix3<double> hess = pImplSurf->GetHessian( Wm4::Vector3<double>(x, y, z) );
-        Base::Matrix4D cMat; cMat.setToUnity();
-        cMat[0][0] = hess[0][0]; cMat[0][1] = hess[0][1]; cMat[0][2] = hess[0][2];
-        cMat[1][0] = hess[1][0]; cMat[1][1] = hess[1][1]; cMat[1][2] = hess[1][2];
-        cMat[2][0] = hess[2][0]; cMat[2][1] = hess[2][1]; cMat[2][2] = hess[2][2];
+        Wm4::Matrix3<double> hess = pImplSurf->GetHessian(Wm4::Vector3<double>(x, y, z));
+        Base::Matrix4D cMat;
+        cMat.setToUnity();
+        cMat[0][0] = hess[0][0];
+        cMat[0][1] = hess[0][1];
+        cMat[0][2] = hess[0][2];
+        cMat[1][0] = hess[1][0];
+        cMat[1][1] = hess[1][1];
+        cMat[1][2] = hess[1][2];
+        cMat[2][0] = hess[2][0];
+        cMat[2][1] = hess[2][1];
+        cMat[2][2] = hess[2][2];
         return cMat;
     }
 
-    bool CurvatureInfo(double x, double y, double z,
-                       double &rfCurv0, double &rfCurv1)
+    bool CurvatureInfo(double x, double y, double z, double &rfCurv0, double &rfCurv1)
     {
-        double dQuot = Fz(x,y,z);
-        double zx = - ( Fx(x,y,z) / dQuot );
-        double zy = - ( Fy(x,y,z) / dQuot );
-        
-        double zxx = - ( 2.0 * ( dKoeff[5] + dKoeff[6] * zx * zx + dKoeff[8] * zx ) ) / dQuot;
-        double zyy = - ( 2.0 * ( dKoeff[5] + dKoeff[6] * zy * zy + dKoeff[9] * zy ) ) / dQuot;
-        double zxy = - ( dKoeff[6] * zx * zy + dKoeff[7] + dKoeff[8] * zy + dKoeff[9] * zx ) / dQuot;
+        double dQuot = Fz(x, y, z);
+        double zx = -(Fx(x, y, z) / dQuot);
+        double zy = -(Fy(x, y, z) / dQuot);
 
-        double dNen = 1 + zx*zx + zy*zy;
-        double dNenSqrt = sqrt( dNen );
-        double K = ( zxx * zyy - zxy * zxy ) / ( dNen * dNen );
-        double H = 0.5 * ( ( 1.0+zx*zx - 2*zx*zy*zxy + (1.0+zy*zy)*zxx ) / ( dNenSqrt * dNenSqrt * dNenSqrt ) ) ;
+        double zxx = -(2.0 * (dKoeff[5] + dKoeff[6] * zx * zx + dKoeff[8] * zx)) / dQuot;
+        double zyy = -(2.0 * (dKoeff[5] + dKoeff[6] * zy * zy + dKoeff[9] * zy)) / dQuot;
+        double zxy = -(dKoeff[6] * zx * zy + dKoeff[7] + dKoeff[8] * zy + dKoeff[9] * zx) / dQuot;
 
-        double dDiscr = sqrt(fabs(H*H-K));
+        double dNen = 1 + zx * zx + zy * zy;
+        double dNenSqrt = sqrt(dNen);
+        double K = (zxx * zyy - zxy * zxy) / (dNen * dNen);
+        double H = 0.5
+            * ((1.0 + zx * zx - 2 * zx * zy * zxy + (1.0 + zy * zy) * zxx)
+               / (dNenSqrt * dNenSqrt * dNenSqrt));
+
+        double dDiscr = sqrt(fabs(H * H - K));
         rfCurv0 = H - dDiscr;
         rfCurv1 = H + dDiscr;
 
@@ -587,71 +587,83 @@ public:
     }
 
     //+++++++++ Quadric +++++++++++++++++++++++++++++++++++++++
-    double F  ( double x, double y, double z ) 
+    double F(double x, double y, double z)
     {
-        return (dKoeff[0] + dKoeff[1]*x + dKoeff[2]*y + dKoeff[3]*z +
-                dKoeff[4]*x*x + dKoeff[5]*y*y + dKoeff[6]*z*z +
-                dKoeff[7]*x*y + dKoeff[8]*x*z + dKoeff[9]*y*z);
+        return (dKoeff[0] + dKoeff[1] * x + dKoeff[2] * y + dKoeff[3] * z + dKoeff[4] * x * x
+                + dKoeff[5] * y * y + dKoeff[6] * z * z + dKoeff[7] * x * y + dKoeff[8] * x * z
+                + dKoeff[9] * y * z);
     }
-  
+
     //+++++++++ 1. derivations ++++++++++++++++++++++++++++++++
-    double Fx ( double x, double y, double z )
+    double Fx(double x, double y, double z)
     {
-        return( dKoeff[1] + 2.0*dKoeff[4]*x + dKoeff[7]*y + dKoeff[8]*z );
+        return (dKoeff[1] + 2.0 * dKoeff[4] * x + dKoeff[7] * y + dKoeff[8] * z);
     }
-    double Fy ( double x, double y, double z ) 
+    double Fy(double x, double y, double z)
     {
-        return( dKoeff[2] + 2.0*dKoeff[5]*y + dKoeff[7]*x + dKoeff[9]*z );
+        return (dKoeff[2] + 2.0 * dKoeff[5] * y + dKoeff[7] * x + dKoeff[9] * z);
     }
-    double Fz ( double x, double y, double z ) 
+    double Fz(double x, double y, double z)
     {
-        return( dKoeff[3] + 2.0*dKoeff[6]*z + dKoeff[8]*x + dKoeff[9]*y );
+        return (dKoeff[3] + 2.0 * dKoeff[6] * z + dKoeff[8] * x + dKoeff[9] * y);
     }
 
     //+++++++++ 2. derivations ++++++++++++++++++++++++++++++++
-    double Fxx( double x, double y, double z ) 
+    double Fxx(double x, double y, double z)
     {
-        (void)x; (void)y; (void)z;
-        return( 2.0*dKoeff[4] );
+        (void)x;
+        (void)y;
+        (void)z;
+        return (2.0 * dKoeff[4]);
     }
-    double Fxy( double x, double y, double z ) 
+    double Fxy(double x, double y, double z)
     {
-        (void)x; (void)y; (void)z;
-        return( dKoeff[7] );
+        (void)x;
+        (void)y;
+        (void)z;
+        return (dKoeff[7]);
     }
-    double Fxz( double x, double y, double z ) 
+    double Fxz(double x, double y, double z)
     {
-        (void)x; (void)y; (void)z;
-        return( dKoeff[8] );
+        (void)x;
+        (void)y;
+        (void)z;
+        return (dKoeff[8]);
     }
-    double Fyy( double x, double y, double z ) 
+    double Fyy(double x, double y, double z)
     {
-        (void)x; (void)y; (void)z;
-        return( 2.0*dKoeff[5] );
+        (void)x;
+        (void)y;
+        (void)z;
+        return (2.0 * dKoeff[5]);
     }
-    double Fyz( double x, double y, double z ) 
+    double Fyz(double x, double y, double z)
     {
-        (void)x; (void)y; (void)z;
-        return( dKoeff[9] );
+        (void)x;
+        (void)y;
+        (void)z;
+        return (dKoeff[9]);
     }
-    double Fzz( double x, double y, double z ) 
+    double Fzz(double x, double y, double z)
     {
-        (void)x; (void)y; (void)z;
-        return( 2.0*dKoeff[6] );
+        (void)x;
+        (void)y;
+        (void)z;
+        return (2.0 * dKoeff[6]);
     }
-   
+
 protected:
-    double dKoeff[ 10 ];     /**< Coefficients of quadric */
-    Wm4::ImplicitSurface<double> *pImplSurf;  /**< Access to the WildMagic library */
+    double dKoeff[10];                       /**< Coefficients of quadric */
+    Wm4::ImplicitSurface<double> *pImplSurf; /**< Access to the WildMagic library */
 
 private:
     /**
      * Private construction.
      */
-    FunctionContainer(){}
+    FunctionContainer() {}
 };
 
-class MeshExport PolynomialFit : public Approximation
+class MeshExport PolynomialFit: public Approximation
 {
 public:
     /**

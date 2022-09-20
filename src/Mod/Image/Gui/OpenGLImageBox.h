@@ -27,17 +27,18 @@ class QOpenGLDebugMessage;
 namespace ImageGui
 {
 
-#define IV_DISPLAY_NOCHANGE     0       // no change to view settings when displaying a new image
-#define IV_DISPLAY_FITIMAGE     1       // fit-image when displaying a new image (other settings remain the same)
-#define IV_DISPLAY_RESET        2       // reset settings when displaying a new image (image will be displayed at 1:1 scale with no color map)
+#define IV_DISPLAY_NOCHANGE 0 // no change to view settings when displaying a new image
+#define IV_DISPLAY_FITIMAGE                                                                        \
+    1 // fit-image when displaying a new image (other settings remain the same)
+#define IV_DISPLAY_RESET                                                                           \
+    2 // reset settings when displaying a new image (image will be displayed at 1:1 scale with no color map)
 
-class ImageGuiExport GLImageBox : public QOpenGLWidget
+class ImageGuiExport GLImageBox: public QOpenGLWidget
 {
     Q_OBJECT
 
 public:
-
-    GLImageBox(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    GLImageBox(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     ~GLImageBox();
 
     Image::ImageBase *getImageBasePtr() { return &_image; }
@@ -63,8 +64,11 @@ public:
     double ICToWC_Y(double ImageY);
 
     void clearImage();
-    int createImageCopy(void* pSrcPixelData, unsigned long width, unsigned long height, int format, unsigned short numSigBitsPerSample, int displayMode = IV_DISPLAY_RESET);
-    int pointImageTo(void* pSrcPixelData, unsigned long width, unsigned long height, int format, unsigned short numSigBitsPerSample, bool takeOwnership, int displayMode = IV_DISPLAY_RESET);
+    int createImageCopy(void *pSrcPixelData, unsigned long width, unsigned long height, int format,
+                        unsigned short numSigBitsPerSample, int displayMode = IV_DISPLAY_RESET);
+    int pointImageTo(void *pSrcPixelData, unsigned long width, unsigned long height, int format,
+                     unsigned short numSigBitsPerSample, bool takeOwnership,
+                     int displayMode = IV_DISPLAY_RESET);
 
     void clearColorMap();
     int createColorMap(int numEntriesReq = 0, bool Initialise = true);
@@ -76,7 +80,7 @@ public:
     int setColorMapAlphaValue(int index, float value);
     unsigned int pixValToMapIndex(double PixVal);
 
-    void renderText(int x, int y, const QString& str, const QFont& fnt = QFont());
+    void renderText(int x, int y, const QString &str, const QFont &fnt = QFont());
 
 public Q_SLOTS:
     void handleLoggedMessage(const QOpenGLDebugMessage &debugMessage);
@@ -85,10 +89,9 @@ Q_SIGNALS:
     void drawGraphics();
 
 private:
-
     void initializeGL();
     void paintGL();
-    void resizeGL( int w, int h );
+    void resizeGL(int w, int h);
 
     void drawImage();
     void getDisplayedImageAreaSize(int &dx, int &dy);
@@ -101,19 +104,18 @@ private:
     void resetDisplay();
     int calcNumColorMapEntries();
 
-    Image::ImageBase _image;   // the image data
+    Image::ImageBase _image; // the image data
 
     int _x0;            // image x-coordinate of top-left widget pixel
     int _y0;            // image y-coordinate of top-left widget pixel
     double _zoomFactor; // zoom factor = (num_widget_pixels / num_image_pixels)
 
-    int _base_x0;       // defines a fixed position of x0
-    int _base_y0;       // defines a fixed position of y0
+    int _base_x0; // defines a fixed position of x0
+    int _base_y0; // defines a fixed position of y0
 
-    float* _pColorMap;  // a RGBA color map (to alter the intensity or colors)
-    int _numMapEntries;     // number of entries in color map
+    float *_pColorMap;  // a RGBA color map (to alter the intensity or colors)
+    int _numMapEntries; // number of entries in color map
     static bool haveMesa;
-
 };
 
 

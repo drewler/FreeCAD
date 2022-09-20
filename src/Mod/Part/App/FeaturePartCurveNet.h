@@ -29,7 +29,7 @@
 namespace Part
 {
 
-class CurveNet :public Part::Feature
+class CurveNet: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::FeaturePartCurveNet);
 
@@ -44,13 +44,11 @@ public:
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderCurveNet";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderCurveNet"; }
     //@}
 };
 
-}
+} // namespace Part
 
 
 #endif // PART_FeaturePartCurveNet_H

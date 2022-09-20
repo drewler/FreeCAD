@@ -43,41 +43,33 @@ class NETGENPlugin_Hypothesis;
 
 class NETGENPLUGIN_EXPORT NETGENPlugin_NETGEN_3D: public SMESH_3D_Algo
 {
- public:
-  NETGENPlugin_NETGEN_3D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~NETGENPlugin_NETGEN_3D();
+public:
+    NETGENPlugin_NETGEN_3D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~NETGENPlugin_NETGEN_3D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh& aMesh,
-                               const TopoDS_Shape& aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh,
-                       const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Compute(SMESH_Mesh& aMesh,
-                       SMESH_MesherHelper* aHelper);
+    virtual bool Compute(SMESH_Mesh &aMesh, SMESH_MesherHelper *aHelper);
 
-  virtual void CancelCompute();
+    virtual void CancelCompute();
 
-  virtual double GetProgress() const;
+    virtual double GetProgress() const;
 
-  virtual bool Evaluate(SMESH_Mesh& aMesh,
-                        const TopoDS_Shape& aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
- protected:
+protected:
+    bool compute(SMESH_Mesh &mesh, SMESH_MesherHelper &helper,
+                 vector<const SMDS_MeshNode *> &nodeVec, nglib::Ng_Mesh *ngMesh);
 
-  bool compute(SMESH_Mesh&                     mesh,
-               SMESH_MesherHelper&             helper,
-               vector< const SMDS_MeshNode* >& nodeVec,
-               nglib::Ng_Mesh*                 ngMesh);
+    double _maxElementVolume;
 
-  double _maxElementVolume;
-
-  const NETGENPlugin_Hypothesis *    _hypParameters;
-  const StdMeshers_MaxElementVolume* _hypMaxElementVolume;
-  const StdMeshers_ViscousLayers*    _viscousLayersHyp;
-  double                             _progressByTic;
+    const NETGENPlugin_Hypothesis *_hypParameters;
+    const StdMeshers_MaxElementVolume *_hypMaxElementVolume;
+    const StdMeshers_ViscousLayers *_viscousLayersHyp;
+    double _progressByTic;
 };
 
 #endif

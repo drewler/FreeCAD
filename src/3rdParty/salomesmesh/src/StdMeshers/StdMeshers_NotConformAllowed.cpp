@@ -36,11 +36,11 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_NotConformAllowed::StdMeshers_NotConformAllowed(int hypId, int studyId, SMESH_Gen* gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_NotConformAllowed::StdMeshers_NotConformAllowed(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "NotConformAllowed";
-  _param_algo_dim = -1; 
+    _name = "NotConformAllowed";
+    _param_algo_dim = -1;
 }
 
 //=============================================================================
@@ -49,9 +49,7 @@ StdMeshers_NotConformAllowed::StdMeshers_NotConformAllowed(int hypId, int studyI
  */
 //=============================================================================
 
-StdMeshers_NotConformAllowed::~StdMeshers_NotConformAllowed()
-{
-}
+StdMeshers_NotConformAllowed::~StdMeshers_NotConformAllowed() {}
 
 //=============================================================================
 /*!
@@ -59,10 +57,7 @@ StdMeshers_NotConformAllowed::~StdMeshers_NotConformAllowed()
  */
 //=============================================================================
 
-ostream & StdMeshers_NotConformAllowed::SaveTo(ostream & save)
-{
-  return save << this;
-}
+ostream &StdMeshers_NotConformAllowed::SaveTo(ostream &save) { return save << this; }
 
 //=============================================================================
 /*!
@@ -70,10 +65,7 @@ ostream & StdMeshers_NotConformAllowed::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_NotConformAllowed::LoadFrom(istream & load)
-{
-  return load >> (*this);
-}
+istream &StdMeshers_NotConformAllowed::LoadFrom(istream &load) { return load >> (*this); }
 
 //=============================================================================
 /*!
@@ -81,10 +73,7 @@ istream & StdMeshers_NotConformAllowed::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator << (ostream & save, StdMeshers_NotConformAllowed & hyp)
-{
-  return save;
-}
+ostream &operator<<(ostream &save, StdMeshers_NotConformAllowed &hyp) { return save; }
 
 //=============================================================================
 /*!
@@ -92,10 +81,7 @@ ostream & operator << (ostream & save, StdMeshers_NotConformAllowed & hyp)
  */
 //=============================================================================
 
-istream & operator >> (istream & load, StdMeshers_NotConformAllowed & hyp)
-{
-  return load;
-}
+istream &operator>>(istream &load, StdMeshers_NotConformAllowed &hyp) { return load; }
 //================================================================================
 /*!
  * \brief Initialize my parameter values by the mesh built on the geometry
@@ -107,10 +93,10 @@ istream & operator >> (istream & load, StdMeshers_NotConformAllowed & hyp)
  */
 //================================================================================
 
-bool StdMeshers_NotConformAllowed::SetParametersByMesh(const SMESH_Mesh* /*theMesh*/,
-                                                       const TopoDS_Shape& /*theShape*/)
+bool StdMeshers_NotConformAllowed::SetParametersByMesh(const SMESH_Mesh * /*theMesh*/,
+                                                       const TopoDS_Shape & /*theShape*/)
 {
-  return true;
+    return true;
 }
 //================================================================================
 /*!
@@ -119,9 +105,8 @@ bool StdMeshers_NotConformAllowed::SetParametersByMesh(const SMESH_Mesh* /*theMe
  */
 //================================================================================
 
-bool StdMeshers_NotConformAllowed::SetParametersByDefaults(const TDefaults&  /*dflts*/,
-                                                           const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_NotConformAllowed::SetParametersByDefaults(const TDefaults & /*dflts*/,
+                                                           const SMESH_Mesh * /*theMesh*/)
 {
-  return true;
+    return true;
 }
-

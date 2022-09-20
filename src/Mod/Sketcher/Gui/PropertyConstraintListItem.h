@@ -38,7 +38,8 @@
 #include <Gui/propertyeditor/PropertyItem.h>
 
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class PropertyConstraintListItem: public Gui::PropertyEditor::PropertyItem
 {
@@ -46,16 +47,17 @@ class PropertyConstraintListItem: public Gui::PropertyEditor::PropertyItem
     PROPERTYITEM_HEADER
 
     ~PropertyConstraintListItem() override;
-    void assignProperty(const App::Property* prop) override;
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    void assignProperty(const App::Property *prop) override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
-    bool event (QEvent* ev) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
+    bool event(QEvent *ev) override;
 
     void initialize() override;
 

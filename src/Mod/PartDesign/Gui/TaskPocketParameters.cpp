@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Precision.hxx>
+#include <Precision.hxx>
 #endif
 
 #include <Mod/PartDesign/App/FeaturePocket.h>
@@ -36,9 +36,10 @@ using namespace Gui;
 
 /* TRANSLATOR PartDesignGui::TaskPocketParameters */
 
-TaskPocketParameters::TaskPocketParameters(ViewProviderPocket *PocketView,QWidget *parent, bool newObj)
-    : TaskExtrudeParameters(PocketView, parent, "PartDesign_Pocket", tr("Pocket parameters"))
-    , oldLength(0)
+TaskPocketParameters::TaskPocketParameters(ViewProviderPocket *PocketView, QWidget *parent,
+                                           bool newObj)
+    : TaskExtrudeParameters(PocketView, parent, "PartDesign_Pocket", tr("Pocket parameters")),
+      oldLength(0)
 {
     ui->offsetEdit->setToolTip(tr("Offset from face at which pocket will end"));
     ui->checkBoxReversed->setToolTip(tr("Reverses pocket direction"));
@@ -58,14 +59,10 @@ TaskPocketParameters::TaskPocketParameters(ViewProviderPocket *PocketView,QWidge
     setupDialog();
 
     // if it is a newly created object use the last value of the history
-    if (newObj) {
-        readValuesFromHistory();
-    }
+    if (newObj) { readValuesFromHistory(); }
 }
 
-TaskPocketParameters::~TaskPocketParameters()
-{
-}
+TaskPocketParameters::~TaskPocketParameters() {}
 
 void TaskPocketParameters::translateModeList(int index)
 {
@@ -88,13 +85,12 @@ void TaskPocketParameters::updateUI(int index)
 
 void TaskPocketParameters::onModeChanged(int index)
 {
-    PartDesign::Pocket* pcPocket = static_cast<PartDesign::Pocket*>(vp->getObject());
+    PartDesign::Pocket *pcPocket = static_cast<PartDesign::Pocket *>(vp->getObject());
 
     switch (static_cast<Modes>(index)) {
         case Modes::Dimension:
             // Why? See below for "UpToFace"
-            if (oldLength < Precision::Confusion())
-                oldLength = 5.0;
+            if (oldLength < Precision::Confusion()) oldLength = 5.0;
             pcPocket->Length.setValue(oldLength);
             ui->lengthEdit->setValue(oldLength);
             pcPocket->Type.setValue("Length");
@@ -132,9 +128,7 @@ void TaskPocketParameters::onModeChanged(int index)
 void TaskPocketParameters::apply()
 {
     QString facename = QString::fromLatin1("None");
-    if (static_cast<Modes>(getMode()) == Modes::ToFace) {
-        facename = getFaceName();
-    }
+    if (static_cast<Modes>(getMode()) == Modes::ToFace) { facename = getFaceName(); }
     applyParameters(facename);
 }
 
@@ -147,7 +141,7 @@ TaskDlgPocketParameters::TaskDlgPocketParameters(ViewProviderPocket *PocketView)
     : TaskDlgSketchBasedParameters(PocketView)
 {
     assert(vp);
-    Content.push_back ( new TaskPocketParameters(PocketView ) );
+    Content.push_back(new TaskPocketParameters(PocketView));
 }
 
 #include "moc_TaskPocketParameters.cpp"

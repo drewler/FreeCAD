@@ -33,23 +33,25 @@
 
 class QButtonGroup;
 
-namespace MeshGui {
+namespace MeshGui
+{
 
 class Selection;
 class Ui_DlgSmoothing;
-class DlgSmoothing : public QWidget
+class DlgSmoothing: public QWidget
 {
     Q_OBJECT
 
 public:
-    enum Smooth {
+    enum Smooth
+    {
         None,
         Taubin,
         Laplace,
         MedianFilter
     };
 
-    explicit DlgSmoothing(QWidget* parent = nullptr);
+    explicit DlgSmoothing(QWidget *parent = nullptr);
     ~DlgSmoothing() override;
     int iterations() const;
     double lambdaStep() const;
@@ -65,40 +67,35 @@ Q_SIGNALS:
     void toggledSelection(bool);
 
 private:
-    Ui_DlgSmoothing* ui;
-    QButtonGroup* bg;
+    Ui_DlgSmoothing *ui;
+    QButtonGroup *bg;
 };
 
 /**
  * Embed the panel into a dialog.
  */
-class MeshGuiExport SmoothingDialog : public QDialog
+class MeshGuiExport SmoothingDialog: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SmoothingDialog(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit SmoothingDialog(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~SmoothingDialog() override;
 
-    int iterations() const
-    { return widget->iterations(); }
-    double lambdaStep() const
-    { return widget->lambdaStep(); }
-    double microStep() const
-    { return widget->microStep(); }
-    DlgSmoothing::Smooth method() const
-    { return widget->method(); }
-    bool smoothSelection() const
-    { return widget->smoothSelection(); }
+    int iterations() const { return widget->iterations(); }
+    double lambdaStep() const { return widget->lambdaStep(); }
+    double microStep() const { return widget->microStep(); }
+    DlgSmoothing::Smooth method() const { return widget->method(); }
+    bool smoothSelection() const { return widget->smoothSelection(); }
 
 private:
-    DlgSmoothing* widget;
+    DlgSmoothing *widget;
 };
 
 /**
  * Embed the panel into a task dialog.
  */
-class TaskSmoothing : public Gui::TaskView::TaskDialog
+class TaskSmoothing: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -110,15 +107,16 @@ public:
     bool accept() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Cancel; }
-    bool isAllowedAlterDocument() const override
-    { return true; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
+    bool isAllowedAlterDocument() const override { return true; }
 
 private:
-    DlgSmoothing* widget;
-    Selection* selection;
+    DlgSmoothing *widget;
+    Selection *selection;
 };
 
-}
+} // namespace MeshGui
 
 #endif // MESHGUI_DLGSMOOTHING_H

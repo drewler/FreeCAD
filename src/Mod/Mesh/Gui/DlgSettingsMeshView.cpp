@@ -33,9 +33,8 @@ using namespace MeshGui;
 /**
  *  Constructs a DlgSettingsMeshView which is a child of 'parent'.
  */
-DlgSettingsMeshView::DlgSettingsMeshView(QWidget* parent)
-  : PreferencePage(parent)
-  , ui(new Ui_DlgSettingsMeshView)
+DlgSettingsMeshView::DlgSettingsMeshView(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsMeshView)
 {
     ui->setupUi(this);
     ui->labelBackfaceColor->hide();
@@ -67,8 +66,7 @@ void DlgSettingsMeshView::loadSettings()
 {
     Base::Reference<ParameterGrp> hGrp = Gui::WindowParameter::getDefaultParameter();
     hGrp = hGrp->GetGroup("View");
-    if (!hGrp->GetBool("EnablePreselection",true) &&
-        !hGrp->GetBool("EnableSelection",true))
+    if (!hGrp->GetBool("EnablePreselection", true) && !hGrp->GetBool("EnableSelection", true))
         ui->checkboxBoundbox->setDisabled(true);
     ui->checkboxRendering->onRestore();
     ui->checkboxBoundbox->onRestore();
@@ -86,9 +84,7 @@ void DlgSettingsMeshView::loadSettings()
  */
 void DlgSettingsMeshView::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }

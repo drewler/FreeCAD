@@ -23,18 +23,17 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM DelTetrahedron
+template<class Real> class WM4_FOUNDATION_ITEM DelTetrahedron
 {
 public:
-    DelTetrahedron (int iV0, int iV1, int iV2, int iV3);
+    DelTetrahedron(int iV0, int iV1, int iV2, int iV3);
 
-    bool IsInsertionComponent (int i, DelTetrahedron* pkAdj,
-        const Query3<Real>* pkQuery, const int* aiSupervertex);
-    int DetachFrom (int iAdj, DelTetrahedron* pkAdj);
+    bool IsInsertionComponent(int i, DelTetrahedron *pkAdj, const Query3<Real> *pkQuery,
+                              const int *aiSupervertex);
+    int DetachFrom(int iAdj, DelTetrahedron *pkAdj);
 
     int V[4];
-    DelTetrahedron* A[4];
+    DelTetrahedron *A[4];
     int Time;
     bool IsComponent;
     bool OnStack;
@@ -43,6 +42,6 @@ public:
 typedef DelTetrahedron<float> DelTetrahedronf;
 typedef DelTetrahedron<double> DelTetrahedrond;
 
-}
+} // namespace Wm4
 
 #endif

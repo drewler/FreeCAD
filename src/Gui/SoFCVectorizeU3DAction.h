@@ -28,16 +28,18 @@
 #include <Inventor/annex/HardCopy/SoVectorOutput.h>
 
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport SoU3DVectorOutput : public SoVectorOutput {
+class GuiExport SoU3DVectorOutput: public SoVectorOutput
+{
 public:
     SoU3DVectorOutput();
     virtual ~SoU3DVectorOutput();
 
-    virtual SbBool openFile (const char *filename);
-    virtual void closeFile ();
-    std::fstream& getFileStream();
+    virtual SbBool openFile(const char *filename);
+    virtual void closeFile();
+    std::fstream &getFileStream();
 
 private:
     std::fstream file;
@@ -47,7 +49,8 @@ private:
  * @author Werner Mayer
  */
 class SoFCVectorizeU3DActionP;
-class GuiExport SoFCVectorizeU3DAction : public SoVectorizeAction {
+class GuiExport SoFCVectorizeU3DAction: public SoVectorizeAction
+{
     using inherited = SoVectorizeAction;
 
     SO_ACTION_HEADER(SoFCVectorizeU3DAction);
@@ -57,22 +60,22 @@ public:
     virtual ~SoFCVectorizeU3DAction();
 
     static void initClass();
-    SoU3DVectorOutput * getU3DOutput() const;
+    SoU3DVectorOutput *getU3DOutput() const;
 
 protected:
-    virtual void beginTraversal(SoNode * node);
+    virtual void beginTraversal(SoNode *node);
     virtual void endTraversal(SoNode *node);
     virtual void printHeader() const;
     virtual void printFooter() const;
     virtual void printBackground() const;
-    virtual void printItem(const SoVectorizeItem * item) const;
+    virtual void printItem(const SoVectorizeItem *item) const;
     virtual void printViewport() const;
 
 private:
     static void actionMethod(SoAction *, SoNode *);
 
 private:
-    SoFCVectorizeU3DActionP* p;
+    SoFCVectorizeU3DActionP *p;
     friend class SoFCVectorizeU3DActionP;
 };
 

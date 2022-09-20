@@ -28,17 +28,8 @@
 class FcLodHandler: public LodHandler
 {
 public:
-	virtual void startLod();
-
-
-
+    virtual void startLod();
 };
 
 
-
 #endif
-
-
-
-
-

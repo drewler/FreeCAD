@@ -23,26 +23,26 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QApplication>
-# include <QCheckBox>
-# include <QClipboard>
-# include <QDateTime>
-# include <QHBoxLayout>
-# include <QVBoxLayout>
-# include <QLineEdit>
-# include <QMessageBox>
-# include <QPrinter>
-# include <QPrintDialog>
-# include <QPlainTextEdit>
-# include <QPrintPreviewDialog>
-# include <QSpacerItem>
-# include <QStyle>
-# include <QTextCodec>
-# include <QTextCursor>
-# include <QTextDocument>
-# include <QTextStream>
-# include <QTimer>
-# include <QToolButton>
+#include <QApplication>
+#include <QCheckBox>
+#include <QClipboard>
+#include <QDateTime>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QPlainTextEdit>
+#include <QPrintPreviewDialog>
+#include <QSpacerItem>
+#include <QStyle>
+#include <QTextCodec>
+#include <QTextCursor>
+#include <QTextDocument>
+#include <QTextStream>
+#include <QTimer>
+#include <QToolButton>
 #endif
 
 #include "EditorView.h"
@@ -58,21 +58,23 @@
 
 
 using namespace Gui;
-namespace Gui {
-class EditorViewP {
+namespace Gui
+{
+class EditorViewP
+{
 public:
-    QPlainTextEdit* textEdit;
-    SearchBar* searchBar;
+    QPlainTextEdit *textEdit;
+    SearchBar *searchBar;
     QString fileName;
     EditorView::DisplayName displayName;
-    QTimer*  activityTimer;
+    QTimer *activityTimer;
     uint timeStamp;
     bool lock;
     bool aboutToClose;
     QStringList undos;
     QStringList redos;
 };
-}
+} // namespace Gui
 
 // -------------------------------------------------------
 
@@ -84,8 +86,8 @@ TYPESYSTEM_SOURCE_ABSTRACT(Gui::EditorView, Gui::MDIView)
  *  Constructs a EditorView which is a child of 'parent', with the
  *  name 'name'.
  */
-EditorView::EditorView(QPlainTextEdit* editor, QWidget* parent)
-    : MDIView(nullptr,parent,Qt::WindowFlags()), WindowParameter( "Editor" )
+EditorView::EditorView(QPlainTextEdit *editor, QWidget *parent)
+    : MDIView(nullptr, parent, Qt::WindowFlags()), WindowParameter("Editor")
 {
     d = new EditorViewP;
     d->lock = false;
@@ -100,7 +102,7 @@ EditorView::EditorView(QPlainTextEdit* editor, QWidget* parent)
     d->searchBar->setEditor(editor);
 
     // update editor actions on request
-    Gui::MainWindow* mw = Gui::getMainWindow();
+    Gui::MainWindow *mw = Gui::getMainWindow();
     connect(editor, SIGNAL(undoAvailable(bool)), mw, SLOT(updateEditorActions()));
     connect(editor, SIGNAL(redoAvailable(bool)), mw, SLOT(updateEditorActions()));
     connect(editor, SIGNAL(copyAvailable(bool)), mw, SLOT(updateEditorActions()));
@@ -128,20 +130,17 @@ EditorView::EditorView(QPlainTextEdit* editor, QWidget* parent)
     setWindowIcon(d->textEdit->windowIcon());
 
     ParameterGrp::handle hPrefGrp = getWindowParameter();
-    hPrefGrp->Attach( this );
+    hPrefGrp->Attach(this);
     hPrefGrp->NotifyAll();
 
     d->activityTimer = new QTimer(this);
-    connect(d->activityTimer, SIGNAL(timeout()),
-            this, SLOT(checkTimestamp()) );
-    connect(d->textEdit->document(), SIGNAL(modificationChanged(bool)),
-            this, SLOT(setWindowModified(bool)));
-    connect(d->textEdit->document(), SIGNAL(undoAvailable(bool)),
-            this, SLOT(undoAvailable(bool)));
-    connect(d->textEdit->document(), SIGNAL(redoAvailable(bool)),
-            this, SLOT(redoAvailable(bool)));
-    connect(d->textEdit->document(), SIGNAL(contentsChange(int, int, int)),
-            this, SLOT(contentsChange(int, int, int)));
+    connect(d->activityTimer, SIGNAL(timeout()), this, SLOT(checkTimestamp()));
+    connect(d->textEdit->document(), SIGNAL(modificationChanged(bool)), this,
+            SLOT(setWindowModified(bool)));
+    connect(d->textEdit->document(), SIGNAL(undoAvailable(bool)), this, SLOT(undoAvailable(bool)));
+    connect(d->textEdit->document(), SIGNAL(redoAvailable(bool)), this, SLOT(redoAvailable(bool)));
+    connect(d->textEdit->document(), SIGNAL(contentsChange(int, int, int)), this,
+            SLOT(contentsChange(int, int, int)));
 }
 
 /** Destroys the object and frees any allocated resources */
@@ -150,37 +149,31 @@ EditorView::~EditorView()
     d->activityTimer->stop();
     delete d->activityTimer;
     delete d;
-    getWindowParameter()->Detach( this );
+    getWindowParameter()->Detach(this);
 }
 
-QPlainTextEdit* EditorView::getEditor() const
-{
-    return d->textEdit;
-}
+QPlainTextEdit *EditorView::getEditor() const { return d->textEdit; }
 
-void EditorView::showEvent(QShowEvent* event)
+void EditorView::showEvent(QShowEvent *event)
 {
-    Gui::MainWindow* mw = Gui::getMainWindow();
+    Gui::MainWindow *mw = Gui::getMainWindow();
     mw->updateEditorActions();
     MDIView::showEvent(event);
 }
 
-void EditorView::hideEvent(QHideEvent* event)
-{
-    MDIView::hideEvent(event);
-}
+void EditorView::hideEvent(QHideEvent *event) { MDIView::hideEvent(event); }
 
-void EditorView::closeEvent(QCloseEvent* event)
+void EditorView::closeEvent(QCloseEvent *event)
 {
     MDIView::closeEvent(event);
     if (event->isAccepted()) {
         d->aboutToClose = true;
-        Gui::MainWindow* mw = Gui::getMainWindow();
+        Gui::MainWindow *mw = Gui::getMainWindow();
         mw->updateEditorActions();
     }
 }
 
-void EditorView::OnChange(Base::Subject<const char*> &rCaller,const char* rcReason)
+void EditorView::OnChange(Base::Subject<const char *> &rCaller, const char *rcReason)
 {
     Q_UNUSED(rCaller);
     ParameterGrp::handle hPrefGrp = getWindowParameter();
@@ -192,19 +185,19 @@ void EditorView::OnChange(Base::Subject<const char*> &rCaller,const char* rcReas
 void EditorView::checkTimestamp()
 {
     QFileInfo fi(d->fileName);
-    uint timeStamp =  fi.lastModified().toTime_t();
+    uint timeStamp = fi.lastModified().toTime_t();
     if (timeStamp != d->timeStamp) {
-        switch( QMessageBox::question( this, tr("Modified file"),
-                tr("%1.\n\nThis has been modified outside of the source editor. Do you want to reload it?").arg(d->fileName),
-                QMessageBox::Yes|QMessageBox::Default, QMessageBox::No|QMessageBox::Escape) )
-        {
+        switch (QMessageBox::question(this, tr("Modified file"),
+                                      tr("%1.\n\nThis has been modified outside of the source "
+                                         "editor. Do you want to reload it?")
+                                          .arg(d->fileName),
+                                      QMessageBox::Yes | QMessageBox::Default,
+                                      QMessageBox::No | QMessageBox::Escape)) {
             case QMessageBox::Yes:
                 // updates time stamp and timer
-                open( d->fileName );
+                open(d->fileName);
                 return;
-            case QMessageBox::No:
-                d->timeStamp = timeStamp;
-                break;
+            case QMessageBox::No: d->timeStamp = timeStamp; break;
         }
     }
 
@@ -215,11 +208,10 @@ void EditorView::checkTimestamp()
 /**
  * Runs the action specified by \a pMsg.
  */
-bool EditorView::onMsg(const char* pMsg,const char** /*ppReturn*/)
+bool EditorView::onMsg(const char *pMsg, const char ** /*ppReturn*/)
 {
     // don't allow any actions if the editor is being closed
-    if (d->aboutToClose)
-        return false;
+    if (d->aboutToClose) return false;
 
     if (strcmp(pMsg, "Save") == 0) {
         saveFile();
@@ -261,34 +253,24 @@ bool EditorView::onMsg(const char* pMsg,const char** /*ppReturn*/)
  * Checks if the action \a pMsg is available. This is for enabling/disabling
  * the corresponding buttons or menu items for this action.
  */
-bool EditorView::onHasMsg(const char* pMsg) const
+bool EditorView::onHasMsg(const char *pMsg) const
 {
     // don't allow any actions if the editor is being closed
-    if (d->aboutToClose)
-        return false;
-    if (strcmp(pMsg, "Run") == 0)
-        return true;
-    if (strcmp(pMsg, "DebugStart") == 0)
-        return true;
-    if (strcmp(pMsg, "DebugStop") == 0)
-        return true;
-    if (strcmp(pMsg, "SaveAs") == 0)
-        return true;
-    if (strcmp(pMsg, "Print") == 0)
-        return true;
-    if (strcmp(pMsg, "PrintPreview") == 0)
-        return true;
-    if (strcmp(pMsg, "PrintPdf") == 0)
-        return true;
-    if (strcmp(pMsg, "Save") == 0) {
-        return d->textEdit->document()->isModified();
-    }
+    if (d->aboutToClose) return false;
+    if (strcmp(pMsg, "Run") == 0) return true;
+    if (strcmp(pMsg, "DebugStart") == 0) return true;
+    if (strcmp(pMsg, "DebugStop") == 0) return true;
+    if (strcmp(pMsg, "SaveAs") == 0) return true;
+    if (strcmp(pMsg, "Print") == 0) return true;
+    if (strcmp(pMsg, "PrintPreview") == 0) return true;
+    if (strcmp(pMsg, "PrintPdf") == 0) return true;
+    if (strcmp(pMsg, "Save") == 0) { return d->textEdit->document()->isModified(); }
     else if (strcmp(pMsg, "Cut") == 0) {
         bool canWrite = !d->textEdit->isReadOnly();
         return (canWrite && (d->textEdit->textCursor().hasSelection()));
     }
     else if (strcmp(pMsg, "Copy") == 0) {
-        return ( d->textEdit->textCursor().hasSelection() );
+        return (d->textEdit->textCursor().hasSelection());
     }
     else if (strcmp(pMsg, "Paste") == 0) {
         QClipboard *cb = QApplication::clipboard();
@@ -298,13 +280,13 @@ bool EditorView::onHasMsg(const char* pMsg) const
         text = cb->text();
 
         bool canWrite = !d->textEdit->isReadOnly();
-        return ( !text.isEmpty() && canWrite );
+        return (!text.isEmpty() && canWrite);
     }
     else if (strcmp(pMsg, "Undo") == 0) {
-        return d->textEdit->document()->isUndoAvailable ();
+        return d->textEdit->document()->isUndoAvailable();
     }
     else if (strcmp(pMsg, "Redo") == 0) {
-        return d->textEdit->document()->isRedoAvailable ();
+        return d->textEdit->document()->isRedoAvailable();
     }
 
     return false;
@@ -313,40 +295,31 @@ bool EditorView::onHasMsg(const char* pMsg) const
 /** Checking on close state. */
 bool EditorView::canClose()
 {
-    if ( !d->textEdit->document()->isModified() )
-        return true;
+    if (!d->textEdit->document()->isModified()) return true;
     this->setFocus(); // raises the view to front
-    switch( QMessageBox::question(this, tr("Unsaved document"),
-                                    tr("The document has been modified.\n"
-                                       "Do you want to save your changes?"),
-                                     QMessageBox::Yes|QMessageBox::Default, QMessageBox::No,
-                                     QMessageBox::Cancel|QMessageBox::Escape))
-    {
-        case QMessageBox::Yes:
-            return saveFile();
-        case QMessageBox::No:
-            return true;
-        case QMessageBox::Cancel:
-            return false;
-        default:
-            return false;
+    switch (QMessageBox::question(this, tr("Unsaved document"),
+                                  tr("The document has been modified.\n"
+                                     "Do you want to save your changes?"),
+                                  QMessageBox::Yes | QMessageBox::Default, QMessageBox::No,
+                                  QMessageBox::Cancel | QMessageBox::Escape)) {
+        case QMessageBox::Yes: return saveFile();
+        case QMessageBox::No: return true;
+        case QMessageBox::Cancel: return false;
+        default: return false;
     }
 }
 
-void EditorView::setDisplayName(EditorView::DisplayName type)
-{
-    d->displayName = type;
-}
+void EditorView::setDisplayName(EditorView::DisplayName type) { d->displayName = type; }
 
 /**
  * Saves the content of the editor to a file specified by the appearing file dialog.
  */
 bool EditorView::saveAs()
 {
-    QString fn = FileDialog::getSaveFileName(this, QObject::tr("Save Macro"),
-        QString(), QString::fromLatin1("%1 (*.FCMacro);;Python (*.py)").arg(tr("FreeCAD macro")));
-    if (fn.isEmpty())
-        return false;
+    QString fn = FileDialog::getSaveFileName(
+        this, QObject::tr("Save Macro"), QString(),
+        QString::fromLatin1("%1 (*.FCMacro);;Python (*.py)").arg(tr("FreeCAD macro")));
+    if (fn.isEmpty()) return false;
     setCurrentFileName(fn);
     return saveFile();
 }
@@ -354,13 +327,11 @@ bool EditorView::saveAs()
 /**
  * Opens the file \a fileName.
  */
-bool EditorView::open(const QString& fileName)
+bool EditorView::open(const QString &fileName)
 {
-    if (!QFile::exists(fileName))
-        return false;
+    if (!QFile::exists(fileName)) return false;
     QFile file(fileName);
-    if (!file.open(QFile::ReadOnly))
-        return false;
+    if (!file.open(QFile::ReadOnly)) return false;
 
     d->lock = true;
     d->textEdit->setPlainText(QString::fromUtf8(file.readAll()));
@@ -370,7 +341,7 @@ bool EditorView::open(const QString& fileName)
     file.close();
 
     QFileInfo fi(fileName);
-    d->timeStamp =  fi.lastModified().toTime_t();
+    d->timeStamp = fi.lastModified().toTime_t();
     d->activityTimer->setSingleShot(true);
     d->activityTimer->start(3000);
 
@@ -382,27 +353,18 @@ bool EditorView::open(const QString& fileName)
  * Copies the selected text to the clipboard and deletes it from the text edit.
  * If there is no selected text nothing happens.
  */
-void EditorView::cut()
-{
-    d->textEdit->cut();
-}
+void EditorView::cut() { d->textEdit->cut(); }
 
 /**
  * Copies any selected text to the clipboard.
  */
-void EditorView::copy()
-{
-    d->textEdit->copy();
-}
+void EditorView::copy() { d->textEdit->copy(); }
 
 /**
  * Pastes the text from the clipboard into the text edit at the current cursor position.
  * If there is no text in the clipboard nothing happens.
  */
-void EditorView::paste()
-{
-    d->textEdit->paste();
-}
+void EditorView::paste() { d->textEdit->paste(); }
 
 /**
  * Undoes the last operation.
@@ -442,32 +404,26 @@ void EditorView::print()
     QPrinter printer(QPrinter::ScreenResolution);
     printer.setFullPage(true);
     QPrintDialog dlg(&printer, this);
-    if (dlg.exec() == QDialog::Accepted) {
-        d->textEdit->document()->print(&printer);
-    }
+    if (dlg.exec() == QDialog::Accepted) { d->textEdit->document()->print(&printer); }
 }
 
 void EditorView::printPreview()
 {
     QPrinter printer(QPrinter::ScreenResolution);
     QPrintPreviewDialog dlg(&printer, this);
-    connect(&dlg, SIGNAL(paintRequested (QPrinter *)),
-            this, SLOT(print(QPrinter *)));
+    connect(&dlg, SIGNAL(paintRequested(QPrinter *)), this, SLOT(print(QPrinter *)));
     dlg.exec();
 }
 
-void EditorView::print(QPrinter* printer)
-{
-    d->textEdit->document()->print(printer);
-}
+void EditorView::print(QPrinter *printer) { d->textEdit->document()->print(printer); }
 
 /**
  * Prints the document into a Pdf file.
  */
 void EditorView::printPdf()
 {
-    QString filename = FileDialog::getSaveFileName(this, tr("Export PDF"), QString(),
-        QString::fromLatin1("%1 (*.pdf)").arg(tr("PDF file")));
+    QString filename = FileDialog::getSaveFileName(
+        this, tr("Export PDF"), QString(), QString::fromLatin1("%1 (*.pdf)").arg(tr("PDF file")));
     if (!filename.isEmpty()) {
         QPrinter printer(QPrinter::ScreenResolution);
         printer.setOutputFormat(QPrinter::PdfFormat);
@@ -485,20 +441,13 @@ void EditorView::setCurrentFileName(const QString &fileName)
     QString name;
     QFileInfo fi(fileName);
     switch (d->displayName) {
-    case FullName:
-        name = fileName;
-        break;
-    case FileName:
-        name = fi.fileName();
-        break;
-    case BaseName:
-        name = fi.baseName();
-        break;
+        case FullName: name = fileName; break;
+        case FileName: name = fi.fileName(); break;
+        case BaseName: name = fi.baseName(); break;
     }
 
     QString shownName;
-    if (fileName.isEmpty())
-        shownName = tr("untitled[*]");
+    if (fileName.isEmpty()) shownName = tr("untitled[*]");
     else
         shownName = QString::fromLatin1("%1[*]").arg(name);
     shownName += tr(" - Editor");
@@ -506,22 +455,17 @@ void EditorView::setCurrentFileName(const QString &fileName)
     setWindowModified(false);
 }
 
-QString EditorView::fileName() const
-{
-    return d->fileName;
-}
+QString EditorView::fileName() const { return d->fileName; }
 
 /**
  * Saves the contents to a file.
  */
 bool EditorView::saveFile()
 {
-    if (d->fileName.isEmpty())
-        return saveAs();
+    if (d->fileName.isEmpty()) return saveAs();
 
     QFile file(d->fileName);
-    if (!file.open(QFile::WriteOnly))
-        return false;
+    if (!file.open(QFile::WriteOnly)) return false;
     QTextStream ts(&file);
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
     ts << d->textEdit->document()->toPlainText();
@@ -529,29 +473,25 @@ bool EditorView::saveFile()
     d->textEdit->document()->setModified(false);
 
     QFileInfo fi(d->fileName);
-    d->timeStamp =  fi.lastModified().toTime_t();
+    d->timeStamp = fi.lastModified().toTime_t();
     return true;
 }
 
 void EditorView::undoAvailable(bool undo)
 {
-    if (!undo)
-        d->undos.clear();
+    if (!undo) d->undos.clear();
 }
 
 void EditorView::redoAvailable(bool redo)
 {
-    if (!redo)
-        d->redos.clear();
+    if (!redo) d->redos.clear();
 }
 
 void EditorView::contentsChange(int position, int charsRemoved, int charsAdded)
 {
     Q_UNUSED(position);
-    if (d->lock)
-        return;
-    if (charsRemoved > 0 && charsAdded > 0)
-        return; // syntax highlighting
+    if (d->lock) return;
+    if (charsRemoved > 0 && charsAdded > 0) return; // syntax highlighting
     else if (charsRemoved > 0)
         d->undos << tr("%1 chars removed").arg(charsRemoved);
     else if (charsAdded > 0)
@@ -564,53 +504,46 @@ void EditorView::contentsChange(int position, int charsRemoved, int charsAdded)
 /**
  * Get the undo history.
  */
-QStringList EditorView::undoActions() const
-{
-    return d->undos;
-}
+QStringList EditorView::undoActions() const { return d->undos; }
 
 /**
  * Get the redo history.
  */
 QStringList EditorView::redoActions() const
 {
-    return d->redos;;
+    return d->redos;
+    ;
 }
 
-void EditorView::focusInEvent (QFocusEvent *)
-{
-    d->textEdit->setFocus();
-}
+void EditorView::focusInEvent(QFocusEvent *) { d->textEdit->setFocus(); }
 
 // ---------------------------------------------------------
 
 TYPESYSTEM_SOURCE_ABSTRACT(Gui::PythonEditorView, Gui::EditorView)
 
-PythonEditorView::PythonEditorView(PythonEditor* editor, QWidget* parent)
-  : EditorView(editor, parent), _pye(editor)
+PythonEditorView::PythonEditorView(PythonEditor *editor, QWidget *parent)
+    : EditorView(editor, parent), _pye(editor)
 {
-    connect(this, SIGNAL(changeFileName(const QString&)),
-            editor, SLOT(setFileName(const QString&)));
+    connect(this, SIGNAL(changeFileName(const QString &)), editor,
+            SLOT(setFileName(const QString &)));
 }
 
-PythonEditorView::~PythonEditorView()
-{
-}
+PythonEditorView::~PythonEditorView() {}
 
 /**
  * Runs the action specified by \a pMsg.
  */
-bool PythonEditorView::onMsg(const char* pMsg,const char** ppReturn)
+bool PythonEditorView::onMsg(const char *pMsg, const char **ppReturn)
 {
-    if (strcmp(pMsg,"Run")==0) {
+    if (strcmp(pMsg, "Run") == 0) {
         executeScript();
         return true;
     }
-    else if (strcmp(pMsg,"StartDebug")==0) {
+    else if (strcmp(pMsg, "StartDebug") == 0) {
         QTimer::singleShot(300, this, SLOT(startDebug()));
         return true;
     }
-    else if (strcmp(pMsg,"ToggleBreakpoint")==0) {
+    else if (strcmp(pMsg, "ToggleBreakpoint") == 0) {
         toggleBreakpoint();
         return true;
     }
@@ -621,14 +554,11 @@ bool PythonEditorView::onMsg(const char* pMsg,const char** ppReturn)
  * Checks if the action \a pMsg is available. This is for enabling/disabling
  * the corresponding buttons or menu items for this action.
  */
-bool PythonEditorView::onHasMsg(const char* pMsg) const
+bool PythonEditorView::onHasMsg(const char *pMsg) const
 {
-    if (strcmp(pMsg,"Run")==0)
-        return true;
-    if (strcmp(pMsg,"StartDebug")==0)
-        return true;
-    if (strcmp(pMsg,"ToggleBreakpoint")==0)
-        return true;
+    if (strcmp(pMsg, "Run") == 0) return true;
+    if (strcmp(pMsg, "StartDebug") == 0) return true;
+    if (strcmp(pMsg, "ToggleBreakpoint") == 0) return true;
     return EditorView::onHasMsg(pMsg);
 }
 
@@ -638,12 +568,11 @@ bool PythonEditorView::onHasMsg(const char* pMsg) const
 void PythonEditorView::executeScript()
 {
     // always save the macro when it is modified
-    if (EditorView::onHasMsg("Save"))
-        EditorView::onMsg("Save", nullptr);
+    if (EditorView::onHasMsg("Save")) EditorView::onMsg("Save", nullptr);
     try {
-        Application::Instance->macroManager()->run(Gui::MacroManager::File,fileName().toUtf8());
+        Application::Instance->macroManager()->run(Gui::MacroManager::File, fileName().toUtf8());
     }
-    catch (const Base::SystemExitException&) {
+    catch (const Base::SystemExitException &) {
         // handle SystemExit exceptions
         Base::PyGILStateLocker locker;
         Base::PyException e;
@@ -651,31 +580,17 @@ void PythonEditorView::executeScript()
     }
 }
 
-void PythonEditorView::startDebug()
-{
-    _pye->startDebug();
-}
+void PythonEditorView::startDebug() { _pye->startDebug(); }
 
-void PythonEditorView::toggleBreakpoint()
-{
-    _pye->toggleBreakpoint();
-}
+void PythonEditorView::toggleBreakpoint() { _pye->toggleBreakpoint(); }
 
-void PythonEditorView::showDebugMarker(int line)
-{
-    _pye->showDebugMarker(line);
-}
+void PythonEditorView::showDebugMarker(int line) { _pye->showDebugMarker(line); }
 
-void PythonEditorView::hideDebugMarker()
-{
-    _pye->hideDebugMarker();
-}
+void PythonEditorView::hideDebugMarker() { _pye->hideDebugMarker(); }
 
 // ----------------------------------------------------------------------------
 
-SearchBar::SearchBar(QWidget* parent)
-    : QWidget(parent)
-    , textEditor(nullptr)
+SearchBar::SearchBar(QWidget *parent) : QWidget(parent), textEditor(nullptr)
 {
     horizontalLayout = new QHBoxLayout(this);
     horizontalLayout->setSpacing(3);
@@ -726,12 +641,9 @@ SearchBar::SearchBar(QWidget* parent)
     hide();
 }
 
-void SearchBar::setEditor(QPlainTextEdit* textEdit)
-{
-    textEditor = textEdit;
-}
+void SearchBar::setEditor(QPlainTextEdit *textEdit) { textEditor = textEdit; }
 
-void SearchBar::keyPressEvent(QKeyEvent* event)
+void SearchBar::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
         hide();
@@ -758,35 +670,23 @@ void SearchBar::activate()
 
 void SearchBar::deactivate()
 {
-    if (textEditor)
-        textEditor->setFocus();
+    if (textEditor) textEditor->setFocus();
     hide();
 }
 
-void SearchBar::findPrevious()
-{
-    findText(true, false, searchText->text());
-}
+void SearchBar::findPrevious() { findText(true, false, searchText->text()); }
 
-void SearchBar::findNext()
-{
-    findText(true, true, searchText->text());
-}
+void SearchBar::findNext() { findText(true, true, searchText->text()); }
 
-void SearchBar::findCurrent()
-{
-    findText(false, true, searchText->text());
-}
+void SearchBar::findCurrent() { findText(false, true, searchText->text()); }
 
-void SearchBar::findText(bool skip, bool next, const QString& str)
+void SearchBar::findText(bool skip, bool next, const QString &str)
 {
-    if (!textEditor)
-        return;
+    if (!textEditor) return;
 
     QTextCursor cursor = textEditor->textCursor();
     QTextDocument *doc = textEditor->document();
-    if (!doc || cursor.isNull())
-        return;
+    if (!doc || cursor.isNull()) return;
 
     if (cursor.hasSelection())
         cursor.setPosition((skip && next) ? cursor.position() : cursor.anchor());
@@ -795,17 +695,15 @@ void SearchBar::findText(bool skip, bool next, const QString& str)
     QTextCursor newCursor = cursor;
     if (!str.isEmpty()) {
         QTextDocument::FindFlags options;
-        if (!next)
-            options |= QTextDocument::FindBackward;
-        if (matchCase->isChecked())
-            options |= QTextDocument::FindCaseSensitively;
-        if (matchWord->isChecked())
-            options |= QTextDocument::FindWholeWords;
+        if (!next) options |= QTextDocument::FindBackward;
+        if (matchCase->isChecked()) options |= QTextDocument::FindCaseSensitively;
+        if (matchWord->isChecked()) options |= QTextDocument::FindWholeWords;
 
         newCursor = doc->find(str, cursor, options);
         if (newCursor.isNull()) {
             QTextCursor ac(doc);
-            ac.movePosition(options & QTextDocument::FindBackward ? QTextCursor::End : QTextCursor::Start);
+            ac.movePosition(options & QTextDocument::FindBackward ? QTextCursor::End
+                                                                  : QTextCursor::Start);
             newCursor = doc->find(str, ac, options);
             if (newCursor.isNull()) {
                 found = false;
@@ -814,18 +712,15 @@ void SearchBar::findText(bool skip, bool next, const QString& str)
         }
     }
 
-    if (!isVisible())
-        show();
+    if (!isVisible()) show();
 
     textEditor->setTextCursor(newCursor);
 
     QString styleSheet;
     if (!found) {
-        styleSheet = QString::fromLatin1(
-            " QLineEdit {\n"
-            "     background-color: rgb(221,144,161);\n"
-            " }\n"
-        );
+        styleSheet = QString::fromLatin1(" QLineEdit {\n"
+                                         "     background-color: rgb(221,144,161);\n"
+                                         " }\n");
     }
 
     searchText->setStyleSheet(styleSheet);
@@ -838,11 +733,9 @@ void SearchBar::updateButtons()
     nextButton->setDisabled(empty);
 }
 
-void SearchBar::changeEvent(QEvent* event)
+void SearchBar::changeEvent(QEvent *event)
 {
-    if (event->type() == QEvent::LanguageChange) {
-        retranslateUi();
-    }
+    if (event->type() == QEvent::LanguageChange) { retranslateUi(); }
 
     QWidget::changeEvent(event);
 }

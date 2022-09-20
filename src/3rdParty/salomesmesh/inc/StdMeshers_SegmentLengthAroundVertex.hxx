@@ -37,37 +37,37 @@
  * \brief This hypothesis specifies length of segments adjacent to the vertex the
  * hypothesis is assigned to
  */
-class STDMESHERS_EXPORT StdMeshers_SegmentLengthAroundVertex:public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_SegmentLengthAroundVertex: public SMESH_Hypothesis
 {
- public:
-  StdMeshers_SegmentLengthAroundVertex(int hypId, int studyId, SMESH_Gen * gen);
-  virtual ~ StdMeshers_SegmentLengthAroundVertex();
+public:
+    StdMeshers_SegmentLengthAroundVertex(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_SegmentLengthAroundVertex();
 
-  void SetLength(double length);
+    void SetLength(double length);
 
-  double GetLength() const;
+    double GetLength() const;
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  friend std::ostream & operator <<(std::ostream & save, StdMeshers_SegmentLengthAroundVertex & hyp);
-  friend std::istream & operator >>(std::istream & load, StdMeshers_SegmentLengthAroundVertex & hyp);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    friend std::ostream &operator<<(std::ostream &save, StdMeshers_SegmentLengthAroundVertex &hyp);
+    friend std::istream &operator>>(std::istream &load, StdMeshers_SegmentLengthAroundVertex &hyp);
 
-  /*!
+    /*!
    * \brief Initialize segment length by the mesh built on the geometry
    * \param theMesh - the built mesh
    * \param theShape - the geometry of interest
    * \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
- protected:
-  double _length;
+protected:
+    double _length;
 };
 
 #endif

@@ -32,13 +32,15 @@ class ActionPanelScheme;
     It can contain arbitrary widgets as well.
 */
 
-class QSINT_EXPORT ActionGroup : public QWidget
+class QSINT_EXPORT ActionGroup: public QWidget
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool expandable READ isExpandable WRITE setExpandable) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(bool expandable READ isExpandable WRITE
+                   setExpandable)                          // clazy:exclude=qproperty-without-notify
     Q_PROPERTY(bool header READ hasHeader WRITE setHeader) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(QString headerText READ headerText WRITE setHeaderText) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QString headerText READ headerText WRITE
+                   setHeaderText) // clazy:exclude=qproperty-without-notify
 
 public:
     /** Constructor. Creates ActionGroup without header.
@@ -50,18 +52,14 @@ public:
 
         If \a expandable set to \a true (default), the group can be expanded/collapsed by the user.
       */
-    explicit ActionGroup(const QString& title,
-                         bool expandable = true,
-                         QWidget *parent = nullptr);
+    explicit ActionGroup(const QString &title, bool expandable = true, QWidget *parent = nullptr);
 
     /** Constructor. Creates ActionGroup with header's
         text set to \a title and icon set to \a icon.
 
         If \a expandable set to \a true (default), the group can be expanded/collapsed by the user.
       */
-    explicit ActionGroup(const QPixmap& icon,
-                         const QString& title,
-                         bool expandable = true,
+    explicit ActionGroup(const QPixmap &icon, const QString &title, bool expandable = true,
                          QWidget *parent = nullptr);
 
     /** Creates action item from the \a action and returns it.
@@ -78,13 +76,14 @@ public:
       ActionLabel will be automatically aligned to the left side of the ActionGroup.
       Set \a addStretch to \a false if you want ActionLabel to occupy all the horizontal space.
       */
-    ActionLabel* addAction(QAction *action, bool addToLayout = true, bool addStretch = true);
+    ActionLabel *addAction(QAction *action, bool addToLayout = true, bool addStretch = true);
 
     /** Adds \a label to the group.
 
       \sa addAction() for the description.
       */
-    ActionLabel* addActionLabel(ActionLabel *label, bool addToLayout = true, bool addStretch = true);
+    ActionLabel *addActionLabel(ActionLabel *label, bool addToLayout = true,
+                                bool addStretch = true);
 
     /** Adds \a widget to the group. Returns \a true if it has been added successfully.
 
@@ -94,7 +93,7 @@ public:
 
     /** Returns group's layout (QVBoxLayout by default).
       */
-    QBoxLayout* groupLayout();
+    QBoxLayout *groupLayout();
 
     /** Sets the scheme of the panel and all the child groups to \a scheme.
 
@@ -146,7 +145,7 @@ public Q_SLOTS:
 
       \sa headerText().
       */
-    void setHeaderText(const QString & title);
+    void setHeaderText(const QString &title);
 
 protected Q_SLOTS:
     void processHide();
@@ -155,7 +154,7 @@ protected Q_SLOTS:
 protected:
     void init(bool header);
 
-    virtual void paintEvent ( QPaintEvent * event );
+    virtual void paintEvent(QPaintEvent *event);
 
     double m_foldStep, m_foldDelta, m_fullHeight, m_tempHeight;
     int m_foldDirection;
@@ -170,6 +169,6 @@ protected:
 };
 
 
-} // namespace
+} // namespace QSint
 
 #endif // ACTIONGROUP_H

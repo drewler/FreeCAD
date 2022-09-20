@@ -42,24 +42,21 @@ std::string ExternalGeometryExtensionPy::representation() const
     std::string ref = getExternalGeometryExtensionPtr()->getRef();
 
 
-
     str << "<ExternalGeometryExtension (";
 
-    if(!getExternalGeometryExtensionPtr()->getName().empty())
+    if (!getExternalGeometryExtensionPtr()->getName().empty())
         str << "\'" << getExternalGeometryExtensionPtr()->getName() << "\', ";
 
     str << "\"" << ref;
 
-    if(!getExternalGeometryExtensionPtr()->isClear()) {
-        str<< "\",{";
+    if (!getExternalGeometryExtensionPtr()->isClear()) {
+        str << "\",{";
 
-        bool first=true;
+        bool first = true;
 
-        for(size_t i=0;i<ExternalGeometryExtension::NumFlags;i++) {
-            if(getExternalGeometryExtensionPtr()->testFlag(i)) {
-                if(first) {
-                    first=false;
-                }
+        for (size_t i = 0; i < ExternalGeometryExtension::NumFlags; i++) {
+            if (getExternalGeometryExtensionPtr()->testFlag(i)) {
+                if (first) { first = false; }
                 else {
                     str << ", ";
                 }
@@ -68,7 +65,7 @@ std::string ExternalGeometryExtensionPy::representation() const
             }
         }
 
-        str<< "}";
+        str << "}";
     }
     else {
         str << "\") >";
@@ -79,14 +76,15 @@ std::string ExternalGeometryExtensionPy::representation() const
     return str.str();
 }
 
-PyObject *ExternalGeometryExtensionPy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *ExternalGeometryExtensionPy::PyMake(struct _typeobject *, PyObject *,
+                                              PyObject *) // Python wrapper
 {
     // create a new instance of PointPy and the Twin object
     return new ExternalGeometryExtensionPy(new ExternalGeometryExtension);
 }
 
 // constructor method
-int ExternalGeometryExtensionPy::PyInit(PyObject* args, PyObject* /*kwd*/)
+int ExternalGeometryExtensionPy::PyInit(PyObject *args, PyObject * /*kwd*/)
 {
 
     if (PyArg_ParseTuple(args, "")) {
@@ -94,39 +92,40 @@ int ExternalGeometryExtensionPy::PyInit(PyObject* args, PyObject* /*kwd*/)
         return 0;
     }
 
-    PyErr_SetString(PyExc_TypeError, "ExternalGeometryExtension constructor accepts:\n"
-        "-- empty parameter list\n");
+    PyErr_SetString(PyExc_TypeError,
+                    "ExternalGeometryExtension constructor accepts:\n"
+                    "-- empty parameter list\n");
     return -1;
 }
 
-PyObject* ExternalGeometryExtensionPy::testFlag(PyObject *args)
+PyObject *ExternalGeometryExtensionPy::testFlag(PyObject *args)
 {
-    char* flag;
-    if (PyArg_ParseTuple(args, "s",&flag)) {
+    char *flag;
+    if (PyArg_ParseTuple(args, "s", &flag)) {
 
         ExternalGeometryExtension::Flag flagtype;
 
-        if(getExternalGeometryExtensionPtr()->getFlagsFromName(flag, flagtype))
-            return new_reference_to(Py::Boolean(this->getExternalGeometryExtensionPtr()->testFlag(flagtype)));
+        if (getExternalGeometryExtensionPtr()->getFlagsFromName(flag, flagtype))
+            return new_reference_to(
+                Py::Boolean(this->getExternalGeometryExtensionPtr()->testFlag(flagtype)));
 
         PyErr_SetString(PyExc_TypeError, "Flag string does not exist.");
         return nullptr;
-
     }
 
     PyErr_SetString(PyExc_TypeError, "No flag string provided.");
     return nullptr;
 }
 
-PyObject* ExternalGeometryExtensionPy::setFlag(PyObject *args)
+PyObject *ExternalGeometryExtensionPy::setFlag(PyObject *args)
 {
-    char * flag;
-    PyObject * bflag = Py_True;
+    char *flag;
+    PyObject *bflag = Py_True;
     if (PyArg_ParseTuple(args, "s|O!", &flag, &PyBool_Type, &bflag)) {
 
         ExternalGeometryExtension::Flag flagtype;
 
-        if(getExternalGeometryExtensionPtr()->getFlagsFromName(flag, flagtype)) {
+        if (getExternalGeometryExtensionPtr()->getFlagsFromName(flag, flagtype)) {
 
             this->getExternalGeometryExtensionPtr()->setFlag(flagtype, Base::asBoolean(bflag));
             Py_Return;
@@ -151,12 +150,12 @@ void ExternalGeometryExtensionPy::setRef(Py::String value)
 }
 
 
-PyObject *ExternalGeometryExtensionPy::getCustomAttributes(const char* /*attr*/) const
+PyObject *ExternalGeometryExtensionPy::getCustomAttributes(const char * /*attr*/) const
 {
     return nullptr;
 }
 
-int ExternalGeometryExtensionPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
+int ExternalGeometryExtensionPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
 {
     return 0;
 }

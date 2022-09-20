@@ -32,13 +32,14 @@ class QCheckBox;
 class QTreeWidgetItem;
 class QTreeWidget;
 
-namespace Gui {
+namespace Gui
+{
 
 class Ui_DlgObjectSelection;
 
 /** Dialog for object dependency selection
  */
-class GuiExport DlgObjectSelection : public QDialog
+class GuiExport DlgObjectSelection: public QDialog
 {
     Q_OBJECT
 
@@ -52,8 +53,8 @@ public:
      * @param parent: optional parent widget
      * @param fl: optional window flags
      */
-    DlgObjectSelection(const std::vector<App::DocumentObject*> &objs,
-            QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    DlgObjectSelection(const std::vector<App::DocumentObject *> &objs, QWidget *parent = nullptr,
+                       Qt::WindowFlags fl = Qt::WindowFlags());
 
     /** Constructor
      *
@@ -66,16 +67,17 @@ public:
      * @param parent: optional parent widget
      * @param fl: optional window flags
      */
-    DlgObjectSelection(const std::vector<App::DocumentObject*> &objs,
-                       const std::vector<App::DocumentObject*> &excludes,
-            QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    DlgObjectSelection(const std::vector<App::DocumentObject *> &objs,
+                       const std::vector<App::DocumentObject *> &excludes,
+                       QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
 
     /// Destructor
     ~DlgObjectSelection() override;
 
     /// Options for getSelections()
-    enum class SelectionOptions {
-        /// Invert the selection, i.e. return the unselected objects 
+    enum class SelectionOptions
+    {
+        /// Invert the selection, i.e. return the unselected objects
         Invert = 1,
         /// Sort the returned object in depending order
         Sort = 2,
@@ -83,7 +85,8 @@ public:
         InvertSort = 3,
     };
     /// Get the selected objects
-    std::vector<App::DocumentObject*> getSelections(SelectionOptions options = SelectionOptions()) const;
+    std::vector<App::DocumentObject *>
+    getSelections(SelectionOptions options = SelectionOptions()) const;
 
     /// Add a user defined checkbox at the bottom of the dialog
     void addCheckBox(QCheckBox *box);
@@ -95,8 +98,8 @@ public:
     void reject() override;
 
 private Q_SLOTS:
-    void onDepItemChanged(QTreeWidgetItem * item, int);
-    void onObjItemChanged(QTreeWidgetItem * item, int);
+    void onDepItemChanged(QTreeWidgetItem *item, int);
+    void onObjItemChanged(QTreeWidgetItem *item, int);
     void onItemSelectionChanged();
     void checkItemChanged();
     void onAutoDeps(bool);
@@ -105,29 +108,29 @@ private Q_SLOTS:
 
 private:
     QTreeWidgetItem *getItem(App::DocumentObject *obj,
-                             std::vector<QTreeWidgetItem*> **items = nullptr,
+                             std::vector<QTreeWidgetItem *> **items = nullptr,
                              QTreeWidgetItem *parent = nullptr);
 
     QTreeWidgetItem *createDepItem(QTreeWidget *parent, App::DocumentObject *obj);
 
-    void init(const std::vector<App::DocumentObject*> &objs,
-              const std::vector<App::DocumentObject*> &excludes);
+    void init(const std::vector<App::DocumentObject *> &objs,
+              const std::vector<App::DocumentObject *> &excludes);
 
     void setItemState(App::DocumentObject *obj, Qt::CheckState state, bool forced = false);
     void updateAllItemState();
 
 private:
-    Ui_DlgObjectSelection* ui;
-    std::vector<App::DocumentObject*> initSels;
-    std::vector<App::DocumentObject*> deps;
-    std::set<App::DocumentObject*> depSet;
-    std::map<App::SubObjectT, std::vector<QTreeWidgetItem*>> itemMap;
-    std::map<App::SubObjectT, QTreeWidgetItem*> depMap;
-    std::map<App::SubObjectT, QTreeWidgetItem*> inMap;
+    Ui_DlgObjectSelection *ui;
+    std::vector<App::DocumentObject *> initSels;
+    std::vector<App::DocumentObject *> deps;
+    std::set<App::DocumentObject *> depSet;
+    std::map<App::SubObjectT, std::vector<QTreeWidgetItem *>> itemMap;
+    std::map<App::SubObjectT, QTreeWidgetItem *> depMap;
+    std::map<App::SubObjectT, QTreeWidgetItem *> inMap;
     std::map<App::SubObjectT, Qt::CheckState> itemChanged;
-    QTreeWidgetItem *allItem = nullptr;    
-    
-    QPushButton* useOriginalsBtn;
+    QTreeWidgetItem *allItem = nullptr;
+
+    QPushButton *useOriginalsBtn;
     bool returnOriginals = false;
 
     QTimer timer;
@@ -139,4 +142,3 @@ private:
 ENABLE_BITMASK_OPERATORS(Gui::DlgObjectSelection::SelectionOptions);
 
 #endif // GUI_DLGOBJECTSELECTION_H
-

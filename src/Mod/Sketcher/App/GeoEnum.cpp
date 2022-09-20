@@ -26,12 +26,12 @@
 
 using namespace Sketcher;
 
-bool GeoElementId::operator==(const GeoElementId& obj) const
+bool GeoElementId::operator==(const GeoElementId &obj) const
 {
     return this->GeoId == obj.GeoId && this->Pos == obj.Pos;
 }
 
-bool GeoElementId::operator!=(const GeoElementId& obj) const
+bool GeoElementId::operator!=(const GeoElementId &obj) const
 {
     return this->GeoId != obj.GeoId || this->Pos != obj.Pos;
 }

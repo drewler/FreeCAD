@@ -29,38 +29,40 @@
 
 class QTreeWidgetItem;
 
-namespace Gui {
+namespace Gui
+{
 class SelectionObject;
 class StatusWidget;
-}
-namespace PartGui { 
+} // namespace Gui
+namespace PartGui
+{
 
-class SweepWidget : public QWidget
+class SweepWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SweepWidget(QWidget* parent = nullptr);
+    explicit SweepWidget(QWidget *parent = nullptr);
     ~SweepWidget() override;
 
     bool accept();
     bool reject();
 
 private Q_SLOTS:
-    void onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
+    void onCurrentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *);
     void on_buttonPath_toggled(bool);
 
 private:
     void changeEvent(QEvent *e) override;
     void findShapes();
-    bool isPathValid(const Gui::SelectionObject& sel) const;
+    bool isPathValid(const Gui::SelectionObject &sel) const;
 
 private:
     class Private;
-    Private* d;
+    Private *d;
 };
 
-class TaskSweep : public Gui::TaskView::TaskDialog
+class TaskSweep: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -75,12 +77,14 @@ public:
     void clicked(int) override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok|QDialogButtonBox::Cancel|QDialogButtonBox::Help; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help;
+    }
 
 private:
-    SweepWidget* widget;
-    Gui::StatusWidget* label;
-    Gui::TaskView::TaskBox* taskbox;
+    SweepWidget *widget;
+    Gui::StatusWidget *label;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace PartGui

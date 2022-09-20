@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Standard_Failure.hxx>
+#include <Standard_Failure.hxx>
 #endif
 
 #include <App/Application.h>
@@ -37,46 +37,44 @@
 
 using namespace PartDesign;
 
-namespace PartDesign {
+namespace PartDesign
+{
 
 
 PROPERTY_SOURCE(PartDesign::FeatureAddSub, PartDesign::Feature)
 
-FeatureAddSub::FeatureAddSub()
-  :  addSubType(Additive)
+FeatureAddSub::FeatureAddSub() : addSubType(Additive)
 {
-    ADD_PROPERTY(AddSubShape,(TopoDS_Shape()));
-    ADD_PROPERTY_TYPE(Refine,(0),"Part Design",(App::PropertyType)(App::Prop_None),"Refine shape (clean up redundant edges) after adding/subtracting");
+    ADD_PROPERTY(AddSubShape, (TopoDS_Shape()));
+    ADD_PROPERTY_TYPE(Refine, (0), "Part Design", (App::PropertyType)(App::Prop_None),
+                      "Refine shape (clean up redundant edges) after adding/subtracting");
     //init Refine property
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/PartDesign");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/PartDesign");
     this->Refine.setValue(hGrp->GetBool("RefineModel", false));
 }
 
-FeatureAddSub::Type FeatureAddSub::getAddSubType()
-{
-    return addSubType;
-}
+FeatureAddSub::Type FeatureAddSub::getAddSubType() { return addSubType; }
 
 short FeatureAddSub::mustExecute() const
 {
-    if (Refine.isTouched())
-        return 1;
+    if (Refine.isTouched()) return 1;
     return PartDesign::Feature::mustExecute();
 }
 
-TopoDS_Shape FeatureAddSub::refineShapeIfActive(const TopoDS_Shape& oldShape) const
+TopoDS_Shape FeatureAddSub::refineShapeIfActive(const TopoDS_Shape &oldShape) const
 {
     if (this->Refine.getValue()) {
         try {
             Part::BRepBuilderAPI_RefineModel mkRefine(oldShape);
             TopoDS_Shape resShape = mkRefine.Shape();
-            if (!TopoShape(resShape).isClosed()) {
-                return oldShape;
-            }
+            if (!TopoShape(resShape).isClosed()) { return oldShape; }
             return resShape;
         }
-        catch (Standard_Failure&) {
+        catch (Standard_Failure &) {
             return oldShape;
         }
     }
@@ -86,24 +84,26 @@ TopoDS_Shape FeatureAddSub::refineShapeIfActive(const TopoDS_Shape& oldShape) co
 
 void FeatureAddSub::getAddSubShape(Part::TopoShape &addShape, Part::TopoShape &subShape)
 {
-    if (addSubType == Additive)
-        addShape = AddSubShape.getShape();
+    if (addSubType == Additive) addShape = AddSubShape.getShape();
     else if (addSubType == Subtractive)
         subShape = AddSubShape.getShape();
 }
 
-}
+} // namespace PartDesign
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(PartDesign::FeatureAddSubPython, PartDesign::FeatureAddSub)
-template<> const char* PartDesign::FeatureAddSubPython::getViewProviderName(void) const {
+template<> const char *PartDesign::FeatureAddSubPython::getViewProviderName(void) const
+{
     return "PartDesignGui::ViewProviderPython";
 }
-template<> PyObject* PartDesign::FeatureAddSubPython::getPyObject(void) {
+template<> PyObject *PartDesign::FeatureAddSubPython::getPyObject(void)
+{
     if (PythonObject.is(Py::_None())) {
         // ref counter is set to 1
-        PythonObject = Py::Object(new FeaturePythonPyT<PartDesign::FeaturePy>(this),true);
+        PythonObject = Py::Object(new FeaturePythonPyT<PartDesign::FeaturePy>(this), true);
     }
     return Py::new_reference_to(PythonObject);
 }
@@ -111,32 +111,23 @@ template<> PyObject* PartDesign::FeatureAddSubPython::getPyObject(void) {
 
 // explicit template instantiation
 template class PartDesignExport FeaturePythonT<PartDesign::FeatureAddSub>;
-}
+} // namespace App
 
 
-namespace PartDesign {
+namespace PartDesign
+{
 
 PROPERTY_SOURCE(PartDesign::FeatureAdditivePython, PartDesign::FeatureAddSubPython)
 
-FeatureAdditivePython::FeatureAdditivePython()
-{
-    addSubType = Additive;
-}
+FeatureAdditivePython::FeatureAdditivePython() { addSubType = Additive; }
 
-FeatureAdditivePython::~FeatureAdditivePython()
-{
-}
+FeatureAdditivePython::~FeatureAdditivePython() {}
 
 
 PROPERTY_SOURCE(PartDesign::FeatureSubtractivePython, PartDesign::FeatureAddSubPython)
 
-FeatureSubtractivePython::FeatureSubtractivePython()
-{
-    addSubType = Subtractive;
-}
+FeatureSubtractivePython::FeatureSubtractivePython() { addSubType = Subtractive; }
 
-FeatureSubtractivePython::~FeatureSubtractivePython()
-{
-}
+FeatureSubtractivePython::~FeatureSubtractivePython() {}
 
-}
+} // namespace PartDesign

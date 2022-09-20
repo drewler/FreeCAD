@@ -15,21 +15,18 @@ std::string DrawProjGroupItemPy::representation() const
     return std::string("<DrawProjGroupItem object>");
 }
 
-PyObject* DrawProjGroupItemPy::autoPosition(PyObject *args)
+PyObject *DrawProjGroupItemPy::autoPosition(PyObject *args)
 {
-    (void) args;
-    DrawProjGroupItem* item = getDrawProjGroupItemPtr();
+    (void)args;
+    DrawProjGroupItem *item = getDrawProjGroupItemPtr();
     item->autoPosition();
     Py_INCREF(Py_None);
     return Py_None;
 }
 
-PyObject *DrawProjGroupItemPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *DrawProjGroupItemPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int DrawProjGroupItemPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
+int DrawProjGroupItemPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
 {
     return 0;
 }

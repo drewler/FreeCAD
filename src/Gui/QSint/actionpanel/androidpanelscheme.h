@@ -21,12 +21,12 @@ namespace QSint
 
     \image html ActionPanel5.png Example of the scheme
 */
-class QSINT_EXPORT AndroidPanelScheme : public ActionPanelScheme
+class QSINT_EXPORT AndroidPanelScheme: public ActionPanelScheme
 {
 public:
     AndroidPanelScheme();
 
-    static ActionPanelScheme* defaultScheme()
+    static ActionPanelScheme *defaultScheme()
     {
         static AndroidPanelScheme scheme;
         return &scheme;
@@ -34,7 +34,7 @@ public:
 };
 
 
-}
+} // namespace QSint
 
 
 #endif // ANDROIDPANELSCHEME_H

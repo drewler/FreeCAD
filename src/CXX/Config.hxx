@@ -36,11 +36,11 @@
 //-----------------------------------------------------------------------------
 #include "CXX/WrapPython.h"
 
-#if defined( PYCXX_6_2_COMPATIBILITY )
-    //typedef int PyCxx_ssize_t;
-    typedef Py_ssize_t PyCxx_ssize_t;
+#if defined(PYCXX_6_2_COMPATIBILITY)
+//typedef int PyCxx_ssize_t;
+typedef Py_ssize_t PyCxx_ssize_t;
 #else
-    typedef Py_ssize_t PyCxx_ssize_t;
+typedef Py_ssize_t PyCxx_ssize_t;
 #endif
 
 #include "CXX/Python3/Config.hxx"

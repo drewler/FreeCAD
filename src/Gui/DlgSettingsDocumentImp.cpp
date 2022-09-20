@@ -37,24 +37,27 @@ using namespace Gui::Dialog;
  *  Constructs a DlgSettingsDocumentImp which is a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'
  */
-DlgSettingsDocumentImp::DlgSettingsDocumentImp( QWidget* parent )
-    : PreferencePage( parent )
-    , ui(new Ui_DlgSettingsDocument)
+DlgSettingsDocumentImp::DlgSettingsDocumentImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsDocument)
 {
     ui->setupUi(this);
     ui->prefSaveTransaction->hide();
     ui->prefDiscardTransaction->hide();
 
-    QString tip = QString::fromLatin1("<html><head/><body><p>%1</p>"
-                                      "<p>%2: %Y%m%d-%H%M%S</p>"
-                                      "<p>%3: <a href=\"http://www.cplusplus.com/reference/ctime/strftime/\">C++ strftime</a>"
-                                      "</p></body></html>").arg(tr("The format of the date to use."), tr("Default"), tr("Format"));
+    QString tip =
+        QString::fromLatin1(
+            "<html><head/><body><p>%1</p>"
+            "<p>%2: %Y%m%d-%H%M%S</p>"
+            "<p>%3: <a href=\"http://www.cplusplus.com/reference/ctime/strftime/\">C++ strftime</a>"
+            "</p></body></html>")
+            .arg(tr("The format of the date to use."), tr("Default"), tr("Format"));
     ui->prefSaveBackupDateFormat->setToolTip(tip);
 
     ui->prefCountBackupFiles->setMaximum(INT_MAX);
     ui->prefCompression->setMinimum(Z_NO_COMPRESSION);
     ui->prefCompression->setMaximum(Z_BEST_COMPRESSION);
-    connect( ui->prefLicenseType, SIGNAL(currentIndexChanged(int)), this, SLOT(onLicenseTypeChanged(int)) );
+    connect(ui->prefLicenseType, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(onLicenseTypeChanged(int)));
 }
 
 /**
@@ -95,8 +98,7 @@ void DlgSettingsDocumentImp::saveSettings()
     ui->prefCanAbortRecompute->onSave();
 
     int timeout = ui->prefAutoSaveTimeout->value();
-    if (!ui->prefAutoSaveEnabled->isChecked())
-        timeout = 0;
+    if (!ui->prefAutoSaveEnabled->isChecked()) timeout = 0;
     AutoSaver::instance()->setTimeout(timeout * 60000);
 }
 
@@ -134,9 +136,7 @@ void DlgSettingsDocumentImp::loadSettings()
  */
 void DlgSettingsDocumentImp::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }
@@ -151,28 +151,36 @@ void DlgSettingsDocumentImp::onLicenseTypeChanged(int index)
 
     switch (index) {
         case 0:
-            ui->prefLicenseUrl->setText(QString::fromLatin1("http://en.wikipedia.org/wiki/All_rights_reserved"));
+            ui->prefLicenseUrl->setText(
+                QString::fromLatin1("http://en.wikipedia.org/wiki/All_rights_reserved"));
             break;
         case 1:
-            ui->prefLicenseUrl->setText(QString::fromLatin1("http://creativecommons.org/licenses/by/4.0/"));
+            ui->prefLicenseUrl->setText(
+                QString::fromLatin1("http://creativecommons.org/licenses/by/4.0/"));
             break;
         case 2:
-            ui->prefLicenseUrl->setText(QString::fromLatin1("http://creativecommons.org/licenses/by-sa/4.0/"));
+            ui->prefLicenseUrl->setText(
+                QString::fromLatin1("http://creativecommons.org/licenses/by-sa/4.0/"));
             break;
         case 3:
-            ui->prefLicenseUrl->setText(QString::fromLatin1("http://creativecommons.org/licenses/by-nd/4.0/"));
+            ui->prefLicenseUrl->setText(
+                QString::fromLatin1("http://creativecommons.org/licenses/by-nd/4.0/"));
             break;
         case 4:
-            ui->prefLicenseUrl->setText(QString::fromLatin1("http://creativecommons.org/licenses/by-nc/4.0/"));
+            ui->prefLicenseUrl->setText(
+                QString::fromLatin1("http://creativecommons.org/licenses/by-nc/4.0/"));
             break;
         case 5:
-            ui->prefLicenseUrl->setText(QString::fromLatin1("http://creativecommons.org/licenses/by-nc-sa/4.0/"));
+            ui->prefLicenseUrl->setText(
+                QString::fromLatin1("http://creativecommons.org/licenses/by-nc-sa/4.0/"));
             break;
         case 6:
-            ui->prefLicenseUrl->setText(QString::fromLatin1("http://creativecommons.org/licenses/by-nc-nd/4.0/"));
+            ui->prefLicenseUrl->setText(
+                QString::fromLatin1("http://creativecommons.org/licenses/by-nc-nd/4.0/"));
             break;
         case 7:
-            ui->prefLicenseUrl->setText(QString::fromLatin1("http://en.wikipedia.org/wiki/Public_domain"));
+            ui->prefLicenseUrl->setText(
+                QString::fromLatin1("http://en.wikipedia.org/wiki/Public_domain"));
             break;
         case 8:
             ui->prefLicenseUrl->setText(QString::fromLatin1("http://artlibre.org/licence/lal"));

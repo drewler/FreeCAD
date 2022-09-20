@@ -43,8 +43,9 @@ void loadStartResource()
     Gui::Translator::instance()->refresh();
 }
 
-namespace StartGui {
-class Module : public Py::ExtensionModule<Module>
+namespace StartGui
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("StartGui")
@@ -57,10 +58,7 @@ public:
 private:
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace StartGui
 
@@ -73,17 +71,17 @@ PyMOD_INIT_FUNC(StartGui)
         PyMOD_Return(nullptr);
     }
 
-    PyObject* mod = StartGui::initModule();
+    PyObject *mod = StartGui::initModule();
     Base::Console().Log("Loading GUI of Start module... done\n");
 
     // register preferences pages
-    new Gui::PrefPageProducer<StartGui::DlgStartPreferencesImp> ("Start");
+    new Gui::PrefPageProducer<StartGui::DlgStartPreferencesImp>("Start");
 
     // instantiating the commands
     CreateStartCommands();
     StartGui::Workbench::init();
 
-     // add resources and reloads the translators
+    // add resources and reloads the translators
     loadStartResource();
     PyMOD_Return(mod);
 }

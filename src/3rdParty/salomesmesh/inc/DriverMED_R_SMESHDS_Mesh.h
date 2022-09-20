@@ -40,25 +40,24 @@ class SMESHDS_Mesh;
 class SMESHDS_Group;
 class SMESHDS_SubMesh;
 
-typedef std::pair< std::string, SMDSAbs_ElementType > TNameAndType;
+typedef std::pair<std::string, SMDSAbs_ElementType> TNameAndType;
 
 class MESHDRIVERMED_EXPORT DriverMED_R_SMESHDS_Mesh: public Driver_SMESHDS_Mesh
 {
- public:
-  virtual Status Perform();
+public:
+    virtual Status Perform();
 
-  std::list< TNameAndType > GetGroupNamesAndTypes();
-  void GetGroup(SMESHDS_Group* theGroup);
-  void CreateAllSubMeshes();
-  void GetSubMesh(SMESHDS_SubMesh* theSubMesh, const int theId);
+    std::list<TNameAndType> GetGroupNamesAndTypes();
+    void GetGroup(SMESHDS_Group *theGroup);
+    void CreateAllSubMeshes();
+    void GetSubMesh(SMESHDS_SubMesh *theSubMesh, const int theId);
 
-  std::list<std::string> GetMeshNames(Status& theStatus);
-  void SetMeshName(std::string theMeshName);
+    std::list<std::string> GetMeshNames(Status &theStatus);
+    void SetMeshName(std::string theMeshName);
 
- private:
-  std::string myMeshName;
-  std::map<int, DriverMED_FamilyPtr> myFamilies;
-
+private:
+    std::string myMeshName;
+    std::map<int, DriverMED_FamilyPtr> myFamilies;
 };
 
 #endif

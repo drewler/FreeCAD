@@ -64,11 +64,11 @@ namespace Sketcher
  */
 enum GeoEnum
 {
-    RtPnt = -1,     // GeoId of the Root Point
-    HAxis = -1,     // GeoId of the Horizontal Axis
-    VAxis = -2,     // GeoId of the Vertical Axis
-    RefExt = -3,    // Starting GeoID of external geometry ( negative geoIds starting at this index)
-    GeoUndef = -2000,  // GeoId of an undefined Geometry (uninitialised or unused GeoId)
+    RtPnt = -1,  // GeoId of the Root Point
+    HAxis = -1,  // GeoId of the Horizontal Axis
+    VAxis = -2,  // GeoId of the Vertical Axis
+    RefExt = -3, // Starting GeoID of external geometry ( negative geoIds starting at this index)
+    GeoUndef = -2000, // GeoId of an undefined Geometry (uninitialised or unused GeoId)
 };
 
 /*!
@@ -79,11 +79,12 @@ enum GeoEnum
  * More complex geometries like parabola focus or b-spline knots use InternalAlignment constraints
  * in addition to PointPos.
  */
-enum class PointPos : int {
-    none    = 0,    // Edge of a geometry
-    start   = 1,    // Starting point of a geometry
-    end     = 2,    // End point of a geometry
-    mid     = 3     // Mid point of a geometry
+enum class PointPos : int
+{
+    none = 0,  // Edge of a geometry
+    start = 1, // Starting point of a geometry
+    end = 2,   // End point of a geometry
+    mid = 3    // Mid point of a geometry
 };
 
 /** @brief      Struct for storing a {GeoId, PointPos} pair.
@@ -106,11 +107,11 @@ public:
 
     /** @brief equality operator
      */
-    bool operator==(const GeoElementId& obj) const;
+    bool operator==(const GeoElementId &obj) const;
 
     /** @brief inequality operator
     */
-    bool operator!=(const GeoElementId& obj) const;
+    bool operator!=(const GeoElementId &obj) const;
 
     /** @brief Underlying GeoId (see GeoEnum for definition)
      */
@@ -135,17 +136,11 @@ public:
 };
 
 // inline constexpr constructor
-inline constexpr GeoElementId::GeoElementId(int geoId, PointPos pos): GeoId(geoId), Pos(pos)
-{
-}
+inline constexpr GeoElementId::GeoElementId(int geoId, PointPos pos) : GeoId(geoId), Pos(pos) {}
 
-inline bool GeoElementId::isCurve() const {
-    return Pos == PointPos::none;
-}
+inline bool GeoElementId::isCurve() const { return Pos == PointPos::none; }
 
-inline int GeoElementId::posIdAsInt() const {
-    return static_cast<int>(Pos);
-}
+inline int GeoElementId::posIdAsInt() const { return static_cast<int>(Pos); }
 
 #ifndef FC_OS_WIN32
 constexpr const GeoElementId GeoElementId::RtPnt = GeoElementId(GeoEnum::RtPnt, PointPos::start);
@@ -157,14 +152,13 @@ constexpr const GeoElementId GeoElementId::VAxis = GeoElementId(GeoEnum::VAxis, 
 
 namespace std
 {
-    template<> struct less<Sketcher::GeoElementId>
+template<> struct less<Sketcher::GeoElementId> {
+    bool operator()(const Sketcher::GeoElementId &lhs, const Sketcher::GeoElementId &rhs) const
     {
-       bool operator() (const Sketcher::GeoElementId& lhs, const Sketcher::GeoElementId& rhs) const
-       {
-           return (lhs.GeoId != rhs.GeoId)?(lhs.GeoId < rhs.GeoId):(static_cast<int>(lhs.Pos) < static_cast<int>(rhs.Pos));
-       }
-    };
+        return (lhs.GeoId != rhs.GeoId) ? (lhs.GeoId < rhs.GeoId)
+                                        : (static_cast<int>(lhs.Pos) < static_cast<int>(rhs.Pos));
+    }
+};
 } // namespace std
 
 #endif // SKETCHER_GeoEnum_H
-

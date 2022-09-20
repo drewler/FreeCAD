@@ -12,132 +12,103 @@
 
 #include "outputstringstream.h"
 
-namespace zipios {
+namespace zipios
+{
 
-using std::ifstream ;
-using std::ios ;
+using std::ifstream;
+using std::ios;
 
 //
 // Public definitions
 //
 
-BasicEntry::BasicEntry( const string &filename, const string &comment,
-		       const FilePath &basepath ) 
-  : _filename ( filename ),
-    _comment  ( comment  ),
-    _basepath ( basepath )
+BasicEntry::BasicEntry(const string &filename, const string &comment, const FilePath &basepath)
+    : _filename(filename), _comment(comment), _basepath(basepath)
 {
-  string full_path = _basepath + _filename ;
-  ifstream is( full_path.c_str(), ios::in | ios::binary ) ;
-  if ( ! is ) {
-    _valid = false ;
-  } else {
-    is.seekg( 0, ios::end ) ;
-    _size = is.tellg() ;
-    is.close() ;
-    _valid = true ;
-  }
+    string full_path = _basepath + _filename;
+    ifstream is(full_path.c_str(), ios::in | ios::binary);
+    if (!is) { _valid = false; }
+    else {
+        is.seekg(0, ios::end);
+        _size = is.tellg();
+        is.close();
+        _valid = true;
+    }
 }
 
-string BasicEntry::getComment() const {
-  return _comment ;
+string BasicEntry::getComment() const { return _comment; }
+
+uint32 BasicEntry::getCompressedSize() const { return getSize(); }
+
+uint32 BasicEntry::getCrc() const { return 0; }
+
+vector<unsigned char> BasicEntry::getExtra() const { return vector<unsigned char>(); }
+
+StorageMethod BasicEntry::getMethod() const { return STORED; }
+
+string BasicEntry::getName() const { return _filename; }
+
+string BasicEntry::getFileName() const
+{
+    if (isDirectory()) return string();
+    string::size_type pos;
+    pos = _filename.find_last_of(separator);
+    if (pos != string::npos) { // separator found!
+        // isDirectory() check means pos should not be last, so pos+1 is ok
+        return _filename.substr(pos + 1);
+    }
+    else {
+        return _filename;
+    }
 }
 
-uint32 BasicEntry::getCompressedSize() const {
-  return getSize() ;
+uint32 BasicEntry::getSize() const { return _size; }
+
+int BasicEntry::getTime() const
+{
+    return 0; // FIXME later
 }
 
-uint32 BasicEntry::getCrc() const {
-  return 0 ;
-}
-
-vector< unsigned char > BasicEntry::getExtra() const {
-  return vector< unsigned char > () ;
-}
-
-StorageMethod BasicEntry::getMethod() const {
-  return STORED ;
-}
-
-string BasicEntry::getName() const {
-  return _filename ;
-}
-
-string BasicEntry::getFileName() const {
-  if ( isDirectory() )
-    return string() ;
-  string::size_type pos ;
-  pos = _filename.find_last_of( separator ) ;
-  if ( pos != string::npos ) { // separator found!
-    // isDirectory() check means pos should not be last, so pos+1 is ok 
-    return _filename.substr(pos + 1) ;
-  } else {
-    return _filename ;
-  }
-}
-
-uint32 BasicEntry::getSize() const {
-  return _size ;
-}
-
-int BasicEntry::getTime() const {
-  return 0 ; // FIXME later
-}
-
-bool BasicEntry::isValid() const {
-  return _valid ;
-}
+bool BasicEntry::isValid() const { return _valid; }
 
 //     virtual int hashCode() const {}
-bool BasicEntry::isDirectory() const {
-  assert( _filename.size() != 0 ) ;
-  return  _filename[ _filename.size() - 1 ] == separator ;
+bool BasicEntry::isDirectory() const
+{
+    assert(_filename.size() != 0);
+    return _filename[_filename.size() - 1] == separator;
 }
 
 
-void BasicEntry::setComment( const string &comment ) {
-  _comment = comment ;
+void BasicEntry::setComment(const string &comment) { _comment = comment; }
+
+void BasicEntry::setCompressedSize(uint32) {}
+
+void BasicEntry::setCrc(uint32) {}
+
+void BasicEntry::setExtra(const vector<unsigned char> &) {}
+
+void BasicEntry::setMethod(StorageMethod) {}
+
+void BasicEntry::setName(const string &name) { _filename = name; }
+
+void BasicEntry::setSize(uint32 size) { _size = size; }
+
+void BasicEntry::setTime(int) {}
+
+
+string BasicEntry::toString() const
+{
+    OutputStringStream sout;
+    sout << _filename << " (" << _size << " bytes)";
+    return sout.str();
 }
 
-void BasicEntry::setCompressedSize( uint32  ) {
-}
+FileEntry *BasicEntry::clone() const { return new BasicEntry(*this); }
 
-void BasicEntry::setCrc( uint32  ) {
-}
-
-void BasicEntry::setExtra( const vector< unsigned char > & ) {
-}
-
-void BasicEntry::setMethod( StorageMethod ) {
-}
-
-void BasicEntry::setName( const string &name ) {
-  _filename = name ;
-}
-
-void BasicEntry::setSize( uint32 size ) {
-  _size = size ;
-}
-
-void BasicEntry::setTime( int  ) {
-}
+BasicEntry::~BasicEntry() {}
 
 
-string BasicEntry::toString() const {
-  OutputStringStream sout ;
-  sout << _filename << " (" << _size << " bytes)" ;
-  return sout.str() ;
-}
-
-FileEntry *BasicEntry::clone() const {
-  return new BasicEntry( *this ) ;
-}
-
-BasicEntry::~BasicEntry() {
-}
-
-
-} // namespace
+} // namespace zipios
 
 /** \file
     Implementation of BasicEntry.

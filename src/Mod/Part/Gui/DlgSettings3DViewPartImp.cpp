@@ -41,12 +41,12 @@ using namespace PartGui;
  *  Constructs a DlgSettings3DViewPart which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-DlgSettings3DViewPart::DlgSettings3DViewPart(QWidget* parent)
-  : PreferencePage(parent), ui(new Ui_DlgSettings3DViewPart), checkValue(false)
+DlgSettings3DViewPart::DlgSettings3DViewPart(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettings3DViewPart), checkValue(false)
 {
     ui->setupUi(this);
-    ParameterGrp::handle hPart = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/Mod/Part");
+    ParameterGrp::handle hPart = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Mod/Part");
     double lowerLimit = hPart->GetFloat("MinimumDeviation", ui->maxDeviation->minimum());
     ui->maxDeviation->setMinimum(lowerLimit);
 }
@@ -61,11 +61,11 @@ DlgSettings3DViewPart::~DlgSettings3DViewPart()
 
 void DlgSettings3DViewPart::on_maxDeviation_valueChanged(double v)
 {
-    if (!this->isVisible())
-        return;
+    if (!this->isVisible()) return;
     if (v < 0.01 && !checkValue) {
         checkValue = true;
-        QMessageBox::warning(this, tr("Deviation"),
+        QMessageBox::warning(
+            this, tr("Deviation"),
             tr("Setting a too small deviation causes the tessellation to take longer"
                "and thus freezes or slows down the GUI."));
     }
@@ -77,12 +77,14 @@ void DlgSettings3DViewPart::saveSettings()
     ui->maxAngularDeflection->onSave();
 
     // search for Part view providers and apply the new settings
-    std::vector<App::Document*> docs = App::GetApplication().getDocuments();
-    for (std::vector<App::Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
-        Gui::Document* doc = Gui::Application::Instance->getDocument(*it);
-        std::vector<Gui::ViewProvider*> views = doc->getViewProvidersOfType(ViewProviderPart::getClassTypeId());
-        for (std::vector<Gui::ViewProvider*>::iterator jt = views.begin(); jt != views.end(); ++jt) {
-            static_cast<ViewProviderPart*>(*jt)->reload();
+    std::vector<App::Document *> docs = App::GetApplication().getDocuments();
+    for (std::vector<App::Document *>::iterator it = docs.begin(); it != docs.end(); ++it) {
+        Gui::Document *doc = Gui::Application::Instance->getDocument(*it);
+        std::vector<Gui::ViewProvider *> views =
+            doc->getViewProvidersOfType(ViewProviderPart::getClassTypeId());
+        for (std::vector<Gui::ViewProvider *>::iterator jt = views.begin(); jt != views.end();
+             ++jt) {
+            static_cast<ViewProviderPart *>(*jt)->reload();
         }
     }
 }
@@ -98,9 +100,7 @@ void DlgSettings3DViewPart::loadSettings()
  */
 void DlgSettings3DViewPart::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }

@@ -49,13 +49,13 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_SegmentLengthAroundVertex::StdMeshers_SegmentLengthAroundVertex
-                                       (int hypId, int studyId, SMESH_Gen * gen)
-  :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_SegmentLengthAroundVertex::StdMeshers_SegmentLengthAroundVertex(int hypId, int studyId,
+                                                                           SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _length = 1.;
-  _name = "SegmentLengthAroundVertex";
-  _param_algo_dim = 0; // is used by StdMeshers_SegmentAroundVertex_0D
+    _length = 1.;
+    _name = "SegmentLengthAroundVertex";
+    _param_algo_dim = 0; // is used by StdMeshers_SegmentAroundVertex_0D
 }
 
 //=============================================================================
@@ -64,9 +64,7 @@ StdMeshers_SegmentLengthAroundVertex::StdMeshers_SegmentLengthAroundVertex
  */
 //=============================================================================
 
-StdMeshers_SegmentLengthAroundVertex::~StdMeshers_SegmentLengthAroundVertex()
-{
-}
+StdMeshers_SegmentLengthAroundVertex::~StdMeshers_SegmentLengthAroundVertex() {}
 
 //=============================================================================
 /*!
@@ -76,12 +74,11 @@ StdMeshers_SegmentLengthAroundVertex::~StdMeshers_SegmentLengthAroundVertex()
 
 void StdMeshers_SegmentLengthAroundVertex::SetLength(double length)
 {
-  if (length <= 0)
-    throw SALOME_Exception(LOCALIZED("length must be positive"));
-  if (_length != length) {
-    _length = length;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (length <= 0) throw SALOME_Exception(LOCALIZED("length must be positive"));
+    if (_length != length) {
+        _length = length;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -90,9 +87,18 @@ void StdMeshers_SegmentLengthAroundVertex::SetLength(double length)
  */
 //=============================================================================
 
-double StdMeshers_SegmentLengthAroundVertex::GetLength() const
+double StdMeshers_SegmentLengthAroundVertex::GetLength() const { return _length; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &StdMeshers_SegmentLengthAroundVertex::SaveTo(ostream &save)
 {
-  return _length;
+    save << this->_length;
+    return save;
 }
 
 //=============================================================================
@@ -101,10 +107,15 @@ double StdMeshers_SegmentLengthAroundVertex::GetLength() const
  */
 //=============================================================================
 
-ostream & StdMeshers_SegmentLengthAroundVertex::SaveTo(ostream & save)
+istream &StdMeshers_SegmentLengthAroundVertex::LoadFrom(istream &load)
 {
-  save << this->_length;
-  return save;
+    bool isOK = true;
+    double a;
+    isOK = (bool)(load >> a);
+    if (isOK) this->_length = a;
+    else
+        load.clear(ios::badbit | load.rdstate());
+    return load;
 }
 
 //=============================================================================
@@ -113,16 +124,9 @@ ostream & StdMeshers_SegmentLengthAroundVertex::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_SegmentLengthAroundVertex::LoadFrom(istream & load)
+ostream &operator<<(ostream &save, StdMeshers_SegmentLengthAroundVertex &hyp)
 {
-  bool isOK = true;
-  double a;
-  isOK = (bool)(load >> a);
-  if (isOK)
-    this->_length = a;
-  else
-    load.clear(ios::badbit | load.rdstate());
-  return load;
+    return hyp.SaveTo(save);
 }
 
 //=============================================================================
@@ -131,20 +135,9 @@ istream & StdMeshers_SegmentLengthAroundVertex::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_SegmentLengthAroundVertex & hyp)
+istream &operator>>(istream &load, StdMeshers_SegmentLengthAroundVertex &hyp)
 {
-  return hyp.SaveTo( save );
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-istream & operator >>(istream & load, StdMeshers_SegmentLengthAroundVertex & hyp)
-{
-  return hyp.LoadFrom( load );
+    return hyp.LoadFrom(load);
 }
 
 //================================================================================
@@ -156,49 +149,46 @@ istream & operator >>(istream & load, StdMeshers_SegmentLengthAroundVertex & hyp
  */
 //================================================================================
 
-bool StdMeshers_SegmentLengthAroundVertex::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                               const TopoDS_Shape& theShape)
+bool StdMeshers_SegmentLengthAroundVertex::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                               const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() || theShape.ShapeType() != TopAbs_VERTEX )
-    return false;
+    if (!theMesh || theShape.IsNull() || theShape.ShapeType() != TopAbs_VERTEX) return false;
 
-  SMESH_MeshEditor editor( const_cast<SMESH_Mesh*>( theMesh ) );
-  SMESH_MesherHelper helper( *editor.GetMesh() );
+    SMESH_MeshEditor editor(const_cast<SMESH_Mesh *>(theMesh));
+    SMESH_MesherHelper helper(*editor.GetMesh());
 
-  // get node built on theShape vertex
-  SMESHDS_Mesh* meshDS = editor.GetMeshDS();
-  SMESHDS_SubMesh* smV = meshDS->MeshElements( theShape );
-  if ( !smV || smV->NbNodes() == 0 )
-    return false;
-  const SMDS_MeshNode* vNode = smV->GetNodes()->next();
+    // get node built on theShape vertex
+    SMESHDS_Mesh *meshDS = editor.GetMeshDS();
+    SMESHDS_SubMesh *smV = meshDS->MeshElements(theShape);
+    if (!smV || smV->NbNodes() == 0) return false;
+    const SMDS_MeshNode *vNode = smV->GetNodes()->next();
 
-  // calculate average length of segments sharing vNode
+    // calculate average length of segments sharing vNode
 
-  _length = 0.;
-  int nbSegs = 0;
+    _length = 0.;
+    int nbSegs = 0;
 
-  SMDS_ElemIteratorPtr segIt = vNode->GetInverseElementIterator(SMDSAbs_Edge);
-  while ( segIt->more() ) {
-    const SMDS_MeshElement* seg = segIt->next();
-    // get geom edge
-    int shapeID = editor.FindShape( seg );
-    if (!shapeID) continue;
-    const TopoDS_Shape& s = meshDS->IndexToShape( shapeID );
-    if ( s.IsNull() || s.ShapeType() != TopAbs_EDGE ) continue;
-    const TopoDS_Edge& edge = TopoDS::Edge( s );
-    // params of edge ends
-    double u0 = helper.GetNodeU( edge, seg->GetNode(0) );
-    double u1 = helper.GetNodeU( edge, seg->GetNode(1) );
-    // length
-    BRepAdaptor_Curve AdaptCurve( edge );
-    _length += GCPnts_AbscissaPoint::Length( AdaptCurve, u0, u1);
-    nbSegs++;
-  }
-  
-  if ( nbSegs > 1 )
-    _length /= nbSegs;
+    SMDS_ElemIteratorPtr segIt = vNode->GetInverseElementIterator(SMDSAbs_Edge);
+    while (segIt->more()) {
+        const SMDS_MeshElement *seg = segIt->next();
+        // get geom edge
+        int shapeID = editor.FindShape(seg);
+        if (!shapeID) continue;
+        const TopoDS_Shape &s = meshDS->IndexToShape(shapeID);
+        if (s.IsNull() || s.ShapeType() != TopAbs_EDGE) continue;
+        const TopoDS_Edge &edge = TopoDS::Edge(s);
+        // params of edge ends
+        double u0 = helper.GetNodeU(edge, seg->GetNode(0));
+        double u1 = helper.GetNodeU(edge, seg->GetNode(1));
+        // length
+        BRepAdaptor_Curve AdaptCurve(edge);
+        _length += GCPnts_AbscissaPoint::Length(AdaptCurve, u0, u1);
+        nbSegs++;
+    }
 
-  return nbSegs;
+    if (nbSegs > 1) _length /= nbSegs;
+
+    return nbSegs;
 }
 
 //================================================================================
@@ -208,9 +198,8 @@ bool StdMeshers_SegmentLengthAroundVertex::SetParametersByMesh(const SMESH_Mesh*
  */
 //================================================================================
 
-bool StdMeshers_SegmentLengthAroundVertex::SetParametersByDefaults(const TDefaults&,
-                                                                   const SMESH_Mesh*)
+bool StdMeshers_SegmentLengthAroundVertex::SetParametersByDefaults(const TDefaults &,
+                                                                   const SMESH_Mesh *)
 {
-  return false;
+    return false;
 }
-

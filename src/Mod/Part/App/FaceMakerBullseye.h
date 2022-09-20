@@ -44,16 +44,16 @@ namespace Part
 class PartExport FaceMakerBullseye: public FaceMakerPublic
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
+
 public:
-    FaceMakerBullseye()
-        :planeSupplied(false){}
+    FaceMakerBullseye() : planeSupplied(false) {}
     /**
      * @brief setPlane: sets the plane to use when making faces. This is
      * optional. If the plane was set, it is not tested that the wires are
      * planar or on the supplied plane, potentially speeding things up.
      * @param plane FIXME: the plane is not propagated if processing compounds.
      */
-    void setPlane(const gp_Pln& plane);
+    void setPlane(const gp_Pln &plane);
 
     std::string getUserFriendlyName() const override;
     std::string getBriefExplanation() const override;
@@ -73,17 +73,18 @@ protected:
     class FaceDriller
     {
     public:
-        FaceDriller(const gp_Pln& plane, TopoDS_Wire outerWire);
+        FaceDriller(const gp_Pln &plane, TopoDS_Wire outerWire);
 
         /**
          * @brief hitTest: returns True if point is on the face
          * @param point
          */
-        bool hitTest(const gp_Pnt& point) const;
+        bool hitTest(const gp_Pnt &point) const;
 
         void addHole(TopoDS_Wire w);
 
-        const TopoDS_Face& Face() const {return myFace;}
+        const TopoDS_Face &Face() const { return myFace; }
+
     public:
         /**
          * @brief wireDirection: determines direction of wire with respect to
@@ -92,6 +93,7 @@ protected:
          * @return  1 = CCW (suits as outer wire), -1 = CW (suits as hole)
          */
         static int getWireDirection(const gp_Pln &plane, const TopoDS_Wire &w);
+
     private:
         gp_Pln myPlane;
         TopoDS_Face myFace;
@@ -100,5 +102,5 @@ protected:
 };
 
 
-}//namespace Part
+} //namespace Part
 #endif // PART_FACEMAKER_BULLSEYE_H

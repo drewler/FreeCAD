@@ -50,7 +50,7 @@ namespace TechDraw
 
 /** Base class of all View Features in the drawing module
  */
-class TechDrawExport DrawViewMulti : public DrawViewPart
+class TechDrawExport DrawViewMulti: public DrawViewPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::DrawViewMulti);
 
@@ -59,25 +59,23 @@ public:
     DrawViewMulti();
     ~DrawViewMulti() override;
 
-    App::PropertyLinkList    Sources;
+    App::PropertyLinkList Sources;
 
     short mustExecute() const override;
     /** @name methods override Feature */
     //@{
     /// recalculate the Feature
     App::DocumentObjectExecReturn *execute() override;
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     //@}
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderViewPart";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderViewPart"; }
 
 protected:
     TopoDS_Compound m_compound;
 
-//    void getParameters(void);
+    //    void getParameters(void);
 };
 
 using DrawViewMultiPython = App::FeaturePythonT<DrawViewMulti>;

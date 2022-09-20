@@ -37,29 +37,21 @@
  */
 //=============================================================================
 
-SMESH_Group::SMESH_Group (int                       theID,
-                          const SMESH_Mesh*         theMesh,
-                          const SMDSAbs_ElementType theType,
-                          const char*               theName,
-                          const TopoDS_Shape&       theShape,
-                          const SMESH_PredicatePtr& thePredicate)
-     : myName(theName)
+SMESH_Group::SMESH_Group(int theID, const SMESH_Mesh *theMesh, const SMDSAbs_ElementType theType,
+                         const char *theName, const TopoDS_Shape &theShape,
+                         const SMESH_PredicatePtr &thePredicate)
+    : myName(theName)
 {
-  if ( !theShape.IsNull() )
-    myGroupDS = new SMESHDS_GroupOnGeom (theID,
-                                         const_cast<SMESH_Mesh*>(theMesh)->GetMeshDS(),
-                                         theType,
-                                         theShape);
-  else if ( thePredicate )
-    myGroupDS = new SMESHDS_GroupOnFilter (theID,
-                                           const_cast<SMESH_Mesh*>(theMesh)->GetMeshDS(),
-                                           theType,
-                                           thePredicate);
-  else
-    myGroupDS = new SMESHDS_Group (theID,
-                                   const_cast<SMESH_Mesh*>(theMesh)->GetMeshDS(),
-                                   theType);
-  myGroupDS->SetStoreName( theName );
+    if (!theShape.IsNull())
+        myGroupDS = new SMESHDS_GroupOnGeom(theID, const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS(),
+                                            theType, theShape);
+    else if (thePredicate)
+        myGroupDS = new SMESHDS_GroupOnFilter(theID, const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS(),
+                                              theType, thePredicate);
+    else
+        myGroupDS =
+            new SMESHDS_Group(theID, const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS(), theType);
+    myGroupDS->SetStoreName(theName);
 }
 
 //================================================================================
@@ -68,10 +60,9 @@ SMESH_Group::SMESH_Group (int                       theID,
  */
 //================================================================================
 
-SMESH_Group::SMESH_Group (SMESHDS_GroupBase* groupDS): myGroupDS( groupDS )
+SMESH_Group::SMESH_Group(SMESHDS_GroupBase *groupDS) : myGroupDS(groupDS)
 {
-  if ( myGroupDS )
-    myName = myGroupDS->GetStoreName();
+    if (myGroupDS) myName = myGroupDS->GetStoreName();
 }
 
 //=============================================================================
@@ -80,9 +71,10 @@ SMESH_Group::SMESH_Group (SMESHDS_GroupBase* groupDS): myGroupDS( groupDS )
  */
 //=============================================================================
 
-SMESH_Group::~SMESH_Group ()
+SMESH_Group::~SMESH_Group()
 {
-  delete myGroupDS; myGroupDS=0;
+    delete myGroupDS;
+    myGroupDS = 0;
 }
 
 //================================================================================
@@ -91,8 +83,8 @@ SMESH_Group::~SMESH_Group ()
  */
 //================================================================================
 
-void SMESH_Group::SetName (const char* theName)
+void SMESH_Group::SetName(const char *theName)
 {
-  myName = theName;
-  myGroupDS->SetStoreName( theName );
+    myName = theName;
+    myGroupDS->SetStoreName(theName);
 }

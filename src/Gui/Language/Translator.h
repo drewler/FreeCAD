@@ -31,7 +31,8 @@
 
 class QDir;
 
-namespace Gui {
+namespace Gui
+{
 
 using TStringList = std::list<std::string>;
 using TStringMap = std::map<std::string, std::string>;
@@ -45,7 +46,7 @@ using TStringMap = std::map<std::string, std::string>;
  * \author Werner Mayer
  */
 class TranslatorP;
-class GuiExport Translator : public QObject
+class GuiExport Translator: public QObject
 {
     Q_OBJECT
 
@@ -53,39 +54,39 @@ public:
     /** @name singleton stuff */
     //@{
     /// Creates an instance
-    static Translator* instance(void);
+    static Translator *instance(void);
     /// Destroys the instance
-    static void destruct (void);
+    static void destruct(void);
     //@}
 
     /** Activates the specified language \a lang if available. */
-    void activateLanguage (const char* lang);
+    void activateLanguage(const char *lang);
     /* Reloads the translators */
     void refresh();
     /** Returns the currently installed language. If no language is installed an empty string is returned. */
     std::string activeLanguage() const;
     /** Returns the locale (e.g. "de") to the given language name. */
-    std::string locale(const std::string&) const;
+    std::string locale(const std::string &) const;
     /** Sets default Qt locale based on given language name **/
-    void setLocale(const std::string& = "") const;
+    void setLocale(const std::string & = "") const;
     /** Returns a list of supported languages. */
     TStringList supportedLanguages() const;
     /** Returns a map of supported languages/locales. */
     TStringMap supportedLocales() const;
     /** Adds a path where localization files can be found */
-    void addPath(const QString& path);
+    void addPath(const QString &path);
 
 private:
     Translator();
     ~Translator();
     void removeTranslators();
     QStringList directories() const;
-    void installQMFiles(const QDir& dir, const char* locale);
+    void installQMFiles(const QDir &dir, const char *locale);
     void updateLocaleChange() const;
 
 private:
-    static Translator* _pcSingleton;
-    TranslatorP* d;
+    static Translator *_pcSingleton;
+    TranslatorP *d;
 };
 
 } // namespace Gui

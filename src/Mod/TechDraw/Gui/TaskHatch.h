@@ -45,13 +45,13 @@ namespace TechDrawGui
 {
 class ViewProviderHatch;
 
-class TaskHatch : public QWidget
+class TaskHatch: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskHatch(TechDraw::DrawViewPart* inDvp, std::vector<std::string> subs);
-    explicit TaskHatch(TechDrawGui::ViewProviderHatch* inVp);
+    TaskHatch(TechDraw::DrawViewPart *inDvp, std::vector<std::string> subs);
+    explicit TaskHatch(TechDrawGui::ViewProviderHatch *inVp);
     ~TaskHatch() override;
 
     virtual bool accept();
@@ -78,9 +78,9 @@ protected:
 
 private:
     std::unique_ptr<Ui_TaskHatch> ui;
-    TechDraw::DrawHatch* m_hatch;
-    TechDrawGui::ViewProviderHatch* m_vp;
-    TechDraw::DrawViewPart* m_dvp;
+    TechDraw::DrawHatch *m_hatch;
+    TechDrawGui::ViewProviderHatch *m_vp;
+    TechDraw::DrawViewPart *m_dvp;
     std::vector<std::string> m_subs;
     std::string m_file;
     double m_scale;
@@ -90,16 +90,15 @@ private:
     double m_saveScale;
     App::Color m_saveColor;
     std::vector<std::string> m_saveSubs;
-
 };
 
-class TaskDlgHatch : public Gui::TaskView::TaskDialog
+class TaskDlgHatch: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    TaskDlgHatch(TechDraw::DrawViewPart* inDvp, std::vector<std::string> subs);
-    explicit TaskDlgHatch(TechDrawGui::ViewProviderHatch* inVp);
+    TaskDlgHatch(TechDraw::DrawViewPart *inDvp, std::vector<std::string> subs);
+    explicit TaskDlgHatch(TechDrawGui::ViewProviderHatch *inVp);
     ~TaskDlgHatch() override;
 
     /// is called the TaskView when the dialog is opened
@@ -111,15 +110,14 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    void helpRequested() override { return;}
-    bool isAllowedAlterDocument() const override
-    { return false; }
+    void helpRequested() override { return; }
+    bool isAllowedAlterDocument() const override { return false; }
 
     void update();
 
 private:
-    TaskHatch * widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskHatch *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

@@ -45,7 +45,8 @@
 */
 
 // Based on https://stackoverflow.com/questions/1448396/how-to-use-enums-as-flags-in-c
-template<class T = void> struct enum_traits {};
+template<class T = void> struct enum_traits {
+};
 
 template<> struct enum_traits<void> {
     struct _allow_bitops {
@@ -54,76 +55,72 @@ template<> struct enum_traits<void> {
     using allow_bitops = _allow_bitops;
 
     template<class T, class R = T>
-    using t = typename std::enable_if<std::is_enum<T>::value &&
-        enum_traits<T>::allow_bitops, R>::type;
+    using t =
+        typename std::enable_if<std::is_enum<T>::value && enum_traits<T>::allow_bitops, R>::type;
 
-    template<class T>
-    using u = typename std::underlying_type<T>::type;
+    template<class T> using u = typename std::underlying_type<T>::type;
 };
 
-template<class T>
-constexpr enum_traits<>::t<T> operator~(T a) {
+template<class T> constexpr enum_traits<>::t<T> operator~(T a)
+{
     return static_cast<T>(~static_cast<enum_traits<>::u<T>>(a));
 }
-template<class T>
-constexpr enum_traits<>::t<T> operator|(T a, T b) {
-    return static_cast<T>(
-        static_cast<enum_traits<>::u<T>>(a) |
-        static_cast<enum_traits<>::u<T>>(b));
+template<class T> constexpr enum_traits<>::t<T> operator|(T a, T b)
+{
+    return static_cast<T>(static_cast<enum_traits<>::u<T>>(a)
+                          | static_cast<enum_traits<>::u<T>>(b));
 }
-template<class T>
-constexpr enum_traits<>::t<T> operator&(T a, T b) {
-    return static_cast<T>(
-        static_cast<enum_traits<>::u<T>>(a) &
-        static_cast<enum_traits<>::u<T>>(b));
+template<class T> constexpr enum_traits<>::t<T> operator&(T a, T b)
+{
+    return static_cast<T>(static_cast<enum_traits<>::u<T>>(a)
+                          & static_cast<enum_traits<>::u<T>>(b));
 }
-template<class T>
-constexpr enum_traits<>::t<T> operator^(T a, T b) {
-    return static_cast<T>(
-        static_cast<enum_traits<>::u<T>>(a) ^
-        static_cast<enum_traits<>::u<T>>(b));
+template<class T> constexpr enum_traits<>::t<T> operator^(T a, T b)
+{
+    return static_cast<T>(static_cast<enum_traits<>::u<T>>(a)
+                          ^ static_cast<enum_traits<>::u<T>>(b));
 }
-template<class T>
-constexpr enum_traits<>::t<T, T&> operator|=(T& a, T b) {
+template<class T> constexpr enum_traits<>::t<T, T &> operator|=(T &a, T b)
+{
     a = a | b;
     return a;
 }
-template<class T>
-constexpr enum_traits<>::t<T, T&> operator&=(T& a, T b) {
+template<class T> constexpr enum_traits<>::t<T, T &> operator&=(T &a, T b)
+{
     a = a & b;
     return a;
 }
-template<class T>
-constexpr enum_traits<>::t<T, T&> operator^=(T& a, T b) {
+template<class T> constexpr enum_traits<>::t<T, T &> operator^=(T &a, T b)
+{
     a = a ^ b;
     return a;
 }
 
-#define ENABLE_BITMASK_OPERATORS(x)  \
-template<>                           \
-struct enum_traits<x> :              \
-       enum_traits<>::allow_bitops {};
+#define ENABLE_BITMASK_OPERATORS(x)                                                                \
+    template<> struct enum_traits<x>: enum_traits<>::allow_bitops {                                \
+    };
 
-namespace Base {
-template <typename Enum>
-class Flags {
+namespace Base
+{
+template<typename Enum> class Flags
+{
     static_assert(std::is_enum<Enum>::value, "Flags is only usable on enumeration types.");
     Enum i;
 
 public:
     constexpr inline Flags(Enum f) : i(f) {}
-    constexpr bool testFlag(Enum f) const {
+    constexpr bool testFlag(Enum f) const
+    {
         using u = typename std::underlying_type<Enum>::type;
         return (i & f) == f && (static_cast<u>(f) != 0 || i == f);
     }
-    constexpr inline void setFlag(Enum f, bool on = true) {
-        on ? (i |= f) : (i &= ~f);
-    }
-    constexpr bool isEqual(Flags f) const {
+    constexpr inline void setFlag(Enum f, bool on = true) { on ? (i |= f) : (i &= ~f); }
+    constexpr bool isEqual(Flags f) const
+    {
         using u = typename std::underlying_type<Enum>::type;
         return static_cast<u>(i) == static_cast<u>(f.i);
     }
 };
-}
+} // namespace Base
 
 #endif

@@ -27,9 +27,10 @@
 #include "ViewProvider.h"
 
 
-namespace PartGui {
+namespace PartGui
+{
 
-class PartGuiExport ViewProviderBoolean : public ViewProviderPart
+class PartGuiExport ViewProviderBoolean: public ViewProviderPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderBoolean);
 
@@ -39,15 +40,15 @@ public:
     /// destructor
     ~ViewProviderBoolean() override;
 
-    /// grouping handling 
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    /// grouping handling
+    std::vector<App::DocumentObject *> claimChildren() const override;
     QIcon getIcon() const override;
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
     bool onDelete(const std::vector<std::string> &) override;
 };
 
 /// ViewProvider for the MultiFuse feature
-class PartGuiExport ViewProviderMultiFuse : public ViewProviderPart
+class PartGuiExport ViewProviderMultiFuse: public ViewProviderPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderMultiFuse);
 
@@ -57,23 +58,23 @@ public:
     /// destructor
     ~ViewProviderMultiFuse() override;
 
-    /// grouping handling 
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    /// grouping handling
+    std::vector<App::DocumentObject *> claimChildren() const override;
     QIcon getIcon() const override;
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
     bool onDelete(const std::vector<std::string> &) override;
 
     /// drag and drop
     bool canDragObjects() const override;
-    bool canDragObject(App::DocumentObject*) const override;
-    void dragObject(App::DocumentObject*) override;
+    bool canDragObject(App::DocumentObject *) const override;
+    void dragObject(App::DocumentObject *) override;
     bool canDropObjects() const override;
-    bool canDropObject(App::DocumentObject*) const override;
-    void dropObject(App::DocumentObject*) override;
+    bool canDropObject(App::DocumentObject *) const override;
+    void dropObject(App::DocumentObject *) override;
 };
 
 /// ViewProvider for the MultiFuse feature
-class PartGuiExport ViewProviderMultiCommon : public ViewProviderPart
+class PartGuiExport ViewProviderMultiCommon: public ViewProviderPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderMultiCommon);
 
@@ -83,19 +84,19 @@ public:
     /// destructor
     ~ViewProviderMultiCommon() override;
 
-    /// grouping handling 
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    /// grouping handling
+    std::vector<App::DocumentObject *> claimChildren() const override;
     QIcon getIcon() const override;
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
     bool onDelete(const std::vector<std::string> &) override;
 
     /// drag and drop
     bool canDragObjects() const override;
-    bool canDragObject(App::DocumentObject*) const override;
-    void dragObject(App::DocumentObject*) override;
+    bool canDragObject(App::DocumentObject *) const override;
+    void dragObject(App::DocumentObject *) override;
     bool canDropObjects() const override;
-    bool canDropObject(App::DocumentObject*) const override;
-    void dropObject(App::DocumentObject*) override;
+    bool canDropObject(App::DocumentObject *) const override;
+    void dropObject(App::DocumentObject *) override;
 };
 
 

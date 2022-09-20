@@ -27,12 +27,13 @@
 
 #include "ConstraintFilters.h"
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 using namespace ConstraintFilter;
 
 class Ui_ConstraintSettingsDialog;
-class ConstraintSettingsDialog : public QDialog
+class ConstraintSettingsDialog: public QDialog
 {
     Q_OBJECT
 
@@ -65,6 +66,6 @@ private:
     bool visualisationTrackingFilter;
 };
 
-}
+} // namespace SketcherGui
 
 #endif // SKETCHERGUI_ConstraintSettingsDialog_H

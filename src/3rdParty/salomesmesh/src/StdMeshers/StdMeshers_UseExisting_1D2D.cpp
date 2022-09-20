@@ -30,109 +30,101 @@
 
 //=======================================================================
 //function : StdMeshers_UseExisting_1D
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-StdMeshers_UseExisting_1D::StdMeshers_UseExisting_1D
-                                   (int hypId, int studyId, SMESH_Gen* gen)
-  :SMESH_1D_Algo(hypId, studyId, gen)
+StdMeshers_UseExisting_1D::StdMeshers_UseExisting_1D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_1D_Algo(hypId, studyId, gen)
 {
-  _name = "UseExisting_1D";
-  _shapeType = (1 << TopAbs_EDGE); // 1 bit per shape type
-  _requireShape = false;
+    _name = "UseExisting_1D";
+    _shapeType = (1 << TopAbs_EDGE); // 1 bit per shape type
+    _requireShape = false;
 }
 
 //=======================================================================
 //function : CheckHypothesis
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_UseExisting_1D::CheckHypothesis(SMESH_Mesh& ,
-                                                const TopoDS_Shape& ,
-                                                Hypothesis_Status& aStatus)
+bool StdMeshers_UseExisting_1D::CheckHypothesis(SMESH_Mesh &, const TopoDS_Shape &,
+                                                Hypothesis_Status &aStatus)
 {
-  return (aStatus = HYP_OK) == HYP_OK;
+    return (aStatus = HYP_OK) == HYP_OK;
 }
 
 //=======================================================================
 //function : Compute
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_UseExisting_1D::Compute(SMESH_Mesh& mesh, const TopoDS_Shape& edge)
+bool StdMeshers_UseExisting_1D::Compute(SMESH_Mesh &mesh, const TopoDS_Shape &edge)
 {
-  // This algorithm exists to allow mesh generation by mesh
-  // edition functions in TUI mode
-  mesh.GetSubMesh( edge )->SetIsAlwaysComputed( true );
-  return true;
+    // This algorithm exists to allow mesh generation by mesh
+    // edition functions in TUI mode
+    mesh.GetSubMesh(edge)->SetIsAlwaysComputed(true);
+    return true;
 }
 
 
 //=======================================================================
 //function : Evaluate
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_UseExisting_1D::Evaluate(SMESH_Mesh&,
-                                         const TopoDS_Shape&,
-                                         MapShapeNbElems&)
+bool StdMeshers_UseExisting_1D::Evaluate(SMESH_Mesh &, const TopoDS_Shape &, MapShapeNbElems &)
 {
-  // This algorithm exists to allow mesh generation by mesh
-  // edition functions in TUI mode
-  return false;
+    // This algorithm exists to allow mesh generation by mesh
+    // edition functions in TUI mode
+    return false;
 }
 
 
 //=======================================================================
 //function : StdMeshers_UseExisting_2D
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-StdMeshers_UseExisting_2D::StdMeshers_UseExisting_2D
-                                   (int hypId, int studyId, SMESH_Gen* gen)
-  :SMESH_2D_Algo(hypId, studyId, gen)
+StdMeshers_UseExisting_2D::StdMeshers_UseExisting_2D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_2D_Algo(hypId, studyId, gen)
 {
-  _name = "UseExisting_2D";
-  _shapeType = (1 << TopAbs_FACE); // 1 bit per shape type
-  _requireShape = false;
+    _name = "UseExisting_2D";
+    _shapeType = (1 << TopAbs_FACE); // 1 bit per shape type
+    _requireShape = false;
 }
 
 //=======================================================================
 //function : CheckHypothesis
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_UseExisting_2D::CheckHypothesis(SMESH_Mesh& ,
-                                                const TopoDS_Shape& ,
-                                                Hypothesis_Status& aStatus)
+bool StdMeshers_UseExisting_2D::CheckHypothesis(SMESH_Mesh &, const TopoDS_Shape &,
+                                                Hypothesis_Status &aStatus)
 {
-  return (aStatus = HYP_OK) == HYP_OK;
+    return (aStatus = HYP_OK) == HYP_OK;
 }
 
 //=======================================================================
 //function : Compute
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_UseExisting_2D::Compute(SMESH_Mesh& mesh, const TopoDS_Shape& face)
+bool StdMeshers_UseExisting_2D::Compute(SMESH_Mesh &mesh, const TopoDS_Shape &face)
 {
-  // This algorithm exists to allow mesh generation by mesh edition
-  // functions in TUI mode
-  mesh.GetSubMesh( face )->SetIsAlwaysComputed( true );
-  return true;
+    // This algorithm exists to allow mesh generation by mesh edition
+    // functions in TUI mode
+    mesh.GetSubMesh(face)->SetIsAlwaysComputed(true);
+    return true;
 }
 
 
 //=======================================================================
 //function : Evaluate
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_UseExisting_2D::Evaluate(SMESH_Mesh&,
-                                         const TopoDS_Shape&,
-                                         MapShapeNbElems&)
+bool StdMeshers_UseExisting_2D::Evaluate(SMESH_Mesh &, const TopoDS_Shape &, MapShapeNbElems &)
 {
-  // This algorithm exists to allow mesh generation by mesh edition
-  // functions in TUI mode
-  return false;
+    // This algorithm exists to allow mesh generation by mesh edition
+    // functions in TUI mode
+    return false;
 }

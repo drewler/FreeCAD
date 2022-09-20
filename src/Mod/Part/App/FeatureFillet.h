@@ -29,7 +29,7 @@
 namespace Part
 {
 
-class Fillet : public Part::FilletBase
+class Fillet: public Part::FilletBase
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::Fillet);
 
@@ -41,9 +41,7 @@ public:
     /// recalculate the feature
     App::DocumentObjectExecReturn *execute() override;
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderFillet";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderFillet"; }
     //@}
 };
 

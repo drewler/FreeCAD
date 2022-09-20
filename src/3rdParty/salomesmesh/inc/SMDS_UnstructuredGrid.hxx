@@ -53,77 +53,76 @@ class SMDS_MeshVolume;
 class SMDS_EXPORT SMDS_CellLinks: public vtkCellLinks
 {
 public:
-  void ResizeForPoint(vtkIdType vtkID);
-  static SMDS_CellLinks* New();
+    void ResizeForPoint(vtkIdType vtkID);
+    static SMDS_CellLinks *New();
+
 protected:
-  SMDS_CellLinks();
-  ~SMDS_CellLinks();
+    SMDS_CellLinks();
+    ~SMDS_CellLinks();
 };
 
 class SMDS_EXPORT SMDS_UnstructuredGrid: public vtkUnstructuredGrid
 {
 public:
-  void setSMDS_mesh(SMDS_Mesh *mesh);
-  void compactGrid(std::vector<int>& idNodesOldToNew,
-                   int               newNodeSize,
-                   std::vector<int>& idCellsOldToNew,
-                   int               newCellSize);
-  virtual VTK_MTIME_TYPE GetMTime();
-  // OUV_PORTING_VTK6: seems to be useless
-  //virtual void Update();
-  //virtual void UpdateInformation();
-  virtual vtkPoints *GetPoints();
+    void setSMDS_mesh(SMDS_Mesh *mesh);
+    void compactGrid(std::vector<int> &idNodesOldToNew, int newNodeSize,
+                     std::vector<int> &idCellsOldToNew, int newCellSize);
+    virtual VTK_MTIME_TYPE GetMTime();
+    // OUV_PORTING_VTK6: seems to be useless
+    //virtual void Update();
+    //virtual void UpdateInformation();
+    virtual vtkPoints *GetPoints();
 
-  //#ifdef VTK_HAVE_POLYHEDRON
-  int InsertNextLinkedCell(int type, int npts, vtkIdType *pts);
-  //#endif
+    //#ifdef VTK_HAVE_POLYHEDRON
+    int InsertNextLinkedCell(int type, int npts, vtkIdType *pts);
+    //#endif
 
-  int CellIdToDownId(int vtkCellId);
-  void setCellIdToDownId(int vtkCellId, int downId);
-  void CleanDownwardConnectivity();
-  void BuildDownwardConnectivity(bool withEdges);
-  int GetNeighbors(int* neighborsVtkIds, int* downIds, unsigned char* downTypes, int vtkId, bool getSkin=false);
-  int GetParentVolumes(int* volVtkIds, int vtkId);
-  int GetParentVolumes(int* volVtkIds, int downId, unsigned char downType);
-  void GetNodeIds(std::set<int>& nodeSet, int downId, unsigned char downType);
-  void ModifyCellNodes(int vtkVolId, std::map<int, int> localClonedNodeIds);
-  int getOrderedNodesOfFace(int vtkVolId, int& dim, std::vector<vtkIdType>& orderedNodes);
-  void BuildLinks();
-  SMDS_MeshCell* extrudeVolumeFromFace(int vtkVolId, int domain1, int domain2,
-                                       std::set<int>&                      originalNodes,
-                                       std::map<int, std::map<int, int> >& nodeDomains,
-                                       std::map<int, std::map<long,int> >& nodeQuadDomains);
-  vtkCellLinks* GetLinks()
-  {
+    int CellIdToDownId(int vtkCellId);
+    void setCellIdToDownId(int vtkCellId, int downId);
+    void CleanDownwardConnectivity();
+    void BuildDownwardConnectivity(bool withEdges);
+    int GetNeighbors(int *neighborsVtkIds, int *downIds, unsigned char *downTypes, int vtkId,
+                     bool getSkin = false);
+    int GetParentVolumes(int *volVtkIds, int vtkId);
+    int GetParentVolumes(int *volVtkIds, int downId, unsigned char downType);
+    void GetNodeIds(std::set<int> &nodeSet, int downId, unsigned char downType);
+    void ModifyCellNodes(int vtkVolId, std::map<int, int> localClonedNodeIds);
+    int getOrderedNodesOfFace(int vtkVolId, int &dim, std::vector<vtkIdType> &orderedNodes);
+    void BuildLinks();
+    SMDS_MeshCell *extrudeVolumeFromFace(int vtkVolId, int domain1, int domain2,
+                                         std::set<int> &originalNodes,
+                                         std::map<int, std::map<int, int>> &nodeDomains,
+                                         std::map<int, std::map<long, int>> &nodeQuadDomains);
+    vtkCellLinks *GetLinks()
+    {
 #ifdef VTK_CELL_ARRAY_V2
-    return static_cast<vtkCellLinks*>(GetCellLinks());
+        return static_cast<vtkCellLinks *>(GetCellLinks());
 #else
-    return Links;
+        return Links;
 #endif
-  }
-  SMDS_Downward* getDownArray(unsigned char vtkType)
-  {
-    return _downArray[vtkType];
-  }
-  void AllocateDiameters( vtkIdType maxVtkID );
-  void SetBallDiameter( vtkIdType vtkID, double diameter );
-  double GetBallDiameter( vtkIdType vtkID ) const;
+    }
+    SMDS_Downward *getDownArray(unsigned char vtkType) { return _downArray[vtkType]; }
+    void AllocateDiameters(vtkIdType maxVtkID);
+    void SetBallDiameter(vtkIdType vtkID, double diameter);
+    double GetBallDiameter(vtkIdType vtkID) const;
 
-  static SMDS_UnstructuredGrid* New();
-  SMDS_Mesh *_mesh;
+    static SMDS_UnstructuredGrid *New();
+    SMDS_Mesh *_mesh;
 
 protected:
-  SMDS_UnstructuredGrid();
-  ~SMDS_UnstructuredGrid();
-  void copyNodes(vtkPoints *newPoints, std::vector<int>& idNodesOldToNew, int& alreadyCopied, int start, int end);
-  void copyBloc(vtkUnsignedCharArray *newTypes, std::vector<int>& idCellsOldToNew, std::vector<int>& idNodesOldToNew,
-                vtkCellArray* newConnectivity, vtkIdTypeArray* newLocations, vtkIdType* pointsCell, int& alreadyCopied,
-                int start, int end);
+    SMDS_UnstructuredGrid();
+    ~SMDS_UnstructuredGrid();
+    void copyNodes(vtkPoints *newPoints, std::vector<int> &idNodesOldToNew, int &alreadyCopied,
+                   int start, int end);
+    void copyBloc(vtkUnsignedCharArray *newTypes, std::vector<int> &idCellsOldToNew,
+                  std::vector<int> &idNodesOldToNew, vtkCellArray *newConnectivity,
+                  vtkIdTypeArray *newLocations, vtkIdType *pointsCell, int &alreadyCopied,
+                  int start, int end);
 
-  std::vector<int> _cellIdToDownId; //!< convert vtk Id to downward[vtkType] id, initialized with -1
-  std::vector<unsigned char> _downTypes;
-  std::vector<SMDS_Downward*> _downArray;
+    std::vector<int>
+        _cellIdToDownId; //!< convert vtk Id to downward[vtkType] id, initialized with -1
+    std::vector<unsigned char> _downTypes;
+    std::vector<SMDS_Downward *> _downArray;
 };
 
-#endif  /* _SMDS_UNSTRUCTUREDGRID_HXX */
-
+#endif /* _SMDS_UNSTRUCTUREDGRID_HXX */

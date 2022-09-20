@@ -35,31 +35,27 @@
 class STDMESHERS_EXPORT StdMeshers_UseExisting_2D: public SMESH_2D_Algo
 {
 public:
-  StdMeshers_UseExisting_2D(int hypId, int studyId, SMESH_Gen* gen);
+    StdMeshers_UseExisting_2D(int hypId, int studyId, SMESH_Gen *gen);
 
-  virtual bool CheckHypothesis(SMESH_Mesh&                          aMesh,
-                               const TopoDS_Shape&                  aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape);
-  
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
+
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 };
 
 class STDMESHERS_EXPORT StdMeshers_UseExisting_1D: public SMESH_1D_Algo
 {
 public:
-  StdMeshers_UseExisting_1D(int hypId, int studyId, SMESH_Gen* gen);
+    StdMeshers_UseExisting_1D(int hypId, int studyId, SMESH_Gen *gen);
 
-  virtual bool CheckHypothesis(SMESH_Mesh&                          aMesh,
-                               const TopoDS_Shape&                  aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape);
-  
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
+
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 };
 
 #endif

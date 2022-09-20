@@ -31,10 +31,10 @@
    version 2.2 of Bison.  */
 
 #ifndef YY_YY_EXPRESSIONPARSER_TAB_H_INCLUDED
-# define YY_YY_EXPRESSIONPARSER_TAB_H_INCLUDED
+#define YY_YY_EXPRESSIONPARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+#define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -42,9 +42,9 @@ extern int yydebug;
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
-  {
+#define YYTOKENTYPE
+enum yytokentype
+{
     FUNC = 258,
     ONE = 259,
     NUM = 260,
@@ -68,7 +68,7 @@ extern int yydebug;
     NUM_AND_UNIT = 278,
     NEG = 279,
     POS = 280
-  };
+};
 #endif
 
 /* Value type.  */
@@ -76,6 +76,6 @@ extern int yydebug;
 
 extern YYSTYPE yylval;
 
-int yyparse (void);
+int yyparse(void);
 
 #endif /* !YY_YY_EXPRESSIONPARSER_TAB_H_INCLUDED  */

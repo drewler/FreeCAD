@@ -30,17 +30,18 @@
 class QDoubleSpinBox;
 class QSlider;
 
-namespace PartGui {
+namespace PartGui
+{
 
 class Ui_SectionCut;
 
-class SectionCut : public QDialog
+class SectionCut: public QDialog
 {
     Q_OBJECT
 
 public:
-    static SectionCut* makeDockWidget(QWidget* parent = nullptr);
-    explicit SectionCut(QWidget* parent = nullptr);
+    static SectionCut *makeDockWidget(QWidget *parent = nullptr);
+    explicit SectionCut(QWidget *parent = nullptr);
     ~SectionCut() override;
 
 protected Q_SLOTS:
@@ -68,9 +69,9 @@ public:
     void reject() override;
 
 private:
-    Ui_SectionCut* ui;
+    Ui_SectionCut *ui;
     std::vector<App::DocumentObjectT> ObjectsListVisible;
-    App::Document* doc = nullptr; // pointer to active document
+    App::Document *doc = nullptr; // pointer to active document
     bool hasBoxX = false;
     bool hasBoxY = false;
     bool hasBoxZ = false;
@@ -78,17 +79,18 @@ private:
     void noDocumentActions();
     void startCutting(bool isInitial = false);
     SbBox3f getViewBoundingBox();
-    void refreshCutRanges(SbBox3f, bool forXValue = true, bool forYValue = true, bool forZValue = true,
-        bool forXRange = true, bool forYRange = true, bool forZRange = true);
-    void CutValueHelper(double val, QDoubleSpinBox* SpinBox, QSlider* Slider);
-    void FlipClickedHelper(const char* BoxName);
-    const char* CompoundName = "SectionCutCompound";
-    const char* BoxXName = "SectionCutBoxX";
-    const char* BoxYName = "SectionCutBoxY";
-    const char* BoxZName = "SectionCutBoxZ";
-    const char* CutXName = "SectionCutX";
-    const char* CutYName = "SectionCutY";
-    const char* CutZName = "SectionCutZ";
+    void refreshCutRanges(SbBox3f, bool forXValue = true, bool forYValue = true,
+                          bool forZValue = true, bool forXRange = true, bool forYRange = true,
+                          bool forZRange = true);
+    void CutValueHelper(double val, QDoubleSpinBox *SpinBox, QSlider *Slider);
+    void FlipClickedHelper(const char *BoxName);
+    const char *CompoundName = "SectionCutCompound";
+    const char *BoxXName = "SectionCutBoxX";
+    const char *BoxYName = "SectionCutBoxY";
+    const char *BoxZName = "SectionCutBoxZ";
+    const char *CutXName = "SectionCutX";
+    const char *CutYName = "SectionCutY";
+    const char *CutZName = "SectionCutZ";
 };
 
 } // namespace PartGui

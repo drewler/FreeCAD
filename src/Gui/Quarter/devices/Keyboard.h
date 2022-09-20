@@ -39,21 +39,29 @@
 class QEvent;
 class SoEvent;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
-class QUARTER_DLL_API Keyboard : public InputDevice {
+class QUARTER_DLL_API Keyboard: public InputDevice
+{
 public:
-  Keyboard(QuarterWidget* quarter);
-  Keyboard();
-  virtual ~Keyboard();
+    Keyboard(QuarterWidget *quarter);
+    Keyboard();
+    virtual ~Keyboard();
 
-  virtual const SoEvent * translateEvent(QEvent * event);
+    virtual const SoEvent *translateEvent(QEvent *event);
 
 private:
-  friend class KeyboardP;
-  class KeyboardP * pimpl;
+    friend class KeyboardP;
+    class KeyboardP *pimpl;
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_KEYBOARD_H

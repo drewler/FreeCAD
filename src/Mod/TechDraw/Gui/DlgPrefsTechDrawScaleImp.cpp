@@ -31,17 +31,16 @@
 
 using namespace TechDrawGui;
 
-DlgPrefsTechDrawScaleImp::DlgPrefsTechDrawScaleImp( QWidget* parent )
-  : PreferencePage( parent )
-  , ui(new Ui_DlgPrefsTechDrawScaleImp)
+DlgPrefsTechDrawScaleImp::DlgPrefsTechDrawScaleImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgPrefsTechDrawScaleImp)
 {
     ui->setupUi(this);
 
     ui->pdsbTemplateMark->setUnit(Base::Unit::Length);
     ui->pdsbTemplateMark->setMinimum(0);
 
-    connect(ui->cbViewScaleType, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(onScaleTypeChanged(int)));
+    connect(ui->cbViewScaleType, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(onScaleTypeChanged(int)));
 }
 
 DlgPrefsTechDrawScaleImp::~DlgPrefsTechDrawScaleImp()

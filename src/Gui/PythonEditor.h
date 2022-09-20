@@ -27,7 +27,8 @@
 #include "TextEdit.h"
 
 
-namespace Gui {
+namespace Gui
+{
 
 class PythonSyntaxHighlighter;
 class PythonSyntaxHighlighterP;
@@ -36,7 +37,7 @@ class PythonSyntaxHighlighterP;
  * Python text editor with syntax highlighting.
  * \author Werner Mayer
  */
-class GuiExport PythonEditor : public TextEditor
+class GuiExport PythonEditor: public TextEditor
 {
     Q_OBJECT
 
@@ -59,33 +60,33 @@ public Q_SLOTS:
      * this line is skipped.
      */
     void onUncomment();
-    void setFileName(const QString&);
+    void setFileName(const QString &);
     void startDebug();
 
 protected:
     /** Pops up the context menu with some extensions */
-    void contextMenuEvent ( QContextMenuEvent* e ) override;
-    void drawMarker(int line, int x, int y, QPainter*) override;
+    void contextMenuEvent(QContextMenuEvent *e) override;
+    void drawMarker(int line, int x, int y, QPainter *) override;
 
 private:
     //PythonSyntaxHighlighter* pythonSyntax;
-    struct PythonEditorP* d;
+    struct PythonEditorP *d;
 };
 
 /**
  * Syntax highlighter for Python.
  * \author Werner Mayer
  */
-class GuiExport PythonSyntaxHighlighter : public SyntaxHighlighter
+class GuiExport PythonSyntaxHighlighter: public SyntaxHighlighter
 {
 public:
-    explicit PythonSyntaxHighlighter(QObject* parent);
+    explicit PythonSyntaxHighlighter(QObject *parent);
     virtual ~PythonSyntaxHighlighter();
 
-    void highlightBlock (const QString & text);
+    void highlightBlock(const QString &text);
 
 private:
-    PythonSyntaxHighlighterP* d;
+    PythonSyntaxHighlighterP *d;
 };
 
 } // namespace Gui

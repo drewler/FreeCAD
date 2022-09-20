@@ -27,9 +27,10 @@
 #include <Gui/ViewProviderPythonFeature.h>
 #include <Mod/Part/Gui/ViewProvider.h>
 
-namespace PartGui {
+namespace PartGui
+{
 
-class PartGuiExport ViewProviderCustom : public ViewProviderPart
+class PartGuiExport ViewProviderCustom: public ViewProviderPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderCustom);
 
@@ -38,11 +39,11 @@ public:
     ViewProviderCustom();
     /// destructor
     ~ViewProviderCustom() override;
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
 
 protected:
-    void onChanged(const App::Property* prop) override;
-    std::map<const App::Property*, Gui::ViewProvider*> propView;
+    void onChanged(const App::Property *prop) override;
+    std::map<const App::Property *, Gui::ViewProvider *> propView;
 };
 
 using ViewProviderPython = Gui::ViewProviderPythonFeatureT<ViewProviderPart>;
@@ -52,4 +53,3 @@ using ViewProviderCustomPython = Gui::ViewProviderPythonFeatureT<ViewProviderCus
 
 
 #endif // PARTGUI_VIEWPROVIDERPYTHON_H
-

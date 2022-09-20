@@ -23,8 +23,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QDialog>
-# include <QListIterator>
+#include <QDialog>
+#include <QListIterator>
 #endif
 
 #include <App/DocumentObject.h>
@@ -51,9 +51,9 @@ const QString FeaturePickDialog::getFeatureStatusString(const featureStatus st)
     return tr("");
 }
 
-FeaturePickDialog::FeaturePickDialog(std::vector<App::DocumentObject*>& objects,
-                                     const std::vector<featureStatus>& status)
-  : QDialog(Gui::getMainWindow()), ui(new Ui_FeaturePickDialog)
+FeaturePickDialog::FeaturePickDialog(std::vector<App::DocumentObject *> &objects,
+                                     const std::vector<featureStatus> &status)
+    : QDialog(Gui::getMainWindow()), ui(new Ui_FeaturePickDialog)
 {
     ui->setupUi(this);
 
@@ -76,9 +76,11 @@ FeaturePickDialog::FeaturePickDialog(std::vector<App::DocumentObject*>& objects,
     ui->radioXRef->setEnabled(false);
 
     std::vector<featureStatus>::const_iterator st = status.begin();
-    for (std::vector<App::DocumentObject*>::const_iterator o = objects.begin(); o != objects.end(); ++o) {
-        QListWidgetItem* item = new QListWidgetItem(QString::fromLatin1((*o)->getNameInDocument()) +
-                                                    QString::fromLatin1(" (") + getFeatureStatusString(*st) + QString::fromLatin1(")"));
+    for (std::vector<App::DocumentObject *>::const_iterator o = objects.begin(); o != objects.end();
+         ++o) {
+        QListWidgetItem *item = new QListWidgetItem(
+            QString::fromLatin1((*o)->getNameInDocument()) + QString::fromLatin1(" (")
+            + getFeatureStatusString(*st) + QString::fromLatin1(")"));
         ui->listWidget->addItem(item);
         st++;
     }
@@ -87,24 +89,30 @@ FeaturePickDialog::FeaturePickDialog(std::vector<App::DocumentObject*>& objects,
     updateList();
 }
 
-FeaturePickDialog::~FeaturePickDialog()
-{
-
-}
+FeaturePickDialog::~FeaturePickDialog() {}
 
 void FeaturePickDialog::updateList()
 {
     int index = 0;
 
-    for (std::vector<featureStatus>::const_iterator st = statuses.begin(); st != statuses.end(); st++) {
-        QListWidgetItem* item = ui->listWidget->item(index);
+    for (std::vector<featureStatus>::const_iterator st = statuses.begin(); st != statuses.end();
+         st++) {
+        QListWidgetItem *item = ui->listWidget->item(index);
 
         switch (*st) {
             case validFeature: item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled); break;
             case invalidShape: item->setFlags(Qt::NoItemFlags); break;
             case noWire: item->setFlags(Qt::NoItemFlags); break;
-            case isUsed: item->setFlags(ui->checkOtherFeature->isChecked() ? Qt::ItemIsSelectable | Qt::ItemIsEnabled : Qt::NoItemFlags); break;
-            case otherBody: item->setFlags(ui->checkOtherBody->isChecked() ? Qt::ItemIsSelectable | Qt::ItemIsEnabled : Qt::NoItemFlags); break;
+            case isUsed:
+                item->setFlags(ui->checkOtherFeature->isChecked()
+                                   ? Qt::ItemIsSelectable | Qt::ItemIsEnabled
+                                   : Qt::NoItemFlags);
+                break;
+            case otherBody:
+                item->setFlags(ui->checkOtherBody->isChecked()
+                                   ? Qt::ItemIsSelectable | Qt::ItemIsEnabled
+                                   : Qt::NoItemFlags);
+                break;
             case basePlane: item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled); break;
             case afterTip: item->setFlags(Qt::NoItemFlags); break;
         }
@@ -113,9 +121,7 @@ void FeaturePickDialog::updateList()
     }
 }
 
-void FeaturePickDialog::onCheckReverse(bool checked)
-{
-}
+void FeaturePickDialog::onCheckReverse(bool checked) {}
 
 void FeaturePickDialog::onCheckOtherFeature(bool checked)
 {
@@ -137,31 +143,26 @@ void FeaturePickDialog::onCheckOtherBody(bool checked)
     updateList();
 }
 
-void FeaturePickDialog::onUpdate(bool)
-{
-    updateList();
-}
+void FeaturePickDialog::onUpdate(bool) { updateList(); }
 
-bool FeaturePickDialog::getReverse()
-{
-    return ui->checkReverse->isChecked();
-}
+bool FeaturePickDialog::getReverse() { return ui->checkReverse->isChecked(); }
 
-std::vector<App::DocumentObject*> FeaturePickDialog::getFeatures() {
-    std::vector<App::DocumentObject*> result;
+std::vector<App::DocumentObject *> FeaturePickDialog::getFeatures()
+{
+    std::vector<App::DocumentObject *> result;
 
     for (std::vector<QString>::const_iterator s = features.begin(); s != features.end(); ++s)
-        result.push_back(App::GetApplication().getActiveDocument()->getObject(s->toLatin1().data()));
+        result.push_back(
+            App::GetApplication().getActiveDocument()->getObject(s->toLatin1().data()));
 
     return result;
 }
 
 
-
 void FeaturePickDialog::accept()
 {
     features.clear();
-    QListIterator<QListWidgetItem*> i(ui->listWidget->selectedItems());
+    QListIterator<QListWidgetItem *> i(ui->listWidget->selectedItems());
     while (i.hasNext()) {
         QString t = i.next()->text();
         t = t.left(t.indexOf(QString::fromLatin1("(")) - 1);

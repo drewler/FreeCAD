@@ -28,19 +28,21 @@
 
 class QTreeWidgetItem;
 
-namespace App {
+namespace App
+{
 class DocumentObject;
 class Property;
-}
-namespace PartGui {
+} // namespace App
+namespace PartGui
+{
 
 class Ui_Mirroring;
-class Mirroring : public QWidget
+class Mirroring: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Mirroring(QWidget* parent = nullptr);
+    explicit Mirroring(QWidget *parent = nullptr);
     ~Mirroring() override;
     bool accept();
 
@@ -55,7 +57,7 @@ private:
     std::unique_ptr<Ui_Mirroring> ui;
 };
 
-class TaskMirroring : public Gui::TaskView::TaskDialog
+class TaskMirroring: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -67,15 +69,15 @@ public:
     bool accept() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Cancel; }
-    bool isAllowedAlterDocument() const override
-    { return false; }
-    bool needsFullSpace() const override
-    { return false; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
+    bool isAllowedAlterDocument() const override { return false; }
+    bool needsFullSpace() const override { return false; }
 
 private:
-    Mirroring* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    Mirroring *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } // namespace PartGui

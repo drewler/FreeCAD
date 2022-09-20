@@ -47,15 +47,13 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_StartEndLength::StdMeshers_StartEndLength(int         hypId,
-                                                     int         studyId,
-                                                     SMESH_Gen * gen)
-     :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_StartEndLength::StdMeshers_StartEndLength(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _begLength = 1.;
-  _endLength = 10.;
-  _name = "StartEndLength";
-  _param_algo_dim = 1; // is used by SMESH_Regular_1D
+    _begLength = 1.;
+    _endLength = 10.;
+    _name = "StartEndLength";
+    _param_algo_dim = 1; // is used by SMESH_Regular_1D
 }
 
 //=============================================================================
@@ -64,9 +62,7 @@ StdMeshers_StartEndLength::StdMeshers_StartEndLength(int         hypId,
  */
 //=============================================================================
 
-StdMeshers_StartEndLength::~StdMeshers_StartEndLength()
-{
-}
+StdMeshers_StartEndLength::~StdMeshers_StartEndLength() {}
 
 //=============================================================================
 /*!
@@ -76,16 +72,14 @@ StdMeshers_StartEndLength::~StdMeshers_StartEndLength()
 
 void StdMeshers_StartEndLength::SetLength(double length, bool isStartLength)
 {
-  if ( (isStartLength ? _begLength : _endLength) != length ) {
-    if (length <= 0)
-      throw SALOME_Exception(LOCALIZED("length must be positive"));
-    if ( isStartLength )
-      _begLength = length;
-    else
-      _endLength = length;
+    if ((isStartLength ? _begLength : _endLength) != length) {
+        if (length <= 0) throw SALOME_Exception(LOCALIZED("length must be positive"));
+        if (isStartLength) _begLength = length;
+        else
+            _endLength = length;
 
-    NotifySubMeshesHypothesisModification();
-  }
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -96,7 +90,7 @@ void StdMeshers_StartEndLength::SetLength(double length, bool isStartLength)
 
 double StdMeshers_StartEndLength::GetLength(bool isStartLength) const
 {
-  return isStartLength ? _begLength : _endLength;
+    return isStartLength ? _begLength : _endLength;
 }
 
 //=============================================================================
@@ -105,34 +99,13 @@ double StdMeshers_StartEndLength::GetLength(bool isStartLength) const
  */
 //=============================================================================
 
-void StdMeshers_StartEndLength::SetReversedEdges( std::vector<int>& ids )
+void StdMeshers_StartEndLength::SetReversedEdges(std::vector<int> &ids)
 {
-  if ( ids != _edgeIDs ) {
-    _edgeIDs = ids;
+    if (ids != _edgeIDs) {
+        _edgeIDs = ids;
 
-    NotifySubMeshesHypothesisModification();
-  }
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-ostream & StdMeshers_StartEndLength::SaveTo(ostream & save)
-{
-  int listSize = _edgeIDs.size();
-  save << _begLength << " " << _endLength << " " << listSize;
-
-  if ( listSize > 0 ) {
-    for ( int i = 0; i < listSize; i++) {
-      save << " " << _edgeIDs[i];
+        NotifySubMeshesHypothesisModification();
     }
-    save << " " << _objEntry;
-  }
-
-  return save;
 }
 
 //=============================================================================
@@ -141,29 +114,17 @@ ostream & StdMeshers_StartEndLength::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_StartEndLength::LoadFrom(istream & load)
+ostream &StdMeshers_StartEndLength::SaveTo(ostream &save)
 {
-  bool isOK = true;
-  int intVal;
-  isOK = (bool)(load >> _begLength);
-  if (!isOK)
-    load.clear(ios::badbit | load.rdstate());
-  isOK = (bool)(load >> _endLength);
+    int listSize = _edgeIDs.size();
+    save << _begLength << " " << _endLength << " " << listSize;
 
-  if (!isOK)
-    load.clear(ios::badbit | load.rdstate());
-  
-  isOK = (bool)(load >> intVal);
-  if (isOK && intVal > 0) {
-    _edgeIDs.reserve( intVal );
-    for (int i = 0; i < _edgeIDs.capacity() && isOK; i++) {
-      isOK = (bool)(load >> intVal);
-      if ( isOK ) _edgeIDs.push_back( intVal );
+    if (listSize > 0) {
+        for (int i = 0; i < listSize; i++) { save << " " << _edgeIDs[i]; }
+        save << " " << _objEntry;
     }
-    isOK = (bool)(load >> _objEntry);
-  }
 
-  return load;
+    return save;
 }
 
 //=============================================================================
@@ -172,9 +133,27 @@ istream & StdMeshers_StartEndLength::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_StartEndLength & hyp)
+istream &StdMeshers_StartEndLength::LoadFrom(istream &load)
 {
-  return hyp.SaveTo( save );
+    bool isOK = true;
+    int intVal;
+    isOK = (bool)(load >> _begLength);
+    if (!isOK) load.clear(ios::badbit | load.rdstate());
+    isOK = (bool)(load >> _endLength);
+
+    if (!isOK) load.clear(ios::badbit | load.rdstate());
+
+    isOK = (bool)(load >> intVal);
+    if (isOK && intVal > 0) {
+        _edgeIDs.reserve(intVal);
+        for (int i = 0; i < _edgeIDs.capacity() && isOK; i++) {
+            isOK = (bool)(load >> intVal);
+            if (isOK) _edgeIDs.push_back(intVal);
+        }
+        isOK = (bool)(load >> _objEntry);
+    }
+
+    return load;
 }
 
 //=============================================================================
@@ -183,10 +162,15 @@ ostream & operator <<(ostream & save, StdMeshers_StartEndLength & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_StartEndLength & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+ostream &operator<<(ostream &save, StdMeshers_StartEndLength &hyp) { return hyp.SaveTo(save); }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+istream &operator>>(istream &load, StdMeshers_StartEndLength &hyp) { return hyp.LoadFrom(load); }
 
 //================================================================================
 /*!
@@ -197,41 +181,38 @@ istream & operator >>(istream & load, StdMeshers_StartEndLength & hyp)
  */
 //================================================================================
 
-bool StdMeshers_StartEndLength::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                    const TopoDS_Shape& theShape)
+bool StdMeshers_StartEndLength::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                    const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _begLength = _endLength = 0.;
+    _begLength = _endLength = 0.;
 
-  Standard_Real UMin, UMax;
-  TopLoc_Location L;
+    Standard_Real UMin, UMax;
+    TopLoc_Location L;
 
-  int nbEdges = 0;
-  TopTools_IndexedMapOfShape edgeMap;
-  TopExp::MapShapes( theShape, TopAbs_EDGE, edgeMap );
-  for ( int i = 1; i <= edgeMap.Extent(); ++i )
-  {
-    const TopoDS_Edge& edge = TopoDS::Edge( edgeMap( i ));
-    Handle(Geom_Curve) C = BRep_Tool::Curve(edge, L, UMin, UMax);
-    GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
+    int nbEdges = 0;
+    TopTools_IndexedMapOfShape edgeMap;
+    TopExp::MapShapes(theShape, TopAbs_EDGE, edgeMap);
+    for (int i = 1; i <= edgeMap.Extent(); ++i) {
+        const TopoDS_Edge &edge = TopoDS::Edge(edgeMap(i));
+        Handle(Geom_Curve) C = BRep_Tool::Curve(edge, L, UMin, UMax);
+        GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
 
-    vector< double > params;
-    SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* >( theMesh )->GetMeshDS();
-    if ( SMESH_Algo::GetNodeParamOnEdge( aMeshDS, edge, params ))
-    {
-      nbEdges++;
-      _begLength += GCPnts_AbscissaPoint::Length( AdaptCurve, params[0], params[1]);
-      int nb = params.size();
-      _endLength += GCPnts_AbscissaPoint::Length( AdaptCurve, params[nb-2], params[nb-1]);
+        vector<double> params;
+        SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
+        if (SMESH_Algo::GetNodeParamOnEdge(aMeshDS, edge, params)) {
+            nbEdges++;
+            _begLength += GCPnts_AbscissaPoint::Length(AdaptCurve, params[0], params[1]);
+            int nb = params.size();
+            _endLength += GCPnts_AbscissaPoint::Length(AdaptCurve, params[nb - 2], params[nb - 1]);
+        }
     }
-  }
-  if ( nbEdges ) {
-    _begLength /= nbEdges;
-    _endLength /= nbEdges;
-  }
-  return nbEdges;
+    if (nbEdges) {
+        _begLength /= nbEdges;
+        _endLength /= nbEdges;
+    }
+    return nbEdges;
 }
 
 //================================================================================
@@ -241,9 +222,8 @@ bool StdMeshers_StartEndLength::SetParametersByMesh(const SMESH_Mesh*   theMesh,
  */
 //================================================================================
 
-bool StdMeshers_StartEndLength::SetParametersByDefaults(const TDefaults&  dflts,
-                                                        const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_StartEndLength::SetParametersByDefaults(const TDefaults &dflts,
+                                                        const SMESH_Mesh * /*theMesh*/)
 {
-  return (_begLength = _endLength = dflts._elemLength );
+    return (_begLength = _endLength = dflts._elemLength);
 }
-

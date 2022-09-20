@@ -23,59 +23,59 @@
 
 #include "PreCompiled.h"
 #if defined(__MINGW32__)
-# define WNT // avoid conflict with GUID
+#define WNT // avoid conflict with GUID
 #endif
 #ifndef _PreComp_
-# include <gp_Trsf.hxx>
-# include <gp_Ax1.hxx>
-# include <NCollection_Vector.hxx>
-# include <BRepBuilderAPI_MakeShape.hxx>
-# include <BRepAlgoAPI_Fuse.hxx>
-# include <BRepAlgoAPI_Common.hxx>
-# include <TopTools_ListIteratorOfListOfShape.hxx>
-# include <TopExp.hxx>
-# include <TopExp_Explorer.hxx>
-# include <TopTools_IndexedMapOfShape.hxx>
-# include <Standard_Failure.hxx>
-# include <TopoDS_Face.hxx>
-# include <gp_Dir.hxx>
-# include <gp_Pln.hxx> // for Precision::Confusion()
-# include <Bnd_Box.hxx>
-# include <BRepBndLib.hxx>
-# include <BRepExtrema_DistShapeShape.hxx>
-# include <climits>
-# include <Standard_Version.hxx>
-# include <BRep_Builder.hxx>
-# include <TDocStd_Document.hxx>
-# include <XCAFApp_Application.hxx>
-# include <TDocStd_Document.hxx>
-# include <XCAFApp_Application.hxx>
-# include <XCAFDoc_DocumentTool.hxx>
-# include <XCAFDoc_ShapeTool.hxx>
-# include <XCAFDoc_ColorTool.hxx>
-# include <XCAFDoc_Location.hxx>
-# include <XCAFDoc_GraphNode.hxx>
-# include <TDF_Label.hxx>
-# include <TDF_Tool.hxx>
-# include <TDF_LabelSequence.hxx>
-# include <TDF_ChildIterator.hxx>
-# include <TDataStd_Name.hxx>
-# include <Quantity_ColorRGBA.hxx>
-# include <STEPCAFControl_Reader.hxx>
-# include <STEPControl_Writer.hxx>
-# include <IGESCAFControl_Reader.hxx>
-# include <IGESCAFControl_Writer.hxx>
-# include <IGESControl_Controller.hxx>
-# include <Interface_Static.hxx>
-# include <Transfer_TransientProcess.hxx>
-# include <XSControl_WorkSession.hxx>
-# include <TopTools_IndexedMapOfShape.hxx>
-# include <TopTools_MapOfShape.hxx>
-# include <TopExp_Explorer.hxx>
-# include <TopoDS_Iterator.hxx>
-# include <APIHeaderSection_MakeHeader.hxx>
-# include <OSD_Exception.hxx>
-# include <TDataXtd_Shape.hxx>
+#include <gp_Trsf.hxx>
+#include <gp_Ax1.hxx>
+#include <NCollection_Vector.hxx>
+#include <BRepBuilderAPI_MakeShape.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
+#include <BRepAlgoAPI_Common.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <Standard_Failure.hxx>
+#include <TopoDS_Face.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Pln.hxx> // for Precision::Confusion()
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
+#include <climits>
+#include <Standard_Version.hxx>
+#include <BRep_Builder.hxx>
+#include <TDocStd_Document.hxx>
+#include <XCAFApp_Application.hxx>
+#include <TDocStd_Document.hxx>
+#include <XCAFApp_Application.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#include <XCAFDoc_ColorTool.hxx>
+#include <XCAFDoc_Location.hxx>
+#include <XCAFDoc_GraphNode.hxx>
+#include <TDF_Label.hxx>
+#include <TDF_Tool.hxx>
+#include <TDF_LabelSequence.hxx>
+#include <TDF_ChildIterator.hxx>
+#include <TDataStd_Name.hxx>
+#include <Quantity_ColorRGBA.hxx>
+#include <STEPCAFControl_Reader.hxx>
+#include <STEPControl_Writer.hxx>
+#include <IGESCAFControl_Reader.hxx>
+#include <IGESCAFControl_Writer.hxx>
+#include <IGESControl_Controller.hxx>
+#include <Interface_Static.hxx>
+#include <Transfer_TransientProcess.hxx>
+#include <XSControl_WorkSession.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <APIHeaderSection_MakeHeader.hxx>
+#include <OSD_Exception.hxx>
+#include <TDataXtd_Shape.hxx>
 #endif
 
 #include <boost/algorithm/string.hpp>
@@ -106,50 +106,43 @@ using namespace Import;
 
 #if OCC_VERSION_HEX >= 0x070500
 // See https://dev.opencascade.org/content/occt-3d-viewer-becomes-srgb-aware
-#   define OCC_COLOR_SPACE Quantity_TOC_sRGB
+#define OCC_COLOR_SPACE Quantity_TOC_sRGB
 #else
-#   define OCC_COLOR_SPACE Quantity_TOC_RGB
+#define OCC_COLOR_SPACE Quantity_TOC_RGB
 #endif
 
 static inline App::Color convertColor(const Quantity_ColorRGBA &c)
 {
     Standard_Real r, g, b;
     c.GetRGB().Values(r, g, b, OCC_COLOR_SPACE);
-    return App::Color(static_cast<float>(r),
-                      static_cast<float>(g),
-                      static_cast<float>(b),
+    return App::Color(static_cast<float>(r), static_cast<float>(g), static_cast<float>(b),
                       1.0f - static_cast<float>(c.Alpha()));
 }
 
 #define OCAF_KEEP_PLACEMENT
 
-ImportOCAF::ImportOCAF(Handle(TDocStd_Document) h, App::Document* d, const std::string& name)
+ImportOCAF::ImportOCAF(Handle(TDocStd_Document) h, App::Document *d, const std::string &name)
     : pDoc(h), doc(d), merge(true), default_name(name)
 {
-    aShapeTool = XCAFDoc_DocumentTool::ShapeTool (pDoc->Main());
+    aShapeTool = XCAFDoc_DocumentTool::ShapeTool(pDoc->Main());
     aColorTool = XCAFDoc_DocumentTool::ColorTool(pDoc->Main());
 }
 
-ImportOCAF::~ImportOCAF()
-{
-}
+ImportOCAF::~ImportOCAF() {}
 
 void ImportOCAF::loadShapes()
 {
-    std::vector<App::DocumentObject*> lValue;
+    std::vector<App::DocumentObject *> lValue;
     myRefShapes.clear();
     loadShapes(pDoc->Main(), TopLoc_Location(), default_name, "", false, lValue);
     lValue.clear();
 }
 
-void ImportOCAF::setMerge(bool merge)
-{
-    this->merge=merge;
-}
+void ImportOCAF::setMerge(bool merge) { this->merge = merge; }
 
-void ImportOCAF::loadShapes(const TDF_Label& label, const TopLoc_Location& loc,
-                            const std::string& defaultname, const std::string& assembly, bool isRef,
-                            std::vector<App::DocumentObject*>& lValue)
+void ImportOCAF::loadShapes(const TDF_Label &label, const TopLoc_Location &loc,
+                            const std::string &defaultname, const std::string &assembly, bool isRef,
+                            std::vector<App::DocumentObject *> &lValue)
 {
     int hash = 0;
 #ifdef HAVE_TBB
@@ -160,57 +153,44 @@ void ImportOCAF::loadShapes(const TDF_Label& label, const TopLoc_Location& loc,
 
     std::vector<App::DocumentObject *> localValue;
 
-    if (aShapeTool->GetShape(label,aShape)) {
-        hash = aShape.HashCode(HashUpper);
-    }
+    if (aShapeTool->GetShape(label, aShape)) { hash = aShape.HashCode(HashUpper); }
 
     Handle(TDataStd_Name) name;
     std::string part_name = defaultname;
-    if (label.FindAttribute(TDataStd_Name::GetID(),name)) {
+    if (label.FindAttribute(TDataStd_Name::GetID(), name)) {
         TCollection_ExtendedString extstr = name->Get();
-        char* str = new char[extstr.LengthOfCString()+1];
+        char *str = new char[extstr.LengthOfCString() + 1];
         extstr.ToUTF8CString(str);
         part_name = str;
-        delete [] str;
-        if (part_name.empty()) {
-            part_name = defaultname;
-        }
+        delete[] str;
+        if (part_name.empty()) { part_name = defaultname; }
         else {
-            bool ws=true;
+            bool ws = true;
             for (std::string::iterator it = part_name.begin(); it != part_name.end(); ++it) {
                 if (*it != ' ') {
                     ws = false;
                     break;
                 }
             }
-            if (ws)
-                part_name = defaultname;
+            if (ws) part_name = defaultname;
         }
     }
 
     TopLoc_Location part_loc = loc;
     Handle(XCAFDoc_Location) hLoc;
     if (label.FindAttribute(XCAFDoc_Location::GetID(), hLoc)) {
-        if (isRef)
-            part_loc = part_loc * hLoc->Get();
+        if (isRef) part_loc = part_loc * hLoc->Get();
         else
             part_loc = hLoc->Get();
     }
 
 #ifdef FC_DEBUG
     Base::Console().Log("H:%d, N:%s, T:%d, A:%d, S:%d, C:%d, SS:%d, F:%d, R:%d, C:%d, SS:%d\n",
-        hash,
-        part_name.c_str(),
-        aShapeTool->IsTopLevel(label),
-        aShapeTool->IsAssembly(label),
-        aShapeTool->IsShape(label),
-        aShapeTool->IsCompound(label),
-        aShapeTool->IsSimpleShape(label),
-        aShapeTool->IsFree(label),
-        aShapeTool->IsReference(label),
-        aShapeTool->IsComponent(label),
-        aShapeTool->IsSubShape(label)
-    );
+                        hash, part_name.c_str(), aShapeTool->IsTopLevel(label),
+                        aShapeTool->IsAssembly(label), aShapeTool->IsShape(label),
+                        aShapeTool->IsCompound(label), aShapeTool->IsSimpleShape(label),
+                        aShapeTool->IsFree(label), aShapeTool->IsReference(label),
+                        aShapeTool->IsComponent(label), aShapeTool->IsSubShape(label));
 #endif
 
 #if defined(OCAF_KEEP_PLACEMENT)
@@ -218,9 +198,7 @@ void ImportOCAF::loadShapes(const TDF_Label& label, const TopLoc_Location& loc,
     (void)assembly;
 #else
     std::string asm_name = assembly;
-    if (aShapeTool->IsAssembly(label)) {
-        asm_name = part_name;
-    }
+    if (aShapeTool->IsAssembly(label)) { asm_name = part_name; }
 #endif
 
     TDF_Label ref;
@@ -234,15 +212,13 @@ void ImportOCAF::loadShapes(const TDF_Label& label, const TopLoc_Location& loc,
             myRefShapes.insert(aShape.HashCode(HashUpper));
 
         if (aShapeTool->IsSimpleShape(label) && (isRef || aShapeTool->IsFree(label))) {
-            if (!asm_name.empty())
-                part_name = asm_name;
+            if (!asm_name.empty()) part_name = asm_name;
 
             // TODO: The merge parameter (last one from createShape) should become an Importer/Exporter
             // option within the FreeCAD preference menu
             // Currently it is merging STEP Compound Shape into a single Shape Part::Feature which
             // is an OpenCascade computed Compound
-            if (isRef)
-                createShape(label, loc, part_name, lValue, this->merge);
+            if (isRef) createShape(label, loc, part_name, lValue, this->merge);
             else
                 createShape(label, part_loc, part_name, localValue, this->merge);
         }
@@ -258,8 +234,7 @@ void ImportOCAF::loadShapes(const TDF_Label& label, const TopLoc_Location& loc,
 
             // This is probably an Assembly let's try to create a Compound with the name
             for (TDF_ChildIterator it(label); it.More(); it.Next()) {
-                if (isRef)
-                    loadShapes(it.Value(), part_loc, part_name, asm_name, false, localValue);
+                if (isRef) loadShapes(it.Value(), part_loc, part_name, asm_name, false, localValue);
                 else
                     loadShapes(it.Value(), part_loc, part_name, asm_name, isRef, localValue);
             }
@@ -267,7 +242,8 @@ void ImportOCAF::loadShapes(const TDF_Label& label, const TopLoc_Location& loc,
             if (!localValue.empty()) {
                 if (aShapeTool->IsAssembly(label)) {
                     App::Part *pcPart = nullptr;
-                    pcPart = static_cast<App::Part*>(doc->addObject("App::Part",asm_name.c_str()));
+                    pcPart =
+                        static_cast<App::Part *>(doc->addObject("App::Part", asm_name.c_str()));
                     pcPart->Label.setValue(asm_name);
                     pcPart->addObjects(localValue);
 
@@ -277,8 +253,7 @@ void ImportOCAF::loadShapes(const TDF_Label& label, const TopLoc_Location& loc,
 
                     gp_Trsf trf;
                     Base::Matrix4D mtrx;
-                    if (part_loc.IsIdentity())
-                        trf = part_loc.Transformation();
+                    if (part_loc.IsIdentity()) trf = part_loc.Transformation();
                     else
                         trf = TopLoc_Location(part_loc.FirstDatum()).Transformation();
                     Part::TopoShape::convertToMatrix(trf, mtrx);
@@ -293,10 +268,11 @@ void ImportOCAF::loadShapes(const TDF_Label& label, const TopLoc_Location& loc,
     }
 }
 
-void ImportOCAF::createShape(const TDF_Label& label, const TopLoc_Location& loc, const std::string& name,
-                             std::vector<App::DocumentObject*>& lValue, bool mergeShape)
+void ImportOCAF::createShape(const TDF_Label &label, const TopLoc_Location &loc,
+                             const std::string &name, std::vector<App::DocumentObject *> &lValue,
+                             bool mergeShape)
 {
-    const TopoDS_Shape& aShape = aShapeTool->GetShape(label);
+    const TopoDS_Shape &aShape = aShapeTool->GetShape(label);
 #ifdef HAVE_TBB
     using namespace tbb;
     task_group g;
@@ -319,7 +295,7 @@ void ImportOCAF::createShape(const TDF_Label& label, const TopLoc_Location& loc,
             TopoDS_Compound comp;
             builder.MakeCompound(comp);
 
-/*
+            /*
             std::vector<App::Color> colors;
             for (xp.Init(aShape, TopAbs_SOLID); xp.More(); xp.Next(), ctSolids++) {
                 Quantity_Color aColor;
@@ -340,50 +316,40 @@ void ImportOCAF::createShape(const TDF_Label& label, const TopLoc_Location& loc,
             }
 */
             for (xp.Init(aShape, TopAbs_SOLID); xp.More(); xp.Next(), ctSolids++) {
-                const TopoDS_Shape& sh = xp.Current();
-                if (!sh.IsNull()) {
-                    builder.Add(comp, sh);
-                }
+                const TopoDS_Shape &sh = xp.Current();
+                if (!sh.IsNull()) { builder.Add(comp, sh); }
             }
 
             for (xp.Init(aShape, TopAbs_SHELL, TopAbs_SOLID); xp.More(); xp.Next(), ctShells++) {
-                const TopoDS_Shape& sh = xp.Current();
-                if (!sh.IsNull()) {
-                    builder.Add(comp, sh);
-                }
+                const TopoDS_Shape &sh = xp.Current();
+                if (!sh.IsNull()) { builder.Add(comp, sh); }
             }
 
             for (xp.Init(aShape, TopAbs_EDGE); xp.More(); xp.Next(), ctEdges++) {
-                const TopoDS_Shape& sh = xp.Current();
-                if (!sh.IsNull()) {
-                    builder.Add(comp, sh);
-                }
+                const TopoDS_Shape &sh = xp.Current();
+                if (!sh.IsNull()) { builder.Add(comp, sh); }
             }
 
             for (xp.Init(aShape, TopAbs_VERTEX); xp.More(); xp.Next(), ctVertices++) {
-                const TopoDS_Shape& sh = xp.Current();
-                if (!sh.IsNull()) {
-                    builder.Add(comp, sh);
-                }
+                const TopoDS_Shape &sh = xp.Current();
+                if (!sh.IsNull()) { builder.Add(comp, sh); }
             }
 
             // Ok we got a Compound which is computed
             // Just need to add it to a Part::Feature and push it to lValue
-            if (!comp.IsNull() && (ctSolids||ctShells||ctEdges||ctVertices)) {
-                Part::Feature* part = static_cast<Part::Feature*>(doc->addObject("Part::Feature"));
+            if (!comp.IsNull() && (ctSolids || ctShells || ctEdges || ctVertices)) {
+                Part::Feature *part = static_cast<Part::Feature *>(doc->addObject("Part::Feature"));
                 // Let's allocate the relative placement of the Compound from the STEP file
                 gp_Trsf trf;
                 Base::Matrix4D mtrx;
-                if ( loc.IsIdentity() )
-                     trf = loc.Transformation();
+                if (loc.IsIdentity()) trf = loc.Transformation();
                 else
-                     trf = TopLoc_Location(loc.FirstDatum()).Transformation();
+                    trf = TopLoc_Location(loc.FirstDatum()).Transformation();
                 Part::TopoShape::convertToMatrix(trf, mtrx);
                 Base::Placement pl;
                 pl.fromMatrix(mtrx);
                 part->Placement.setValue(pl);
-                if (!loc.IsIdentity())
-                    part->Shape.setValue(comp.Moved(loc));
+                if (!loc.IsIdentity()) part->Shape.setValue(comp.Moved(loc));
                 else
                     part->Shape.setValue(comp);
                 part->Label.setValue(name);
@@ -402,7 +368,7 @@ void ImportOCAF::createShape(const TDF_Label& label, const TopLoc_Location& loc,
         }
 
         if (!localValue.empty() && !mergeShape) {
-            pcPart = static_cast<App::Part*>(doc->addObject("App::Part",name.c_str()));
+            pcPart = static_cast<App::Part *>(doc->addObject("App::Part", name.c_str()));
             pcPart->Label.setValue(name);
 
             // localValue contain the objects that  must added to the local Part
@@ -410,7 +376,7 @@ void ImportOCAF::createShape(const TDF_Label& label, const TopLoc_Location& loc,
             pcPart->addObjects(localValue);
 
             // Let's compute relative placement of the Part
-/*
+            /*
             gp_Trsf trf;
             Base::Matrix4D mtrx;
             if ( loc.IsIdentity() )
@@ -425,18 +391,17 @@ void ImportOCAF::createShape(const TDF_Label& label, const TopLoc_Location& loc,
             lValue.push_back(pcPart);
         }
 
-        if (ctSolids > 0 || ctShells > 0)
-            return;
+        if (ctSolids > 0 || ctShells > 0) return;
     }
     else if (!aShape.IsNull()) {
         createShape(aShape, loc, name, lValue);
     }
 }
 
-void ImportOCAF::createShape(const TopoDS_Shape& aShape, const TopLoc_Location& loc, const std::string& name,
-                             std::vector<App::DocumentObject*>& lvalue)
+void ImportOCAF::createShape(const TopoDS_Shape &aShape, const TopLoc_Location &loc,
+                             const std::string &name, std::vector<App::DocumentObject *> &lvalue)
 {
-    Part::Feature* part = static_cast<Part::Feature*>(doc->addObject("Part::Feature"));
+    Part::Feature *part = static_cast<Part::Feature *>(doc->addObject("Part::Feature"));
 
     if (!loc.IsIdentity())
         // part->Shape.setValue(aShape.Moved(TopLoc_Location(loc.FirstDatum())));
@@ -450,13 +415,13 @@ void ImportOCAF::createShape(const TopoDS_Shape& aShape, const TopLoc_Location& 
     loadColors(part, aShape);
 }
 
-void ImportOCAF::loadColors(Part::Feature* part, const TopoDS_Shape& aShape)
+void ImportOCAF::loadColors(Part::Feature *part, const TopoDS_Shape &aShape)
 {
     Quantity_ColorRGBA aColor;
-    App::Color color(0.8f,0.8f,0.8f);
-    if (aColorTool->GetColor(aShape, XCAFDoc_ColorGen, aColor) ||
-        aColorTool->GetColor(aShape, XCAFDoc_ColorSurf, aColor) ||
-        aColorTool->GetColor(aShape, XCAFDoc_ColorCurv, aColor)) {
+    App::Color color(0.8f, 0.8f, 0.8f);
+    if (aColorTool->GetColor(aShape, XCAFDoc_ColorGen, aColor)
+        || aColorTool->GetColor(aShape, XCAFDoc_ColorSurf, aColor)
+        || aColorTool->GetColor(aShape, XCAFDoc_ColorCurv, aColor)) {
         color = convertColor(aColor);
         std::vector<App::Color> colors;
         colors.push_back(color);
@@ -464,7 +429,7 @@ void ImportOCAF::loadColors(Part::Feature* part, const TopoDS_Shape& aShape)
     }
 
     TopTools_IndexedMapOfShape faces;
-    TopExp_Explorer xp(aShape,TopAbs_FACE);
+    TopExp_Explorer xp(aShape, TopAbs_FACE);
     while (xp.More()) {
         faces.Add(xp.Current());
         xp.Next();
@@ -473,98 +438,85 @@ void ImportOCAF::loadColors(Part::Feature* part, const TopoDS_Shape& aShape)
     bool found_face_color = false;
     std::vector<App::Color> faceColors;
     faceColors.resize(faces.Extent(), color);
-    xp.Init(aShape,TopAbs_FACE);
+    xp.Init(aShape, TopAbs_FACE);
     while (xp.More()) {
-        if (aColorTool->GetColor(xp.Current(), XCAFDoc_ColorGen, aColor) ||
-            aColorTool->GetColor(xp.Current(), XCAFDoc_ColorSurf, aColor) ||
-            aColorTool->GetColor(xp.Current(), XCAFDoc_ColorCurv, aColor)) {
+        if (aColorTool->GetColor(xp.Current(), XCAFDoc_ColorGen, aColor)
+            || aColorTool->GetColor(xp.Current(), XCAFDoc_ColorSurf, aColor)
+            || aColorTool->GetColor(xp.Current(), XCAFDoc_ColorCurv, aColor)) {
             int index = faces.FindIndex(xp.Current());
             color = convertColor(aColor);
-            faceColors[index-1] = color;
+            faceColors[index - 1] = color;
             found_face_color = true;
         }
         xp.Next();
     }
 
-    if (found_face_color) {
-        applyColors(part, faceColors);
-    }
+    if (found_face_color) { applyColors(part, faceColors); }
 }
 
 // ----------------------------------------------------------------------------
 
-ImportOCAFCmd::ImportOCAFCmd(Handle(TDocStd_Document) h, App::Document* d, const std::string& name)
+ImportOCAFCmd::ImportOCAFCmd(Handle(TDocStd_Document) h, App::Document *d, const std::string &name)
     : ImportOCAF(h, d, name)
-{
-}
+{}
 
-void ImportOCAFCmd::applyColors(Part::Feature* part, const std::vector<App::Color>& colors)
+void ImportOCAFCmd::applyColors(Part::Feature *part, const std::vector<App::Color> &colors)
 {
     partColors[part] = colors;
 }
 
 // ----------------------------------------------------------------------------
 
-ImportXCAF::ImportXCAF(Handle(TDocStd_Document) h, App::Document* d, const std::string& name)
+ImportXCAF::ImportXCAF(Handle(TDocStd_Document) h, App::Document *d, const std::string &name)
     : hdoc(h), doc(d), default_name(name)
 {
-    aShapeTool = XCAFDoc_DocumentTool::ShapeTool (hdoc->Main());
+    aShapeTool = XCAFDoc_DocumentTool::ShapeTool(hdoc->Main());
     hColors = XCAFDoc_DocumentTool::ColorTool(hdoc->Main());
 }
 
-ImportXCAF::~ImportXCAF()
-{
-}
+ImportXCAF::~ImportXCAF() {}
 
 void ImportXCAF::loadShapes()
 {
     // collect sequence of labels to display
     TDF_LabelSequence shapeLabels, colorLabels;
-    aShapeTool->GetFreeShapes (shapeLabels);
+    aShapeTool->GetFreeShapes(shapeLabels);
     hColors->GetColors(colorLabels);
 
     // set presentations and show
-    for (Standard_Integer i=1; i <= shapeLabels.Length(); i++ ) {
+    for (Standard_Integer i = 1; i <= shapeLabels.Length(); i++) {
         // get the shapes and attributes
-        const TDF_Label& label = shapeLabels.Value(i);
+        const TDF_Label &label = shapeLabels.Value(i);
         loadShapes(label);
     }
     std::map<Standard_Integer, TopoDS_Shape>::iterator it;
     // go through solids
-    for (it = mySolids.begin(); it != mySolids.end(); ++it) {
-        createShape(it->second, true, true);
-    }
+    for (it = mySolids.begin(); it != mySolids.end(); ++it) { createShape(it->second, true, true); }
     // go through shells
-    for (it = myShells.begin(); it != myShells.end(); ++it) {
-        createShape(it->second, true, true);
-    }
+    for (it = myShells.begin(); it != myShells.end(); ++it) { createShape(it->second, true, true); }
     // go through compounds
-    for (it = myCompds.begin(); it != myCompds.end(); ++it) {
-        createShape(it->second, true, true);
-    }
+    for (it = myCompds.begin(); it != myCompds.end(); ++it) { createShape(it->second, true, true); }
     // do the rest
     if (!myShapes.empty()) {
         BRep_Builder builder;
         TopoDS_Compound comp;
         builder.MakeCompound(comp);
-        for (it = myShapes.begin(); it != myShapes.end(); ++it) {
-            builder.Add(comp, it->second);
-        }
+        for (it = myShapes.begin(); it != myShapes.end(); ++it) { builder.Add(comp, it->second); }
         createShape(comp, true, false);
     }
 }
 
-void ImportXCAF::createShape(const TopoDS_Shape& shape, bool perface, bool setname) const
+void ImportXCAF::createShape(const TopoDS_Shape &shape, bool perface, bool setname) const
 {
-    Part::Feature* part;
-    part = static_cast<Part::Feature*>(doc->addObject("Part::Feature", default_name.c_str()));
+    Part::Feature *part;
+    part = static_cast<Part::Feature *>(doc->addObject("Part::Feature", default_name.c_str()));
     part->Label.setValue(default_name);
     part->Shape.setValue(shape);
     std::map<Standard_Integer, Quantity_ColorRGBA>::const_iterator jt;
     jt = myColorMap.find(shape.HashCode(INT_MAX));
 
-    App::Color partColor(0.8f,0.8f,0.8f);
-#if 0//TODO
+    App::Color partColor(0.8f, 0.8f, 0.8f);
+#if 0 //TODO
     Gui::ViewProvider* vp = Gui::Application::Instance->getViewProvider(part);
     if (vp && vp->isDerivedFrom(PartGui::ViewProviderPart::getClassTypeId())) {
         if (jt != myColorMap.end()) {
@@ -583,15 +535,13 @@ void ImportXCAF::createShape(const TopoDS_Shape& shape, bool perface, bool setna
     if (setname && !myNameMap.empty()) {
         std::map<Standard_Integer, std::string>::const_iterator jt;
         jt = myNameMap.find(shape.HashCode(INT_MAX));
-        if (jt != myNameMap.end()) {
-            part->Label.setValue(jt->second);
-        }
+        if (jt != myNameMap.end()) { part->Label.setValue(jt->second); }
     }
 
     // check for colors per face
     if (perface && !myColorMap.empty()) {
         TopTools_IndexedMapOfShape faces;
-        TopExp_Explorer xp(shape,TopAbs_FACE);
+        TopExp_Explorer xp(shape, TopAbs_FACE);
         while (xp.More()) {
             faces.Add(xp.Current());
             xp.Next();
@@ -600,19 +550,19 @@ void ImportXCAF::createShape(const TopoDS_Shape& shape, bool perface, bool setna
         bool found_face_color = false;
         std::vector<App::Color> faceColors;
         faceColors.resize(faces.Extent(), partColor);
-        xp.Init(shape,TopAbs_FACE);
+        xp.Init(shape, TopAbs_FACE);
         while (xp.More()) {
             jt = myColorMap.find(xp.Current().HashCode(INT_MAX));
             if (jt != myColorMap.end()) {
                 int index = faces.FindIndex(xp.Current());
-                faceColors[index-1] = convertColor(jt->second);
+                faceColors[index - 1] = convertColor(jt->second);
                 found_face_color = true;
             }
             xp.Next();
         }
 
         if (found_face_color) {
-#if 0//TODO
+#if 0 //TODO
             Gui::ViewProvider* vp = Gui::Application::Instance->getViewProvider(part);
             if (vp && vp->isDerivedFrom(PartGui::ViewProviderPartExt::getClassTypeId())) {
                 static_cast<PartGui::ViewProviderPartExt*>(vp)->DiffuseColor.setValues(faceColors);
@@ -622,10 +572,10 @@ void ImportXCAF::createShape(const TopoDS_Shape& shape, bool perface, bool setna
     }
 }
 
-void ImportXCAF::loadShapes(const TDF_Label& label)
+void ImportXCAF::loadShapes(const TDF_Label &label)
 {
     TopoDS_Shape aShape;
-    if (aShapeTool->GetShape(label,aShape)) {
+    if (aShapeTool->GetShape(label, aShape)) {
         //if (aShapeTool->IsReference(label)) {
         //    TDF_Label reflabel;
         //    if (aShapeTool->GetReferredShape(label, reflabel)) {
@@ -659,19 +609,19 @@ void ImportXCAF::loadShapes(const TDF_Label& label)
 
         // getting color
         Quantity_ColorRGBA col;
-        if (hColors->GetColor(label, XCAFDoc_ColorGen, col) ||
-            hColors->GetColor(label, XCAFDoc_ColorSurf, col) ||
-            hColors->GetColor(label, XCAFDoc_ColorCurv, col)) {
+        if (hColors->GetColor(label, XCAFDoc_ColorGen, col)
+            || hColors->GetColor(label, XCAFDoc_ColorSurf, col)
+            || hColors->GetColor(label, XCAFDoc_ColorCurv, col)) {
             // add defined color
             myColorMap[aShape.HashCode(INT_MAX)] = col;
         }
         else {
             // http://www.opencascade.org/org/forum/thread_17107/
             TopoDS_Iterator it;
-            for (it.Initialize(aShape);it.More(); it.Next()) {
-                if (hColors->GetColor(it.Value(), XCAFDoc_ColorGen, col) ||
-                    hColors->GetColor(it.Value(), XCAFDoc_ColorSurf, col) ||
-                    hColors->GetColor(it.Value(), XCAFDoc_ColorCurv, col)) {
+            for (it.Initialize(aShape); it.More(); it.Next()) {
+                if (hColors->GetColor(it.Value(), XCAFDoc_ColorGen, col)
+                    || hColors->GetColor(it.Value(), XCAFDoc_ColorSurf, col)
+                    || hColors->GetColor(it.Value(), XCAFDoc_ColorCurv, col)) {
                     // add defined color
                     myColorMap[it.Value().HashCode(INT_MAX)] = col;
                 }
@@ -680,14 +630,13 @@ void ImportXCAF::loadShapes(const TDF_Label& label)
 
         // getting names
         Handle(TDataStd_Name) name;
-        if (label.FindAttribute(TDataStd_Name::GetID(),name)) {
+        if (label.FindAttribute(TDataStd_Name::GetID(), name)) {
             TCollection_ExtendedString extstr = name->Get();
-            char* str = new char[extstr.LengthOfCString()+1];
+            char *str = new char[extstr.LengthOfCString() + 1];
             extstr.ToUTF8CString(str);
             std::string labelName(str);
-            if (!labelName.empty())
-                myNameMap[aShape.HashCode(INT_MAX)] = labelName;
-            delete [] str;
+            if (!labelName.empty()) myNameMap[aShape.HashCode(INT_MAX)] = labelName;
+            delete[] str;
         }
 
 #if 0
@@ -704,9 +653,7 @@ void ImportXCAF::loadShapes(const TDF_Label& label)
 
         if (label.HasChild()) {
             TDF_ChildIterator it;
-            for (it.Initialize(label); it.More(); it.Next()) {
-                loadShapes(it.Value());
-            }
+            for (it.Initialize(label); it.More(); it.Next()) { loadShapes(it.Value()); }
         }
     }
 }

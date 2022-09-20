@@ -23,29 +23,33 @@
 #ifndef WORKFLOWMANAGER_H_PB7A5GCM
 #define WORKFLOWMANAGER_H_PB7A5GCM
 
-namespace App {
-    class Document;
+namespace App
+{
+class Document;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 /**
  * Defines allowded tool set provided by the workbench
  * Legacy mode provides a free PartDesign features but forbids bodies and parts
  */
-enum class Workflow {
+enum class Workflow
+{
     Undetermined = 0, ///< No workflow was chosen yet
-    Legacy = 1<<0,    ///< Old-style workflow with free features and no bodies
-    Modern = 1<<1,    ///< New-style workflow with bodies, parts etc
+    Legacy = 1 << 0,  ///< Old-style workflow with free features and no bodies
+    Modern = 1 << 1,  ///< New-style workflow with bodies, parts etc
 };
 
 /**
  * This class controls the workflow of each file.
  * It has been introduced to support legacy files migrating to the new workflow.
  */
-class PartDesignGuiExport WorkflowManager {
+class PartDesignGuiExport WorkflowManager
+{
 public:
-    virtual ~WorkflowManager ();
+    virtual ~WorkflowManager();
 
     /**
      * Lookup the workflow of the document in the map.
@@ -67,61 +71,65 @@ public:
     /**
      * Force the desired workflow in document
      */
-    void forceWorkflow (const App::Document *doc, Workflow wf);
+    void forceWorkflow(const App::Document *doc, Workflow wf);
 
     /** @name Init, Destruct an Access methods */
     //@{
     /// Creates an instance of the manager, should be called before any instance()
-    static void init ();
+    static void init();
     /// Return an instance of the WorkflofManager.
-    static WorkflowManager* instance();
+    static WorkflowManager *instance();
     /// destroy the manager
-    static void destruct ();
+    static void destruct();
     //@}
 
 private:
     /// The class is not intended to be constructed outside of itself
-    WorkflowManager ();
+    WorkflowManager();
     /// Get the signal on New document created
-    void slotNewDocument (const App::Document& doc);
+    void slotNewDocument(const App::Document &doc);
     /// Get the signal on document getting loaded
-    void slotFinishRestoreDocument (const App::Document& doc);
+    void slotFinishRestoreDocument(const App::Document &doc);
     /// Get the signal on document close and remove it from our list
-    void slotDeleteDocument (const App::Document& doc);
+    void slotDeleteDocument(const App::Document &doc);
 
     /// Guess the Workflow of the document out of it's content
     Workflow guessWorkflow(const App::Document *doc);
 
 private:
-    std::map<const App::Document*, Workflow> dwMap;
+    std::map<const App::Document *, Workflow> dwMap;
 
     boost::signals2::connection connectNewDocument;
     boost::signals2::connection connectFinishRestoreDocument;
     boost::signals2::connection connectDeleteDocument;
 
-    static WorkflowManager* _instance;
+    static WorkflowManager *_instance;
 };
 
 /// Assures that workflow of the given document is determined and returns true if it is Workflow::Legacy
-inline bool assureLegacyWorkflow (App::Document *doc) {
-    return WorkflowManager::instance()->determineWorkflow( doc ) == Workflow::Legacy ;
+inline bool assureLegacyWorkflow(App::Document *doc)
+{
+    return WorkflowManager::instance()->determineWorkflow(doc) == Workflow::Legacy;
 }
 
 /// Assures that workflow of the given document is determined and returns true if it is Workflow::Modern
-inline bool assureModernWorkflow (App::Document *doc) {
-    return WorkflowManager::instance()->determineWorkflow( doc ) == Workflow::Modern ;
+inline bool assureModernWorkflow(App::Document *doc)
+{
+    return WorkflowManager::instance()->determineWorkflow(doc) == Workflow::Modern;
 }
 
 /// Returns true if the workflow of the given document is Workflow::Legacy
-inline bool isLegacyWorkflow (App::Document *doc) {
-    return WorkflowManager::instance()->getWorkflowForDocument( doc ) == Workflow::Legacy ;
+inline bool isLegacyWorkflow(App::Document *doc)
+{
+    return WorkflowManager::instance()->getWorkflowForDocument(doc) == Workflow::Legacy;
 }
 
 /// Returns true if the workflow of the given document is Workflow::Modern
-inline bool isModernWorkflow (App::Document *doc) {
-    return WorkflowManager::instance()->getWorkflowForDocument( doc ) == Workflow::Modern ;
+inline bool isModernWorkflow(App::Document *doc)
+{
+    return WorkflowManager::instance()->getWorkflowForDocument(doc) == Workflow::Modern;
 }
 
-} /* PartDesignGui  */
+} // namespace PartDesignGui
 
 #endif /* end of include guard: WORKFLOWMANAGER_H_PB7A5GCM */

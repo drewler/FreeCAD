@@ -25,144 +25,140 @@
 
 #include "SMESH_DriverUNV.hxx"
 
-#include <iostream>     
-#include <sstream>      
+#include <iostream>
+#include <sstream>
 #include <fstream>
 #include <string>
 #include <stdexcept>
 #include <cassert>
 #include <cstdlib>
 
-namespace UNV{
-  using namespace std;
+namespace UNV
+{
+using namespace std;
 
-  const size_t theMaxLineLen = 82; // 80 for text + 2 for "\r\n"
+const size_t theMaxLineLen = 82; // 80 for text + 2 for "\r\n"
 
-  class MESHDRIVERUNV_EXPORT PrefixPrinter{
+class MESHDRIVERUNV_EXPORT PrefixPrinter
+{
     static int myCounter;
-  public:
+
+public:
     PrefixPrinter();
     ~PrefixPrinter();
 
     static string GetPrefix();
-  };
+};
 
-  /**
+/**
    * @returns \p false when error occurred, \p true otherwise.
    * Adjusts the \p in_stream to the beginning of the
    * dataset \p ds_name.
    */
-  inline bool beginning_of_dataset(std::istream& in_file, const std::string& ds_name)
-  {
-    assert (in_file.good());
-    assert (!ds_name.empty());
+inline bool beginning_of_dataset(std::istream &in_file, const std::string &ds_name)
+{
+    assert(in_file.good());
+    assert(!ds_name.empty());
 
     std::string olds, news;
 
     in_file.seekg(0);
-    while(!in_file.eof() && !in_file.fail())
-    {
-      in_file >> olds >> news;
-      /*
+    while (!in_file.eof() && !in_file.fail()) {
+        in_file >> olds >> news;
+        /*
        * a "-1" followed by a number means the beginning of a dataset
        * stop combing at the end of the file
        */
-      while( ((olds != "-1") || (news == "-1")))
-      {
-        olds = news;
-        in_file >> news;
+        while (((olds != "-1") || (news == "-1"))) {
+            olds = news;
+            in_file >> news;
 
-        if ( in_file.eof() || in_file.fail() )
-        {
-          in_file.clear();
-          return false;
+            if (in_file.eof() || in_file.fail()) {
+                in_file.clear();
+                return false;
+            }
         }
-      }
-      if (news == ds_name)
-        return true;
+        if (news == ds_name) return true;
     }
     // We didn't found the card
     // Let's rewind the file handler and return an error
     in_file.clear();
     return false;
-  }
+}
 
-  /**
+/**
    * Method for converting exponential notation
    * from "D" to "e", for example
    * \p 3.141592654D+00 \p --> \p 3.141592654e+00
    * in order to make it readable for C++.
    */
-  inline double D_to_e(std::string& number)
-  {
+inline double D_to_e(std::string &number)
+{
     /* find "D" in string, start looking at 
      * 6th element, to improve speed.
      * We dont expect a "D" earlier
      */
-    const int position = number.find("D",6);
-    if(position != std::string::npos){
-      number.replace(position, 1, "e"); 
-    }
-    return atof (number.c_str());
-  }
-  
-  /**
+    const int position = number.find("D", 6);
+    if (position != std::string::npos) { number.replace(position, 1, "e"); }
+    return atof(number.c_str());
+}
+
+/**
    * @returns \p false when file is incorrect, \p true otherwise.
    * Check file with name \p theFileName for correct terminate
    * string, i.e. the next to the last line is equal to "    -1",
    */
-  inline bool check_file(const std::string theFileName)
-  {
+inline bool check_file(const std::string theFileName)
+{
     std::ifstream in_stream(theFileName.c_str());
-    if (!in_stream)
-      return false;
+    if (!in_stream) return false;
     std::string olds, news;
-    while (!in_stream.eof()){
-      olds = news;
-      std::getline(in_stream, news, '\n');
+    while (!in_stream.eof()) {
+        olds = news;
+        std::getline(in_stream, news, '\n');
     }
     return (olds == "    -1");
-  }
+}
 
-  /*!
+/*!
    * \brief reads a whole line
    *  \param in_stream - source stream
    *  \param next - if true, first reads the current line up to the end
    *  which is necessary after reading using >> operator
    *  \retval std::string - the result line
    */
-  inline std::string read_line(std::ifstream& in_stream, const bool next=true)
-  {
+inline std::string read_line(std::ifstream &in_stream, const bool next = true)
+{
     std::string resLine;
-    std::getline( in_stream, resLine );
-    if ( next )
-      std::getline( in_stream, resLine );
+    std::getline(in_stream, resLine);
+    if (next) std::getline(in_stream, resLine);
 
-    if ( resLine.size() > 0 && resLine[ resLine.size()-1 ] == '\r' )
-      resLine.resize( resLine.size()-1 );
+    if (resLine.size() > 0 && resLine[resLine.size() - 1] == '\r')
+        resLine.resize(resLine.size() - 1);
     return resLine;
-  }
-};
+}
+}; // namespace UNV
 
 
 #ifndef MESSAGE
 
-#define MESSAGE(msg) std::cout<<__FILE__<<"["<<__LINE__<<"]::"<<msg<<endl;
+#define MESSAGE(msg) std::cout << __FILE__ << "[" << __LINE__ << "]::" << msg << endl;
 
-#define BEGMSG(msg) std::cout<<UNV::PrefixPrinter::GetPrefix()<<msg
+#define BEGMSG(msg) std::cout << UNV::PrefixPrinter::GetPrefix() << msg
 
-#define ADDMSG(msg) std::cout<<msg
+#define ADDMSG(msg) std::cout << msg
 
 #endif
 
 
 #ifndef EXCEPTION
 
-#define EXCEPTION(TYPE, MSG) {\
-  std::ostringstream aStream;\
-  aStream<<__FILE__<<"["<<__LINE__<<"]::"<<MSG;\
-  throw TYPE(aStream.str());\
-}
+#define EXCEPTION(TYPE, MSG)                                                                       \
+    {                                                                                              \
+        std::ostringstream aStream;                                                                \
+        aStream << __FILE__ << "[" << __LINE__ << "]::" << MSG;                                    \
+        throw TYPE(aStream.str());                                                                 \
+    }
 
 #endif
 

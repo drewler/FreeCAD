@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QGraphicsScene>
+#include <QGraphicsScene>
 #endif
 
 #include <Base/Console.h>
@@ -37,8 +37,7 @@
 
 using namespace TechDrawGui;
 
-QGITemplate::QGITemplate(QGSPage *scene) : QGraphicsItemGroup(),
-    pageTemplate(nullptr)
+QGITemplate::QGITemplate(QGSPage *scene) : QGraphicsItemGroup(), pageTemplate(nullptr)
 {
     setHandlesChildEvents(false);
     setCacheMode(QGraphicsItem::NoCache);
@@ -47,23 +46,16 @@ QGITemplate::QGITemplate(QGSPage *scene) : QGraphicsItemGroup(),
     scene->addItem(this);
 }
 
-QGITemplate::~QGITemplate()
-{
-    pageTemplate = nullptr;
-}
+QGITemplate::~QGITemplate() { pageTemplate = nullptr; }
 
 void QGITemplate::setTemplate(TechDraw::DrawTemplate *obj)
 {
-    if (!obj)
-        return;
+    if (!obj) return;
 
     pageTemplate = obj;
 }
 
-void QGITemplate::clearContents()
-{
-
-}
+void QGITemplate::clearContents() {}
 
 void QGITemplate::updateView(bool update)
 {

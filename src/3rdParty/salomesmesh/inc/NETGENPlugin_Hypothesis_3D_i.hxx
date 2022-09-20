@@ -39,21 +39,20 @@ class SMESH_Gen;
 
 // NETGENPlugin parameters hypothesis (3D "only" case)
 
-class NETGENPLUGIN_EXPORT  NETGENPlugin_Hypothesis_3D_i:
-  public virtual POA_NETGENPlugin::NETGENPlugin_Hypothesis_3D,
-  public NETGENPlugin_Hypothesis_i
+class NETGENPLUGIN_EXPORT NETGENPlugin_Hypothesis_3D_i
+    : public virtual POA_NETGENPlugin::NETGENPlugin_Hypothesis_3D,
+      public NETGENPlugin_Hypothesis_i
 {
- public:
-  // Constructor
-  NETGENPlugin_Hypothesis_3D_i (PortableServer::POA_ptr thePOA,
-                                int                     theStudyId,
-                                ::SMESH_Gen*            theGenImpl);
+public:
+    // Constructor
+    NETGENPlugin_Hypothesis_3D_i(PortableServer::POA_ptr thePOA, int theStudyId,
+                                 ::SMESH_Gen *theGenImpl);
 
-  // Get type name of hypothesis
-  char* GetName();
+    // Get type name of hypothesis
+    char *GetName();
 
-  // Destructor
-  virtual ~NETGENPlugin_Hypothesis_3D_i();
+    // Destructor
+    virtual ~NETGENPlugin_Hypothesis_3D_i();
 };
 
 #endif

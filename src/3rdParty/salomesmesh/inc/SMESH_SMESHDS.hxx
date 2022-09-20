@@ -28,13 +28,13 @@
 #define _SMESH_SMESHDS_HXX_
 
 #ifdef WIN32
- #if defined SMESHDS_EXPORTS
-  #define SMESHDS_EXPORT __declspec( dllexport )
- #else
-  #define SMESHDS_EXPORT __declspec( dllimport )
- #endif
+#if defined SMESHDS_EXPORTS
+#define SMESHDS_EXPORT __declspec(dllexport)
 #else
- #define SMESHDS_EXPORT
+#define SMESHDS_EXPORT __declspec(dllimport)
+#endif
+#else
+#define SMESHDS_EXPORT
 #endif
 
 #endif

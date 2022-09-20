@@ -22,8 +22,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QDateTime>
-# include <QPushButton>
+#include <QDateTime>
+#include <QPushButton>
 #endif
 
 #include "DlgRevertToBackupConfigImp.h"
@@ -38,26 +38,23 @@ namespace fs = boost::filesystem;
 
 /* TRANSLATOR Gui::Dialog::DlgRevertToBackupConfigImp */
 
-DlgRevertToBackupConfigImp::DlgRevertToBackupConfigImp(QWidget* parent)
-    : QDialog(parent)
-    , ui(new Ui_DlgRevertToBackupConfig)
+DlgRevertToBackupConfigImp::DlgRevertToBackupConfigImp(QWidget *parent)
+    : QDialog(parent), ui(new Ui_DlgRevertToBackupConfig)
 {
     ui->setupUi(this);
-    connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &DlgRevertToBackupConfigImp::onItemSelectionChanged);
+    connect(ui->listWidget, &QListWidget::itemSelectionChanged, this,
+            &DlgRevertToBackupConfigImp::onItemSelectionChanged);
 }
 
-DlgRevertToBackupConfigImp::~DlgRevertToBackupConfigImp()
-{
-}
+DlgRevertToBackupConfigImp::~DlgRevertToBackupConfigImp() {}
 
 void Gui::Dialog::DlgRevertToBackupConfigImp::onItemSelectionChanged()
 {
     auto items = ui->listWidget->selectedItems();
-    if (items.count() == 1) 
+    if (items.count() == 1)
         ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(true);
     else
         ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(false);
-
 }
 
 /**
@@ -65,19 +62,17 @@ void Gui::Dialog::DlgRevertToBackupConfigImp::onItemSelectionChanged()
  */
 void DlgRevertToBackupConfigImp::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }
 }
 
-void DlgRevertToBackupConfigImp::showEvent(QShowEvent* event)
+void DlgRevertToBackupConfigImp::showEvent(QShowEvent *event)
 {
     ui->listWidget->clear();
-    const auto& backups = Application::Instance->prefPackManager()->configBackups();
-    for (const auto& backup : backups) {
+    const auto &backups = Application::Instance->prefPackManager()->configBackups();
+    for (const auto &backup : backups) {
         auto filename = backup.filename().string();
         auto modification_date = QDateTime::fromTime_t(fs::last_write_time(backup));
         auto item = new QListWidgetItem(QLocale().toString(modification_date));
@@ -92,7 +87,8 @@ void DlgRevertToBackupConfigImp::accept()
 {
     auto items = ui->listWidget->selectedItems();
     if (items.count() != 1) {
-        Base::Console().Error(tr("No selection in dialog, cannot load backup file").toStdString().c_str());
+        Base::Console().Error(
+            tr("No selection in dialog, cannot load backup file").toStdString().c_str());
         return;
     }
     auto item = items[0];

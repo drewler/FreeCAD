@@ -34,35 +34,30 @@
 #include <iostream>
 
 
-class SMDS_EXPORT SMDS_FaceOfEdges:public SMDS_MeshFace
+class SMDS_EXPORT SMDS_FaceOfEdges: public SMDS_MeshFace
 {
-  public:
-        void Print(std::ostream & OS) const;
-        SMDS_FaceOfEdges(const SMDS_MeshEdge* edge1,
-                         const SMDS_MeshEdge* edge2,
-                         const SMDS_MeshEdge* edge3);
-        SMDS_FaceOfEdges(const SMDS_MeshEdge* edge1,
-                         const SMDS_MeshEdge* edge2,
-                         const SMDS_MeshEdge* edge3,
-                         const SMDS_MeshEdge* edge4);
-                
-        virtual SMDSAbs_ElementType  GetType() const;
-        virtual SMDSAbs_EntityType   GetEntityType() const;
-        virtual SMDSAbs_GeometryType GetGeomType() const;
-        virtual bool ChangeNodes(const SMDS_MeshNode* nodes[],
-                                 const int            nbNodes) {return false;}
-        virtual int NbNodes() const;
-        virtual int NbEdges() const;
-        virtual int NbFaces() const;
-        virtual const SMDS_MeshNode* GetNode(const int ind) const;
+public:
+    void Print(std::ostream &OS) const;
+    SMDS_FaceOfEdges(const SMDS_MeshEdge *edge1, const SMDS_MeshEdge *edge2,
+                     const SMDS_MeshEdge *edge3);
+    SMDS_FaceOfEdges(const SMDS_MeshEdge *edge1, const SMDS_MeshEdge *edge2,
+                     const SMDS_MeshEdge *edge3, const SMDS_MeshEdge *edge4);
 
-  protected:
-        virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
+    virtual SMDSAbs_ElementType GetType() const;
+    virtual SMDSAbs_EntityType GetEntityType() const;
+    virtual SMDSAbs_GeometryType GetGeomType() const;
+    virtual bool ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes) { return false; }
+    virtual int NbNodes() const;
+    virtual int NbEdges() const;
+    virtual int NbFaces() const;
+    virtual const SMDS_MeshNode *GetNode(const int ind) const;
 
-  private:
-        const SMDS_MeshEdge* myEdges[4];
-        int                  myNbEdges;
+protected:
+    virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
 
+private:
+    const SMDS_MeshEdge *myEdges[4];
+    int myNbEdges;
 };
 
 #endif

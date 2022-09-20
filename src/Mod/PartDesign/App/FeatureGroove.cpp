@@ -23,12 +23,12 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepAlgoAPI_Cut.hxx>
-# include <BRepPrimAPI_MakeRevol.hxx>
-# include <gp_Lin.hxx>
-# include <TopoDS.hxx>
-# include <TopExp_Explorer.hxx>
-# include <Precision.hxx>
+#include <BRepAlgoAPI_Cut.hxx>
+#include <BRepPrimAPI_MakeRevol.hxx>
+#include <gp_Lin.hxx>
+#include <TopoDS.hxx>
+#include <TopExp_Explorer.hxx>
+#include <Precision.hxx>
 #endif
 
 #include <Base/Exception.h>
@@ -39,33 +39,35 @@
 
 using namespace PartDesign;
 
-namespace PartDesign {
+namespace PartDesign
+{
 
 
 /* TRANSLATOR PartDesign::Groove */
 
 PROPERTY_SOURCE(PartDesign::Groove, PartDesign::ProfileBased)
 
-const App::PropertyAngle::Constraints Groove::floatAngle = { Base::toDegrees<double>(Precision::Angular()), 360.0, 1.0 };
+const App::PropertyAngle::Constraints Groove::floatAngle = {
+    Base::toDegrees<double>(Precision::Angular()), 360.0, 1.0};
 
 Groove::Groove()
 {
     addSubType = FeatureAddSub::Subtractive;
-    
-    ADD_PROPERTY_TYPE(Base,(Base::Vector3d(0.0f,0.0f,0.0f)),"Groove", App::Prop_ReadOnly, "Base");
-    ADD_PROPERTY_TYPE(Axis,(Base::Vector3d(0.0f,1.0f,0.0f)),"Groove", App::Prop_ReadOnly, "Axis");
-    ADD_PROPERTY_TYPE(Angle,(360.0),"Groove", App::Prop_None, "Angle");
+
+    ADD_PROPERTY_TYPE(Base, (Base::Vector3d(0.0f, 0.0f, 0.0f)), "Groove", App::Prop_ReadOnly,
+                      "Base");
+    ADD_PROPERTY_TYPE(Axis, (Base::Vector3d(0.0f, 1.0f, 0.0f)), "Groove", App::Prop_ReadOnly,
+                      "Axis");
+    ADD_PROPERTY_TYPE(Angle, (360.0), "Groove", App::Prop_None, "Angle");
     Angle.setConstraints(&floatAngle);
-    ADD_PROPERTY_TYPE(ReferenceAxis,(nullptr),"Groove",(App::PropertyType)(App::Prop_None),"Reference axis of Groove");
+    ADD_PROPERTY_TYPE(ReferenceAxis, (nullptr), "Groove", (App::PropertyType)(App::Prop_None),
+                      "Reference axis of Groove");
 }
 
 short Groove::mustExecute() const
 {
-    if (Placement.isTouched() ||
-        ReferenceAxis.isTouched() ||
-        Axis.isTouched() ||
-        Base.isTouched() ||
-        Angle.isTouched())
+    if (Placement.isTouched() || ReferenceAxis.isTouched() || Axis.isTouched() || Base.isTouched()
+        || Angle.isTouched())
         return 1;
     return ProfileBased::mustExecute();
 }
@@ -74,21 +76,20 @@ App::DocumentObjectExecReturn *Groove::execute()
 {
     // Validate parameters
     double angle = Angle.getValue();
-    if (angle > 360.0)
-        return new App::DocumentObjectExecReturn("Angle of groove too large");
+    if (angle > 360.0) return new App::DocumentObjectExecReturn("Angle of groove too large");
 
     angle = Base::toRadians<double>(angle);
     if (angle < Precision::Angular())
         return new App::DocumentObjectExecReturn("Angle of groove too small");
 
     // Reverse angle if selected
-    if (Reversed.getValue() && !Midplane.getValue())
-        angle *= (-1.0);
+    if (Reversed.getValue() && !Midplane.getValue()) angle *= (-1.0);
 
     TopoDS_Shape sketchshape;
     try {
         sketchshape = getVerifiedFace();
-    } catch (const Base::Exception& e) {
+    }
+    catch (const Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 
@@ -97,11 +98,12 @@ App::DocumentObjectExecReturn *Groove::execute()
     try {
         base = getBaseShape();
     }
-    catch (const Base::Exception&) {
-        std::string text(QT_TR_NOOP("The requested feature cannot be created. The reason may be that:\n"
-                                    "  - the active Body does not contain a base shape, so there is no\n"
-                                    "  material to be removed;\n"
-                                    "  - the selected sketch does not belong to the active Body."));
+    catch (const Base::Exception &) {
+        std::string text(
+            QT_TR_NOOP("The requested feature cannot be created. The reason may be that:\n"
+                       "  - the active Body does not contain a base shape, so there is no\n"
+                       "  material to be removed;\n"
+                       "  - the selected sketch does not belong to the active Body."));
         return new App::DocumentObjectExecReturn(text);
     }
 
@@ -109,9 +111,9 @@ App::DocumentObjectExecReturn *Groove::execute()
 
     // get revolve axis
     Base::Vector3d b = Base.getValue();
-    gp_Pnt pnt(b.x,b.y,b.z);
+    gp_Pnt pnt(b.x, b.y, b.z);
     Base::Vector3d v = Axis.getValue();
-    gp_Dir dir(v.x,v.y,v.z);
+    gp_Dir dir(v.x, v.y, v.z);
 
     try {
         if (sketchshape.IsNull())
@@ -120,7 +122,8 @@ App::DocumentObjectExecReturn *Groove::execute()
         // Rotate the face by half the angle to get Groove symmetric to sketch plane
         if (Midplane.getValue()) {
             gp_Trsf mov;
-            mov.SetRotation(gp_Ax1(pnt, dir), Base::toRadians<double>(Angle.getValue()) * (-1.0) / 2.0);
+            mov.SetRotation(gp_Ax1(pnt, dir),
+                            Base::toRadians<double>(Angle.getValue()) * (-1.0) / 2.0);
             TopLoc_Location loc(mov);
             sketchshape.Move(loc);
         }
@@ -135,11 +138,11 @@ App::DocumentObjectExecReturn *Groove::execute()
         // Check distance between sketchshape and axis - to avoid failures and crashes
         TopExp_Explorer xp;
         xp.Init(sketchshape, TopAbs_FACE);
-        for (;xp.More(); xp.Next()) {
+        for (; xp.More(); xp.Next()) {
             if (checkLineCrossesFace(gp_Lin(pnt, dir), TopoDS::Face(xp.Current())))
                 return new App::DocumentObjectExecReturn("Revolve axis intersects the sketch");
         }
-        
+
         // revolve the face to a solid
         BRepPrimAPI_MakeRevol RevolMaker(sketchshape, gp_Ax1(pnt, dir), angle);
 
@@ -152,8 +155,7 @@ App::DocumentObjectExecReturn *Groove::execute()
             // cut out groove to get one result object
             BRepAlgoAPI_Cut mkCut(base, result);
             // Let's check if the fusion has been successful
-            if (!mkCut.IsDone())
-                throw Base::CADKernelError("Cut out of base feature failed");
+            if (!mkCut.IsDone()) throw Base::CADKernelError("Cut out of base feature failed");
 
             // we have to get the solids (fuse sometimes creates compounds)
             TopoDS_Shape solRes = this->getSolid(mkCut.Shape());
@@ -165,24 +167,25 @@ App::DocumentObjectExecReturn *Groove::execute()
 
             int solidCount = countSolids(solRes);
             if (solidCount > 1) {
-                return new App::DocumentObjectExecReturn("Groove: Result has multiple solids. This is not supported at this time.");
+                return new App::DocumentObjectExecReturn(
+                    "Groove: Result has multiple solids. This is not supported at this time.");
             }
-            
         }
         else
             return new App::DocumentObjectExecReturn("Could not revolve the sketch!");
 
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
 
         if (std::string(e.GetMessageString()) == "TopoDS::Face")
-            return new App::DocumentObjectExecReturn("Could not create face from sketch.\n"
+            return new App::DocumentObjectExecReturn(
+                "Could not create face from sketch.\n"
                 "Intersecting sketch entities in a sketch are not allowed.");
         else
             return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
-    catch (Base::Exception& e) {
+    catch (Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 }
@@ -202,9 +205,9 @@ void Groove::updateAxis()
     getAxis(pcReferenceAxis, subReferenceAxis, base, dir, ForbiddenAxis::NotParallelWithNormal);
 
     if (dir.Length() > Precision::Confusion()) {
-        Base.setValue(base.x,base.y,base.z);
-        Axis.setValue(dir.x,dir.y,dir.z);
+        Base.setValue(base.x, base.y, base.z);
+        Axis.setValue(dir.x, dir.y, dir.z);
     }
 }
 
-}
+} // namespace PartDesign

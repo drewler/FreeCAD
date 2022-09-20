@@ -29,20 +29,17 @@
 namespace Part
 {
 
-class PartExport Spline :public Part::Feature
+class PartExport Spline: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::Spline);
 
 public:
     Spline();
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderSpline";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderSpline"; }
 };
 
 } //namespace Part
 
 
 #endif // PART_FEATUREPARTSPLINE_H
-

@@ -24,7 +24,7 @@
 //  File   : SMESHDS_Document.cxx
 //  Author : Yves FRICAUD, OCC
 //  Module : SMESH
-//  $Header: 
+//  $Header:
 //
 #include "SMESHDS_Document.hxx"
 #include "utilities.h"
@@ -33,37 +33,34 @@ using namespace std;
 
 //=======================================================================
 //function : Create
-//purpose  : 
+//purpose  :
 //=======================================================================
-SMESHDS_Document::SMESHDS_Document(int UserID):myUserID(UserID)
-{
-}
+SMESHDS_Document::SMESHDS_Document(int UserID) : myUserID(UserID) {}
 
 //=======================================================================
 //function : Destructor
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 SMESHDS_Document::~SMESHDS_Document()
 {
-  InitMeshesIterator();
-  while ( MoreMesh() )
-    delete NextMesh();
+    InitMeshesIterator();
+    while (MoreMesh()) delete NextMesh();
 }
 
 //=======================================================================
 //function : NewMesh
-//purpose  : 
+//purpose  :
 //=======================================================================
-SMESHDS_Mesh * SMESHDS_Document::NewMesh(bool theIsEmbeddedMode, int MeshID)
+SMESHDS_Mesh *SMESHDS_Document::NewMesh(bool theIsEmbeddedMode, int MeshID)
 {
-  std::map<int,SMESHDS_Mesh*>::iterator i_m =
-    myMeshes.insert( make_pair( MeshID, (SMESHDS_Mesh*)0 )).first;
-  if ( i_m->second )
-    throw SALOME_Exception("SMESHDS_Document::NewMesh(): ID of existing mesh given");
-  SMESHDS_Mesh *aNewMesh = new SMESHDS_Mesh(MeshID,theIsEmbeddedMode);
-  i_m->second = aNewMesh;
-  return aNewMesh;
+    std::map<int, SMESHDS_Mesh *>::iterator i_m =
+        myMeshes.insert(make_pair(MeshID, (SMESHDS_Mesh *)0)).first;
+    if (i_m->second)
+        throw SALOME_Exception("SMESHDS_Document::NewMesh(): ID of existing mesh given");
+    SMESHDS_Mesh *aNewMesh = new SMESHDS_Mesh(MeshID, theIsEmbeddedMode);
+    i_m->second = aNewMesh;
+    return aNewMesh;
 }
 
 //=======================================================================
@@ -72,13 +69,13 @@ SMESHDS_Mesh * SMESHDS_Document::NewMesh(bool theIsEmbeddedMode, int MeshID)
 //=======================================================================
 SMESHDS_Mesh *SMESHDS_Document::GetMesh(int MeshID)
 {
-  map<int,SMESHDS_Mesh*>::iterator it=myMeshes.find(MeshID);
-  if (it==myMeshes.end())
-  {
-    MESSAGE("SMESHDS_Document::GetMesh : ID not found");
-    return NULL;
-  }
-  else return (*it).second;
+    map<int, SMESHDS_Mesh *>::iterator it = myMeshes.find(MeshID);
+    if (it == myMeshes.end()) {
+        MESSAGE("SMESHDS_Document::GetMesh : ID not found");
+        return NULL;
+    }
+    else
+        return (*it).second;
 }
 
 //=======================================================================
@@ -87,33 +84,29 @@ SMESHDS_Mesh *SMESHDS_Document::GetMesh(int MeshID)
 //=======================================================================
 void SMESHDS_Document::RemoveMesh(int MeshID)
 {
-  map<int,SMESHDS_Mesh*>::iterator it=myMeshes.find(MeshID);
-  if (it!=myMeshes.end())
-    myMeshes.erase(it);
+    map<int, SMESHDS_Mesh *>::iterator it = myMeshes.find(MeshID);
+    if (it != myMeshes.end()) myMeshes.erase(it);
 }
 
 //=======================================================================
 //function : AddHypothesis
-//purpose  : 
+//purpose  :
 //=======================================================================
-void SMESHDS_Document::AddHypothesis(SMESHDS_Hypothesis * H)
-{
-  myHypothesis[H->GetID()]=H;
-}
+void SMESHDS_Document::AddHypothesis(SMESHDS_Hypothesis *H) { myHypothesis[H->GetID()] = H; }
 
 //=======================================================================
 //function : GetHypothesis
-//purpose  : 
+//purpose  :
 //=======================================================================
-SMESHDS_Hypothesis * SMESHDS_Document::GetHypothesis(int HypID)
+SMESHDS_Hypothesis *SMESHDS_Document::GetHypothesis(int HypID)
 {
-  map<int,SMESHDS_Hypothesis*>::iterator it=myHypothesis.find(HypID);
-  if (it==myHypothesis.end())
-  {
-    MESSAGE("SMESHDS_Document::GetHypothesis : ID not found");
-    return NULL;
-  }
-  else return (*it).second;
+    map<int, SMESHDS_Hypothesis *>::iterator it = myHypothesis.find(HypID);
+    if (it == myHypothesis.end()) {
+        MESSAGE("SMESHDS_Document::GetHypothesis : ID not found");
+        return NULL;
+    }
+    else
+        return (*it).second;
 }
 
 //=======================================================================
@@ -122,84 +115,65 @@ SMESHDS_Hypothesis * SMESHDS_Document::GetHypothesis(int HypID)
 //=======================================================================
 void SMESHDS_Document::RemoveHypothesis(int HypID)
 {
-  map<int,SMESHDS_Hypothesis*>::iterator it=myHypothesis.find(HypID);
-  if (it==myHypothesis.end())
-    MESSAGE("SMESHDS_Document::RemoveHypothesis : ID not found");
-  myHypothesis.erase(it);
+    map<int, SMESHDS_Hypothesis *>::iterator it = myHypothesis.find(HypID);
+    if (it == myHypothesis.end()) MESSAGE("SMESHDS_Document::RemoveHypothesis : ID not found");
+    myHypothesis.erase(it);
 }
 
 //=======================================================================
 //function : NbMeshes
 //purpose  :
 //=======================================================================
-int SMESHDS_Document::NbMeshes()
-{
-  return myMeshes.size();
-}
+int SMESHDS_Document::NbMeshes() { return myMeshes.size(); }
 
 //=======================================================================
 //function : NbHypothesis
 //purpose  :
 //=======================================================================
-int SMESHDS_Document::NbHypothesis()
-{
-  return myHypothesis.size();
-}
+int SMESHDS_Document::NbHypothesis() { return myHypothesis.size(); }
 
 //=======================================================================
 //function : InitMeshesIterator
 //purpose  :
 //=======================================================================
-void SMESHDS_Document::InitMeshesIterator()
-{
-  myMeshesIt=myMeshes.begin();
-}
+void SMESHDS_Document::InitMeshesIterator() { myMeshesIt = myMeshes.begin(); }
 
 //=======================================================================
 //function : NextMesh
 //purpose  :
 //=======================================================================
-SMESHDS_Mesh * SMESHDS_Document::NextMesh()
+SMESHDS_Mesh *SMESHDS_Document::NextMesh()
 {
-  SMESHDS_Mesh * toReturn=(*myMeshesIt).second;
-  myMeshesIt++;
-  return toReturn;
+    SMESHDS_Mesh *toReturn = (*myMeshesIt).second;
+    myMeshesIt++;
+    return toReturn;
 }
 
 //=======================================================================
 //function : MoreMesh
 //purpose  :
 //=======================================================================
-bool SMESHDS_Document::MoreMesh()
-{
-  return myMeshesIt!=myMeshes.end();
-}
+bool SMESHDS_Document::MoreMesh() { return myMeshesIt != myMeshes.end(); }
 
 //=======================================================================
 //function : InitHypothesisIterator
 //purpose  :
 //=======================================================================
-void SMESHDS_Document::InitHypothesisIterator()
-{
-  myHypothesisIt=myHypothesis.begin();
-}
+void SMESHDS_Document::InitHypothesisIterator() { myHypothesisIt = myHypothesis.begin(); }
 
 //=======================================================================
 //function : NextMesh
 //purpose  :
 //=======================================================================
-SMESHDS_Hypothesis * SMESHDS_Document::NextHypothesis()
+SMESHDS_Hypothesis *SMESHDS_Document::NextHypothesis()
 {
-  SMESHDS_Hypothesis * toReturn=(*myHypothesisIt).second;
-  myHypothesisIt++;
-  return toReturn;
+    SMESHDS_Hypothesis *toReturn = (*myHypothesisIt).second;
+    myHypothesisIt++;
+    return toReturn;
 }
 
 //=======================================================================
 //function : MoreMesh
 //purpose  :
 //=======================================================================
-bool SMESHDS_Document::MoreHypothesis()
-{
-  return myHypothesisIt!=myHypothesis.end();
-}
+bool SMESHDS_Document::MoreHypothesis() { return myHypothesisIt != myHypothesis.end(); }

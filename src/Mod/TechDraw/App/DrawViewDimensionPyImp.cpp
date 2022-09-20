@@ -43,34 +43,34 @@ std::string DrawViewDimensionPy::representation() const
     return std::string("<DrawViewDimension object>");
 }
 
-PyObject* DrawViewDimensionPy::getRawValue(PyObject* args)
+PyObject *DrawViewDimensionPy::getRawValue(PyObject *args)
 {
-    (void) args;
-    DrawViewDimension* dvd = getDrawViewDimensionPtr();
+    (void)args;
+    DrawViewDimension *dvd = getDrawViewDimensionPtr();
     double val = dvd->getDimValue();
-    PyObject* pyVal = PyFloat_FromDouble(val);
+    PyObject *pyVal = PyFloat_FromDouble(val);
     return pyVal;
 }
 
-PyObject* DrawViewDimensionPy::getText(PyObject* args)
+PyObject *DrawViewDimensionPy::getText(PyObject *args)
 {
-    (void) args;
-//    PyObject* asShape = Py_False;
-//    PyObject* pagePos = Py_False;
-//    if (!PyArg_ParseTuple(args, "|OO", &asShape, &pagePos)) {
-//        return 0;
-//    }
-    DrawViewDimension* dvd = getDrawViewDimensionPtr();
-    std::string  textString = dvd->getFormattedDimensionValue();
-//TODO: check multiversion code!
-    PyObject* pyText = Base::PyAsUnicodeObject(textString);
+    (void)args;
+    //    PyObject* asShape = Py_False;
+    //    PyObject* pagePos = Py_False;
+    //    if (!PyArg_ParseTuple(args, "|OO", &asShape, &pagePos)) {
+    //        return 0;
+    //    }
+    DrawViewDimension *dvd = getDrawViewDimensionPtr();
+    std::string textString = dvd->getFormattedDimensionValue();
+    //TODO: check multiversion code!
+    PyObject *pyText = Base::PyAsUnicodeObject(textString);
     return pyText;
 }
 
-PyObject* DrawViewDimensionPy::getLinearPoints(PyObject* args)
+PyObject *DrawViewDimensionPy::getLinearPoints(PyObject *args)
 {
-    (void) args;
-    DrawViewDimension* dvd = getDrawViewDimensionPtr();
+    (void)args;
+    DrawViewDimension *dvd = getDrawViewDimensionPtr();
     pointPair pts = dvd->getLinearPoints();
     Py::List ret;
     ret.append(Py::asObject(new Base::VectorPy(new Base::Vector3d(pts.first))));
@@ -78,10 +78,10 @@ PyObject* DrawViewDimensionPy::getLinearPoints(PyObject* args)
     return Py::new_reference_to(ret);
 }
 
-PyObject* DrawViewDimensionPy::getArcPoints(PyObject* args)
+PyObject *DrawViewDimensionPy::getArcPoints(PyObject *args)
 {
-    (void) args;
-    DrawViewDimension* dvd = getDrawViewDimensionPtr();
+    (void)args;
+    DrawViewDimension *dvd = getDrawViewDimensionPtr();
     arcPoints pts = dvd->getArcPoints();
     Py::List ret;
     ret.append(Py::asObject(new Base::VectorPy(new Base::Vector3d(pts.center))));
@@ -93,10 +93,10 @@ PyObject* DrawViewDimensionPy::getArcPoints(PyObject* args)
     return Py::new_reference_to(ret);
 }
 
-PyObject* DrawViewDimensionPy::getAnglePoints(PyObject* args)
+PyObject *DrawViewDimensionPy::getAnglePoints(PyObject *args)
 {
-    (void) args;
-    DrawViewDimension* dvd = getDrawViewDimensionPtr();
+    (void)args;
+    DrawViewDimension *dvd = getDrawViewDimensionPtr();
     anglePoints pts = dvd->getAnglePoints();
     Py::List ret;
     ret.append(Py::asObject(new Base::VectorPy(new Base::Vector3d(pts.ends.first))));
@@ -105,22 +105,19 @@ PyObject* DrawViewDimensionPy::getAnglePoints(PyObject* args)
     return Py::new_reference_to(ret);
 }
 
-PyObject* DrawViewDimensionPy::getArrowPositions(PyObject* args)
+PyObject *DrawViewDimensionPy::getArrowPositions(PyObject *args)
 {
-    (void) args;
-    DrawViewDimension* dvd = getDrawViewDimensionPtr();
+    (void)args;
+    DrawViewDimension *dvd = getDrawViewDimensionPtr();
     pointPair pts = dvd->getArrowPositions();
     Py::List ret;
     ret.append(Py::asObject(new Base::VectorPy(new Base::Vector3d(pts.first))));
     ret.append(Py::asObject(new Base::VectorPy(new Base::Vector3d(pts.second))));
     return Py::new_reference_to(ret);
 }
-PyObject *DrawViewDimensionPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *DrawViewDimensionPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int DrawViewDimensionPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
+int DrawViewDimensionPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
 {
     return 0;
 }

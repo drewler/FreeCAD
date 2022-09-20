@@ -39,32 +39,28 @@ class TopoDS_Face;
 class STDMESHERS_EXPORT StdMeshers_CompositeSegment_1D: public StdMeshers_Regular_1D
 {
 public:
-  StdMeshers_CompositeSegment_1D(int hypId, int studyId, SMESH_Gen* gen);
+    StdMeshers_CompositeSegment_1D(int hypId, int studyId, SMESH_Gen *gen);
 
-  virtual bool Compute(SMESH_Mesh&         aMesh,
-                       const TopoDS_Shape& aShape);
-  /*!
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
+    /*!
    * \brief Sets event listener to submeshes if necessary
     * \param subMesh - submesh where algo is set
    *
    * This method is called when a submesh gets HYP_OK algo_state.
    * After being set, event listener is notified on each event of a submesh.
    */
-  virtual void SetEventListener(SMESH_subMesh* subMesh);
+    virtual void SetEventListener(SMESH_subMesh *subMesh);
 
-   /*!
+    /*!
    * \brief Return a face side the edge belongs to
    */
-  static StdMeshers_FaceSide * GetFaceSide(SMESH_Mesh&        aMesh,
-                                           const TopoDS_Edge& anEdge,
-                                           const TopoDS_Face& aFace,
-                                           const bool         ignoreMeshed);
+    static StdMeshers_FaceSide *GetFaceSide(SMESH_Mesh &aMesh, const TopoDS_Edge &anEdge,
+                                            const TopoDS_Face &aFace, const bool ignoreMeshed);
 
-  /*!
+    /*!
    * \brief Returns algo type name
    */
-  static std::string AlgoName();
-
+    static std::string AlgoName();
 };
 
 #endif

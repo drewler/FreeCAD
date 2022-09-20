@@ -40,19 +40,22 @@ class QGIVertex;
 class QGIView;
 class QGILeaderLine;
 
-class TechDrawGuiExport QGMarker : public QObject, public QGIVertex
+class TechDrawGuiExport QGMarker: public QObject, public QGIVertex
 {
     Q_OBJECT
 public:
     explicit QGMarker(int idx);
     ~QGMarker() = default;
 
-    enum {Type = QGraphicsItem::UserType + 302};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 302
+    };
+    int type() const override { return Type; }
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void keyPressEvent(QKeyEvent * event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
     void setRadius(float radius) override;
 
@@ -67,21 +70,23 @@ protected:
 
 private:
     bool m_dragging;
-
 };
 
 //******************************************************************************
 
-class TechDrawGuiExport QGEPath : public QObject, public QGIPrimPath
+class TechDrawGuiExport QGEPath: public QObject, public QGIPrimPath
 {
     Q_OBJECT
 
 public:
-    explicit QGEPath(QGILeaderLine* leader);
+    explicit QGEPath(QGILeaderLine *leader);
     ~QGEPath() = default;
 
-    enum {Type = QGraphicsItem::UserType + 301};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 301
+    };
+    int type() const override { return Type; }
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
 
@@ -97,13 +102,13 @@ public:
     void setScale(double scale) { m_scale = scale; }
     double getScale() const { return m_scale; }
 
-    void setPoints(std::vector<QPointF>& pts) { m_ghostPoints = pts; }
+    void setPoints(std::vector<QPointF> &pts) { m_ghostPoints = pts; }
 
     void updateParent();
     void drawGhost();
 
-    void dumpGhostPoints(const char* text);
-    void dumpMarkerPos(const char* text);
+    void dumpGhostPoints(const char *text);
+    void dumpMarkerPos(const char *text);
     void setStartAdjust(double adjust);
     void setEndAdjust(double adjust);
 
@@ -127,18 +132,18 @@ protected:
 
 private:
     std::vector<QPointF> m_ghostPoints;
-    std::vector<QGMarker*> m_markers;
+    std::vector<QGMarker *> m_markers;
 
     double m_scale;
     bool m_inEdit;
 
-    QGILeaderLine* m_parentLeader;
-    QGIPrimPath* m_ghost;
+    QGILeaderLine *m_parentLeader;
+    QGIPrimPath *m_ghost;
 
     double m_startAdj;
     double m_endAdj;
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // TECHDRAWGUI_EDITABLEPATH_H

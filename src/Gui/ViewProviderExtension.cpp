@@ -24,8 +24,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <cassert>
-# include <algorithm>
+#include <cassert>
+#include <algorithm>
 #endif
 
 #include "ViewProviderExtension.h"
@@ -42,30 +42,28 @@ ViewProviderExtension::ViewProviderExtension()
     initExtensionType(Gui::ViewProviderExtension::getExtensionClassTypeId());
 }
 
-ViewProviderExtension::~ViewProviderExtension()
+ViewProviderExtension::~ViewProviderExtension() {}
+
+const ViewProviderDocumentObject *ViewProviderExtension::getExtendedViewProvider() const
 {
 
+    assert(getExtendedContainer()->isDerivedFrom(ViewProviderDocumentObject::getClassTypeId()));
+    return static_cast<const ViewProviderDocumentObject *>(getExtendedContainer());
 }
 
-const ViewProviderDocumentObject* ViewProviderExtension::getExtendedViewProvider() const{
+ViewProviderDocumentObject *ViewProviderExtension::getExtendedViewProvider()
+{
 
     assert(getExtendedContainer()->isDerivedFrom(ViewProviderDocumentObject::getClassTypeId()));
-    return static_cast<const ViewProviderDocumentObject*>(getExtendedContainer());
+    return static_cast<ViewProviderDocumentObject *>(getExtendedContainer());
 }
 
-ViewProviderDocumentObject* ViewProviderExtension::getExtendedViewProvider() {
+void ViewProviderExtension::extensionUpdateData(const App::Property *) {}
 
-    assert(getExtendedContainer()->isDerivedFrom(ViewProviderDocumentObject::getClassTypeId()));
-    return static_cast<ViewProviderDocumentObject*>(getExtendedContainer());
-}
+PyObject *ViewProviderExtension::getExtensionPyObject()
+{
 
-void ViewProviderExtension::extensionUpdateData(const App::Property*) {
-
-}
-
-PyObject* ViewProviderExtension::getExtensionPyObject() {
-
-    if (ExtensionPythonObject.is(Py::_None())){
+    if (ExtensionPythonObject.is(Py::_None())) {
         // ref counter is set to 1
         auto ext = new ViewProviderExtensionPy(this);
         ExtensionPythonObject = Py::asObject(ext);
@@ -73,9 +71,10 @@ PyObject* ViewProviderExtension::getExtensionPyObject() {
     return Py::new_reference_to(ExtensionPythonObject);
 }
 
-namespace Gui {
+namespace Gui
+{
 EXTENSION_PROPERTY_SOURCE_TEMPLATE(Gui::ViewProviderExtensionPython, Gui::ViewProviderExtension)
 
 // explicit template instantiation
 template class GuiExport ViewProviderExtensionPythonT<ViewProviderExtension>;
-}
+} // namespace Gui

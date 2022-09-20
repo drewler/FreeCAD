@@ -22,12 +22,12 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <memory>
-# include <BRepOffsetAPI_MakeFilling.hxx>
-# include <GeomAbs_Shape.hxx>
-# include <gp_Pnt.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Face.hxx>
+#include <memory>
+#include <BRepOffsetAPI_MakeFilling.hxx>
+#include <GeomAbs_Shape.hxx>
+#include <gp_Pnt.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Face.hxx>
 #endif
 
 #include <Base/VectorPy.h>
@@ -71,14 +71,15 @@ bp.surfInit()
  * \endcode
  */
 
-PyObject *BRepOffsetAPI_MakeFillingPy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *BRepOffsetAPI_MakeFillingPy::PyMake(struct _typeobject *, PyObject *,
+                                              PyObject *) // Python wrapper
 {
     // create a new instance of BRepOffsetAPI_MakeFillingPy
     return new BRepOffsetAPI_MakeFillingPy(nullptr);
 }
 
 // constructor method
-int BRepOffsetAPI_MakeFillingPy::PyInit(PyObject* args, PyObject* kwds)
+int BRepOffsetAPI_MakeFillingPy::PyInit(PyObject *args, PyObject *kwds)
 {
     int degree = 3;
     int nbPtsOnCur = 15;
@@ -89,25 +90,26 @@ int BRepOffsetAPI_MakeFillingPy::PyInit(PyObject* args, PyObject* kwds)
     double tol3d = 0.0001;
     double tolAng = 0.01;
     double tolCurv = 0.1;
-    PyObject* anisotropy = Py_False;
+    PyObject *anisotropy = Py_False;
 
-    static char* keywords[] = {"Degree", "NbPtsOnCur", "NbIter", "MaxDegree", "MaxSegments", "Tol2d",
-                               "Tol3d", "TolAng", "TolCurv", "Anisotropy", nullptr};
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|iiiiiddddO!", keywords,
-                                     &degree, &nbPtsOnCur, &nbIter, &maxDeg, &maxSegments,
-                                     &tol2d, &tol3d, &tolAng, &tolCurv, &PyBool_Type, &anisotropy))
+    static char *keywords[] = {"Degree",      "NbPtsOnCur", "NbIter", "MaxDegree",
+                               "MaxSegments", "Tol2d",      "Tol3d",  "TolAng",
+                               "TolCurv",     "Anisotropy", nullptr};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|iiiiiddddO!", keywords, &degree, &nbPtsOnCur,
+                                     &nbIter, &maxDeg, &maxSegments, &tol2d, &tol3d, &tolAng,
+                                     &tolCurv, &PyBool_Type, &anisotropy))
         return -1;
 
     try {
-        std::unique_ptr<BRepOffsetAPI_MakeFilling> ptr(new BRepOffsetAPI_MakeFilling(degree, nbPtsOnCur, nbIter,
-                                                          Base::asBoolean(anisotropy),
-                                                          tol2d, tol3d, tolAng, tolCurv, maxDeg, maxSegments));
+        std::unique_ptr<BRepOffsetAPI_MakeFilling> ptr(
+            new BRepOffsetAPI_MakeFilling(degree, nbPtsOnCur, nbIter, Base::asBoolean(anisotropy),
+                                          tol2d, tol3d, tolAng, tolCurv, maxDeg, maxSegments));
 
 
         setTwinPointer(ptr.release());
         return 0;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return -1;
     }
@@ -119,38 +121,38 @@ std::string BRepOffsetAPI_MakeFillingPy::representation() const
     return std::string("<BRepOffsetAPI_MakeFilling object>");
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::setConstrParam(PyObject *args, PyObject *kwds)
+PyObject *BRepOffsetAPI_MakeFillingPy::setConstrParam(PyObject *args, PyObject *kwds)
 {
     double tol2d = 0.00001;
     double tol3d = 0.0001;
     double tolAng = 0.01;
     double tolCurv = 0.1;
 
-    static char* keywords[] = {"Tol2d", "Tol3d", "TolAng", "TolCurv", nullptr};
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|dddd", keywords,
-                                     &tol2d, &tol3d, &tolAng, &tolCurv))
+    static char *keywords[] = {"Tol2d", "Tol3d", "TolAng", "TolCurv", nullptr};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|dddd", keywords, &tol2d, &tol3d, &tolAng,
+                                     &tolCurv))
         return nullptr;
 
     try {
         getBRepOffsetAPI_MakeFillingPtr()->SetConstrParam(tol2d, tol3d, tolAng, tolCurv);
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::setResolParam(PyObject *args, PyObject *kwds)
+PyObject *BRepOffsetAPI_MakeFillingPy::setResolParam(PyObject *args, PyObject *kwds)
 {
     int degree = 3;
     int nbPtsOnCur = 15;
     int nbIter = 2;
-    PyObject* anisotropy = Py_False;
+    PyObject *anisotropy = Py_False;
 
-    static char* keywords[] = {"Degree", "NbPtsOnCur", "NbIter", "Anisotropy", nullptr};
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|iiiO!", keywords,
-                                     &degree, &nbPtsOnCur, &nbIter, &PyBool_Type, &anisotropy))
+    static char *keywords[] = {"Degree", "NbPtsOnCur", "NbIter", "Anisotropy", nullptr};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|iiiO!", keywords, &degree, &nbPtsOnCur, &nbIter,
+                                     &PyBool_Type, &anisotropy))
         return nullptr;
 
     try {
@@ -158,39 +160,38 @@ PyObject* BRepOffsetAPI_MakeFillingPy::setResolParam(PyObject *args, PyObject *k
                                                          Base::asBoolean(anisotropy));
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::setApproxParam(PyObject *args, PyObject *kwds)
+PyObject *BRepOffsetAPI_MakeFillingPy::setApproxParam(PyObject *args, PyObject *kwds)
 {
     int maxDeg = 8;
     int maxSegments = 9;
 
-    static char* keywords[] = {"MaxDegree", "MaxSegments", nullptr};
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|ii", keywords,
-                                     &maxDeg, &maxSegments))
+    static char *keywords[] = {"MaxDegree", "MaxSegments", nullptr};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|ii", keywords, &maxDeg, &maxSegments))
         return nullptr;
 
     try {
         getBRepOffsetAPI_MakeFillingPtr()->SetApproxParam(maxDeg, maxSegments);
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::loadInitSurface(PyObject *args)
+PyObject *BRepOffsetAPI_MakeFillingPy::loadInitSurface(PyObject *args)
 {
-    PyObject* shape;
-    if (!PyArg_ParseTuple(args, "O!", &(TopoShapeFacePy::Type), &shape))
-        return nullptr;
+    PyObject *shape;
+    if (!PyArg_ParseTuple(args, "O!", &(TopoShapeFacePy::Type), &shape)) return nullptr;
 
-    TopoDS_Face face = TopoDS::Face(static_cast<TopoShapeFacePy*>(shape)->getTopoShapePtr()->getShape());
+    TopoDS_Face face =
+        TopoDS::Face(static_cast<TopoShapeFacePy *>(shape)->getTopoShapePtr()->getShape());
     if (face.IsNull()) {
         PyErr_SetString(PyExc_ReferenceError, "No valid face");
         return nullptr;
@@ -200,75 +201,77 @@ PyObject* BRepOffsetAPI_MakeFillingPy::loadInitSurface(PyObject *args)
         getBRepOffsetAPI_MakeFillingPtr()->LoadInitSurface(face);
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::add(PyObject *args, PyObject *kwds)
+PyObject *BRepOffsetAPI_MakeFillingPy::add(PyObject *args, PyObject *kwds)
 {
     // 1st
-    PyObject* pnt;
-    static char* keywords_pnt[] = {"Point", nullptr};
-    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!", keywords_pnt,
-                                    &Base::VectorPy::Type, &pnt)) {
+    PyObject *pnt;
+    static char *keywords_pnt[] = {"Point", nullptr};
+    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!", keywords_pnt, &Base::VectorPy::Type, &pnt)) {
         try {
-            Base::Vector3d vec = static_cast<Base::VectorPy*>(pnt)->value();
+            Base::Vector3d vec = static_cast<Base::VectorPy *>(pnt)->value();
             getBRepOffsetAPI_MakeFillingPtr()->Add(gp_Pnt(vec.x, vec.y, vec.z));
             Py_Return;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return nullptr;
         }
     }
 
     // 2nd
-    PyObject* support;
+    PyObject *support;
     int order;
-    static char* keywords_sup_ord[] = {"Support", "Order", nullptr};
+    static char *keywords_sup_ord[] = {"Support", "Order", nullptr};
     PyErr_Clear();
-    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!i", keywords_sup_ord,
-                                    &TopoShapeFacePy::Type, &support, &order)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!i", keywords_sup_ord, &TopoShapeFacePy::Type,
+                                    &support, &order)) {
         try {
-            TopoDS_Face face = TopoDS::Face(static_cast<TopoShapeFacePy*>(support)->getTopoShapePtr()->getShape());
+            TopoDS_Face face = TopoDS::Face(
+                static_cast<TopoShapeFacePy *>(support)->getTopoShapePtr()->getShape());
             if (face.IsNull()) {
                 PyErr_SetString(PyExc_ReferenceError, "No valid face");
                 return nullptr;
             }
 
             if (order < 0 || order > 2) {
-                PyErr_SetString(PyExc_ReferenceError, "Order must be in the [0, 2] with 0 -> C0, 1 -> G1, 2 -> G2");
+                PyErr_SetString(PyExc_ReferenceError,
+                                "Order must be in the [0, 2] with 0 -> C0, 1 -> G1, 2 -> G2");
                 return nullptr;
             }
 
             getBRepOffsetAPI_MakeFillingPtr()->Add(face, static_cast<GeomAbs_Shape>(order));
             Py_Return;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return nullptr;
         }
     }
 
     // 3rd
-    PyObject* constr;
-    PyObject* isbound = Py_True;
-    static char* keywords_const[] = {"Constraint", "Order", "IsBound", nullptr};
+    PyObject *constr;
+    PyObject *isbound = Py_True;
+    static char *keywords_const[] = {"Constraint", "Order", "IsBound", nullptr};
     PyErr_Clear();
-    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!i|O!", keywords_const,
-                                    &TopoShapeEdgePy::Type, &constr,
-                                    &order, &PyBool_Type, isbound)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!i|O!", keywords_const, &TopoShapeEdgePy::Type,
+                                    &constr, &order, &PyBool_Type, isbound)) {
         try {
-            TopoDS_Edge edge = TopoDS::Edge(static_cast<TopoShapeEdgePy*>(constr)->getTopoShapePtr()->getShape());
+            TopoDS_Edge edge =
+                TopoDS::Edge(static_cast<TopoShapeEdgePy *>(constr)->getTopoShapePtr()->getShape());
             if (edge.IsNull()) {
                 PyErr_SetString(PyExc_ReferenceError, "No valid constraint edge");
                 return nullptr;
             }
 
             if (order < 0 || order > 2) {
-                PyErr_SetString(PyExc_ReferenceError, "Order must be in the [0, 2] with 0 -> C0, 1 -> G1, 2 -> G2");
+                PyErr_SetString(PyExc_ReferenceError,
+                                "Order must be in the [0, 2] with 0 -> C0, 1 -> G1, 2 -> G2");
                 return nullptr;
             }
 
@@ -276,33 +279,35 @@ PyObject* BRepOffsetAPI_MakeFillingPy::add(PyObject *args, PyObject *kwds)
                                                    Base::asBoolean(isbound));
             Py_Return;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return nullptr;
         }
     }
 
     // 4th
-    static char* keywords_const_sup[] = {"Constraint", "Support", "Order", "IsBound", nullptr};
+    static char *keywords_const_sup[] = {"Constraint", "Support", "Order", "IsBound", nullptr};
     PyErr_Clear();
     if (PyArg_ParseTupleAndKeywords(args, kwds, "O!O!i|O!", keywords_const_sup,
-                                    &TopoShapeEdgePy::Type, &constr,
-                                    &TopoShapeFacePy::Type, &support,
-                                    &order, &PyBool_Type, isbound)) {
+                                    &TopoShapeEdgePy::Type, &constr, &TopoShapeFacePy::Type,
+                                    &support, &order, &PyBool_Type, isbound)) {
         try {
-            TopoDS_Edge edge = TopoDS::Edge(static_cast<TopoShapeEdgePy*>(constr)->getTopoShapePtr()->getShape());
+            TopoDS_Edge edge =
+                TopoDS::Edge(static_cast<TopoShapeEdgePy *>(constr)->getTopoShapePtr()->getShape());
             if (edge.IsNull()) {
                 PyErr_SetString(PyExc_ReferenceError, "No valid constraint edge");
                 return nullptr;
             }
-            TopoDS_Face face = TopoDS::Face(static_cast<TopoShapeFacePy*>(support)->getTopoShapePtr()->getShape());
+            TopoDS_Face face = TopoDS::Face(
+                static_cast<TopoShapeFacePy *>(support)->getTopoShapePtr()->getShape());
             if (face.IsNull()) {
                 PyErr_SetString(PyExc_ReferenceError, "No valid face");
                 return nullptr;
             }
 
             if (order < 0 || order > 2) {
-                PyErr_SetString(PyExc_ReferenceError, "Order must be in the [0, 2] with 0 -> C0, 1 -> G1, 2 -> G2");
+                PyErr_SetString(PyExc_ReferenceError,
+                                "Order must be in the [0, 2] with 0 -> C0, 1 -> G1, 2 -> G2");
                 return nullptr;
             }
 
@@ -310,7 +315,7 @@ PyObject* BRepOffsetAPI_MakeFillingPy::add(PyObject *args, PyObject *kwds)
                                                    Base::asBoolean(isbound));
             Py_Return;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return nullptr;
         }
@@ -318,26 +323,28 @@ PyObject* BRepOffsetAPI_MakeFillingPy::add(PyObject *args, PyObject *kwds)
 
     // 5th
     double u, v;
-    static char* keywords_uv[] = {"U", "V", "Support", "Order", nullptr};
+    static char *keywords_uv[] = {"U", "V", "Support", "Order", nullptr};
     PyErr_Clear();
-    if (PyArg_ParseTupleAndKeywords(args, kwds, "ddO!i", keywords_uv,
-                                    &u, &v, &TopoShapeFacePy::Type, &support, &order)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwds, "ddO!i", keywords_uv, &u, &v,
+                                    &TopoShapeFacePy::Type, &support, &order)) {
         try {
-            TopoDS_Face face = TopoDS::Face(static_cast<TopoShapeFacePy*>(support)->getTopoShapePtr()->getShape());
+            TopoDS_Face face = TopoDS::Face(
+                static_cast<TopoShapeFacePy *>(support)->getTopoShapePtr()->getShape());
             if (face.IsNull()) {
                 PyErr_SetString(PyExc_ReferenceError, "No valid face");
                 return nullptr;
             }
 
             if (order < 0 || order > 2) {
-                PyErr_SetString(PyExc_ReferenceError, "Order must be in the [0, 2] with 0 -> C0, 1 -> G1, 2 -> G2");
+                PyErr_SetString(PyExc_ReferenceError,
+                                "Order must be in the [0, 2] with 0 -> C0, 1 -> G1, 2 -> G2");
                 return nullptr;
             }
 
             getBRepOffsetAPI_MakeFillingPtr()->Add(u, v, face, static_cast<GeomAbs_Shape>(order));
             Py_Return;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return nullptr;
         }
@@ -347,108 +354,102 @@ PyObject* BRepOffsetAPI_MakeFillingPy::add(PyObject *args, PyObject *kwds)
     return nullptr;
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::build(PyObject *args)
+PyObject *BRepOffsetAPI_MakeFillingPy::build(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     try {
         getBRepOffsetAPI_MakeFillingPtr()->Build();
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::isDone(PyObject *args)
+PyObject *BRepOffsetAPI_MakeFillingPy::isDone(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     try {
         Standard_Boolean ok = getBRepOffsetAPI_MakeFillingPtr()->IsDone();
         return Py_BuildValue("O", (ok ? Py_True : Py_False));
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::G0Error(PyObject *args)
+PyObject *BRepOffsetAPI_MakeFillingPy::G0Error(PyObject *args)
 {
     int index = 0;
-    if (!PyArg_ParseTuple(args, "|i", &index))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "|i", &index)) return nullptr;
 
     try {
         Standard_Real v = index < 1 ? getBRepOffsetAPI_MakeFillingPtr()->G0Error()
                                     : getBRepOffsetAPI_MakeFillingPtr()->G0Error(index);
         return PyFloat_FromDouble(v);
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::G1Error(PyObject *args)
+PyObject *BRepOffsetAPI_MakeFillingPy::G1Error(PyObject *args)
 {
     int index = 0;
-    if (!PyArg_ParseTuple(args, "|i", &index))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "|i", &index)) return nullptr;
 
     try {
         Standard_Real v = index < 1 ? getBRepOffsetAPI_MakeFillingPtr()->G1Error()
                                     : getBRepOffsetAPI_MakeFillingPtr()->G1Error(index);
         return PyFloat_FromDouble(v);
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::G2Error(PyObject *args)
+PyObject *BRepOffsetAPI_MakeFillingPy::G2Error(PyObject *args)
 {
     int index = 0;
-    if (!PyArg_ParseTuple(args, "|i", &index))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "|i", &index)) return nullptr;
 
     try {
         Standard_Real v = index < 1 ? getBRepOffsetAPI_MakeFillingPtr()->G2Error()
                                     : getBRepOffsetAPI_MakeFillingPtr()->G2Error(index);
         return PyFloat_FromDouble(v);
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* BRepOffsetAPI_MakeFillingPy::shape(PyObject *args)
+PyObject *BRepOffsetAPI_MakeFillingPy::shape(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     try {
-        const TopoDS_Shape& shape = this->getBRepOffsetAPI_MakeFillingPtr()->Shape();
+        const TopoDS_Shape &shape = this->getBRepOffsetAPI_MakeFillingPtr()->Shape();
         return new TopoShapePy(new TopoShape(shape));
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject *BRepOffsetAPI_MakeFillingPy::getCustomAttributes(const char* /*attr*/) const
+PyObject *BRepOffsetAPI_MakeFillingPy::getCustomAttributes(const char * /*attr*/) const
 {
     return nullptr;
 }
 
-int BRepOffsetAPI_MakeFillingPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
+int BRepOffsetAPI_MakeFillingPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
 {
     return 0;
 }

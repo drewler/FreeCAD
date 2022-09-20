@@ -21,7 +21,6 @@
  ***************************************************************************/
 
 
-
 #ifndef APP_FEATURECUSTOM_H
 #define APP_FEATURECUSTOM_H
 
@@ -39,8 +38,7 @@ class Property;
  * it has no support for in Python written feature classes.
  * @author Werner Mayer
  */
-template <class FeatureT>
-class FeatureCustomT : public FeatureT
+template<class FeatureT> class FeatureCustomT: public FeatureT
 {
     PROPERTY_HEADER(App::FeatureCustomT<FeatureT>);
 
@@ -51,43 +49,25 @@ public:
 
     /** @name methods override DocumentObject */
     //@{
-    short mustExecute() const {
-        return FeatureT::mustExecute();
-    }
+    short mustExecute() const { return FeatureT::mustExecute(); }
     /// recalculate the Feature
-    virtual DocumentObjectExecReturn *execute() {
-        return FeatureT::execute();
-    }
+    virtual DocumentObjectExecReturn *execute() { return FeatureT::execute(); }
     /// returns the type name of the ViewProvider
-    virtual const char* getViewProviderName() const {
-        return FeatureT::getViewProviderName();
-    }
+    virtual const char *getViewProviderName() const { return FeatureT::getViewProviderName(); }
 
-    PyObject *getPyObject() {
-        return FeatureT::getPyObject();
-    }
-    void setPyObject(PyObject *obj) {
-        FeatureT::setPyObject(obj);
-    }
+    PyObject *getPyObject() { return FeatureT::getPyObject(); }
+    void setPyObject(PyObject *obj) { FeatureT::setPyObject(obj); }
 
 protected:
-    virtual void onBeforeChange(const Property* prop) {
-        FeatureT::onBeforeChange(prop);
-    }
-    virtual void onChanged(const Property* prop) {
-        FeatureT::onChanged(prop);
-    }
-    virtual void onDocumentRestored() {
-        FeatureT::onDocumentRestored();
-    }
-    virtual void onSettingDocument() {
-        FeatureT::onSettingDocument();
-    }
+    virtual void onBeforeChange(const Property *prop) { FeatureT::onBeforeChange(prop); }
+    virtual void onChanged(const Property *prop) { FeatureT::onChanged(prop); }
+    virtual void onDocumentRestored() { FeatureT::onDocumentRestored(); }
+    virtual void onSettingDocument() { FeatureT::onSettingDocument(); }
 
-    FeatureCustomT(const FeatureCustomT&) = delete;
-    FeatureCustomT(FeatureCustomT&&) = delete;
-    FeatureCustomT& operator= (const FeatureCustomT&) = delete;
-    FeatureCustomT& operator= (FeatureCustomT&&) = delete;
+    FeatureCustomT(const FeatureCustomT &) = delete;
+    FeatureCustomT(FeatureCustomT &&) = delete;
+    FeatureCustomT &operator=(const FeatureCustomT &) = delete;
+    FeatureCustomT &operator=(FeatureCustomT &&) = delete;
 };
 
 } //namespace App

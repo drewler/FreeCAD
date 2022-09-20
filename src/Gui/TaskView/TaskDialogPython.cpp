@@ -23,9 +23,9 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
-# include <QFile>
-# include <QPointer>
+#include <sstream>
+#include <QFile>
+#include <QPointer>
 #endif
 
 #include <Base/Interpreter.h>
@@ -43,12 +43,11 @@
 using namespace Gui;
 using namespace Gui::TaskView;
 
-ControlPy* ControlPy::instance = nullptr;
+ControlPy *ControlPy::instance = nullptr;
 
-ControlPy* ControlPy::getInstance()
+ControlPy *ControlPy::getInstance()
 {
-    if (!instance)
-        instance = new ControlPy();
+    if (!instance) instance = new ControlPy();
     return instance;
 }
 
@@ -60,47 +59,43 @@ void ControlPy::init_type()
     behaviors().supportRepr();
     behaviors().supportGetattr();
     behaviors().supportSetattr();
-    add_varargs_method("showDialog",&ControlPy::showDialog,
-                        "show the given dialog in the task panel\n"
-                        "showDialog(dialog)\n"
-                        "--\n"
-                        "if a task is already active a RuntimeError is raised");
-    add_varargs_method("activeDialog",&ControlPy::activeDialog,
-                        "check if a dialog is active in the task panel\n"
-                        "activeDialog() --> bool");
-    add_varargs_method("closeDialog",&ControlPy::closeDialog,
-                        "close the active dialog\n"
-                        "closeDialog()");
-    add_varargs_method("addTaskWatcher",&ControlPy::addTaskWatcher,
-                        "install a (list of) TaskWatcher\n"
-                        "addTaskWatcher(TaskWatcher | list)");
-    add_varargs_method("clearTaskWatcher",&ControlPy::clearTaskWatcher,
-                        "remove all TaskWatchers\n"
-                        "clearTaskWatcher()");
-    add_varargs_method("isAllowedAlterDocument",&ControlPy::isAllowedAlterDocument,
-                        "return the permission to alter the current Document\n"
-                        "isAllowedAlterDocument() --> bool");
-    add_varargs_method("isAllowedAlterView",&ControlPy::isAllowedAlterView,
-                        "return the permission to alter the current View\n"
-                        "isAllowedAlterView() --> bool");
-    add_varargs_method("isAllowedAlterSelection",&ControlPy::isAllowedAlterSelection,
-                        "return the permission to alter the current Selection\n"
-                        "isAllowedAlterSelection() --> bool");
-    add_varargs_method("showTaskView",&ControlPy::showTaskView,
-                        "show the Task panel\n"
-                        "showTaskView()");
-    add_varargs_method("showModelView",&ControlPy::showModelView,
-                        "show the Model panel\n"
-                        "showModelView()");
+    add_varargs_method("showDialog", &ControlPy::showDialog,
+                       "show the given dialog in the task panel\n"
+                       "showDialog(dialog)\n"
+                       "--\n"
+                       "if a task is already active a RuntimeError is raised");
+    add_varargs_method("activeDialog", &ControlPy::activeDialog,
+                       "check if a dialog is active in the task panel\n"
+                       "activeDialog() --> bool");
+    add_varargs_method("closeDialog", &ControlPy::closeDialog,
+                       "close the active dialog\n"
+                       "closeDialog()");
+    add_varargs_method("addTaskWatcher", &ControlPy::addTaskWatcher,
+                       "install a (list of) TaskWatcher\n"
+                       "addTaskWatcher(TaskWatcher | list)");
+    add_varargs_method("clearTaskWatcher", &ControlPy::clearTaskWatcher,
+                       "remove all TaskWatchers\n"
+                       "clearTaskWatcher()");
+    add_varargs_method("isAllowedAlterDocument", &ControlPy::isAllowedAlterDocument,
+                       "return the permission to alter the current Document\n"
+                       "isAllowedAlterDocument() --> bool");
+    add_varargs_method("isAllowedAlterView", &ControlPy::isAllowedAlterView,
+                       "return the permission to alter the current View\n"
+                       "isAllowedAlterView() --> bool");
+    add_varargs_method("isAllowedAlterSelection", &ControlPy::isAllowedAlterSelection,
+                       "return the permission to alter the current Selection\n"
+                       "isAllowedAlterSelection() --> bool");
+    add_varargs_method("showTaskView", &ControlPy::showTaskView,
+                       "show the Task panel\n"
+                       "showTaskView()");
+    add_varargs_method("showModelView", &ControlPy::showModelView,
+                       "show the Model panel\n"
+                       "showModelView()");
 }
 
-ControlPy::ControlPy()
-{
-}
+ControlPy::ControlPy() {}
 
-ControlPy::~ControlPy()
-{
-}
+ControlPy::~ControlPy() {}
 
 Py::Object ControlPy::repr()
 {
@@ -110,108 +105,94 @@ Py::Object ControlPy::repr()
     return Py::String(s_out.str());
 }
 
-Py::Object ControlPy::showDialog(const Py::Tuple& args)
+Py::Object ControlPy::showDialog(const Py::Tuple &args)
 {
-    PyObject* arg0;
-    if (!PyArg_ParseTuple(args.ptr(), "O", &arg0))
-        throw Py::Exception();
-    Gui::TaskView::TaskDialog* act = Gui::Control().activeDialog();
-    if (act)
-        throw Py::RuntimeError("Active task dialog found");
+    PyObject *arg0;
+    if (!PyArg_ParseTuple(args.ptr(), "O", &arg0)) throw Py::Exception();
+    Gui::TaskView::TaskDialog *act = Gui::Control().activeDialog();
+    if (act) throw Py::RuntimeError("Active task dialog found");
     auto dlg = new TaskDialogPython(Py::Object(arg0));
     Gui::Control().showDialog(dlg);
     return Py::None();
 }
 
-Py::Object ControlPy::activeDialog(const Py::Tuple& args)
+Py::Object ControlPy::activeDialog(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
-    Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
+    Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
     return Py::Boolean(dlg != nullptr);
 }
 
-Py::Object ControlPy::closeDialog(const Py::Tuple& args)
+Py::Object ControlPy::closeDialog(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
     Gui::Control().closeDialog();
     return Py::None();
 }
 
-Py::Object ControlPy::addTaskWatcher(const Py::Tuple& args)
+Py::Object ControlPy::addTaskWatcher(const Py::Tuple &args)
 {
-    PyObject* arg0;
-    if (!PyArg_ParseTuple(args.ptr(), "O", &arg0))
-        throw Py::Exception();
+    PyObject *arg0;
+    if (!PyArg_ParseTuple(args.ptr(), "O", &arg0)) throw Py::Exception();
 
-    std::vector<Gui::TaskView::TaskWatcher*> watcher;
+    std::vector<Gui::TaskView::TaskWatcher *> watcher;
     Py::Sequence list(arg0);
     for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {
         auto w = new TaskWatcherPython(*it);
         watcher.push_back(w);
     }
 
-    Gui::TaskView::TaskView* taskView = Gui::Control().taskPanel();
-    if (taskView)
-        taskView->addTaskWatcher(watcher);
+    Gui::TaskView::TaskView *taskView = Gui::Control().taskPanel();
+    if (taskView) taskView->addTaskWatcher(watcher);
     return Py::None();
 }
 
-Py::Object ControlPy::clearTaskWatcher(const Py::Tuple& args)
+Py::Object ControlPy::clearTaskWatcher(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
-    Gui::TaskView::TaskView* taskView = Gui::Control().taskPanel();
-    if (taskView)
-        taskView->clearTaskWatcher();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
+    Gui::TaskView::TaskView *taskView = Gui::Control().taskPanel();
+    if (taskView) taskView->clearTaskWatcher();
     return Py::None();
 }
 
-Py::Object ControlPy::isAllowedAlterDocument(const Py::Tuple& args)
+Py::Object ControlPy::isAllowedAlterDocument(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
     bool ok = Gui::Control().isAllowedAlterDocument();
     return Py::Boolean(ok);
 }
 
-Py::Object ControlPy::isAllowedAlterView(const Py::Tuple& args)
+Py::Object ControlPy::isAllowedAlterView(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
     bool ok = Gui::Control().isAllowedAlterView();
     return Py::Boolean(ok);
 }
 
-Py::Object ControlPy::isAllowedAlterSelection(const Py::Tuple& args)
+Py::Object ControlPy::isAllowedAlterSelection(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
     bool ok = Gui::Control().isAllowedAlterSelection();
     return Py::Boolean(ok);
 }
 
-Py::Object ControlPy::showTaskView(const Py::Tuple& args)
+Py::Object ControlPy::showTaskView(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
     Gui::Control().showTaskView();
     return Py::None();
 }
 
-Py::Object ControlPy::showModelView(const Py::Tuple& args)
+Py::Object ControlPy::showModelView(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
     Gui::Control().showModelView();
     return Py::None();
 }
 
 // ------------------------------------------------------------------
 
-TaskWatcherPython::TaskWatcherPython(const Py::Object& o)
-  : TaskWatcher(nullptr), watcher(o)
+TaskWatcherPython::TaskWatcherPython(const Py::Object &o) : TaskWatcher(nullptr), watcher(o)
 {
     QString title;
     if (watcher.hasAttr(std::string("title"))) {
@@ -236,25 +217,22 @@ TaskWatcherPython::TaskWatcherPython(const Py::Object& o)
             Py::String name(*it);
             std::string s = (std::string)name;
             Command *c = mgr.getCommandByName(s.c_str());
-            if (c)
-                c->addTo(tb);
+            if (c) c->addTo(tb);
         }
     }
 
     if (watcher.hasAttr(std::string("widgets"))) {
-        if (!tb && !title.isEmpty())
-            tb = new Gui::TaskView::TaskBox(icon, title, true, nullptr);
+        if (!tb && !title.isEmpty()) tb = new Gui::TaskView::TaskBox(icon, title, true, nullptr);
         Py::Sequence list(watcher.getAttr(std::string("widgets")));
 
         Gui::PythonWrapper wrap;
         if (wrap.loadCoreModule()) {
             for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {
-                QObject* object = wrap.toQObject(*it);
+                QObject *object = wrap.toQObject(*it);
                 if (object) {
-                    QWidget* w = qobject_cast<QWidget*>(object);
+                    QWidget *w = qobject_cast<QWidget *>(object);
                     if (w) {
-                        if (tb)
-                            tb->groupLayout()->addWidget(w);
+                        if (tb) tb->groupLayout()->addWidget(w);
                         else
                             Content.push_back(w);
                     }
@@ -274,7 +252,7 @@ TaskWatcherPython::TaskWatcherPython(const Py::Object& o)
 
 TaskWatcherPython::~TaskWatcherPython()
 {
-    std::vector< QPointer<QWidget> > guarded;
+    std::vector<QPointer<QWidget>> guarded;
     guarded.insert(guarded.begin(), Content.begin(), Content.end());
     Content.clear();
     Base::PyGILStateLocker lock;
@@ -293,20 +271,19 @@ bool TaskWatcherPython::shouldShow()
             return (bool)ret;
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
 
-    if (!this->Filter.empty())
-        return match();
+    if (!this->Filter.empty()) return match();
     else
         return TaskWatcher::shouldShow();
 }
 
 // ------------------------------------------------------------------
 
-TaskDialogPython::TaskDialogPython(const Py::Object& o) : dlg(o)
+TaskDialogPython::TaskDialogPython(const Py::Object &o) : dlg(o)
 {
     if (dlg.hasAttr(std::string("ui"))) {
         UiLoader loader;
@@ -317,27 +294,23 @@ TaskDialogPython::TaskDialogPython(const Py::Object& o) : dlg(o)
         fn = QString::fromUtf8(path.c_str());
 
         QFile file(fn);
-        QWidget* form = nullptr;
-        if (file.open(QFile::ReadOnly))
-            form = loader.load(&file, nullptr);
+        QWidget *form = nullptr;
+        if (file.open(QFile::ReadOnly)) form = loader.load(&file, nullptr);
         file.close();
         if (form) {
-            auto taskbox = new Gui::TaskView::TaskBox(
-                QPixmap(icon), form->windowTitle(), true, nullptr);
+            auto taskbox =
+                new Gui::TaskView::TaskBox(QPixmap(icon), form->windowTitle(), true, nullptr);
             taskbox->groupLayout()->addWidget(form);
             Content.push_back(taskbox);
         }
         else {
-            Base::Console().Error("Failed to load UI file from '%s'\n",
-                (const char*)fn.toUtf8());
+            Base::Console().Error("Failed to load UI file from '%s'\n", (const char *)fn.toUtf8());
         }
     }
     else if (dlg.hasAttr(std::string("form"))) {
         Py::Object f(dlg.getAttr(std::string("form")));
         Py::List widgets;
-        if (f.isList()) {
-            widgets = f;
-        }
+        if (f.isList()) { widgets = f; }
         else {
             widgets.append(f);
         }
@@ -345,9 +318,9 @@ TaskDialogPython::TaskDialogPython(const Py::Object& o) : dlg(o)
         Gui::PythonWrapper wrap;
         if (wrap.loadCoreModule()) {
             for (Py::List::iterator it = widgets.begin(); it != widgets.end(); ++it) {
-                QObject* object = wrap.toQObject(*it);
+                QObject *object = wrap.toQObject(*it);
                 if (object) {
-                    QWidget* form = qobject_cast<QWidget*>(object);
+                    QWidget *form = qobject_cast<QWidget *>(object);
                     if (form) {
                         auto taskbox = new Gui::TaskView::TaskBox(
                             form->windowIcon().pixmap(32), form->windowTitle(), true, nullptr);
@@ -362,7 +335,7 @@ TaskDialogPython::TaskDialogPython(const Py::Object& o) : dlg(o)
 
 TaskDialogPython::~TaskDialogPython()
 {
-    std::vector< QPointer<QWidget> > guarded;
+    std::vector<QPointer<QWidget>> guarded;
     guarded.insert(guarded.begin(), Content.begin(), Content.end());
     Content.clear();
 
@@ -386,7 +359,7 @@ void TaskDialogPython::clearForm()
         }
         this->dlg = Py::None();
     }
-    catch (Py::AttributeError& e) {
+    catch (Py::AttributeError &e) {
         e.clear();
     }
 }
@@ -401,7 +374,7 @@ void TaskDialogPython::open()
             method.apply(args);
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -418,7 +391,7 @@ void TaskDialogPython::clicked(int i)
             method.apply(args);
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -435,7 +408,7 @@ bool TaskDialogPython::accept()
             return (bool)ret;
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -454,7 +427,7 @@ bool TaskDialogPython::reject()
             return (bool)ret;
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -472,7 +445,7 @@ void TaskDialogPython::helpRequested()
             method.apply(args);
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -490,7 +463,7 @@ QDialogButtonBox::StandardButtons TaskDialogPython::getStandardButtons() const
             return QDialogButtonBox::StandardButtons(value);
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -512,7 +485,7 @@ void TaskDialogPython::modifyStandardButtons(QDialogButtonBox *buttonBox)
             method.apply(args);
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -529,7 +502,7 @@ bool TaskDialogPython::isAllowedAlterDocument() const
             return (bool)ret;
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -548,7 +521,7 @@ bool TaskDialogPython::isAllowedAlterView() const
             return (bool)ret;
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -567,7 +540,7 @@ bool TaskDialogPython::isAllowedAlterSelection() const
             return (bool)ret;
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -586,11 +559,10 @@ bool TaskDialogPython::needsFullSpace() const
             return (bool)ret;
         }
     }
-    catch (Py::Exception&) {
+    catch (Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
 
     return TaskDialog::needsFullSpace();
 }
-

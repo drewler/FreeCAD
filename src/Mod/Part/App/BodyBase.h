@@ -37,7 +37,7 @@ namespace Part
  * in edit or active on a workbench, the body shows only the
  * resulting shape to the outside (Tip link).
  */
-class PartExport BodyBase : public Part::Feature, public App::OriginGroupExtension
+class PartExport BodyBase: public Part::Feature, public App::OriginGroupExtension
 {
     PROPERTY_HEADER_WITH_EXTENSIONS(Part::BodyBase);
 
@@ -49,7 +49,7 @@ public:
      * Note: tip may either point to the BaseFeature or to some feature inside the Group list.
      *       in case it points to the model the PartDesign::Body guaranties that it is a solid.
      */
-    App::PropertyLink       Tip;
+    App::PropertyLink Tip;
 
     /**
      * A base object of the body, serves as a base object for the first feature of the body.
@@ -58,12 +58,11 @@ public:
     App::PropertyLink BaseFeature;
 
     /// Returns all Group objects prepanded by BaseFeature (if any)
-    std::vector<App::DocumentObject *> getFullModel () {
+    std::vector<App::DocumentObject *> getFullModel()
+    {
         std::vector<App::DocumentObject *> rv;
-        if ( BaseFeature.getValue () ) {
-            rv.push_back ( BaseFeature.getValue () );
-        }
-        std::copy ( Group.getValues ().begin (), Group.getValues ().end (), std::back_inserter (rv) );
+        if (BaseFeature.getValue()) { rv.push_back(BaseFeature.getValue()); }
+        std::copy(Group.getValues().begin(), Group.getValues().end(), std::back_inserter(rv));
         return rv;
     }
 
@@ -77,18 +76,16 @@ public:
      *       But there are could be more features based on the same body.
      * TODO introduce a findBodiesOf() if needed (2015-08-04, Fat-Zer)
      */
-    static BodyBase* findBodyOf(const App::DocumentObject* f);
-    PyObject* getPyObject() override;
+    static BodyBase *findBodyOf(const App::DocumentObject *f);
+    PyObject *getPyObject() override;
 
 protected:
     /// If BaseFeature is getting changed and Tip points to it reset the Tip
-    void onBeforeChange (const App::Property* prop) override;
+    void onBeforeChange(const App::Property *prop) override;
     /// If BaseFeature is set and Tip is null set the Tip to it
-    void onChanged (const App::Property* prop) override;
-    void handleChangedPropertyName(Base::XMLReader &reader,
-                                           const char * TypeName,
-                                           const char *PropName) override;
-
+    void onChanged(const App::Property *prop) override;
+    void handleChangedPropertyName(Base::XMLReader &reader, const char *TypeName,
+                                   const char *PropName) override;
 };
 
 } //namespace Part

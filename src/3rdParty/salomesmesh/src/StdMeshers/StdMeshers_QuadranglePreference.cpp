@@ -35,13 +35,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_QuadranglePreference::StdMeshers_QuadranglePreference(int         hypId,
-                                                                 int         studyId,
-                                                                 SMESH_Gen * gen)
-     :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_QuadranglePreference::StdMeshers_QuadranglePreference(int hypId, int studyId,
+                                                                 SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "QuadranglePreference";
-  _param_algo_dim = -2; // auxiliary used by NETGEN 2D
+    _name = "QuadranglePreference";
+    _param_algo_dim = -2; // auxiliary used by NETGEN 2D
 }
 
 //=============================================================================
@@ -50,9 +49,7 @@ StdMeshers_QuadranglePreference::StdMeshers_QuadranglePreference(int         hyp
  */
 //=============================================================================
 
-StdMeshers_QuadranglePreference::~StdMeshers_QuadranglePreference()
-{
-}
+StdMeshers_QuadranglePreference::~StdMeshers_QuadranglePreference() {}
 
 //=============================================================================
 /*!
@@ -60,10 +57,7 @@ StdMeshers_QuadranglePreference::~StdMeshers_QuadranglePreference()
  */
 //=============================================================================
 
-ostream & StdMeshers_QuadranglePreference::SaveTo(ostream & save)
-{
-  return save;
-}
+ostream &StdMeshers_QuadranglePreference::SaveTo(ostream &save) { return save; }
 
 //=============================================================================
 /*!
@@ -71,10 +65,7 @@ ostream & StdMeshers_QuadranglePreference::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_QuadranglePreference::LoadFrom(istream & load)
-{
-  return load;
-}
+istream &StdMeshers_QuadranglePreference::LoadFrom(istream &load) { return load; }
 
 //================================================================================
 /*!
@@ -87,10 +78,10 @@ istream & StdMeshers_QuadranglePreference::LoadFrom(istream & load)
  */
 //================================================================================
 
-bool StdMeshers_QuadranglePreference::SetParametersByMesh(const SMESH_Mesh* /*theMesh*/,
-                                                          const TopoDS_Shape& /*theShape*/)
+bool StdMeshers_QuadranglePreference::SetParametersByMesh(const SMESH_Mesh * /*theMesh*/,
+                                                          const TopoDS_Shape & /*theShape*/)
 {
-  return false;
+    return false;
 }
 
 //================================================================================
@@ -100,9 +91,8 @@ bool StdMeshers_QuadranglePreference::SetParametersByMesh(const SMESH_Mesh* /*th
  */
 //================================================================================
 
-bool StdMeshers_QuadranglePreference::SetParametersByDefaults(const TDefaults&  /*dflts*/,
-                                                              const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_QuadranglePreference::SetParametersByDefaults(const TDefaults & /*dflts*/,
+                                                              const SMESH_Mesh * /*theMesh*/)
 {
-  return false;
+    return false;
 }
-

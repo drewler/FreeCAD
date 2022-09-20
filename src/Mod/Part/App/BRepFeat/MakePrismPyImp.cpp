@@ -22,9 +22,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <TopoDS.hxx>
-# include <TopoDS_Edge.hxx>
-# include <TopoDS_Face.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
 #endif
 
 #include <Base/VectorPy.h>
@@ -38,40 +38,39 @@
 
 using namespace Part;
 
-PyObject *MakePrismPy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *MakePrismPy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     // create a new instance of MakePrismPy
     return new MakePrismPy(nullptr);
 }
 
 // constructor method
-int MakePrismPy::PyInit(PyObject* args, PyObject* kwds)
+int MakePrismPy::PyInit(PyObject *args, PyObject *kwds)
 {
-    PyObject* Sbase;
-    PyObject* Pbase;
-    PyObject* Skface;
-    PyObject* Direction;
+    PyObject *Sbase;
+    PyObject *Pbase;
+    PyObject *Skface;
+    PyObject *Direction;
     int Fuse;
-    PyObject* Modify;
-    static char* keywords[] = {"Sbase", "Pbase", "Skface", "Direction", "Fuse", "Modify", nullptr};
-    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!O!iO!", keywords,
-                                    &(TopoShapePy::Type), &Sbase,
-                                    &(TopoShapePy::Type), &Pbase,
-                                    &(TopoShapeFacePy::Type), &Skface,
-                                    &(Base::VectorPy::Type), &Direction, &Fuse,
+    PyObject *Modify;
+    static char *keywords[] = {"Sbase", "Pbase", "Skface", "Direction", "Fuse", "Modify", nullptr};
+    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!O!iO!", keywords, &(TopoShapePy::Type),
+                                    &Sbase, &(TopoShapePy::Type), &Pbase, &(TopoShapeFacePy::Type),
+                                    &Skface, &(Base::VectorPy::Type), &Direction, &Fuse,
                                     &(PyBool_Type), &Modify)) {
         try {
-            TopoDS_Shape sbase = static_cast<TopoShapePy*>(Sbase)->getTopoShapePtr()->getShape();
-            TopoDS_Shape pbase = static_cast<TopoShapePy*>(Pbase)->getTopoShapePtr()->getShape();
-            TopoDS_Face skface = TopoDS::Face(static_cast<TopoShapePy*>(Skface)->getTopoShapePtr()->getShape());
-            Base::Vector3d dir = static_cast<Base::VectorPy*>(Direction)->value();
-            std::unique_ptr<BRepFeat_MakePrism> ptr(new BRepFeat_MakePrism(sbase, pbase, skface, gp_Dir(dir.x, dir.y, dir.z), Fuse,
-                                                                           Base::asBoolean(Modify)));
+            TopoDS_Shape sbase = static_cast<TopoShapePy *>(Sbase)->getTopoShapePtr()->getShape();
+            TopoDS_Shape pbase = static_cast<TopoShapePy *>(Pbase)->getTopoShapePtr()->getShape();
+            TopoDS_Face skface =
+                TopoDS::Face(static_cast<TopoShapePy *>(Skface)->getTopoShapePtr()->getShape());
+            Base::Vector3d dir = static_cast<Base::VectorPy *>(Direction)->value();
+            std::unique_ptr<BRepFeat_MakePrism> ptr(new BRepFeat_MakePrism(
+                sbase, pbase, skface, gp_Dir(dir.x, dir.y, dir.z), Fuse, Base::asBoolean(Modify)));
 
             setTwinPointer(ptr.release());
             return 0;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return -1;
         }
@@ -84,15 +83,17 @@ int MakePrismPy::PyInit(PyObject* args, PyObject* kwds)
             setTwinPointer(ptr.release());
             return 0;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return -1;
         }
     }
 
-    PyErr_SetString(PyExc_TypeError, "supported signatures:\n"
+    PyErr_SetString(PyExc_TypeError,
+                    "supported signatures:\n"
                     "MakePrism()\n"
-                    "MakePrism(Sbase [shape], Pbase [shape], Skface [face], Direction [Vector], Fuse [int={0, 1}], Modify [bool])\n");
+                    "MakePrism(Sbase [shape], Pbase [shape], Skface [face], Direction [Vector], "
+                    "Fuse [int={0, 1}], Modify [bool])\n");
     return -1;
 }
 
@@ -102,94 +103,92 @@ std::string MakePrismPy::representation() const
     return std::string("<BRepFeat_MakePrism object>");
 }
 
-PyObject* MakePrismPy::init(PyObject *args,  PyObject* kwds)
+PyObject *MakePrismPy::init(PyObject *args, PyObject *kwds)
 {
-    PyObject* Sbase;
-    PyObject* Pbase;
-    PyObject* Skface;
-    PyObject* Direction;
+    PyObject *Sbase;
+    PyObject *Pbase;
+    PyObject *Skface;
+    PyObject *Direction;
     int Fuse;
-    PyObject* Modify;
-    static char* keywords[] = {"Sbase", "Pbase", "Skface", "Direction", "Fuse", "Modify", nullptr};
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!O!iO!", keywords,
-                                     &(TopoShapePy::Type), &Sbase,
-                                     &(TopoShapePy::Type), &Pbase,
-                                     &(TopoShapeFacePy::Type), &Skface,
-                                     &(Base::VectorPy::Type), &Direction, &Fuse,
+    PyObject *Modify;
+    static char *keywords[] = {"Sbase", "Pbase", "Skface", "Direction", "Fuse", "Modify", nullptr};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!O!iO!", keywords, &(TopoShapePy::Type),
+                                     &Sbase, &(TopoShapePy::Type), &Pbase, &(TopoShapeFacePy::Type),
+                                     &Skface, &(Base::VectorPy::Type), &Direction, &Fuse,
                                      &(PyBool_Type), &Modify))
         return nullptr;
 
 
     try {
-        TopoDS_Shape sbase = static_cast<TopoShapePy*>(Sbase)->getTopoShapePtr()->getShape();
-        TopoDS_Shape pbase = static_cast<TopoShapePy*>(Pbase)->getTopoShapePtr()->getShape();
-        TopoDS_Face skface = TopoDS::Face(static_cast<TopoShapePy*>(Skface)->getTopoShapePtr()->getShape());
-        Base::Vector3d dir = static_cast<Base::VectorPy*>(Direction)->value();
+        TopoDS_Shape sbase = static_cast<TopoShapePy *>(Sbase)->getTopoShapePtr()->getShape();
+        TopoDS_Shape pbase = static_cast<TopoShapePy *>(Pbase)->getTopoShapePtr()->getShape();
+        TopoDS_Face skface =
+            TopoDS::Face(static_cast<TopoShapePy *>(Skface)->getTopoShapePtr()->getShape());
+        Base::Vector3d dir = static_cast<Base::VectorPy *>(Direction)->value();
         getBRepFeat_MakePrismPtr()->Init(sbase, pbase, skface, gp_Dir(dir.x, dir.y, dir.z), Fuse,
                                          Base::asBoolean(Modify));
 
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* MakePrismPy::add(PyObject *args,  PyObject* kwds)
+PyObject *MakePrismPy::add(PyObject *args, PyObject *kwds)
 {
-    PyObject* Edge;
-    PyObject* Face;
-    static char* keywords[] = {"Edge", "Face", nullptr};
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!", keywords,
-                                     &(TopoShapeEdgePy::Type), &Edge,
+    PyObject *Edge;
+    PyObject *Face;
+    static char *keywords[] = {"Edge", "Face", nullptr};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!", keywords, &(TopoShapeEdgePy::Type), &Edge,
                                      &(TopoShapeFacePy::Type), &Face))
         return nullptr;
 
 
     try {
-        TopoDS_Edge edge = TopoDS::Edge(static_cast<TopoShapePy*>(Edge)->getTopoShapePtr()->getShape());
-        TopoDS_Face face = TopoDS::Face(static_cast<TopoShapePy*>(Face)->getTopoShapePtr()->getShape());
+        TopoDS_Edge edge =
+            TopoDS::Edge(static_cast<TopoShapePy *>(Edge)->getTopoShapePtr()->getShape());
+        TopoDS_Face face =
+            TopoDS::Face(static_cast<TopoShapePy *>(Face)->getTopoShapePtr()->getShape());
         getBRepFeat_MakePrismPtr()->Add(edge, face);
 
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* MakePrismPy::perform(PyObject *args,  PyObject* kwds)
+PyObject *MakePrismPy::perform(PyObject *args, PyObject *kwds)
 {
-    PyObject* From;
-    PyObject* Until;
-    static char* keywords_fu[] = {"From", "Until", nullptr};
-    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!O!", keywords_fu,
-                                    &(TopoShapePy::Type), &From,
+    PyObject *From;
+    PyObject *Until;
+    static char *keywords_fu[] = {"From", "Until", nullptr};
+    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!O!", keywords_fu, &(TopoShapePy::Type), &From,
                                     &(TopoShapePy::Type), &Until)) {
         try {
-            TopoDS_Shape from = static_cast<TopoShapePy*>(From)->getTopoShapePtr()->getShape();
-            TopoDS_Shape until = static_cast<TopoShapePy*>(Until)->getTopoShapePtr()->getShape();
+            TopoDS_Shape from = static_cast<TopoShapePy *>(From)->getTopoShapePtr()->getShape();
+            TopoDS_Shape until = static_cast<TopoShapePy *>(Until)->getTopoShapePtr()->getShape();
             getBRepFeat_MakePrismPtr()->Perform(from, until);
             Py_Return;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return nullptr;
         }
     }
 
     PyErr_Clear();
-    static char* keywords_u[] = {"Until", nullptr};
-    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!", keywords_u,
-                                    &(TopoShapePy::Type), &Until)) {
+    static char *keywords_u[] = {"Until", nullptr};
+    if (PyArg_ParseTupleAndKeywords(args, kwds, "O!", keywords_u, &(TopoShapePy::Type), &Until)) {
         try {
-            TopoDS_Shape until = static_cast<TopoShapePy*>(Until)->getTopoShapePtr()->getShape();
+            TopoDS_Shape until = static_cast<TopoShapePy *>(Until)->getTopoShapePtr()->getShape();
             getBRepFeat_MakePrismPtr()->Perform(until);
             Py_Return;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return nullptr;
         }
@@ -197,94 +196,90 @@ PyObject* MakePrismPy::perform(PyObject *args,  PyObject* kwds)
 
     PyErr_Clear();
     double length;
-    static char* keywords_l[] = {"Length", nullptr};
+    static char *keywords_l[] = {"Length", nullptr};
     if (PyArg_ParseTupleAndKeywords(args, kwds, "d", keywords_l, &length)) {
         try {
             getBRepFeat_MakePrismPtr()->Perform(length);
             Py_Return;
         }
-        catch (const Standard_Failure& e) {
+        catch (const Standard_Failure &e) {
             PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
             return nullptr;
         }
     }
 
-    PyErr_SetString(PyExc_TypeError, "supported signatures:\n"
+    PyErr_SetString(PyExc_TypeError,
+                    "supported signatures:\n"
                     "perform(From [shape], Until [shape])\n"
                     "perform(Until [shape])\n"
                     "perform(Length [float])\n");
     return nullptr;
 }
 
-PyObject* MakePrismPy::performUntilEnd(PyObject *args)
+PyObject *MakePrismPy::performUntilEnd(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     try {
         getBRepFeat_MakePrismPtr()->PerformUntilEnd();
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* MakePrismPy::performFromEnd(PyObject *args)
+PyObject *MakePrismPy::performFromEnd(PyObject *args)
 {
-    PyObject* Until;
-    if (!PyArg_ParseTuple(args, "O!", &(TopoShapePy::Type), &Until))
-        return nullptr;
+    PyObject *Until;
+    if (!PyArg_ParseTuple(args, "O!", &(TopoShapePy::Type), &Until)) return nullptr;
 
     try {
-        TopoDS_Shape until = static_cast<TopoShapePy*>(Until)->getTopoShapePtr()->getShape();
+        TopoDS_Shape until = static_cast<TopoShapePy *>(Until)->getTopoShapePtr()->getShape();
         getBRepFeat_MakePrismPtr()->PerformFromEnd(until);
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* MakePrismPy::performThruAll(PyObject *args)
+PyObject *MakePrismPy::performThruAll(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     try {
         getBRepFeat_MakePrismPtr()->PerformThruAll();
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* MakePrismPy::performUntilHeight(PyObject *args)
+PyObject *MakePrismPy::performUntilHeight(PyObject *args)
 {
-    PyObject* Until;
+    PyObject *Until;
     double length;
-    if (!PyArg_ParseTuple(args, "O!d", &(TopoShapePy::Type), &Until, &length))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "O!d", &(TopoShapePy::Type), &Until, &length)) return nullptr;
 
     try {
-        TopoDS_Shape until = static_cast<TopoShapePy*>(Until)->getTopoShapePtr()->getShape();
+        TopoDS_Shape until = static_cast<TopoShapePy *>(Until)->getTopoShapePtr()->getShape();
         getBRepFeat_MakePrismPtr()->PerformUntilHeight(until, length);
         Py_Return;
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject* MakePrismPy::curves(PyObject *args)
+PyObject *MakePrismPy::curves(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     TColGeom_SequenceOfCurve S;
     getBRepFeat_MakePrismPtr()->Curves(S);
@@ -292,8 +287,7 @@ PyObject* MakePrismPy::curves(PyObject *args)
     Py::Tuple tuple(S.Length());
     for (int i = S.Lower(); i <= S.Upper(); ++i) {
         Handle(Geom_Curve) hC = S.Value(i);
-        if (hC.IsNull())
-            continue;
+        if (hC.IsNull()) continue;
         std::unique_ptr<GeomCurve> gc(Part::makeFromCurve(hC));
         tuple.setItem(i, Py::asObject(gc->getPyObject()));
     }
@@ -301,39 +295,30 @@ PyObject* MakePrismPy::curves(PyObject *args)
     return Py::new_reference_to(tuple);
 }
 
-PyObject* MakePrismPy::barycCurve(PyObject *args)
+PyObject *MakePrismPy::barycCurve(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     Handle(Geom_Curve) hC = getBRepFeat_MakePrismPtr()->BarycCurve();
-    if (hC.IsNull())
-        Py_Return;
+    if (hC.IsNull()) Py_Return;
     std::unique_ptr<GeomCurve> gc(Part::makeFromCurve(hC));
     return gc->getPyObject();
 }
 
-PyObject* MakePrismPy::shape(PyObject *args)
+PyObject *MakePrismPy::shape(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     try {
         TopoShape shape(getBRepFeat_MakePrismPtr()->Shape());
         return shape.getPyObject();
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         PyErr_SetString(PyExc_RuntimeError, e.GetMessageString());
         return nullptr;
     }
 }
 
-PyObject *MakePrismPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *MakePrismPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int MakePrismPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int MakePrismPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

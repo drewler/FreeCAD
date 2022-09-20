@@ -22,12 +22,12 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QApplication>
-# include <QElapsedTimer>
-# include <QMessageBox>
-# include <QPushButton>
-# include <QThread>
-# include <QTime>
+#include <QApplication>
+#include <QElapsedTimer>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QThread>
+#include <QTime>
 #endif
 
 #include "ProgressDialog.h"
@@ -37,51 +37,43 @@
 using namespace Gui;
 
 
-namespace Gui {
-struct SequencerDialogPrivate
+namespace Gui
 {
-    ProgressDialog* dlg;
+struct SequencerDialogPrivate {
+    ProgressDialog *dlg;
     QElapsedTimer measureTime;
     QElapsedTimer progressTime;
     QString text;
     bool guiThread;
     bool canabort;
 };
-}
+} // namespace Gui
 
 
-SequencerDialog* SequencerDialog::_pclSingleton = nullptr;
+SequencerDialog *SequencerDialog::_pclSingleton = nullptr;
 
-SequencerDialog* SequencerDialog::instance()
+SequencerDialog *SequencerDialog::instance()
 {
     // not initialized?
-    if (!_pclSingleton)
-        _pclSingleton = new SequencerDialog();
+    if (!_pclSingleton) _pclSingleton = new SequencerDialog();
     return _pclSingleton;
 }
 
-SequencerDialog::SequencerDialog ()
+SequencerDialog::SequencerDialog()
 {
     d = new SequencerDialogPrivate;
-    d->dlg = new ProgressDialog(this,getMainWindow());
+    d->dlg = new ProgressDialog(this, getMainWindow());
     d->dlg->reset(); // stops the timer to force showing the dialog
     d->dlg->hide();
     d->guiThread = true;
     d->canabort = false;
 }
 
-SequencerDialog::~SequencerDialog()
-{
-    delete d;
-}
+SequencerDialog::~SequencerDialog() { delete d; }
 
-void SequencerDialog::pause()
-{
-}
+void SequencerDialog::pause() {}
 
-void SequencerDialog::resume()
-{
-}
+void SequencerDialog::resume() {}
 
 void SequencerDialog::startStep()
 {
@@ -90,24 +82,21 @@ void SequencerDialog::startStep()
     if (thr != currentThread) {
         d->guiThread = false;
         QMetaObject::invokeMethod(d->dlg, "setRangeEx", Qt::QueuedConnection,
-            QGenericReturnArgument(), Q_ARG(int, 0), Q_ARG(int, (int)nTotalSteps));
+                                  QGenericReturnArgument(), Q_ARG(int, 0),
+                                  Q_ARG(int, (int)nTotalSteps));
         d->dlg->setModal(false);
-        if (nTotalSteps == 0) {
-            d->progressTime.start();
-        }
+        if (nTotalSteps == 0) { d->progressTime.start(); }
 
         d->measureTime.start();
         QMetaObject::invokeMethod(d->dlg, "setValueEx", Qt::QueuedConnection,
-            QGenericReturnArgument(), Q_ARG(int,0));
+                                  QGenericReturnArgument(), Q_ARG(int, 0));
         QMetaObject::invokeMethod(d->dlg, "aboutToShow", Qt::QueuedConnection);
     }
     else {
         d->guiThread = true;
         d->dlg->setRangeEx(0, (int)nTotalSteps);
         d->dlg->setModal(true);
-        if (nTotalSteps == 0) {
-            d->progressTime.start();
-        }
+        if (nTotalSteps == 0) { d->progressTime.start(); }
 
         d->measureTime.start();
         d->dlg->setValueEx(0);
@@ -121,9 +110,7 @@ void SequencerDialog::nextStep(bool canAbort)
     QThread *currentThread = QThread::currentThread();
     QThread *thr = d->dlg->thread(); // this is the main thread
     if (thr != currentThread) {
-        if (wasCanceled() && canAbort) {
-            abort();
-        }
+        if (wasCanceled() && canAbort) { abort(); }
         else {
             setValue((int)nProgress + 1);
         }
@@ -137,26 +124,23 @@ void SequencerDialog::nextStep(bool canAbort)
             resume();
 
             // force to abort the operation
-            if ( ok ) {
-                abort();
-            } else {
+            if (ok) { abort(); }
+            else {
                 rejectCancel();
-                setValue((int)nProgress+1);
+                setValue((int)nProgress + 1);
             }
         }
         else {
-            setValue((int)nProgress+1);
+            setValue((int)nProgress + 1);
         }
     }
 }
 
 void SequencerDialog::setProgress(size_t step)
 {
-    QThread* currentThread = QThread::currentThread();
-    QThread* thr = d->dlg->thread(); // this is the main thread
-    if (thr != currentThread) {
-        QMetaObject::invokeMethod(d->dlg, "show", Qt::QueuedConnection);
-    }
+    QThread *currentThread = QThread::currentThread();
+    QThread *thr = d->dlg->thread(); // this is the main thread
+    if (thr != currentThread) { QMetaObject::invokeMethod(d->dlg, "show", Qt::QueuedConnection); }
     else {
         d->dlg->show();
     }
@@ -175,26 +159,25 @@ void SequencerDialog::setValue(int step)
         if (elapsed > 500) {
             d->progressTime.restart();
             if (thr != currentThread) {
-                QMetaObject::invokeMethod(d->dlg, "setValueEx", Qt::/*Blocking*/QueuedConnection,
-                    QGenericReturnArgument(), Q_ARG(int,d->dlg->value()+1));
+                QMetaObject::invokeMethod(d->dlg, "setValueEx", Qt::/*Blocking*/ QueuedConnection,
+                                          QGenericReturnArgument(),
+                                          Q_ARG(int, d->dlg->value() + 1));
             }
             else {
-                d->dlg->setValueEx(d->dlg->value()+1);
+                d->dlg->setValueEx(d->dlg->value() + 1);
                 qApp->processEvents();
             }
         }
     }
     else {
         if (thr != currentThread) {
-            QMetaObject::invokeMethod(d->dlg, "setValueEx", Qt::/*Blocking*/QueuedConnection,
-                QGenericReturnArgument(), Q_ARG(int,step));
-            if (d->dlg->isVisible())
-                showRemainingTime();
+            QMetaObject::invokeMethod(d->dlg, "setValueEx", Qt::/*Blocking*/ QueuedConnection,
+                                      QGenericReturnArgument(), Q_ARG(int, step));
+            if (d->dlg->isVisible()) showRemainingTime();
         }
         else {
             d->dlg->setValueEx(step);
-            if (d->dlg->isVisible())
-                showRemainingTime();
+            if (d->dlg->isVisible()) showRemainingTime();
             qApp->processEvents();
         }
     }
@@ -212,20 +195,18 @@ void SequencerDialog::showRemainingTime()
     QString txt = d->text;
     // More than 5 percent complete or more than 5 secs have elapsed.
     if (progress * 20 > totalSteps || elapsed > 5000) {
-        int rest = (int) ( (double) totalSteps/progress * elapsed ) - elapsed;
+        int rest = (int)((double)totalSteps / progress * elapsed) - elapsed;
 
         // more than 1 secs have elapsed and at least 100 ms are remaining
         if (elapsed > 1000 && rest > 100) {
-            QTime time( 0,0, 0);
-            time = time.addSecs( rest/1000 );
+            QTime time(0, 0, 0);
+            time = time.addSecs(rest / 1000);
             QString remain = Gui::ProgressDialog::tr("Remaining: %1").arg(time.toString());
             QString status = QString::fromLatin1("%1\t[%2]").arg(txt, remain);
 
             if (thr != currentThread) {
-                QMetaObject::invokeMethod(d->dlg, "setLabelText",
-                    Qt::/*Blocking*/QueuedConnection,
-                    QGenericReturnArgument(),
-                    Q_ARG(QString,status));
+                QMetaObject::invokeMethod(d->dlg, "setLabelText", Qt::/*Blocking*/ QueuedConnection,
+                                          QGenericReturnArgument(), Q_ARG(QString, status));
             }
             else {
                 d->dlg->setLabelText(status);
@@ -241,10 +222,8 @@ void SequencerDialog::resetData()
     if (thr != currentThread) {
         QMetaObject::invokeMethod(d->dlg, "resetEx", Qt::QueuedConnection);
         QMetaObject::invokeMethod(d->dlg, "hide", Qt::QueuedConnection);
-        QMetaObject::invokeMethod(d->dlg, "setLabelText",
-            Qt::/*Blocking*/QueuedConnection,
-            QGenericReturnArgument(),
-            Q_ARG(QString,QString()));
+        QMetaObject::invokeMethod(d->dlg, "setLabelText", Qt::/*Blocking*/ QueuedConnection,
+                                  QGenericReturnArgument(), Q_ARG(QString, QString()));
     }
     else {
         d->dlg->resetEx();
@@ -258,10 +237,7 @@ void SequencerDialog::resetData()
     SequencerBase::resetData();
 }
 
-bool SequencerDialog::canAbort() const
-{
-    return d->canabort;
-}
+bool SequencerDialog::canAbort() const { return d->canabort; }
 
 void SequencerDialog::abort()
 {
@@ -271,7 +247,7 @@ void SequencerDialog::abort()
     throw exc;
 }
 
-void SequencerDialog::setText (const char* pszTxt)
+void SequencerDialog::setText(const char *pszTxt)
 {
     QThread *currentThread = QThread::currentThread();
     QThread *thr = d->dlg->thread(); // this is the main thread
@@ -279,26 +255,21 @@ void SequencerDialog::setText (const char* pszTxt)
     // set label text of the dialog
     d->text = pszTxt ? QString::fromUtf8(pszTxt) : QLatin1String("");
     if (thr != currentThread) {
-        QMetaObject::invokeMethod(d->dlg, "setLabelText",
-            Qt::/*Blocking*/QueuedConnection,
-            QGenericReturnArgument(),
-            Q_ARG(QString,d->text));
+        QMetaObject::invokeMethod(d->dlg, "setLabelText", Qt::/*Blocking*/ QueuedConnection,
+                                  QGenericReturnArgument(), Q_ARG(QString, d->text));
     }
     else {
         d->dlg->setLabelText(d->text);
     }
 }
 
-bool SequencerDialog::isBlocking() const
-{
-    return d->guiThread;
-}
+bool SequencerDialog::isBlocking() const { return d->guiThread; }
 
 // -------------------------------------------------------
 
 /* TRANSLATOR Gui::ProgressDialog */
 
-ProgressDialog::ProgressDialog (SequencerDialog* s, QWidget * parent)
+ProgressDialog::ProgressDialog(SequencerDialog *s, QWidget *parent)
     : QProgressDialog(parent, Qt::FramelessWindowHint), sequencer(s)
 {
 #ifdef QT_WINEXTRAS_LIB
@@ -308,36 +279,27 @@ ProgressDialog::ProgressDialog (SequencerDialog* s, QWidget * parent)
     connect(this, SIGNAL(canceled()), this, SLOT(onCancel()));
 }
 
-ProgressDialog::~ProgressDialog ()
-{
-}
+ProgressDialog::~ProgressDialog() {}
 
-void ProgressDialog::onCancel()
-{
-    sequencer->tryToCancel();
-}
+void ProgressDialog::onCancel() { sequencer->tryToCancel(); }
 
 bool ProgressDialog::canAbort() const
 {
-    int ret = QMessageBox::question(getMainWindow(),tr("Aborting"),
-    tr("Do you really want to abort the operation?"),  QMessageBox::Yes,
-    QMessageBox::No|QMessageBox::Default);
+    int ret = QMessageBox::question(getMainWindow(), tr("Aborting"),
+                                    tr("Do you really want to abort the operation?"),
+                                    QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
 
     return (ret == QMessageBox::Yes) ? true : false;
 }
 
-void ProgressDialog::showEvent(QShowEvent* ev)
+void ProgressDialog::showEvent(QShowEvent *ev)
 {
-    QPushButton* btn = findChild<QPushButton*>();
-    if (btn)
-        btn->setEnabled(sequencer->canAbort());
+    QPushButton *btn = findChild<QPushButton *>();
+    if (btn) btn->setEnabled(sequencer->canAbort());
     QProgressDialog::showEvent(ev);
 }
 
-void ProgressDialog::hideEvent(QHideEvent* ev)
-{
-    QProgressDialog::hideEvent(ev);
-}
+void ProgressDialog::hideEvent(QHideEvent *ev) { QProgressDialog::hideEvent(ev); }
 
 void ProgressDialog::resetEx()
 {
@@ -386,8 +348,7 @@ void ProgressDialog::aboutToHide()
 #ifdef QT_WINEXTRAS_LIB
 void ProgressDialog::setupTaskBarProgress()
 {
-    if (!m_taskbarButton || !m_taskbarProgress)
-    {
+    if (!m_taskbarButton || !m_taskbarProgress) {
         m_taskbarButton = new QWinTaskbarButton(this);
         m_taskbarButton->setWindow(MainWindow::getInstance()->windowHandle());
         //m_myButton->setOverlayIcon(QIcon(""));

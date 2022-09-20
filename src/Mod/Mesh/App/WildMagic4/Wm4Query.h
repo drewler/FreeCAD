@@ -26,7 +26,7 @@ class Query
 {
 public:
     // abstract base class
-    virtual ~Query ();
+    virtual ~Query();
 
     // run-time type information
     enum Type
@@ -38,13 +38,13 @@ public:
         QT_FILTERED
     };
 
-    virtual Type GetType () const = 0;
+    virtual Type GetType() const = 0;
 
 protected:
-    Query ();
+    Query();
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4Query.inl"
 

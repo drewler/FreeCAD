@@ -45,14 +45,14 @@
 #include <vector>
 
 #ifdef FC_OS_WIN32
-# include <windows.h>
+#include <windows.h>
 #endif
 
 // Qt Toolkit
 #ifndef __QtAll__
-# include <Gui/QtAll.h>
+#include <Gui/QtAll.h>
 #endif
 
-#endif  //_PreComp_
+#endif //_PreComp_
 
 #endif // GUI_PRECOMPILED_H

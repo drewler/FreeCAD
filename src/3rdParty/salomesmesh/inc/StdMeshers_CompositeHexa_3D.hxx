@@ -42,30 +42,21 @@ class _QuadFaceGrid;
 class STDMESHERS_EXPORT StdMeshers_CompositeHexa_3D: public SMESH_3D_Algo
 {
 public:
-  StdMeshers_CompositeHexa_3D(int hypId, int studyId, SMESH_Gen* gen);
-  //virtual ~StdMeshers_CompositeHexa_3D();
+    StdMeshers_CompositeHexa_3D(int hypId, int studyId, SMESH_Gen *gen);
+    //virtual ~StdMeshers_CompositeHexa_3D();
 
-  virtual bool Compute(SMESH_Mesh&         aMesh,
-                       const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
-  virtual bool CheckHypothesis(SMESH_Mesh&         aMesh,
-                               const TopoDS_Shape& aShape,
-                               Hypothesis_Status&  aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 Hypothesis_Status &aStatus);
 
 private:
-
-  bool findBoxFaces( const TopoDS_Shape&    shape,
-                     std::list< _QuadFaceGrid >& boxFaceContainer,
-                     SMESH_Mesh&            mesh,
-                     _QuadFaceGrid * &      fBottom,
-                     _QuadFaceGrid * &      fTop,
-                     _QuadFaceGrid * &      fFront,
-                     _QuadFaceGrid * &      fBack,
-                     _QuadFaceGrid * &      fLeft,
-                     _QuadFaceGrid * &      fRight);
+    bool findBoxFaces(const TopoDS_Shape &shape, std::list<_QuadFaceGrid> &boxFaceContainer,
+                      SMESH_Mesh &mesh, _QuadFaceGrid *&fBottom, _QuadFaceGrid *&fTop,
+                      _QuadFaceGrid *&fFront, _QuadFaceGrid *&fBack, _QuadFaceGrid *&fLeft,
+                      _QuadFaceGrid *&fRight);
 };
 
 #endif

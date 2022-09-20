@@ -40,191 +40,167 @@
 namespace Py
 {
 
-Py_ssize_t numeric_limits_max()
-{
-    return std::numeric_limits<Py_ssize_t>::max();
-}
+Py_ssize_t numeric_limits_max() { return std::numeric_limits<Py_ssize_t>::max(); }
 
 #if !defined(Py_LIMITED_API)
-Py_UNICODE unicode_null_string[1] = { 0 };
+Py_UNICODE unicode_null_string[1] = {0};
 #endif
-Py_UCS4 ucs4_null_string[1] = { 0 };
+Py_UCS4 ucs4_null_string[1] = {0};
 
-Type Object::type() const
-{
-    return Type( PyObject_Type( p ), true );
-}
+Type Object::type() const { return Type(PyObject_Type(p), true); }
 
-String Object::str() const
-{
-    return String( PyObject_Str( p ), true );
-}
+String Object::str() const { return String(PyObject_Str(p), true); }
 
-String Object::repr() const
-{
-    return String( PyObject_Repr( p ), true );
-}
+String Object::repr() const { return String(PyObject_Repr(p), true); }
 
-std::string Object::as_string() const
-{
-    return static_cast<std::string>( str() );
-}
+std::string Object::as_string() const { return static_cast<std::string>(str()); }
 
-List Object::dir() const
-{
-    return List( PyObject_Dir( p ), true );
-}
+List Object::dir() const { return List(PyObject_Dir(p), true); }
 
-bool Object::isType( const Type &t ) const
-{
-    return type().ptr() == t.ptr();
-}
+bool Object::isType(const Type &t) const { return type().ptr() == t.ptr(); }
 
-Char::operator String() const
-{
-    return String( ptr() );
-}
+Char::operator String() const { return String(ptr()); }
 
-String Bytes::decode( const char *encoding, const char *error )
+String Bytes::decode(const char *encoding, const char *error)
 {
-    return String( PyUnicode_FromEncodedObject( ptr(), encoding, error ), true );
+    return String(PyUnicode_FromEncodedObject(ptr(), encoding, error), true);
 }
 
 // Object compares
-bool operator==( const Object &o1, const Object &o2 )
+bool operator==(const Object &o1, const Object &o2)
 {
-    int k = PyObject_RichCompareBool( *o1, *o2, Py_EQ );
+    int k = PyObject_RichCompareBool(*o1, *o2, Py_EQ);
     ifPyErrorThrowCxxException();
     return k != 0;
 }
 
-bool operator!=( const Object &o1, const Object &o2 )
+bool operator!=(const Object &o1, const Object &o2)
 {
-    int k = PyObject_RichCompareBool( *o1, *o2, Py_NE );
+    int k = PyObject_RichCompareBool(*o1, *o2, Py_NE);
     ifPyErrorThrowCxxException();
     return k != 0;
 }
 
-bool operator>=( const Object &o1, const Object &o2 )
+bool operator>=(const Object &o1, const Object &o2)
 {
-    int k = PyObject_RichCompareBool( *o1, *o2, Py_GE );
+    int k = PyObject_RichCompareBool(*o1, *o2, Py_GE);
     ifPyErrorThrowCxxException();
     return k != 0;
 }
 
-bool operator<=( const Object &o1, const Object &o2 )
+bool operator<=(const Object &o1, const Object &o2)
 {
-    int k = PyObject_RichCompareBool( *o1, *o2, Py_LE );
+    int k = PyObject_RichCompareBool(*o1, *o2, Py_LE);
     ifPyErrorThrowCxxException();
     return k != 0;
 }
 
-bool operator<( const Object &o1, const Object &o2 )
+bool operator<(const Object &o1, const Object &o2)
 {
-    int k = PyObject_RichCompareBool( *o1, *o2, Py_LT );
+    int k = PyObject_RichCompareBool(*o1, *o2, Py_LT);
     ifPyErrorThrowCxxException();
     return k != 0;
 }
 
-bool operator>( const Object &o1, const Object &o2 )
+bool operator>(const Object &o1, const Object &o2)
 {
-    int k = PyObject_RichCompareBool( *o1, *o2, Py_GT );
+    int k = PyObject_RichCompareBool(*o1, *o2, Py_GT);
     ifPyErrorThrowCxxException();
     return k != 0;
 }
 
 // iterator compares
-bool operator==( const Sequence::iterator &left, const Sequence::iterator &right )
+bool operator==(const Sequence::iterator &left, const Sequence::iterator &right)
 {
-    return left.eql( right );
+    return left.eql(right);
 }
 
-bool operator!=( const Sequence::iterator &left, const Sequence::iterator &right )
+bool operator!=(const Sequence::iterator &left, const Sequence::iterator &right)
 {
-    return left.neq( right );
+    return left.neq(right);
 }
 
-bool operator<( const Sequence::iterator &left, const Sequence::iterator &right )
+bool operator<(const Sequence::iterator &left, const Sequence::iterator &right)
 {
-    return left.lss( right );
+    return left.lss(right);
 }
 
-bool operator>( const Sequence::iterator &left, const Sequence::iterator &right )
+bool operator>(const Sequence::iterator &left, const Sequence::iterator &right)
 {
-    return left.gtr( right );
+    return left.gtr(right);
 }
 
-bool operator<=( const Sequence::iterator &left, const Sequence::iterator &right )
+bool operator<=(const Sequence::iterator &left, const Sequence::iterator &right)
 {
-    return left.leq( right );
+    return left.leq(right);
 }
 
-bool operator>=( const Sequence::iterator &left, const Sequence::iterator &right )
+bool operator>=(const Sequence::iterator &left, const Sequence::iterator &right)
 {
-    return left.geq( right );
+    return left.geq(right);
 }
 
 // const_iterator compares
-bool operator==( const Sequence::const_iterator &left, const Sequence::const_iterator &right )
+bool operator==(const Sequence::const_iterator &left, const Sequence::const_iterator &right)
 {
-    return left.eql( right );
+    return left.eql(right);
 }
 
-bool operator!=( const Sequence::const_iterator &left, const Sequence::const_iterator &right )
+bool operator!=(const Sequence::const_iterator &left, const Sequence::const_iterator &right)
 {
-    return left.neq( right );
+    return left.neq(right);
 }
 
-bool operator<( const Sequence::const_iterator &left, const Sequence::const_iterator &right )
+bool operator<(const Sequence::const_iterator &left, const Sequence::const_iterator &right)
 {
-    return left.lss( right );
+    return left.lss(right);
 }
 
-bool operator>( const Sequence::const_iterator &left, const Sequence::const_iterator &right )
+bool operator>(const Sequence::const_iterator &left, const Sequence::const_iterator &right)
 {
-    return left.gtr( right );
+    return left.gtr(right);
 }
 
-bool operator<=( const Sequence::const_iterator &left, const Sequence::const_iterator &right )
+bool operator<=(const Sequence::const_iterator &left, const Sequence::const_iterator &right)
 {
-    return left.leq( right );
+    return left.leq(right);
 }
 
-bool operator>=( const Sequence::const_iterator &left, const Sequence::const_iterator &right )
+bool operator>=(const Sequence::const_iterator &left, const Sequence::const_iterator &right)
 {
-    return left.geq( right );
+    return left.geq(right);
 }
 
 // For mappings:
-bool operator==( const Mapping::iterator &left, const Mapping::iterator &right )
+bool operator==(const Mapping::iterator &left, const Mapping::iterator &right)
 {
-    return left.eql( right );
+    return left.eql(right);
 }
 
-bool operator!=( const Mapping::iterator &left, const Mapping::iterator &right )
+bool operator!=(const Mapping::iterator &left, const Mapping::iterator &right)
 {
-    return left.neq( right );
+    return left.neq(right);
 }
 
 // now for const_iterator
-bool operator==( const Mapping::const_iterator &left, const Mapping::const_iterator &right )
+bool operator==(const Mapping::const_iterator &left, const Mapping::const_iterator &right)
 {
-    return left.eql( right );
+    return left.eql(right);
 }
 
-bool operator!=( const Mapping::const_iterator &left, const Mapping::const_iterator &right )
+bool operator!=(const Mapping::const_iterator &left, const Mapping::const_iterator &right)
 {
-    return left.neq( right );
+    return left.neq(right);
 }
 
 // TMM: 31May'01 - Added the #ifndef so I can exclude iostreams.
 #ifndef CXX_NO_IOSTREAMS
 // output
 
-std::ostream &operator<<( std::ostream &os, const Object &ob )
+std::ostream &operator<<(std::ostream &os, const Object &ob)
 {
-    return( os << static_cast<std::string>( ob.str() ) );
+    return (os << static_cast<std::string>(ob.str()));
 }
 #endif
 
-} // Py
+} // namespace Py

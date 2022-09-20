@@ -34,11 +34,13 @@
 #include <FCGlobal.h>
 
 
-namespace Base {
+namespace Base
+{
 class Writer;
 }
 
-namespace Data {
+namespace Data
+{
 class ComplexGeoData;
 }
 
@@ -46,7 +48,6 @@ namespace App
 {
 class Feature;
 class Placement;
-
 
 
 /** Vector properties
@@ -80,34 +81,28 @@ public:
     /** This method returns a string representation of the property
      */
     const Base::Vector3d &getValue() const;
-    const char* getEditorName() const override {
-        return "Gui::PropertyEditor::PropertyVectorItem";
-    }
+    const char *getEditorName() const override { return "Gui::PropertyEditor::PropertyVectorItem"; }
 
     PyObject *getPyObject() override;
     void setPyObject(PyObject *) override;
 
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
     Property *Copy() const override;
     void Paste(const Property &from) override;
 
-    unsigned int getMemSize () const override {
-        return sizeof(Base::Vector3d);
-    }
+    unsigned int getMemSize() const override { return sizeof(Base::Vector3d); }
 
     const boost::any getPathValue(const ObjectIdentifier &path) const override;
 
     bool getPyPathValue(const ObjectIdentifier &path, Py::Object &res) const override;
 
-    virtual Base::Unit getUnit() const {
-        return Base::Unit();
-    }
+    virtual Base::Unit getUnit() const { return Base::Unit(); }
 
-    bool isSame(const Property &other) const override {
-        if (&other == this)
-            return true;
+    bool isSame(const Property &other) const override
+    {
+        if (&other == this) return true;
         return getTypeId() == other.getTypeId()
             && getValue() == dynamic_cast<decltype(this)>(&other)->getValue();
     }
@@ -134,11 +129,10 @@ public:
      */
     ~PropertyVectorDistance() override;
 
-    Base::Unit getUnit() const override {
-        return Base::Unit::Length;
-    }
+    Base::Unit getUnit() const override { return Base::Unit::Length; }
 
-    const char* getEditorName() const override {
+    const char *getEditorName() const override
+    {
         return "Gui::PropertyEditor::PropertyVectorDistanceItem";
     }
 };
@@ -160,11 +154,10 @@ public:
      */
     ~PropertyPosition() override;
 
-    Base::Unit getUnit() const override {
-        return Base::Unit::Length;
-    }
+    Base::Unit getUnit() const override { return Base::Unit::Length; }
 
-    const char* getEditorName() const override {
+    const char *getEditorName() const override
+    {
         return "Gui::PropertyEditor::PropertyPositionItem";
     }
 };
@@ -186,11 +179,10 @@ public:
      */
     ~PropertyDirection() override;
 
-    Base::Unit getUnit() const override {
-        return Base::Unit::Length;
-    }
+    Base::Unit getUnit() const override { return Base::Unit::Length; }
 
-    const char* getEditorName() const override {
+    const char *getEditorName() const override
+    {
         return "Gui::PropertyEditor::PropertyDirectionItem";
     }
 };
@@ -219,17 +211,18 @@ public:
 
     PyObject *getPyObject() override;
 
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
-    void SaveDocFile (Base::Writer &writer) const override;
+    void SaveDocFile(Base::Writer &writer) const override;
     void RestoreDocFile(Base::Reader &reader) override;
 
     Property *Copy() const override;
     void Paste(const Property &from) override;
 
-    unsigned int getMemSize () const override;
-    const char* getEditorName() const override {
+    unsigned int getMemSize() const override;
+    const char *getEditorName() const override
+    {
         return "Gui::PropertyEditor::PropertyVectorListItem";
     }
 
@@ -265,26 +258,22 @@ public:
     /** This method returns a string representation of the property
      */
     const Base::Matrix4D &getValue() const;
-    const char* getEditorName() const override {
-        return "Gui::PropertyEditor::PropertyMatrixItem";
-    }
+    const char *getEditorName() const override { return "Gui::PropertyEditor::PropertyMatrixItem"; }
 
     PyObject *getPyObject() override;
     void setPyObject(PyObject *) override;
 
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
     Property *Copy() const override;
     void Paste(const Property &from) override;
 
-    unsigned int getMemSize () const override {
-        return sizeof(Base::Matrix4D);
-    }
+    unsigned int getMemSize() const override { return sizeof(Base::Matrix4D); }
 
-    bool isSame(const Property &other) const override {
-        if (&other == this)
-            return true;
+    bool isSame(const Property &other) const override
+    {
+        if (&other == this) return true;
         return getTypeId() == other.getTypeId()
             && getValue() == static_cast<decltype(this)>(&other)->getValue();
     }
@@ -323,8 +312,7 @@ public:
      * @param tol: position tolerance
      * @param atol: angular tolerance
      */
-    bool setValueIfChanged(const Base::Placement &pos, 
-            double tol=1e-7, double atol=1e-12);
+    bool setValueIfChanged(const Base::Placement &pos, double tol = 1e-7, double atol = 1e-12);
 
     /** This method returns a string representation of the property
      */
@@ -339,26 +327,25 @@ public:
 
     bool getPyPathValue(const ObjectIdentifier &path, Py::Object &res) const override;
 
-    const char* getEditorName() const override {
+    const char *getEditorName() const override
+    {
         return "Gui::PropertyEditor::PropertyPlacementItem";
     }
 
     PyObject *getPyObject() override;
     void setPyObject(PyObject *) override;
 
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
     Property *Copy() const override;
     void Paste(const Property &from) override;
 
-    unsigned int getMemSize () const override {
-        return sizeof(Base::Placement);
-    }
+    unsigned int getMemSize() const override { return sizeof(Base::Placement); }
 
-    bool isSame(const Property &other) const override {
-        if (&other == this)
-            return true;
+    bool isSame(const Property &other) const override
+    {
+        if (&other == this) return true;
         return getTypeId() == other.getTypeId()
             && getValue() == static_cast<decltype(this)>(&other)->getValue();
     }
@@ -372,7 +359,7 @@ private:
 /** the general Link Property
  *  Main Purpose of this property is to Link Objects and Features in a document.
  */
-class AppExport PropertyPlacementLink : public PropertyLink
+class AppExport PropertyPlacementLink: public PropertyLink
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -391,7 +378,7 @@ public:
 
     /** This method returns the linked DocumentObject
      */
-    App::Placement * getPlacementObject() const;
+    App::Placement *getPlacementObject() const;
 
     Property *Copy() const override;
     void Paste(const Property &from) override;
@@ -412,16 +399,16 @@ public:
 
     PyObject *getPyObject() override;
 
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
-    void SaveDocFile (Base::Writer &writer) const override;
+    void SaveDocFile(Base::Writer &writer) const override;
     void RestoreDocFile(Base::Reader &reader) override;
 
     Property *Copy() const override;
     void Paste(const Property &from) override;
 
-    unsigned int getMemSize () const override;
+    unsigned int getMemSize() const override;
 
 protected:
     Base::Placement getPyValue(PyObject *) const override;
@@ -432,7 +419,7 @@ protected:
 /*!
  * Encapsulates a Base::Rotation in a Property
  */
-class AppExport PropertyRotation : public Property
+class AppExport PropertyRotation: public Property
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -458,7 +445,7 @@ public:
      * @param tol: position tolerance
      * @param atol: angular tolerance
      */
-    bool setValueIfChanged(const Base::Rotation &rot, double atol=1e-12);
+    bool setValueIfChanged(const Base::Rotation &rot, double atol = 1e-12);
 
     /** This method returns a string representation of the property
      */
@@ -473,22 +460,21 @@ public:
 
     bool getPyPathValue(const ObjectIdentifier &path, Py::Object &res) const override;
 
-    const char* getEditorName() const override {
+    const char *getEditorName() const override
+    {
         return "Gui::PropertyEditor::PropertyRotationItem";
     }
 
     PyObject *getPyObject() override;
     void setPyObject(PyObject *) override;
 
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
     Property *Copy() const override;
     void Paste(const Property &from) override;
 
-    unsigned int getMemSize () const override {
-        return sizeof(Base::Placement);
-    }
+    unsigned int getMemSize() const override { return sizeof(Base::Placement); }
 
 private:
     Base::Rotation _rot;
@@ -498,7 +484,7 @@ private:
 /** The base class for all basic geometry properties.
  * @author Werner Mayer
  */
-class AppExport PropertyGeometry : public App::Property
+class AppExport PropertyGeometry: public App::Property
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -509,7 +495,7 @@ public:
     /** @name Modification */
     //@{
     /// Set the placement of the geometry
-    virtual void setTransform(const Base::Matrix4D& rclTrf) = 0;
+    virtual void setTransform(const Base::Matrix4D &rclTrf) = 0;
     /// Get the placement of the geometry
     virtual Base::Matrix4D getTransform() const = 0;
     /// Applies a transformation on the real geometric data type
@@ -522,7 +508,7 @@ public:
 /** The base class for all complex data properties.
  * @author Werner Mayer
  */
-class AppExport PropertyComplexGeoData : public App::PropertyGeometry
+class AppExport PropertyComplexGeoData: public App::PropertyGeometry
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -538,7 +524,7 @@ public:
 
     /** @name Getting basic geometric entities */
     //@{
-    virtual const Data::ComplexGeoData* getComplexData() const = 0;
+    virtual const Data::ComplexGeoData *getComplexData() const = 0;
     Base::BoundBox3d getBoundingBox() const override = 0;
     //@}
 };

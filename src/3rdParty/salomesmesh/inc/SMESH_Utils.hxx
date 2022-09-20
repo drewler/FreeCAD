@@ -28,13 +28,13 @@
 #define _SMESH_Utils_hxx_
 
 #ifdef WIN32
- #if defined SMESHUtils_EXPORTS
-  #define SMESHUtils_EXPORT __declspec( dllexport )
- #else
-  #define SMESHUtils_EXPORT __declspec( dllimport )
- #endif
+#if defined SMESHUtils_EXPORTS
+#define SMESHUtils_EXPORT __declspec(dllexport)
 #else
- #define SMESHUtils_EXPORT
+#define SMESHUtils_EXPORT __declspec(dllimport)
+#endif
+#else
+#define SMESHUtils_EXPORT
 #endif
 
 #endif

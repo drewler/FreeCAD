@@ -32,50 +32,53 @@
 #include <boost/shared_ptr.hpp>
 
 #ifdef WIN32
- #if defined SMESHCONTROLS_EXPORTS || defined SMESHControls_EXPORTS
-  #define SMESHCONTROLS_EXPORT __declspec( dllexport )
- #else
-  #define SMESHCONTROLS_EXPORT __declspec( dllimport )
- #endif
+#if defined SMESHCONTROLS_EXPORTS || defined SMESHControls_EXPORTS
+#define SMESHCONTROLS_EXPORT __declspec(dllexport)
 #else
- #define SMESHCONTROLS_EXPORT
+#define SMESHCONTROLS_EXPORT __declspec(dllimport)
+#endif
+#else
+#define SMESHCONTROLS_EXPORT
 #endif
 
 class SMDS_Mesh;
 
-namespace SMESH{
-  namespace Controls{
+namespace SMESH
+{
+namespace Controls
+{
 
-    /*
+/*
       Class       : Functor
       Description : Root of all Functors defined in ../Controls/SMESH_ControlsDef.hxx
     */
-    class SMESHCONTROLS_EXPORT Functor
-    {
-    public:
-      virtual ~Functor(){}
-      virtual void SetMesh( const SMDS_Mesh* theMesh ) = 0;
-      virtual SMDSAbs_ElementType GetType() const = 0;
-    };
-    typedef boost::shared_ptr<Functor> FunctorPtr;
+class SMESHCONTROLS_EXPORT Functor
+{
+public:
+    virtual ~Functor() {}
+    virtual void SetMesh(const SMDS_Mesh *theMesh) = 0;
+    virtual SMDSAbs_ElementType GetType() const = 0;
+};
+typedef boost::shared_ptr<Functor> FunctorPtr;
 
 
-    class NumericalFunctor;
-    typedef boost::shared_ptr<NumericalFunctor> NumericalFunctorPtr;
-  
-    /*
+class NumericalFunctor;
+typedef boost::shared_ptr<NumericalFunctor> NumericalFunctorPtr;
+
+/*
       Class       : Predicate
       Description : Base class for all predicates
     */
-    class SMESHCONTROLS_EXPORT Predicate: public virtual Functor{
-    public:
-      virtual bool IsSatisfy( long theElementId ) = 0;
-      virtual SMDSAbs_ElementType GetType() const = 0;
-    };
-    typedef boost::shared_ptr<Predicate> PredicatePtr;
+class SMESHCONTROLS_EXPORT Predicate: public virtual Functor
+{
+public:
+    virtual bool IsSatisfy(long theElementId) = 0;
+    virtual SMDSAbs_ElementType GetType() const = 0;
+};
+typedef boost::shared_ptr<Predicate> PredicatePtr;
 
-  }
-}
+} // namespace Controls
+} // namespace SMESH
 
 typedef SMESH::Controls::PredicatePtr SMESH_PredicatePtr;
 

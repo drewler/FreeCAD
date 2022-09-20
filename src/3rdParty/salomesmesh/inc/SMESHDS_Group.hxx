@@ -36,42 +36,37 @@
 
 class SMESHDS_Mesh;
 
-class SMESHDS_EXPORT SMESHDS_Group : public SMESHDS_GroupBase
+class SMESHDS_EXPORT SMESHDS_Group: public SMESHDS_GroupBase
 {
- public:
+public:
+    SMESHDS_Group(const int theID, const SMESHDS_Mesh *theMesh, const SMDSAbs_ElementType theType);
 
-  SMESHDS_Group (const int                 theID,
-                 const SMESHDS_Mesh*       theMesh,
-                 const SMDSAbs_ElementType theType);
+    virtual void SetType(SMDSAbs_ElementType theType);
 
-  virtual void SetType(SMDSAbs_ElementType theType);
+    virtual int Extent() const;
 
-  virtual int Extent() const;
+    virtual bool IsEmpty();
 
-  virtual bool IsEmpty();
+    virtual bool Contains(const int theID);
 
-  virtual bool Contains (const int theID);
+    virtual bool Contains(const SMDS_MeshElement *elem);
 
-  virtual bool Contains (const SMDS_MeshElement* elem);
+    virtual SMDS_ElemIteratorPtr GetElements() const;
 
-  virtual SMDS_ElemIteratorPtr GetElements() const;
+    virtual VTK_MTIME_TYPE GetTic() const;
 
-  virtual VTK_MTIME_TYPE GetTic() const;
+    bool Add(const int theID);
 
-  bool Add (const int theID);
+    bool Add(const SMDS_MeshElement *theElem);
 
-  bool Add (const SMDS_MeshElement* theElem );
+    bool Remove(const int theID);
 
-  bool Remove (const int theID);
+    void Clear();
 
-  void Clear();
+    SMDS_MeshGroup &SMDSGroup() { return myGroup; }
 
-  SMDS_MeshGroup& SMDSGroup() { return myGroup; }
-
- private:
-
-  SMDS_MeshGroup myGroup;
-
+private:
+    SMDS_MeshGroup myGroup;
 };
 
 #endif

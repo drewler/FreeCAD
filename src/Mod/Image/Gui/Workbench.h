@@ -26,25 +26,26 @@
 #include <Gui/Workbench.h>
 #include <Mod/Image/ImageGlobal.h>
 
-namespace ImageGui {
+namespace ImageGui
+{
 
 /**
  * @author Werner Mayer
  */
-class ImageGuiExport Workbench : public Gui::StdWorkbench
+class ImageGuiExport Workbench: public Gui::StdWorkbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-  Workbench();
-  ~Workbench() override;
+    Workbench();
+    ~Workbench() override;
 
 protected:
-  Gui::ToolBarItem* setupToolBars() const override;
-  Gui::ToolBarItem* setupCommandBars() const override;
+    Gui::ToolBarItem *setupToolBars() const override;
+    Gui::ToolBarItem *setupCommandBars() const override;
 };
 
 } // namespace ImageGui
 
 
-#endif // IMAGE_WORKBENCH_H 
+#endif // IMAGE_WORKBENCH_H

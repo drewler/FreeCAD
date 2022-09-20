@@ -38,27 +38,24 @@
  */
 class StdMeshers_CartesianParameters3D;
 
-class STDMESHERS_EXPORT StdMeshers_Cartesian_3D : public SMESH_3D_Algo
+class STDMESHERS_EXPORT StdMeshers_Cartesian_3D: public SMESH_3D_Algo
 {
 public:
-  StdMeshers_Cartesian_3D(int hypId, int studyId, SMESH_Gen* gen);
+    StdMeshers_Cartesian_3D(int hypId, int studyId, SMESH_Gen *gen);
 
-  virtual bool CheckHypothesis(SMESH_Mesh&         aMesh,
-                               const TopoDS_Shape& aShape,
-                               Hypothesis_Status&  aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh,  const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
-  virtual void SetEventListener(SMESH_subMesh* subMesh);
+    virtual void SetEventListener(SMESH_subMesh *subMesh);
 
- private:
+private:
+    void setSubmeshesComputed(SMESH_Mesh &aMesh, const TopoDS_Shape &theShape);
 
-  void setSubmeshesComputed(SMESH_Mesh& aMesh, const TopoDS_Shape& theShape );
-
-  const StdMeshers_CartesianParameters3D* _hyp;
+    const StdMeshers_CartesianParameters3D *_hyp;
 };
 
 #endif

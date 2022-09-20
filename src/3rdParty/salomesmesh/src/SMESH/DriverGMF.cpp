@@ -27,40 +27,38 @@
 
 #include <boost/filesystem.hpp>
 
-extern "C"
-{
+extern "C" {
 #include "libmesh5.h"
 }
 
 namespace DriverGMF
 {
 
-  //================================================================================
-  /*!
+//================================================================================
+/*!
    * \brief Closes GMF mesh at destruction
    */
-  //================================================================================
+//================================================================================
 
-  MeshCloser::~MeshCloser()
-  {
-    if ( _gmfMeshID )
-      GmfCloseMesh( _gmfMeshID );
-  }
+MeshCloser::~MeshCloser()
+{
+    if (_gmfMeshID) GmfCloseMesh(_gmfMeshID);
+}
 
-  //================================================================================
-  /*!
+//================================================================================
+/*!
    * \brief Checks GMF file extension
    */
-  //================================================================================
+//================================================================================
 
-  bool isExtensionCorrect( const std::string& fileName )
-  {
-    std::string ext  = boost::filesystem::extension(fileName);
-    switch ( ext.size() ) {
-    case 5: return ( ext == ".mesh" || ext == ".solb" );
-    case 6: return ( ext == ".meshb" );
-    case 4: return ( ext == ".sol" );
+bool isExtensionCorrect(const std::string &fileName)
+{
+    std::string ext = boost::filesystem::extension(fileName);
+    switch (ext.size()) {
+        case 5: return (ext == ".mesh" || ext == ".solb");
+        case 6: return (ext == ".meshb");
+        case 4: return (ext == ".sol");
     }
     return false;
-  }
 }
+} // namespace DriverGMF

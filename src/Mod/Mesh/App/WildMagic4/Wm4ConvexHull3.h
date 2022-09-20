@@ -17,8 +17,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM ConvexHull3 : public ConvexHull<Real>
+template<class Real> class WM4_FOUNDATION_ITEM ConvexHull3: public ConvexHull<Real>
 {
 public:
     // The input to the constructor is the array of vertices whose convex hull
@@ -33,27 +32,27 @@ public:
     // exact arithmetic, but is the slowest choice.  The choice Query::QT_REAL
     // uses floating-point arithmetic, but is not robust in all cases.
 
-    ConvexHull3 (int iVertexQuantity, Vector3<Real>* akVertex, Real fEpsilon,
-        bool bOwner, Query::Type eQueryType);
-    virtual ~ConvexHull3 ();
+    ConvexHull3(int iVertexQuantity, Vector3<Real> *akVertex, Real fEpsilon, bool bOwner,
+                Query::Type eQueryType);
+    virtual ~ConvexHull3();
 
     // If GetDimension() returns 1, then the points lie on a line.  You must
     // create a ConvexHull1 object using the function provided.
-    const Vector3<Real>& GetLineOrigin () const;
-    const Vector3<Real>& GetLineDirection () const;
-    ConvexHull1<Real>* GetConvexHull1 () const;
+    const Vector3<Real> &GetLineOrigin() const;
+    const Vector3<Real> &GetLineDirection() const;
+    ConvexHull1<Real> *GetConvexHull1() const;
 
     // If GetDimension() returns 2, then the points lie on a plane.  The plane
     // has two direction vectors (inputs 0 or 1).  You must create a
     // ConvexHull2 object using the function provided.
-    const Vector3<Real>& GetPlaneOrigin () const;
-    const Vector3<Real>& GetPlaneDirection (int i) const;
-    ConvexHull2<Real>* GetConvexHull2 () const;
+    const Vector3<Real> &GetPlaneOrigin() const;
+    const Vector3<Real> &GetPlaneDirection(int i) const;
+    ConvexHull2<Real> *GetConvexHull2() const;
 
     // Support for streaming to/from disk.
-    ConvexHull3 (const char* acFilename);
-    bool Load (const char* acFilename);
-    bool Save (const char* acFilename) const;
+    ConvexHull3(const char *acFilename);
+    bool Load(const char *acFilename);
+    bool Save(const char *acFilename) const;
 
 private:
     using ConvexHull<Real>::m_eQueryType;
@@ -67,29 +66,29 @@ private:
     class WM4_FOUNDATION_ITEM Triangle
     {
     public:
-        Triangle (int iV0, int iV1, int iV2);
+        Triangle(int iV0, int iV1, int iV2);
 
-        int GetSign (int i, const Query3<Real>* pkQuery);
-        void AttachTo (Triangle* pkAdj0, Triangle* pkAdj1, Triangle* pkAdj2);
-        int DetachFrom (int iAdj, Triangle* pkAdj);
+        int GetSign(int i, const Query3<Real> *pkQuery);
+        void AttachTo(Triangle *pkAdj0, Triangle *pkAdj1, Triangle *pkAdj2);
+        int DetachFrom(int iAdj, Triangle *pkAdj);
 
         int V[3];
-        Triangle* A[3];
+        Triangle *A[3];
         int Sign;
         int Time;
         bool OnStack;
     };
 
-    bool Update (int i);
-    void ExtractIndices ();
-    void DeleteHull ();
+    bool Update(int i);
+    void ExtractIndices();
+    void DeleteHull();
 
     // The input points.
-    Vector3<Real>* m_akVertex;
+    Vector3<Real> *m_akVertex;
 
     // Support for robust queries.
-    Vector3<Real>* m_akSVertex;
-    Query3<Real>* m_pkQuery;
+    Vector3<Real> *m_akSVertex;
+    Query3<Real> *m_pkQuery;
 
     // The line of containment if the dimension is 1.
     Vector3<Real> m_kLineOrigin, m_kLineDirection;
@@ -98,13 +97,12 @@ private:
     Vector3<Real> m_kPlaneOrigin, m_akPlaneDirection[2];
 
     // The current hull.
-    std::set<Triangle*> m_kHull;
+    std::set<Triangle *> m_kHull;
 
     class WM4_FOUNDATION_ITEM TerminatorData
     {
     public:
-        TerminatorData (int iV0 = -1, int iV1 = -1, int iNullIndex = -1,
-            Triangle* pkTri = nullptr)
+        TerminatorData(int iV0 = -1, int iV1 = -1, int iNullIndex = -1, Triangle *pkTri = nullptr)
         {
             V[0] = iV0;
             V[1] = iV1;
@@ -114,13 +112,13 @@ private:
 
         int V[2];
         int NullIndex;
-        Triangle* Tri;
+        Triangle *Tri;
     };
 };
 
 typedef ConvexHull3<float> ConvexHull3f;
 typedef ConvexHull3<double> ConvexHull3d;
 
-}
+} // namespace Wm4
 
 #endif

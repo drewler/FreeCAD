@@ -9,42 +9,43 @@
 
 #include "gzipoutputstreambuf.h"
 
-namespace zipios {
+namespace zipios
+{
 
 /** \anchor GZIPOutputStream_anchor
     GZIPOutputStream is an ostream that writes the output to a gz file. The
     interface approximates the interface of the Java GZIPOutputStream. */
-class BaseExport GZIPOutputStream : public std::ostream {
+class BaseExport GZIPOutputStream: public std::ostream
+{
 public:
-
-  /** GZIPOutputStream constructor.
+    /** GZIPOutputStream constructor.
       @param os ostream to which the compressed zip archive is written.
     */
-  explicit GZIPOutputStream( std::ostream &os ) ;
+    explicit GZIPOutputStream(std::ostream &os);
 
-  /** GZIPOutputStream constructor.
+    /** GZIPOutputStream constructor.
       @param filename filename to write the gzip archive to.
    */
-  explicit GZIPOutputStream( const std::string &filename ) ;
+    explicit GZIPOutputStream(const std::string &filename);
 
-  void setFilename( const string &filename );
-  void setComment( const string &comment );
-  
-  /** Calls finish and closes the stream. */
-  void close() ;
+    void setFilename(const string &filename);
+    void setComment(const string &comment);
 
-  /** Finishes the stream. */
-  void finish() ;
+    /** Calls finish and closes the stream. */
+    void close();
 
-  /** Destructor. */
-  virtual ~GZIPOutputStream() ;
+    /** Finishes the stream. */
+    void finish();
+
+    /** Destructor. */
+    virtual ~GZIPOutputStream();
 
 private:
-  std::ofstream *ofs ;
-  GZIPOutputStreambuf *ozf ;
+    std::ofstream *ofs;
+    GZIPOutputStreambuf *ozf;
 };
- 
-} // namespace.
+
+} // namespace zipios
 
 #endif
 

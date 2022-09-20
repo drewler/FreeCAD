@@ -34,9 +34,9 @@ using namespace Gui::TaskView;
 namespace bp = boost::placeholders;
 
 TaskTransformedMessages::TaskTransformedMessages(ViewProviderTransformed *transformedView_)
-    : TaskBox(Gui::BitmapFactory().pixmap("document-new"), tr("Transformed feature messages"), true, nullptr)
-    , transformedView(transformedView_)
-    , ui(new Ui_TaskTransformedMessages)
+    : TaskBox(Gui::BitmapFactory().pixmap("document-new"), tr("Transformed feature messages"), true,
+              nullptr),
+      transformedView(transformedView_), ui(new Ui_TaskTransformedMessages)
 {
     // we need a separate container widget to add all controls to
     proxy = new QWidget(this);
@@ -49,13 +49,11 @@ TaskTransformedMessages::TaskTransformedMessages(ViewProviderTransformed *transf
     this->groupLayout()->addWidget(proxy);
     ui->labelTransformationStatus->setText(transformedView->getMessage());
 
-    connectionDiagnosis = transformedView->signalDiagnosis.connect(boost::bind(&PartDesignGui::TaskTransformedMessages::slotDiagnosis, this, bp::_1));
+    connectionDiagnosis = transformedView->signalDiagnosis.connect(
+        boost::bind(&PartDesignGui::TaskTransformedMessages::slotDiagnosis, this, bp::_1));
 }
 
-TaskTransformedMessages::~TaskTransformedMessages()
-{
-    connectionDiagnosis.disconnect();
-}
+TaskTransformedMessages::~TaskTransformedMessages() { connectionDiagnosis.disconnect(); }
 
 void TaskTransformedMessages::slotDiagnosis(QString msg)
 {

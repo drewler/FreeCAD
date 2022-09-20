@@ -32,45 +32,51 @@
 #include "PropertyItem.h"
 
 
-namespace App {
+namespace App
+{
 class Property;
 }
-namespace Gui {
-namespace PropertyEditor {
+namespace Gui
+{
+namespace PropertyEditor
+{
 
-class PropertyModel : public QAbstractItemModel
+class PropertyModel: public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    using PropertyList = std::vector< std::pair< std::string, std::vector<App::Property*> > >;
+    using PropertyList = std::vector<std::pair<std::string, std::vector<App::Property *>>>;
 
-    PropertyModel(QObject* parent);
+    PropertyModel(QObject *parent);
     ~PropertyModel() override;
 
-    QModelIndex buddy (const QModelIndex & index) const override;
-    int columnCount (const QModelIndex & parent = QModelIndex()) const override;
-    QVariant data (const QModelIndex & index, int role = Qt::DisplayRole) const override;
-    bool setData (const QModelIndex & idx, const QVariant & value, int role) override;
+    QModelIndex buddy(const QModelIndex &index) const override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex &idx, const QVariant &value, int role) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
-    QModelIndex index (int row, int column, const QModelIndex & parent = QModelIndex()) const override;
-    QModelIndex parent (const QModelIndex & index) const override;
-    int rowCount (const QModelIndex & parent = QModelIndex()) const override;
-    QVariant headerData (int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-    bool setHeaderData (int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole) override;
-    void buildUp(const PropertyList& props);
+    QModelIndex index(int row, int column,
+                      const QModelIndex &parent = QModelIndex()) const override;
+    QModelIndex parent(const QModelIndex &index) const override;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant headerData(int section, Qt::Orientation orientation,
+                        int role = Qt::DisplayRole) const override;
+    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value,
+                       int role = Qt::EditRole) override;
+    void buildUp(const PropertyList &props);
 
-    bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex()) override;
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
-    void updateProperty(const App::Property&);
-    void appendProperty(const App::Property&);
-    void removeProperty(const App::Property&);
+    void updateProperty(const App::Property &);
+    void appendProperty(const App::Property &);
+    void removeProperty(const App::Property &);
 
-    QStringList propertyPathFromIndex(const QModelIndex&) const;
-    QModelIndex propertyIndexFromPath(const QStringList&) const;
+    QStringList propertyPathFromIndex(const QModelIndex &) const;
+    QModelIndex propertyIndexFromPath(const QStringList &) const;
 
 private:
-    void updateChildren(PropertyItem* item, int column, const QModelIndex& parent);
+    void updateChildren(PropertyItem *item, int column, const QModelIndex &parent);
 
     struct GroupInfo {
         PropertySeparatorItem *groupItem = nullptr;
@@ -81,7 +87,7 @@ private:
 private:
     PropertyItem *rootItem;
 
-    std::unordered_map<App::Property*, QPointer<PropertyItem> > itemMap;
+    std::unordered_map<App::Property *, QPointer<PropertyItem>> itemMap;
 
     std::map<QString, GroupInfo> groupItems;
 };

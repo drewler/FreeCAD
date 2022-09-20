@@ -24,8 +24,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM QuadricSurface : public ImplicitSurface<Real>
+template<class Real> class WM4_FOUNDATION_ITEM QuadricSurface: public ImplicitSurface<Real>
 {
 public:
     // A quadric surface is defined implicitly by
@@ -40,32 +39,32 @@ public:
     //
     // The matrix A is symmetric.
 
-    QuadricSurface ();  // all coefficients zero
-    QuadricSurface (const Real afCoeff[10]);
+    QuadricSurface(); // all coefficients zero
+    QuadricSurface(const Real afCoeff[10]);
 
     // member access
-    const Real* GetCoefficients () const;
-    const Matrix3<Real>& GetA () const;
-    const Vector3<Real>& GetB () const;
-    Real GetC () const;
+    const Real *GetCoefficients() const;
+    const Matrix3<Real> &GetA() const;
+    const Vector3<Real> &GetB() const;
+    Real GetC() const;
 
     // the function
-    virtual Real F (const Vector3<Real>& rkP) const;
+    virtual Real F(const Vector3<Real> &rkP) const;
 
     // first-order partial derivatives
-    virtual Real FX (const Vector3<Real>& rkP) const;
-    virtual Real FY (const Vector3<Real>& rkP) const;
-    virtual Real FZ (const Vector3<Real>& rkP) const;
+    virtual Real FX(const Vector3<Real> &rkP) const;
+    virtual Real FY(const Vector3<Real> &rkP) const;
+    virtual Real FZ(const Vector3<Real> &rkP) const;
 
     // second-order partial derivatives
-    virtual Real FXX (const Vector3<Real>& rkP) const;
-    virtual Real FXY (const Vector3<Real>& rkP) const;
-    virtual Real FXZ (const Vector3<Real>& rkP) const;
-    virtual Real FYY (const Vector3<Real>& rkP) const;
-    virtual Real FYZ (const Vector3<Real>& rkP) const;
-    virtual Real FZZ (const Vector3<Real>& rkP) const;
+    virtual Real FXX(const Vector3<Real> &rkP) const;
+    virtual Real FXY(const Vector3<Real> &rkP) const;
+    virtual Real FXZ(const Vector3<Real> &rkP) const;
+    virtual Real FYY(const Vector3<Real> &rkP) const;
+    virtual Real FYZ(const Vector3<Real> &rkP) const;
+    virtual Real FZZ(const Vector3<Real> &rkP) const;
 
-    enum  // solution type
+    enum // solution type
     {
         QT_NONE,
         QT_POINT,
@@ -84,7 +83,7 @@ public:
     };
 
     // classification of the equation using exact arithmetic
-    int GetType () const;
+    int GetType() const;
 
 protected:
     Real m_afCoeff[10];
@@ -93,34 +92,34 @@ protected:
     Real m_fC;
 
 private:
-    typedef TRational<4*sizeof(Real)> Rational;
-    typedef RVector3<4*sizeof(Real)> QSVector;
+    typedef TRational<4 * sizeof(Real)> Rational;
+    typedef RVector3<4 * sizeof(Real)> QSVector;
 
     class RReps
     {
     public:
-        RReps (const Real afCoeff[10])
+        RReps(const Real afCoeff[10])
         {
-            Rational kOneHalf(1,2);
+            Rational kOneHalf(1, 2);
 
             c = Rational(afCoeff[0]);
             b0 = Rational(afCoeff[1]);
             b1 = Rational(afCoeff[2]);
             b2 = Rational(afCoeff[3]);
             a00 = Rational(afCoeff[4]);
-            a01 = kOneHalf*Rational(afCoeff[5]);
-            a02 = kOneHalf*Rational(afCoeff[6]);
+            a01 = kOneHalf * Rational(afCoeff[5]);
+            a02 = kOneHalf * Rational(afCoeff[6]);
             a11 = Rational(afCoeff[7]);
-            a12 = kOneHalf*Rational(afCoeff[8]);
+            a12 = kOneHalf * Rational(afCoeff[8]);
             a22 = Rational(afCoeff[9]);
 
-            Sub00 = a11*a22 - a12*a12;
-            Sub01 = a01*a22 - a12*a02;
-            Sub02 = a01*a12 - a02*a11;
-            Sub11 = a00*a22 - a02*a02;
-            Sub12 = a00*a12 - a02*a01;
-            Sub22 = a00*a11 - a01*a01;
-            c0 = a00*Sub00 - a01*Sub01 + a02*Sub02;
+            Sub00 = a11 * a22 - a12 * a12;
+            Sub01 = a01 * a22 - a12 * a02;
+            Sub02 = a01 * a12 - a02 * a11;
+            Sub11 = a00 * a22 - a02 * a02;
+            Sub12 = a00 * a12 - a02 * a01;
+            Sub22 = a00 * a11 - a01 * a01;
+            c0 = a00 * Sub00 - a01 * Sub01 + a02 * Sub02;
             c1 = Sub00 + Sub11 + Sub22;
             c2 = a00 + a11 + a22;
         }
@@ -138,22 +137,22 @@ private:
         Rational c3, c4, c5;
     };
 
-    static void GetRootSigns (RReps& rkReps, int& riPositiveRoots,
-        int& riNegativeRoots, int& riZeroRoots);
-    static int GetSignChanges (int iQuantity, const Rational* akValue);
-    static int ClassifyZeroRoots0 (const RReps& rkReps, int iPositiveRoots);
-    static int ClassifyZeroRoots1 (const RReps& rkReps, int iPositiveRoots);
-    static int ClassifyZeroRoots1 (const RReps& rkReps, int iPositiveRoots,
-        const QSVector& rkP0, const QSVector& rkP1, const QSVector& rkP2);
-    static int ClassifyZeroRoots2 (const RReps& rkReps, int iPositiveRoots);
-    static int ClassifyZeroRoots2 (const RReps& rkReps, int iPositiveRoots,
-        const QSVector& rkP0, const QSVector& rkP1, const QSVector& rkP2);
-    static int ClassifyZeroRoots3 (const RReps& rkReps);
+    static void GetRootSigns(RReps &rkReps, int &riPositiveRoots, int &riNegativeRoots,
+                             int &riZeroRoots);
+    static int GetSignChanges(int iQuantity, const Rational *akValue);
+    static int ClassifyZeroRoots0(const RReps &rkReps, int iPositiveRoots);
+    static int ClassifyZeroRoots1(const RReps &rkReps, int iPositiveRoots);
+    static int ClassifyZeroRoots1(const RReps &rkReps, int iPositiveRoots, const QSVector &rkP0,
+                                  const QSVector &rkP1, const QSVector &rkP2);
+    static int ClassifyZeroRoots2(const RReps &rkReps, int iPositiveRoots);
+    static int ClassifyZeroRoots2(const RReps &rkReps, int iPositiveRoots, const QSVector &rkP0,
+                                  const QSVector &rkP1, const QSVector &rkP2);
+    static int ClassifyZeroRoots3(const RReps &rkReps);
 };
 
 typedef QuadricSurface<float> QuadricSurfacef;
 typedef QuadricSurface<double> QuadricSurfaced;
 
-}
+} // namespace Wm4
 
 #endif

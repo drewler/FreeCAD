@@ -32,7 +32,7 @@
 
 #include "DrawUtil.h"
 
-#include <Mod/TechDraw/App/DrawRichAnnoPy.h>  // generated from DrawRichAnnoPy.xml
+#include <Mod/TechDraw/App/DrawRichAnnoPy.h> // generated from DrawRichAnnoPy.xml
 #include "DrawRichAnno.h"
 
 using namespace TechDraw;
@@ -55,31 +55,22 @@ DrawRichAnno::DrawRichAnno()
     Caption.setStatus(App::Property::Hidden, true);
     Scale.setStatus(App::Property::Hidden, true);
     ScaleType.setStatus(App::Property::Hidden, true);
-
 }
 
-void DrawRichAnno::onChanged(const App::Property* prop)
+void DrawRichAnno::onChanged(const App::Property *prop)
 {
     if (!isRestoring()) {
-        if ((prop == &AnnoText) ||
-            (prop == &ShowFrame) ||
-            (prop == &MaxWidth) ) {
-            requestPaint();
-        }
+        if ((prop == &AnnoText) || (prop == &ShowFrame) || (prop == &MaxWidth)) { requestPaint(); }
     }
 
     DrawView::onChanged(prop);
-
 }
 
 //NOTE: DocumentObject::mustExecute returns 1/0 and not true/false
 short DrawRichAnno::mustExecute() const
 {
     if (!isRestoring()) {
-        if (AnnoText.isTouched() ||
-            AnnoParent.isTouched()) {
-            return 1;
-        }
+        if (AnnoText.isTouched() || AnnoParent.isTouched()) { return 1; }
     }
 
     return DrawView::mustExecute();
@@ -87,34 +78,28 @@ short DrawRichAnno::mustExecute() const
 
 App::DocumentObjectExecReturn *DrawRichAnno::execute()
 {
-//    Base::Console().Message("DRA::execute() - @ (%.3f, %.3f)\n", X.getValue(), Y.getValue());
-    if (!keepUpdated()) {
-        return App::DocumentObject::StdReturn;
-    }
+    //    Base::Console().Message("DRA::execute() - @ (%.3f, %.3f)\n", X.getValue(), Y.getValue());
+    if (!keepUpdated()) { return App::DocumentObject::StdReturn; }
     overrideKeepUpdated(false);
     return DrawView::execute();
 }
 
-DrawView* DrawRichAnno::getBaseView() const
+DrawView *DrawRichAnno::getBaseView() const
 {
-//    Base::Console().Message("DRA::getBaseView() - %s\n", getNameInDocument());
-    return dynamic_cast<DrawView*>(AnnoParent.getValue());
+    //    Base::Console().Message("DRA::getBaseView() - %s\n", getNameInDocument());
+    return dynamic_cast<DrawView *>(AnnoParent.getValue());
 }
 
 //finds the first DrawPage in this Document that claims to own this DrawRichAnno
 //note that it is possible to manipulate the Views property of DrawPage so that
 //more than 1 DrawPage claims a DrawRichAnno.
-DrawPage* DrawRichAnno::findParentPage() const
+DrawPage *DrawRichAnno::findParentPage() const
 {
-//    Base::Console().Message("DRA::findParentPage()\n");
-    if (!AnnoParent.getValue()) {
-        return DrawView::findParentPage();
-    }
+    //    Base::Console().Message("DRA::findParentPage()\n");
+    if (!AnnoParent.getValue()) { return DrawView::findParentPage(); }
 
-    DrawView* parent = dynamic_cast<DrawView*>(AnnoParent.getValue());
-    if (parent) {
-        return parent->findParentPage();
-    }
+    DrawView *parent = dynamic_cast<DrawView *>(AnnoParent.getValue());
+    if (parent) { return parent->findParentPage(); }
 
     return nullptr;
 }
@@ -130,15 +115,16 @@ PyObject *DrawRichAnno::getPyObject()
 
 // Python Drawing feature ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(TechDraw::DrawRichAnnoPython, TechDraw::DrawRichAnno)
-template<> const char* TechDraw::DrawRichAnnoPython::getViewProviderName() const {
+template<> const char *TechDraw::DrawRichAnnoPython::getViewProviderName() const
+{
     return "TechDrawGui::ViewProviderRichAnno";
 }
 /// @endcond
 
 // explicit template instantiation
 template class TechDrawExport FeaturePythonT<TechDraw::DrawRichAnno>;
-}
-
+} // namespace App

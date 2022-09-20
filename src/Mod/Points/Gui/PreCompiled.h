@@ -27,9 +27,9 @@
 #include <FCConfig.h>
 
 #ifdef FC_OS_WIN32
-# ifndef NOMINMAX
-# define NOMINMAX
-# endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #endif
 
 #ifdef _PreComp_
@@ -52,21 +52,21 @@
 #include <bitset>
 
 #ifdef FC_OS_WIN32
-# include <windows.h>
+#include <windows.h>
 #endif
 
 
 // Qt Toolkit
 #ifndef __QtAll__
-# include <Gui/QtAll.h>
+#include <Gui/QtAll.h>
 #endif
 
 // Inventor
 #ifndef __InventorAll__
-# include <Gui/InventorAll.h>
+#include <Gui/InventorAll.h>
 #endif
 
 
-#endif  //_PreComp_
+#endif //_PreComp_
 
 #endif // POINTSGUI_PRECOMPILED_H

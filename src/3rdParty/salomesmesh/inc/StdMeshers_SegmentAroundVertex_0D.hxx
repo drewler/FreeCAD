@@ -38,17 +38,15 @@
 class STDMESHERS_EXPORT StdMeshers_SegmentAroundVertex_0D: public SMESH_0D_Algo
 {
 public:
-  StdMeshers_SegmentAroundVertex_0D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_SegmentAroundVertex_0D();
+    StdMeshers_SegmentAroundVertex_0D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_SegmentAroundVertex_0D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh&                          aMesh,
-                               const TopoDS_Shape&                  aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape);
-  
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
+
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 };
 
 #endif

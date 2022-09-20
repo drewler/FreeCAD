@@ -33,12 +33,11 @@
 
 using namespace Gui;
 
-WorkbenchManager* WorkbenchManager::_instance = nullptr;
+WorkbenchManager *WorkbenchManager::_instance = nullptr;
 
-WorkbenchManager* WorkbenchManager::instance()
+WorkbenchManager *WorkbenchManager::instance()
 {
-    if (!_instance)
-        _instance = new WorkbenchManager;
+    if (!_instance) _instance = new WorkbenchManager;
     return _instance;
 }
 
@@ -48,14 +47,13 @@ void WorkbenchManager::destruct()
     _instance = nullptr;
 }
 
-WorkbenchManager::WorkbenchManager() : _activeWorkbench(nullptr)
-{
-}
+WorkbenchManager::WorkbenchManager() : _activeWorkbench(nullptr) {}
 
 WorkbenchManager::~WorkbenchManager()
 {
-    for (std::map<std::string, Workbench*>::iterator it = _workbenches.begin(); it != _workbenches.end(); ++it) {
-        Workbench* wb = it->second;
+    for (std::map<std::string, Workbench *>::iterator it = _workbenches.begin();
+         it != _workbenches.end(); ++it) {
+        Workbench *wb = it->second;
         delete wb;
     }
 
@@ -65,14 +63,15 @@ WorkbenchManager::~WorkbenchManager()
     DockWindowManager::destruct();
 }
 
-Workbench* WorkbenchManager::createWorkbench (const std::string& name, const std::string& className)
+Workbench *WorkbenchManager::createWorkbench(const std::string &name, const std::string &className)
 {
-    Workbench* wb = getWorkbench(name);
+    Workbench *wb = getWorkbench(name);
 
     if (!wb) {
         // try to create an instance now
-        Base::Type type = Base::Type::getTypeIfDerivedFrom(className.c_str(), Workbench::getClassTypeId(), false);
-        wb = static_cast<Workbench*>(type.createInstance());
+        Base::Type type =
+            Base::Type::getTypeIfDerivedFrom(className.c_str(), Workbench::getClassTypeId(), false);
+        wb = static_cast<Workbench *>(type.createInstance());
         // createInstance could return a null pointer
         if (!wb) {
             std::stringstream str;
@@ -87,23 +86,22 @@ Workbench* WorkbenchManager::createWorkbench (const std::string& name, const std
     return wb;
 }
 
-void WorkbenchManager::removeWorkbench(const std::string& name)
+void WorkbenchManager::removeWorkbench(const std::string &name)
 {
-    std::map<std::string, Workbench*>::iterator it = _workbenches.find(name);
+    std::map<std::string, Workbench *>::iterator it = _workbenches.find(name);
     if (it != _workbenches.end()) {
-        Workbench* wb = it->second;
+        Workbench *wb = it->second;
         _workbenches.erase(it);
-        if (_activeWorkbench == wb)
-            _activeWorkbench = nullptr;
+        if (_activeWorkbench == wb) _activeWorkbench = nullptr;
         delete wb;
     }
 }
 
-Workbench* WorkbenchManager::getWorkbench (const std::string& name) const
+Workbench *WorkbenchManager::getWorkbench(const std::string &name) const
 {
-    Workbench* wb=nullptr;
+    Workbench *wb = nullptr;
 
-    std::map<std::string, Workbench*>::const_iterator it = _workbenches.find(name);
+    std::map<std::string, Workbench *>::const_iterator it = _workbenches.find(name);
     if (it != _workbenches.end()) {
         // returns the already created object
         wb = it->second;
@@ -112,9 +110,9 @@ Workbench* WorkbenchManager::getWorkbench (const std::string& name) const
     return wb;
 }
 
-bool WorkbenchManager::activate(const std::string& name, const std::string& className)
+bool WorkbenchManager::activate(const std::string &name, const std::string &className)
 {
-    Workbench* wb = createWorkbench(name, className);
+    Workbench *wb = createWorkbench(name, className);
     if (wb) {
         _activeWorkbench = wb;
         wb->activate();
@@ -124,15 +122,13 @@ bool WorkbenchManager::activate(const std::string& name, const std::string& clas
     return false;
 }
 
-Workbench* WorkbenchManager::active() const
-{
-    return _activeWorkbench;
-}
+Workbench *WorkbenchManager::active() const { return _activeWorkbench; }
 
 std::list<std::string> WorkbenchManager::workbenches() const
 {
     std::list<std::string> wb;
-    for (std::map<std::string, Workbench*>::const_iterator it = _workbenches.begin(); it != _workbenches.end(); ++it)
+    for (std::map<std::string, Workbench *>::const_iterator it = _workbenches.begin();
+         it != _workbenches.end(); ++it)
         wb.push_back(it->first);
     return wb;
 }

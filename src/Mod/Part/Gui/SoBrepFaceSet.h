@@ -41,7 +41,8 @@ class SoTextureCoordinateBundle;
 
 // #define RENDER_GLARRAYS
 
-namespace PartGui {
+namespace PartGui
+{
 
 /**
  * First some words to the history and the reason why we have this class:
@@ -76,7 +77,8 @@ namespace PartGui {
  *
  * As an example how to use the class correctly see ViewProviderPartExt::updateVisual().
  */
-class PartGuiExport SoBrepFaceSet : public SoIndexedFaceSet {
+class PartGuiExport SoBrepFaceSet: public SoIndexedFaceSet
+{
     using inherited = SoIndexedFaceSet;
 
     SO_NODE_HEADER(SoBrepFaceSet);
@@ -90,19 +92,17 @@ public:
 protected:
     ~SoBrepFaceSet() override;
     void GLRender(SoGLRenderAction *action) override;
-    void GLRenderBelowPath(SoGLRenderAction * action) override;
-    void doAction(SoAction* action) override;
-    SoDetail * createTriangleDetail(
-        SoRayPickAction * action,
-        const SoPrimitiveVertex * v1,
-        const SoPrimitiveVertex * v2,
-        const SoPrimitiveVertex * v3,
-        SoPickedPoint * pp) override;
-    void generatePrimitives(SoAction * action) override;
-    void getBoundingBox(SoGetBoundingBoxAction * action) override;
+    void GLRenderBelowPath(SoGLRenderAction *action) override;
+    void doAction(SoAction *action) override;
+    SoDetail *createTriangleDetail(SoRayPickAction *action, const SoPrimitiveVertex *v1,
+                                   const SoPrimitiveVertex *v2, const SoPrimitiveVertex *v3,
+                                   SoPickedPoint *pp) override;
+    void generatePrimitives(SoAction *action) override;
+    void getBoundingBox(SoGetBoundingBoxAction *action) override;
 
 private:
-    enum Binding {
+    enum Binding
+    {
         OVERALL = 0,
         PER_PART,
         PER_PART_INDEXED,
@@ -112,30 +112,21 @@ private:
         PER_VERTEX_INDEXED,
         NONE = OVERALL
     };
-    Binding findMaterialBinding(SoState * const state) const;
-    Binding findNormalBinding(SoState * const state) const;
-    void renderShape(SoGLRenderAction * action,
-                     SbBool hasVBO,
-                     const SoGLCoordinateElement * const vertexlist,
-                     const int32_t *vertexindices,
-                     int num_vertexindices,
-                     const int32_t *partindices,
-                     int num_partindices,
-                     const SbVec3f *normals,
-                     const int32_t *normindices,
-                     SoMaterialBundle *const materials,
-                     const int32_t *matindices,
-                     SoTextureCoordinateBundle * const texcoords,
-                     const int32_t *texindices,
-                     const int nbind,
-                     const int mbind,
-                     SbBool texture);
+    Binding findMaterialBinding(SoState *const state) const;
+    Binding findNormalBinding(SoState *const state) const;
+    void renderShape(SoGLRenderAction *action, SbBool hasVBO,
+                     const SoGLCoordinateElement *const vertexlist, const int32_t *vertexindices,
+                     int num_vertexindices, const int32_t *partindices, int num_partindices,
+                     const SbVec3f *normals, const int32_t *normindices,
+                     SoMaterialBundle *const materials, const int32_t *matindices,
+                     SoTextureCoordinateBundle *const texcoords, const int32_t *texindices,
+                     const int nbind, const int mbind, SbBool texture);
 
     using SelContext = Gui::SoFCSelectionContextEx;
     using SelContextPtr = Gui::SoFCSelectionContextExPtr;
 
     void renderHighlight(SoGLRenderAction *action, SelContextPtr);
-    void renderSelection(SoGLRenderAction *action, SelContextPtr, bool push=true);
+    void renderSelection(SoGLRenderAction *action, SelContextPtr, bool push = true);
 
     bool overrideMaterialBinding(SoGLRenderAction *action, SelContextPtr ctx, SelContextPtr ctx2);
 
@@ -164,4 +155,3 @@ private:
 } // namespace PartGui
 
 #endif // PARTGUI_SOBREPFACESET_H
-

@@ -28,11 +28,12 @@
 
 class SbVec2s;
 
-namespace Gui {
+namespace Gui
+{
 
 class View3DInventorViewer;
 
-class GuiExport ViewProviderFeature:public ViewProviderDocumentObject
+class GuiExport ViewProviderFeature: public ViewProviderDocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderFeature);
 
@@ -43,7 +44,7 @@ public:
     /// destructor.
     ~ViewProviderFeature() override;
 
-    App::PropertyColorList    ColourList;
+    App::PropertyColorList ColourList;
 
     /**
      * Attaches the document object to this view provider.
@@ -54,4 +55,3 @@ public:
 } // namespace Gui
 
 #endif // GUI_VIEWPROVIDER_FEATURE_H
-

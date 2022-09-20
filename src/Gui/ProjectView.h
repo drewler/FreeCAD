@@ -28,28 +28,27 @@
 
 class QFileSystemModel;
 
-namespace Gui {
+namespace Gui
+{
 
 
 /** Tree view that allows drag & drop of document objects.
  * @author Werner Mayer
  */
-class ProjectWidget : public QTreeView
+class ProjectWidget: public QTreeView
 {
     Q_OBJECT
 
 public:
-    explicit ProjectWidget(QWidget* parent=nullptr);
+    explicit ProjectWidget(QWidget *parent = nullptr);
     ~ProjectWidget() override;
 
 private:
     QFileSystemModel *fileModel;
-
 };
 
 
-}
+} // namespace Gui
 
 
 #endif // GUI_ProjectView_H
-

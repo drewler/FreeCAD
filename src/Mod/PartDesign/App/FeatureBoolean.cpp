@@ -23,10 +23,10 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepAlgoAPI_Common.hxx>
-# include <BRepAlgoAPI_Cut.hxx>
-# include <BRepAlgoAPI_Fuse.hxx>
-# include <Standard_Failure.hxx>
+#include <BRepAlgoAPI_Common.hxx>
+#include <BRepAlgoAPI_Cut.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
+#include <Standard_Failure.hxx>
 #endif
 
 #include <App/Application.h>
@@ -40,20 +40,25 @@
 
 using namespace PartDesign;
 
-namespace PartDesign {
+namespace PartDesign
+{
 
 PROPERTY_SOURCE_WITH_EXTENSIONS(PartDesign::Boolean, PartDesign::Feature)
 
-const char* Boolean::TypeEnums[]= {"Fuse","Cut","Common",nullptr};
+const char *Boolean::TypeEnums[] = {"Fuse", "Cut", "Common", nullptr};
 
 Boolean::Boolean()
 {
-    ADD_PROPERTY(Type,((long)0));
+    ADD_PROPERTY(Type, ((long)0));
     Type.setEnums(TypeEnums);
 
-    ADD_PROPERTY_TYPE(Refine,(0),"Part Design",(App::PropertyType)(App::Prop_None),"Refine shape (clean up redundant edges) after adding/subtracting");
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/PartDesign");
+    ADD_PROPERTY_TYPE(Refine, (0), "Part Design", (App::PropertyType)(App::Prop_None),
+                      "Refine shape (clean up redundant edges) after adding/subtracting");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/PartDesign");
     this->Refine.setValue(hGrp->GetBool("RefineModel", false));
 
     initExtension(this);
@@ -61,8 +66,7 @@ Boolean::Boolean()
 
 short Boolean::mustExecute() const
 {
-    if (Group.isTouched())
-        return 1;
+    if (Group.isTouched()) return 1;
     return PartDesign::Feature::mustExecute();
 }
 
@@ -70,56 +74,55 @@ App::DocumentObjectExecReturn *Boolean::execute()
 {
     // Get the operation type
     std::string type = Type.getValueAsString();
-   
+
     // Check the parameters
-    const Part::Feature* baseFeature = this->getBaseObject(/* silent = */ true);
+    const Part::Feature *baseFeature = this->getBaseObject(/* silent = */ true);
 
     if (!baseFeature && type == "Cut") {
         return new App::DocumentObjectExecReturn("Cannot do boolean cut without BaseFeature");
     }
 
-    std::vector<App::DocumentObject*> tools = Group.getValues();
-    if (tools.empty())
-        return App::DocumentObject::StdReturn;
+    std::vector<App::DocumentObject *> tools = Group.getValues();
+    if (tools.empty()) return App::DocumentObject::StdReturn;
 
     // Get the base shape to operate on
     Part::TopoShape baseTopShape;
-    if(baseFeature)
-        baseTopShape = baseFeature->Shape.getShape();
+    if (baseFeature) baseTopShape = baseFeature->Shape.getShape();
     else {
         auto feature = tools.back();
-        if(!feature->isDerivedFrom(Part::Feature::getClassTypeId()))
-            return new App::DocumentObjectExecReturn("Cannot do boolean with anything but Part::Feature and its derivatives");
-        
-        baseTopShape = static_cast<Part::Feature*>(feature)->Shape.getShape();
+        if (!feature->isDerivedFrom(Part::Feature::getClassTypeId()))
+            return new App::DocumentObjectExecReturn(
+                "Cannot do boolean with anything but Part::Feature and its derivatives");
+
+        baseTopShape = static_cast<Part::Feature *>(feature)->Shape.getShape();
         tools.pop_back();
     }
-        
+
     if (baseTopShape.getShape().IsNull())
-        return new App::DocumentObjectExecReturn("Cannot do boolean operation with invalid base shape");
+        return new App::DocumentObjectExecReturn(
+            "Cannot do boolean operation with invalid base shape");
 
     //get the body this boolean feature belongs to
-    Part::BodyBase* baseBody = Part::BodyBase::findBodyOf(this);
+    Part::BodyBase *baseBody = Part::BodyBase::findBodyOf(this);
 
-    if(!baseBody)
-         return new App::DocumentObjectExecReturn("Cannot do boolean on feature which is not in a body");
+    if (!baseBody)
+        return new App::DocumentObjectExecReturn(
+            "Cannot do boolean on feature which is not in a body");
 
     TopoDS_Shape result = baseTopShape.getShape();
 
-    for (auto tool : tools)
-    {
-        if(!tool->isDerivedFrom(Part::Feature::getClassTypeId()))
-            return new App::DocumentObjectExecReturn("Cannot do boolean with anything but Part::Feature and its derivatives");
+    for (auto tool : tools) {
+        if (!tool->isDerivedFrom(Part::Feature::getClassTypeId()))
+            return new App::DocumentObjectExecReturn(
+                "Cannot do boolean with anything but Part::Feature and its derivatives");
 
-        TopoDS_Shape shape = static_cast<Part::Feature*>(tool)->Shape.getValue();
+        TopoDS_Shape shape = static_cast<Part::Feature *>(tool)->Shape.getValue();
         TopoDS_Shape boolOp;
 
         // Must not pass null shapes to the boolean operations
-        if (result.IsNull())
-            return new App::DocumentObjectExecReturn("Base shape is null");
+        if (result.IsNull()) return new App::DocumentObjectExecReturn("Base shape is null");
 
-        if (shape.IsNull())
-            return new App::DocumentObjectExecReturn("Tool shape is null");
+        if (shape.IsNull()) return new App::DocumentObjectExecReturn("Tool shape is null");
 
         if (type == "Fuse") {
             BRepAlgoAPI_Fuse mkFuse(result, shape);
@@ -130,12 +133,13 @@ App::DocumentObjectExecReturn *Boolean::execute()
             // lets check if the result is a solid
             if (boolOp.IsNull())
                 return new App::DocumentObjectExecReturn("Resulting shape is not a solid");
-        } else if (type == "Cut") {
+        }
+        else if (type == "Cut") {
             BRepAlgoAPI_Cut mkCut(result, shape);
-            if (!mkCut.IsDone())
-                return new App::DocumentObjectExecReturn("Cut out failed");
+            if (!mkCut.IsDone()) return new App::DocumentObjectExecReturn("Cut out failed");
             boolOp = mkCut.Shape();
-        } else if (type == "Common") {
+        }
+        else if (type == "Common") {
             BRepAlgoAPI_Common mkCommon(result, shape);
             if (!mkCommon.IsDone())
                 return new App::DocumentObjectExecReturn("Common operation failed");
@@ -149,22 +153,24 @@ App::DocumentObjectExecReturn *Boolean::execute()
 
     int solidCount = countSolids(result);
     if (solidCount > 1) {
-        return new App::DocumentObjectExecReturn("Boolean: Result has multiple solids. This is not supported at this time.");
+        return new App::DocumentObjectExecReturn(
+            "Boolean: Result has multiple solids. This is not supported at this time.");
     }
 
     this->Shape.setValue(getSolid(result));
     return App::DocumentObject::StdReturn;
 }
 
-void Boolean::onChanged(const App::Property* prop) {
-    
-    if(strcmp(prop->getName(), "Group") == 0)
-        touch();
+void Boolean::onChanged(const App::Property *prop)
+{
+
+    if (strcmp(prop->getName(), "Group") == 0) touch();
 
     PartDesign::Feature::onChanged(prop);
 }
 
-void Boolean::handleChangedPropertyName(Base::XMLReader &reader, const char * TypeName, const char *PropName)
+void Boolean::handleChangedPropertyName(Base::XMLReader &reader, const char *TypeName,
+                                        const char *PropName)
 {
     // The App::PropertyLinkList property was Bodies in the past
     Base::Type type = Base::Type::fromName(TypeName);
@@ -173,7 +179,7 @@ void Boolean::handleChangedPropertyName(Base::XMLReader &reader, const char * Ty
     }
 }
 
-TopoDS_Shape Boolean::refineShapeIfActive(const TopoDS_Shape& oldShape) const
+TopoDS_Shape Boolean::refineShapeIfActive(const TopoDS_Shape &oldShape) const
 {
     if (this->Refine.getValue()) {
         try {
@@ -181,7 +187,7 @@ TopoDS_Shape Boolean::refineShapeIfActive(const TopoDS_Shape& oldShape) const
             TopoDS_Shape resShape = mkRefine.Shape();
             return resShape;
         }
-        catch (Standard_Failure&) {
+        catch (Standard_Failure &) {
             return oldShape;
         }
     }
@@ -189,4 +195,4 @@ TopoDS_Shape Boolean::refineShapeIfActive(const TopoDS_Shape& oldShape) const
     return oldShape;
 }
 
-}
+} // namespace PartDesign

@@ -35,25 +35,25 @@
 /*!
  * \brief A base of reversible 1D hypotheses
  */
-class STDMESHERS_EXPORT StdMeshers_Reversible1D : public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_Reversible1D: public SMESH_Hypothesis
 {
 public:
-  StdMeshers_Reversible1D(int hypId, int studyId, SMESH_Gen* gen);
+    StdMeshers_Reversible1D(int hypId, int studyId, SMESH_Gen *gen);
 
-  void SetReversedEdges( const std::vector<int>& ids);
+    void SetReversedEdges(const std::vector<int> &ids);
 
-  void SetObjectEntry( const char* entry ) { _objEntry = entry; }
+    void SetObjectEntry(const char *entry) { _objEntry = entry; }
 
-  const char* GetObjectEntry() { return _objEntry.c_str(); }
+    const char *GetObjectEntry() { return _objEntry.c_str(); }
 
-  const std::vector<int>& GetReversedEdges() const { return _edgeIDs; }
+    const std::vector<int> &GetReversedEdges() const { return _edgeIDs; }
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
 
 protected:
-  std::vector<int> _edgeIDs;
-  std::string      _objEntry;
+    std::vector<int> _edgeIDs;
+    std::string _objEntry;
 };
 
 #endif

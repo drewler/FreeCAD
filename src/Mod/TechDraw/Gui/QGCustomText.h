@@ -40,15 +40,19 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGCustomText : public QGraphicsTextItem
+class TechDrawGuiExport QGCustomText: public QGraphicsTextItem
 {
 public:
-    explicit QGCustomText(QGraphicsItem* parent = nullptr);
+    explicit QGCustomText(QGraphicsItem *parent = nullptr);
     ~QGCustomText() {}
 
-    enum {Type = QGraphicsItem::UserType + 130};
-    int type() const override { return Type;}
-    virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr ) override;
+    enum
+    {
+        Type = QGraphicsItem::UserType + 130
+    };
+    int type() const override { return Type; }
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr) override;
     virtual QRectF boundingRect() const override;
     QRectF tightBoundingRect() const;
     QPointF tightBoundingAdjust() const;
@@ -86,14 +90,14 @@ protected:
     Base::Reference<ParameterGrp> getParmGroup(void);
 
     bool isHighlighted;
-    bool tightBounding;  // Option to use tighter boundingRect(), works only for plaintext QGCustomText
+    bool
+        tightBounding; // Option to use tighter boundingRect(), works only for plaintext QGCustomText
     QColor m_colCurrent;
     QColor m_colNormal;
 
 private:
-
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGCUSTOMTEXT_H

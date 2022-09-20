@@ -28,9 +28,10 @@
 
 class QProcess;
 
-namespace Gui {
+namespace Gui
+{
 
-class Assistant : public QObject
+class Assistant: public QObject
 {
     Q_OBJECT
 
@@ -48,6 +49,6 @@ private:
     QProcess *proc;
 };
 
-}
+} // namespace Gui
 
 #endif // GUI_ASSISTANT_H

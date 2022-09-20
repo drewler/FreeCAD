@@ -26,20 +26,22 @@
 
 #include <QDialog>
 
-namespace Gui {
+namespace Gui
+{
 class View3DInventor;
-namespace Dialog {
+namespace Dialog
+{
 
 /**
  * @author Werner Mayer
  */
-class GuiExport Clipping : public QDialog
+class GuiExport Clipping: public QDialog
 {
     Q_OBJECT
 
 public:
-    static Clipping* makeDockWidget(Gui::View3DInventor*);
-    Clipping(Gui::View3DInventor* view, QWidget* parent = nullptr);
+    static Clipping *makeDockWidget(Gui::View3DInventor *);
+    Clipping(Gui::View3DInventor *view, QWidget *parent = nullptr);
     ~Clipping();
 
 protected Q_SLOTS:
@@ -65,7 +67,7 @@ public:
 
 private:
     class Private;
-    Private* d;
+    Private *d;
 };
 
 } // namespace Dialog

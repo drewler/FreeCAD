@@ -28,19 +28,19 @@
 #include <Gui/Selection.h>
 
 
-
-
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
-namespace TaskView {
+namespace TaskView
+{
 
 
-
-class TaskSketcherCreateCommands : public TaskBox, public Gui::SelectionSingleton::ObserverType
+class TaskSketcherCreateCommands: public TaskBox, public Gui::SelectionSingleton::ObserverType
 {
     Q_OBJECT
 
@@ -52,7 +52,7 @@ public:
                   Gui::SelectionSingleton::MessageType Reason) override;
 
 private Q_SLOTS:
- 
+
 protected:
     void changeEvent(QEvent *e) override;
 

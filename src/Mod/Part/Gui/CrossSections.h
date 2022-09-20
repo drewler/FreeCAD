@@ -31,29 +31,37 @@
 #include <Gui/TaskView/TaskView.h>
 
 
-namespace Gui {
+namespace Gui
+{
 class View3DInventor;
 }
 
-namespace PartGui {
+namespace PartGui
+{
 
 class ViewProviderCrossSections;
 class Ui_CrossSections;
-class CrossSections : public QDialog
+class CrossSections: public QDialog
 {
     Q_OBJECT
 
-    enum Plane { XY, XZ, YZ };
+    enum Plane
+    {
+        XY,
+        XZ,
+        YZ
+    };
 
 public:
-    explicit CrossSections(const Base::BoundBox3d& bb, QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit CrossSections(const Base::BoundBox3d &bb, QWidget *parent = nullptr,
+                           Qt::WindowFlags fl = Qt::WindowFlags());
     ~CrossSections() override;
     void accept() override;
     void apply();
 
 protected:
     void changeEvent(QEvent *e) override;
-    void keyPressEvent(QKeyEvent*) override;
+    void keyPressEvent(QKeyEvent *) override;
 
 private Q_SLOTS:
     void on_xyPlane_clicked();
@@ -68,23 +76,23 @@ private Q_SLOTS:
 private:
     std::vector<double> getPlanes() const;
     void calcPlane(Plane, double);
-    void calcPlanes(Plane/*, double, bool, int*/);
-    void makePlanes(Plane, const std::vector<double>&, double[4]);
+    void calcPlanes(Plane /*, double, bool, int*/);
+    void makePlanes(Plane, const std::vector<double> &, double[4]);
     Plane plane() const;
 
 private:
     std::unique_ptr<Ui_CrossSections> ui;
     Base::BoundBox3d bbox;
-    ViewProviderCrossSections* vp;
+    ViewProviderCrossSections *vp;
     QPointer<Gui::View3DInventor> view;
 };
 
-class TaskCrossSections : public Gui::TaskView::TaskDialog
+class TaskCrossSections: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskCrossSections(const Base::BoundBox3d& bb);
+    explicit TaskCrossSections(const Base::BoundBox3d &bb);
     ~TaskCrossSections() override;
 
 public:
@@ -92,11 +100,13 @@ public:
     void clicked(int id) override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel;
+    }
 
 private:
-    CrossSections* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    CrossSections *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } // namespace PartGui

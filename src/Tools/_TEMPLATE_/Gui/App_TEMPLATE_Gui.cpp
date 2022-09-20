@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Python.h>
+#include <Python.h>
 #endif
 
 #include <Base/Console.h>
@@ -40,8 +40,9 @@
 void Create_TEMPLATE_Commands(void);
 
 
-namespace _TEMPLATE_Gui {
-class Module : public Py::ExtensionModule<Module>
+namespace _TEMPLATE_Gui
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("_TEMPLATE_Gui")
@@ -54,10 +55,7 @@ public:
 private:
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace _TEMPLATE_Gui
 
@@ -77,7 +75,7 @@ PyMOD_INIT_FUNC(_TEMPLATE_Gui)
     // ADD YOUR CODE HERE
     //
     //
-    PyObject* mod = _TEMPLATE_Gui::initModule();
+    PyObject *mod = _TEMPLATE_Gui::initModule();
     Base::Console().Log("Loading GUI of _TEMPLATE_ module... done\n");
     PyMOD_Return(mod);
 }

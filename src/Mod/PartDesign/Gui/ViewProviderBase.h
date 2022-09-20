@@ -26,9 +26,10 @@
 
 #include "ViewProvider.h"
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderBase : public ViewProvider
+class PartDesignGuiExport ViewProviderBase: public ViewProvider
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderBase);
 
@@ -39,7 +40,7 @@ public:
     ~ViewProviderBase() override;
 
     bool doubleClicked() override;
-    void setupContextMenu(QMenu* menu, QObject* receiver, const char* member) override;
+    void setupContextMenu(QMenu *menu, QObject *receiver, const char *member) override;
 
 protected:
     bool setEdit(int ModNum) override;

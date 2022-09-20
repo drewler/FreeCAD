@@ -27,8 +27,9 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderPolarPattern,PartDesignGui::ViewProviderTransformed)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderPolarPattern, PartDesignGui::ViewProviderTransformed)
 
-TaskDlgFeatureParameters *ViewProviderPolarPattern::getEditDialog() {
-    return new TaskDlgPolarPatternParameters (this);
+TaskDlgFeatureParameters *ViewProviderPolarPattern::getEditDialog()
+{
+    return new TaskDlgPolarPatternParameters(this);
 }

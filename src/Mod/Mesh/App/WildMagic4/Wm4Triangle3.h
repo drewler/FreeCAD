@@ -23,26 +23,24 @@
 namespace Wm4
 {
 
-template <class Real>
-class Triangle3
+template<class Real> class Triangle3
 {
 public:
     // The triangle is represented as an array of three vertices, V0, V1,
     // and V2.
 
     // construction
-    Triangle3 ();  // uninitialized
-    Triangle3 (const Vector3<Real>& rkV0, const Vector3<Real>& rkV1,
-        const Vector3<Real>& rkV2);
-    Triangle3 (const Vector3<Real> akV[3]);
+    Triangle3(); // uninitialized
+    Triangle3(const Vector3<Real> &rkV0, const Vector3<Real> &rkV1, const Vector3<Real> &rkV2);
+    Triangle3(const Vector3<Real> akV[3]);
 
     // distance from the point Q to the triangle
-    Real DistanceTo (const Vector3<Real>& rkQ) const;
+    Real DistanceTo(const Vector3<Real> &rkQ) const;
 
     Vector3<Real> V[3];
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4Triangle3.inl"
 
@@ -51,6 +49,6 @@ namespace Wm4
 typedef Triangle3<float> Triangle3f;
 typedef Triangle3<double> Triangle3d;
 
-}
+} // namespace Wm4
 
 #endif

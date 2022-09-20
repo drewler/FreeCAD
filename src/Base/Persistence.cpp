@@ -37,50 +37,44 @@
 
 using namespace Base;
 
-TYPESYSTEM_SOURCE_ABSTRACT(Base::Persistence,Base::BaseClass)
+TYPESYSTEM_SOURCE_ABSTRACT(Base::Persistence, Base::BaseClass)
 
 
 //**************************************************************************
 // Construction/Destruction
 
 
-
 //**************************************************************************
 // separator for other implementation aspects
 
-unsigned int Persistence::getMemSize () const
+unsigned int Persistence::getMemSize() const
 {
     // you have to implement this method in all descending classes!
     assert(0);
     return 0;
 }
 
-void Persistence::Save (Writer &/*writer*/) const
+void Persistence::Save(Writer & /*writer*/) const
 {
     // you have to implement this method in all descending classes!
     assert(0);
 }
 
-void Persistence::Restore(XMLReader &/*reader*/)
+void Persistence::Restore(XMLReader & /*reader*/)
 {
     // you have to implement this method in all descending classes!
     assert(0);
 }
 
-void Persistence::SaveDocFile (Writer &/*writer*/) const
-{
-}
+void Persistence::SaveDocFile(Writer & /*writer*/) const {}
 
-void Persistence::RestoreDocFile(Reader &/*reader*/)
-{
-}
+void Persistence::RestoreDocFile(Reader & /*reader*/) {}
 
-std::string Persistence::encodeAttribute(const std::string& str)
+std::string Persistence::encodeAttribute(const std::string &str)
 {
     std::string tmp;
     for (std::string::const_iterator it = str.begin(); it != str.end(); ++it) {
-        if (*it == '<')
-            tmp += "&lt;";
+        if (*it == '<') tmp += "&lt;";
         else if (*it == '\"')
             tmp += "&quot;";
         else if (*it == '\'')
@@ -102,7 +96,7 @@ std::string Persistence::encodeAttribute(const std::string& str)
     return tmp;
 }
 
-void Persistence::dumpToStream(std::ostream& stream, int compression)
+void Persistence::dumpToStream(std::ostream &stream, int compression)
 {
     //we need to close the zipstream to get a good result, the only way to do this is to delete the ZipWriter.
     //Hence the scope...
@@ -121,13 +115,12 @@ void Persistence::dumpToStream(std::ostream& stream, int compression)
     }
 }
 
-void Persistence::restoreFromStream(std::istream& stream)
+void Persistence::restoreFromStream(std::istream &stream)
 {
     zipios::ZipInputStream zipstream(stream);
     Base::XMLReader reader("", zipstream);
 
-    if (!reader.isValid())
-        throw Base::ValueError("Unable to construct reader");
+    if (!reader.isValid()) throw Base::ValueError("Unable to construct reader");
 
     reader.readElement("Content");
     Restore(reader);

@@ -28,10 +28,11 @@
 #include "ViewProviderPythonFeature.h"
 
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport ViewProviderDocumentObjectGroup : public ViewProviderDocumentObject,
-                                                  public ViewProviderGroupExtension
+class GuiExport ViewProviderDocumentObjectGroup: public ViewProviderDocumentObject,
+                                                 public ViewProviderGroupExtension
 {
     PROPERTY_HEADER_WITH_EXTENSIONS(Gui::ViewProviderDocumentObjectGroup);
 
@@ -49,15 +50,15 @@ public:
     QIcon getIcon() const override;
 
 protected:
-    void getViewProviders(std::vector<ViewProviderDocumentObject*>&) const;
+    void getViewProviders(std::vector<ViewProviderDocumentObject *> &) const;
 
 private:
-    std::vector<ViewProvider*> nodes;
+    std::vector<ViewProvider *> nodes;
 };
 
-using ViewProviderDocumentObjectGroupPython = ViewProviderPythonFeatureT<ViewProviderDocumentObjectGroup>;
+using ViewProviderDocumentObjectGroupPython =
+    ViewProviderPythonFeatureT<ViewProviderDocumentObjectGroup>;
 
 } // namespace Gui
 
 #endif // GUI_VIEWPROVIDER_DOCUMENTOBJECTGROUP_H
-

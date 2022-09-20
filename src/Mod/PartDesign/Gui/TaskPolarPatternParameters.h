@@ -30,25 +30,29 @@
 class QTimer;
 class Ui_TaskPolarPatternParameters;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 class TaskMultiTransformParameters;
 
-class TaskPolarPatternParameters : public TaskTransformedParameters
+class TaskPolarPatternParameters: public TaskTransformedParameters
 {
     Q_OBJECT
 
 public:
     /// Constructor for task with ViewProvider
-    explicit TaskPolarPatternParameters(ViewProviderTransformed *TransformedView, QWidget *parent = nullptr);
+    explicit TaskPolarPatternParameters(ViewProviderTransformed *TransformedView,
+                                        QWidget *parent = nullptr);
     /// Constructor for task with parent task (MultiTransform mode)
     TaskPolarPatternParameters(TaskMultiTransformParameters *parentTask, QLayout *layout);
     ~TaskPolarPatternParameters() override;
@@ -65,12 +69,12 @@ private Q_SLOTS:
     void onFeatureDeleted() override;
 
 protected:
-    void addObject(App::DocumentObject*) override;
-    void removeObject(App::DocumentObject*) override;
+    void addObject(App::DocumentObject *) override;
+    void removeObject(App::DocumentObject *) override;
     void changeEvent(QEvent *e) override;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     void clearButtons() override;
-    void getAxis(App::DocumentObject*& obj, std::vector<std::string>& sub) const;
+    void getAxis(App::DocumentObject *&obj, std::vector<std::string> &sub) const;
     const std::string getStdAxis() const;
     const std::string getAxis() const;
     bool getReverse() const;
@@ -85,14 +89,14 @@ private:
 
 private:
     std::unique_ptr<Ui_TaskPolarPatternParameters> ui;
-    QTimer* updateViewTimer;
+    QTimer *updateViewTimer;
 
     ComboLinks axesLinks;
 };
 
 
 /// simulation dialog for the TaskView
-class TaskDlgPolarPatternParameters : public TaskDlgTransformedParameters
+class TaskDlgPolarPatternParameters: public TaskDlgTransformedParameters
 {
     Q_OBJECT
 

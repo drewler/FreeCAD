@@ -24,10 +24,10 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# ifdef _MSC_VER
-#  define _USE_MATH_DEFINES
-#  include <cmath>
-# endif //_MSC_VER
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#include <cmath>
+#endif //_MSC_VER
 #endif
 
 #include <Mod/TechDraw/App/CosmeticExtension.h>
@@ -43,16 +43,19 @@ ViewProviderCosmeticExtension::ViewProviderCosmeticExtension()
     initExtensionType(ViewProviderCosmeticExtension::getExtensionClassTypeId());
 }
 
-QIcon ViewProviderCosmeticExtension::extensionMergeGreyableOverlayIcons(const QIcon & orig) const
+QIcon ViewProviderCosmeticExtension::extensionMergeGreyableOverlayIcons(const QIcon &orig) const
 {
     QIcon mergedicon = orig;
 
     return mergedicon;
 }
 
-namespace Gui {
-    EXTENSION_PROPERTY_SOURCE_TEMPLATE(TechDrawGui::ViewProviderCosmeticExtensionPython, TechDrawGui::ViewProviderCosmeticExtension)
+namespace Gui
+{
+EXTENSION_PROPERTY_SOURCE_TEMPLATE(TechDrawGui::ViewProviderCosmeticExtensionPython,
+                                   TechDrawGui::ViewProviderCosmeticExtension)
 
 // explicit template instantiation
-    template class TechDrawGuiExport ViewProviderExtensionPythonT<TechDrawGui::ViewProviderCosmeticExtension>;
-}
+template class TechDrawGuiExport
+    ViewProviderExtensionPythonT<TechDrawGui::ViewProviderCosmeticExtension>;
+} // namespace Gui

@@ -35,50 +35,59 @@ class SoCamera;
 class SoOrthographicCamera;
 class SoPerspectiveCamera;
 
-namespace SIM {
-namespace Coin3D {
-namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
 class SoQTQuarterAdaptor;
-typedef void SoQTQuarterAdaptorCB(void* data, SoQTQuarterAdaptor* viewer);
+typedef void SoQTQuarterAdaptorCB(void *data, SoQTQuarterAdaptor *viewer);
 
-class QUARTER_DLL_API SoQTQuarterAdaptor :  public QuarterWidget {
+class QUARTER_DLL_API SoQTQuarterAdaptor: public QuarterWidget
+{
 
     Q_OBJECT
 
 public:
-    explicit SoQTQuarterAdaptor(QWidget* parent = nullptr, const QtGLWidget* sharewidget = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    explicit SoQTQuarterAdaptor(const QtGLFormat& format, QWidget* parent = nullptr, const QtGLWidget* shareWidget = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-    explicit SoQTQuarterAdaptor(QtGLContext* context, QWidget* parent = nullptr, const QtGLWidget* sharewidget = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    explicit SoQTQuarterAdaptor(QWidget *parent = nullptr, const QtGLWidget *sharewidget = nullptr,
+                                Qt::WindowFlags f = Qt::WindowFlags());
+    explicit SoQTQuarterAdaptor(const QtGLFormat &format, QWidget *parent = nullptr,
+                                const QtGLWidget *shareWidget = nullptr,
+                                Qt::WindowFlags f = Qt::WindowFlags());
+    explicit SoQTQuarterAdaptor(QtGLContext *context, QWidget *parent = nullptr,
+                                const QtGLWidget *sharewidget = nullptr,
+                                Qt::WindowFlags f = Qt::WindowFlags());
     virtual ~SoQTQuarterAdaptor();
 
     //the functions available in soqtviewer but missing in quarter
-    QWidget* getWidget();
-    QWidget* getGLWidget();
-    QWidget* getWidget() const;
-    QWidget* getGLWidget() const;
+    QWidget *getWidget();
+    QWidget *getGLWidget();
+    QWidget *getWidget() const;
+    QWidget *getGLWidget() const;
 
     virtual void setCameraType(SoType type);
-    SoCamera * getCamera() const;
+    SoCamera *getCamera() const;
 
-    const SbViewportRegion & getViewportRegion() const;
+    const SbViewportRegion &getViewportRegion() const;
 
     virtual void setViewing(SbBool enable);
     SbBool isViewing() const;
 
     void interactiveCountInc();
     void interactiveCountDec();
-    int  getInteractiveCount() const;
+    int getInteractiveCount() const;
 
-    void addStartCallback(SoQTQuarterAdaptorCB* func, void* data = nullptr);
-    void addFinishCallback(SoQTQuarterAdaptorCB* func, void* data = nullptr);
-    void removeStartCallback(SoQTQuarterAdaptorCB* func, void* data = nullptr);
-    void removeFinishCallback(SoQTQuarterAdaptorCB* func, void* data = nullptr);
+    void addStartCallback(SoQTQuarterAdaptorCB *func, void *data = nullptr);
+    void addFinishCallback(SoQTQuarterAdaptorCB *func, void *data = nullptr);
+    void removeStartCallback(SoQTQuarterAdaptorCB *func, void *data = nullptr);
+    void removeFinishCallback(SoQTQuarterAdaptorCB *func, void *data = nullptr);
 
     virtual void setSeekMode(SbBool enable);
     SbBool isSeekMode() const;
     SbBool seekToPoint(const SbVec2s screenpos);
-    void seekToPoint(const SbVec3f& scenepos);
+    void seekToPoint(const SbVec3f &scenepos);
     void setSeekTime(const float seconds);
     float getSeekTime() const;
     void setSeekDistance(const float distance);
@@ -86,34 +95,34 @@ public:
     void setSeekValueAsPercentage(const SbBool on);
     SbBool isSeekValuePercentage() const;
 
-    virtual float getPickRadius() const {return this->pickRadius;}
+    virtual float getPickRadius() const { return this->pickRadius; }
     virtual void setPickRadius(float pickRadius);
 
     virtual void saveHomePosition();
     virtual void resetToHomePosition();
 
-    virtual void setSceneGraph(SoNode* root) {
-        QuarterWidget::setSceneGraph(root);
-    }
-    
-    virtual bool processSoEvent(const SoEvent* event);
-    virtual void paintEvent(QPaintEvent*);
+    virtual void setSceneGraph(SoNode *root) { QuarterWidget::setSceneGraph(root); }
+
+    virtual bool processSoEvent(const SoEvent *event);
+    virtual void paintEvent(QPaintEvent *);
 
     //this functions still need to be ported
-    virtual void afterRealizeHook() {} //enables spacenav and joystick in soqt, dunno if this is needed
+    virtual void afterRealizeHook() {
+    } //enables spacenav and joystick in soqt, dunno if this is needed
 
 private:
     void init();
-    void convertPerspective2Ortho(const SoPerspectiveCamera* in,  SoOrthographicCamera* out);
-    void convertOrtho2Perspective(const SoOrthographicCamera* in, SoPerspectiveCamera* out);
-    void getCameraCoordinateSystem(SoCamera * camera, SoNode * root, SbMatrix & matrix, SbMatrix & inverse);
-    static void seeksensorCB(void * data, SoSensor * s);
-    void moveCameraScreen(const SbVec2f & screenpos);
+    void convertPerspective2Ortho(const SoPerspectiveCamera *in, SoOrthographicCamera *out);
+    void convertOrtho2Perspective(const SoOrthographicCamera *in, SoPerspectiveCamera *out);
+    void getCameraCoordinateSystem(SoCamera *camera, SoNode *root, SbMatrix &matrix,
+                                   SbMatrix &inverse);
+    static void seeksensorCB(void *data, SoSensor *s);
+    void moveCameraScreen(const SbVec2f &screenpos);
     void resetFrameCounter();
     SbVec2f addFrametime(double ft);
 
     bool m_viewingflag;
-    int  m_interactionnesting;
+    int m_interactionnesting;
     SoCallbackList m_interactionStartCallback;
     SoCallbackList m_interactionEndCallback;
 
@@ -123,7 +132,7 @@ private:
     int framecount;
 
     // Seek functionality
-    SoTimerSensor* m_seeksensor;
+    SoTimerSensor *m_seeksensor;
     float m_seekperiod;
     SbBool m_inseekmode;
     SbVec3f m_camerastartposition, m_cameraendposition;
@@ -134,16 +143,16 @@ private:
     SoGetMatrixAction matrixaction;
     float pickRadius;
     // Home position storage.
-    SoNode * m_storedcamera;
-    
+    SoNode *m_storedcamera;
+
 protected:
-    void draw2DString(const char * str, SbVec2s glsize, SbVec2f position);
-    void printString(const char * s);
+    void draw2DString(const char *str, SbVec2s glsize, SbVec2f position);
+    void printString(const char *s);
     SbVec2f framesPerSecond;
 };
 
-} //Quarter
-} //Coin3D
-} //
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // SIM_COIN3D_SOQTQUARTERADAPTOR_H

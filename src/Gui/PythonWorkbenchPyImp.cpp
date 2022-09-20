@@ -40,38 +40,39 @@ using namespace Gui;
  */
 
 // returns a string which represent the object e.g. when printed in python
-std::string PythonWorkbenchPy::representation() const
-{
-    return std::string("<Workbench object>");
-}
+std::string PythonWorkbenchPy::representation() const { return std::string("<Workbench object>"); }
 
 /** Appends a new menu */
-PyObject*  PythonWorkbenchPy::appendMenu(PyObject *args)
+PyObject *PythonWorkbenchPy::appendMenu(PyObject *args)
 {
-    PY_TRY {
-        PyObject* pPath;
-        PyObject* pItems;
-        if ( !PyArg_ParseTuple(args, "OO", &pPath, &pItems) )
-            return nullptr;
+    PY_TRY
+    {
+        PyObject *pPath;
+        PyObject *pItems;
+        if (!PyArg_ParseTuple(args, "OO", &pPath, &pItems)) return nullptr;
 
         // menu path
         std::list<std::string> path;
         if (PyList_Check(pPath)) {
             int nDepth = PyList_Size(pPath);
-            for (int j=0; j<nDepth;++j) {
-                PyObject* item = PyList_GetItem(pPath, j);
+            for (int j = 0; j < nDepth; ++j) {
+                PyObject *item = PyList_GetItem(pPath, j);
                 if (PyUnicode_Check(item)) {
-                    const char* pItem = PyUnicode_AsUTF8(item);
+                    const char *pItem = PyUnicode_AsUTF8(item);
                     path.emplace_back(pItem);
-                } else {
+                }
+                else {
                     continue;
                 }
             }
-        } else if (PyUnicode_Check(pPath)) {
-            const char* pItem = PyUnicode_AsUTF8(pPath);
+        }
+        else if (PyUnicode_Check(pPath)) {
+            const char *pItem = PyUnicode_AsUTF8(pPath);
             path.emplace_back(pItem);
-        } else {
-            PyErr_SetString(PyExc_AssertionError, "Expected either a string or a stringlist as first argument");
+        }
+        else {
+            PyErr_SetString(PyExc_AssertionError,
+                            "Expected either a string or a stringlist as first argument");
             return nullptr;
         }
 
@@ -79,69 +80,79 @@ PyObject*  PythonWorkbenchPy::appendMenu(PyObject *args)
         std::list<std::string> items;
         if (PyList_Check(pItems)) {
             int nItems = PyList_Size(pItems);
-            for (int i=0; i<nItems;++i) {
-                PyObject* item = PyList_GetItem(pItems, i);
+            for (int i = 0; i < nItems; ++i) {
+                PyObject *item = PyList_GetItem(pItems, i);
                 if (PyUnicode_Check(item)) {
-                    const char* pItem = PyUnicode_AsUTF8(item);
+                    const char *pItem = PyUnicode_AsUTF8(item);
                     items.emplace_back(pItem);
-                } else {
+                }
+                else {
                     continue;
                 }
             }
-        } else if (PyUnicode_Check(pItems)) {
-            const char* pItem = PyUnicode_AsUTF8(pItems);
+        }
+        else if (PyUnicode_Check(pItems)) {
+            const char *pItem = PyUnicode_AsUTF8(pItems);
             items.emplace_back(pItem);
-        } else {
-            PyErr_SetString(PyExc_AssertionError, "Expected either a string or a stringlist as first argument");
+        }
+        else {
+            PyErr_SetString(PyExc_AssertionError,
+                            "Expected either a string or a stringlist as first argument");
             return nullptr;
         }
 
-        getPythonBaseWorkbenchPtr()->appendMenu( path, items );
+        getPythonBaseWorkbenchPtr()->appendMenu(path, items);
 
         Py_Return;
-    } PY_CATCH;
+    }
+    PY_CATCH;
 }
 
 /** Removes a menu */
-PyObject*  PythonWorkbenchPy::removeMenu(PyObject *args)
+PyObject *PythonWorkbenchPy::removeMenu(PyObject *args)
 {
-    PY_TRY {
+    PY_TRY
+    {
         char *psMenu;
-        if (!PyArg_ParseTuple(args, "s", &psMenu))
-            return nullptr;
+        if (!PyArg_ParseTuple(args, "s", &psMenu)) return nullptr;
 
-        getPythonBaseWorkbenchPtr()->removeMenu( psMenu );
+        getPythonBaseWorkbenchPtr()->removeMenu(psMenu);
         Py_Return;
-    } PY_CATCH;
+    }
+    PY_CATCH;
 }
 
 /** Appends new context menu items */
-PyObject*  PythonWorkbenchPy::appendContextMenu(PyObject *args)
+PyObject *PythonWorkbenchPy::appendContextMenu(PyObject *args)
 {
-    PY_TRY {
-        PyObject* pPath;
-        PyObject* pItems;
-        if ( !PyArg_ParseTuple(args, "OO", &pPath, &pItems) )
-            return nullptr;
+    PY_TRY
+    {
+        PyObject *pPath;
+        PyObject *pItems;
+        if (!PyArg_ParseTuple(args, "OO", &pPath, &pItems)) return nullptr;
 
         // menu path
         std::list<std::string> path;
         if (PyList_Check(pPath)) {
             int nDepth = PyList_Size(pPath);
-            for (int j=0; j<nDepth;++j) {
-                PyObject* item = PyList_GetItem(pPath, j);
+            for (int j = 0; j < nDepth; ++j) {
+                PyObject *item = PyList_GetItem(pPath, j);
                 if (PyUnicode_Check(item)) {
-                    const char* pItem = PyUnicode_AsUTF8(item);
+                    const char *pItem = PyUnicode_AsUTF8(item);
                     path.emplace_back(pItem);
-                } else {
+                }
+                else {
                     continue;
                 }
             }
-        } else if (PyUnicode_Check(pPath)) {
-            const char* pItem = PyUnicode_AsUTF8(pPath);
+        }
+        else if (PyUnicode_Check(pPath)) {
+            const char *pItem = PyUnicode_AsUTF8(pPath);
             path.emplace_back(pItem);
-        } else {
-            PyErr_SetString(PyExc_AssertionError, "Expected either a string or a stringlist as first argument");
+        }
+        else {
+            PyErr_SetString(PyExc_AssertionError,
+                            "Expected either a string or a stringlist as first argument");
             return nullptr;
         }
 
@@ -149,50 +160,56 @@ PyObject*  PythonWorkbenchPy::appendContextMenu(PyObject *args)
         std::list<std::string> items;
         if (PyList_Check(pItems)) {
             int nItems = PyList_Size(pItems);
-            for (int i=0; i<nItems;++i) {
-                PyObject* item = PyList_GetItem(pItems, i);
+            for (int i = 0; i < nItems; ++i) {
+                PyObject *item = PyList_GetItem(pItems, i);
                 if (PyUnicode_Check(item)) {
-                    const char* pItem = PyUnicode_AsUTF8(item);
+                    const char *pItem = PyUnicode_AsUTF8(item);
                     items.emplace_back(pItem);
-                } else {
+                }
+                else {
                     continue;
                 }
             }
-        } else if (PyUnicode_Check(pItems)) {
-            const char* pItem = PyUnicode_AsUTF8(pItems);
+        }
+        else if (PyUnicode_Check(pItems)) {
+            const char *pItem = PyUnicode_AsUTF8(pItems);
             items.emplace_back(pItem);
-        } else {
-            PyErr_SetString(PyExc_AssertionError, "Expected either a string or a stringlist as first argument");
+        }
+        else {
+            PyErr_SetString(PyExc_AssertionError,
+                            "Expected either a string or a stringlist as first argument");
             return nullptr;
         }
 
-        getPythonBaseWorkbenchPtr()->appendContextMenu( path, items );
+        getPythonBaseWorkbenchPtr()->appendContextMenu(path, items);
 
         Py_Return;
-    } PY_CATCH;
+    }
+    PY_CATCH;
 }
 
 /** Removes a context menu */
-PyObject*  PythonWorkbenchPy::removeContextMenu(PyObject *args)
+PyObject *PythonWorkbenchPy::removeContextMenu(PyObject *args)
 {
-    PY_TRY {
+    PY_TRY
+    {
         char *psMenu;
-        if (!PyArg_ParseTuple(args, "s", &psMenu))
-            return nullptr;
+        if (!PyArg_ParseTuple(args, "s", &psMenu)) return nullptr;
 
-        getPythonBaseWorkbenchPtr()->removeContextMenu( psMenu );
+        getPythonBaseWorkbenchPtr()->removeContextMenu(psMenu);
         Py_Return;
-    } PY_CATCH;
+    }
+    PY_CATCH;
 }
 
 /** Appends a new toolbar */
-PyObject*  PythonWorkbenchPy::appendToolbar(PyObject *args)
+PyObject *PythonWorkbenchPy::appendToolbar(PyObject *args)
 {
-    PY_TRY {
-        PyObject* pObject;
-        char* psToolBar;
-        if ( !PyArg_ParseTuple(args, "sO", &psToolBar, &pObject) )
-            return nullptr;
+    PY_TRY
+    {
+        PyObject *pObject;
+        char *psToolBar;
+        if (!PyArg_ParseTuple(args, "sO", &psToolBar, &pObject)) return nullptr;
         if (!PyList_Check(pObject)) {
             PyErr_SetString(PyExc_AssertionError, "Expected a list as second argument");
             return nullptr;
@@ -200,42 +217,45 @@ PyObject*  PythonWorkbenchPy::appendToolbar(PyObject *args)
 
         std::list<std::string> items;
         int nSize = PyList_Size(pObject);
-        for (int i=0; i<nSize;++i) {
-            PyObject* item = PyList_GetItem(pObject, i);
+        for (int i = 0; i < nSize; ++i) {
+            PyObject *item = PyList_GetItem(pObject, i);
             if (PyUnicode_Check(item)) {
-                const char* pItem = PyUnicode_AsUTF8(item);
+                const char *pItem = PyUnicode_AsUTF8(item);
                 items.emplace_back(pItem);
-            } else {
+            }
+            else {
                 continue;
             }
         }
-        getPythonBaseWorkbenchPtr()->appendToolbar( psToolBar, items );
+        getPythonBaseWorkbenchPtr()->appendToolbar(psToolBar, items);
 
         Py_Return;
-    } PY_CATCH;
+    }
+    PY_CATCH;
 }
 
 /** Removes a toolbar */
-PyObject*  PythonWorkbenchPy::removeToolbar(PyObject *args)
+PyObject *PythonWorkbenchPy::removeToolbar(PyObject *args)
 {
-    PY_TRY {
+    PY_TRY
+    {
         char *psToolBar;
-        if (!PyArg_ParseTuple(args, "s", &psToolBar))
-            return nullptr;
+        if (!PyArg_ParseTuple(args, "s", &psToolBar)) return nullptr;
 
-        getPythonBaseWorkbenchPtr()->removeToolbar( psToolBar );
+        getPythonBaseWorkbenchPtr()->removeToolbar(psToolBar);
         Py_Return;
-    } PY_CATCH;
+    }
+    PY_CATCH;
 }
 
 /** Appends a new command bar */
-PyObject*  PythonWorkbenchPy::appendCommandbar(PyObject *args)
+PyObject *PythonWorkbenchPy::appendCommandbar(PyObject *args)
 {
-    PY_TRY {
-        PyObject* pObject;
-        char* psToolBar;
-        if ( !PyArg_ParseTuple(args, "sO", &psToolBar, &pObject) )
-            return nullptr;
+    PY_TRY
+    {
+        PyObject *pObject;
+        char *psToolBar;
+        if (!PyArg_ParseTuple(args, "sO", &psToolBar, &pObject)) return nullptr;
         if (!PyList_Check(pObject)) {
             PyErr_SetString(PyExc_AssertionError, "Expected a list as second argument");
             return nullptr;
@@ -243,98 +263,62 @@ PyObject*  PythonWorkbenchPy::appendCommandbar(PyObject *args)
 
         std::list<std::string> items;
         int nSize = PyList_Size(pObject);
-        for (int i=0; i<nSize;++i) {
-            PyObject* item = PyList_GetItem(pObject, i);
+        for (int i = 0; i < nSize; ++i) {
+            PyObject *item = PyList_GetItem(pObject, i);
             if (PyUnicode_Check(item)) {
-                const char* pItem = PyUnicode_AsUTF8(item);
+                const char *pItem = PyUnicode_AsUTF8(item);
                 items.emplace_back(pItem);
-            } else {
+            }
+            else {
                 continue;
             }
         }
 
-        getPythonBaseWorkbenchPtr()->appendCommandbar( psToolBar, items );
+        getPythonBaseWorkbenchPtr()->appendCommandbar(psToolBar, items);
 
         Py_Return;
-    } PY_CATCH;
+    }
+    PY_CATCH;
 }
 
 /** Removes a command bar */
-PyObject*  PythonWorkbenchPy::removeCommandbar(PyObject *args)
+PyObject *PythonWorkbenchPy::removeCommandbar(PyObject *args)
 {
-    PY_TRY {
+    PY_TRY
+    {
         char *psToolBar;
-        if (!PyArg_ParseTuple(args, "s", &psToolBar))
-            return nullptr;
+        if (!PyArg_ParseTuple(args, "s", &psToolBar)) return nullptr;
 
-        getPythonBaseWorkbenchPtr()->removeCommandbar( psToolBar );
+        getPythonBaseWorkbenchPtr()->removeCommandbar(psToolBar);
         Py_Return;
-    } PY_CATCH;
+    }
+    PY_CATCH;
 }
 
-PyObject* PythonWorkbenchPy::getCustomAttributes(const char* ) const
-{
-    return nullptr;
-}
+PyObject *PythonWorkbenchPy::getCustomAttributes(const char *) const { return nullptr; }
 
-int PythonWorkbenchPy::setCustomAttributes(const char* , PyObject *)
-{
-    return 0;
-}
+int PythonWorkbenchPy::setCustomAttributes(const char *, PyObject *) { return 0; }
 
 // deprecated methods
 
-PyObject*  PythonWorkbenchPy::AppendMenu(PyObject *args)
-{
-    return appendMenu(args);
-}
+PyObject *PythonWorkbenchPy::AppendMenu(PyObject *args) { return appendMenu(args); }
 
-PyObject*  PythonWorkbenchPy::RemoveMenu(PyObject *args)
-{
-    return removeMenu(args);
-}
+PyObject *PythonWorkbenchPy::RemoveMenu(PyObject *args) { return removeMenu(args); }
 
-PyObject*  PythonWorkbenchPy::ListMenus(PyObject *args)
-{
-    return listMenus(args);
-}
+PyObject *PythonWorkbenchPy::ListMenus(PyObject *args) { return listMenus(args); }
 
-PyObject*  PythonWorkbenchPy::AppendContextMenu(PyObject *args)
-{
-    return appendContextMenu(args);
-}
+PyObject *PythonWorkbenchPy::AppendContextMenu(PyObject *args) { return appendContextMenu(args); }
 
-PyObject*  PythonWorkbenchPy::RemoveContextMenu(PyObject *args)
-{
-    return removeContextMenu(args);
-}
+PyObject *PythonWorkbenchPy::RemoveContextMenu(PyObject *args) { return removeContextMenu(args); }
 
-PyObject*  PythonWorkbenchPy::AppendToolbar(PyObject *args)
-{
-    return appendToolbar(args);
-}
+PyObject *PythonWorkbenchPy::AppendToolbar(PyObject *args) { return appendToolbar(args); }
 
-PyObject*  PythonWorkbenchPy::RemoveToolbar(PyObject *args)
-{
-    return removeToolbar(args);
-}
+PyObject *PythonWorkbenchPy::RemoveToolbar(PyObject *args) { return removeToolbar(args); }
 
-PyObject*  PythonWorkbenchPy::ListToolbars(PyObject *args)
-{
-    return listToolbars(args);
-}
+PyObject *PythonWorkbenchPy::ListToolbars(PyObject *args) { return listToolbars(args); }
 
-PyObject*  PythonWorkbenchPy::AppendCommandbar(PyObject *args)
-{
-    return appendCommandbar(args);
-}
+PyObject *PythonWorkbenchPy::AppendCommandbar(PyObject *args) { return appendCommandbar(args); }
 
-PyObject*  PythonWorkbenchPy::RemoveCommandbar(PyObject *args)
-{
-    return removeCommandbar(args);
-}
+PyObject *PythonWorkbenchPy::RemoveCommandbar(PyObject *args) { return removeCommandbar(args); }
 
-PyObject*  PythonWorkbenchPy::ListCommandbars(PyObject *args)
-{
-    return listCommandbars(args);
-}
+PyObject *PythonWorkbenchPy::ListCommandbars(PyObject *args) { return listCommandbars(args); }

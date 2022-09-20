@@ -39,17 +39,21 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGCustomClip : public QGraphicsItemGroup
+class TechDrawGuiExport QGCustomClip: public QGraphicsItemGroup
 {
 public:
     explicit QGCustomClip();
     ~QGCustomClip() override {}
 
-    enum {Type = QGraphicsItem::UserType + 132};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 132
+    };
+    int type() const override { return Type; }
     QRectF boundingRect() const override;
 
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr ) override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget = nullptr) override;
     virtual void centerAt(QPointF centerPos);
     virtual void centerAt(double cX, double cY);
     virtual void setRect(QRectF r);
@@ -59,13 +63,10 @@ public:
     void makeMark(Base::Vector3d v);
 
 protected:
-
 private:
     QRectF m_rect;
-
 };
 
-} // namespace MDIViewPageGui
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGCUSTOMCLIP_H
-

@@ -27,20 +27,22 @@
 #include "PropertyPage.h"
 #include <memory>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgReportView;
 
 /** The DlgReportViewImp class implements the available settings for the
  * report output window to change.
  * \author Werner Mayer
  */
-class DlgReportViewImp : public PreferencePage
+class DlgReportViewImp: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgReportViewImp( QWidget* parent = nullptr );
+    explicit DlgReportViewImp(QWidget *parent = nullptr);
     ~DlgReportViewImp() override;
 
     void saveSettings() override;

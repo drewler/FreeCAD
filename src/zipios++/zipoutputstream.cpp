@@ -11,81 +11,70 @@
 
 using std::ostream;
 
-namespace zipios {
-
-ZipOutputStream::ZipOutputStream( std::ostream &os ) 
-  : std::ostream( nullptr ), 
-// SGIs basic_ifstream calls istream with 0, but calls basic_ios constructor first??
-    ofs( nullptr )
+namespace zipios
 {
-  ozf = new ZipOutputStreambuf( os.rdbuf() ) ;
-  
-  init( ozf ) ;
+
+ZipOutputStream::ZipOutputStream(std::ostream &os)
+    : std::ostream(nullptr),
+      // SGIs basic_ifstream calls istream with 0, but calls basic_ios constructor first??
+      ofs(nullptr)
+{
+    ozf = new ZipOutputStreambuf(os.rdbuf());
+
+    init(ozf);
 }
 
 
-ZipOutputStream::ZipOutputStream( const std::string &filename )
-  : std::ostream( nullptr ),
-    ofs( nullptr )
+ZipOutputStream::ZipOutputStream(const std::string &filename) : std::ostream(nullptr), ofs(nullptr)
 {
 #if defined(_WIN32) && defined(ZIPIOS_UTF8)
-  std::wstring wsfilename = Base::FileInfo(filename).toStdWString();
-  ofs = new std::ofstream( wsfilename.c_str(), std::ios::out | std::ios::binary ) ;
+    std::wstring wsfilename = Base::FileInfo(filename).toStdWString();
+    ofs = new std::ofstream(wsfilename.c_str(), std::ios::out | std::ios::binary);
 #else
-  ofs = new std::ofstream( filename.c_str(), std::ios::out | std::ios::binary ) ;
+    ofs = new std::ofstream(filename.c_str(), std::ios::out | std::ios::binary);
 #endif
-  ozf = new ZipOutputStreambuf( ofs->rdbuf() ) ;
-  this->init( ozf ) ;
+    ozf = new ZipOutputStreambuf(ofs->rdbuf());
+    this->init(ozf);
 }
 
-void ZipOutputStream::closeEntry() {
-  ozf->closeEntry() ;
-}
+void ZipOutputStream::closeEntry() { ozf->closeEntry(); }
 
 
-void ZipOutputStream::close() {
-  ozf->close() ;  
-  if ( ofs )
-    ofs->close() ;
-}
-
-
-void ZipOutputStream::finish() {
-  ozf->finish() ;
+void ZipOutputStream::close()
+{
+    ozf->close();
+    if (ofs) ofs->close();
 }
 
 
-void ZipOutputStream::putNextEntry( const ZipCDirEntry &entry ) {
-  ozf->putNextEntry( entry ) ;
-}
-
-void ZipOutputStream::putNextEntry(const std::string& entryName) {
-  putNextEntry( ZipCDirEntry(entryName));
-}
+void ZipOutputStream::finish() { ozf->finish(); }
 
 
-void ZipOutputStream::setComment( const std::string &comment ) {
-  ozf->setComment( comment ) ;
+void ZipOutputStream::putNextEntry(const ZipCDirEntry &entry) { ozf->putNextEntry(entry); }
+
+void ZipOutputStream::putNextEntry(const std::string &entryName)
+{
+    putNextEntry(ZipCDirEntry(entryName));
 }
 
 
-void ZipOutputStream::setLevel( int level ) {
-  ozf->setLevel( level ) ;
+void ZipOutputStream::setComment(const std::string &comment) { ozf->setComment(comment); }
+
+
+void ZipOutputStream::setLevel(int level) { ozf->setLevel(level); }
+
+
+void ZipOutputStream::setMethod(StorageMethod method) { ozf->setMethod(method); }
+
+
+ZipOutputStream::~ZipOutputStream()
+{
+    // It's ok to call delete with a Null pointer.
+    delete ozf;
+    delete ofs;
 }
 
-
-void ZipOutputStream::setMethod( StorageMethod method ) {
-  ozf->setMethod( method ) ;
-}
-
-
-ZipOutputStream::~ZipOutputStream() {
-  // It's ok to call delete with a Null pointer.
-  delete ozf ;
-  delete ofs ;
-}
-
-} // namespace
+} // namespace zipios
 
 /** \file
     Implementation of ZipOutputStream.

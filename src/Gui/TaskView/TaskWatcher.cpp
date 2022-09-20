@@ -42,50 +42,39 @@ using namespace Gui::TaskView;
 // TaskWatcher
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-TaskWatcher::TaskWatcher(const char* Filter)
-    : QObject(nullptr),SelectionFilter(Filter)
-{
-    
-}
+TaskWatcher::TaskWatcher(const char *Filter) : QObject(nullptr), SelectionFilter(Filter) {}
 
 TaskWatcher::~TaskWatcher()
 {
-    for (std::vector<QWidget*>::iterator it=Content.begin();it!=Content.end();++it){
-        delete(*it);
+    for (std::vector<QWidget *>::iterator it = Content.begin(); it != Content.end(); ++it) {
+        delete (*it);
         *it = 0;
     }
-
 }
 
 //==== implementer ===========================================================================
 
-std::vector<QWidget*> &TaskWatcher::getWatcherContent()
-{
-    return Content;
-}
+std::vector<QWidget *> &TaskWatcher::getWatcherContent() { return Content; }
 
 //==== calls from the TaskView ===============================================================
 
-bool TaskWatcher::shouldShow()
-{
-    return false;
-}
+bool TaskWatcher::shouldShow() { return false; }
 
 //**************************************************************************
 //**************************************************************************
 // TaskWatcherCommands
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-TaskWatcherCommands::TaskWatcherCommands(const char* Filter,const char* commands[],
-                                         const char* name, const char* pixmap)
+TaskWatcherCommands::TaskWatcherCommands(const char *Filter, const char *commands[],
+                                         const char *name, const char *pixmap)
     : TaskWatcher(Filter)
 {
     if (commands) {
         CommandManager &mgr = Gui::Application::Instance->commandManager();
-        auto tb = new Gui::TaskView::TaskBox
-            (BitmapFactory().pixmap(pixmap), tr(name), true, nullptr);
+        auto tb =
+            new Gui::TaskView::TaskBox(BitmapFactory().pixmap(pixmap), tr(name), true, nullptr);
 
-        for (const char** i=commands;*i;i++) {
+        for (const char **i = commands; *i; i++) {
             Command *c = mgr.getCommandByName(*i);
             if (c) {
                 // handled in TaskBox::actionEvent()
@@ -103,23 +92,17 @@ TaskWatcherCommands::TaskWatcherCommands(const char* Filter,const char* commands
 
 //==== calls from the TaskView ===============================================================
 
-bool TaskWatcherCommands::shouldShow()
-{
-    return match();
-}
+bool TaskWatcherCommands::shouldShow() { return match(); }
 
 //**************************************************************************
 //**************************************************************************
 // TaskWatcherCommandsEmptyDoc
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-TaskWatcherCommandsEmptyDoc::TaskWatcherCommandsEmptyDoc(const char* commands[],
-                                                         const char* name,
-                                                         const char* pixmap )
-    : TaskWatcherCommands(nullptr,commands,name,pixmap)
-{
-}
-
+TaskWatcherCommandsEmptyDoc::TaskWatcherCommandsEmptyDoc(const char *commands[], const char *name,
+                                                         const char *pixmap)
+    : TaskWatcherCommands(nullptr, commands, name, pixmap)
+{}
 
 
 //==== implementer ===========================================================================
@@ -129,7 +112,7 @@ TaskWatcherCommandsEmptyDoc::TaskWatcherCommandsEmptyDoc(const char* commands[],
 
 bool TaskWatcherCommandsEmptyDoc::shouldShow()
 {
-    App::Document* doc = App::GetApplication().getActiveDocument();
+    App::Document *doc = App::GetApplication().getActiveDocument();
     return doc && doc->countObjects() == 0;
 }
 
@@ -138,16 +121,13 @@ bool TaskWatcherCommandsEmptyDoc::shouldShow()
 // TaskWatcherCommandsEmptySelection
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-TaskWatcherCommandsEmptySelection::TaskWatcherCommandsEmptySelection(const char* commands[],
-                                                         const char* name,
-                                                         const char* pixmap )
-    : TaskWatcherCommands(nullptr,commands,name,pixmap)
-{
-}
+TaskWatcherCommandsEmptySelection::TaskWatcherCommandsEmptySelection(const char *commands[],
+                                                                     const char *name,
+                                                                     const char *pixmap)
+    : TaskWatcherCommands(nullptr, commands, name, pixmap)
+{}
 
-TaskWatcherCommandsEmptySelection::~TaskWatcherCommandsEmptySelection()
-{
-}
+TaskWatcherCommandsEmptySelection::~TaskWatcherCommandsEmptySelection() {}
 
 //==== implementer ===========================================================================
 

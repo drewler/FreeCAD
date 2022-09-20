@@ -36,28 +36,28 @@ class QTabWidget;
 
 namespace App
 {
-  class DocumentObject;
-  class Document;
-}
+class DocumentObject;
+class Document;
+} // namespace App
 
 namespace Gui
 {
 namespace TaskView
 {
-    class TaskDialog;
-    class TaskView;
-}
+class TaskDialog;
+class TaskView;
+} // namespace TaskView
 
 
 /** The control class
  */
-class GuiExport ControlSingleton : public QObject
+class GuiExport ControlSingleton: public QObject
 {
-     Q_OBJECT
+    Q_OBJECT
 
 public:
-    static ControlSingleton& instance();
-    static void destruct ();
+    static ControlSingleton &instance();
+    static void destruct();
 
     /** @name dialog handling
      *  These methods are used to control the TaskDialog stuff.
@@ -65,18 +65,18 @@ public:
     //@{
     /// This method starts a task dialog in the task view
     void showDialog(Gui::TaskView::TaskDialog *dlg);
-    Gui::TaskView::TaskDialog* activeDialog() const;
+    Gui::TaskView::TaskDialog *activeDialog() const;
     //void closeDialog();
     //@}
 
     /** @name task view handling
      */
     //@{
-    Gui::TaskView::TaskView* taskPanel() const;
+    Gui::TaskView::TaskView *taskPanel() const;
     /// raising the model view
     void showModelView();
     /// get the tab panel
-    QTabWidget* tabPanel() const;
+    QTabWidget *tabPanel() const;
     //@}
 
     /*!
@@ -124,14 +124,11 @@ private:
     /// Destruction
     ~ControlSingleton() override;
 
-    static ControlSingleton* _pcSingleton;
+    static ControlSingleton *_pcSingleton;
 };
 
 /// Get the global instance
-inline ControlSingleton& Control()
-{
-    return ControlSingleton::instance();
-}
+inline ControlSingleton &Control() { return ControlSingleton::instance(); }
 
 } //namespace Gui
 

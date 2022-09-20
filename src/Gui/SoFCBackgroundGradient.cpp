@@ -37,10 +37,7 @@ using namespace Gui;
 
 SO_NODE_SOURCE(SoFCBackgroundGradient)
 
-void SoFCBackgroundGradient::finish()
-{
-    atexit_cleanup();
-}
+void SoFCBackgroundGradient::finish() { atexit_cleanup(); }
 
 /*!
   Constructor.
@@ -56,22 +53,20 @@ SoFCBackgroundGradient::SoFCBackgroundGradient()
 /*!
   Destructor.
 */
-SoFCBackgroundGradient::~SoFCBackgroundGradient()
-{
-}
+SoFCBackgroundGradient::~SoFCBackgroundGradient() {}
 
 // doc from parent
 void SoFCBackgroundGradient::initClass()
 {
-    SO_NODE_INIT_CLASS(SoFCBackgroundGradient,SoNode,"Node");
+    SO_NODE_INIT_CLASS(SoFCBackgroundGradient, SoNode, "Node");
 }
 
-void SoFCBackgroundGradient::GLRender (SoGLRenderAction * /*action*/)
+void SoFCBackgroundGradient::GLRender(SoGLRenderAction * /*action*/)
 {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    glOrtho(-1,1,-1,1,-1,1);
+    glOrtho(-1, 1, -1, 1, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -82,22 +77,34 @@ void SoFCBackgroundGradient::GLRender (SoGLRenderAction * /*action*/)
 
     glBegin(GL_TRIANGLE_STRIP);
     if (mCol[0] < 0) {
-        glColor3f(fCol[0],fCol[1],fCol[2]); glVertex2f(-1, 1);
-        glColor3f(tCol[0],tCol[1],tCol[2]); glVertex2f(-1,-1);
-        glColor3f(fCol[0],fCol[1],fCol[2]); glVertex2f( 1, 1);
-        glColor3f(tCol[0],tCol[1],tCol[2]); glVertex2f( 1,-1);
+        glColor3f(fCol[0], fCol[1], fCol[2]);
+        glVertex2f(-1, 1);
+        glColor3f(tCol[0], tCol[1], tCol[2]);
+        glVertex2f(-1, -1);
+        glColor3f(fCol[0], fCol[1], fCol[2]);
+        glVertex2f(1, 1);
+        glColor3f(tCol[0], tCol[1], tCol[2]);
+        glVertex2f(1, -1);
     }
     else {
-        glColor3f(fCol[0],fCol[1],fCol[2]); glVertex2f(-1, 1);
-        glColor3f(mCol[0],mCol[1],mCol[2]); glVertex2f(-1, 0);
-        glColor3f(fCol[0],fCol[1],fCol[2]); glVertex2f( 1, 1);
-        glColor3f(mCol[0],mCol[1],mCol[2]); glVertex2f( 1, 0);
+        glColor3f(fCol[0], fCol[1], fCol[2]);
+        glVertex2f(-1, 1);
+        glColor3f(mCol[0], mCol[1], mCol[2]);
+        glVertex2f(-1, 0);
+        glColor3f(fCol[0], fCol[1], fCol[2]);
+        glVertex2f(1, 1);
+        glColor3f(mCol[0], mCol[1], mCol[2]);
+        glVertex2f(1, 0);
         glEnd();
         glBegin(GL_TRIANGLE_STRIP);
-        glColor3f(mCol[0],mCol[1],mCol[2]); glVertex2f(-1, 0);
-        glColor3f(tCol[0],tCol[1],tCol[2]); glVertex2f(-1,-1);
-        glColor3f(mCol[0],mCol[1],mCol[2]); glVertex2f( 1, 0);
-        glColor3f(tCol[0],tCol[1],tCol[2]); glVertex2f( 1,-1);
+        glColor3f(mCol[0], mCol[1], mCol[2]);
+        glVertex2f(-1, 0);
+        glColor3f(tCol[0], tCol[1], tCol[2]);
+        glVertex2f(-1, -1);
+        glColor3f(mCol[0], mCol[1], mCol[2]);
+        glVertex2f(1, 0);
+        glColor3f(tCol[0], tCol[1], tCol[2]);
+        glVertex2f(1, -1);
     }
     glEnd();
 
@@ -108,17 +115,15 @@ void SoFCBackgroundGradient::GLRender (SoGLRenderAction * /*action*/)
     glMatrixMode(GL_MODELVIEW);
 }
 
-void SoFCBackgroundGradient::setColorGradient(const SbColor& fromColor,
-                                              const SbColor& toColor)
+void SoFCBackgroundGradient::setColorGradient(const SbColor &fromColor, const SbColor &toColor)
 {
     fCol = fromColor;
     tCol = toColor;
     mCol[0] = -1.0f;
 }
 
-void SoFCBackgroundGradient::setColorGradient(const SbColor& fromColor,
-                                              const SbColor& toColor,
-                                              const SbColor& midColor)
+void SoFCBackgroundGradient::setColorGradient(const SbColor &fromColor, const SbColor &toColor,
+                                              const SbColor &midColor)
 {
     fCol = fromColor;
     tCol = toColor;

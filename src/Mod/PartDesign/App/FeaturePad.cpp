@@ -23,11 +23,11 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepAlgoAPI_Fuse.hxx>
-# include <Precision.hxx>
-# include <TopExp_Explorer.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Face.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
+#include <Precision.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Face.hxx>
 #endif
 
 #include <App/DocumentObject.h>
@@ -38,7 +38,8 @@
 
 using namespace PartDesign;
 
-const char* Pad::TypeEnums[]= {"Length", "UpToLast", "UpToFirst", "UpToFace", "TwoLengths", nullptr};
+const char *Pad::TypeEnums[] = {"Length",   "UpToLast",   "UpToFirst",
+                                "UpToFace", "TwoLengths", nullptr};
 
 PROPERTY_SOURCE(PartDesign::Pad, PartDesign::FeatureExtrude)
 
@@ -50,12 +51,17 @@ Pad::Pad()
     Type.setEnums(TypeEnums);
     ADD_PROPERTY_TYPE(Length, (10.0), "Pad", App::Prop_None, "Pad length");
     ADD_PROPERTY_TYPE(Length2, (10.0), "Pad", App::Prop_None, "Pad length in 2nd direction");
-    ADD_PROPERTY_TYPE(UseCustomVector, (false), "Pad", App::Prop_None, "Use custom vector for pad direction");
-    ADD_PROPERTY_TYPE(Direction, (Base::Vector3d(1.0, 1.0, 1.0)), "Pad", App::Prop_None, "Pad direction vector");
-    ADD_PROPERTY_TYPE(ReferenceAxis, (nullptr), "Pad", App::Prop_None, "Reference axis of direction");
-    ADD_PROPERTY_TYPE(AlongSketchNormal, (true), "Pad", App::Prop_None, "Measure pad length along the sketch normal direction");
+    ADD_PROPERTY_TYPE(UseCustomVector, (false), "Pad", App::Prop_None,
+                      "Use custom vector for pad direction");
+    ADD_PROPERTY_TYPE(Direction, (Base::Vector3d(1.0, 1.0, 1.0)), "Pad", App::Prop_None,
+                      "Pad direction vector");
+    ADD_PROPERTY_TYPE(ReferenceAxis, (nullptr), "Pad", App::Prop_None,
+                      "Reference axis of direction");
+    ADD_PROPERTY_TYPE(AlongSketchNormal, (true), "Pad", App::Prop_None,
+                      "Measure pad length along the sketch normal direction");
     ADD_PROPERTY_TYPE(UpToFace, (nullptr), "Pad", App::Prop_None, "Face where pad will end");
-    ADD_PROPERTY_TYPE(Offset, (0.0), "Pad", App::Prop_None, "Offset from face in which pad will end");
+    ADD_PROPERTY_TYPE(Offset, (0.0), "Pad", App::Prop_None,
+                      "Offset from face in which pad will end");
     Offset.setConstraints(&signedLengthConstraint);
     ADD_PROPERTY_TYPE(TaperAngle, (0.0), "Pad", App::Prop_None, "Taper angle");
     TaperAngle.setConstraints(&floatAngle);
@@ -87,7 +93,7 @@ App::DocumentObjectExecReturn *Pad::execute()
     try {
         sketchshape = getVerifiedFace();
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 
@@ -96,7 +102,7 @@ App::DocumentObjectExecReturn *Pad::execute()
     try {
         base = getBaseShape();
     }
-    catch (const Base::Exception&) {
+    catch (const Base::Exception &) {
         base = TopoDS_Shape();
     }
 
@@ -127,7 +133,8 @@ App::DocumentObjectExecReturn *Pad::execute()
 
         // factor would be zero if vectors are orthogonal
         if (factor < Precision::Confusion())
-            return new App::DocumentObjectExecReturn("Pad: Creation failed because direction is orthogonal to sketch's normal vector");
+            return new App::DocumentObjectExecReturn(
+                "Pad: Creation failed because direction is orthogonal to sketch's normal vector");
 
         // perform the length correction if not along custom vector
         if (AlongSketchNormal.getValue()) {
@@ -144,12 +151,11 @@ App::DocumentObjectExecReturn *Pad::execute()
         TopoDS_Shape prism;
         std::string method(Type.getValueAsString());
         if (method == "UpToFirst" || method == "UpToLast" || method == "UpToFace") {
-              // Note: This will return an unlimited planar face if support is a datum plane
+            // Note: This will return an unlimited planar face if support is a datum plane
             TopoDS_Face supportface = getSupportFace();
             supportface.Move(invObjLoc);
 
-            if (Reversed.getValue())
-                dir.Reverse();
+            if (Reversed.getValue()) dir.Reverse();
 
             // Find a valid face or datum plane to extrude up to
             TopoDS_Face upToFace;
@@ -165,12 +171,12 @@ App::DocumentObjectExecReturn *Pad::execute()
                 //generatePrism(prism, sketchshape, "Length", dir, length, 0.0, false, false);
                 base = sketchshape;
                 supportface = TopoDS::Face(sketchshape);
-                TopExp_Explorer Ex(supportface,TopAbs_WIRE);
-                if (!Ex.More())
-                    supportface = TopoDS_Face();
+                TopExp_Explorer Ex(supportface, TopAbs_WIRE);
+                if (!Ex.More()) supportface = TopoDS_Face();
 
                 PrismMode mode = PrismMode::None;
-                generatePrism(prism, method, base, sketchshape, supportface, upToFace, dir, mode, Standard_True);
+                generatePrism(prism, method, base, sketchshape, supportface, upToFace, dir, mode,
+                              Standard_True);
                 base.Nullify();
             }
             else {
@@ -183,18 +189,18 @@ App::DocumentObjectExecReturn *Pad::execute()
                 // warn the user
                 // FIXME: If the support shape is not the previous solid in the tree, then there will be unexpected results
                 // Check supportface for limits, otherwise Perform() throws an exception
-                TopExp_Explorer Ex(supportface,TopAbs_WIRE);
-                if (!Ex.More())
-                    supportface = TopoDS_Face();
+                TopExp_Explorer Ex(supportface, TopAbs_WIRE);
+                if (!Ex.More()) supportface = TopoDS_Face();
                 PrismMode mode = PrismMode::None;
-                generatePrism(prism, method, base, sketchshape, supportface, upToFace, dir, mode, Standard_True);
+                generatePrism(prism, method, base, sketchshape, supportface, upToFace, dir, mode,
+                              Standard_True);
             }
         }
         else {
             if (hasTaperedAngle()) {
-                if (hasReversed)
-                    dir.Reverse();
-                generateTaperedPrism(prism, sketchshape, method, dir, L, L2, TaperAngle.getValue(), TaperAngle2.getValue(), hasMidplane);
+                if (hasReversed) dir.Reverse();
+                generateTaperedPrism(prism, sketchshape, method, dir, L, L2, TaperAngle.getValue(),
+                                     TaperAngle2.getValue(), hasMidplane);
             }
             else {
                 generatePrism(prism, sketchshape, method, dir, L, L2, hasMidplane, hasReversed);
@@ -223,7 +229,8 @@ App::DocumentObjectExecReturn *Pad::execute()
 
             int solidCount = countSolids(result);
             if (solidCount > 1) {
-                return new App::DocumentObjectExecReturn("Pad: Result has multiple solids. This is not supported at this time.");
+                return new App::DocumentObjectExecReturn(
+                    "Pad: Result has multiple solids. This is not supported at this time.");
             }
 
             solRes = refineShapeIfActive(solRes);
@@ -232,10 +239,11 @@ App::DocumentObjectExecReturn *Pad::execute()
         else {
             int solidCount = countSolids(prism);
             if (solidCount > 1) {
-                return new App::DocumentObjectExecReturn("Pad: Result has multiple solids. This is not supported at this time.");
+                return new App::DocumentObjectExecReturn(
+                    "Pad: Result has multiple solids. This is not supported at this time.");
             }
 
-           this->Shape.setValue(getSolid(prism));
+            this->Shape.setValue(getSolid(prism));
         }
 
         // eventually disable some settings that are not valid for the current method
@@ -243,15 +251,15 @@ App::DocumentObjectExecReturn *Pad::execute()
 
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         if (std::string(e.GetMessageString()) == "TopoDS::Face")
-            return new App::DocumentObjectExecReturn("Could not create face from sketch.\n"
+            return new App::DocumentObjectExecReturn(
+                "Could not create face from sketch.\n"
                 "Intersecting sketch entities or multiple faces in a sketch are not allowed.");
         else
             return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
-    catch (Base::Exception& e) {
+    catch (Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
-    
 }

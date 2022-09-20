@@ -37,25 +37,27 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGCustomLabel : public QGraphicsTextItem
+class TechDrawGuiExport QGCustomLabel: public QGraphicsTextItem
 {
 public:
     explicit QGCustomLabel(void);
     ~QGCustomLabel() {}
 
-    enum {Type = QGraphicsItem::UserType + 135};
-    int type() const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 135
+    };
+    int type() const { return Type; }
 
-    virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr );
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr);
     virtual void centerAt(QPointF centerPos);
     virtual void centerAt(double cX, double cY);
 
 protected:
-
 private:
-
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGCUSTOMLABEL_H

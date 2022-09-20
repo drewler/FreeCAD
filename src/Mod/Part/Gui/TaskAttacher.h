@@ -36,32 +36,37 @@
 class Ui_TaskAttacher;
 class QLineEdit;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartGui { 
+namespace PartGui
+{
 
 class Ui_TaskAttacher;
 
-class PartGuiExport TaskAttacher : public Gui::TaskView::TaskBox, public Gui::SelectionObserver
+class PartGuiExport TaskAttacher: public Gui::TaskView::TaskBox, public Gui::SelectionObserver
 {
     Q_OBJECT
 
 public:
-    using VisibilityFunction =  std::function<void (bool, const std::string &, Gui::ViewProviderDocumentObject*,
-                                App::DocumentObject *, const std::string&)>;
+    using VisibilityFunction =
+        std::function<void(bool, const std::string &, Gui::ViewProviderDocumentObject *,
+                           App::DocumentObject *, const std::string &)>;
 
     explicit TaskAttacher(Gui::ViewProviderDocumentObject *ViewProvider, QWidget *parent = nullptr,
-                 QString picture = QString(),
-                 QString text = QString::fromLatin1("Attachment"), VisibilityFunction func = 0);
+                          QString picture = QString(),
+                          QString text = QString::fromLatin1("Attachment"),
+                          VisibilityFunction func = 0);
     ~TaskAttacher() override;
 
-    bool   getFlip(void) const;
+    bool getFlip(void) const;
 
     /**
      * @brief getActiveMapMode returns either the default mode for selected
@@ -81,10 +86,10 @@ private Q_SLOTS:
     void onAttachmentOffsetPitchChanged(double);
     void onAttachmentOffsetRollChanged(double);
     void onCheckFlip(bool);
-    void onRefName1(const QString& text);
-    void onRefName2(const QString& text);
-    void onRefName3(const QString& text);
-    void onRefName4(const QString& text);
+    void onRefName1(const QString &text);
+    void onRefName2(const QString &text);
+    void onRefName3(const QString &text);
+    void onRefName4(const QString &text);
     void onButtonRef1(const bool checked = true);
     void onButtonRef2(const bool checked = true);
     void onButtonRef3(const bool checked = true);
@@ -94,10 +99,11 @@ private Q_SLOTS:
 
 protected:
     void changeEvent(QEvent *e) override;
+
 private:
-    void objectDeleted(const Gui::ViewProviderDocumentObject&);
-    void documentDeleted(const Gui::Document&);
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void objectDeleted(const Gui::ViewProviderDocumentObject &);
+    void documentDeleted(const Gui::Document &);
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     void updateReferencesUI();
 
     /**
@@ -106,10 +112,10 @@ private:
      */
     bool updatePreview();
 
-    void makeRefStrings(std::vector<QString>& refstrings, std::vector<std::string>& refnames);
-    QLineEdit* getLine(unsigned idx);
+    void makeRefStrings(std::vector<QString> &refstrings, std::vector<std::string> &refnames);
+    QLineEdit *getLine(unsigned idx);
     void onButtonRef(const bool checked, unsigned idx);
-    void onRefName(const QString& text, unsigned idx);
+    void onRefName(const QString &text, unsigned idx);
     void updateRefButton(int idx);
     void updateAttachmentOffsetUI();
 
@@ -118,7 +124,7 @@ private:
      * current set of references. Maintains selection when possible.
      */
     void updateListOfModes();
-    
+
     /**
      * @brief selectMapMode Select the given mode in the list widget
      */
@@ -129,14 +135,16 @@ protected:
     std::string ObjectName;
 
 private:
-    QWidget* proxy;
+    QWidget *proxy;
     std::unique_ptr<Ui_TaskAttacher> ui;
     VisibilityFunction visibilityFunc;
 
     // TODO fix documentation here (2015-11-10, Fat-Zer)
     int iActiveRef; //what reference is being picked in 3d view now? -1 means no one, 0-3 means a reference is being picked.
-    bool autoNext;//if we should automatically switch to next reference (true after dialog launch, false afterwards)
-    std::vector<Attacher::eMapMode> modesInList; //this list is synchronous to what is populated into listOfModes widget.
+    bool
+        autoNext; //if we should automatically switch to next reference (true after dialog launch, false afterwards)
+    std::vector<Attacher::eMapMode>
+        modesInList; //this list is synchronous to what is populated into listOfModes widget.
     Attacher::SuggestResult lastSuggestResult;
     bool completed;
 
@@ -146,7 +154,7 @@ private:
 };
 
 /// simulation dialog for the TaskView
-class PartGuiExport TaskDlgAttacher : public Gui::TaskView::TaskDialog
+class PartGuiExport TaskDlgAttacher: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -154,8 +162,7 @@ public:
     explicit TaskDlgAttacher(Gui::ViewProviderDocumentObject *ViewProvider, bool createBox = true);
     ~TaskDlgAttacher() override;
 
-    Gui::ViewProviderDocumentObject* getViewProvider() const
-    { return ViewProvider; }
+    Gui::ViewProviderDocumentObject *getViewProvider() const { return ViewProvider; }
 
 
 public:
@@ -167,20 +174,21 @@ public:
     bool accept() override;
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
-    /// is called by the framework if the user presses the help button 
-    bool isAllowedAlterDocument(void) const override
-    { return false; }
+    /// is called by the framework if the user presses the help button
+    bool isAllowedAlterDocument(void) const override { return false; }
 
-    /// returns for Close and Help button 
+    /// returns for Close and Help button
     QDialogButtonBox::StandardButtons getStandardButtons(void) const override
-    { return QDialogButtonBox::Ok|QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 protected:
-    Gui::ViewProviderDocumentObject   *ViewProvider;
+    Gui::ViewProviderDocumentObject *ViewProvider;
 
-    TaskAttacher  *parameter;
+    TaskAttacher *parameter;
 };
 
-} //namespace PartDesignGui
+} // namespace PartGui
 
 #endif // GUI_TASKVIEW_TASKAPPERANCE_H

@@ -24,8 +24,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class Query2Filtered : public Query2<Real>
+template<class Real> class Query2Filtered: public Query2<Real>
 {
 public:
     // The base class handles floating-point queries.  Each query involves
@@ -37,19 +36,17 @@ public:
     // interval [0,1].  The uncertainty of 0 causes the class to behave
     // as if it were Query2.  The uncertainty of 1 causes the class to
     // behave as if it were Query2TRational.
-    Query2Filtered (int iVQuantity, const Vector2<Real>* akVertex,
-        Real fUncertainty);
-    virtual ~Query2Filtered ();
+    Query2Filtered(int iVQuantity, const Vector2<Real> *akVertex, Real fUncertainty);
+    virtual ~Query2Filtered();
 
     // run-time type information
-    virtual Query::Type GetType () const;
+    virtual Query::Type GetType() const;
 
     // Queries about the relation of a point to various geometric objects.
 
-    virtual int ToLine (const Vector2<Real>& rkP, int iV0, int iV1) const;
+    virtual int ToLine(const Vector2<Real> &rkP, int iV0, int iV1) const;
 
-    virtual int ToCircumcircle (const Vector2<Real>& rkP, int iV0, int iV1,
-        int iV2) const;
+    virtual int ToCircumcircle(const Vector2<Real> &rkP, int iV0, int iV1, int iV2) const;
 
 private:
     using Query2<Real>::m_akVertex;
@@ -58,7 +55,7 @@ private:
     Real m_fUncertainty;
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4Query2Filtered.inl"
 
@@ -67,6 +64,6 @@ namespace Wm4
 typedef Query2Filtered<float> Query2Filteredf;
 typedef Query2Filtered<double> Query2Filteredd;
 
-}
+} // namespace Wm4
 
 #endif

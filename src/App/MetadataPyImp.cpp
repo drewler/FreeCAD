@@ -50,7 +50,7 @@ std::string MetadataPy::representation() const
     return str.str();
 }
 
-PyObject *MetadataPy::PyMake(struct _typeobject *, PyObject *, PyObject *)// Python wrapper
+PyObject *MetadataPy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     return new MetadataPy(nullptr);
 }
@@ -108,38 +108,29 @@ int MetadataPy::PyInit(PyObject *args, PyObject * /*kwd*/)
         return 0;
     }
 
-    PyErr_SetString(Base::PyExc_FC_GeneralError, "metadata object or path to metadata file expected");
+    PyErr_SetString(Base::PyExc_FC_GeneralError,
+                    "metadata object or path to metadata file expected");
     return -1;
 }
 
-Py::Object MetadataPy::getName() const
-{
-    return Py::String(getMetadataPtr()->name());
-}
+Py::Object MetadataPy::getName() const { return Py::String(getMetadataPtr()->name()); }
 
 void MetadataPy::setName(Py::Object args)
 {
     const char *name = nullptr;
-    if (!PyArg_Parse(args.ptr(), "z", &name)) {
-        throw Py::Exception();
-    }
-    if (name)
-        getMetadataPtr()->setName(name);
+    if (!PyArg_Parse(args.ptr(), "z", &name)) { throw Py::Exception(); }
+    if (name) getMetadataPtr()->setName(name);
     else
         getMetadataPtr()->setName("");
 }
 
-Py::Object MetadataPy::getVersion() const
-{
-    return Py::String(getMetadataPtr()->version().str());
-}
+Py::Object MetadataPy::getVersion() const { return Py::String(getMetadataPtr()->version().str()); }
 
 void MetadataPy::setVersion(Py::Object args)
 {
     const char *name = nullptr;
-    if (!PyArg_Parse(args.ptr(), "z", &name))
-        throw Py::Exception();
-    if (name && name[0] != '\0') 
+    if (!PyArg_Parse(args.ptr(), "z", &name)) throw Py::Exception();
+    if (name && name[0] != '\0')
         getMetadataPtr()->setVersion(App::Meta::Version(std::string(name)));
     else
         getMetadataPtr()->setVersion(App::Meta::Version());
@@ -153,8 +144,7 @@ Py::Object MetadataPy::getDescription() const
 void MetadataPy::setDescription(Py::Object args)
 {
     const char *description = nullptr;
-    if (!PyArg_Parse(args.ptr(), "s", &description))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "s", &description)) throw Py::Exception();
     getMetadataPtr()->setDescription(description);
 }
 
@@ -174,8 +164,7 @@ Py::Object MetadataPy::getMaintainer() const
 void MetadataPy::setMaintainer(Py::Object args)
 {
     PyObject *list = nullptr;
-    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list)) throw Py::Exception();
 
     getMetadataPtr()->clearMaintainer();
     Py::List maintainers(list);
@@ -191,8 +180,7 @@ PyObject *MetadataPy::addMaintainer(PyObject *args)
 {
     const char *name = nullptr;
     const char *email = nullptr;
-    if (!PyArg_ParseTuple(args, "ss", &name, &email))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "ss", &name, &email)) throw Py::Exception();
     getMetadataPtr()->addMaintainer(App::Meta::Contact(name, email));
     Py_INCREF(Py_None);
     return Py_None;
@@ -202,8 +190,7 @@ PyObject *MetadataPy::removeMaintainer(PyObject *args)
 {
     const char *name = nullptr;
     const char *email = nullptr;
-    if (!PyArg_ParseTuple(args, "ss", &name, &email))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "ss", &name, &email)) throw Py::Exception();
     getMetadataPtr()->removeMaintainer(App::Meta::Contact(name, email));
     Py_INCREF(Py_None);
     return Py_None;
@@ -226,8 +213,7 @@ Py::Object MetadataPy::getAuthor() const
 void MetadataPy::setAuthor(Py::Object args)
 {
     PyObject *list = nullptr;
-    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list)) throw Py::Exception();
 
     getMetadataPtr()->clearAuthor();
     Py::List authors(list);
@@ -243,8 +229,7 @@ PyObject *MetadataPy::addAuthor(PyObject *args)
 {
     const char *name = nullptr;
     const char *email = nullptr;
-    if (!PyArg_ParseTuple(args, "ss", &name, &email))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "ss", &name, &email)) throw Py::Exception();
     getMetadataPtr()->addAuthor(App::Meta::Contact(name, email));
     Py_INCREF(Py_None);
     return Py_None;
@@ -254,8 +239,7 @@ PyObject *MetadataPy::removeAuthor(PyObject *args)
 {
     const char *name = nullptr;
     const char *email = nullptr;
-    if (!PyArg_ParseTuple(args, "ss", &name, &email))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "ss", &name, &email)) throw Py::Exception();
     getMetadataPtr()->removeAuthor(App::Meta::Contact(name, email));
     Py_INCREF(Py_None);
     return Py_None;
@@ -277,8 +261,7 @@ Py::Object MetadataPy::getLicense() const
 void MetadataPy::setLicense(Py::Object args)
 {
     PyObject *list = nullptr;
-    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list)) throw Py::Exception();
 
     getMetadataPtr()->clearLicense();
     Py::List licenses(list);
@@ -294,8 +277,7 @@ PyObject *MetadataPy::addLicense(PyObject *args)
 {
     const char *shortCode = nullptr;
     const char *path = nullptr;
-    if (!PyArg_ParseTuple(args, "ss", &shortCode, &path))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "ss", &shortCode, &path)) throw Py::Exception();
     getMetadataPtr()->addLicense(App::Meta::License(shortCode, path));
     Py_INCREF(Py_None);
     return Py_None;
@@ -305,8 +287,7 @@ PyObject *MetadataPy::removeLicense(PyObject *args)
 {
     const char *shortCode = nullptr;
     const char *path = nullptr;
-    if (!PyArg_ParseTuple(args, "ss", &shortCode, &path))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "ss", &shortCode, &path)) throw Py::Exception();
     getMetadataPtr()->removeLicense(App::Meta::License(shortCode, path));
     Py_INCREF(Py_None);
     return Py_None;
@@ -326,8 +307,7 @@ Py::Object MetadataPy::getUrls() const
             case Meta::UrlType::readme: pyUrl["type"] = Py::String("readme"); break;
             case Meta::UrlType::documentation: pyUrl["type"] = Py::String("documentation"); break;
         }
-        if (url.type == Meta::UrlType::repository)
-            pyUrl["branch"] = Py::String(url.branch);
+        if (url.type == Meta::UrlType::repository) pyUrl["branch"] = Py::String(url.branch);
         pyUrls.append(pyUrl);
     }
     return pyUrls;
@@ -336,8 +316,7 @@ Py::Object MetadataPy::getUrls() const
 void MetadataPy::setUrls(Py::Object args)
 {
     PyObject *list = nullptr;
-    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list)) throw Py::Exception();
 
     getMetadataPtr()->clearUrl();
     Py::List urls(list);
@@ -347,9 +326,7 @@ void MetadataPy::setUrls(Py::Object args)
         std::string typeAsString = pyUrl["type"].str();
         std::string branch = pyUrl["branch"].str();
         auto newUrl = App::Meta::Url(location, Meta::UrlType::website);
-        if (typeAsString == "website") {
-            newUrl.type = Meta::UrlType::website;
-        }
+        if (typeAsString == "website") { newUrl.type = Meta::UrlType::website; }
         else if (typeAsString == "repository") {
             newUrl.type = Meta::UrlType::repository;
             newUrl.branch = branch;
@@ -371,12 +348,11 @@ void MetadataPy::setUrls(Py::Object args)
     }
 }
 
-App::Meta::Url urlFromStrings(const char* urlTypeCharStar, const char* link, const char* branch)
+App::Meta::Url urlFromStrings(const char *urlTypeCharStar, const char *link, const char *branch)
 {
     std::string urlTypeString(urlTypeCharStar);
-    App::Meta::UrlType urlType{App::Meta::UrlType::documentation};
-    if (urlTypeString == "repository")
-        urlType = App::Meta::UrlType::repository;
+    App::Meta::UrlType urlType {App::Meta::UrlType::documentation};
+    if (urlTypeString == "repository") urlType = App::Meta::UrlType::repository;
     else if (urlTypeString == "bugtracker")
         urlType = App::Meta::UrlType::bugtracker;
     else if (urlTypeString == "documentation")
@@ -387,8 +363,7 @@ App::Meta::Url urlFromStrings(const char* urlTypeCharStar, const char* link, con
         urlType = App::Meta::UrlType::website;
 
     App::Meta::Url url(link, urlType);
-    if (urlType == App::Meta::UrlType::repository)
-        url.branch = std::string(branch);
+    if (urlType == App::Meta::UrlType::repository) url.branch = std::string(branch);
 
     return url;
 }
@@ -398,8 +373,7 @@ PyObject *MetadataPy::addUrl(PyObject *args)
     const char *urlTypeCharStar = nullptr;
     const char *link = nullptr;
     const char *branch = nullptr;
-    if (!PyArg_ParseTuple(args, "ss|s", &urlTypeCharStar, &link, &branch))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "ss|s", &urlTypeCharStar, &link, &branch)) throw Py::Exception();
 
     getMetadataPtr()->addUrl(urlFromStrings(urlTypeCharStar, link, branch));
     Py_INCREF(Py_None);
@@ -411,8 +385,7 @@ PyObject *MetadataPy::removeUrl(PyObject *args)
     const char *urlTypeCharStar = nullptr;
     const char *link = nullptr;
     const char *branch = nullptr;
-    if (!PyArg_ParseTuple(args, "ss|s", &urlTypeCharStar, &link, &branch))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "ss|s", &urlTypeCharStar, &link, &branch)) throw Py::Exception();
 
     getMetadataPtr()->removeUrl(urlFromStrings(urlTypeCharStar, link, branch));
     Py_INCREF(Py_None);
@@ -432,17 +405,13 @@ Py::Object dependencyToPyObject(const Meta::Dependency &d)
     pyDependency["optional"] = Py::Boolean(d.optional);
     switch (d.dependencyType) {
         case App::Meta::DependencyType::automatic:
-            pyDependency["type"] = Py::String ("automatic");
+            pyDependency["type"] = Py::String("automatic");
             break;
-        case App::Meta::DependencyType::addon:
-            pyDependency["type"] = Py::String("addon");
-            break;
+        case App::Meta::DependencyType::addon: pyDependency["type"] = Py::String("addon"); break;
         case App::Meta::DependencyType::internal:
             pyDependency["type"] = Py::String("internal");
             break;
-        case App::Meta::DependencyType::python:
-            pyDependency["type"] = Py::String("python");
-            break;
+        case App::Meta::DependencyType::python: pyDependency["type"] = Py::String("python"); break;
     }
     return pyDependency;
 }
@@ -452,18 +421,12 @@ Meta::Dependency pyObjectToDependency(const Py::Object &d)
     Py::Dict pyDependency(d);
     Meta::Dependency result;
     result.package = pyDependency["package"].str();
-    if (pyDependency.hasKey("version_lt"))
-        result.version_lt = pyDependency["version_lt"].str();
-    if (pyDependency.hasKey("version_lte"))
-        result.version_lte = pyDependency["version_lte"].str();
-    if (pyDependency.hasKey("version_eq"))
-        result.version_eq = pyDependency["version_eq"].str();
-    if (pyDependency.hasKey("version_gt"))
-        result.version_gt = pyDependency["version_gt"].str();
-    if (pyDependency.hasKey("version_gte"))
-        result.version_gte = pyDependency["version_gte"].str();
-    if (pyDependency.hasKey("condition"))
-        result.condition = pyDependency["condition"].str();
+    if (pyDependency.hasKey("version_lt")) result.version_lt = pyDependency["version_lt"].str();
+    if (pyDependency.hasKey("version_lte")) result.version_lte = pyDependency["version_lte"].str();
+    if (pyDependency.hasKey("version_eq")) result.version_eq = pyDependency["version_eq"].str();
+    if (pyDependency.hasKey("version_gt")) result.version_gt = pyDependency["version_gt"].str();
+    if (pyDependency.hasKey("version_gte")) result.version_gte = pyDependency["version_gte"].str();
+    if (pyDependency.hasKey("condition")) result.condition = pyDependency["condition"].str();
     if (pyDependency.hasKey("optional"))
         result.optional = Py::Boolean(pyDependency["optional"]).as_bool();
     if (pyDependency.hasKey("type")) {
@@ -483,17 +446,14 @@ Py::Object MetadataPy::getDepend() const
 {
     auto dependencies = getMetadataPtr()->depend();
     Py::List pyDependencies;
-    for (const auto &d : dependencies) {
-        pyDependencies.append(dependencyToPyObject(d));
-    }
+    for (const auto &d : dependencies) { pyDependencies.append(dependencyToPyObject(d)); }
     return pyDependencies;
 }
 
 void MetadataPy::setDepend(Py::Object args)
 {
     PyObject *list = nullptr;
-    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list)) throw Py::Exception();
 
     getMetadataPtr()->clearDepend();
     Py::List deps(list);
@@ -506,8 +466,7 @@ void MetadataPy::setDepend(Py::Object args)
 PyObject *MetadataPy::addDepend(PyObject *args)
 {
     PyObject *dictionary = nullptr;
-    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary)) throw Py::Exception();
     Py::Dict pyDep(dictionary);
     getMetadataPtr()->addDepend(pyObjectToDependency(pyDep));
     Py_INCREF(Py_None);
@@ -517,8 +476,7 @@ PyObject *MetadataPy::addDepend(PyObject *args)
 PyObject *MetadataPy::removeDepend(PyObject *args)
 {
     PyObject *dictionary = nullptr;
-    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary)) throw Py::Exception();
     Py::Dict pyDep(dictionary);
     getMetadataPtr()->removeDepend(pyObjectToDependency(pyDep));
     Py_INCREF(Py_None);
@@ -529,17 +487,14 @@ Py::Object MetadataPy::getConflict() const
 {
     auto dependencies = getMetadataPtr()->conflict();
     Py::List pyDependencies;
-    for (const auto &d : dependencies) {
-        pyDependencies.append(dependencyToPyObject(d));
-    }
+    for (const auto &d : dependencies) { pyDependencies.append(dependencyToPyObject(d)); }
     return pyDependencies;
 }
 
 void MetadataPy::setConflict(Py::Object args)
 {
     PyObject *list = nullptr;
-    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list)) throw Py::Exception();
 
     getMetadataPtr()->clearConflict();
     Py::List deps(list);
@@ -552,8 +507,7 @@ void MetadataPy::setConflict(Py::Object args)
 PyObject *MetadataPy::addConflict(PyObject *args)
 {
     PyObject *dictionary = nullptr;
-    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary)) throw Py::Exception();
     Py::Dict pyDep(dictionary);
     getMetadataPtr()->addConflict(pyObjectToDependency(pyDep));
     Py_INCREF(Py_None);
@@ -563,8 +517,7 @@ PyObject *MetadataPy::addConflict(PyObject *args)
 PyObject *MetadataPy::removeConflict(PyObject *args)
 {
     PyObject *dictionary = nullptr;
-    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary)) throw Py::Exception();
     Py::Dict pyDep(dictionary);
     getMetadataPtr()->removeConflict(pyObjectToDependency(pyDep));
     Py_INCREF(Py_None);
@@ -575,17 +528,14 @@ Py::Object MetadataPy::getReplace() const
 {
     auto dependencies = getMetadataPtr()->replace();
     Py::List pyDependencies;
-    for (const auto &d : dependencies) {
-        pyDependencies.append(dependencyToPyObject(d));
-    }
+    for (const auto &d : dependencies) { pyDependencies.append(dependencyToPyObject(d)); }
     return pyDependencies;
 }
 
 void MetadataPy::setReplace(Py::Object args)
 {
     PyObject *list = nullptr;
-    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list)) throw Py::Exception();
 
     getMetadataPtr()->clearReplace();
     Py::List deps(list);
@@ -598,8 +548,7 @@ void MetadataPy::setReplace(Py::Object args)
 PyObject *MetadataPy::addReplace(PyObject *args)
 {
     PyObject *dictionary = nullptr;
-    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary)) throw Py::Exception();
     Py::Dict pyDep(dictionary);
     getMetadataPtr()->addReplace(pyObjectToDependency(pyDep));
     Py_INCREF(Py_None);
@@ -609,8 +558,7 @@ PyObject *MetadataPy::addReplace(PyObject *args)
 PyObject *MetadataPy::removeReplace(PyObject *args)
 {
     PyObject *dictionary = nullptr;
-    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dictionary)) throw Py::Exception();
     Py::Dict pyDep(dictionary);
     getMetadataPtr()->removeReplace(pyObjectToDependency(pyDep));
     Py_INCREF(Py_None);
@@ -623,17 +571,14 @@ Py::Object MetadataPy::getTag() const
 {
     auto tags = getMetadataPtr()->tag();
     Py::List pyTags;
-    for (const auto &t : tags) {
-        pyTags.append(Py::String(t));
-    }
+    for (const auto &t : tags) { pyTags.append(Py::String(t)); }
     return pyTags;
 }
 
 void MetadataPy::setTag(Py::Object args)
 {
     PyObject *list = nullptr;
-    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list)) throw Py::Exception();
 
     getMetadataPtr()->clearTag();
     Py::List tags(list);
@@ -646,8 +591,7 @@ void MetadataPy::setTag(Py::Object args)
 PyObject *MetadataPy::addTag(PyObject *args)
 {
     const char *tag = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &tag))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "s", &tag)) throw Py::Exception();
     getMetadataPtr()->addTag(tag);
     Py_INCREF(Py_None);
     return Py_None;
@@ -656,36 +600,27 @@ PyObject *MetadataPy::addTag(PyObject *args)
 PyObject *MetadataPy::removeTag(PyObject *args)
 {
     const char *tag = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &tag))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "s", &tag)) throw Py::Exception();
     getMetadataPtr()->removeTag(tag);
     Py_INCREF(Py_None);
     return Py_None;
 }
 
-Py::Object MetadataPy::getIcon() const
-{
-    return Py::String(getMetadataPtr()->icon().string());
-}
+Py::Object MetadataPy::getIcon() const { return Py::String(getMetadataPtr()->icon().string()); }
 
 void MetadataPy::setIcon(Py::Object args)
 {
     const char *name;
-    if (!PyArg_Parse(args.ptr(), "s", &name))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "s", &name)) throw Py::Exception();
     getMetadataPtr()->setIcon(name);
 }
 
-Py::Object MetadataPy::getClassname() const
-{
-    return Py::String(getMetadataPtr()->classname());
-}
+Py::Object MetadataPy::getClassname() const { return Py::String(getMetadataPtr()->classname()); }
 
 void MetadataPy::setClassname(Py::Object args)
 {
     const char *name;
-    if (!PyArg_Parse(args.ptr(), "s", &name))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "s", &name)) throw Py::Exception();
     getMetadataPtr()->setClassname(name);
 }
 
@@ -697,8 +632,7 @@ Py::Object MetadataPy::getSubdirectory() const
 void MetadataPy::setSubdirectory(Py::Object args)
 {
     const char *name;
-    if (!PyArg_Parse(args.ptr(), "s", &name))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "s", &name)) throw Py::Exception();
     getMetadataPtr()->setSubdirectory(name);
 }
 
@@ -706,17 +640,14 @@ Py::Object MetadataPy::getFile() const
 {
     auto files = getMetadataPtr()->file();
     Py::List pyFiles;
-    for (const auto &f : files) {
-        pyFiles.append(Py::String(f.string()));
-    }
+    for (const auto &f : files) { pyFiles.append(Py::String(f.string())); }
     return pyFiles;
 }
 
 void MetadataPy::setFile(Py::Object args)
 {
     PyObject *list = nullptr;
-    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list))
-        throw Py::Exception();
+    if (!PyArg_Parse(args.ptr(), "O!", &PyList_Type, &list)) throw Py::Exception();
 
     getMetadataPtr()->clearTag();
     Py::List files(list);
@@ -729,8 +660,7 @@ void MetadataPy::setFile(Py::Object args)
 PyObject *MetadataPy::addFile(PyObject *args)
 {
     const char *file = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &file))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "s", &file)) throw Py::Exception();
     getMetadataPtr()->addFile(file);
     Py_INCREF(Py_None);
     return Py_None;
@@ -739,8 +669,7 @@ PyObject *MetadataPy::addFile(PyObject *args)
 PyObject *MetadataPy::removeFile(PyObject *args)
 {
     const char *file = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &file))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args, "s", &file)) throw Py::Exception();
     getMetadataPtr()->removeFile(file);
     Py_INCREF(Py_None);
     return Py_None;
@@ -751,9 +680,7 @@ Py::Object MetadataPy::getContent() const
 {
     auto content = getMetadataPtr()->content();
     std::set<std::string> keys;
-    for (const auto &item : content) {
-        keys.insert(item.first);
-    }
+    for (const auto &item : content) { keys.insert(item.first); }
 
     // For the Python, we'll use a dictionary of lists to store the content components:
     Py::Dict pyContent;
@@ -772,27 +699,24 @@ Py::Object MetadataPy::getContent() const
 void MetadataPy::setContent(Py::Object arg)
 {
     PyObject *obj = nullptr;
-    if (!PyArg_Parse(arg.ptr(), "O!", &PyList_Type, &obj))
-        throw Py::Exception();
+    if (!PyArg_Parse(arg.ptr(), "O!", &PyList_Type, &obj)) throw Py::Exception();
 
     getMetadataPtr()->clearContent();
     Py::Dict outerDict(obj);
     for (const auto &pyContentType : outerDict) {
         auto contentType = Py::String(pyContentType.first).as_std_string();
         auto contentList = Py::List(pyContentType.second);
-        for (const auto& contentItem : contentList) {
+        for (const auto &contentItem : contentList) {
             auto item = static_cast<MetadataPy *>(contentItem.ptr());
             getMetadataPtr()->addContentItem(contentType, *(item->getMetadataPtr()));
         }
     }
-
 }
 
 PyObject *MetadataPy::getGenericMetadata(PyObject *args)
 {
     const char *name;
-    if (!PyArg_ParseTuple(args, "s", &name))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "s", &name)) return nullptr;
 
     auto gm = (*getMetadataPtr())[name];
     Py::List pyGenericMetadata;
@@ -818,10 +742,8 @@ void MetadataPy::setFreeCADMin(Py::Object args)
 {
     char *version = nullptr;
     PyObject *p = args.ptr();
-    if (!PyArg_Parse(p, "z", &version))
-        throw Py::Exception();
-    if (version)
-        getMetadataPtr()->setFreeCADMin(App::Meta::Version(version));
+    if (!PyArg_Parse(p, "z", &version)) throw Py::Exception();
+    if (version) getMetadataPtr()->setFreeCADMin(App::Meta::Version(version));
     else
         getMetadataPtr()->setFreeCADMin(App::Meta::Version());
 }
@@ -835,19 +757,16 @@ void MetadataPy::setFreeCADMax(Py::Object args)
 {
     char *version = nullptr;
     PyObject *p = args.ptr();
-    if (!PyArg_Parse(p, "z", &version))
-        throw Py::Exception();
+    if (!PyArg_Parse(p, "z", &version)) throw Py::Exception();
 
-    if (version)
-        getMetadataPtr()->setFreeCADMax(App::Meta::Version(version));
+    if (version) getMetadataPtr()->setFreeCADMax(App::Meta::Version(version));
     else
         getMetadataPtr()->setFreeCADMax(App::Meta::Version());
 }
 
 PyObject *MetadataPy::getFirstSupportedFreeCADVersion(PyObject *p)
 {
-    if (!PyArg_ParseTuple(p, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(p, "")) return nullptr;
 
     // Short-circuit: if the toplevel sets a version, then the lower-levels are overridden
     if (getMetadataPtr()->freecadmin() != App::Meta::Version())
@@ -858,12 +777,9 @@ PyObject *MetadataPy::getFirstSupportedFreeCADVersion(PyObject *p)
     for (const auto &item : content) {
         auto minVersion = item.second.freecadmin();
         if (minVersion != App::Meta::Version())
-            if (result == App::Meta::Version() || minVersion < result)
-                result = minVersion;
+            if (result == App::Meta::Version() || minVersion < result) result = minVersion;
     }
-    if (result != App::Meta::Version()) {
-        return Py::new_reference_to(Py::String(result.str()));
-    }
+    if (result != App::Meta::Version()) { return Py::new_reference_to(Py::String(result.str())); }
     else {
         Py_INCREF(Py_None);
         return Py_None;
@@ -872,8 +788,7 @@ PyObject *MetadataPy::getFirstSupportedFreeCADVersion(PyObject *p)
 
 PyObject *MetadataPy::getLastSupportedFreeCADVersion(PyObject *p)
 {
-    if (!PyArg_ParseTuple(p, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(p, "")) return nullptr;
 
     // Short-circuit: if the toplevel sets a version, then the lower-levels are overridden
     if (getMetadataPtr()->freecadmax() != App::Meta::Version())
@@ -884,12 +799,9 @@ PyObject *MetadataPy::getLastSupportedFreeCADVersion(PyObject *p)
     for (const auto &item : content) {
         auto maxVersion = item.second.freecadmax();
         if (maxVersion != App::Meta::Version())
-            if (result == App::Meta::Version() || maxVersion > result)
-                result = maxVersion;
+            if (result == App::Meta::Version() || maxVersion > result) result = maxVersion;
     }
-    if (result != App::Meta::Version()) {
-        return Py::new_reference_to(Py::String(result.str()));
-    }
+    if (result != App::Meta::Version()) { return Py::new_reference_to(Py::String(result.str())); }
     else {
         Py_INCREF(Py_None);
         return Py_None;
@@ -898,22 +810,20 @@ PyObject *MetadataPy::getLastSupportedFreeCADVersion(PyObject *p)
 
 PyObject *MetadataPy::supportsCurrentFreeCAD(PyObject *p)
 {
-    if (!PyArg_ParseTuple(p, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(p, "")) return nullptr;
 
     bool result = getMetadataPtr()->supportsCurrentFreeCAD();
     return Py::new_reference_to(Py::Boolean(result));
 }
 
-PyObject* MetadataPy::addContentItem(PyObject* arg)
+PyObject *MetadataPy::addContentItem(PyObject *arg)
 {
     char *contentType = nullptr;
     PyObject *contentItem = nullptr;
     if (!PyArg_ParseTuple(arg, "sO!", &contentType, &(App::MetadataPy::Type), &contentItem))
         return nullptr;
 
-    if (!contentItem || !contentType)
-        return nullptr;
+    if (!contentItem || !contentType) return nullptr;
     auto item = static_cast<MetadataPy *>(contentItem);
     getMetadataPtr()->addContentItem(contentType, *(item->getMetadataPtr()));
 
@@ -925,20 +835,17 @@ PyObject *MetadataPy::removeContentItem(PyObject *arg)
 {
     char *contentType = nullptr;
     char *contentName = nullptr;
-    if (!PyArg_ParseTuple(arg, "ss", &contentType, &contentName))
-        return nullptr;
-    if (contentType && contentName)
-        getMetadataPtr()->removeContentItem(contentType, contentName);
+    if (!PyArg_ParseTuple(arg, "ss", &contentType, &contentName)) return nullptr;
+    if (contentType && contentName) getMetadataPtr()->removeContentItem(contentType, contentName);
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
-PyObject* MetadataPy::write(PyObject* args)
+PyObject *MetadataPy::write(PyObject *args)
 {
     char *filename = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &filename))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "s", &filename)) return nullptr;
     getMetadataPtr()->write(filename);
 
     Py_INCREF(Py_None);
@@ -946,12 +853,6 @@ PyObject* MetadataPy::write(PyObject* args)
 }
 
 
-PyObject *MetadataPy::getCustomAttributes(const char * /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *MetadataPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int MetadataPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
-{
-    return 0;
-}
+int MetadataPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

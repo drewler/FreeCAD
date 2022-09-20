@@ -23,11 +23,11 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QImage>
-# include <QMouseEvent>
-# include <QPainter>
-# include <Inventor/nodes/SoOrthographicCamera.h>
-# include <Inventor/nodes/SoImage.h>
+#include <QImage>
+#include <QMouseEvent>
+#include <QPainter>
+#include <Inventor/nodes/SoOrthographicCamera.h>
+#include <Inventor/nodes/SoImage.h>
 #endif
 
 #include <QtOpenGL.h>
@@ -45,22 +45,22 @@
 using namespace SandboxGui;
 
 
-class MyPaintable : public Gui::GLGraphicsItem
+class MyPaintable: public Gui::GLGraphicsItem
 {
-    QtGLFramebufferObject* fbo;
-    Gui::View3DInventorViewer* view;
+    QtGLFramebufferObject *fbo;
+    Gui::View3DInventorViewer *view;
     QImage img;
+
 public:
-    ~MyPaintable()
-    {
-    }
-    MyPaintable(Gui::View3DInventorViewer* v) :view(v), img(v->getGLWidget()->size(), QImage::Format_ARGB32)
+    ~MyPaintable() {}
+    MyPaintable(Gui::View3DInventorViewer *v)
+        : view(v), img(v->getGLWidget()->size(), QImage::Format_ARGB32)
     {
         img.fill(qRgba(255, 255, 255, 0));
         {
             QPainter p(&img);
             p.setPen(Qt::white);
-            p.drawText(200,200,QString::fromLatin1("Render to QImage"));
+            p.drawText(200, 200, QString::fromLatin1("Render to QImage"));
         }
 
 #if !defined(HAVE_QT5_OPENGL)
@@ -74,7 +74,7 @@ public:
 #if !defined(HAVE_QT5_OPENGL)
             QPainter p(fbo);
             p.setPen(Qt::white);
-            p.drawText(200,200,QString::fromLatin1("Render to QtGLFramebufferObject"));
+            p.drawText(200, 200, QString::fromLatin1("Render to QtGLFramebufferObject"));
             p.end();
 #endif
             //img = fbo->toImage();
@@ -93,29 +93,29 @@ public:
 
         view->getSoRenderManager()->scheduleRedraw();
     }
- #ifndef GL_MULTISAMPLE
- #define GL_MULTISAMPLE  0x809D
- #endif
+#ifndef GL_MULTISAMPLE
+#define GL_MULTISAMPLE 0x809D
+#endif
     void paintGL()
     {
-    const SbViewportRegion vp = view->getSoRenderManager()->getViewportRegion();
-    SbVec2s size = vp.getViewportSizePixels();
+        const SbViewportRegion vp = view->getSoRenderManager()->getViewportRegion();
+        SbVec2s size = vp.getViewportSizePixels();
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0, size[0], 0, size[1], -1, 1);
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        glOrtho(0, size[0], 0, size[1], -1, 1);
 
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    glEnable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glColor4d(0.0,0.0,1.0,0.0f);
-    glRasterPos2d(0,0);
-    
-    //http://wiki.delphigl.com/index.php/Multisampling
-    //glDrawPixels(img.width(),img.height(),GL_RGBA,GL_UNSIGNED_BYTE,img.bits());
-/*
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        glEnable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor4d(0.0, 0.0, 1.0, 0.0f);
+        glRasterPos2d(0, 0);
+
+        //http://wiki.delphigl.com/index.php/Multisampling
+        //glDrawPixels(img.width(),img.height(),GL_RGBA,GL_UNSIGNED_BYTE,img.bits());
+        /*
     fbo->bind();
     GLuint* buf = new GLuint[size[0]*size[1]];
     glReadPixels(0, 0, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, buf);
@@ -123,7 +123,7 @@ public:
     glDrawPixels(size[0],size[1],GL_RGBA,GL_UNSIGNED_BYTE,buf);
     delete [] buf;
 */
-/*
+        /*
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, fbo->texture());
     glBegin(GL_QUADS);
@@ -140,74 +140,73 @@ public:
 */
 
 
-    glPopAttrib();
-    glPopMatrix();
+        glPopAttrib();
+        glPopMatrix();
     }
 };
 
-class Teapots : public Gui::GLGraphicsItem
+class Teapots: public Gui::GLGraphicsItem
 {
     QtGLFramebufferObject *fbObject;
     GLuint glTeapotObject;
     QPoint rubberBandCorner1;
     QPoint rubberBandCorner2;
     bool rubberBandIsShown;
-    Gui::View3DInventorViewer* view;
+    Gui::View3DInventorViewer *view;
 
 public:
-Teapots(Gui::View3DInventorViewer* v) :view(v)
-{
-    const SbViewportRegion vp = view->getSoRenderManager()->getViewportRegion();
-    SbVec2s size = vp.getViewportSizePixels();
+    Teapots(Gui::View3DInventorViewer *v) : view(v)
+    {
+        const SbViewportRegion vp = view->getSoRenderManager()->getViewportRegion();
+        SbVec2s size = vp.getViewportSizePixels();
 
-    rubberBandIsShown = false;
+        rubberBandIsShown = false;
 
-//    makeCurrent();
-    fbObject = new QtGLFramebufferObject(size[0],size[1],
-                                         QtGLFramebufferObject::Depth);
-    //initializeGL();
-    resizeGL(size[0],size[1]);
+        //    makeCurrent();
+        fbObject = new QtGLFramebufferObject(size[0], size[1], QtGLFramebufferObject::Depth);
+        //initializeGL();
+        resizeGL(size[0], size[1]);
 
-    rubberBandIsShown = true;
-    rubberBandCorner1.setX(200);
-    rubberBandCorner1.setY(200);
-    rubberBandCorner2.setX(800);
-    rubberBandCorner2.setY(600);
+        rubberBandIsShown = true;
+        rubberBandCorner1.setX(200);
+        rubberBandCorner1.setY(200);
+        rubberBandCorner2.setX(800);
+        rubberBandCorner2.setY(600);
 
-    view->getSoRenderManager()->scheduleRedraw();
-}
+        view->getSoRenderManager()->scheduleRedraw();
+    }
 
-~Teapots()
-{
-    delete fbObject;
-    glDeleteLists(glTeapotObject, 1);
-}
+    ~Teapots()
+    {
+        delete fbObject;
+        glDeleteLists(glTeapotObject, 1);
+    }
 
-void initializeGL()
-{
-    static const GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-    static const GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-    static const GLfloat position[] = { 0.0, 3.0, 3.0, 0.0 };
-    static const GLfloat lmodelAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    static const GLfloat localView[] = { 0.0 };
+    void initializeGL()
+    {
+        static const GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
+        static const GLfloat diffuse[] = {1.0, 1.0, 1.0, 1.0};
+        static const GLfloat position[] = {0.0, 3.0, 3.0, 0.0};
+        static const GLfloat lmodelAmbient[] = {0.2f, 0.2f, 0.2f, 1.0f};
+        static const GLfloat localView[] = {0.0};
 
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-    glLightfv(GL_LIGHT0, GL_POSITION, position);
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodelAmbient);
-    glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, localView);
+        glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+        glLightfv(GL_LIGHT0, GL_POSITION, position);
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodelAmbient);
+        glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, localView);
 
-    glFrontFace(GL_CW);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_AUTO_NORMAL);
-    glEnable(GL_NORMALIZE);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-}
+        glFrontFace(GL_CW);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        glEnable(GL_AUTO_NORMAL);
+        glEnable(GL_NORMALIZE);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+    }
 
-void resizeGL(int width, int height)
-{
+    void resizeGL(int width, int height)
+    {
 #if 0
     fbObject->bind();
 
@@ -230,146 +229,143 @@ void resizeGL(int width, int height)
 
     fbObject->release();
 #else
-    (void)width;
-    (void)height;
-    fbObject->bind();
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LINE_SMOOTH);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDepthRange(0.1,1.0);
-    SoGLRenderAction gl(SbViewportRegion(fbObject->size().width(),fbObject->size().height()));
-    gl.apply(view->getSoRenderManager()->getSceneGraph());
-    fbObject->release();
-#endif
-}
-
-void paintGL()
-{
-    const SbViewportRegion vp = view->getSoRenderManager()->getViewportRegion();
-    SbVec2s size = vp.getViewportSizePixels();
-
-
-    glDisable(GL_LIGHTING);
-    glViewport(0, 0, size[0], size[1]);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glDisable(GL_DEPTH_TEST);
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, fbObject->texture());
-    glColor3f(1.0, 1.0, 1.0);
-    GLfloat s = size[0] / GLfloat(fbObject->size().width());
-    GLfloat t = size[1] / GLfloat(fbObject->size().height());
-
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0);
-    glVertex2f(-1.0, -1.0);
-    glTexCoord2f(s, 0.0);
-    glVertex2f(1.0, -1.0);
-    glTexCoord2f(s, t);
-    glVertex2f(1.0, 1.0);
-    glTexCoord2f(0.0, t);
-    glVertex2f(-1.0, 1.0);
-    glEnd();
-
-    if (rubberBandIsShown) {
-        glMatrixMode(GL_PROJECTION);
-        glOrtho(0, size[0], size[1], 0, 0, 100);
-        glMatrixMode(GL_MODELVIEW);
+        (void)width;
+        (void)height;
+        fbObject->bind();
         glDisable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glLineWidth(4.0);
-        glColor4f(1.0f, 1.0f, 1.0f, 0.2f);
-        glRecti(rubberBandCorner1.x(), rubberBandCorner1.y(),
-                rubberBandCorner2.x(), rubberBandCorner2.y());
-        glColor4f(1.0, 1.0, 0.0, 0.5);
-        glLineStipple(3, 0xAAAA);
-        glEnable(GL_LINE_STIPPLE);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_LINE_SMOOTH);
 
-        glBegin(GL_LINE_LOOP);
-        glVertex2i(rubberBandCorner1.x(), rubberBandCorner1.y());
-        glVertex2i(rubberBandCorner2.x(), rubberBandCorner1.y());
-        glVertex2i(rubberBandCorner2.x(), rubberBandCorner2.y());
-        glVertex2i(rubberBandCorner1.x(), rubberBandCorner2.y());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDepthRange(0.1, 1.0);
+        SoGLRenderAction gl(SbViewportRegion(fbObject->size().width(), fbObject->size().height()));
+        gl.apply(view->getSoRenderManager()->getSceneGraph());
+        fbObject->release();
+#endif
+    }
+
+    void paintGL()
+    {
+        const SbViewportRegion vp = view->getSoRenderManager()->getViewportRegion();
+        SbVec2s size = vp.getViewportSizePixels();
+
+
+        glDisable(GL_LIGHTING);
+        glViewport(0, 0, size[0], size[1]);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glDisable(GL_DEPTH_TEST);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, fbObject->texture());
+        glColor3f(1.0, 1.0, 1.0);
+        GLfloat s = size[0] / GLfloat(fbObject->size().width());
+        GLfloat t = size[1] / GLfloat(fbObject->size().height());
+
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0, 0.0);
+        glVertex2f(-1.0, -1.0);
+        glTexCoord2f(s, 0.0);
+        glVertex2f(1.0, -1.0);
+        glTexCoord2f(s, t);
+        glVertex2f(1.0, 1.0);
+        glTexCoord2f(0.0, t);
+        glVertex2f(-1.0, 1.0);
         glEnd();
 
-        glLineWidth(1.0);
-        glDisable(GL_LINE_STIPPLE);
-        glDisable(GL_BLEND);
+        if (rubberBandIsShown) {
+            glMatrixMode(GL_PROJECTION);
+            glOrtho(0, size[0], size[1], 0, 0, 100);
+            glMatrixMode(GL_MODELVIEW);
+            glDisable(GL_TEXTURE_2D);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glLineWidth(4.0);
+            glColor4f(1.0f, 1.0f, 1.0f, 0.2f);
+            glRecti(rubberBandCorner1.x(), rubberBandCorner1.y(), rubberBandCorner2.x(),
+                    rubberBandCorner2.y());
+            glColor4f(1.0, 1.0, 0.0, 0.5);
+            glLineStipple(3, 0xAAAA);
+            glEnable(GL_LINE_STIPPLE);
+
+            glBegin(GL_LINE_LOOP);
+            glVertex2i(rubberBandCorner1.x(), rubberBandCorner1.y());
+            glVertex2i(rubberBandCorner2.x(), rubberBandCorner1.y());
+            glVertex2i(rubberBandCorner2.x(), rubberBandCorner2.y());
+            glVertex2i(rubberBandCorner1.x(), rubberBandCorner2.y());
+            glEnd();
+
+            glLineWidth(1.0);
+            glDisable(GL_LINE_STIPPLE);
+            glDisable(GL_BLEND);
+        }
+
+        glEnable(GL_LIGHTING);
+        glEnable(GL_DEPTH_TEST);
     }
 
-    glEnable(GL_LIGHTING);
-    glEnable(GL_DEPTH_TEST);
-}
-
-void mousePressEvent(QMouseEvent *event)
-{
-    rubberBandCorner1 = event->pos();
-    rubberBandCorner2 = event->pos();
-    rubberBandIsShown = true;
-}
-
-void mouseMoveEvent(QMouseEvent *event)
-{
-    if (rubberBandIsShown) {
+    void mousePressEvent(QMouseEvent *event)
+    {
+        rubberBandCorner1 = event->pos();
         rubberBandCorner2 = event->pos();
-//        updateGL();
+        rubberBandIsShown = true;
     }
-}
 
-void mouseReleaseEvent(QMouseEvent * /* event */)
-{
-    if (rubberBandIsShown) {
-        rubberBandIsShown = false;
-//        updateGL();
+    void mouseMoveEvent(QMouseEvent *event)
+    {
+        if (rubberBandIsShown) {
+            rubberBandCorner2 = event->pos();
+            //        updateGL();
+        }
     }
-}
 
+    void mouseReleaseEvent(QMouseEvent * /* event */)
+    {
+        if (rubberBandIsShown) {
+            rubberBandIsShown = false;
+            //        updateGL();
+        }
+    }
 };
 
-class Rubberband : public Gui::GLGraphicsItem
+class Rubberband: public Gui::GLGraphicsItem
 {
     QPoint rubberBandCorner1;
     QPoint rubberBandCorner2;
-    Gui::View3DInventorViewer* view;
+    Gui::View3DInventorViewer *view;
 
 public:
-Rubberband(Gui::View3DInventorViewer* v) :view(v)
-{
-    rubberBandCorner1.setX(200);
-    rubberBandCorner1.setY(200);
-    rubberBandCorner2.setX(800);
-    rubberBandCorner2.setY(600);
-    v->setRenderType(Gui::View3DInventorViewer::Image);
-    v->getSoRenderManager()->scheduleRedraw();
-}
+    Rubberband(Gui::View3DInventorViewer *v) : view(v)
+    {
+        rubberBandCorner1.setX(200);
+        rubberBandCorner1.setY(200);
+        rubberBandCorner2.setX(800);
+        rubberBandCorner2.setY(600);
+        v->setRenderType(Gui::View3DInventorViewer::Image);
+        v->getSoRenderManager()->scheduleRedraw();
+    }
 
-~Rubberband()
-{
-}
+    ~Rubberband() {}
 
-void paintGL()
-{
-    const SbViewportRegion vp = view->getSoRenderManager()->getViewportRegion();
-    SbVec2s size = vp.getViewportSizePixels();
+    void paintGL()
+    {
+        const SbViewportRegion vp = view->getSoRenderManager()->getViewportRegion();
+        SbVec2s size = vp.getViewportSizePixels();
 
 
-    //glDisable(GL_LIGHTING);
-    //glViewport(0, 0, size[0], size[1]);
-    //glMatrixMode(GL_PROJECTION);
-    //glLoadIdentity();
-    //glMatrixMode(GL_MODELVIEW);
-    //glLoadIdentity();
-    //glDisable(GL_DEPTH_TEST);
+        //glDisable(GL_LIGHTING);
+        //glViewport(0, 0, size[0], size[1]);
+        //glMatrixMode(GL_PROJECTION);
+        //glLoadIdentity();
+        //glMatrixMode(GL_MODELVIEW);
+        //glLoadIdentity();
+        //glDisable(GL_DEPTH_TEST);
 
-    //glClear(GL_COLOR_BUFFER_BIT);
+        //glClear(GL_COLOR_BUFFER_BIT);
 
         glMatrixMode(GL_PROJECTION);
         glOrtho(0, size[0], size[1], 0, 0, 100);
@@ -379,8 +375,8 @@ void paintGL()
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glLineWidth(4.0);
         glColor4f(1.0f, 1.0f, 1.0f, 0.2f);
-        glRecti(rubberBandCorner1.x(), rubberBandCorner1.y(),
-                rubberBandCorner2.x(), rubberBandCorner2.y());
+        glRecti(rubberBandCorner1.x(), rubberBandCorner1.y(), rubberBandCorner2.x(),
+                rubberBandCorner2.y());
         glColor4f(1.0, 1.0, 0.0, 0.5);
         glLineStipple(3, 0xAAAA);
         glEnable(GL_LINE_STIPPLE);
@@ -396,10 +392,9 @@ void paintGL()
         glDisable(GL_LINE_STIPPLE);
         glDisable(GL_BLEND);
 
-    //glEnable(GL_LIGHTING);
-    //glEnable(GL_DEPTH_TEST);
-}
-
+        //glEnable(GL_LIGHTING);
+        //glEnable(GL_DEPTH_TEST);
+    }
 };
 
 
@@ -476,23 +471,20 @@ DrawingPlane::DrawingPlane()
 
     myPenWidth = 50;
 
-    QRgb p = qRgba(255,255,0,0);
-    int q = p;//((p << 16) & 0xff0000) | ((p >> 16) & 0xff) | (p & 0xff00ff00);
+    QRgb p = qRgba(255, 255, 0, 0);
+    int q = p; //((p << 16) & 0xff0000) | ((p >> 16) & 0xff) | (p & 0xff00ff00);
     int r = qRed(q);
     int g = qGreen(q);
     int b = qBlue(q);
-    myPenColor = qRgb(r,g,b);//Qt::yellow;
+    myPenColor = qRgb(r, g, b); //Qt::yellow;
     myRadius = 5.0f;
 }
 
-DrawingPlane::~DrawingPlane()
-{
-    terminate();
-}
+DrawingPlane::~DrawingPlane() { terminate(); }
 
 void DrawingPlane::initialize()
 {
-    fbo = new QtGLFramebufferObject(128, 128,QtGLFramebufferObject::Depth);
+    fbo = new QtGLFramebufferObject(128, 128, QtGLFramebufferObject::Depth);
 }
 
 void DrawingPlane::terminate()
@@ -500,115 +492,107 @@ void DrawingPlane::terminate()
     fbo->bind();
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDepthRange(0.1,1.0);
+    glDepthRange(0.1, 1.0);
     glEnable(GL_LINE_SMOOTH);
-    SoGLRenderAction a(SbViewportRegion(128,128));
+    SoGLRenderAction a(SbViewportRegion(128, 128));
     a.apply(_pcView3D->getSoRenderManager()->getSceneGraph());
     fbo->release();
     fbo->toImage().save(QString::fromLatin1("C:/Temp/DrawingPlane.png"));
     delete fbo;
 }
 
-void DrawingPlane::draw ()
-{return;
-    if (1/*mustRedraw*/) {
+void DrawingPlane::draw()
+{
+    return;
+    if (1 /*mustRedraw*/) {
         SbVec2s view = _pcView3D->getSoRenderManager()->getSize();
-        static_cast<QtGLWidget*>(_pcView3D->getGLWidget())->makeCurrent();
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0, view[0], 0, view[1], -1, 1);
+        static_cast<QtGLWidget *>(_pcView3D->getGLWidget())->makeCurrent();
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        glOrtho(0, view[0], 0, view[1], -1, 1);
 
-    // Store GL state
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-    GLfloat depthrange[2];
-    glGetFloatv(GL_DEPTH_RANGE, depthrange);
-    GLdouble projectionmatrix[16];
-    glGetDoublev(GL_PROJECTION_MATRIX, projectionmatrix);
+        // Store GL state
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        GLfloat depthrange[2];
+        glGetFloatv(GL_DEPTH_RANGE, depthrange);
+        GLdouble projectionmatrix[16];
+        glGetDoublev(GL_PROJECTION_MATRIX, projectionmatrix);
 
-    glDepthFunc(GL_ALWAYS);
-    glDepthMask(GL_TRUE);
-    glDepthRange(0,0);
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-    glEnable(GL_COLOR_MATERIAL);
-    glDisable(GL_BLEND);
+        glDepthFunc(GL_ALWAYS);
+        glDepthMask(GL_TRUE);
+        glDepthRange(0, 0);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_LIGHTING);
+        glEnable(GL_COLOR_MATERIAL);
+        glDisable(GL_BLEND);
 
-    glLineWidth(1.0f);
-    glColor4f(1.0, 1.0, 1.0, 0.0);
-    glViewport(0, 0, view[0], view[1]);
+        glLineWidth(1.0f);
+        glColor4f(1.0, 1.0, 1.0, 0.0);
+        glViewport(0, 0, view[0], view[1]);
 
-    glEnable(GL_COLOR_LOGIC_OP);
-    glLogicOp(GL_XOR);
-    glDrawBuffer(GL_FRONT);
+        glEnable(GL_COLOR_LOGIC_OP);
+        glLogicOp(GL_XOR);
+        glDrawBuffer(GL_FRONT);
 
 
-    //fbo->drawTexture(QPointF(), fbo->texture());
+        //fbo->drawTexture(QPointF(), fbo->texture());
 
-    glFlush();
-    glLogicOp(GL_COPY);
-    glDisable(GL_COLOR_LOGIC_OP);
+        glFlush();
+        glLogicOp(GL_COPY);
+        glDisable(GL_COLOR_LOGIC_OP);
 
-    // Reset original state
-    glDepthRange(depthrange[0], depthrange[1]);
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixd(projectionmatrix);
+        // Reset original state
+        glDepthRange(depthrange[0], depthrange[1]);
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrixd(projectionmatrix);
 
-    glPopAttrib();
-    glPopMatrix();
+        glPopAttrib();
+        glPopMatrix();
     }
 }
 
 #include <Inventor/events/SoMouseButtonEvent.h>
-int DrawingPlane::mouseButtonEvent(const SoMouseButtonEvent * const e, const QPoint& pos)
+int DrawingPlane::mouseButtonEvent(const SoMouseButtonEvent *const e, const QPoint &pos)
 {
     const int button = e->getButton();
     const SbBool press = e->getState() == SoButtonEvent::DOWN ? true : false;
 
     if (press) {
-        switch (button)
-        {
-        case SoMouseButtonEvent::BUTTON1:
-            {
+        switch (button) {
+            case SoMouseButtonEvent::BUTTON1: {
                 scribbling = true;
                 lastPoint = pos;
-            }   break;
-        default:
-            {
-            }   break;
+            } break;
+            default: {
+            } break;
         }
     }
     // release
     else {
-        switch (button)
-        {
-        case SoMouseButtonEvent::BUTTON1:
-            drawLineTo(pos);
-            scribbling = false;
-            return Finish;
-        default:
-            {
-            }   break;
+        switch (button) {
+            case SoMouseButtonEvent::BUTTON1:
+                drawLineTo(pos);
+                scribbling = false;
+                return Finish;
+            default: {
+            } break;
         }
     }
 
     return Continue;
 }
 
-int DrawingPlane::locationEvent(const SoLocation2Event * const, const QPoint& pos)
+int DrawingPlane::locationEvent(const SoLocation2Event *const, const QPoint &pos)
 {
     if (scribbling) {
         drawLineTo(pos);
 
         // filter out some points
-        if (selection.isEmpty()) {
-            selection << pos;
-        }
+        if (selection.isEmpty()) { selection << pos; }
         else {
-            const QPoint& top = selection.last();
-            if (abs(top.x()-pos.x()) > 20 ||
-                abs(top.y()-pos.y()) > 20)
-                selection << pos;
+            const QPoint &top = selection.last();
+            if (abs(top.x() - pos.x()) > 20 || abs(top.y() - pos.y()) > 20) selection << pos;
         }
 
         draw();
@@ -617,10 +601,7 @@ int DrawingPlane::locationEvent(const SoLocation2Event * const, const QPoint& po
     return Continue;
 }
 
-int DrawingPlane::keyboardEvent(const SoKeyboardEvent * const)
-{
-    return Continue;
-}
+int DrawingPlane::keyboardEvent(const SoKeyboardEvent *const) { return Continue; }
 
 void DrawingPlane::drawLineTo(const QPoint &endPoint)
 {
@@ -628,9 +609,8 @@ void DrawingPlane::drawLineTo(const QPoint &endPoint)
     return;
 #if !defined(HAVE_QT5_OPENGL)
     QPainter painter(fbo);
-  //QPainter painter(_pcView3D->getGLWidget());
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine, Qt::RoundCap,
-                        Qt::RoundJoin));
+    //QPainter painter(_pcView3D->getGLWidget());
+    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     //painter.setOpacity(0.5);
     //painter.drawLine(lastPoint.x(), fbo->height()-lastPoint.y(), endPoint.x(), fbo->height()-endPoint.y());
     painter.drawLine(lastPoint.x(), lastPoint.y(), endPoint.x(), endPoint.y());
@@ -639,12 +619,12 @@ void DrawingPlane::drawLineTo(const QPoint &endPoint)
     lastPoint = endPoint;
 #endif
 }
-    //Gui::Document* doc = Gui::Application::Instance->activeDocument();
-    //Gui::View3DInventorViewer* view = static_cast<Gui::View3DInventor*>(doc->getActiveView())->getViewer();
-    ////view->addGraphicsItem(new MyPaintable(view));
-    ////view->addGraphicsItem(new Teapots(view));
-    //view->addGraphicsItem(new Rubberband(view));
-    //....
-    //Gui::Document* doc = Gui::Application::Instance->activeDocument();
-    //Gui::View3DInventorViewer* view = static_cast<Gui::View3DInventor*>(doc->getActiveView())->getViewer();
-    //view->clearGraphicsItems();
+//Gui::Document* doc = Gui::Application::Instance->activeDocument();
+//Gui::View3DInventorViewer* view = static_cast<Gui::View3DInventor*>(doc->getActiveView())->getViewer();
+////view->addGraphicsItem(new MyPaintable(view));
+////view->addGraphicsItem(new Teapots(view));
+//view->addGraphicsItem(new Rubberband(view));
+//....
+//Gui::Document* doc = Gui::Application::Instance->activeDocument();
+//Gui::View3DInventorViewer* view = static_cast<Gui::View3DInventor*>(doc->getActiveView())->getViewer();
+//view->clearGraphicsItems();

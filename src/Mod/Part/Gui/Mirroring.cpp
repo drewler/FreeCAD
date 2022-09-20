@@ -26,13 +26,13 @@
 
 // to avoid compiler warnings of redefining contents of basic.h
 // later by #include <Gui/ViewProvider.h>
-# define _USE_MATH_DEFINES
-# include <cmath>
+#define _USE_MATH_DEFINES
+#include <cmath>
 
-# include <cfloat>
-# include <QMessageBox>
-# include <QRegExp>
-# include <QTreeWidget>
+#include <cfloat>
+#include <QMessageBox>
+#include <QRegExp>
+#include <QTreeWidget>
 #endif
 
 #include <Base/Tools.h>
@@ -59,8 +59,7 @@ using namespace PartGui;
 
 /* TRANSLATOR PartGui::Mirroring */
 
-Mirroring::Mirroring(QWidget* parent)
-  : QWidget(parent), ui(new Ui_Mirroring)
+Mirroring::Mirroring(QWidget *parent) : QWidget(parent), ui(new Ui_Mirroring)
 {
     ui->setupUi(this);
     ui->baseX->setRange(-DBL_MAX, DBL_MAX);
@@ -87,35 +86,31 @@ Mirroring::~Mirroring()
 
 void Mirroring::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     QWidget::changeEvent(e);
 }
 
 void Mirroring::findShapes()
 {
-    App::Document* activeDoc = App::GetApplication().getActiveDocument();
-    if (!activeDoc)
-        return;
-    Gui::Document* activeGui = Gui::Application::Instance->getDocument(activeDoc);
-    if (!activeGui)
-        return;
+    App::Document *activeDoc = App::GetApplication().getActiveDocument();
+    if (!activeDoc) return;
+    Gui::Document *activeGui = Gui::Application::Instance->getDocument(activeDoc);
+    if (!activeGui) return;
 
     this->document = QString::fromLatin1(activeDoc->getName());
-    std::vector<App::DocumentObject*> objs = activeDoc->getObjectsOfType<App::DocumentObject>();
+    std::vector<App::DocumentObject *> objs = activeDoc->getObjectsOfType<App::DocumentObject>();
 
-    for (std::vector<App::DocumentObject*>::iterator it = objs.begin(); it!=objs.end(); ++it) {
+    for (std::vector<App::DocumentObject *>::iterator it = objs.begin(); it != objs.end(); ++it) {
         Part::TopoShape shape = Part::Feature::getTopoShape(*it);
         if (!shape.isNull()) {
             QString label = QString::fromUtf8((*it)->Label.getValue());
             QString name = QString::fromLatin1((*it)->getNameInDocument());
-            
-            QTreeWidgetItem* child = new QTreeWidgetItem();
+
+            QTreeWidgetItem *child = new QTreeWidgetItem();
             child->setText(0, label);
             child->setToolTip(0, label);
             child->setData(0, Qt::UserRole, name);
-            Gui::ViewProvider* vp = activeGui->getViewProvider(*it);
+            Gui::ViewProvider *vp = activeGui->getViewProvider(*it);
             if (vp) child->setIcon(0, vp->getIcon());
             ui->shapes->addTopLevelItem(child);
         }
@@ -125,15 +120,15 @@ void Mirroring::findShapes()
 bool Mirroring::accept()
 {
     if (ui->shapes->selectedItems().isEmpty()) {
-        QMessageBox::critical(this, windowTitle(),
-            tr("Select a shape for mirroring, first."));
+        QMessageBox::critical(this, windowTitle(), tr("Select a shape for mirroring, first."));
         return false;
     }
 
-    App::Document* activeDoc = App::GetApplication().getDocument((const char*)this->document.toLatin1());
+    App::Document *activeDoc =
+        App::GetApplication().getDocument((const char *)this->document.toLatin1());
     if (!activeDoc) {
         QMessageBox::critical(this, windowTitle(),
-            tr("No such document '%1'.").arg(this->document));
+                              tr("No such document '%1'.").arg(this->document));
         return false;
     }
 
@@ -144,10 +139,9 @@ bool Mirroring::accept()
     QString shape, label;
     QRegExp rx(QString::fromLatin1(" \\(Mirror #\\d+\\)$"));
     QList<QTreeWidgetItem *> items = ui->shapes->selectedItems();
-    float normx=0, normy=0, normz=0;
+    float normx = 0, normy = 0, normz = 0;
     int index = ui->comboBox->currentIndex();
-    if (index == 0)
-        normz = 1.0f;
+    if (index == 0) normz = 1.0f;
     else if (index == 1)
         normy = 1.0f;
     else
@@ -162,21 +156,23 @@ bool Mirroring::accept()
 
         // if we already have the suffix " (Mirror #<number>)" remove it
         int pos = label.indexOf(rx);
-        if (pos > -1)
-            label = label.left(pos);
+        if (pos > -1) label = label.left(pos);
         label.append(QString::fromLatin1(" (Mirror #%1)").arg(++count));
 
-        QString code = QString::fromLatin1(
-            "__doc__=FreeCAD.getDocument(\"%1\")\n"
-            "__doc__.addObject(\"Part::Mirroring\")\n"
-            "__doc__.ActiveObject.Source=__doc__.getObject(\"%2\")\n"
-            "__doc__.ActiveObject.Label=u\"%3\"\n"
-            "__doc__.ActiveObject.Normal=(%4,%5,%6)\n"
-            "__doc__.ActiveObject.Base=(%7,%8,%9)\n"
-            "del __doc__")
-            .arg(this->document, shape, label)
-            .arg(normx).arg(normy).arg(normz)
-            .arg(basex).arg(basey).arg(basez);
+        QString code = QString::fromLatin1("__doc__=FreeCAD.getDocument(\"%1\")\n"
+                                           "__doc__.addObject(\"Part::Mirroring\")\n"
+                                           "__doc__.ActiveObject.Source=__doc__.getObject(\"%2\")\n"
+                                           "__doc__.ActiveObject.Label=u\"%3\"\n"
+                                           "__doc__.ActiveObject.Normal=(%4,%5,%6)\n"
+                                           "__doc__.ActiveObject.Base=(%7,%8,%9)\n"
+                                           "del __doc__")
+                           .arg(this->document, shape, label)
+                           .arg(normx)
+                           .arg(normy)
+                           .arg(normz)
+                           .arg(basex)
+                           .arg(basey)
+                           .arg(basez);
         Gui::Command::runCommand(Gui::Command::App, code.toLatin1());
         QByteArray from = shape.toLatin1();
         Gui::Command::copyVisual("ActiveObject", "ShapeColor", from);
@@ -194,9 +190,8 @@ bool Mirroring::accept()
 TaskMirroring::TaskMirroring()
 {
     widget = new Mirroring();
-    taskbox = new Gui::TaskView::TaskBox(
-        Gui::BitmapFactory().pixmap("Part_Mirror.svg"),
-        widget->windowTitle(), false, nullptr);
+    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("Part_Mirror.svg"),
+                                         widget->windowTitle(), false, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
@@ -206,9 +201,6 @@ TaskMirroring::~TaskMirroring()
     // automatically deleted in the sub-class
 }
 
-bool TaskMirroring::accept()
-{
-    return widget->accept();
-}
+bool TaskMirroring::accept() { return widget->accept(); }
 
 #include "moc_Mirroring.cpp"

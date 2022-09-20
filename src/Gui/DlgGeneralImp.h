@@ -29,8 +29,10 @@
 
 class QTabWidget;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgGeneral;
 class DlgCreateNewPreferencePackImp;
 class DlgPreferencePackManagementImp;
@@ -40,12 +42,12 @@ class DlgRevertToBackupConfigImp;
  *  You can change window style, size of pixmaps, size of recent file list and so on
  *  \author Werner Mayer
  */
-class DlgGeneralImp : public PreferencePage
+class DlgGeneralImp: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    DlgGeneralImp( QWidget* parent = nullptr );
+    DlgGeneralImp(QWidget *parent = nullptr);
     ~DlgGeneralImp() override;
 
     void saveSettings() override;

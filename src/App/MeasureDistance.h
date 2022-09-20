@@ -32,7 +32,7 @@
 namespace App
 {
 
-class AppExport MeasureDistance : public DocumentObject
+class AppExport MeasureDistance: public DocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(App::MeasureDistance);
 
@@ -49,12 +49,10 @@ public:
     DocumentObjectExecReturn *execute() override;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "Gui::ViewProviderMeasureDistance";
-    }
+    const char *getViewProviderName() const override { return "Gui::ViewProviderMeasureDistance"; }
 
 protected:
-    void onChanged(const Property* prop) override;
+    void onChanged(const Property *prop) override;
 };
 
 } //namespace App

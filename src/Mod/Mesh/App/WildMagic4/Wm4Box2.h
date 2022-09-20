@@ -15,8 +15,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class Box2
+template<class Real> class Box2
 {
 public:
     // A box has center C, axis directions U[0] and U[1] (both unit-length
@@ -25,17 +24,16 @@ public:
     // |y[i]| <= e[i] for all i.
 
     // construction
-    Box2 ();  // uninitialized
-    Box2 (const Vector2<Real>& rkCenter, const Vector2<Real>* akAxis,
-        const Real* afExtent);
-    Box2 (const Vector2<Real>& rkCenter, const Vector2<Real>& rkAxis0,
-        const Vector2<Real>& rkAxis1, Real fExtent0, Real fExtent1);
+    Box2(); // uninitialized
+    Box2(const Vector2<Real> &rkCenter, const Vector2<Real> *akAxis, const Real *afExtent);
+    Box2(const Vector2<Real> &rkCenter, const Vector2<Real> &rkAxis0, const Vector2<Real> &rkAxis1,
+         Real fExtent0, Real fExtent1);
 
-    void ComputeVertices (Vector2<Real> akVertex[4]) const;
+    void ComputeVertices(Vector2<Real> akVertex[4]) const;
 
     Vector2<Real> Center;
-    Vector2<Real> Axis[2];  // must be an orthonormal set of vectors
-    Real Extent[2];         // must be nonnegative
+    Vector2<Real> Axis[2]; // must be an orthonormal set of vectors
+    Real Extent[2];        // must be nonnegative
 };
 
 #include "Wm4Box2.inl"
@@ -43,6 +41,6 @@ public:
 typedef Box2<float> Box2f;
 typedef Box2<double> Box2d;
 
-}
+} // namespace Wm4
 
 #endif

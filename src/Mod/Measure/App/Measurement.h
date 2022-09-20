@@ -34,22 +34,24 @@
 class TopoDS_Shape;
 namespace Measure
 {
- enum MeasureType {
-        Volumes, // Measure the Volume(s)
-        Edges, // Measure the Edge(s)
-        Surfaces, // Measure the surface(s)
-        Points,
-        PointToPoint, // Measure between TWO points
-        PointToEdge, // Measure between ONE point and ONE edge
-        PointToSurface, // Measure between ONE point and ONE surface
-        EdgeToEdge, // Measure between TWO edges
-        Invalid
-    };
+enum MeasureType
+{
+    Volumes,  // Measure the Volume(s)
+    Edges,    // Measure the Edge(s)
+    Surfaces, // Measure the surface(s)
+    Points,
+    PointToPoint,   // Measure between TWO points
+    PointToEdge,    // Measure between ONE point and ONE edge
+    PointToSurface, // Measure between ONE point and ONE surface
+    EdgeToEdge,     // Measure between TWO edges
+    Invalid
+};
 
-class MeasureExport Measurement : public Base::BaseClass {
-      TYPESYSTEM_HEADER_WITH_OVERRIDE();
+class MeasureExport Measurement: public Base::BaseClass
+{
+    TYPESYSTEM_HEADER_WITH_OVERRIDE();
+
 public:
-
     App::PropertyLinkSubList References3D;
 
 public:
@@ -60,37 +62,38 @@ public:
     bool has3DReferences();
 
     /// Add a reference
-    int addReference3D(App::DocumentObject* obj, const std::string& subName);
-    int addReference3D(App::DocumentObject* obj, const char *subName);
+    int addReference3D(App::DocumentObject *obj, const std::string &subName);
+    int addReference3D(App::DocumentObject *obj, const char *subName);
 
     MeasureType getType();
 
-     // from base class
+    // from base class
     PyObject *getPyObject() override;
     virtual unsigned int getMemSize() const;
 
 public:
-  // Methods for distances (edge length, two points, edge and a point
-  double length() const;
-  Base::Vector3d delta() const;                                                 //when would client use delta??
+    // Methods for distances (edge length, two points, edge and a point
+    double length() const;
+    Base::Vector3d delta() const; //when would client use delta??
 
-  // Calculates the radius for an arc or circular edge
-  double radius() const;
+    // Calculates the radius for an arc or circular edge
+    double radius() const;
 
-  // Calculates the angle between two edges
-  double angle(const Base::Vector3d &param = Base::Vector3d(0,0,0)) const;      //param is never used???
+    // Calculates the angle between two edges
+    double angle(const Base::Vector3d &param = Base::Vector3d(0, 0,
+                                                              0)) const; //param is never used???
 
-  // Calculate volumetric/mass properties
-  Base::Vector3d massCenter() const;
+    // Calculate volumetric/mass properties
+    Base::Vector3d massCenter() const;
 
 protected:
-  TopoDS_Shape getShape(App::DocumentObject *obj , const char *subName) const;
-  MeasureType measureType;
-  Py::SmartPtr PythonObject;
+    TopoDS_Shape getShape(App::DocumentObject *obj, const char *subName) const;
+    MeasureType measureType;
+    Py::SmartPtr PythonObject;
 };
 
 
-} //namespace measure
+} // namespace Measure
 
 
 #endif // MEASURE_MEASUREMENT_H

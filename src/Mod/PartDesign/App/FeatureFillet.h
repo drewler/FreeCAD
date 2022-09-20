@@ -31,7 +31,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Fillet : public DressUp
+class PartDesignExport Fillet: public DressUp
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Fillet);
 
@@ -47,17 +47,19 @@ public:
     App::DocumentObjectExecReturn *execute(void) override;
     short mustExecute() const override;
     /// returns the type name of the view provider
-    const char* getViewProviderName(void) const override {
+    const char *getViewProviderName(void) const override
+    {
         return "PartDesignGui::ViewProviderFillet";
     }
     //@}
 
 protected:
     void Restore(Base::XMLReader &reader) override;
-    void handleChangedPropertyType(Base::XMLReader &reader, const char * TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 };
 
-} //namespace Part
+} // namespace PartDesign
 
 
 #endif // PARTDESIGN_FEATUREFILLET_H

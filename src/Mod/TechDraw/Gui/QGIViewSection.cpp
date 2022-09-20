@@ -56,9 +56,7 @@ using namespace TechDrawGui;
 
 void QGIViewSection::draw()
 {
-    if (!isVisible()) {
-        return;
-    }
+    if (!isVisible()) { return; }
 
     QGIViewPart::draw();
     drawSectionFace();
@@ -66,61 +64,55 @@ void QGIViewSection::draw()
 
 void QGIViewSection::drawSectionFace()
 {
-    auto section( dynamic_cast<TechDraw::DrawViewSection *>(getViewObject()) );
-    if (!section) {
-        return;
-    }
+    auto section(dynamic_cast<TechDraw::DrawViewSection *>(getViewObject()));
+    if (!section) { return; }
 
-    if (!section->hasGeometry()) {
-        return;
-    }
+    if (!section->hasGeometry()) { return; }
 
-    Gui::ViewProvider* gvp = QGIView::getViewProvider(section);
-    ViewProviderViewSection* sectionVp = dynamic_cast<ViewProviderViewSection*>(gvp);
-    if (!sectionVp || !sectionVp->ShowCutSurface.getValue())
-        return;
+    Gui::ViewProvider *gvp = QGIView::getViewProvider(section);
+    ViewProviderViewSection *sectionVp = dynamic_cast<ViewProviderViewSection *>(gvp);
+    if (!sectionVp || !sectionVp->ShowCutSurface.getValue()) return;
 
-    auto sectionFaces( section->getTDFaceGeometry() );
-    if (sectionFaces.empty()) {
-        return;
-    }
+    auto sectionFaces(section->getTDFaceGeometry());
+    if (sectionFaces.empty()) { return; }
 
-    float lineWidth    = sectionVp->LineWidth.getValue();
+    float lineWidth = sectionVp->LineWidth.getValue();
 
     std::vector<TechDraw::FacePtr>::iterator fit = sectionFaces.begin();
     int i = 0;
-    for(; fit != sectionFaces.end(); fit++, i++) {
-        QGIFace* newFace = drawFace(*fit, -1);
+    for (; fit != sectionFaces.end(); fit++, i++) {
+        QGIFace *newFace = drawFace(*fit, -1);
         newFace->setZValue(ZVALUE::SECTIONFACE);
         if (section->showSectionEdges()) {
             newFace->setDrawEdges(true);
             newFace->setStyle(Qt::SolidLine);
             newFace->setWidth(lineWidth);
-        } else {
+        }
+        else {
             newFace->setDrawEdges(false);
         }
 
-        if (section->CutSurfaceDisplay.isValue("Hide")) {
-            return;
-        } else if (section->CutSurfaceDisplay.isValue("Color")) {
+        if (section->CutSurfaceDisplay.isValue("Hide")) { return; }
+        else if (section->CutSurfaceDisplay.isValue("Color")) {
             newFace->isHatched(false);
             newFace->setFillMode(QGIFace::PlainFill);
             QColor faceColor = (sectionVp->CutSurfaceColor.getValue()).asValue<QColor>();
             newFace->setFillColor(faceColor);
             newFace->setFillStyle(Qt::SolidPattern);
-        } else if (section->CutSurfaceDisplay.isValue("SvgHatch")) {
-            if (getExporting()) {
-                newFace->hideSvg(true);
-            } else {
+        }
+        else if (section->CutSurfaceDisplay.isValue("SvgHatch")) {
+            if (getExporting()) { newFace->hideSvg(true); }
+            else {
                 newFace->hideSvg(false);
             }
             newFace->setFillMode(QGIFace::SvgFill);
             newFace->setHatchColor(sectionVp->HatchColor.getValue());
             newFace->setHatchScale(section->HatchScale.getValue());
-//                std::string hatchSpec = section->FileHatchPattern.getValue();
+            //                std::string hatchSpec = section->FileHatchPattern.getValue();
             std::string hatchSpec = section->SvgIncluded.getValue();
             newFace->setHatchFile(hatchSpec);
-        } else if (section->CutSurfaceDisplay.isValue("PatHatch")) {
+        }
+        else if (section->CutSurfaceDisplay.isValue("PatHatch")) {
             newFace->isHatched(true);
             newFace->setFillMode(QGIFace::GeomHatchFill);
             newFace->setHatchColor(sectionVp->GeomHatchColor.getValue());
@@ -129,11 +121,10 @@ void QGIViewSection::drawSectionFace()
             std::vector<TechDraw::LineSet> lineSets = section->getDrawableLines(i);
             if (!lineSets.empty()) {
                 newFace->clearLineSets();
-                for (auto& ls: lineSets) {
-                    newFace->addLineSet(ls);
-                }
+                for (auto &ls : lineSets) { newFace->addLineSet(ls); }
             }
-        } else {
+        }
+        else {
             Base::Console().Warning("QGIVS::draw - unknown CutSurfaceDisplay: %d\n",
                                     section->CutSurfaceDisplay.getValue());
         }
@@ -148,17 +139,15 @@ void QGIViewSection::drawSectionFace()
 void QGIViewSection::updateView(bool update)
 {
     Q_UNUSED(update);
-    auto viewPart( dynamic_cast<TechDraw::DrawViewSection *>(getViewObject()) );
-    if (!viewPart)
-        return;
+    auto viewPart(dynamic_cast<TechDraw::DrawViewSection *>(getViewObject()));
+    if (!viewPart) return;
     draw();
     QGIView::updateView(update);
 }
 
-void QGIViewSection::drawSectionLine(TechDraw::DrawViewSection* s, bool b)
+void QGIViewSection::drawSectionLine(TechDraw::DrawViewSection *s, bool b)
 {
     Q_UNUSED(b);
     Q_UNUSED(s);
-   //override QGIVP::drawSectionLine
+    //override QGIVP::drawSectionLine
 }
-

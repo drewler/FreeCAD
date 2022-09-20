@@ -36,17 +36,18 @@ class SoType;
 
 namespace App
 {
-  class DocumentObject;
-  class Material;
-}
+class DocumentObject;
+class Material;
+} // namespace App
 
 
-namespace Gui {
+namespace Gui
+{
 
 class MDIView;
 class Document;
 
-class GuiExport ViewProviderDocumentObject : public ViewProvider
+class GuiExport ViewProviderDocumentObject: public ViewProvider
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderDocumentObject);
 
@@ -66,7 +67,7 @@ public:
 
     virtual void attach(App::DocumentObject *pcObject);
     virtual void reattach(App::DocumentObject *);
-    void update(const App::Property*) override;
+    void update(const App::Property *) override;
     /// Set the active mode, i.e. the first item of the 'Display' property.
     void setActiveMode();
     /// Hide the object in the view
@@ -76,33 +77,34 @@ public:
     /// Is called by the tree if the user double clicks on the object. It returns the string
     /// for the transaction that will be shown in the undo/redo dialog.
     /// If null is returned then no transaction will be opened.
-    const char* getTransactionText() const override;
+    const char *getTransactionText() const override;
 
-    bool canDropObjectEx(App::DocumentObject *, App::DocumentObject *,
-            const char *, const std::vector<std::string> &) const override;
+    bool canDropObjectEx(App::DocumentObject *, App::DocumentObject *, const char *,
+                         const std::vector<std::string> &) const override;
 
-    int replaceObject(App::DocumentObject*, App::DocumentObject*) override;
+    int replaceObject(App::DocumentObject *, App::DocumentObject *) override;
 
     bool showInTree() const override;
 
     /// Get a list of TaskBoxes associated with this object
-    void getTaskViewContent(std::vector<Gui::TaskView::TaskContent*>&) const override;
+    void getTaskViewContent(std::vector<Gui::TaskView::TaskContent *> &) const override;
 
     /// Run a redraw
     void updateView();
     /// Get the object of this ViewProvider object
-    App::DocumentObject *getObject() const {return pcObject;}
+    App::DocumentObject *getObject() const { return pcObject; }
     /// Asks the view provider if the given object can be deleted.
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
     /// Get the GUI document to this ViewProvider object
-    Gui::Document* getDocument() const;
+    Gui::Document *getDocument() const;
     /// Get the python wrapper for that ViewProvider
-    PyObject* getPyObject() override;
+    PyObject *getPyObject() override;
 
     /// return a hit element given the picked point which contains the full node path
     bool getElementPicked(const SoPickedPoint *, std::string &subname) const override;
     /// return the coin node detail and path to the node of the subname
-    bool getDetailPath(const char *subname, SoFullPath *pPath, bool append, SoDetail *&det) const override;
+    bool getDetailPath(const char *subname, SoFullPath *pPath, bool append,
+                       SoDetail *&det) const override;
 
     /* Force update visual
      *
@@ -111,8 +113,8 @@ public:
      * visual update.
      */
     //@{
-    virtual void forceUpdate(bool enable = true) {(void)enable;}
-    virtual bool isUpdateForced() const {return false;}
+    virtual void forceUpdate(bool enable = true) { (void)enable; }
+    virtual bool isUpdateForced() const { return false; }
     //@}
 
     /** @name Restoring view provider from document load */
@@ -121,12 +123,12 @@ public:
     virtual void finishRestoring();
     //@}
 
-    bool removeDynamicProperty(const char* prop) override;
+    bool removeDynamicProperty(const char *prop) override;
 
-    App::Property* addDynamicProperty(
-            const char* type, const char* name=nullptr,
-            const char* group=nullptr, const char* doc=nullptr,
-            short attr=0, bool ro=false, bool hidden=false) override;
+    App::Property *addDynamicProperty(const char *type, const char *name = nullptr,
+                                      const char *group = nullptr, const char *doc = nullptr,
+                                      short attr = 0, bool ro = false,
+                                      bool hidden = false) override;
 
     /** Return the linked view object
      *
@@ -139,8 +141,8 @@ public:
      * @return Returns the linked view provider. If none, it shall return
      * itself.
      */
-    virtual ViewProviderDocumentObject *getLinkedViewProvider(
-            std::string *subname=nullptr, bool recursive=false) const;
+    virtual ViewProviderDocumentObject *getLinkedViewProvider(std::string *subname = nullptr,
+                                                              bool recursive = false) const;
 
     std::string getFullName() const override;
 
@@ -148,9 +150,7 @@ public:
      *
      * @sa App::DocumentObject::getViewProviderNameOverride()
      */
-    virtual bool allowOverride(const App::DocumentObject &) const {
-        return false;
-    }
+    virtual bool allowOverride(const App::DocumentObject &) const { return false; }
 
     void setShowable(bool enable);
     bool isShowable() const;
@@ -163,27 +163,27 @@ protected:
       @note The returned mdi view doesn't need to be a 3d view but can be e.g.
       an image view, an SVG view or something else.
      */
-    Gui::MDIView* getActiveView() const;
+    Gui::MDIView *getActiveView() const;
     /*! Get the mdi view of the document this view provider is part of and
       that is in editing mode.
       @note In case there is no mdi view in editing mode 0 is returned.
       If a value different to 0 is returned it is guaranteed to be a 3d view.
      */
-    Gui::MDIView* getEditingView() const;
+    Gui::MDIView *getEditingView() const;
     /*! Get any mdi view of the document this view provider is part of.
       In case there is an mdi view in editing mode that contains this
       view provider that mdi view is returned. Otherwise any other
       3d view that contains this view provider is returned.
       If a value different to 0 is returned it is guaranteed to be a 3d view.
      */
-    Gui::MDIView* getInventorView() const;
+    Gui::MDIView *getInventorView() const;
     /*! Get the mdi view of the document that contains the given \a node.
      */
-    Gui::MDIView* getViewOfNode(SoNode* node) const;
+    Gui::MDIView *getViewOfNode(SoNode *node) const;
     /// get called before the value is changed
-    void onBeforeChange(const App::Property* prop) override;
+    void onBeforeChange(const App::Property *prop) override;
     /// Gets called by the container whenever a property has been changed
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     /** Searches in all view providers that are attached to an object that
      * is part of the same document as the object this view provider is
      * attached to for an front root of \a type.
@@ -191,13 +191,13 @@ protected:
      * to an object. The method returns after the first front root node
      * matches. If no front root node matches, 0 is returned.
      */
-    SoNode* findFrontRootOfType(const SoType& type) const;
+    SoNode *findFrontRootOfType(const SoType &type) const;
 
     /** @name Transaction handling
      */
     //@{
     bool isAttachedToDocument() const override;
-    const char* detachFromDocument() override;
+    const char *detachFromDocument() override;
 
     /// get called when a property status has changed
     void onPropertyStatusChanged(const App::Property &prop, unsigned long oldStatus) override;
@@ -207,16 +207,16 @@ protected:
     void setModeSwitch() override;
 
     /** Adds a menu item and bind it with \ref startDefaultEditMode().  */
-    void addDefaultAction(QMenu*, const QString&);
+    void addDefaultAction(QMenu *, const QString &);
 
 protected:
     App::DocumentObject *pcObject;
-    Gui::Document* pcDocument;
+    Gui::Document *pcDocument;
 
 private:
     bool _Showable = true;
 
-    std::vector<const char*> aDisplayEnumsArray;
+    std::vector<const char *> aDisplayEnumsArray;
     std::vector<std::string> aDisplayModesArray;
 
     friend class Document;
@@ -226,4 +226,3 @@ private:
 } // namespace Gui
 
 #endif // GUI_VIEWPROVIDER_DOCUMENTOBJECT_H
-

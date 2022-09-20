@@ -48,10 +48,10 @@ using namespace TechDrawGui;
 using namespace TechDraw;
 using namespace std;
 
-void execStackTop(Gui::Command* cmd);
-void execStackBottom(Gui::Command* cmd);
-void execStackUp(Gui::Command* cmd);
-void execStackDown(Gui::Command* cmd);
+void execStackTop(Gui::Command *cmd);
+void execStackBottom(Gui::Command *cmd);
+void execStackUp(Gui::Command *cmd);
+void execStackDown(Gui::Command *cmd);
 
 
 //===========================================================================
@@ -60,15 +60,14 @@ void execStackDown(Gui::Command* cmd);
 
 DEF_STD_CMD_ACL(CmdTechDrawStackGroup)
 
-CmdTechDrawStackGroup::CmdTechDrawStackGroup()
-  : Command("TechDraw_StackGroup")
+CmdTechDrawStackGroup::CmdTechDrawStackGroup() : Command("TechDraw_StackGroup")
 {
-    sAppModule      = "TechDraw";
-    sGroup          = QT_TR_NOOP("TechDraw");
-    sMenuText       = QT_TR_NOOP("Adjust stacking order of views");
-    sToolTipText    = sMenuText;
-    sWhatsThis      = "TechDraw_StackGroup";
-    sStatusTip      = sToolTipText;
+    sAppModule = "TechDraw";
+    sGroup = QT_TR_NOOP("TechDraw");
+    sMenuText = QT_TR_NOOP("Adjust stacking order of views");
+    sToolTipText = sMenuText;
+    sWhatsThis = "TechDraw_StackGroup";
+    sStatusTip = sToolTipText;
 }
 
 void CmdTechDrawStackGroup::activated(int iMsg)
@@ -76,49 +75,40 @@ void CmdTechDrawStackGroup::activated(int iMsg)
     Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
     if (dlg != nullptr) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
-            QObject::tr("Close active task dialog and try again."));
+                             QObject::tr("Close active task dialog and try again."));
         return;
     }
 
-    Gui::ActionGroup* pcAction = qobject_cast<Gui::ActionGroup*>(_pcAction);
+    Gui::ActionGroup *pcAction = qobject_cast<Gui::ActionGroup *>(_pcAction);
     pcAction->setIcon(pcAction->actions().at(iMsg)->icon());
-    switch(iMsg) {
-        case 0:
-            execStackTop(this);
-            break;
-        case 1:
-            execStackBottom(this);
-            break;
-        case 2:
-            execStackUp(this);
-            break;
-        case 3:
-            execStackDown(this);
-            break;
-        default:
-            Base::Console().Message("CMD::StackGrp - invalid iMsg: %d\n",iMsg);
+    switch (iMsg) {
+        case 0: execStackTop(this); break;
+        case 1: execStackBottom(this); break;
+        case 2: execStackUp(this); break;
+        case 3: execStackDown(this); break;
+        default: Base::Console().Message("CMD::StackGrp - invalid iMsg: %d\n", iMsg);
     };
 }
 
-Gui::Action * CmdTechDrawStackGroup::createAction(void)
+Gui::Action *CmdTechDrawStackGroup::createAction(void)
 {
-    Gui::ActionGroup* pcAction = new Gui::ActionGroup(this, Gui::getMainWindow());
+    Gui::ActionGroup *pcAction = new Gui::ActionGroup(this, Gui::getMainWindow());
     pcAction->setDropDownMenu(true);
     applyCommandData(this->className(), pcAction);
 
-    QAction* p1 = pcAction->addAction(QString());
+    QAction *p1 = pcAction->addAction(QString());
     p1->setIcon(Gui::BitmapFactory().iconFromTheme("actions/TechDraw_StackTop"));
     p1->setObjectName(QString::fromLatin1("TechDraw_StackTop"));
     p1->setWhatsThis(QString::fromLatin1("TechDraw_StackTop"));
-    QAction* p2 = pcAction->addAction(QString());
+    QAction *p2 = pcAction->addAction(QString());
     p2->setIcon(Gui::BitmapFactory().iconFromTheme("actions/TechDraw_StackBottom"));
     p2->setObjectName(QString::fromLatin1("TechDraw_StackBottom"));
     p2->setWhatsThis(QString::fromLatin1("TechDraw_StackBottom"));
-    QAction* p3 = pcAction->addAction(QString());
+    QAction *p3 = pcAction->addAction(QString());
     p3->setIcon(Gui::BitmapFactory().iconFromTheme("actions/TechDraw_StackUp"));
     p3->setObjectName(QString::fromLatin1("TechDraw_StackUp"));
     p3->setWhatsThis(QString::fromLatin1("TechDraw_StackUp"));
-    QAction* p4 = pcAction->addAction(QString());
+    QAction *p4 = pcAction->addAction(QString());
     p4->setIcon(Gui::BitmapFactory().iconFromTheme("actions/TechDraw_StackDown"));
     p4->setObjectName(QString::fromLatin1("TechDraw_StackDown"));
     p4->setWhatsThis(QString::fromLatin1("TechDraw_StackDown"));
@@ -137,26 +127,26 @@ void CmdTechDrawStackGroup::languageChange()
 {
     Command::languageChange();
 
-    if (!_pcAction)
-        return;
-    Gui::ActionGroup* pcAction = qobject_cast<Gui::ActionGroup*>(_pcAction);
-    QList<QAction*> a = pcAction->actions();
+    if (!_pcAction) return;
+    Gui::ActionGroup *pcAction = qobject_cast<Gui::ActionGroup *>(_pcAction);
+    QList<QAction *> a = pcAction->actions();
 
-    QAction* arc1 = a[0];
-    arc1->setText(QApplication::translate("CmdTechDrawStackGroup","Stack Top"));
-    arc1->setToolTip(QApplication::translate("TechDraw_StackTop","Move view to top of stack"));
+    QAction *arc1 = a[0];
+    arc1->setText(QApplication::translate("CmdTechDrawStackGroup", "Stack Top"));
+    arc1->setToolTip(QApplication::translate("TechDraw_StackTop", "Move view to top of stack"));
     arc1->setStatusTip(arc1->toolTip());
-    QAction* arc2 = a[1];
-    arc2->setText(QApplication::translate("CmdTechDrawStackGroup","Stack Bottom"));
-    arc2->setToolTip(QApplication::translate("TechDraw_StackBottom","Move view to bottom of stack"));
+    QAction *arc2 = a[1];
+    arc2->setText(QApplication::translate("CmdTechDrawStackGroup", "Stack Bottom"));
+    arc2->setToolTip(
+        QApplication::translate("TechDraw_StackBottom", "Move view to bottom of stack"));
     arc2->setStatusTip(arc2->toolTip());
-    QAction* arc3 = a[2];
-    arc3->setText(QApplication::translate("CmdTechDrawStackGroup","Stack Up"));
-    arc3->setToolTip(QApplication::translate("TechDraw_StackUp","Move view up one level"));
+    QAction *arc3 = a[2];
+    arc3->setText(QApplication::translate("CmdTechDrawStackGroup", "Stack Up"));
+    arc3->setToolTip(QApplication::translate("TechDraw_StackUp", "Move view up one level"));
     arc3->setStatusTip(arc3->toolTip());
-    QAction* arc4 = a[3];
-    arc4->setText(QApplication::translate("CmdTechDrawStackGroup","Stack Down"));
-    arc4->setToolTip(QApplication::translate("TechDraw_StackDown","Move view down one level"));
+    QAction *arc4 = a[3];
+    arc4->setText(QApplication::translate("CmdTechDrawStackGroup", "Stack Down"));
+    arc4->setToolTip(QApplication::translate("TechDraw_StackDown", "Move view down one level"));
     arc4->setStatusTip(arc4->toolTip());
 }
 
@@ -173,16 +163,15 @@ bool CmdTechDrawStackGroup::isActive(void)
 
 DEF_STD_CMD_A(CmdTechDrawStackTop)
 
-CmdTechDrawStackTop::CmdTechDrawStackTop()
-  : Command("TechDraw_StackTop")
+CmdTechDrawStackTop::CmdTechDrawStackTop() : Command("TechDraw_StackTop")
 {
-    sAppModule      = "TechDraw";
-    sGroup          = QT_TR_NOOP("TechDraw");
-    sMenuText       = QT_TR_NOOP("Move view to top of stack");
-    sToolTipText    = sMenuText;
-    sWhatsThis      = "TechDraw_StackTop";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "actions/TechDraw_StackTop";
+    sAppModule = "TechDraw";
+    sGroup = QT_TR_NOOP("TechDraw");
+    sMenuText = QT_TR_NOOP("Move view to top of stack");
+    sToolTipText = sMenuText;
+    sWhatsThis = "TechDraw_StackTop";
+    sStatusTip = sToolTipText;
+    sPixmap = "actions/TechDraw_StackTop";
 }
 
 void CmdTechDrawStackTop::activated(int iMsg)
@@ -192,7 +181,7 @@ void CmdTechDrawStackTop::activated(int iMsg)
     Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
     if (dlg != nullptr) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
-            QObject::tr("Close active task dialog and try again."));
+                             QObject::tr("Close active task dialog and try again."));
         return;
     }
 
@@ -206,23 +195,20 @@ bool CmdTechDrawStackTop::isActive(void)
     return (havePage && haveView);
 }
 
-void execStackTop(Gui::Command* cmd)
+void execStackTop(Gui::Command *cmd)
 {
-    TechDraw::DrawPage* page = DrawGuiUtil::findPage(cmd);
-    if (!page) {
-        return;
-    }
+    TechDraw::DrawPage *page = DrawGuiUtil::findPage(cmd);
+    if (!page) { return; }
 
-    std::vector<App::DocumentObject*> views = cmd->getSelection().getObjectsOfType(TechDraw::DrawView::getClassTypeId());
+    std::vector<App::DocumentObject *> views =
+        cmd->getSelection().getObjectsOfType(TechDraw::DrawView::getClassTypeId());
     if (!views.empty()) {
-        for (auto& v: views) {
-            TechDraw::DrawView* dv = static_cast<TechDraw::DrawView*>(v);
-            Gui::ViewProvider* vp = Gui::Application::Instance->getDocument(
-                                    cmd->getDocument())->getViewProvider(dv);
-            ViewProviderDrawingView* vpdv = static_cast<ViewProviderDrawingView*>(vp);
-            if (vpdv) {
-                vpdv->stackTop();
-            }
+        for (auto &v : views) {
+            TechDraw::DrawView *dv = static_cast<TechDraw::DrawView *>(v);
+            Gui::ViewProvider *vp =
+                Gui::Application::Instance->getDocument(cmd->getDocument())->getViewProvider(dv);
+            ViewProviderDrawingView *vpdv = static_cast<ViewProviderDrawingView *>(vp);
+            if (vpdv) { vpdv->stackTop(); }
         }
     }
 }
@@ -233,16 +219,15 @@ void execStackTop(Gui::Command* cmd)
 
 DEF_STD_CMD_A(CmdTechDrawStackBottom)
 
-CmdTechDrawStackBottom::CmdTechDrawStackBottom()
-  : Command("TechDraw_StackBottom")
+CmdTechDrawStackBottom::CmdTechDrawStackBottom() : Command("TechDraw_StackBottom")
 {
-    sAppModule      = "TechDraw";
-    sGroup          = QT_TR_NOOP("TechDraw");
-    sMenuText       = QT_TR_NOOP("Move view to bottom of stack");
-    sToolTipText    = sMenuText;
-    sWhatsThis      = "TechDraw_StackBottom";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "actions/TechDraw_StackBottom";
+    sAppModule = "TechDraw";
+    sGroup = QT_TR_NOOP("TechDraw");
+    sMenuText = QT_TR_NOOP("Move view to bottom of stack");
+    sToolTipText = sMenuText;
+    sWhatsThis = "TechDraw_StackBottom";
+    sStatusTip = sToolTipText;
+    sPixmap = "actions/TechDraw_StackBottom";
 }
 
 void CmdTechDrawStackBottom::activated(int iMsg)
@@ -252,7 +237,7 @@ void CmdTechDrawStackBottom::activated(int iMsg)
     Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
     if (dlg != nullptr) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
-            QObject::tr("Close active task dialog and try again."));
+                             QObject::tr("Close active task dialog and try again."));
         return;
     }
 
@@ -266,23 +251,20 @@ bool CmdTechDrawStackBottom::isActive(void)
     return (havePage && haveView);
 }
 
-void execStackBottom(Gui::Command* cmd)
+void execStackBottom(Gui::Command *cmd)
 {
-    TechDraw::DrawPage* page = DrawGuiUtil::findPage(cmd);
-    if (!page) {
-        return;
-    }
+    TechDraw::DrawPage *page = DrawGuiUtil::findPage(cmd);
+    if (!page) { return; }
 
-    std::vector<App::DocumentObject*> views = cmd->getSelection().getObjectsOfType(TechDraw::DrawView::getClassTypeId());
+    std::vector<App::DocumentObject *> views =
+        cmd->getSelection().getObjectsOfType(TechDraw::DrawView::getClassTypeId());
     if (!views.empty()) {
-        for (auto& v: views) {
-            TechDraw::DrawView* dv = static_cast<TechDraw::DrawView*>(v);
-            Gui::ViewProvider* vp = Gui::Application::Instance->getDocument(
-                                    cmd->getDocument())->getViewProvider(dv);
-            ViewProviderDrawingView* vpdv = static_cast<ViewProviderDrawingView*>(vp);
-            if (vpdv) {
-                vpdv->stackBottom();
-            }
+        for (auto &v : views) {
+            TechDraw::DrawView *dv = static_cast<TechDraw::DrawView *>(v);
+            Gui::ViewProvider *vp =
+                Gui::Application::Instance->getDocument(cmd->getDocument())->getViewProvider(dv);
+            ViewProviderDrawingView *vpdv = static_cast<ViewProviderDrawingView *>(vp);
+            if (vpdv) { vpdv->stackBottom(); }
         }
     }
 }
@@ -293,16 +275,15 @@ void execStackBottom(Gui::Command* cmd)
 
 DEF_STD_CMD_A(CmdTechDrawStackUp)
 
-CmdTechDrawStackUp::CmdTechDrawStackUp()
-  : Command("TechDraw_StackUp")
+CmdTechDrawStackUp::CmdTechDrawStackUp() : Command("TechDraw_StackUp")
 {
-    sAppModule      = "TechDraw";
-    sGroup          = QT_TR_NOOP("TechDraw");
-    sMenuText       = QT_TR_NOOP("Move view up one level");
-    sToolTipText    = sMenuText;
-    sWhatsThis      = "TechDraw_StackUp";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "actions/TechDraw_StackUp";
+    sAppModule = "TechDraw";
+    sGroup = QT_TR_NOOP("TechDraw");
+    sMenuText = QT_TR_NOOP("Move view up one level");
+    sToolTipText = sMenuText;
+    sWhatsThis = "TechDraw_StackUp";
+    sStatusTip = sToolTipText;
+    sPixmap = "actions/TechDraw_StackUp";
 }
 
 void CmdTechDrawStackUp::activated(int iMsg)
@@ -312,7 +293,7 @@ void CmdTechDrawStackUp::activated(int iMsg)
     Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
     if (dlg != nullptr) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
-            QObject::tr("Close active task dialog and try again."));
+                             QObject::tr("Close active task dialog and try again."));
         return;
     }
 
@@ -326,23 +307,20 @@ bool CmdTechDrawStackUp::isActive(void)
     return (havePage && haveView);
 }
 
-void execStackUp(Gui::Command* cmd)
+void execStackUp(Gui::Command *cmd)
 {
-    TechDraw::DrawPage* page = DrawGuiUtil::findPage(cmd);
-    if (!page) {
-        return;
-    }
+    TechDraw::DrawPage *page = DrawGuiUtil::findPage(cmd);
+    if (!page) { return; }
 
-    std::vector<App::DocumentObject*> views = cmd->getSelection().getObjectsOfType(TechDraw::DrawView::getClassTypeId());
+    std::vector<App::DocumentObject *> views =
+        cmd->getSelection().getObjectsOfType(TechDraw::DrawView::getClassTypeId());
     if (!views.empty()) {
-        for (auto& v: views) {
-            TechDraw::DrawView* dv = static_cast<TechDraw::DrawView*>(v);
-            Gui::ViewProvider* vp = Gui::Application::Instance->getDocument(
-                                    cmd->getDocument())->getViewProvider(dv);
-            ViewProviderDrawingView* vpdv = static_cast<ViewProviderDrawingView*>(vp);
-            if (vpdv) {
-                vpdv->stackUp();
-            }
+        for (auto &v : views) {
+            TechDraw::DrawView *dv = static_cast<TechDraw::DrawView *>(v);
+            Gui::ViewProvider *vp =
+                Gui::Application::Instance->getDocument(cmd->getDocument())->getViewProvider(dv);
+            ViewProviderDrawingView *vpdv = static_cast<ViewProviderDrawingView *>(vp);
+            if (vpdv) { vpdv->stackUp(); }
         }
     }
 }
@@ -353,16 +331,15 @@ void execStackUp(Gui::Command* cmd)
 
 DEF_STD_CMD_A(CmdTechDrawStackDown)
 
-CmdTechDrawStackDown::CmdTechDrawStackDown()
-  : Command("TechDraw_StackDown")
+CmdTechDrawStackDown::CmdTechDrawStackDown() : Command("TechDraw_StackDown")
 {
-    sAppModule      = "TechDraw";
-    sGroup          = QT_TR_NOOP("TechDraw");
-    sMenuText       = QT_TR_NOOP("Move view down one level");
-    sToolTipText    = sMenuText;
-    sWhatsThis      = "TechDraw_StackDown";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "actions/TechDraw_StackDown";
+    sAppModule = "TechDraw";
+    sGroup = QT_TR_NOOP("TechDraw");
+    sMenuText = QT_TR_NOOP("Move view down one level");
+    sToolTipText = sMenuText;
+    sWhatsThis = "TechDraw_StackDown";
+    sStatusTip = sToolTipText;
+    sPixmap = "actions/TechDraw_StackDown";
 }
 
 void CmdTechDrawStackDown::activated(int iMsg)
@@ -372,7 +349,7 @@ void CmdTechDrawStackDown::activated(int iMsg)
     Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
     if (dlg != nullptr) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
-            QObject::tr("Close active task dialog and try again."));
+                             QObject::tr("Close active task dialog and try again."));
         return;
     }
 
@@ -386,30 +363,27 @@ bool CmdTechDrawStackDown::isActive(void)
     return (havePage && haveView);
 }
 
-void execStackDown(Gui::Command* cmd)
+void execStackDown(Gui::Command *cmd)
 {
-    TechDraw::DrawPage* page = DrawGuiUtil::findPage(cmd);
-    if (!page) {
-        return;
-    }
+    TechDraw::DrawPage *page = DrawGuiUtil::findPage(cmd);
+    if (!page) { return; }
 
-    std::vector<App::DocumentObject*> views = cmd->getSelection().getObjectsOfType(TechDraw::DrawView::getClassTypeId());
+    std::vector<App::DocumentObject *> views =
+        cmd->getSelection().getObjectsOfType(TechDraw::DrawView::getClassTypeId());
     if (!views.empty()) {
-        for (auto& v: views) {
-            TechDraw::DrawView* dv = static_cast<TechDraw::DrawView*>(v);
-            Gui::ViewProvider* vp = Gui::Application::Instance->getDocument(
-                                    cmd->getDocument())->getViewProvider(dv);
-            ViewProviderDrawingView* vpdv = static_cast<ViewProviderDrawingView*>(vp);
-            if (vpdv) {
-                vpdv->stackDown();
-            }
+        for (auto &v : views) {
+            TechDraw::DrawView *dv = static_cast<TechDraw::DrawView *>(v);
+            Gui::ViewProvider *vp =
+                Gui::Application::Instance->getDocument(cmd->getDocument())->getViewProvider(dv);
+            ViewProviderDrawingView *vpdv = static_cast<ViewProviderDrawingView *>(vp);
+            if (vpdv) { vpdv->stackDown(); }
         }
     }
 }
 
 void CreateTechDrawCommandsStack(void)
 {
-    Gui::CommandManager& rcCmdMgr = Gui::Application::Instance->commandManager();
+    Gui::CommandManager &rcCmdMgr = Gui::Application::Instance->commandManager();
 
     rcCmdMgr.addCommand(new CmdTechDrawStackGroup());
     rcCmdMgr.addCommand(new CmdTechDrawStackTop());

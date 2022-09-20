@@ -30,15 +30,18 @@
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGIEdge : public QGIPrimPath
+class TechDrawGuiExport QGIEdge: public QGIPrimPath
 {
 public:
     explicit QGIEdge(int index);
     ~QGIEdge() {}
 
-    enum {Type = QGraphicsItem::UserType + 103};
+    enum
+    {
+        Type = QGraphicsItem::UserType + 103
+    };
 
-    int type() const override { return Type;}
+    int type() const override { return Type; }
     virtual QRectF boundingRect() const override;
     virtual QPainterPath shape() const override;
 
@@ -46,15 +49,15 @@ public:
 
     void setCosmetic(bool state);
     void setHiddenEdge(bool b);
-    bool getHiddenEdge() { return(isHiddenEdge); }
+    bool getHiddenEdge() { return (isHiddenEdge); }
     void setSmoothEdge(bool b) { isSmoothEdge = b; }
-    bool getSmoothEdge() { return(isSmoothEdge); }
+    bool getSmoothEdge() { return (isSmoothEdge); }
     virtual void setPrettyNormal() override;
 
     double getEdgeFuzz(void) const;
 
 protected:
-    int projIndex;                                                     //index of edge in Projection. must exist.
+    int projIndex; //index of edge in Projection. must exist.
 
     bool isCosmetic;
     bool isHiddenEdge;
@@ -65,6 +68,6 @@ protected:
 private:
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMEDGE_H

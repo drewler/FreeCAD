@@ -33,9 +33,9 @@
 
 // low-level read and write functions
 #ifdef _MSC_VER
-# include <io.h>
+#include <io.h>
 #else
-# include <unistd.h>
+#include <unistd.h>
 //extern "C" {
 //    int write (int fd, const char* buf, int num);
 //    int read (int fd, char* buf, int num);
@@ -44,7 +44,8 @@
 
 
 // BEGIN namespace BOOST
-namespace boost {
+namespace boost
+{
 
 
 /************************************************************
@@ -53,22 +54,24 @@ namespace boost {
  ************************************************************/
 
 
-class fdoutbuf : public std::streambuf {
-  protected:
-    int fd;    // file descriptor
-  public:
+class fdoutbuf: public std::streambuf
+{
+protected:
+    int fd; // file descriptor
+public:
     // constructor
-    fdoutbuf (int _fd) : fd(_fd) {
-    }
-  protected:
+    fdoutbuf(int _fd) : fd(_fd) {}
+
+protected:
     // write one character
-    int_type overflow (int_type c) override {
+    int_type overflow(int_type c) override
+    {
         if (c != EOF) {
             char z = c;
 #ifdef _MSC_VER
-            if (_write (fd, &z, 1) != 1) {
+            if (_write(fd, &z, 1) != 1) {
 #else
-            if (write (fd, &z, 1) != 1) {
+            if (write(fd, &z, 1) != 1) {
 #endif
                 return EOF;
             }
@@ -77,23 +80,23 @@ class fdoutbuf : public std::streambuf {
     }
     // write multiple characters
 
-    std::streamsize xsputn (const char* s,
-                            std::streamsize num) override {
+    std::streamsize xsputn(const char *s, std::streamsize num) override
+    {
 #ifdef _MSC_VER
-        return _write(fd,s,num);
+        return _write(fd, s, num);
 #else
-        return write(fd,s,num);
+        return write(fd, s, num);
 #endif
     }
 };
 
-class fdostream : public std::ostream {
-  protected:
+class fdostream: public std::ostream
+{
+protected:
     fdoutbuf buf;
-  public:
-    fdostream (int fd) : std::ostream(0), buf(fd) {
-        rdbuf(&buf);
-    }
+
+public:
+    fdostream(int fd) : std::ostream(0), buf(fd) { rdbuf(&buf); }
 };
 
 
@@ -102,42 +105,43 @@ class fdostream : public std::ostream {
  * - a stream that writes on a file descriptor
  ************************************************************/
 
-class fdinbuf : public std::streambuf {
-  protected:
-    int fd;    // file descriptor
-  protected:
+class fdinbuf: public std::streambuf
+{
+protected:
+    int fd; // file descriptor
+protected:
     /* data buffer:
      * - at most, pbSize characters in putback area plus
      * - at most, bufSize characters in ordinary read buffer
      */
-    static const int pbSize = 4;        // size of putback area
-    static const int bufSize = 1024;    // size of the data buffer
-    char buffer[bufSize+pbSize];        // data buffer
+    static const int pbSize = 4;     // size of putback area
+    static const int bufSize = 1024; // size of the data buffer
+    char buffer[bufSize + pbSize];   // data buffer
 
-  public:
+public:
     /* constructor
      * - initialize file descriptor
      * - initialize empty data buffer
      * - no putback area
      * => force underflow()
      */
-    fdinbuf (int _fd) : fd(_fd) {
-        setg (buffer+pbSize,     // beginning of putback area
-              buffer+pbSize,     // read position
-              buffer+pbSize);    // end position
+    fdinbuf(int _fd) : fd(_fd)
+    {
+        setg(buffer + pbSize,  // beginning of putback area
+             buffer + pbSize,  // read position
+             buffer + pbSize); // end position
     }
 
-  protected:
+protected:
     // insert new characters into the buffer
-    int_type underflow () override {
+    int_type underflow() override
+    {
 #ifndef _MSC_VER
-using std::memcpy;
+        using std::memcpy;
 #endif
 
         // is read position before end of buffer?
-        if (gptr() < egptr()) {
-            return *gptr();
-        }
+        if (gptr() < egptr()) { return *gptr(); }
 
         /* process size of putback area
          * - use number of characters read
@@ -145,22 +149,19 @@ using std::memcpy;
          */
         int numPutback;
         numPutback = gptr() - eback();
-        if (numPutback > pbSize) {
-            numPutback = pbSize;
-        }
+        if (numPutback > pbSize) { numPutback = pbSize; }
 
         /* copy up to pbSize characters previously read into
          * the putback area
          */
-        memcpy (buffer+(pbSize-numPutback), gptr()-numPutback,
-                numPutback);
+        memcpy(buffer + (pbSize - numPutback), gptr() - numPutback, numPutback);
 
         // read at most bufSize new characters
         int num;
 #ifdef _MSC_VER
-        num = _read (fd, buffer+pbSize, bufSize);
+        num = _read(fd, buffer + pbSize, bufSize);
 #else
-        num = read (fd, buffer+pbSize, bufSize);
+        num = read(fd, buffer + pbSize, bufSize);
 #endif
         if (num <= 0) {
             // ERROR or EOF
@@ -168,22 +169,22 @@ using std::memcpy;
         }
 
         // reset buffer pointers
-        setg (buffer+(pbSize-numPutback),   // beginning of putback area
-              buffer+pbSize,                // read position
-              buffer+pbSize+num);           // end of buffer
+        setg(buffer + (pbSize - numPutback), // beginning of putback area
+             buffer + pbSize,                // read position
+             buffer + pbSize + num);         // end of buffer
 
         // return next character
         return *gptr();
     }
 };
 
-class fdistream : public std::istream {
-  protected:
+class fdistream: public std::istream
+{
+protected:
     fdinbuf buf;
-  public:
-    fdistream (int fd) : std::istream(0), buf(fd) {
-        rdbuf(&buf);
-    }
+
+public:
+    fdistream(int fd) : std::istream(0), buf(fd) { rdbuf(&buf); }
 };
 
 

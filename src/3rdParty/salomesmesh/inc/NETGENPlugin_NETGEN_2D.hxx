@@ -40,28 +40,25 @@ class NETGENPlugin_Mesher;
 class NETGENPLUGIN_EXPORT NETGENPlugin_NETGEN_2D: public SMESH_2D_Algo
 {
 public:
-  NETGENPlugin_NETGEN_2D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~NETGENPlugin_NETGEN_2D();
+    NETGENPlugin_NETGEN_2D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~NETGENPlugin_NETGEN_2D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh& aMesh,
-                               const TopoDS_Shape& aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh,
-                       const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual void CancelCompute();
+    virtual void CancelCompute();
 
-  virtual double GetProgress() const;
+    virtual double GetProgress() const;
 
 
-  virtual bool Evaluate(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
 protected:
-  const SMESHDS_Hypothesis* _hypothesis;
-  bool                      _isViscousLayers2D;
-  NETGENPlugin_Mesher *     _mesher;
+    const SMESHDS_Hypothesis *_hypothesis;
+    bool _isViscousLayers2D;
+    NETGENPlugin_Mesher *_mesher;
 };
 
 #endif

@@ -26,21 +26,21 @@
 #define _MED_WrapperBase_HXX_
 
 #ifdef WIN32
- #if defined MEDWRAPPER_BASE_EXPORTS || defined MEDWrapperBase_EXPORTS
-  #if defined WIN32
-   #define MEDWRAPPER_EXPORT __declspec( dllexport )
-  #else
-   #define MEDWRAPPER_EXPORT
-  #endif
- #else
-  #if defined WIN32
-   #define MEDWRAPPER_EXPORT __declspec( dllimport )
-  #else
-   #define MEDWRAPPER_EXPORT
-  #endif
- #endif
+#if defined MEDWRAPPER_BASE_EXPORTS || defined MEDWrapperBase_EXPORTS
+#if defined WIN32
+#define MEDWRAPPER_EXPORT __declspec(dllexport)
 #else
- #define MEDWRAPPER_EXPORT
+#define MEDWRAPPER_EXPORT
+#endif
+#else
+#if defined WIN32
+#define MEDWRAPPER_EXPORT __declspec(dllimport)
+#else
+#define MEDWRAPPER_EXPORT
+#endif
+#endif
+#else
+#define MEDWRAPPER_EXPORT
 #endif
 
 #endif

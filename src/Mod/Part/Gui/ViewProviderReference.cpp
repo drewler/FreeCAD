@@ -25,12 +25,12 @@
 #ifndef _PreComp_
 // to avoid compiler warnings of redefining contents of basic.h
 // later by #include "ViewProvider.h"
-# define _USE_MATH_DEFINES
-# include <cmath>
+#define _USE_MATH_DEFINES
+#include <cmath>
 
-# include <Inventor/nodes/SoGroup.h>
-# include <Inventor/nodes/SoMaterial.h>
-# include <Inventor/nodes/SoShapeHints.h>
+#include <Inventor/nodes/SoGroup.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoShapeHints.h>
 #endif
 
 #include <App/Document.h>
@@ -48,24 +48,16 @@ PROPERTY_SOURCE(PartGui::ViewProviderPartReference, Gui::ViewProviderGeometryObj
 // Construction/Destruction
 
 ViewProviderPartReference::ViewProviderPartReference()
-  : EdgeRoot(nullptr)
-  , FaceRoot(nullptr)
-  , VertexRoot(nullptr)
-  , pcLineMaterial(nullptr)
-  , pcPointMaterial(nullptr)
-  , pcLineStyle(nullptr)
-  , pcPointStyle(nullptr)
-  , pcControlPoints(nullptr)
-  , pShapeHints(nullptr)
-  , meshDeviation(0.01f)
-  , noPerVertexNormals(true)
-  , qualityNormals(false)
+    : EdgeRoot(nullptr), FaceRoot(nullptr), VertexRoot(nullptr), pcLineMaterial(nullptr),
+      pcPointMaterial(nullptr), pcLineStyle(nullptr), pcPointStyle(nullptr),
+      pcControlPoints(nullptr), pShapeHints(nullptr), meshDeviation(0.01f),
+      noPerVertexNormals(true), qualityNormals(false)
 {
     App::Material mat;
-    mat.ambientColor.set(0.2f,0.2f,0.2f);
-    mat.diffuseColor.set(0.1f,0.1f,0.1f);
-    mat.specularColor.set(0.0f,0.0f,0.0f);
-    mat.emissiveColor.set(0.0f,0.0f,0.0f);
+    mat.ambientColor.set(0.2f, 0.2f, 0.2f);
+    mat.diffuseColor.set(0.1f, 0.1f, 0.1f);
+    mat.specularColor.set(0.0f, 0.0f, 0.0f);
+    mat.emissiveColor.set(0.0f, 0.0f, 0.0f);
     mat.shininess = 0.0f;
     mat.transparency = 0.0f;
     //ADD_PROPERTY(LineMaterial,(mat));
@@ -125,7 +117,7 @@ ViewProviderPartReference::~ViewProviderPartReference()
     //pShapeHints->unref();
 }
 
-void ViewProviderPartReference::onChanged(const App::Property* /*prop*/)
+void ViewProviderPartReference::onChanged(const App::Property * /*prop*/)
 {
     //if (prop == &LineWidth) {
     //    pcLineStyle->lineWidth = LineWidth.getValue();
@@ -188,7 +180,7 @@ void ViewProviderPartReference::attach(App::DocumentObject *pcFeat)
     // call parent attach method
     ViewProviderGeometryObject::attach(pcFeat);
 
-    SoGroup* pcNormalRoot = new SoGroup();
+    SoGroup *pcNormalRoot = new SoGroup();
     //SoGroup* pcFlatRoot = new SoGroup();
     //SoGroup* pcWireframeRoot = new SoGroup();
     //SoGroup* pcPointsRoot = new SoGroup();
@@ -218,12 +210,11 @@ void ViewProviderPartReference::attach(App::DocumentObject *pcFeat)
     addDisplayMaskMode(pcNormalRoot, "Reference");
 }
 
-void ViewProviderPartReference::setDisplayMode(const char* ModeName)
+void ViewProviderPartReference::setDisplayMode(const char *ModeName)
 {
-    if ( strcmp("Reference",ModeName)==0 )
-        setDisplayMaskMode("Reference");
+    if (strcmp("Reference", ModeName) == 0) setDisplayMaskMode("Reference");
 
-    ViewProviderGeometryObject::setDisplayMode( ModeName );
+    ViewProviderGeometryObject::setDisplayMode(ModeName);
 }
 
 std::vector<std::string> ViewProviderPartReference::getDisplayModes() const
@@ -241,6 +232,4 @@ std::vector<std::string> ViewProviderPartReference::getDisplayModes() const
 }
 
 
-void ViewProviderPartReference::updateData(const App::Property* )
-{
-}
+void ViewProviderPartReference::updateData(const App::Property *) {}

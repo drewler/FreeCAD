@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Standard_math.hxx>
+#include <Standard_math.hxx>
 #endif
 
 #include <App/Document.h>
@@ -45,36 +45,33 @@
 //===========================================================================
 DEF_STD_CMD_A(CmdPartSimpleCylinder)
 
-CmdPartSimpleCylinder::CmdPartSimpleCylinder()
-  :Command("Part_SimpleCylinder")
+CmdPartSimpleCylinder::CmdPartSimpleCylinder() : Command("Part_SimpleCylinder")
 {
-    sAppModule    = "Part";
-    sGroup        = QT_TR_NOOP("Part");
-    sMenuText     = QT_TR_NOOP("Create Cylinder...");
-    sToolTipText  = QT_TR_NOOP("Create a Cylinder");
-    sWhatsThis    = "Part_SimpleCylinder";
-    sStatusTip    = sToolTipText;
-    sPixmap       = "Part_Cylinder";
+    sAppModule = "Part";
+    sGroup = QT_TR_NOOP("Part");
+    sMenuText = QT_TR_NOOP("Create Cylinder...");
+    sToolTipText = QT_TR_NOOP("Create a Cylinder");
+    sWhatsThis = "Part_SimpleCylinder";
+    sStatusTip = sToolTipText;
+    sPixmap = "Part_Cylinder";
 }
 
 void CmdPartSimpleCylinder::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     PartGui::DlgPartCylinderImp dlg(Gui::getMainWindow());
-    if (dlg.exec()== QDialog::Accepted) {
+    if (dlg.exec() == QDialog::Accepted) {
         Base::Vector3d dir = dlg.getDirection();
         Base::Vector3d pos = dlg.getPosition();
         openCommand(QT_TRANSLATE_NOOP("Command", "Create Part Cylinder"));
-        doCommand(Doc,"from FreeCAD import Base");
-        doCommand(Doc,"import Part");
-        doCommand(Doc,"App.ActiveDocument.addObject(\"Part::Feature\",\"Cylinder\")"
-                      ".Shape=Part.makeCylinder(%f,%f,"
-                      "Base.Vector(%f,%f,%f),"
-                      "Base.Vector(%f,%f,%f))"
-                     ,dlg.getRadius()
-                     ,dlg.getLength()
-                     ,pos.x,pos.y,pos.z
-                     ,dir.x,dir.y,dir.z);
+        doCommand(Doc, "from FreeCAD import Base");
+        doCommand(Doc, "import Part");
+        doCommand(Doc,
+                  "App.ActiveDocument.addObject(\"Part::Feature\",\"Cylinder\")"
+                  ".Shape=Part.makeCylinder(%f,%f,"
+                  "Base.Vector(%f,%f,%f),"
+                  "Base.Vector(%f,%f,%f))",
+                  dlg.getRadius(), dlg.getLength(), pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
         commitCommand();
         updateActive();
         doCommand(Gui, "Gui.SendMsgToActiveView(\"ViewFit\")");
@@ -83,8 +80,7 @@ void CmdPartSimpleCylinder::activated(int iMsg)
 
 bool CmdPartSimpleCylinder::isActive()
 {
-    if (getActiveGuiDocument())
-        return true;
+    if (getActiveGuiDocument()) return true;
     else
         return false;
 }
@@ -95,16 +91,15 @@ bool CmdPartSimpleCylinder::isActive()
 //===========================================================================
 DEF_STD_CMD_A(CmdPartShapeFromMesh)
 
-CmdPartShapeFromMesh::CmdPartShapeFromMesh()
-  :Command("Part_ShapeFromMesh")
+CmdPartShapeFromMesh::CmdPartShapeFromMesh() : Command("Part_ShapeFromMesh")
 {
-    sAppModule    = "Part";
-    sGroup        = QT_TR_NOOP("Part");
-    sMenuText     = QT_TR_NOOP("Create shape from mesh...");
-    sToolTipText  = QT_TR_NOOP("Create shape from selected mesh object");
-    sWhatsThis    = "Part_ShapeFromMesh";
-    sStatusTip    = sToolTipText;
-    sPixmap       = "Part_Shape_from_Mesh";
+    sAppModule = "Part";
+    sGroup = QT_TR_NOOP("Part");
+    sMenuText = QT_TR_NOOP("Create shape from mesh...");
+    sToolTipText = QT_TR_NOOP("Create shape from selected mesh object");
+    sWhatsThis = "Part_ShapeFromMesh";
+    sStatusTip = sToolTipText;
+    sPixmap = "Part_Shape_from_Mesh";
 }
 
 void CmdPartShapeFromMesh::activated(int iMsg)
@@ -124,16 +119,15 @@ bool CmdPartShapeFromMesh::isActive()
 //===========================================================================
 DEF_STD_CMD_A(CmdPartPointsFromMesh)
 
-CmdPartPointsFromMesh::CmdPartPointsFromMesh()
-  :Command("Part_PointsFromMesh")
+CmdPartPointsFromMesh::CmdPartPointsFromMesh() : Command("Part_PointsFromMesh")
 {
-    sAppModule    = "Part";
-    sGroup        = QT_TR_NOOP("Part");
-    sMenuText     = QT_TR_NOOP("Create points object from mesh");
-    sToolTipText  = QT_TR_NOOP("Create selectable points object from selected mesh object");
-    sWhatsThis    = "Part_PointsFromMesh";
-    sStatusTip    = sToolTipText;
-    sPixmap       = "Part_PointsFromMesh";
+    sAppModule = "Part";
+    sGroup = QT_TR_NOOP("Part");
+    sMenuText = QT_TR_NOOP("Create points object from mesh");
+    sToolTipText = QT_TR_NOOP("Create selectable points object from selected mesh object");
+    sWhatsThis = "Part_PointsFromMesh";
+    sStatusTip = sToolTipText;
+    sPixmap = "Part_PointsFromMesh";
 }
 
 void CmdPartPointsFromMesh::activated(int iMsg)
@@ -141,23 +135,24 @@ void CmdPartPointsFromMesh::activated(int iMsg)
     Q_UNUSED(iMsg);
 
     Base::Type meshid = Base::Type::fromName("Mesh::Feature");
-    std::vector<App::DocumentObject*> meshes;
+    std::vector<App::DocumentObject *> meshes;
     meshes = Gui::Selection().getObjectsOfType(meshid);
     Gui::WaitCursor wc;
-    std::vector<App::DocumentObject*>::iterator it;
+    std::vector<App::DocumentObject *>::iterator it;
     openCommand(QT_TRANSLATE_NOOP("Command", "Points from mesh"));
 
     for (it = meshes.begin(); it != meshes.end(); ++it) {
-        App::Document* doc = (*it)->getDocument();
+        App::Document *doc = (*it)->getDocument();
         std::string mesh = (*it)->getNameInDocument();
-        if (!(*it)->isDerivedFrom(Base::Type::fromName("Mesh::Feature")))
-            continue;
-        doCommand(Doc,"import Part");
-        doCommand(Doc,"mesh_pts = FreeCAD.getDocument(\"%s\").getObject(\"%s\").Mesh.Points\n",
-                     doc->getName(), mesh.c_str());
-        doCommand(Doc,"Part.show(Part.makeCompound([Part.Point(m.Vector).toShape() for m in mesh_pts]),\"%s\")\n",
-                  (mesh+"_pts").c_str());
-        doCommand(Doc,"del mesh_pts\n");
+        if (!(*it)->isDerivedFrom(Base::Type::fromName("Mesh::Feature"))) continue;
+        doCommand(Doc, "import Part");
+        doCommand(Doc, "mesh_pts = FreeCAD.getDocument(\"%s\").getObject(\"%s\").Mesh.Points\n",
+                  doc->getName(), mesh.c_str());
+        doCommand(Doc,
+                  "Part.show(Part.makeCompound([Part.Point(m.Vector).toShape() for m in "
+                  "mesh_pts]),\"%s\")\n",
+                  (mesh + "_pts").c_str());
+        doCommand(Doc, "del mesh_pts\n");
     }
 
     commitCommand();
@@ -174,55 +169,51 @@ bool CmdPartPointsFromMesh::isActive()
 //===========================================================================
 DEF_STD_CMD_A(CmdPartSimpleCopy)
 
-CmdPartSimpleCopy::CmdPartSimpleCopy()
-  : Command("Part_SimpleCopy")
+CmdPartSimpleCopy::CmdPartSimpleCopy() : Command("Part_SimpleCopy")
 {
-    sAppModule    = "Part";
-    sGroup        = QT_TR_NOOP("Part");
-    sMenuText     = QT_TR_NOOP("Create simple copy");
-    sToolTipText  = QT_TR_NOOP("Create a simple non-parametric copy");
-    sWhatsThis    = "Part_SimpleCopy";
-    sStatusTip    = sToolTipText;
-    sPixmap       = "Part_3D_object";
+    sAppModule = "Part";
+    sGroup = QT_TR_NOOP("Part");
+    sMenuText = QT_TR_NOOP("Create simple copy");
+    sToolTipText = QT_TR_NOOP("Create a simple non-parametric copy");
+    sWhatsThis = "Part_SimpleCopy";
+    sStatusTip = sToolTipText;
+    sPixmap = "Part_3D_object";
 }
 
-static void _copyShape(const char *cmdName, bool resolve,bool needElement=false, bool refine=false) {
+static void _copyShape(const char *cmdName, bool resolve, bool needElement = false,
+                       bool refine = false)
+{
     Gui::WaitCursor wc;
     Gui::Command::openCommand(cmdName);
-    for(auto &sel : Gui::Selection().getSelectionEx("*", App::DocumentObject::getClassTypeId(),
-                                                    resolve ? Gui::ResolveMode::OldStyleElement : Gui::ResolveMode::NoResolve)) {
-        std::map<std::string,App::DocumentObject*> subMap;
+    for (auto &sel : Gui::Selection().getSelectionEx("*", App::DocumentObject::getClassTypeId(),
+                                                     resolve ? Gui::ResolveMode::OldStyleElement
+                                                             : Gui::ResolveMode::NoResolve)) {
+        std::map<std::string, App::DocumentObject *> subMap;
         auto obj = sel.getObject();
-        if (!obj)
-            continue;
-        if (resolve || !sel.hasSubNames()) {
-            subMap.emplace("",obj);
-        }
+        if (!obj) continue;
+        if (resolve || !sel.hasSubNames()) { subMap.emplace("", obj); }
         else {
-            for(const auto &sub : sel.getSubNames()) {
+            for (const auto &sub : sel.getSubNames()) {
                 const char *element = nullptr;
-                auto sobj = obj->resolve(sub.c_str(),nullptr,nullptr,&element);
-                if(!sobj) continue;
-                if(!needElement && element) 
-                    subMap.emplace(sub.substr(0,element-sub.c_str()),sobj);
+                auto sobj = obj->resolve(sub.c_str(), nullptr, nullptr, &element);
+                if (!sobj) continue;
+                if (!needElement && element)
+                    subMap.emplace(sub.substr(0, element - sub.c_str()), sobj);
                 else
-                    subMap.emplace(sub,sobj);
+                    subMap.emplace(sub, sobj);
             }
-            if(subMap.empty())
-                continue;
+            if (subMap.empty()) continue;
         }
         auto parentName = Gui::Command::getObjectCmd(obj);
-        for(auto &v : subMap) {
-            Gui::Command::doCommand(Gui::Command::Doc,
-                    "__shape = Part.getShape(%s,'%s',needSubElement=%s,refine=%s)%s\n"
-                    "App.ActiveDocument.addObject('Part::Feature','%s').Shape=__shape\n"
-                    "App.ActiveDocument.ActiveObject.Label=%s.Label\n",
-                        parentName.c_str(), v.first.c_str(),
-                        needElement ? "True" : "False",
-                        refine ? "True" : "False",
-                        needElement ? ".copy()" : "",
-                        v.second->getNameInDocument(), 
-                        Gui::Command::getObjectCmd(v.second).c_str());
+        for (auto &v : subMap) {
+            Gui::Command::doCommand(
+                Gui::Command::Doc,
+                "__shape = Part.getShape(%s,'%s',needSubElement=%s,refine=%s)%s\n"
+                "App.ActiveDocument.addObject('Part::Feature','%s').Shape=__shape\n"
+                "App.ActiveDocument.ActiveObject.Label=%s.Label\n",
+                parentName.c_str(), v.first.c_str(), needElement ? "True" : "False",
+                refine ? "True" : "False", needElement ? ".copy()" : "",
+                v.second->getNameInDocument(), Gui::Command::getObjectCmd(v.second).c_str());
             auto newObj = App::GetApplication().getActiveDocument()->getActiveObject();
             Gui::Command::copyVisual(newObj, "ShapeColor", v.second);
             Gui::Command::copyVisual(newObj, "LineColor", v.second);
@@ -236,114 +227,102 @@ static void _copyShape(const char *cmdName, bool resolve,bool needElement=false,
 void CmdPartSimpleCopy::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    _copyShape("Simple copy",true);
+    _copyShape("Simple copy", true);
 }
 
-bool CmdPartSimpleCopy::isActive()
-{
-    return Gui::Selection().hasSelection();
-}
+bool CmdPartSimpleCopy::isActive() { return Gui::Selection().hasSelection(); }
 
 //===========================================================================
 // Part_TransformedCopy
 //===========================================================================
 DEF_STD_CMD_A(CmdPartTransformedCopy)
 
-CmdPartTransformedCopy::CmdPartTransformedCopy()
-  : Command("Part_TransformedCopy")
+CmdPartTransformedCopy::CmdPartTransformedCopy() : Command("Part_TransformedCopy")
 {
-    sAppModule    = "Part";
-    sGroup        = QT_TR_NOOP("Part");
-    sMenuText     = QT_TR_NOOP("Create transformed copy");
-    sToolTipText  = QT_TR_NOOP("Create a non-parametric copy with transformed placement");
-    sWhatsThis    = "Part_TransformCopy";
-    sStatusTip    = sToolTipText;
-    sPixmap       = "Part_Transformed_Copy.svg";
+    sAppModule = "Part";
+    sGroup = QT_TR_NOOP("Part");
+    sMenuText = QT_TR_NOOP("Create transformed copy");
+    sToolTipText = QT_TR_NOOP("Create a non-parametric copy with transformed placement");
+    sWhatsThis = "Part_TransformCopy";
+    sStatusTip = sToolTipText;
+    sPixmap = "Part_Transformed_Copy.svg";
 }
 
 void CmdPartTransformedCopy::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    _copyShape("Transformed copy",false);
+    _copyShape("Transformed copy", false);
 }
 
-bool CmdPartTransformedCopy::isActive()
-{
-    return Gui::Selection().hasSelection();
-}
+bool CmdPartTransformedCopy::isActive() { return Gui::Selection().hasSelection(); }
 
 //===========================================================================
 // Part_ElementCopy
 //===========================================================================
 DEF_STD_CMD_A(CmdPartElementCopy)
 
-CmdPartElementCopy::CmdPartElementCopy()
-  : Command("Part_ElementCopy")
+CmdPartElementCopy::CmdPartElementCopy() : Command("Part_ElementCopy")
 {
-    sAppModule    = "Part";
-    sGroup        = QT_TR_NOOP("Part");
-    sMenuText     = QT_TR_NOOP("Create shape element copy");
-    sToolTipText  = QT_TR_NOOP("Create a non-parametric copy of the selected shape element");
-    sWhatsThis    = "Part_ElementCopy";
-    sStatusTip    = sToolTipText;
-    sPixmap       = "Part_Element_Copy.svg";
+    sAppModule = "Part";
+    sGroup = QT_TR_NOOP("Part");
+    sMenuText = QT_TR_NOOP("Create shape element copy");
+    sToolTipText = QT_TR_NOOP("Create a non-parametric copy of the selected shape element");
+    sWhatsThis = "Part_ElementCopy";
+    sStatusTip = sToolTipText;
+    sPixmap = "Part_Element_Copy.svg";
 }
 
 void CmdPartElementCopy::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    _copyShape("Element copy",false,true);
+    _copyShape("Element copy", false, true);
 }
 
-bool CmdPartElementCopy::isActive()
-{
-    return Gui::Selection().hasSelection();
-}
+bool CmdPartElementCopy::isActive() { return Gui::Selection().hasSelection(); }
 
 //===========================================================================
 // Part_RefineShape
 //===========================================================================
 DEF_STD_CMD_A(CmdPartRefineShape)
 
-CmdPartRefineShape::CmdPartRefineShape()
-  : Command("Part_RefineShape")
+CmdPartRefineShape::CmdPartRefineShape() : Command("Part_RefineShape")
 {
-    sAppModule    = "Part";
-    sGroup        = QT_TR_NOOP("Part");
-    sMenuText     = QT_TR_NOOP("Refine shape");
-    sToolTipText  = QT_TR_NOOP("Refine the copy of a shape");
-    sWhatsThis    = "Part_RefineShape";
-    sStatusTip    = sToolTipText;
-    sPixmap       = "Part_Refine_Shape";
+    sAppModule = "Part";
+    sGroup = QT_TR_NOOP("Part");
+    sMenuText = QT_TR_NOOP("Refine shape");
+    sToolTipText = QT_TR_NOOP("Refine the copy of a shape");
+    sWhatsThis = "Part_RefineShape";
+    sStatusTip = sToolTipText;
+    sPixmap = "Part_Refine_Shape";
 }
 
 void CmdPartRefineShape::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Part");
+    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Mod/Part");
     bool parametric = hGrp->GetBool("ParametricRefine", true);
     if (parametric) {
         Gui::WaitCursor wc;
         Base::Type partid = Base::Type::fromName("Part::Feature");
-        std::vector<App::DocumentObject*> objs = Gui::Selection().getObjectsOfType(partid);
+        std::vector<App::DocumentObject *> objs = Gui::Selection().getObjectsOfType(partid);
         openCommand(QT_TRANSLATE_NOOP("Command", "Refine shape"));
-        std::for_each(objs.begin(), objs.end(), [](App::DocumentObject* obj) {
+        std::for_each(objs.begin(), objs.end(), [](App::DocumentObject *obj) {
             try {
-                doCommand(Doc,"App.ActiveDocument.addObject('Part::Refine','%s').Source="
-                              "App.ActiveDocument.%s\n"
-                              "App.ActiveDocument.ActiveObject.Label="
-                              "App.ActiveDocument.%s.Label\n"
-                              "Gui.ActiveDocument.%s.hide()\n",
-                              obj->getNameInDocument(),
-                              obj->getNameInDocument(),
-                              obj->getNameInDocument(),
-                              obj->getNameInDocument());
+                doCommand(Doc,
+                          "App.ActiveDocument.addObject('Part::Refine','%s').Source="
+                          "App.ActiveDocument.%s\n"
+                          "App.ActiveDocument.ActiveObject.Label="
+                          "App.ActiveDocument.%s.Label\n"
+                          "Gui.ActiveDocument.%s.hide()\n",
+                          obj->getNameInDocument(), obj->getNameInDocument(),
+                          obj->getNameInDocument(), obj->getNameInDocument());
 
                 copyVisual("ActiveObject", "ShapeColor", obj->getNameInDocument());
                 copyVisual("ActiveObject", "LineColor", obj->getNameInDocument());
                 copyVisual("ActiveObject", "PointColor", obj->getNameInDocument());
             }
-            catch (const Base::Exception& e) {
+            catch (const Base::Exception &e) {
                 Base::Console().Warning("%s: %s\n", obj->Label.getValue(), e.what());
             }
         });
@@ -351,30 +330,26 @@ void CmdPartRefineShape::activated(int iMsg)
         updateActive();
     }
     else {
-        _copyShape("Refined copy",true,false,true);
+        _copyShape("Refined copy", true, false, true);
     }
 }
 
-bool CmdPartRefineShape::isActive()
-{
-    return Gui::Selection().hasSelection();
-}
+bool CmdPartRefineShape::isActive() { return Gui::Selection().hasSelection(); }
 
 //===========================================================================
 // Part_Defeaturing
 //===========================================================================
 DEF_STD_CMD_A(CmdPartDefeaturing)
 
-CmdPartDefeaturing::CmdPartDefeaturing()
-  : Command("Part_Defeaturing")
+CmdPartDefeaturing::CmdPartDefeaturing() : Command("Part_Defeaturing")
 {
-    sAppModule    = "Part";
-    sGroup        = QT_TR_NOOP("Part");
-    sMenuText     = QT_TR_NOOP("Defeaturing");
-    sToolTipText  = QT_TR_NOOP("Remove feature from a shape");
-    sWhatsThis    = "Part_Defeaturing";
-    sStatusTip    = sToolTipText;
-    sPixmap       = "Part_Defeaturing";
+    sAppModule = "Part";
+    sGroup = QT_TR_NOOP("Part");
+    sMenuText = QT_TR_NOOP("Defeaturing");
+    sToolTipText = QT_TR_NOOP("Remove feature from a shape");
+    sWhatsThis = "Part_Defeaturing";
+    sStatusTip = sToolTipText;
+    sPixmap = "Part_Defeaturing";
 }
 
 void CmdPartDefeaturing::activated(int iMsg)
@@ -395,25 +370,25 @@ void CmdPartDefeaturing::activated(int iMsg)
 
             std::string faces;
             std::vector<std::string> subnames = it->getSubNames();
-            for (std::vector<std::string>::iterator sub = subnames.begin(); sub != subnames.end(); ++sub) {
+            for (std::vector<std::string>::iterator sub = subnames.begin(); sub != subnames.end();
+                 ++sub) {
                 faces.append("sh.");
                 faces.append(*sub);
                 faces.append(",");
             }
 
-            doCommand(Doc,"\nsh = App.getDocument('%s').%s.Shape\n"
-                          "nsh = sh.defeaturing([%s])\n"
-                          "if not sh.isPartner(nsh):\n"
-                          "\t\tdefeat = App.ActiveDocument.addObject('Part::Feature','Defeatured').Shape = nsh\n"
-                          "\t\tGui.ActiveDocument.%s.hide()\n"
-                          "else:\n"
-                          "\t\tFreeCAD.Console.PrintError('Defeaturing failed\\n')",
-                          it->getDocName(),
-                          it->getFeatName(),
-                          faces.c_str(),
-                          it->getFeatName());
+            doCommand(Doc,
+                      "\nsh = App.getDocument('%s').%s.Shape\n"
+                      "nsh = sh.defeaturing([%s])\n"
+                      "if not sh.isPartner(nsh):\n"
+                      "\t\tdefeat = "
+                      "App.ActiveDocument.addObject('Part::Feature','Defeatured').Shape = nsh\n"
+                      "\t\tGui.ActiveDocument.%s.hide()\n"
+                      "else:\n"
+                      "\t\tFreeCAD.Console.PrintError('Defeaturing failed\\n')",
+                      it->getDocName(), it->getFeatName(), faces.c_str(), it->getFeatName());
         }
-        catch (const Base::Exception& e) {
+        catch (const Base::Exception &e) {
             Base::Console().Warning("%s: %s\n", it->getFeatName(), e.what());
         }
     }
@@ -427,10 +402,9 @@ bool CmdPartDefeaturing::isActive()
     std::vector<Gui::SelectionObject> objs = Gui::Selection().getSelectionEx(nullptr, partid);
     for (std::vector<Gui::SelectionObject>::iterator it = objs.begin(); it != objs.end(); ++it) {
         std::vector<std::string> subnames = it->getSubNames();
-        for (std::vector<std::string>::iterator sub = subnames.begin(); sub != subnames.end(); ++sub) {
-            if (sub->substr(0,4) == "Face") {
-                return true;
-            }
+        for (std::vector<std::string>::iterator sub = subnames.begin(); sub != subnames.end();
+             ++sub) {
+            if (sub->substr(0, 4) == "Face") { return true; }
         }
     }
     return false;

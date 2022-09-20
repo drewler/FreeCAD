@@ -43,7 +43,7 @@ namespace TechDraw
 class GeometryObject;
 class Vertex;
 class BaseGeom;
-}
+} // namespace TechDraw
 
 namespace TechDraw
 {
@@ -60,11 +60,12 @@ struct splitPoint {
 class edgeSortItem
 {
 public:
-    edgeSortItem() {
+    edgeSortItem()
+    {
         startAngle = endAngle = 0.0;
         idx = 0;
     }
-    ~edgeSortItem()  = default;
+    ~edgeSortItem() = default;
 
     Base::Vector3d start;
     Base::Vector3d end;
@@ -72,16 +73,18 @@ public:
     double endAngle;
     unsigned int idx;
 
-    static bool edgeLess(const edgeSortItem& e1, const edgeSortItem& e2);
-    static bool edgeEqual(const edgeSortItem& e1, const edgeSortItem& e2);
+    static bool edgeLess(const edgeSortItem &e1, const edgeSortItem &e2);
+    static bool edgeEqual(const edgeSortItem &e1, const edgeSortItem &e2);
     std::string dump();
 };
 
 using vertexMap = std::map<Base::Vector3d, int, DrawUtil::vectorLessType>;
 
-class edgeVectorEntry {
+class edgeVectorEntry
+{
 public:
-    edgeVectorEntry(TopoDS_Edge e, bool flag) {
+    edgeVectorEntry(TopoDS_Edge e, bool flag)
+    {
         edge = e;
         validFlag = flag;
     }
@@ -98,51 +101,49 @@ public:
     ~DrawProjectSplit();
 
 public:
-    static std::vector<TopoDS_Edge> getEdgesForWalker(TopoDS_Shape shape, double scale, Base::Vector3d direction);
-    static TechDraw::GeometryObject*  buildGeometryObject(TopoDS_Shape shape, const gp_Ax2& viewAxis);
+    static std::vector<TopoDS_Edge> getEdgesForWalker(TopoDS_Shape shape, double scale,
+                                                      Base::Vector3d direction);
+    static TechDraw::GeometryObject *buildGeometryObject(TopoDS_Shape shape,
+                                                         const gp_Ax2 &viewAxis);
 
-    static bool isOnEdge(TopoDS_Edge e, TopoDS_Vertex v, double& param, bool allowEnds = false);
-    static std::vector<TopoDS_Edge> splitEdges(std::vector<TopoDS_Edge> orig, std::vector<splitPoint> splits);
+    static bool isOnEdge(TopoDS_Edge e, TopoDS_Vertex v, double &param, bool allowEnds = false);
+    static std::vector<TopoDS_Edge> splitEdges(std::vector<TopoDS_Edge> orig,
+                                               std::vector<splitPoint> splits);
     static std::vector<TopoDS_Edge> split1Edge(TopoDS_Edge e, std::vector<splitPoint> splitPoints);
 
-    static std::vector<splitPoint> sortSplits(std::vector<splitPoint>& s, bool ascend);
-    static bool splitCompare(const splitPoint& p1, const splitPoint& p2);
-    static bool splitEqual(const splitPoint& p1, const splitPoint& p2);
-    static std::vector<TopoDS_Edge> removeDuplicateEdges(std::vector<TopoDS_Edge>& inEdges);
-    static std::vector<edgeSortItem> sortEdges(std::vector<edgeSortItem>& e, bool ascend);
+    static std::vector<splitPoint> sortSplits(std::vector<splitPoint> &s, bool ascend);
+    static bool splitCompare(const splitPoint &p1, const splitPoint &p2);
+    static bool splitEqual(const splitPoint &p1, const splitPoint &p2);
+    static std::vector<TopoDS_Edge> removeDuplicateEdges(std::vector<TopoDS_Edge> &inEdges);
+    static std::vector<edgeSortItem> sortEdges(std::vector<edgeSortItem> &e, bool ascend);
 
 
     //routines for revised face finding approach
     static std::vector<TopoDS_Edge> scrubEdges(const std::vector<BaseGeomPtr> &origEdges,
-                                               std::vector<TopoDS_Edge>& closedEdges);
-    static std::vector<TopoDS_Edge> scrubEdges(std::vector<TopoDS_Edge>& origEdges,
-                                               std::vector<TopoDS_Edge>& closedEdges);
-    static vertexMap                getUniqueVertexes(std::vector<TopoDS_Edge> inEdges);
+                                               std::vector<TopoDS_Edge> &closedEdges);
+    static std::vector<TopoDS_Edge> scrubEdges(std::vector<TopoDS_Edge> &origEdges,
+                                               std::vector<TopoDS_Edge> &closedEdges);
+    static vertexMap getUniqueVertexes(std::vector<TopoDS_Edge> inEdges);
     static std::vector<TopoDS_Edge> pruneUnconnected(vertexMap verts,
                                                      std::vector<TopoDS_Edge> edges);
     static std::vector<TopoDS_Edge> removeOverlapEdges(std::vector<TopoDS_Edge> inEdges);
-    static std::vector<TopoDS_Edge> splitIntersectingEdges(std::vector<TopoDS_Edge>& inEdges);
+    static std::vector<TopoDS_Edge> splitIntersectingEdges(std::vector<TopoDS_Edge> &inEdges);
 
-    static bool                     sameEndPoints(TopoDS_Edge& e1,
-                                                  TopoDS_Edge& e2);
-    static int                      isSubset(TopoDS_Edge &e0,
-                                             TopoDS_Edge &e1);
-    static std::vector<TopoDS_Edge> fuseEdges(TopoDS_Edge& e0,
-                                              TopoDS_Edge& e1);
-    static bool                     boxesIntersect(TopoDS_Edge& e0,
-                                                   TopoDS_Edge& e1);
+    static bool sameEndPoints(TopoDS_Edge &e1, TopoDS_Edge &e2);
+    static int isSubset(TopoDS_Edge &e0, TopoDS_Edge &e1);
+    static std::vector<TopoDS_Edge> fuseEdges(TopoDS_Edge &e0, TopoDS_Edge &e1);
+    static bool boxesIntersect(TopoDS_Edge &e0, TopoDS_Edge &e1);
     static void dumpVertexMap(vertexMap verts);
 
 protected:
-    static std::vector<TopoDS_Edge> getEdges(TechDraw::GeometryObject* geometryObject);
+    static std::vector<TopoDS_Edge> getEdges(TechDraw::GeometryObject *geometryObject);
 
 
 private:
-
 };
 
 using DrawProjectSplitPython = App::FeaturePythonT<DrawProjectSplit>;
 
 } //namespace TechDraw
 
-#endif  // #ifndef DrawProjectSplit_h_
+#endif // #ifndef DrawProjectSplit_h_

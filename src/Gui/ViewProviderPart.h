@@ -28,10 +28,11 @@
 #include "ViewProviderPythonFeature.h"
 
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport ViewProviderPart : public ViewProviderDragger,
-                                   public ViewProviderOriginGroupExtension
+class GuiExport ViewProviderPart: public ViewProviderDragger,
+                                  public ViewProviderOriginGroupExtension
 {
     PROPERTY_HEADER_WITH_EXTENSIONS(Gui::ViewProviderPart);
 
@@ -42,18 +43,17 @@ public:
     ~ViewProviderPart() override;
 
     bool doubleClicked() override;
-    void setupContextMenu(QMenu* menu, QObject* receiver, const char* member) override;
-    
+    void setupContextMenu(QMenu *menu, QObject *receiver, const char *member) override;
+
     /// deliver the icon shown in the tree view
     /// override from ViewProvider.h
     QIcon getIcon() const override;
 
 protected:
     /// get called by the container whenever a property has been changed
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     /// a second icon for the Assembly type
-    const char* aPixmap;
-
+    const char *aPixmap;
 };
 
 using ViewProviderPartPython = ViewProviderPythonFeatureT<ViewProviderPart>;
@@ -61,4 +61,3 @@ using ViewProviderPartPython = ViewProviderPythonFeatureT<ViewProviderPart>;
 } // namespace Gui
 
 #endif // GUI_VIEWPROVIDER_ViewProviderPart_H
-

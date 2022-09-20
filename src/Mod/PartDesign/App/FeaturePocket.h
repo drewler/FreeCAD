@@ -29,7 +29,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Pocket : public FeatureExtrude
+class PartDesignExport Pocket: public FeatureExtrude
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Pocket);
 
@@ -50,12 +50,10 @@ public:
       */
     App::DocumentObjectExecReturn *execute() override;
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
-        return "PartDesignGui::ViewProviderPocket";
-    }
+    const char *getViewProviderName() const override { return "PartDesignGui::ViewProviderPocket"; }
     //@}
 private:
-    static const char* TypeEnums[];
+    static const char *TypeEnums[];
 };
 
 } //namespace PartDesign

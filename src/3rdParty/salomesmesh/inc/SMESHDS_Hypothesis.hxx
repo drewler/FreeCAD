@@ -35,27 +35,34 @@
 
 class SMESHDS_EXPORT SMESHDS_Hypothesis
 {
- public:
-  SMESHDS_Hypothesis(int hypId);
-  virtual ~SMESHDS_Hypothesis();
+public:
+    SMESHDS_Hypothesis(int hypId);
+    virtual ~SMESHDS_Hypothesis();
 
-  enum hypothesis_type { PARAM_ALGO, ALGO_0D, ALGO_1D, ALGO_2D, ALGO_3D };
+    enum hypothesis_type
+    {
+        PARAM_ALGO,
+        ALGO_0D,
+        ALGO_1D,
+        ALGO_2D,
+        ALGO_3D
+    };
 
-  const char* GetName() const;
-  int         GetID()   const;
-  int         GetType() const;
+    const char *GetName() const;
+    int GetID() const;
+    int GetType() const;
 
-  virtual std::ostream & SaveTo(std::ostream & save)=0;
-  virtual std::istream & LoadFrom(std::istream & load)=0;
+    virtual std::ostream &SaveTo(std::ostream &save) = 0;
+    virtual std::istream &LoadFrom(std::istream &load) = 0;
 
-  bool IsSameName( const SMESHDS_Hypothesis& other) const;
-  virtual bool operator==(const SMESHDS_Hypothesis& other) const;
-  bool operator!=(const SMESHDS_Hypothesis& other) const { return !(*this==other); }
+    bool IsSameName(const SMESHDS_Hypothesis &other) const;
+    virtual bool operator==(const SMESHDS_Hypothesis &other) const;
+    bool operator!=(const SMESHDS_Hypothesis &other) const { return !(*this == other); }
 
- protected:
-  std::string     _name;  // identifier of hypothesis type
-  int             _hypId; // ID unique within application session
-  hypothesis_type _type;  // enum hypothesis_type
+protected:
+    std::string _name;     // identifier of hypothesis type
+    int _hypId;            // ID unique within application session
+    hypothesis_type _type; // enum hypothesis_type
 };
 
 #endif

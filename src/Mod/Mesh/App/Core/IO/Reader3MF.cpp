@@ -23,25 +23,25 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <memory>
-# include <ostream>
-# include <sstream>
-# include <boost/lexical_cast.hpp>
-# include <boost/tokenizer.hpp>
-# include <xercesc/util/PlatformUtils.hpp>
-# include <xercesc/util/XercesVersion.hpp>
-# include <xercesc/dom/DOM.hpp>
-# include <xercesc/dom/DOMImplementation.hpp>
-# include <xercesc/dom/DOMImplementationLS.hpp>
-# include <xercesc/framework/StdOutFormatTarget.hpp>
-# include <xercesc/framework/LocalFileFormatTarget.hpp>
-# include <xercesc/framework/LocalFileInputSource.hpp>
-# include <xercesc/parsers/XercesDOMParser.hpp>
-# include <xercesc/util/XMLUni.hpp>
-# include <xercesc/util/XMLUniDefs.hpp>
-# include <xercesc/util/XMLString.hpp>
-# include <xercesc/sax/ErrorHandler.hpp>
-# include <xercesc/sax/SAXParseException.hpp>
+#include <memory>
+#include <ostream>
+#include <sstream>
+#include <boost/lexical_cast.hpp>
+#include <boost/tokenizer.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XercesVersion.hpp>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/dom/DOMImplementation.hpp>
+#include <xercesc/dom/DOMImplementationLS.hpp>
+#include <xercesc/framework/StdOutFormatTarget.hpp>
+#include <xercesc/framework/LocalFileFormatTarget.hpp>
+#include <xercesc/framework/LocalFileInputSource.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/util/XMLUni.hpp>
+#include <xercesc/util/XMLUniDefs.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/sax/ErrorHandler.hpp>
+#include <xercesc/sax/SAXParseException.hpp>
 #endif
 
 
@@ -60,26 +60,20 @@ XERCES_CPP_NAMESPACE_USE
 Reader3MF::Reader3MF(std::istream &str)
 {
     zipios::ZipHeader zipHeader(str);
-    if (zipHeader.isValid()) {
-        zip.reset(zipHeader.getInputStream("3D/3dmodel.model"));
-    }
+    if (zipHeader.isValid()) { zip.reset(zipHeader.getInputStream("3D/3dmodel.model")); }
 }
 
 Reader3MF::Reader3MF(const std::string &filename)
 {
     zipios::ZipFile zipFile(filename);
-    if (zipFile.isValid()) {
-        zip.reset(zipFile.getInputStream("3D/3dmodel.model"));
-    }
+    if (zipFile.isValid()) { zip.reset(zipFile.getInputStream("3D/3dmodel.model")); }
 }
 
 std::vector<int> Reader3MF::GetMeshIds() const
 {
     std::vector<int> ids;
     ids.reserve(meshes.size());
-    for (const auto& it : meshes) {
-        ids.emplace_back(it.first);
-    }
+    for (const auto &it : meshes) { ids.emplace_back(it.first); }
 
     return ids;
 }
@@ -87,16 +81,15 @@ std::vector<int> Reader3MF::GetMeshIds() const
 bool Reader3MF::Load()
 {
     try {
-        if (!zip)
-            return false;
+        if (!zip) return false;
         return LoadModel(*zip);
     }
-    catch (const std::exception&) {
+    catch (const std::exception &) {
         return false;
     }
 }
 
-bool Reader3MF::LoadModel(std::istream& str)
+bool Reader3MF::LoadModel(std::istream &str)
 {
     try {
         std::unique_ptr<XercesDOMParser> parser(new XercesDOMParser);
@@ -111,22 +104,24 @@ bool Reader3MF::LoadModel(std::istream& str)
         std::unique_ptr<DOMDocument> xmlDocument(parser->adoptDocument());
         return LoadModel(*xmlDocument);
     }
-    catch (const XMLException&) {
+    catch (const XMLException &) {
         return false;
     }
-    catch (const DOMException&) {
+    catch (const DOMException &) {
         return false;
     }
 }
 
-bool Reader3MF::LoadModel(DOMDocument& xmlDocument)
+bool Reader3MF::LoadModel(DOMDocument &xmlDocument)
 {
     DOMNodeList *nodes = xmlDocument.getElementsByTagName(XStr("model").unicodeForm());
     for (XMLSize_t i = 0; i < nodes->getLength(); i++) {
-        DOMNode* node = nodes->item(i);
+        DOMNode *node = nodes->item(i);
         if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
-            bool resource = LoadResources(static_cast<DOMElement*>(node)->getElementsByTagName(XStr("resources").unicodeForm()));
-            bool build = LoadBuild(static_cast<DOMElement*>(node)->getElementsByTagName(XStr("build").unicodeForm()));
+            bool resource = LoadResources(static_cast<DOMElement *>(node)->getElementsByTagName(
+                XStr("resources").unicodeForm()));
+            bool build = LoadBuild(
+                static_cast<DOMElement *>(node)->getElementsByTagName(XStr("build").unicodeForm()));
             return (resource && build);
         }
     }
@@ -134,15 +129,15 @@ bool Reader3MF::LoadModel(DOMDocument& xmlDocument)
     return false;
 }
 
-bool Reader3MF::LoadResources(DOMNodeList* nodes)
+bool Reader3MF::LoadResources(DOMNodeList *nodes)
 {
-    if (!nodes)
-        return false;
+    if (!nodes) return false;
 
     for (XMLSize_t i = 0; i < nodes->getLength(); i++) {
-        DOMNode* node = nodes->item(i);
+        DOMNode *node = nodes->item(i);
         if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
-            DOMNodeList *objectList = static_cast<DOMElement*>(node)->getElementsByTagName(XStr("object").unicodeForm());
+            DOMNodeList *objectList =
+                static_cast<DOMElement *>(node)->getElementsByTagName(XStr("object").unicodeForm());
             return LoadObjects(objectList);
         }
     }
@@ -150,15 +145,15 @@ bool Reader3MF::LoadResources(DOMNodeList* nodes)
     return false;
 }
 
-bool Reader3MF::LoadBuild(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes)
+bool Reader3MF::LoadBuild(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *nodes)
 {
-    if (!nodes)
-        return false;
+    if (!nodes) return false;
 
     for (XMLSize_t i = 0; i < nodes->getLength(); i++) {
-        DOMNode* node = nodes->item(i);
+        DOMNode *node = nodes->item(i);
         if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
-            DOMNodeList *objectList = static_cast<DOMElement*>(node)->getElementsByTagName(XStr("item").unicodeForm());
+            DOMNodeList *objectList =
+                static_cast<DOMElement *>(node)->getElementsByTagName(XStr("item").unicodeForm());
             return LoadItems(objectList);
         }
     }
@@ -166,25 +161,25 @@ bool Reader3MF::LoadBuild(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes)
     return false;
 }
 
-bool Reader3MF::LoadItems(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes)
+bool Reader3MF::LoadItems(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *nodes)
 {
     const std::size_t numEntries = 12;
-    if (!nodes)
-        return false;
+    if (!nodes) return false;
 
     for (XMLSize_t i = 0; i < nodes->getLength(); i++) {
-        DOMNode* itemNode = nodes->item(i);
-        DOMNode* idAttr = itemNode->getAttributes()->getNamedItem(XStr("objectid").unicodeForm());
+        DOMNode *itemNode = nodes->item(i);
+        DOMNode *idAttr = itemNode->getAttributes()->getNamedItem(XStr("objectid").unicodeForm());
         if (idAttr) {
             std::string id = StrX(idAttr->getNodeValue()).c_str();
             int idValue = std::stoi(id);
             Base::Matrix4D mat;
 
-            DOMNode* transformAttr = itemNode->getAttributes()->getNamedItem(XStr("transform").unicodeForm());
+            DOMNode *transformAttr =
+                itemNode->getAttributes()->getNamedItem(XStr("transform").unicodeForm());
             if (transformAttr) {
                 std::string transform = StrX(transformAttr->getNodeValue()).c_str();
                 boost::char_separator<char> sep(" ,");
-                boost::tokenizer<boost::char_separator<char> > tokens(transform, sep);
+                boost::tokenizer<boost::char_separator<char>> tokens(transform, sep);
                 std::vector<std::string> token_results;
                 token_results.assign(tokens.begin(), tokens.end());
                 if (token_results.size() == numEntries) {
@@ -204,7 +199,7 @@ bool Reader3MF::LoadItems(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes)
                     try {
                         meshes.at(idValue).second = mat;
                     }
-                    catch (const std::exception&) {
+                    catch (const std::exception &) {
                     }
                 }
             }
@@ -214,18 +209,18 @@ bool Reader3MF::LoadItems(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes)
     return true;
 }
 
-bool Reader3MF::LoadObjects(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes)
+bool Reader3MF::LoadObjects(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *nodes)
 {
-    if (!nodes)
-        return false;
+    if (!nodes) return false;
 
     for (XMLSize_t i = 0; i < nodes->getLength(); i++) {
-        DOMNode* objectNode = nodes->item(i);
+        DOMNode *objectNode = nodes->item(i);
         if (objectNode->getNodeType() == DOMNode::ELEMENT_NODE) {
-            DOMNode* idAttr = objectNode->getAttributes()->getNamedItem(XStr("id").unicodeForm());
+            DOMNode *idAttr = objectNode->getAttributes()->getNamedItem(XStr("id").unicodeForm());
             if (idAttr) {
                 int id = std::stoi(StrX(idAttr->getNodeValue()).c_str());
-                DOMNodeList *meshList = static_cast<DOMElement*>(objectNode)->getElementsByTagName(XStr("mesh").unicodeForm());
+                DOMNodeList *meshList = static_cast<DOMElement *>(objectNode)
+                                            ->getElementsByTagName(XStr("mesh").unicodeForm());
                 LoadMesh(meshList, id);
             }
         }
@@ -234,18 +229,21 @@ bool Reader3MF::LoadObjects(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes)
     return (!meshes.empty());
 }
 
-void Reader3MF::LoadMesh(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes, int id)
+void Reader3MF::LoadMesh(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *nodes, int id)
 {
-    if (!nodes)
-        return;
+    if (!nodes) return;
 
     for (XMLSize_t i = 0; i < nodes->getLength(); i++) {
-        DOMNode* node = nodes->item(i);
+        DOMNode *node = nodes->item(i);
         if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
             MeshPointArray points;
             MeshFacetArray facets;
-            LoadVertices(static_cast<DOMElement*>(node)->getElementsByTagName(XStr("vertices").unicodeForm()), points);
-            LoadTriangles(static_cast<DOMElement*>(node)->getElementsByTagName(XStr("triangles").unicodeForm()), facets);
+            LoadVertices(static_cast<DOMElement *>(node)->getElementsByTagName(
+                             XStr("vertices").unicodeForm()),
+                         points);
+            LoadTriangles(static_cast<DOMElement *>(node)->getElementsByTagName(
+                              XStr("triangles").unicodeForm()),
+                          facets);
 
             MeshCleanup meshCleanup(points, facets);
             meshCleanup.RemoveInvalids();
@@ -259,25 +257,26 @@ void Reader3MF::LoadMesh(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes, int 
     }
 }
 
-void Reader3MF::LoadVertices(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes, MeshPointArray& points)
+void Reader3MF::LoadVertices(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *nodes,
+                             MeshPointArray &points)
 {
-    if (!nodes)
-        return;
+    if (!nodes) return;
 
     for (XMLSize_t i = 0; i < nodes->getLength(); i++) {
-        DOMNode* node = nodes->item(i);
+        DOMNode *node = nodes->item(i);
         if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
-            DOMNodeList *vertexList = static_cast<DOMElement*>(node)->getElementsByTagName(XStr("vertex").unicodeForm());
+            DOMNodeList *vertexList =
+                static_cast<DOMElement *>(node)->getElementsByTagName(XStr("vertex").unicodeForm());
             if (vertexList) {
                 XMLSize_t numVertices = vertexList->getLength();
                 points.reserve(numVertices);
                 for (XMLSize_t j = 0; j < numVertices; j++) {
-                    DOMNode* vertexNode = vertexList->item(j);
-                    DOMNamedNodeMap* attr = vertexNode->getAttributes();
+                    DOMNode *vertexNode = vertexList->item(j);
+                    DOMNamedNodeMap *attr = vertexNode->getAttributes();
                     if (attr) {
-                        DOMNode* xAttr = attr->getNamedItem(XStr("x").unicodeForm());
-                        DOMNode* yAttr = attr->getNamedItem(XStr("y").unicodeForm());
-                        DOMNode* zAttr = attr->getNamedItem(XStr("z").unicodeForm());
+                        DOMNode *xAttr = attr->getNamedItem(XStr("x").unicodeForm());
+                        DOMNode *yAttr = attr->getNamedItem(XStr("y").unicodeForm());
+                        DOMNode *zAttr = attr->getNamedItem(XStr("z").unicodeForm());
                         if (xAttr && yAttr && zAttr) {
                             float x = std::stof(StrX(xAttr->getNodeValue()).c_str());
                             float y = std::stof(StrX(yAttr->getNodeValue()).c_str());
@@ -291,25 +290,26 @@ void Reader3MF::LoadVertices(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes, 
     }
 }
 
-void Reader3MF::LoadTriangles(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList* nodes, MeshFacetArray& facets)
+void Reader3MF::LoadTriangles(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *nodes,
+                              MeshFacetArray &facets)
 {
-    if (!nodes)
-        return;
+    if (!nodes) return;
 
     for (XMLSize_t i = 0; i < nodes->getLength(); i++) {
-        DOMNode* node = nodes->item(i);
+        DOMNode *node = nodes->item(i);
         if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
-            DOMNodeList *triangleList = static_cast<DOMElement*>(node)->getElementsByTagName(XStr("triangle").unicodeForm());
+            DOMNodeList *triangleList = static_cast<DOMElement *>(node)->getElementsByTagName(
+                XStr("triangle").unicodeForm());
             if (triangleList) {
                 XMLSize_t numTriangles = triangleList->getLength();
                 facets.reserve(numTriangles);
                 for (XMLSize_t j = 0; j < numTriangles; j++) {
-                    DOMNode* triangleNode = triangleList->item(j);
-                    DOMNamedNodeMap* attr = triangleNode->getAttributes();
+                    DOMNode *triangleNode = triangleList->item(j);
+                    DOMNamedNodeMap *attr = triangleNode->getAttributes();
                     if (attr) {
-                        DOMNode* v1Attr = attr->getNamedItem(XStr("v1").unicodeForm());
-                        DOMNode* v2Attr = attr->getNamedItem(XStr("v2").unicodeForm());
-                        DOMNode* v3Attr = attr->getNamedItem(XStr("v3").unicodeForm());
+                        DOMNode *v1Attr = attr->getNamedItem(XStr("v1").unicodeForm());
+                        DOMNode *v2Attr = attr->getNamedItem(XStr("v2").unicodeForm());
+                        DOMNode *v3Attr = attr->getNamedItem(XStr("v3").unicodeForm());
                         if (v1Attr && v2Attr && v3Attr) {
                             PointIndex v1 = std::stoul(StrX(v1Attr->getNodeValue()).c_str());
                             PointIndex v2 = std::stoul(StrX(v2Attr->getNodeValue()).c_str());

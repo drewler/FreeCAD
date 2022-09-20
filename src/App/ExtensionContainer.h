@@ -27,7 +27,8 @@
 #include "PropertyContainer.h"
 
 
-namespace App {
+namespace App
+{
 
 class Extension;
 /**
@@ -107,97 +108,99 @@ class Extension;
  *
  * For information on howto create extension see the documentation of Extension
  */
-class AppExport ExtensionContainer : public App::PropertyContainer
+class AppExport ExtensionContainer: public App::PropertyContainer
 {
 
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-
-    using ExtensionIterator = std::map<Base::Type, App::Extension*>::iterator;
+    using ExtensionIterator = std::map<Base::Type, App::Extension *>::iterator;
 
     ExtensionContainer();
     ~ExtensionContainer() override;
 
-    void registerExtension(Base::Type extension, App::Extension* ext);
-    bool hasExtension(Base::Type, bool derived=true) const; //returns first of type (or derived from if set to true) and throws otherwise
-    bool hasExtension(const std::string& name) const; //this version does not check derived classes
+    void registerExtension(Base::Type extension, App::Extension *ext);
+    bool hasExtension(Base::Type, bool derived = true)
+        const; //returns first of type (or derived from if set to true) and throws otherwise
+    bool hasExtension(const std::string &name) const; //this version does not check derived classes
     bool hasExtensions() const;
-    App::Extension* getExtension(Base::Type, bool derived = true, bool no_except=false) const;
-    App::Extension* getExtension(const std::string& name) const; //this version does not check derived classes
+    App::Extension *getExtension(Base::Type, bool derived = true, bool no_except = false) const;
+    App::Extension *
+    getExtension(const std::string &name) const; //this version does not check derived classes
 
     //returns first of type (or derived from) and throws otherwise
     template<typename ExtensionT>
-    ExtensionT* getExtensionByType(bool no_except=false, bool derived=true) const {
-        return static_cast<ExtensionT*>(getExtension(ExtensionT::getExtensionClassTypeId(),derived,no_except));
+    ExtensionT *getExtensionByType(bool no_except = false, bool derived = true) const
+    {
+        return static_cast<ExtensionT *>(
+            getExtension(ExtensionT::getExtensionClassTypeId(), derived, no_except));
     }
 
     //get all extensions which have the given base class
-    std::vector<Extension*> getExtensionsDerivedFrom(Base::Type type) const;
-    template<typename ExtensionT>
-    std::vector<ExtensionT*> getExtensionsDerivedFromType() const {
-        std::vector<ExtensionT*> typevec;
-        for(const auto& entry : _extensions) {
-            if(entry.first.isDerivedFrom(ExtensionT::getExtensionClassTypeId()))
-                typevec.push_back(static_cast<ExtensionT*>(entry.second));
+    std::vector<Extension *> getExtensionsDerivedFrom(Base::Type type) const;
+    template<typename ExtensionT> std::vector<ExtensionT *> getExtensionsDerivedFromType() const
+    {
+        std::vector<ExtensionT *> typevec;
+        for (const auto &entry : _extensions) {
+            if (entry.first.isDerivedFrom(ExtensionT::getExtensionClassTypeId()))
+                typevec.push_back(static_cast<ExtensionT *>(entry.second));
         }
         return typevec;
     }
 
-    ExtensionIterator extensionBegin() {return _extensions.begin();}
-    ExtensionIterator extensionEnd() {return _extensions.end();}
+    ExtensionIterator extensionBegin() { return _extensions.begin(); }
+    ExtensionIterator extensionEnd() { return _extensions.end(); }
 
 
     /** @name Access properties */
     //@{
     /// find a property by its name
-    Property *getPropertyByName(const char* name) const override;
+    Property *getPropertyByName(const char *name) const override;
     /// get the name of a property
-    const char* getPropertyName(const Property* prop) const override;
+    const char *getPropertyName(const Property *prop) const override;
     /// get all properties of the class (including properties of the parent)
-    void getPropertyMap(std::map<std::string,Property*> &Map) const override;
+    void getPropertyMap(std::map<std::string, Property *> &Map) const override;
     /// get all properties of the class (including properties of the parent)
-    void getPropertyList(std::vector<Property*> &List) const override;
+    void getPropertyList(std::vector<Property *> &List) const override;
 
     /// get the Type of a Property
-    short getPropertyType(const Property* prop) const override;
+    short getPropertyType(const Property *prop) const override;
     /// get the Type of a named Property
     short getPropertyType(const char *name) const override;
     /// get the Group of a Property
-    const char* getPropertyGroup(const Property* prop) const override;
+    const char *getPropertyGroup(const Property *prop) const override;
     /// get the Group of a named Property
-    const char* getPropertyGroup(const char *name) const override;
+    const char *getPropertyGroup(const char *name) const override;
     /// get the Group of a Property
-    const char* getPropertyDocumentation(const Property* prop) const override;
+    const char *getPropertyDocumentation(const Property *prop) const override;
     /// get the Group of a named Property
-    const char* getPropertyDocumentation(const char *name) const override;
+    const char *getPropertyDocumentation(const char *name) const override;
     //@}
 
-    void onChanged(const Property*) override;
+    void onChanged(const Property *) override;
 
-    void Save(Base::Writer& writer) const override;
-    void Restore(Base::XMLReader& reader) override;
+    void Save(Base::Writer &writer) const override;
+    void Restore(Base::XMLReader &reader) override;
 
     //those methods save/restore the dynamic extensions without handling properties, which is something
     //done by the default Save/Restore methods.
-    void saveExtensions(Base::Writer& writer) const;
-    void restoreExtensions(Base::XMLReader& reader);
+    void saveExtensions(Base::Writer &writer) const;
+    void restoreExtensions(Base::XMLReader &reader);
 
 private:
     //stored extensions
-    std::map<Base::Type, App::Extension*> _extensions;
+    std::map<Base::Type, App::Extension *> _extensions;
 };
 
-#define PROPERTY_HEADER_WITH_EXTENSIONS(_class_) \
-  PROPERTY_HEADER_WITH_OVERRIDE(_class)
+#define PROPERTY_HEADER_WITH_EXTENSIONS(_class_) PROPERTY_HEADER_WITH_OVERRIDE(_class)
 
 /// We make sure that the PropertyData of the container is not connected to the one of the extension
-#define PROPERTY_SOURCE_WITH_EXTENSIONS(_class_, _parentclass_) \
+#define PROPERTY_SOURCE_WITH_EXTENSIONS(_class_, _parentclass_)                                    \
     PROPERTY_SOURCE(_class_, _parentclass_)
 
-#define PROPERTY_SOURCE_ABSTRACT_WITH_EXTENSIONS(_class_, _parentclass_) \
+#define PROPERTY_SOURCE_ABSTRACT_WITH_EXTENSIONS(_class_, _parentclass_)                           \
     PROPERTY_SOURCE_ABSTRACT(_class_, _parentclass_)
 
-} //App
+} // namespace App
 
 #endif // APP_EXTENSIONCONTAINER_H

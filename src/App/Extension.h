@@ -27,98 +27,143 @@
 #include "PropertyContainer.h"
 #include <Base/SmartPtrPy.h>
 
-namespace App {
+namespace App
+{
 
 class ExtensionContainer;
 
 /// define Extension types
-#define EXTENSION_TYPESYSTEM_HEADER() \
-public: \
-  static Base::Type getExtensionClassTypeId(void); \
-  virtual Base::Type getExtensionTypeId(void) const; \
-  static void init(void);\
-  static void *create(void);\
-private: \
-  static Base::Type classTypeId
+#define EXTENSION_TYPESYSTEM_HEADER()                                                              \
+public:                                                                                            \
+    static Base::Type getExtensionClassTypeId(void);                                               \
+    virtual Base::Type getExtensionTypeId(void) const;                                             \
+    static void init(void);                                                                        \
+    static void *create(void);                                                                     \
+                                                                                                   \
+private:                                                                                           \
+    static Base::Type classTypeId
 
 /// Like EXTENSION_TYPESYSTEM_HEADER, with getExtensionTypeId declared override
-#define EXTENSION_TYPESYSTEM_HEADER_WITH_OVERRIDE() \
-public: \
-  static Base::Type getExtensionClassTypeId(void); \
-  virtual Base::Type getExtensionTypeId(void) const override; \
-  static void init(void);\
-  static void *create(void);\
-private: \
-  static Base::Type classTypeId
+#define EXTENSION_TYPESYSTEM_HEADER_WITH_OVERRIDE()                                                \
+public:                                                                                            \
+    static Base::Type getExtensionClassTypeId(void);                                               \
+    virtual Base::Type getExtensionTypeId(void) const override;                                    \
+    static void init(void);                                                                        \
+    static void *create(void);                                                                     \
+                                                                                                   \
+private:                                                                                           \
+    static Base::Type classTypeId
 
 /// define to implement a subclass of Base::BaseClass
-#define EXTENSION_TYPESYSTEM_SOURCE_P(_class_) \
-Base::Type _class_::getExtensionClassTypeId(void) { return _class_::classTypeId; } \
-Base::Type _class_::getExtensionTypeId(void) const { return _class_::classTypeId; } \
-Base::Type _class_::classTypeId = Base::Type::badType();  \
-void * _class_::create(void){\
-   return new _class_ ();\
-}
+#define EXTENSION_TYPESYSTEM_SOURCE_P(_class_)                                                     \
+    Base::Type _class_::getExtensionClassTypeId(void)                                              \
+    {                                                                                              \
+        return _class_::classTypeId;                                                               \
+    }                                                                                              \
+    Base::Type _class_::getExtensionTypeId(void) const                                             \
+    {                                                                                              \
+        return _class_::classTypeId;                                                               \
+    }                                                                                              \
+    Base::Type _class_::classTypeId = Base::Type::badType();                                       \
+    void *_class_::create(void)                                                                    \
+    {                                                                                              \
+        return new _class_();                                                                      \
+    }
 
 /// define to implement a subclass of Base::BaseClass
-#define EXTENSION_TYPESYSTEM_SOURCE_ABSTRACT_P(_class_) \
-Base::Type _class_::getExtensionClassTypeId(void) { return _class_::classTypeId; } \
-Base::Type _class_::getExtensionTypeId(void) const { return _class_::classTypeId; } \
-Base::Type _class_::classTypeId = Base::Type::badType();  \
-void * _class_::create(void){return 0;}
+#define EXTENSION_TYPESYSTEM_SOURCE_ABSTRACT_P(_class_)                                            \
+    Base::Type _class_::getExtensionClassTypeId(void)                                              \
+    {                                                                                              \
+        return _class_::classTypeId;                                                               \
+    }                                                                                              \
+    Base::Type _class_::getExtensionTypeId(void) const                                             \
+    {                                                                                              \
+        return _class_::classTypeId;                                                               \
+    }                                                                                              \
+    Base::Type _class_::classTypeId = Base::Type::badType();                                       \
+    void *_class_::create(void)                                                                    \
+    {                                                                                              \
+        return 0;                                                                                  \
+    }
 
 /// define to implement a subclass of Base::BaseClass
-#define EXTENSION_TYPESYSTEM_SOURCE(_class_, _parentclass_) \
-EXTENSION_TYPESYSTEM_SOURCE_P(_class_)\
-void _class_::init(void){\
-  initExtensionSubclass(_class_::classTypeId, #_class_ , #_parentclass_, &(_class_::create) ); \
-}
+#define EXTENSION_TYPESYSTEM_SOURCE(_class_, _parentclass_)                                        \
+    EXTENSION_TYPESYSTEM_SOURCE_P(_class_)                                                         \
+    void _class_::init(void)                                                                       \
+    {                                                                                              \
+        initExtensionSubclass(_class_::classTypeId, #_class_, #_parentclass_, &(_class_::create)); \
+    }
 
-#define EXTENSION_TYPESYSTEM_SOURCE_TEMPLATE(_class_) \
-template<> Base::Type _class_::classTypeId = Base::Type::badType();  \
-template<> Base::Type _class_::getExtensionClassTypeId(void) { return _class_::classTypeId; } \
-template<> Base::Type _class_::getExtensionTypeId(void) const { return _class_::classTypeId; } \
-template<> void * _class_::create(void){\
-   return new _class_ ();\
-}
+#define EXTENSION_TYPESYSTEM_SOURCE_TEMPLATE(_class_)                                              \
+    template<> Base::Type _class_::classTypeId = Base::Type::badType();                            \
+    template<> Base::Type _class_::getExtensionClassTypeId(void)                                   \
+    {                                                                                              \
+        return _class_::classTypeId;                                                               \
+    }                                                                                              \
+    template<> Base::Type _class_::getExtensionTypeId(void) const                                  \
+    {                                                                                              \
+        return _class_::classTypeId;                                                               \
+    }                                                                                              \
+    template<> void *_class_::create(void)                                                         \
+    {                                                                                              \
+        return new _class_();                                                                      \
+    }
 
 // init property stuff
-#define EXTENSION_PROPERTY_HEADER(_class_) \
-  EXTENSION_TYPESYSTEM_HEADER(); \
-protected: \
-  static const App::PropertyData * extensionGetPropertyDataPtr(void); \
-  virtual const App::PropertyData &extensionGetPropertyData(void) const; \
-private: \
-  static App::PropertyData propertyData
+#define EXTENSION_PROPERTY_HEADER(_class_)                                                         \
+    EXTENSION_TYPESYSTEM_HEADER();                                                                 \
+                                                                                                   \
+protected:                                                                                         \
+    static const App::PropertyData *extensionGetPropertyDataPtr(void);                             \
+    virtual const App::PropertyData &extensionGetPropertyData(void) const;                         \
+                                                                                                   \
+private:                                                                                           \
+    static App::PropertyData propertyData
 
 /// Like EXTENSION_PROPERTY_HEADER, but with override declarations.
-#define EXTENSION_PROPERTY_HEADER_WITH_OVERRIDE(_class_) \
-  EXTENSION_TYPESYSTEM_HEADER_WITH_OVERRIDE(); \
-protected: \
-  static const App::PropertyData * extensionGetPropertyDataPtr(void); \
-  virtual const App::PropertyData &extensionGetPropertyData(void) const override; \
-private: \
-  static App::PropertyData propertyData
+#define EXTENSION_PROPERTY_HEADER_WITH_OVERRIDE(_class_)                                           \
+    EXTENSION_TYPESYSTEM_HEADER_WITH_OVERRIDE();                                                   \
+                                                                                                   \
+protected:                                                                                         \
+    static const App::PropertyData *extensionGetPropertyDataPtr(void);                             \
+    virtual const App::PropertyData &extensionGetPropertyData(void) const override;                \
+                                                                                                   \
+private:                                                                                           \
+    static App::PropertyData propertyData
 
-#define EXTENSION_PROPERTY_SOURCE(_class_, _parentclass_) \
-EXTENSION_TYPESYSTEM_SOURCE_P(_class_)\
-const App::PropertyData * _class_::extensionGetPropertyDataPtr(void){return &propertyData;} \
-const App::PropertyData & _class_::extensionGetPropertyData(void) const{return propertyData;} \
-App::PropertyData _class_::propertyData; \
-void _class_::init(void){\
-  initExtensionSubclass(_class_::classTypeId, #_class_ , #_parentclass_, &(_class_::create) ); \
-  _class_::propertyData.parentPropertyData = _parentclass_::extensionGetPropertyDataPtr();\
-}
+#define EXTENSION_PROPERTY_SOURCE(_class_, _parentclass_)                                          \
+    EXTENSION_TYPESYSTEM_SOURCE_P(_class_)                                                         \
+    const App::PropertyData *_class_::extensionGetPropertyDataPtr(void)                            \
+    {                                                                                              \
+        return &propertyData;                                                                      \
+    }                                                                                              \
+    const App::PropertyData &_class_::extensionGetPropertyData(void) const                         \
+    {                                                                                              \
+        return propertyData;                                                                       \
+    }                                                                                              \
+    App::PropertyData _class_::propertyData;                                                       \
+    void _class_::init(void)                                                                       \
+    {                                                                                              \
+        initExtensionSubclass(_class_::classTypeId, #_class_, #_parentclass_, &(_class_::create)); \
+        _class_::propertyData.parentPropertyData = _parentclass_::extensionGetPropertyDataPtr();   \
+    }
 
-#define EXTENSION_PROPERTY_SOURCE_TEMPLATE(_class_, _parentclass_) \
-EXTENSION_TYPESYSTEM_SOURCE_TEMPLATE(_class_)\
-template<> App::PropertyData _class_::propertyData = App::PropertyData(); \
-template<> const App::PropertyData * _class_::extensionGetPropertyDataPtr(void){return &propertyData;} \
-template<> const App::PropertyData & _class_::extensionGetPropertyData(void) const{return propertyData;} \
-template<> void _class_::init(void){\
-  initExtensionSubclass(_class_::classTypeId, #_class_ , #_parentclass_, &(_class_::create) ); \
-  _class_::propertyData.parentPropertyData = _parentclass_::extensionGetPropertyDataPtr();\
-}
+#define EXTENSION_PROPERTY_SOURCE_TEMPLATE(_class_, _parentclass_)                                 \
+    EXTENSION_TYPESYSTEM_SOURCE_TEMPLATE(_class_)                                                  \
+    template<> App::PropertyData _class_::propertyData = App::PropertyData();                      \
+    template<> const App::PropertyData *_class_::extensionGetPropertyDataPtr(void)                 \
+    {                                                                                              \
+        return &propertyData;                                                                      \
+    }                                                                                              \
+    template<> const App::PropertyData &_class_::extensionGetPropertyData(void) const              \
+    {                                                                                              \
+        return propertyData;                                                                       \
+    }                                                                                              \
+    template<> void _class_::init(void)                                                            \
+    {                                                                                              \
+        initExtensionSubclass(_class_::classTypeId, #_class_, #_parentclass_, &(_class_::create)); \
+        _class_::propertyData.parentPropertyData = _parentclass_::extensionGetPropertyDataPtr();   \
+    }
 
 /**
  * @brief Base class for all extension that can be added to a DocumentObject
@@ -227,63 +272,67 @@ class AppExport Extension
     EXTENSION_PROPERTY_HEADER(App::Extension);
 
 public:
-
     Extension();
     virtual ~Extension();
 
-    virtual void initExtension(App::ExtensionContainer* obj);
+    virtual void initExtension(App::ExtensionContainer *obj);
 
-    App::ExtensionContainer*       getExtendedContainer() {return m_base;}
-    const App::ExtensionContainer* getExtendedContainer() const {return m_base;}
+    App::ExtensionContainer *getExtendedContainer() { return m_base; }
+    const App::ExtensionContainer *getExtendedContainer() const { return m_base; }
 
     //get extension name without namespace
     std::string name() const;
 
-    bool isPythonExtension() {return m_isPythonExtension;}
+    bool isPythonExtension() { return m_isPythonExtension; }
 
-    virtual PyObject* getExtensionPyObject();
+    virtual PyObject *getExtensionPyObject();
 
 
     /** @name Access properties */
     //@{
     /// find a property by its name
-    virtual Property *extensionGetPropertyByName(const char* name) const;
+    virtual Property *extensionGetPropertyByName(const char *name) const;
     /// get the name of a property
-    virtual const char* extensionGetPropertyName(const Property* prop) const;
+    virtual const char *extensionGetPropertyName(const Property *prop) const;
     /// get all properties of the class (including properties of the parent)
-    virtual void extensionGetPropertyMap(std::map<std::string,Property*> &Map) const;
+    virtual void extensionGetPropertyMap(std::map<std::string, Property *> &Map) const;
     /// get all properties of the class (including properties of the parent)
-    virtual void extensionGetPropertyList(std::vector<Property*> &List) const;
+    virtual void extensionGetPropertyList(std::vector<Property *> &List) const;
 
     /// get the Type of a Property
-    virtual short extensionGetPropertyType(const Property* prop) const;
+    virtual short extensionGetPropertyType(const Property *prop) const;
     /// get the Type of a named Property
     virtual short extensionGetPropertyType(const char *name) const;
     /// get the Group of a Property
-    virtual const char* extensionGetPropertyGroup(const Property* prop) const;
+    virtual const char *extensionGetPropertyGroup(const Property *prop) const;
     /// get the Group of a named Property
-    virtual const char* extensionGetPropertyGroup(const char *name) const;
+    virtual const char *extensionGetPropertyGroup(const char *name) const;
     /// get the Group of a Property
-    virtual const char* extensionGetPropertyDocumentation(const Property* prop) const;
+    virtual const char *extensionGetPropertyDocumentation(const Property *prop) const;
     /// get the Group of a named Property
-    virtual const char* extensionGetPropertyDocumentation(const char *name) const;
+    virtual const char *extensionGetPropertyDocumentation(const char *name) const;
     //@}
 
     /** @name Persistence */
     //@{
-    virtual void extensionSave(Base::Writer&) const {}
-    virtual void extensionRestore(Base::XMLReader&) {}
+    virtual void extensionSave(Base::Writer &) const {}
+    virtual void extensionRestore(Base::XMLReader &) {}
     //@}
 
     /** @name TypeHandling */
     //@{
-    bool extensionIsDerivedFrom(const Base::Type type) const {return getExtensionTypeId().isDerivedFrom(type);}
+    bool extensionIsDerivedFrom(const Base::Type type) const
+    {
+        return getExtensionTypeId().isDerivedFrom(type);
+    }
+
 protected:
-    static void initExtensionSubclass(Base::Type &toInit,const char* ClassName, const char *ParentName,
-                                      Base::Type::instantiationMethod method=nullptr);
+    static void initExtensionSubclass(Base::Type &toInit, const char *ClassName,
+                                      const char *ParentName,
+                                      Base::Type::instantiationMethod method = nullptr);
     //@}
 
-    virtual void extensionOnChanged(const Property* p) {(void)(p);}
+    virtual void extensionOnChanged(const Property *p) { (void)(p); }
 
     friend class App::ExtensionContainer;
 
@@ -293,31 +342,32 @@ protected:
     Py::SmartPtr ExtensionPythonObject;
 
 private:
-    Base::Type                    m_extensionType;
-    App::ExtensionContainer*      m_base = nullptr;
+    Base::Type m_extensionType;
+    App::ExtensionContainer *m_base = nullptr;
 };
 
 // Property define
-#define _EXTENSION_ADD_PROPERTY(_name, _prop_, _defaultval_) \
-  do { \
-    this->_prop_.setValue _defaultval_;\
-    propertyData.addProperty(static_cast<App::Extension*>(this), _name, &this->_prop_); \
-  } while (0)
+#define _EXTENSION_ADD_PROPERTY(_name, _prop_, _defaultval_)                                       \
+    do {                                                                                           \
+        this->_prop_.setValue _defaultval_;                                                        \
+        propertyData.addProperty(static_cast<App::Extension *>(this), _name, &this->_prop_);       \
+    } while (0)
 
 
-#define EXTENSION_ADD_PROPERTY(_prop_, _defaultval_) \
+#define EXTENSION_ADD_PROPERTY(_prop_, _defaultval_)                                               \
     _EXTENSION_ADD_PROPERTY(#_prop_, _prop_, _defaultval_)
 
-#define _EXTENSION_ADD_PROPERTY_TYPE(_name, _prop_, _defaultval_, _group_,_type_,_Docu_) \
-  do { \
-    this->_prop_.setValue _defaultval_;\
-    propertyData.addProperty(static_cast<App::Extension*>(this), _name, &this->_prop_, (_group_),(_type_),(_Docu_)); \
-  } while (0)
+#define _EXTENSION_ADD_PROPERTY_TYPE(_name, _prop_, _defaultval_, _group_, _type_, _Docu_)         \
+    do {                                                                                           \
+        this->_prop_.setValue _defaultval_;                                                        \
+        propertyData.addProperty(static_cast<App::Extension *>(this), _name, &this->_prop_,        \
+                                 (_group_), (_type_), (_Docu_));                                   \
+    } while (0)
 
-#define EXTENSION_ADD_PROPERTY_TYPE(_prop_, _defaultval_, _group_,_type_,_Docu_) \
-    _EXTENSION_ADD_PROPERTY_TYPE(#_prop_, _prop_, _defaultval_, _group_,_type_,_Docu_)
+#define EXTENSION_ADD_PROPERTY_TYPE(_prop_, _defaultval_, _group_, _type_, _Docu_)                 \
+    _EXTENSION_ADD_PROPERTY_TYPE(#_prop_, _prop_, _defaultval_, _group_, _type_, _Docu_)
 
 
-} //App
+} // namespace App
 
 #endif // APP_EXTENSION_H

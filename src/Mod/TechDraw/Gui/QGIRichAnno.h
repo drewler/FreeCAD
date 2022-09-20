@@ -34,10 +34,11 @@
 
 #include "QGIView.h"
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawRichAnno;
 class DrawLeaderLine;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -51,20 +52,22 @@ class QGCustomRect;
 
 //*******************************************************************
 
-class TechDrawGuiExport QGIRichAnno : public QGIView
+class TechDrawGuiExport QGIRichAnno: public QGIView
 {
     Q_OBJECT
 
 public:
-    enum {Type = QGraphicsItem::UserType + 233};
+    enum
+    {
+        Type = QGraphicsItem::UserType + 233
+    };
 
     explicit QGIRichAnno();
     ~QGIRichAnno() = default;
 
-    int type() const override { return Type;}
-    virtual void paint( QPainter * painter,
-                        const QStyleOptionGraphicsItem * option,
-                        QWidget * widget = nullptr ) override;
+    int type() const override { return Type; }
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr) override;
     virtual QRectF boundingRect() const override;
 
     virtual void drawBorder() override;
@@ -72,7 +75,7 @@ public:
 
     void setTextItem(void);
 
-    virtual TechDraw::DrawRichAnno* getFeature(void);
+    virtual TechDraw::DrawRichAnno *getFeature(void);
     QPen rectPen() const;
 
     void setExporting(bool b) { m_isExporting = b; }
@@ -80,10 +83,10 @@ public:
 
 
 public Q_SLOTS:
-/*    void textDragging(void);*/
-/*    void textDragFinished(void);*/
-/*    void hover(bool state);*/
-/*    void select(bool state);*/
+    /*    void textDragging(void);*/
+    /*    void textDragFinished(void);*/
+    /*    void hover(bool state);*/
+    /*    void select(bool state);*/
 
 protected:
     virtual void draw() override;
@@ -94,12 +97,11 @@ protected:
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
     bool m_isExporting;
-    QGCustomText* m_text;
+    QGCustomText *m_text;
     bool m_hasHover;
-    QGCustomRect* m_rect;
-
+    QGCustomRect *m_rect;
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // TECHDRAWGUI_QGIRICHANNO_H

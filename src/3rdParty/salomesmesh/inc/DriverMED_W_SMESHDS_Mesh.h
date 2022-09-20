@@ -43,51 +43,49 @@ class SMESHDS_SubMesh;
 
 class MESHDRIVERMED_EXPORT DriverMED_W_SMESHDS_Mesh: public Driver_SMESHDS_Mesh
 {
-  public:
+public:
+    DriverMED_W_SMESHDS_Mesh();
 
-  DriverMED_W_SMESHDS_Mesh();
+    virtual void SetFile(const std::string &theFileName);
+    void SetFile(const std::string &theFileName, MED::EVersion theId);
+    void SetAutoDimension(bool toFindOutDimension) { myAutoDimension = toFindOutDimension; }
 
-  virtual void SetFile(const std::string& theFileName);
-  void SetFile(const std::string& theFileName, MED::EVersion theId);
-  void SetAutoDimension(bool toFindOutDimension) { myAutoDimension = toFindOutDimension; }
+    static std::string GetVersionString(const MED::EVersion theVersion, int theNbDigits = 2);
 
-  static std::string GetVersionString(const MED::EVersion theVersion, int theNbDigits=2);
+    void AddGroupOfNodes();
+    void AddGroupOfEdges();
+    void AddGroupOfFaces();
+    void AddGroupOfVolumes();
+    void AddGroupOf0DElems();
+    void AddGroupOfBalls();
 
-  void AddGroupOfNodes();
-  void AddGroupOfEdges();
-  void AddGroupOfFaces();
-  void AddGroupOfVolumes();
-  void AddGroupOf0DElems();
-  void AddGroupOfBalls();
-
-  /*! functions to prepare adding one mesh
+    /*! functions to prepare adding one mesh
    */
-  void AddGroup(SMESHDS_GroupBase * theGroup);
-  void AddAllSubMeshes();
-  void AddSubMesh(SMESHDS_SubMesh* theSubMesh, int theID);
-  void AddODOnVertices(bool toAdd) { myAddODOnVertices = toAdd; }
+    void AddGroup(SMESHDS_GroupBase *theGroup);
+    void AddAllSubMeshes();
+    void AddSubMesh(SMESHDS_SubMesh *theSubMesh, int theID);
+    void AddODOnVertices(bool toAdd) { myAddODOnVertices = toAdd; }
 
-  static bool getNodesOfMissing0DOnVert(SMESHDS_Mesh*                         mesh,
-                                        std::vector<const SMDS_MeshElement*>& nodes);
+    static bool getNodesOfMissing0DOnVert(SMESHDS_Mesh *mesh,
+                                          std::vector<const SMDS_MeshElement *> &nodes);
 
-  /*! add one mesh
+    /*! add one mesh
    */
-  virtual Status Perform();
+    virtual Status Perform();
 
- private:
-
-  MED::EVersion myMedVersion;
-  std::list<SMESHDS_GroupBase*> myGroups;
-  bool myAllSubMeshes;
-  std::vector<SMESHDS_SubMesh*> mySubMeshes;
-  bool myDoGroupOfNodes;
-  bool myDoGroupOfEdges;
-  bool myDoGroupOfFaces;
-  bool myDoGroupOfVolumes;
-  bool myDoGroupOf0DElems;
-  bool myDoGroupOfBalls;
-  bool myAutoDimension;
-  bool myAddODOnVertices;
+private:
+    MED::EVersion myMedVersion;
+    std::list<SMESHDS_GroupBase *> myGroups;
+    bool myAllSubMeshes;
+    std::vector<SMESHDS_SubMesh *> mySubMeshes;
+    bool myDoGroupOfNodes;
+    bool myDoGroupOfEdges;
+    bool myDoGroupOfFaces;
+    bool myDoGroupOfVolumes;
+    bool myDoGroupOf0DElems;
+    bool myDoGroupOfBalls;
+    bool myAutoDimension;
+    bool myAddODOnVertices;
 };
 
 #endif

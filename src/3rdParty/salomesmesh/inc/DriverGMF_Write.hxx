@@ -38,56 +38,51 @@
 /*!
  * \brief Class for storing control points for writing GMF size maps
  */
-class MESHDriverGMF_EXPORT Control_Pnt : public gp_Pnt
+class MESHDriverGMF_EXPORT Control_Pnt: public gp_Pnt
 {
 public:
-  Control_Pnt();
-  Control_Pnt(const gp_Pnt& aPnt, double theSize);
-  Control_Pnt(double x, double y, double z);
-  Control_Pnt(double x, double y, double z, double size);
+    Control_Pnt();
+    Control_Pnt(const gp_Pnt &aPnt, double theSize);
+    Control_Pnt(double x, double y, double z);
+    Control_Pnt(double x, double y, double z, double size);
 
-  double Size() const { return size; };
-  void SetSize( double theSize ) { size = theSize; };
-  
+    double Size() const { return size; };
+    void SetSize(double theSize) { size = theSize; };
+
 private:
-  double size;
+    double size;
 };
 
 /*!
  * \brief Driver Writing a mesh into a GMF file.
  */
-class MESHDriverGMF_EXPORT DriverGMF_Write : public Driver_SMESHDS_Mesh
+class MESHDriverGMF_EXPORT DriverGMF_Write: public Driver_SMESHDS_Mesh
 {
 public:
+    DriverGMF_Write();
+    ~DriverGMF_Write();
 
-  DriverGMF_Write();
-  ~DriverGMF_Write();
+    void SetExportRequiredGroups(bool toExport) { _exportRequiredGroups = toExport; }
 
-  void SetExportRequiredGroups( bool toExport )
-  {
-    _exportRequiredGroups = toExport;
-  }
-   
-  virtual Status Perform();
-  
-  // Size Maps
-  Status PerformSizeMap( const std::vector<Control_Pnt>& points );
-  void SetSizeMapPrefix( std::string prefix )
-  {
-    myVerticesFile = prefix + ".mesh";
-    mySolFile = prefix + ".sol";
-  };
-  std::vector<std::string> GetSizeMapFiles();
+    virtual Status Perform();
 
- private:
+    // Size Maps
+    Status PerformSizeMap(const std::vector<Control_Pnt> &points);
+    void SetSizeMapPrefix(std::string prefix)
+    {
+        myVerticesFile = prefix + ".mesh";
+        mySolFile = prefix + ".sol";
+    };
+    std::vector<std::string> GetSizeMapFiles();
 
-  SMDS_ElemIteratorPtr elementIterator(SMDSAbs_ElementType  type); 
-  SMDS_ElemIteratorPtr elementIterator(SMDSAbs_EntityType   type);  
-  SMDS_ElemIteratorPtr elementIterator(SMDSAbs_GeometryType type);
+private:
+    SMDS_ElemIteratorPtr elementIterator(SMDSAbs_ElementType type);
+    SMDS_ElemIteratorPtr elementIterator(SMDSAbs_EntityType type);
+    SMDS_ElemIteratorPtr elementIterator(SMDSAbs_GeometryType type);
 
-  bool _exportRequiredGroups;
-  std::string myVerticesFile;
-  std::string mySolFile;
+    bool _exportRequiredGroups;
+    std::string myVerticesFile;
+    std::string mySolFile;
 };
 
 #endif

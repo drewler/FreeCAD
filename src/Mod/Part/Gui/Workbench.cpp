@@ -47,20 +47,16 @@ using namespace PartGui;
 /// @namespace PartGui @class Workbench
 TYPESYSTEM_SOURCE(PartGui::Workbench, Gui::StdWorkbench)
 
-Workbench::Workbench()
-{
-}
+Workbench::Workbench() {}
 
-Workbench::~Workbench()
-{
-}
+Workbench::~Workbench() {}
 
-Gui::MenuItem* Workbench::setupMenuBar() const
+Gui::MenuItem *Workbench::setupMenuBar() const
 {
-    Gui::MenuItem* root = StdWorkbench::setupMenuBar();
-    Gui::MenuItem* item = root->findItem("&Windows");
+    Gui::MenuItem *root = StdWorkbench::setupMenuBar();
+    Gui::MenuItem *item = root->findItem("&Windows");
 
-    Gui::MenuItem* prim = new Gui::MenuItem;
+    Gui::MenuItem *prim = new Gui::MenuItem;
     prim->setCommand("Primitives");
     *prim << "Part_Box"
           << "Part_Cylinder"
@@ -70,40 +66,40 @@ Gui::MenuItem* Workbench::setupMenuBar() const
           << "Separator"
           << "Part_Tube";
 
-    Gui::MenuItem* copy = new Gui::MenuItem;
+    Gui::MenuItem *copy = new Gui::MenuItem;
     copy->setCommand("Create a copy");
     *copy << "Part_SimpleCopy"
           << "Part_TransformedCopy"
           << "Part_ElementCopy"
           << "Part_RefineShape";
 
-    Gui::MenuItem* bop = new Gui::MenuItem;
+    Gui::MenuItem *bop = new Gui::MenuItem;
     bop->setCommand("Boolean");
     *bop << "Part_Boolean"
          << "Part_Cut"
          << "Part_Fuse"
          << "Part_Common";
 
-    Gui::MenuItem* join = new Gui::MenuItem;
+    Gui::MenuItem *join = new Gui::MenuItem;
     join->setCommand("Join");
     *join << "Part_JoinConnect"
           << "Part_JoinEmbed"
           << "Part_JoinCutout";
 
-    Gui::MenuItem* split = new Gui::MenuItem;
+    Gui::MenuItem *split = new Gui::MenuItem;
     split->setCommand("Split");
     *split << "Part_BooleanFragments"
            << "Part_SliceApart"
            << "Part_Slice"
            << "Part_XOR";
 
-    Gui::MenuItem* compound = new Gui::MenuItem;
+    Gui::MenuItem *compound = new Gui::MenuItem;
     compound->setCommand("Compound");
     *compound << "Part_Compound"
               << "Part_ExplodeCompound"
               << "Part_CompoundFilter";
 
-    Gui::MenuItem* part = new Gui::MenuItem;
+    Gui::MenuItem *part = new Gui::MenuItem;
     root->insertItem(item, part);
     part->setCommand("&Part");
     *part << "Part_Import"
@@ -111,20 +107,15 @@ Gui::MenuItem* Workbench::setupMenuBar() const
           << "Separator"
           << "Part_BoxSelection"
           << "Separator";
-    *part << prim
-          << "Part_Primitives"
+    *part << prim << "Part_Primitives"
           << "Part_Builder"
           << "Separator"
           << "Part_ShapeFromMesh"
           << "Part_PointsFromMesh"
           << "Part_MakeSolid"
-          << "Part_ReverseShape"
-          << copy
-          << "Part_CheckGeometry"
+          << "Part_ReverseShape" << copy << "Part_CheckGeometry"
           << "Part_Defeaturing"
-          << "Separator"
-          << bop << join << split << compound
-          << "Separator"
+          << "Separator" << bop << join << split << compound << "Separator"
           << "Part_Extrude"
           << "Part_Revolve"
           << "Part_Mirror"
@@ -143,8 +134,8 @@ Gui::MenuItem* Workbench::setupMenuBar() const
           << "Separator"
           << "Part_EditAttachment";
 
-    Gui::MenuItem* measure = new Gui::MenuItem;
-    root->insertItem(item,measure);
+    Gui::MenuItem *measure = new Gui::MenuItem;
+    root->insertItem(item, measure);
     measure->setCommand("Measure");
     *measure << "Part_Measure_Linear"
              << "Part_Measure_Angular"
@@ -155,11 +146,11 @@ Gui::MenuItem* Workbench::setupMenuBar() const
              << "Part_Measure_Toggle_3D"
              << "Part_Measure_Toggle_Delta";
 
-    Gui::MenuItem* view = root->findItem("&View");
+    Gui::MenuItem *view = root->findItem("&View");
     if (view) {
-        Gui::MenuItem* appr = view->findItem("Std_RandomColor");
+        Gui::MenuItem *appr = view->findItem("Std_RandomColor");
         appr = view->afterItem(appr);
-        Gui::MenuItem* face = new Gui::MenuItem();
+        Gui::MenuItem *face = new Gui::MenuItem();
         face->setCommand("Part_ColorPerFace");
         view->insertItem(appr, face);
     }
@@ -167,11 +158,11 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     return root;
 }
 
-Gui::ToolBarItem* Workbench::setupToolBars() const
+Gui::ToolBarItem *Workbench::setupToolBars() const
 {
-    Gui::ToolBarItem* root = StdWorkbench::setupToolBars();
+    Gui::ToolBarItem *root = StdWorkbench::setupToolBars();
 
-    Gui::ToolBarItem* solids = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *solids = new Gui::ToolBarItem(root);
     solids->setCommand("Solids");
     *solids << "Part_Box"
             << "Part_Cylinder"
@@ -182,7 +173,7 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
             << "Part_Primitives"
             << "Part_Builder";
 
-    Gui::ToolBarItem* tool = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *tool = new Gui::ToolBarItem(root);
     tool->setCommand("Part tools");
     *tool << "Part_Extrude"
           << "Part_Revolve"
@@ -198,9 +189,9 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
           << "Part_CompOffset"
           << "Part_Thickness"
           << "Part_ProjectionOnSurface"
-          << "Part_ColorPerFace";  // See issues #0477 and #1954 in the tracker
+          << "Part_ColorPerFace"; // See issues #0477 and #1954 in the tracker
 
-    Gui::ToolBarItem* boolop = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *boolop = new Gui::ToolBarItem(root);
     boolop->setCommand("Boolean");
     *boolop << "Part_CompCompoundTools"
             << "Part_Boolean"
@@ -212,7 +203,7 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
             << "Part_CheckGeometry"
             << "Part_Defeaturing";
 
-    Gui::ToolBarItem* measure = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *measure = new Gui::ToolBarItem(root);
     measure->setCommand("Measure");
     *measure << "Part_Measure_Linear"
              << "Part_Measure_Angular"
@@ -226,9 +217,9 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
     return root;
 }
 
-Gui::ToolBarItem* Workbench::setupCommandBars() const
+Gui::ToolBarItem *Workbench::setupCommandBars() const
 {
     // Part tools
-    Gui::ToolBarItem* root = new Gui::ToolBarItem;
+    Gui::ToolBarItem *root = new Gui::ToolBarItem;
     return root;
 }

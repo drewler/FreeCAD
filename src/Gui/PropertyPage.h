@@ -27,18 +27,20 @@
 #include <QWidget>
 #include <FCGlobal.h>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 
 /** Base class for property pages.
  * \author Werner Mayer
  */
-class GuiExport PropertyPage : public QWidget
+class GuiExport PropertyPage: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PropertyPage(QWidget* parent = nullptr);
+    explicit PropertyPage(QWidget *parent = nullptr);
     ~PropertyPage() override;
 
     bool isModified();
@@ -56,24 +58,24 @@ private:
     bool bChanged; /**< for internal use only */
 
 protected Q_SLOTS:
-    virtual void loadSettings()=0;
-    virtual void saveSettings()=0;
+    virtual void loadSettings() = 0;
+    virtual void saveSettings() = 0;
 };
 
 /** Base class for preferences pages.
  * \author Werner Mayer
  */
-class GuiExport PreferencePage : public QWidget
+class GuiExport PreferencePage: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PreferencePage(QWidget* parent = nullptr);
+    explicit PreferencePage(QWidget *parent = nullptr);
     ~PreferencePage() override;
 
 public Q_SLOTS:
-    virtual void loadSettings()=0;
-    virtual void saveSettings()=0;
+    virtual void loadSettings() = 0;
+    virtual void saveSettings() = 0;
 
 protected:
     void changeEvent(QEvent *e) override = 0;
@@ -82,12 +84,12 @@ protected:
 /** Subclass that embeds a form from a UI file.
  * \author Werner Mayer
  */
-class GuiExport PreferenceUiForm : public PreferencePage
+class GuiExport PreferenceUiForm: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit PreferenceUiForm(const QString& fn, QWidget* parent = nullptr);
+    explicit PreferenceUiForm(const QString &fn, QWidget *parent = nullptr);
     ~PreferenceUiForm() override;
 
     void loadSettings() override;
@@ -97,34 +99,32 @@ protected:
     void changeEvent(QEvent *e) override;
 
 private:
-    template <typename PW>
-    void loadPrefWidgets();
-    template <typename PW>
-    void savePrefWidgets();
+    template<typename PW> void loadPrefWidgets();
+    template<typename PW> void savePrefWidgets();
 
 private:
-    QWidget* form;
+    QWidget *form;
 };
 
 /** Base class for custom pages.
  * \author Werner Mayer
  */
-class GuiExport CustomizeActionPage : public QWidget
+class GuiExport CustomizeActionPage: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit CustomizeActionPage(QWidget* parent = nullptr);
+    explicit CustomizeActionPage(QWidget *parent = nullptr);
     ~CustomizeActionPage() override;
 
 protected:
-    bool event(QEvent* e) override;
+    bool event(QEvent *e) override;
     void changeEvent(QEvent *e) override = 0;
 
 protected Q_SLOTS:
-    virtual void onAddMacroAction(const QByteArray&)=0;
-    virtual void onRemoveMacroAction(const QByteArray&)=0;
-    virtual void onModifyMacroAction(const QByteArray&)=0;
+    virtual void onAddMacroAction(const QByteArray &) = 0;
+    virtual void onRemoveMacroAction(const QByteArray &) = 0;
+    virtual void onModifyMacroAction(const QByteArray &) = 0;
 };
 
 } // namespace Dialog

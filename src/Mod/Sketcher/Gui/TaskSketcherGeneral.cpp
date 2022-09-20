@@ -43,28 +43,23 @@ using namespace Gui::TaskView;
 namespace bp = boost::placeholders;
 
 SketcherGeneralWidget::SketcherGeneralWidget(QWidget *parent)
-  : QWidget(parent), ui(new Ui_TaskSketcherGeneral)
+    : QWidget(parent), ui(new Ui_TaskSketcherGeneral)
 {
     ui->setupUi(this);
     ui->renderingOrder->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 
     // connecting the needed signals
-    connect(ui->checkBoxShowGrid, SIGNAL(toggled(bool)),
-            this, SIGNAL(emitToggleGridView(bool)));
-    connect(ui->checkBoxGridSnap, SIGNAL(toggled(bool)),
-            this, SIGNAL(emitToggleGridSnap(bool)));
-    connect(ui->gridSize, SIGNAL(valueChanged(double)),
-            this, SIGNAL(emitSetGridSize(double)));
-    connect(ui->checkBoxAutoconstraints, SIGNAL(toggled(bool)),
-            this, SIGNAL(emitToggleAutoconstraints(bool)));
-    connect(ui->checkBoxRedundantAutoconstraints, SIGNAL(toggled(bool)),
-        this, SIGNAL(emitToggleAvoidRedundant(bool)));
+    connect(ui->checkBoxShowGrid, SIGNAL(toggled(bool)), this, SIGNAL(emitToggleGridView(bool)));
+    connect(ui->checkBoxGridSnap, SIGNAL(toggled(bool)), this, SIGNAL(emitToggleGridSnap(bool)));
+    connect(ui->gridSize, SIGNAL(valueChanged(double)), this, SIGNAL(emitSetGridSize(double)));
+    connect(ui->checkBoxAutoconstraints, SIGNAL(toggled(bool)), this,
+            SIGNAL(emitToggleAutoconstraints(bool)));
+    connect(ui->checkBoxRedundantAutoconstraints, SIGNAL(toggled(bool)), this,
+            SIGNAL(emitToggleAvoidRedundant(bool)));
     ui->renderingOrder->installEventFilter(this);
 }
 
-SketcherGeneralWidget::~SketcherGeneralWidget()
-{
-}
+SketcherGeneralWidget::~SketcherGeneralWidget() {}
 
 bool SketcherGeneralWidget::eventFilter(QObject *object, QEvent *event)
 {
@@ -91,10 +86,11 @@ void SketcherGeneralWidget::saveOrderingOrder()
     int midid = ui->renderingOrder->item(1)->data(Qt::UserRole).toInt();
     int lowid = ui->renderingOrder->item(2)->data(Qt::UserRole).toInt();
 
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Sketcher/General");
-    hGrp->SetInt("TopRenderGeometryId",topid);
-    hGrp->SetInt("MidRenderGeometryId",midid);
-    hGrp->SetInt("LowRenderGeometryId",lowid);
+    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Mod/Sketcher/General");
+    hGrp->SetInt("TopRenderGeometryId", topid);
+    hGrp->SetInt("MidRenderGeometryId", midid);
+    hGrp->SetInt("LowRenderGeometryId", lowid);
 }
 
 void SketcherGeneralWidget::loadSettings()
@@ -111,12 +107,13 @@ void SketcherGeneralWidget::loadSettings()
 
 void SketcherGeneralWidget::loadOrderingOrder()
 {
-    ParameterGrp::handle hGrpp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Sketcher/General");
+    ParameterGrp::handle hGrpp = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Mod/Sketcher/General");
 
     // 1->Normal Geometry, 2->Construction, 3->External
-    int topid = hGrpp->GetInt("TopRenderGeometryId",1);
-    int midid = hGrpp->GetInt("MidRenderGeometryId",2);
-    int lowid = hGrpp->GetInt("LowRenderGeometryId",3);
+    int topid = hGrpp->GetInt("TopRenderGeometryId", 1);
+    int midid = hGrpp->GetInt("MidRenderGeometryId", 2);
+    int lowid = hGrpp->GetInt("LowRenderGeometryId", 3);
 
     {
         QSignalBlocker block(ui->renderingOrder);
@@ -124,35 +121,35 @@ void SketcherGeneralWidget::loadOrderingOrder()
 
         QListWidgetItem *newItem = new QListWidgetItem;
         newItem->setData(Qt::UserRole, QVariant(topid));
-        newItem->setText( topid==1?tr("Normal Geometry"):topid==2?tr("Construction Geometry"):tr("External Geometry"));
-        ui->renderingOrder->insertItem(0,newItem);
+        newItem->setText(topid == 1       ? tr("Normal Geometry")
+                             : topid == 2 ? tr("Construction Geometry")
+                                          : tr("External Geometry"));
+        ui->renderingOrder->insertItem(0, newItem);
 
         newItem = new QListWidgetItem;
         newItem->setData(Qt::UserRole, QVariant(midid));
-        newItem->setText(midid==1?tr("Normal Geometry"):midid==2?tr("Construction Geometry"):tr("External Geometry"));
-        ui->renderingOrder->insertItem(1,newItem);
+        newItem->setText(midid == 1       ? tr("Normal Geometry")
+                             : midid == 2 ? tr("Construction Geometry")
+                                          : tr("External Geometry"));
+        ui->renderingOrder->insertItem(1, newItem);
 
         newItem = new QListWidgetItem;
         newItem->setData(Qt::UserRole, QVariant(lowid));
-        newItem->setText(lowid==1?tr("Normal Geometry"):lowid==2?tr("Construction Geometry"):tr("External Geometry"));
-        ui->renderingOrder->insertItem(2,newItem);
+        newItem->setText(lowid == 1       ? tr("Normal Geometry")
+                             : lowid == 2 ? tr("Construction Geometry")
+                                          : tr("External Geometry"));
+        ui->renderingOrder->insertItem(2, newItem);
     }
 }
 
 void SketcherGeneralWidget::setGridSize(double val)
 {
-    ui->gridSize->setValue(Base::Quantity(val,Base::Unit::Length));
+    ui->gridSize->setValue(Base::Quantity(val, Base::Unit::Length));
 }
 
-void SketcherGeneralWidget::checkGridView(bool on)
-{
-    ui->checkBoxShowGrid->setChecked(on);
-}
+void SketcherGeneralWidget::checkGridView(bool on) { ui->checkBoxShowGrid->setChecked(on); }
 
-void SketcherGeneralWidget::checkGridSnap(bool on)
-{
-    ui->checkBoxGridSnap->setChecked(on);
-}
+void SketcherGeneralWidget::checkGridSnap(bool on) { ui->checkBoxGridSnap->setChecked(on); }
 
 void SketcherGeneralWidget::checkAutoconstraints(bool on)
 {
@@ -179,21 +176,19 @@ void SketcherGeneralWidget::enableAvoidRedundant(bool on)
 void SketcherGeneralWidget::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
 }
 
 // ----------------------------------------------------------------------------
 
 TaskSketcherGeneral::TaskSketcherGeneral(ViewProviderSketch *sketchView)
-    : TaskBox(Gui::BitmapFactory().pixmap("document-new"),tr("Edit controls"),true, nullptr)
-    , sketchView(sketchView)
+    : TaskBox(Gui::BitmapFactory().pixmap("document-new"), tr("Edit controls"), true, nullptr),
+      sketchView(sketchView)
 {
     // we need a separate container widget to add all controls to
     widget = new SketcherGeneralWidget(this);
     this->groupLayout()->addWidget(widget);
-    
+
     {
         //Blocker probably not needed as signals aren't connected yet
         QSignalBlocker block(widget);
@@ -211,50 +206,31 @@ TaskSketcherGeneral::TaskSketcherGeneral(ViewProviderSketch *sketchView)
     }
 
     // connecting the needed signals
-    QObject::connect(
-        widget, SIGNAL(emitToggleGridView(bool)),
-        this  , SLOT  (onToggleGridView(bool))
-    );
+    QObject::connect(widget, SIGNAL(emitToggleGridView(bool)), this, SLOT(onToggleGridView(bool)));
 
-    QObject::connect(
-        widget, SIGNAL(emitToggleGridSnap(bool)),
-        this  , SLOT  (onToggleGridSnap(bool))
-    );
+    QObject::connect(widget, SIGNAL(emitToggleGridSnap(bool)), this, SLOT(onToggleGridSnap(bool)));
 
-    QObject::connect(
-        widget, SIGNAL(emitSetGridSize(double)),
-        this  , SLOT  (onSetGridSize(double))
-    );
+    QObject::connect(widget, SIGNAL(emitSetGridSize(double)), this, SLOT(onSetGridSize(double)));
 
-    QObject::connect(
-        widget, SIGNAL(emitToggleAutoconstraints(bool)),
-        this  , SLOT  (onToggleAutoconstraints(bool))
-    );
-    
-    QObject::connect(
-        widget, SIGNAL(emitToggleAvoidRedundant(bool)),
-        this  , SLOT  (onToggleAvoidRedundant(bool))
-    );
+    QObject::connect(widget, SIGNAL(emitToggleAutoconstraints(bool)), this,
+                     SLOT(onToggleAutoconstraints(bool)));
 
-    QObject::connect(
-        widget, SIGNAL(emitRenderOrderChanged()),
-        this  , SLOT  (onRenderOrderChanged())
-    );
+    QObject::connect(widget, SIGNAL(emitToggleAvoidRedundant(bool)), this,
+                     SLOT(onToggleAvoidRedundant(bool)));
+
+    QObject::connect(widget, SIGNAL(emitRenderOrderChanged()), this, SLOT(onRenderOrderChanged()));
 
     Gui::Selection().Attach(this);
 
-    Gui::Application* app = Gui::Application::Instance;
-    changedSketchView = app->signalChangedObject.connect(boost::bind
-        (&TaskSketcherGeneral::onChangedSketchView, this, bp::_1, bp::_2));
+    Gui::Application *app = Gui::Application::Instance;
+    changedSketchView = app->signalChangedObject.connect(
+        boost::bind(&TaskSketcherGeneral::onChangedSketchView, this, bp::_1, bp::_2));
 }
 
-TaskSketcherGeneral::~TaskSketcherGeneral()
-{
-    Gui::Selection().Detach(this);
-}
+TaskSketcherGeneral::~TaskSketcherGeneral() { Gui::Selection().Detach(this); }
 
-void TaskSketcherGeneral::onChangedSketchView(const Gui::ViewProvider& vp,
-                                              const App::Property& prop)
+void TaskSketcherGeneral::onChangedSketchView(const Gui::ViewProvider &vp,
+                                              const App::Property &prop)
 {
     if (sketchView == &vp) {
         if (&sketchView->ShowGrid == &prop) {
@@ -292,8 +268,7 @@ void TaskSketcherGeneral::onToggleGridView(bool on)
 void TaskSketcherGeneral::onSetGridSize(double val)
 {
     Base::ConnectionBlocker block(changedSketchView);
-    if (val > 0)
-        sketchView->GridSize.setValue(val);
+    if (val > 0) sketchView->GridSize.setValue(val);
 }
 
 void TaskSketcherGeneral::onToggleGridSnap(bool on)

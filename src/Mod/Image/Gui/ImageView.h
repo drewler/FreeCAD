@@ -36,25 +36,29 @@ namespace ImageGui
 
 class GLImageBox;
 
-class ImageGuiExport ImageView : public Gui::MDIView
+class ImageGuiExport ImageView: public Gui::MDIView
 {
     Q_OBJECT
 
     TYPESYSTEM_HEADER();
 
 public:
-    ImageView(QWidget* parent);
+    ImageView(QWidget *parent);
     virtual ~ImageView();
 
-    const char *getName(void) const {return "ImageView";}
-    void onUpdate(void){}
+    const char *getName(void) const { return "ImageView"; }
+    void onUpdate(void) {}
 
-    bool onMsg(const char* ,const char** ){ return true; }
-    bool onHasMsg(const char* ) const { return false; }
+    bool onMsg(const char *, const char **) { return true; }
+    bool onHasMsg(const char *) const { return false; }
 
     virtual void clearImage();
-    virtual int createImageCopy(void* pSrcPixelData, unsigned long width, unsigned long height, int format, unsigned short numSigBitsPerSample, int displayMode = IV_DISPLAY_RESET);
-    virtual int pointImageTo(void* pSrcPixelData, unsigned long width, unsigned long height, int format, unsigned short numSigBitsPerSample, bool takeOwnership, int displayMode = IV_DISPLAY_RESET);
+    virtual int createImageCopy(void *pSrcPixelData, unsigned long width, unsigned long height,
+                                int format, unsigned short numSigBitsPerSample,
+                                int displayMode = IV_DISPLAY_RESET);
+    virtual int pointImageTo(void *pSrcPixelData, unsigned long width, unsigned long height,
+                             int format, unsigned short numSigBitsPerSample, bool takeOwnership,
+                             int displayMode = IV_DISPLAY_RESET);
 
     virtual void enableStatusBar(bool Enable);
     virtual void enableToolBar(bool Enable);
@@ -65,7 +69,8 @@ public:
     virtual int createColorMap(int numEntriesReq = 0, bool Initialise = true);
     virtual void clearColorMap();
     virtual int getNumColorMapEntries() const;
-    virtual int setColorMapRGBAValue(int index, float red, float green, float blue, float alpha = 1.0);
+    virtual int setColorMapRGBAValue(int index, float red, float green, float blue,
+                                     float alpha = 1.0);
     virtual int setColorMapRedValue(int index, float value);
     virtual int setColorMapGreenValue(int index, float value);
     virtual int setColorMapBlueValue(int index, float value);
@@ -83,15 +88,15 @@ Q_SIGNALS:
 
 protected:
     virtual void createActions();
-    virtual QSize minimumSizeHint () const;
+    virtual QSize minimumSizeHint() const;
     virtual void showOriginalColors();
     virtual void closeEvent(QCloseEvent *e);
-    virtual void mousePressEvent(QMouseEvent* cEvent);
-    virtual void mouseDoubleClickEvent(QMouseEvent* cEvent);
-    virtual void mouseMoveEvent(QMouseEvent* cEvent);
-    virtual void mouseReleaseEvent(QMouseEvent* cEvent);
-    virtual void wheelEvent(QWheelEvent * cEvent);
-    virtual void showEvent (QShowEvent * e);
+    virtual void mousePressEvent(QMouseEvent *cEvent);
+    virtual void mouseDoubleClickEvent(QMouseEvent *cEvent);
+    virtual void mouseMoveEvent(QMouseEvent *cEvent);
+    virtual void mouseReleaseEvent(QMouseEvent *cEvent);
+    virtual void wheelEvent(QWheelEvent *cEvent);
+    virtual void showEvent(QShowEvent *e);
 
     virtual void updateStatusBar();
     virtual QString createStatusBarText();
@@ -102,7 +107,8 @@ protected:
     virtual void addSelect(int currX, int currY);
 
 
-    enum {
+    enum
+    {
         nothing = 0,
         panning,
         zooming,
@@ -110,7 +116,7 @@ protected:
         addselection
     } _currMode;
 
-    GLImageBox* _pGLImageBox;
+    GLImageBox *_pGLImageBox;
 
     int _currX;
     int _currY;
@@ -118,14 +124,14 @@ protected:
     int dragStartWCy;
 
     // Actions
-    QAction* _pFitAct;
-    QAction* _pOneToOneAct;
+    QAction *_pFitAct;
+    QAction *_pOneToOneAct;
 
     // Menus
-    QMenu* _pContextMenu;
+    QMenu *_pContextMenu;
 
     // Toolbars
-    QToolBar* _pStdToolBar;
+    QToolBar *_pStdToolBar;
 
     // Flags
     bool _statusBarEnabled;
@@ -134,6 +140,6 @@ protected:
     bool _invertZoom;
 };
 
-} // namespace ImageViewGui
+} // namespace ImageGui
 
 #endif // ImageView_H

@@ -25,7 +25,7 @@
 
 #ifndef _PreComp_
 
-#endif  // #ifndef _PreComp_
+#endif // #ifndef _PreComp_
 
 #include "ViewProviderSketch.h"
 

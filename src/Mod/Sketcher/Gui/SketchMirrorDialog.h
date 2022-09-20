@@ -26,10 +26,11 @@
 #include <QDialog>
 #include "../App/Constraint.h"
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class Ui_SketchMirrorDialog;
-class SketchMirrorDialog : public QDialog
+class SketchMirrorDialog: public QDialog
 {
     Q_OBJECT
 
@@ -46,6 +47,6 @@ private:
     std::unique_ptr<Ui_SketchMirrorDialog> ui;
 };
 
-}
+} // namespace SketcherGui
 
 #endif // SKETCHERGUI_SketchMirrorDialog_H

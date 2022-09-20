@@ -24,11 +24,11 @@
 #pragma once
 
 //class CThumbnailProvider : public IThumbnailProvider, IObjectWithSite, IInitializeWithStream
-class CThumbnailProvider : public IThumbnailProvider, IObjectWithSite, IInitializeWithFile
+class CThumbnailProvider: public IThumbnailProvider, IObjectWithSite, IInitializeWithFile
 {
 private:
     LONG m_cRef;
-    IUnknown* m_pSite;
+    IUnknown *m_pSite;
     TCHAR m_szFile[1000];
 
     ~CThumbnailProvider();
@@ -38,19 +38,19 @@ public:
     CThumbnailProvider();
 
     //  IUnknown methods
-    STDMETHOD(QueryInterface)(REFIID, void**);
+    STDMETHOD(QueryInterface)(REFIID, void **);
     STDMETHOD_(ULONG, AddRef)();
     STDMETHOD_(ULONG, Release)();
 
     //  IInitializeWithSteam methods
-    STDMETHOD(Initialize)(IStream*, DWORD);
+    STDMETHOD(Initialize)(IStream *, DWORD);
     //  IInitializeWithFile methods
-    STDMETHOD(Initialize)(LPCWSTR , DWORD);
+    STDMETHOD(Initialize)(LPCWSTR, DWORD);
 
     //  IThumbnailProvider methods
-    STDMETHOD(GetThumbnail)(UINT, HBITMAP*, WTS_ALPHATYPE*);
+    STDMETHOD(GetThumbnail)(UINT, HBITMAP *, WTS_ALPHATYPE *);
 
     //  IObjectWithSite methods
-    STDMETHOD(GetSite)(REFIID, void**);
-    STDMETHOD(SetSite)(IUnknown*);
+    STDMETHOD(GetSite)(REFIID, void **);
+    STDMETHOD(SetSite)(IUnknown *);
 };

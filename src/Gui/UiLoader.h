@@ -23,11 +23,11 @@
 #ifndef GUI_UILOADER_H
 #define GUI_UILOADER_H
 
-#if !defined (__MINGW32__)
+#if !defined(__MINGW32__)
 #define HAVE_QT_UI_TOOLS
 #endif
 
-#if defined (HAVE_QT_UI_TOOLS)
+#if defined(HAVE_QT_UI_TOOLS)
 #include <QUiLoader>
 #else
 #include <QObject>
@@ -46,28 +46,31 @@ class QWidget;
 QT_END_NAMESPACE
 
 
-#if !defined (HAVE_QT_UI_TOOLS)
-class QUiLoader : public QObject
+#if !defined(HAVE_QT_UI_TOOLS)
+class QUiLoader: public QObject
 {
     Q_OBJECT
 public:
-    explicit QUiLoader(QObject* parent = nullptr);
+    explicit QUiLoader(QObject *parent = nullptr);
     ~QUiLoader();
 
     QStringList pluginPaths() const;
     void clearPluginPaths();
-    void addPluginPath(const QString& path);
+    void addPluginPath(const QString &path);
 
-    QWidget* load(QIODevice* device, QWidget* parentWidget = nullptr);
+    QWidget *load(QIODevice *device, QWidget *parentWidget = nullptr);
     QStringList availableWidgets() const;
     QStringList availableLayouts() const;
 
-    virtual QWidget* createWidget(const QString& className, QWidget* parent = nullptr, const QString& name = QString());
-    virtual QLayout* createLayout(const QString& className, QObject* parent = nullptr, const QString& name = QString());
-    virtual QActionGroup* createActionGroup(QObject* parent = nullptr, const QString& name = QString());
-    virtual QAction* createAction(QObject* parent = nullptr, const QString& name = QString());
+    virtual QWidget *createWidget(const QString &className, QWidget *parent = nullptr,
+                                  const QString &name = QString());
+    virtual QLayout *createLayout(const QString &className, QObject *parent = nullptr,
+                                  const QString &name = QString());
+    virtual QActionGroup *createActionGroup(QObject *parent = nullptr,
+                                            const QString &name = QString());
+    virtual QAction *createAction(QObject *parent = nullptr, const QString &name = QString());
 
-    void setWorkingDirectory(const QDir& dir);
+    void setWorkingDirectory(const QDir &dir);
     QDir workingDirectory() const;
 
     void setLanguageChangeEnabled(bool enabled);
@@ -83,9 +86,10 @@ private:
 };
 #endif
 
-namespace Gui {
+namespace Gui
+{
 
-class PySideUicModule : public Py::ExtensionModule<PySideUicModule>
+class PySideUicModule: public Py::ExtensionModule<PySideUicModule>
 {
 
 public:
@@ -93,9 +97,9 @@ public:
     ~PySideUicModule() override {}
 
 private:
-    Py::Object loadUiType(const Py::Tuple& args);
-    Py::Object loadUi(const Py::Tuple& args);
-    Py::Object createCustomWidget(const Py::Tuple&);
+    Py::Object loadUiType(const Py::Tuple &args);
+    Py::Object loadUi(const Py::Tuple &args);
+    Py::Object createCustomWidget(const Py::Tuple &);
 };
 
 /**
@@ -104,18 +108,18 @@ private:
  * extends QUiLoader by the creation of FreeCAD specific widgets.
  * @author Werner Mayer
  */
-class UiLoader : public QUiLoader
+class UiLoader: public QUiLoader
 {
 public:
-    explicit UiLoader(QObject* parent=nullptr);
+    explicit UiLoader(QObject *parent = nullptr);
     ~UiLoader() override;
 
     /**
      * Creates a widget of the type \a className with the parent \a parent.
      * For more details see the documentation to QWidgetFactory.
      */
-    QWidget* createWidget(const QString & className, QWidget * parent=nullptr,
-                          const QString& name = QString()) override;
+    QWidget *createWidget(const QString &className, QWidget *parent = nullptr,
+                          const QString &name = QString()) override;
 
 private:
     QStringList cw;
@@ -123,17 +127,17 @@ private:
 
 // --------------------------------------------------------------------
 
-class UiLoaderPy : public Py::PythonExtension<UiLoaderPy>
+class UiLoaderPy: public Py::PythonExtension<UiLoaderPy>
 {
 public:
-    static void init_type();    // announce properties and methods
+    static void init_type(); // announce properties and methods
 
     UiLoaderPy();
     ~UiLoaderPy() override;
 
     Py::Object repr() override;
-    Py::Object createWidget(const Py::Tuple&);
-    Py::Object load(const Py::Tuple&);
+    Py::Object createWidget(const Py::Tuple &);
+    Py::Object load(const Py::Tuple &);
 
 private:
     static PyObject *PyMake(struct _typeobject *, PyObject *, PyObject *);

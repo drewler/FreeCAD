@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <qobject.h>
+#include <qobject.h>
 #endif
 
 #include "Workbench.h"
@@ -39,27 +39,22 @@ using namespace MeshPartGui;
 /// @namespace MeshPartGui @class Workbench
 TYPESYSTEM_SOURCE(MeshPartGui::Workbench, Gui::StdWorkbench)
 
-Workbench::Workbench()
-{
-}
+Workbench::Workbench() {}
 
-Workbench::~Workbench()
-{
-}
+Workbench::~Workbench() {}
 
-Gui::ToolBarItem* Workbench::setupToolBars() const
+Gui::ToolBarItem *Workbench::setupToolBars() const
 {
-    Gui::ToolBarItem* root = StdWorkbench::setupToolBars();
-    Gui::ToolBarItem* part = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *root = StdWorkbench::setupToolBars();
+    Gui::ToolBarItem *part = new Gui::ToolBarItem(root);
     part->setCommand("MeshPart");
     *part << "MeshPart_Mesher";
-     return root;
-}
-
-Gui::ToolBarItem* Workbench::setupCommandBars() const
-{
-    // Part tools
-    Gui::ToolBarItem* root = new Gui::ToolBarItem;
     return root;
 }
 
+Gui::ToolBarItem *Workbench::setupCommandBars() const
+{
+    // Part tools
+    Gui::ToolBarItem *root = new Gui::ToolBarItem;
+    return root;
+}

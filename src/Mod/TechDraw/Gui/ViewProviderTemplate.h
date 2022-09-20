@@ -25,15 +25,17 @@
 
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
-namespace TechDraw{
-    class DrawTemplate;
+namespace TechDraw
+{
+class DrawTemplate;
 }
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 class QGITemplate;
 class MDIViewPage;
 
-class TechDrawGuiExport ViewProviderTemplate : public Gui::ViewProviderDocumentObject
+class TechDrawGuiExport ViewProviderTemplate: public Gui::ViewProviderDocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderTemplate);
 
@@ -43,15 +45,15 @@ public:
     /// destructor
     virtual ~ViewProviderTemplate();
 
-    virtual bool useNewSelectionModel(void) const override {return false;}
-    virtual void updateData(const App::Property*) override;
+    virtual bool useNewSelectionModel(void) const override { return false; }
+    virtual void updateData(const App::Property *) override;
     virtual void onChanged(const App::Property *prop) override;
     virtual void hide(void) override;
     virtual void show(void) override;
     virtual bool isShow(void) const override;
-    QGITemplate* getQTemplate(void);
-    TechDraw::DrawTemplate* getTemplate() const;
-    MDIViewPage* getMDIViewPage(void) const;
+    QGITemplate *getQTemplate(void);
+    TechDraw::DrawTemplate *getTemplate() const;
+    MDIViewPage *getMDIViewPage(void) const;
     virtual Gui::MDIView *getMDIView() const override;
 
     void setMarkers(bool state);
@@ -62,4 +64,3 @@ public:
 
 
 #endif // DRAWINGGUI_VIEWPROVIDERTEMPLATE_H
-

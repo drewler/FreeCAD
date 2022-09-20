@@ -24,7 +24,7 @@
 //  Module : SMESH
 //
 #ifdef _MSC_VER
-#pragma warning(disable:4786)
+#pragma warning(disable : 4786)
 #endif
 
 #include "SMDS_MeshNodeIDFactory.hxx"
@@ -38,112 +38,105 @@ using namespace std;
 
 //=======================================================================
 //function : SMDS_MeshNodeIDFactory
-//purpose  : 
+//purpose  :
 //=======================================================================
-SMDS_MeshNodeIDFactory::SMDS_MeshNodeIDFactory() :
-  SMDS_MeshIDFactory(), myMin(0), myMax(0)
-{
-}
+SMDS_MeshNodeIDFactory::SMDS_MeshNodeIDFactory() : SMDS_MeshIDFactory(), myMin(0), myMax(0) {}
 
 //=======================================================================
 //function : BindID
-//purpose  : 
+//purpose  :
 //=======================================================================
-bool SMDS_MeshNodeIDFactory::BindID(int ID, SMDS_MeshElement * elem)
+bool SMDS_MeshNodeIDFactory::BindID(int ID, SMDS_MeshElement *elem)
 {
-  updateMinMax(ID);
-  return true;
+    updateMinMax(ID);
+    return true;
 }
 
 //=======================================================================
 //function : MeshElement
-//purpose  : 
+//purpose  :
 //=======================================================================
-SMDS_MeshElement* SMDS_MeshNodeIDFactory::MeshElement(int ID)
+SMDS_MeshElement *SMDS_MeshNodeIDFactory::MeshElement(int ID)
 {
-  // commented since myMax can be 0 after ReleaseID()
-//   if ((ID < 1) || (ID > myMax))
-//     return NULL;
-  const SMDS_MeshElement* elem = GetMesh()->FindNode(ID);
-  return (SMDS_MeshElement*) (elem);
+    // commented since myMax can be 0 after ReleaseID()
+    //   if ((ID < 1) || (ID > myMax))
+    //     return NULL;
+    const SMDS_MeshElement *elem = GetMesh()->FindNode(ID);
+    return (SMDS_MeshElement *)(elem);
 }
 
 //=======================================================================
 //function : GetFreeID
-//purpose  : 
+//purpose  :
 //=======================================================================
 int SMDS_MeshNodeIDFactory::GetFreeID()
 {
-  int ID;
-  do {
-    ID = SMDS_MeshIDFactory::GetFreeID();
-  } while ( MeshElement( ID ));
-  return ID;
+    int ID;
+    do {
+        ID = SMDS_MeshIDFactory::GetFreeID();
+    } while (MeshElement(ID));
+    return ID;
 }
 
 //=======================================================================
 //function : ReleaseID
-//purpose  : 
+//purpose  :
 //=======================================================================
 void SMDS_MeshNodeIDFactory::ReleaseID(const int ID, int vtkId)
 {
-  SMDS_MeshIDFactory::ReleaseID(ID);
-  myMesh->setMyModified();
-  if (ID == myMax)
-    myMax = 0; // --- force updateMinMax
-  if (ID == myMin)
-    myMax = 0; // --- force updateMinMax
+    SMDS_MeshIDFactory::ReleaseID(ID);
+    myMesh->setMyModified();
+    if (ID == myMax) myMax = 0; // --- force updateMinMax
+    if (ID == myMin) myMax = 0; // --- force updateMinMax
 }
 
 //=======================================================================
 //function : GetMaxID
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 int SMDS_MeshNodeIDFactory::GetMaxID() const
 {
-  if (myMax == 0)
-    updateMinMax();
-  return myMax;
+    if (myMax == 0) updateMinMax();
+    return myMax;
 }
 
 //=======================================================================
 //function : GetMinID
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 int SMDS_MeshNodeIDFactory::GetMinID() const
 {
-  if (myMax == 0)
-    updateMinMax();
-  return myMin;
+    if (myMax == 0) updateMinMax();
+    return myMin;
 }
 
 //=======================================================================
 //function : updateMinMax
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void SMDS_MeshNodeIDFactory::updateMinMax() const
 {
-  myMesh->updateNodeMinMax();
-  myMin = myMesh->MinNodeID();
-  myMax = myMesh->MaxNodeID();
+    myMesh->updateNodeMinMax();
+    myMin = myMesh->MinNodeID();
+    myMax = myMesh->MaxNodeID();
 }
 
 SMDS_ElemIteratorPtr SMDS_MeshNodeIDFactory::elementsIterator() const
 {
-  return myMesh->elementsIterator(SMDSAbs_Node);
+    return myMesh->elementsIterator(SMDSAbs_Node);
 }
 
 void SMDS_MeshNodeIDFactory::Clear()
 {
-  myMin = myMax = 0;
-  SMDS_MeshIDFactory::Clear();
+    myMin = myMax = 0;
+    SMDS_MeshIDFactory::Clear();
 }
 
 void SMDS_MeshNodeIDFactory::emptyPool(int maxId)
 {
-  SMDS_MeshIDFactory::emptyPool(maxId);
-  myMax = maxId;
+    SMDS_MeshIDFactory::emptyPool(maxId);
+    myMax = maxId;
 }

@@ -23,14 +23,14 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <cfloat>
-# include <memory>
-# include <QMessageBox>
-# include <Precision.hxx>
-# include <QApplication>
-# include <QMessageBox>
+#include <cfloat>
+#include <memory>
+#include <QMessageBox>
+#include <Precision.hxx>
+#include <QApplication>
+#include <QMessageBox>
 
-# include <Inventor/SbString.h>
+#include <Inventor/SbString.h>
 #endif
 
 #include <Base/Console.h>
@@ -66,18 +66,18 @@ using namespace Sketcher;
 // Select Constraints of selected elements
 DEF_STD_CMD_A(CmdSketcherSelectConstraints)
 
-CmdSketcherSelectConstraints::CmdSketcherSelectConstraints()
-    :Command("Sketcher_SelectConstraints")
+CmdSketcherSelectConstraints::CmdSketcherSelectConstraints() : Command("Sketcher_SelectConstraints")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select associated constraints");
-    sToolTipText    = QT_TR_NOOP("Select the constraints associated with the selected geometrical elements");
-    sWhatsThis      = "Sketcher_SelectConstraints";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectConstraints";
-    sAccel          = "Z, K";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select associated constraints");
+    sToolTipText =
+        QT_TR_NOOP("Select the constraints associated with the selected geometrical elements");
+    sWhatsThis = "Sketcher_SelectConstraints";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectConstraints";
+    sAccel = "Z, K";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectConstraints::activated(int iMsg)
@@ -89,20 +89,20 @@ void CmdSketcherSelectConstraints::activated(int iMsg)
     selection = getSelection().getSelectionEx(nullptr, Sketcher::SketchObject::getClassTypeId());
 
     // Cancel any in-progress operation
-    Gui::Document* doc = Gui::Application::Instance->activeDocument();
+    Gui::Document *doc = Gui::Application::Instance->activeDocument();
     SketcherGui::ReleaseHandler(doc);
 
     // only one sketch with its subelements are allowed to be selected
     if (selection.size() != 1) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
-            QObject::tr("Select elements from a single sketch."));
+                             QObject::tr("Select elements from a single sketch."));
         return;
     }
 
     // get the needed lists and objects
     const std::vector<std::string> &SubNames = selection[0].getSubNames();
-    Sketcher::SketchObject* Obj = static_cast<Sketcher::SketchObject*>(selection[0].getObject());
-    const std::vector< Sketcher::Constraint * > &vals = Obj->Constraints.getValues();
+    Sketcher::SketchObject *Obj = static_cast<Sketcher::SketchObject *>(selection[0].getObject());
+    const std::vector<Sketcher::Constraint *> &vals = Obj->Constraints.getValues();
 
     std::string doc_name = Obj->getDocument()->getName();
     std::string obj_name = Obj->getNameInDocument();
@@ -111,26 +111,26 @@ void CmdSketcherSelectConstraints::activated(int iMsg)
 
     std::vector<std::string> constraintSubNames;
     // go through the selected subelements
-    for (std::vector<std::string>::const_iterator it=SubNames.begin(); it != SubNames.end(); ++it) {
+    for (std::vector<std::string>::const_iterator it = SubNames.begin(); it != SubNames.end();
+         ++it) {
         // only handle edges
-        if (it->size() > 4 && it->substr(0,4) == "Edge") {
-            int GeoId = std::atoi(it->substr(4,4000).c_str()) - 1;
+        if (it->size() > 4 && it->substr(0, 4) == "Edge") {
+            int GeoId = std::atoi(it->substr(4, 4000).c_str()) - 1;
 
             // push all the constraints
             int i = 0;
-            for (std::vector< Sketcher::Constraint * >::const_iterator it= vals.begin();
-                 it != vals.end(); ++it,++i)
-            {
+            for (std::vector<Sketcher::Constraint *>::const_iterator it = vals.begin();
+                 it != vals.end(); ++it, ++i) {
                 if ((*it)->First == GeoId || (*it)->Second == GeoId || (*it)->Third == GeoId) {
-                    constraintSubNames.push_back(Sketcher::PropertyConstraintList::getConstraintName(i));
+                    constraintSubNames.push_back(
+                        Sketcher::PropertyConstraintList::getConstraintName(i));
                 }
             }
         }
     }
 
-    if(!constraintSubNames.empty())
+    if (!constraintSubNames.empty())
         Gui::Selection().addSelections(doc_name.c_str(), obj_name.c_str(), constraintSubNames);
-
 }
 
 bool CmdSketcherSelectConstraints::isActive()
@@ -143,29 +143,29 @@ bool CmdSketcherSelectConstraints::isActive()
 // Select Origin
 DEF_STD_CMD_A(CmdSketcherSelectOrigin)
 
-CmdSketcherSelectOrigin::CmdSketcherSelectOrigin()
-    :Command("Sketcher_SelectOrigin")
+CmdSketcherSelectOrigin::CmdSketcherSelectOrigin() : Command("Sketcher_SelectOrigin")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select origin");
-    sToolTipText    = QT_TR_NOOP("Select the local origin point of the sketch");
-    sWhatsThis      = "Sketcher_SelectOrigin";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectOrigin";
-    sAccel          = "Z, O";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select origin");
+    sToolTipText = QT_TR_NOOP("Select the local origin point of the sketch");
+    sWhatsThis = "Sketcher_SelectOrigin";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectOrigin";
+    sAccel = "Z, O";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectOrigin::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    Gui::Document * doc= getActiveGuiDocument();
+    Gui::Document *doc = getActiveGuiDocument();
     ReleaseHandler(doc);
-    SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-    Sketcher::SketchObject* Obj= vp->getSketchObject();
-//    ViewProviderSketch * vp = static_cast<ViewProviderSketch *>(Gui::Application::Instance->getViewProvider(docobj));
-//    Sketcher::SketchObject* Obj = vp->getSketchObject();
+    SketcherGui::ViewProviderSketch *vp =
+        static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+    Sketcher::SketchObject *Obj = vp->getSketchObject();
+    //    ViewProviderSketch * vp = static_cast<ViewProviderSketch *>(Gui::Application::Instance->getViewProvider(docobj));
+    //    Sketcher::SketchObject* Obj = vp->getSketchObject();
 
     std::string doc_name = Obj->getDocument()->getName();
     std::string obj_name = Obj->getNameInDocument();
@@ -173,16 +173,13 @@ void CmdSketcherSelectOrigin::activated(int iMsg)
 
     ss << "RootPoint";
 
-    if(Gui::Selection().isSelected(doc_name.c_str(), obj_name.c_str(), ss.str().c_str()))
+    if (Gui::Selection().isSelected(doc_name.c_str(), obj_name.c_str(), ss.str().c_str()))
         Gui::Selection().rmvSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
     else
         Gui::Selection().addSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
 }
 
-bool CmdSketcherSelectOrigin::isActive()
-{
-    return isCommandActive(getActiveGuiDocument(), false);
-}
+bool CmdSketcherSelectOrigin::isActive() { return isCommandActive(getActiveGuiDocument(), false); }
 
 // ================================================================================
 
@@ -190,26 +187,27 @@ bool CmdSketcherSelectOrigin::isActive()
 DEF_STD_CMD_A(CmdSketcherSelectVerticalAxis)
 
 CmdSketcherSelectVerticalAxis::CmdSketcherSelectVerticalAxis()
-    :Command("Sketcher_SelectVerticalAxis")
+    : Command("Sketcher_SelectVerticalAxis")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select vertical axis");
-    sToolTipText    = QT_TR_NOOP("Select the local vertical axis of the sketch");
-    sWhatsThis      = "Sketcher_SelectVerticalAxis";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectVerticalAxis";
-    sAccel          = "Z, V";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select vertical axis");
+    sToolTipText = QT_TR_NOOP("Select the local vertical axis of the sketch");
+    sWhatsThis = "Sketcher_SelectVerticalAxis";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectVerticalAxis";
+    sAccel = "Z, V";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectVerticalAxis::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    Gui::Document * doc= getActiveGuiDocument();
+    Gui::Document *doc = getActiveGuiDocument();
     ReleaseHandler(doc);
-    SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-    Sketcher::SketchObject* Obj= vp->getSketchObject();
+    SketcherGui::ViewProviderSketch *vp =
+        static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+    Sketcher::SketchObject *Obj = vp->getSketchObject();
 
     std::string doc_name = Obj->getDocument()->getName();
     std::string obj_name = Obj->getNameInDocument();
@@ -217,10 +215,10 @@ void CmdSketcherSelectVerticalAxis::activated(int iMsg)
 
     ss << "V_Axis";
 
-    if(Gui::Selection().isSelected(doc_name.c_str(), obj_name.c_str(), ss.str().c_str()))
-      Gui::Selection().rmvSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
+    if (Gui::Selection().isSelected(doc_name.c_str(), obj_name.c_str(), ss.str().c_str()))
+        Gui::Selection().rmvSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
     else
-      Gui::Selection().addSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
+        Gui::Selection().addSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
 }
 
 bool CmdSketcherSelectVerticalAxis::isActive()
@@ -234,26 +232,27 @@ bool CmdSketcherSelectVerticalAxis::isActive()
 DEF_STD_CMD_A(CmdSketcherSelectHorizontalAxis)
 
 CmdSketcherSelectHorizontalAxis::CmdSketcherSelectHorizontalAxis()
-    :Command("Sketcher_SelectHorizontalAxis")
+    : Command("Sketcher_SelectHorizontalAxis")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select horizontal axis");
-    sToolTipText    = QT_TR_NOOP("Select the local horizontal axis of the sketch");
-    sWhatsThis      = "Sketcher_SelectHorizontalAxis";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectHorizontalAxis";
-    sAccel          = "Z, H";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select horizontal axis");
+    sToolTipText = QT_TR_NOOP("Select the local horizontal axis of the sketch");
+    sWhatsThis = "Sketcher_SelectHorizontalAxis";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectHorizontalAxis";
+    sAccel = "Z, H";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectHorizontalAxis::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    Gui::Document * doc= getActiveGuiDocument();
+    Gui::Document *doc = getActiveGuiDocument();
     ReleaseHandler(doc);
-    SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-    Sketcher::SketchObject* Obj= vp->getSketchObject();
+    SketcherGui::ViewProviderSketch *vp =
+        static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+    Sketcher::SketchObject *Obj = vp->getSketchObject();
 
     std::string doc_name = Obj->getDocument()->getName();
     std::string obj_name = Obj->getNameInDocument();
@@ -261,10 +260,10 @@ void CmdSketcherSelectHorizontalAxis::activated(int iMsg)
 
     ss << "H_Axis";
 
-    if(Gui::Selection().isSelected(doc_name.c_str(), obj_name.c_str(), ss.str().c_str()))
-      Gui::Selection().rmvSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
+    if (Gui::Selection().isSelected(doc_name.c_str(), obj_name.c_str(), ss.str().c_str()))
+        Gui::Selection().rmvSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
     else
-      Gui::Selection().addSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
+        Gui::Selection().addSelection(doc_name.c_str(), obj_name.c_str(), ss.str().c_str());
 }
 
 bool CmdSketcherSelectHorizontalAxis::isActive()
@@ -277,33 +276,34 @@ bool CmdSketcherSelectHorizontalAxis::isActive()
 DEF_STD_CMD_A(CmdSketcherSelectRedundantConstraints)
 
 CmdSketcherSelectRedundantConstraints::CmdSketcherSelectRedundantConstraints()
-    :Command("Sketcher_SelectRedundantConstraints")
+    : Command("Sketcher_SelectRedundantConstraints")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select redundant constraints");
-    sToolTipText    = QT_TR_NOOP("Select redundant constraints");
-    sWhatsThis      = "Sketcher_SelectRedundantConstraints";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectRedundantConstraints";
-    sAccel          = "Z, P, R";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select redundant constraints");
+    sToolTipText = QT_TR_NOOP("Select redundant constraints");
+    sWhatsThis = "Sketcher_SelectRedundantConstraints";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectRedundantConstraints";
+    sAccel = "Z, P, R";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectRedundantConstraints::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    Gui::Document * doc= getActiveGuiDocument();
+    Gui::Document *doc = getActiveGuiDocument();
     ReleaseHandler(doc);
-    SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-    Sketcher::SketchObject* Obj= vp->getSketchObject();
+    SketcherGui::ViewProviderSketch *vp =
+        static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+    Sketcher::SketchObject *Obj = vp->getSketchObject();
 
     std::string doc_name = Obj->getDocument()->getName();
     std::string obj_name = Obj->getNameInDocument();
 
     // get the needed lists and objects
-    const std::vector< int > &solverredundant = vp->getSketchObject()->getLastRedundant();
-    const std::vector< Sketcher::Constraint * > &vals = Obj->Constraints.getValues();
+    const std::vector<int> &solverredundant = vp->getSketchObject()->getLastRedundant();
+    const std::vector<Sketcher::Constraint *> &vals = Obj->Constraints.getValues();
 
     getSelection().clearSelection();
 
@@ -311,16 +311,19 @@ void CmdSketcherSelectRedundantConstraints::activated(int iMsg)
     std::vector<std::string> constraintSubNames;
 
     int i = 0;
-    for (std::vector< Sketcher::Constraint * >::const_iterator it= vals.begin();it != vals.end(); ++it,++i) {
-        for(std::vector< int >::const_iterator itc= solverredundant.begin();itc != solverredundant.end(); ++itc) {
+    for (std::vector<Sketcher::Constraint *>::const_iterator it = vals.begin(); it != vals.end();
+         ++it, ++i) {
+        for (std::vector<int>::const_iterator itc = solverredundant.begin();
+             itc != solverredundant.end(); ++itc) {
             if ((*itc) - 1 == i) {
-                constraintSubNames.push_back(Sketcher::PropertyConstraintList::getConstraintName(i));
+                constraintSubNames.push_back(
+                    Sketcher::PropertyConstraintList::getConstraintName(i));
                 break;
             }
         }
     }
 
-    if(!constraintSubNames.empty())
+    if (!constraintSubNames.empty())
         Gui::Selection().addSelections(doc_name.c_str(), obj_name.c_str(), constraintSubNames);
 }
 
@@ -334,49 +337,53 @@ bool CmdSketcherSelectRedundantConstraints::isActive()
 DEF_STD_CMD_A(CmdSketcherSelectMalformedConstraints)
 
 CmdSketcherSelectMalformedConstraints::CmdSketcherSelectMalformedConstraints()
-    :Command("Sketcher_SelectMalformedConstraints")
+    : Command("Sketcher_SelectMalformedConstraints")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select malformed constraints");
-    sToolTipText    = QT_TR_NOOP("Select malformed constraints");
-    sWhatsThis      = "Sketcher_SelectMalformedConstraints";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectMalformedConstraints";
-    sAccel          = "Z, P, M";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select malformed constraints");
+    sToolTipText = QT_TR_NOOP("Select malformed constraints");
+    sWhatsThis = "Sketcher_SelectMalformedConstraints";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectMalformedConstraints";
+    sAccel = "Z, P, M";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectMalformedConstraints::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    Gui::Document * doc= getActiveGuiDocument();
+    Gui::Document *doc = getActiveGuiDocument();
     ReleaseHandler(doc);
-    SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-    Sketcher::SketchObject* Obj= vp->getSketchObject();
+    SketcherGui::ViewProviderSketch *vp =
+        static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+    Sketcher::SketchObject *Obj = vp->getSketchObject();
 
     std::string doc_name = Obj->getDocument()->getName();
     std::string obj_name = Obj->getNameInDocument();
 
     // get the needed lists and objects
-    const std::vector< int > &solvermalformed = vp->getSketchObject()->getLastMalformedConstraints();
-    const std::vector< Sketcher::Constraint * > &vals = Obj->Constraints.getValues();
+    const std::vector<int> &solvermalformed = vp->getSketchObject()->getLastMalformedConstraints();
+    const std::vector<Sketcher::Constraint *> &vals = Obj->Constraints.getValues();
 
     getSelection().clearSelection();
 
     // push the constraints
     std::vector<std::string> constraintSubNames;
     int i = 0;
-    for (std::vector< Sketcher::Constraint * >::const_iterator it= vals.begin();it != vals.end(); ++it,++i) {
-        for(std::vector< int >::const_iterator itc= solvermalformed.begin();itc != solvermalformed.end(); ++itc) {
+    for (std::vector<Sketcher::Constraint *>::const_iterator it = vals.begin(); it != vals.end();
+         ++it, ++i) {
+        for (std::vector<int>::const_iterator itc = solvermalformed.begin();
+             itc != solvermalformed.end(); ++itc) {
             if ((*itc) - 1 == i) {
-                constraintSubNames.push_back(Sketcher::PropertyConstraintList::getConstraintName(i));
+                constraintSubNames.push_back(
+                    Sketcher::PropertyConstraintList::getConstraintName(i));
                 break;
             }
         }
     }
 
-    if(!constraintSubNames.empty())
+    if (!constraintSubNames.empty())
         Gui::Selection().addSelections(doc_name.c_str(), obj_name.c_str(), constraintSubNames);
 }
 
@@ -390,49 +397,54 @@ bool CmdSketcherSelectMalformedConstraints::isActive()
 DEF_STD_CMD_A(CmdSketcherSelectPartiallyRedundantConstraints)
 
 CmdSketcherSelectPartiallyRedundantConstraints::CmdSketcherSelectPartiallyRedundantConstraints()
-    :Command("Sketcher_SelectPartiallyRedundantConstraints")
+    : Command("Sketcher_SelectPartiallyRedundantConstraints")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select partially redundant constraints");
-    sToolTipText    = QT_TR_NOOP("Select partially redundant constraints");
-    sWhatsThis      = "Sketcher_SelectPartiallyRedundantConstraints";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectPartiallyRedundantConstraints";
-    sAccel          = "Z, P, P";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select partially redundant constraints");
+    sToolTipText = QT_TR_NOOP("Select partially redundant constraints");
+    sWhatsThis = "Sketcher_SelectPartiallyRedundantConstraints";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectPartiallyRedundantConstraints";
+    sAccel = "Z, P, P";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectPartiallyRedundantConstraints::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    Gui::Document * doc= getActiveGuiDocument();
+    Gui::Document *doc = getActiveGuiDocument();
     ReleaseHandler(doc);
-    SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-    Sketcher::SketchObject* Obj= vp->getSketchObject();
+    SketcherGui::ViewProviderSketch *vp =
+        static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+    Sketcher::SketchObject *Obj = vp->getSketchObject();
 
     std::string doc_name = Obj->getDocument()->getName();
     std::string obj_name = Obj->getNameInDocument();
 
     // get the needed lists and objects
-    const std::vector< int > &solverpartiallyredundant = vp->getSketchObject()->getLastPartiallyRedundant();
-    const std::vector< Sketcher::Constraint * > &vals = Obj->Constraints.getValues();
+    const std::vector<int> &solverpartiallyredundant =
+        vp->getSketchObject()->getLastPartiallyRedundant();
+    const std::vector<Sketcher::Constraint *> &vals = Obj->Constraints.getValues();
 
     getSelection().clearSelection();
 
     // push the constraints
     std::vector<std::string> constraintSubNames;
     int i = 0;
-    for (std::vector< Sketcher::Constraint * >::const_iterator it= vals.begin();it != vals.end(); ++it,++i) {
-        for(std::vector< int >::const_iterator itc= solverpartiallyredundant.begin();itc != solverpartiallyredundant.end(); ++itc) {
+    for (std::vector<Sketcher::Constraint *>::const_iterator it = vals.begin(); it != vals.end();
+         ++it, ++i) {
+        for (std::vector<int>::const_iterator itc = solverpartiallyredundant.begin();
+             itc != solverpartiallyredundant.end(); ++itc) {
             if ((*itc) - 1 == i) {
-                constraintSubNames.push_back(Sketcher::PropertyConstraintList::getConstraintName(i));
+                constraintSubNames.push_back(
+                    Sketcher::PropertyConstraintList::getConstraintName(i));
                 break;
             }
         }
     }
 
-    if(!constraintSubNames.empty())
+    if (!constraintSubNames.empty())
         Gui::Selection().addSelections(doc_name.c_str(), obj_name.c_str(), constraintSubNames);
 }
 
@@ -446,48 +458,52 @@ bool CmdSketcherSelectPartiallyRedundantConstraints::isActive()
 DEF_STD_CMD_A(CmdSketcherSelectConflictingConstraints)
 
 CmdSketcherSelectConflictingConstraints::CmdSketcherSelectConflictingConstraints()
-    :Command("Sketcher_SelectConflictingConstraints")
+    : Command("Sketcher_SelectConflictingConstraints")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select conflicting constraints");
-    sToolTipText    = QT_TR_NOOP("Select conflicting constraints");
-    sWhatsThis      = "Sketcher_SelectConflictingConstraints";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectConflictingConstraints";
-    sAccel          = "Z, P, C";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select conflicting constraints");
+    sToolTipText = QT_TR_NOOP("Select conflicting constraints");
+    sWhatsThis = "Sketcher_SelectConflictingConstraints";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectConflictingConstraints";
+    sAccel = "Z, P, C";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectConflictingConstraints::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    Gui::Document * doc= getActiveGuiDocument();
+    Gui::Document *doc = getActiveGuiDocument();
     ReleaseHandler(doc);
-    SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-    Sketcher::SketchObject* Obj= vp->getSketchObject();
+    SketcherGui::ViewProviderSketch *vp =
+        static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+    Sketcher::SketchObject *Obj = vp->getSketchObject();
     std::string doc_name = Obj->getDocument()->getName();
     std::string obj_name = Obj->getNameInDocument();
 
     // get the needed lists and objects
-    const std::vector< int > &solverconflicting = vp->getSketchObject()->getLastConflicting();
-    const std::vector< Sketcher::Constraint * > &vals = Obj->Constraints.getValues();
+    const std::vector<int> &solverconflicting = vp->getSketchObject()->getLastConflicting();
+    const std::vector<Sketcher::Constraint *> &vals = Obj->Constraints.getValues();
 
     getSelection().clearSelection();
 
     // push the constraints
     std::vector<std::string> constraintSubNames;
     int i = 0;
-    for (std::vector< Sketcher::Constraint * >::const_iterator it= vals.begin();it != vals.end(); ++it,++i) {
-        for (std::vector< int >::const_iterator itc= solverconflicting.begin();itc != solverconflicting.end(); ++itc) {
+    for (std::vector<Sketcher::Constraint *>::const_iterator it = vals.begin(); it != vals.end();
+         ++it, ++i) {
+        for (std::vector<int>::const_iterator itc = solverconflicting.begin();
+             itc != solverconflicting.end(); ++itc) {
             if ((*itc) - 1 == i) {
-                constraintSubNames.push_back(Sketcher::PropertyConstraintList::getConstraintName(i));
+                constraintSubNames.push_back(
+                    Sketcher::PropertyConstraintList::getConstraintName(i));
                 break;
             }
         }
     }
 
-    if(!constraintSubNames.empty())
+    if (!constraintSubNames.empty())
         Gui::Selection().addSelections(doc_name.c_str(), obj_name.c_str(), constraintSubNames);
 }
 
@@ -500,31 +516,34 @@ bool CmdSketcherSelectConflictingConstraints::isActive()
 
 DEF_STD_CMD_A(CmdSketcherSelectElementsAssociatedWithConstraints)
 
-CmdSketcherSelectElementsAssociatedWithConstraints::CmdSketcherSelectElementsAssociatedWithConstraints()
-    :Command("Sketcher_SelectElementsAssociatedWithConstraints")
+CmdSketcherSelectElementsAssociatedWithConstraints::
+    CmdSketcherSelectElementsAssociatedWithConstraints()
+    : Command("Sketcher_SelectElementsAssociatedWithConstraints")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select associated geometry");
-    sToolTipText    = QT_TR_NOOP("Select the geometrical elements associated with the selected constraints");
-    sWhatsThis      = "Sketcher_SelectElementsAssociatedWithConstraints";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectElementsAssociatedWithConstraints";
-    sAccel          = "Z, E";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select associated geometry");
+    sToolTipText =
+        QT_TR_NOOP("Select the geometrical elements associated with the selected constraints");
+    sWhatsThis = "Sketcher_SelectElementsAssociatedWithConstraints";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectElementsAssociatedWithConstraints";
+    sAccel = "Z, E";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectElementsAssociatedWithConstraints::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     std::vector<Gui::SelectionObject> selection = Gui::Selection().getSelectionEx();
-    Gui::Document * doc= getActiveGuiDocument();
+    Gui::Document *doc = getActiveGuiDocument();
     ReleaseHandler(doc);
-    SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-    Sketcher::SketchObject* Obj= vp->getSketchObject();
+    SketcherGui::ViewProviderSketch *vp =
+        static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+    Sketcher::SketchObject *Obj = vp->getSketchObject();
 
     const std::vector<std::string> &SubNames = selection[0].getSubNames();
-    const std::vector< Sketcher::Constraint * > &vals = Obj->Constraints.getValues();
+    const std::vector<Sketcher::Constraint *> &vals = Obj->Constraints.getValues();
 
     getSelection().clearSelection();
 
@@ -534,65 +553,63 @@ void CmdSketcherSelectElementsAssociatedWithConstraints::activated(int iMsg)
 
     std::vector<std::string> elementSubNames;
     // go through the selected subelements
-    for (std::vector<std::string>::const_iterator it=SubNames.begin(); it != SubNames.end(); ++it) {
+    for (std::vector<std::string>::const_iterator it = SubNames.begin(); it != SubNames.end();
+         ++it) {
         // only handle constraints
-        if (it->size() > 10 && it->substr(0,10) == "Constraint") {
+        if (it->size() > 10 && it->substr(0, 10) == "Constraint") {
             int ConstrId = Sketcher::PropertyConstraintList::getIndexFromConstraintName(*it);
 
-            if(ConstrId < static_cast<int>(vals.size())){
-                if(vals[ConstrId]->First!=GeoEnum::GeoUndef){
+            if (ConstrId < static_cast<int>(vals.size())) {
+                if (vals[ConstrId]->First != GeoEnum::GeoUndef) {
                     ss.str(std::string());
 
-                    switch(vals[ConstrId]->FirstPos)
-                    {
+                    switch (vals[ConstrId]->FirstPos) {
                         case Sketcher::PointPos::none:
                             ss << "Edge" << vals[ConstrId]->First + 1;
                             break;
                         case Sketcher::PointPos::start:
                         case Sketcher::PointPos::end:
                         case Sketcher::PointPos::mid:
-                            int vertex = Obj->getVertexIndexGeoPos(vals[ConstrId]->First,vals[ConstrId]->FirstPos);
-                            if(vertex>-1)
-                                ss << "Vertex" <<  vertex + 1;
+                            int vertex = Obj->getVertexIndexGeoPos(vals[ConstrId]->First,
+                                                                   vals[ConstrId]->FirstPos);
+                            if (vertex > -1) ss << "Vertex" << vertex + 1;
                             break;
                     }
                     elementSubNames.push_back(ss.str());
                 }
 
-                if(vals[ConstrId]->Second!=GeoEnum::GeoUndef){
+                if (vals[ConstrId]->Second != GeoEnum::GeoUndef) {
                     ss.str(std::string());
 
-                    switch(vals[ConstrId]->SecondPos)
-                    {
+                    switch (vals[ConstrId]->SecondPos) {
                         case Sketcher::PointPos::none:
                             ss << "Edge" << vals[ConstrId]->Second + 1;
                             break;
                         case Sketcher::PointPos::start:
                         case Sketcher::PointPos::end:
                         case Sketcher::PointPos::mid:
-                            int vertex = Obj->getVertexIndexGeoPos(vals[ConstrId]->Second,vals[ConstrId]->SecondPos);
-                            if(vertex>-1)
-                                ss << "Vertex" << vertex + 1;
+                            int vertex = Obj->getVertexIndexGeoPos(vals[ConstrId]->Second,
+                                                                   vals[ConstrId]->SecondPos);
+                            if (vertex > -1) ss << "Vertex" << vertex + 1;
                             break;
                     }
 
                     elementSubNames.push_back(ss.str());
                 }
 
-                if(vals[ConstrId]->Third!=GeoEnum::GeoUndef){
+                if (vals[ConstrId]->Third != GeoEnum::GeoUndef) {
                     ss.str(std::string());
 
-                    switch(vals[ConstrId]->ThirdPos)
-                    {
+                    switch (vals[ConstrId]->ThirdPos) {
                         case Sketcher::PointPos::none:
                             ss << "Edge" << vals[ConstrId]->Third + 1;
                             break;
                         case Sketcher::PointPos::start:
                         case Sketcher::PointPos::end:
                         case Sketcher::PointPos::mid:
-                            int vertex = Obj->getVertexIndexGeoPos(vals[ConstrId]->Third,vals[ConstrId]->ThirdPos);
-                            if(vertex>-1)
-                                ss << "Vertex" <<  vertex + 1;
+                            int vertex = Obj->getVertexIndexGeoPos(vals[ConstrId]->Third,
+                                                                   vals[ConstrId]->ThirdPos);
+                            if (vertex > -1) ss << "Vertex" << vertex + 1;
                             break;
                     }
 
@@ -609,7 +626,6 @@ void CmdSketcherSelectElementsAssociatedWithConstraints::activated(int iMsg)
     else {
         Gui::Selection().addSelections(doc_name.c_str(), obj_name.c_str(), elementSubNames);
     }
-
 }
 
 bool CmdSketcherSelectElementsAssociatedWithConstraints::isActive()
@@ -622,27 +638,29 @@ bool CmdSketcherSelectElementsAssociatedWithConstraints::isActive()
 DEF_STD_CMD_A(CmdSketcherSelectElementsWithDoFs)
 
 CmdSketcherSelectElementsWithDoFs::CmdSketcherSelectElementsWithDoFs()
-:Command("Sketcher_SelectElementsWithDoFs")
+    : Command("Sketcher_SelectElementsWithDoFs")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Select unconstrained DoF");
-    sToolTipText    = QT_TR_NOOP("Select geometrical elements where the solver still detects unconstrained degrees of freedom.");
-    sWhatsThis      = "Sketcher_SelectElementsWithDoFs";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_SelectElementsWithDoFs";
-    sAccel          = "Z, F";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Select unconstrained DoF");
+    sToolTipText = QT_TR_NOOP("Select geometrical elements where the solver still detects "
+                              "unconstrained degrees of freedom.");
+    sWhatsThis = "Sketcher_SelectElementsWithDoFs";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_SelectElementsWithDoFs";
+    sAccel = "Z, F";
+    eType = ForEdit;
 }
 
 void CmdSketcherSelectElementsWithDoFs::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     getSelection().clearSelection();
-    Gui::Document * doc= getActiveGuiDocument();
+    Gui::Document *doc = getActiveGuiDocument();
     ReleaseHandler(doc);
-    SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-    Sketcher::SketchObject* Obj= vp->getSketchObject();
+    SketcherGui::ViewProviderSketch *vp =
+        static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+    Sketcher::SketchObject *Obj = vp->getSketchObject();
 
     std::string doc_name = Obj->getDocument()->getName();
     std::string obj_name = Obj->getNameInDocument();
@@ -657,7 +675,7 @@ void CmdSketcherSelectElementsWithDoFs::activated(int iMsg)
 
         int vertex = Obj->getVertexIndexGeoPos(geoId, pos);
         if (vertex > -1) {
-            ss << "Vertex" <<  vertex + 1;
+            ss << "Vertex" << vertex + 1;
 
             elementSubNames.push_back(ss.str());
         }
@@ -666,20 +684,21 @@ void CmdSketcherSelectElementsWithDoFs::activated(int iMsg)
     auto testselectedge = [&ss, &elementSubNames](int geoId) {
         ss.str(std::string());
 
-        ss << "Edge" <<  geoId + 1;
+        ss << "Edge" << geoId + 1;
         elementSubNames.push_back(ss.str());
     };
 
     int geoid = 0;
 
     for (auto geo : geos) {
-        if(geo) {
-            if(geo->hasExtension(Sketcher::SolverGeometryExtension::getClassTypeId())) {
+        if (geo) {
+            if (geo->hasExtension(Sketcher::SolverGeometryExtension::getClassTypeId())) {
 
                 auto solvext = std::static_pointer_cast<const Sketcher::SolverGeometryExtension>(
-                                    geo->getExtension(Sketcher::SolverGeometryExtension::getClassTypeId()).lock());
+                    geo->getExtension(Sketcher::SolverGeometryExtension::getClassTypeId()).lock());
 
-                if (solvext->getGeometry() == Sketcher::SolverGeometryExtension::NotFullyConstraint) {
+                if (solvext->getGeometry()
+                    == Sketcher::SolverGeometryExtension::NotFullyConstraint) {
                     // Coded for consistency with getGeometryWithDependentParameters, read the comments
                     // on that function
                     if (solvext->getEdge() == SolverGeometryExtension::Dependent)
@@ -700,7 +719,6 @@ void CmdSketcherSelectElementsWithDoFs::activated(int iMsg)
     if (!elementSubNames.empty()) {
         Gui::Selection().addSelections(doc_name.c_str(), obj_name.c_str(), elementSubNames);
     }
-
 }
 
 bool CmdSketcherSelectElementsWithDoFs::isActive()
@@ -713,17 +731,17 @@ bool CmdSketcherSelectElementsWithDoFs::isActive()
 DEF_STD_CMD_A(CmdSketcherRestoreInternalAlignmentGeometry)
 
 CmdSketcherRestoreInternalAlignmentGeometry::CmdSketcherRestoreInternalAlignmentGeometry()
-    :Command("Sketcher_RestoreInternalAlignmentGeometry")
+    : Command("Sketcher_RestoreInternalAlignmentGeometry")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Show/hide internal geometry");
-    sToolTipText    = QT_TR_NOOP("Show all internal geometry or hide unused internal geometry");
-    sWhatsThis      = "Sketcher_RestoreInternalAlignmentGeometry";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_Element_Ellipse_All";
-    sAccel          = "Z, I";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Show/hide internal geometry");
+    sToolTipText = QT_TR_NOOP("Show all internal geometry or hide unused internal geometry");
+    sWhatsThis = "Sketcher_RestoreInternalAlignmentGeometry";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_Element_Ellipse_All";
+    sAccel = "Z, I";
+    eType = ForEdit;
 }
 
 void CmdSketcherRestoreInternalAlignmentGeometry::activated(int iMsg)
@@ -731,7 +749,7 @@ void CmdSketcherRestoreInternalAlignmentGeometry::activated(int iMsg)
     Q_UNUSED(iMsg);
 
     // Cancel any in-progress operation
-    Gui::Document* doc = Gui::Application::Instance->activeDocument();
+    Gui::Document *doc = Gui::Application::Instance->activeDocument();
     SketcherGui::ReleaseHandler(doc);
 
     // get the selection
@@ -740,38 +758,36 @@ void CmdSketcherRestoreInternalAlignmentGeometry::activated(int iMsg)
 
     // only one sketch with its subelements are allowed to be selected
     if (selection.size() != 1) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
                              QObject::tr("Select elements from a single sketch."));
         return;
     }
 
     // get the needed lists and objects
     const std::vector<std::string> &SubNames = selection[0].getSubNames();
-    Sketcher::SketchObject* Obj = static_cast<Sketcher::SketchObject*>(selection[0].getObject());
+    Sketcher::SketchObject *Obj = static_cast<Sketcher::SketchObject *>(selection[0].getObject());
 
     getSelection().clearSelection();
 
     // Return GeoId of the SubName only if it is an edge
-    auto getEdgeGeoId = [&Obj](const std::string& SubName) {
+    auto getEdgeGeoId = [&Obj](const std::string &SubName) {
         int GeoId;
         Sketcher::PointPos PosId;
         getIdsFromName(SubName, Obj, GeoId, PosId);
-        if (PosId == Sketcher::PointPos::none)
-            return GeoId;
+        if (PosId == Sketcher::PointPos::none) return GeoId;
         else
             return (int)GeoEnum::GeoUndef;
     };
 
     // Tells if the geometry with given GeoId has internal geometry
-    auto noInternalGeo = [&Obj](const auto& GeoId) {
+    auto noInternalGeo = [&Obj](const auto &GeoId) {
         const Part::Geometry *geo = Obj->getGeometry(GeoId);
-        bool hasInternalGeo = geo &&
-            (geo->getTypeId() == Part::GeomEllipse::getClassTypeId() ||
-             geo->getTypeId() == Part::GeomArcOfEllipse::getClassTypeId() ||
-             geo->getTypeId() == Part::GeomArcOfHyperbola::getClassTypeId() ||
-             geo->getTypeId() == Part::GeomArcOfParabola::getClassTypeId() ||
-             geo->getTypeId() == Part::GeomBSplineCurve::getClassTypeId());
+        bool hasInternalGeo = geo
+            && (geo->getTypeId() == Part::GeomEllipse::getClassTypeId()
+                || geo->getTypeId() == Part::GeomArcOfEllipse::getClassTypeId()
+                || geo->getTypeId() == Part::GeomArcOfHyperbola::getClassTypeId()
+                || geo->getTypeId() == Part::GeomArcOfParabola::getClassTypeId()
+                || geo->getTypeId() == Part::GeomBSplineCurve::getClassTypeId());
         return !hasInternalGeo; // so it's removed
     };
 
@@ -789,7 +805,7 @@ void CmdSketcherRestoreInternalAlignmentGeometry::activated(int iMsg)
                     SubGeoIds.end());
 
     // go through the selected subelements
-    for (const auto& GeoId : SubGeoIds) {
+    for (const auto &GeoId : SubGeoIds) {
         int currentgeoid = Obj->getHighestCurveIndex();
 
         try {
@@ -798,11 +814,11 @@ void CmdSketcherRestoreInternalAlignmentGeometry::activated(int iMsg)
 
             int aftergeoid = Obj->getHighestCurveIndex();
 
-            if(aftergeoid == currentgeoid) { // if we did not expose anything, deleteunused
+            if (aftergeoid == currentgeoid) { // if we did not expose anything, deleteunused
                 Gui::cmdAppObjectArgs(Obj, "deleteUnusedInternalGeometry(%d)", GeoId);
             }
         }
-        catch (const Base::Exception& e) {
+        catch (const Base::Exception &e) {
             Base::Console().Error("%s\n", e.what());
             Gui::Command::abortCommand();
 
@@ -825,18 +841,18 @@ bool CmdSketcherRestoreInternalAlignmentGeometry::isActive()
 
 DEF_STD_CMD_A(CmdSketcherSymmetry)
 
-CmdSketcherSymmetry::CmdSketcherSymmetry()
-    :Command("Sketcher_Symmetry")
+CmdSketcherSymmetry::CmdSketcherSymmetry() : Command("Sketcher_Symmetry")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Symmetry");
-    sToolTipText    = QT_TR_NOOP("Creates symmetric geometry with respect to the last selected line or point");
-    sWhatsThis      = "Sketcher_Symmetry";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_Symmetry";
-    sAccel          = "Z, S";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Symmetry");
+    sToolTipText =
+        QT_TR_NOOP("Creates symmetric geometry with respect to the last selected line or point");
+    sWhatsThis = "Sketcher_Symmetry";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_Symmetry";
+    sAccel = "Z, S";
+    eType = ForEdit;
 }
 
 void CmdSketcherSymmetry::activated(int iMsg)
@@ -844,7 +860,7 @@ void CmdSketcherSymmetry::activated(int iMsg)
     Q_UNUSED(iMsg);
 
     // Cancel any in-progress operation
-    Gui::Document* doc = Gui::Application::Instance->activeDocument();
+    Gui::Document *doc = Gui::Application::Instance->activeDocument();
     SketcherGui::ReleaseHandler(doc);
 
     // get the selection
@@ -854,7 +870,7 @@ void CmdSketcherSymmetry::activated(int iMsg)
     // only one sketch with its subelements are allowed to be selected
     if (selection.size() != 1) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
-            QObject::tr("Select elements from a single sketch."));
+                             QObject::tr("Select elements from a single sketch."));
         return;
     }
 
@@ -862,11 +878,11 @@ void CmdSketcherSymmetry::activated(int iMsg)
     const std::vector<std::string> &SubNames = selection[0].getSubNames();
     if (SubNames.empty()) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
-            QObject::tr("Select elements from a single sketch."));
+                             QObject::tr("Select elements from a single sketch."));
         return;
     }
 
-    Sketcher::SketchObject* Obj = static_cast<Sketcher::SketchObject*>(selection[0].getObject());
+    Sketcher::SketchObject *Obj = static_cast<Sketcher::SketchObject *>(selection[0].getObject());
     getSelection().clearSelection();
 
     int LastGeoId = 0;
@@ -880,25 +896,25 @@ void CmdSketcherSymmetry::activated(int iMsg)
     std::stringstream stream;
     int geoids = 0;
 
-    for (std::vector<std::string>::const_iterator it=SubNames.begin(); it != SubNames.end(); ++it) {
+    for (std::vector<std::string>::const_iterator it = SubNames.begin(); it != SubNames.end();
+         ++it) {
         // only handle non-external edges
-        if ((it->size() > 4 && it->substr(0,4) == "Edge") ||
-            (it->size() > 12 && it->substr(0,12) == "ExternalEdge")) {
+        if ((it->size() > 4 && it->substr(0, 4) == "Edge")
+            || (it->size() > 12 && it->substr(0, 12) == "ExternalEdge")) {
 
-            if (it->substr(0,4) == "Edge") {
-                LastGeoId = std::atoi(it->substr(4,4000).c_str()) - 1;
+            if (it->substr(0, 4) == "Edge") {
+                LastGeoId = std::atoi(it->substr(4, 4000).c_str()) - 1;
                 LastPointPos = Sketcher::PointPos::none;
             }
             else {
-                LastGeoId = -std::atoi(it->substr(12,4000).c_str()) - 2;
+                LastGeoId = -std::atoi(it->substr(12, 4000).c_str()) - 2;
                 LastPointPos = Sketcher::PointPos::none;
             }
 
             // reference can be external or non-external
             LastGeo = Obj->getGeometry(LastGeoId);
             // Only for supported types
-            if (LastGeo->getTypeId() == Part::GeomLineSegment::getClassTypeId())
-                lastgeotype = line;
+            if (LastGeo->getTypeId() == Part::GeomLineSegment::getClassTypeId()) lastgeotype = line;
             else
                 lastgeotype = invalid;
 
@@ -908,9 +924,9 @@ void CmdSketcherSymmetry::activated(int iMsg)
                 stream << LastGeoId << ",";
             }
         }
-        else if (it->size() > 6 && it->substr(0,6) == "Vertex") {
+        else if (it->size() > 6 && it->substr(0, 6) == "Vertex") {
             // only if it is a GeomPoint
-            int VtId = std::atoi(it->substr(6,4000).c_str()) - 1;
+            int VtId = std::atoi(it->substr(6, 4000).c_str()) - 1;
             int GeoId;
             Sketcher::PointPos PosId;
             Obj->getGeoVertexIndex(VtId, GeoId, PosId);
@@ -931,8 +947,8 @@ void CmdSketcherSymmetry::activated(int iMsg)
 
     bool lastvertexoraxis = false;
     // check if last selected element is a Vertex, not being a GeomPoint
-    if (SubNames.rbegin()->size() > 6 && SubNames.rbegin()->substr(0,6) == "Vertex") {
-        int VtId = std::atoi(SubNames.rbegin()->substr(6,4000).c_str()) - 1;
+    if (SubNames.rbegin()->size() > 6 && SubNames.rbegin()->substr(0, 6) == "Vertex") {
+        int VtId = std::atoi(SubNames.rbegin()->substr(6, 4000).c_str()) - 1;
         int GeoId;
         Sketcher::PointPos PosId;
         Obj->getGeoVertexIndex(VtId, GeoId, PosId);
@@ -944,21 +960,21 @@ void CmdSketcherSymmetry::activated(int iMsg)
         }
     }
     // check if last selected element is horizontal axis
-    else if (SubNames.rbegin()->size() == 6 && SubNames.rbegin()->substr(0,6) == "H_Axis") {
+    else if (SubNames.rbegin()->size() == 6 && SubNames.rbegin()->substr(0, 6) == "H_Axis") {
         LastGeoId = Sketcher::GeoEnum::HAxis;
         LastPointPos = Sketcher::PointPos::none;
         lastgeotype = line;
         lastvertexoraxis = true;
     }
     // check if last selected element is vertical axis
-    else if (SubNames.rbegin()->size() == 6 && SubNames.rbegin()->substr(0,6) == "V_Axis") {
+    else if (SubNames.rbegin()->size() == 6 && SubNames.rbegin()->substr(0, 6) == "V_Axis") {
         LastGeoId = Sketcher::GeoEnum::VAxis;
         LastPointPos = Sketcher::PointPos::none;
         lastgeotype = line;
         lastvertexoraxis = true;
     }
     // check if last selected element is the root point
-    else if (SubNames.rbegin()->size() == 9 && SubNames.rbegin()->substr(0,9) == "RootPoint") {
+    else if (SubNames.rbegin()->size() == 9 && SubNames.rbegin()->substr(0, 9) == "RootPoint") {
         LastGeoId = Sketcher::GeoEnum::RtPnt;
         LastPointPos = Sketcher::PointPos::start;
         lastgeotype = point;
@@ -967,18 +983,18 @@ void CmdSketcherSymmetry::activated(int iMsg)
 
     if (geoids == 0 || (geoids == 1 && LastGeoId >= 0 && !lastvertexoraxis)) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
-            QObject::tr("A symmetric construction requires "
-                        "at least two geometric elements, "
-                        "the last geometric element being the reference "
-                        "for the symmetry construction."));
+                             QObject::tr("A symmetric construction requires "
+                                         "at least two geometric elements, "
+                                         "the last geometric element being the reference "
+                                         "for the symmetry construction."));
         return;
     }
 
     if (lastgeotype == invalid) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
-            QObject::tr("The last element must be a point "
-                        "or a line serving as reference "
-                        "for the symmetry construction."));
+                             QObject::tr("The last element must be a point "
+                                         "or a line serving as reference "
+                                         "for the symmetry construction."));
         return;
     }
 
@@ -992,7 +1008,7 @@ void CmdSketcherSymmetry::activated(int iMsg)
     if (LastGeoId >= 0 && !lastvertexoraxis) {
         // if LastGeoId was added remove the last element
         int index = geoIdList.rfind(',');
-        index = geoIdList.rfind(',', index-1);
+        index = geoIdList.rfind(',', index - 1);
         geoIdList.resize(index);
     }
     else {
@@ -1005,103 +1021,93 @@ void CmdSketcherSymmetry::activated(int iMsg)
 
     Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Create symmetric geometry"));
 
-    try{
-        Gui::cmdAppObjectArgs(Obj,
-                              "addSymmetric(%s, %d, %d)",
-                              geoIdList.c_str(), LastGeoId, static_cast<int>(LastPointPos));
+    try {
+        Gui::cmdAppObjectArgs(Obj, "addSymmetric(%s, %d, %d)", geoIdList.c_str(), LastGeoId,
+                              static_cast<int>(LastPointPos));
         Gui::Command::commitCommand();
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         Base::Console().Error("%s\n", e.what());
         Gui::Command::abortCommand();
     }
     tryAutoRecomputeIfNotSolve(Obj);
 }
 
-bool CmdSketcherSymmetry::isActive()
-{
-    return isCommandActive(getActiveGuiDocument(), true);
-}
+bool CmdSketcherSymmetry::isActive() { return isCommandActive(getActiveGuiDocument(), true); }
 
 // ================================================================================
 
-class SketcherCopy : public Gui::Command {
+class SketcherCopy: public Gui::Command
+{
 public:
-    enum Op {
+    enum Op
+    {
         Copy,
         Clone,
         Move
     };
-    explicit SketcherCopy(const char* name);
+    explicit SketcherCopy(const char *name);
     void activate(SketcherCopy::Op op);
     virtual void activate() = 0;
 };
 
 // TODO: replace XPM cursor with SVG file
-static const char *cursor_createcopy[]={
-    "32 32 3 1",
-    "+ c white",
-    "# c red",
-    ". c None",
-    "................................",
-    ".......+........................",
-    ".......+........................",
-    ".......+........................",
-    ".......+........................",
-    ".......+........................",
-    "................................",
-    ".+++++...+++++..................",
-    "................................",
-    ".......+........................",
-    ".......+..............###.......",
-    ".......+..............###.......",
-    ".......+..............###.......",
-    ".......+..............###.......",
-    "......................###.......",
-    ".....###..............###.......",
-    ".....###..............###.......",
-    ".....###..............###.......",
-    ".....###..............###.......",
-    ".....###..............###.......",
-    ".....###..............###.......",
-    ".....###..............###.......",
-    ".....###..............###.......",
-    ".....###..............###.......",
-    ".....###........................",
-    ".....###........................",
-    ".....###........................",
-    ".....###........................",
-    "................................",
-    "................................",
-    "................................",
-    "................................"};
+static const char *cursor_createcopy[] = {"32 32 3 1",
+                                          "+ c white",
+                                          "# c red",
+                                          ". c None",
+                                          "................................",
+                                          ".......+........................",
+                                          ".......+........................",
+                                          ".......+........................",
+                                          ".......+........................",
+                                          ".......+........................",
+                                          "................................",
+                                          ".+++++...+++++..................",
+                                          "................................",
+                                          ".......+........................",
+                                          ".......+..............###.......",
+                                          ".......+..............###.......",
+                                          ".......+..............###.......",
+                                          ".......+..............###.......",
+                                          "......................###.......",
+                                          ".....###..............###.......",
+                                          ".....###..............###.......",
+                                          ".....###..............###.......",
+                                          ".....###..............###.......",
+                                          ".....###..............###.......",
+                                          ".....###..............###.......",
+                                          ".....###..............###.......",
+                                          ".....###..............###.......",
+                                          ".....###..............###.......",
+                                          ".....###........................",
+                                          ".....###........................",
+                                          ".....###........................",
+                                          ".....###........................",
+                                          "................................",
+                                          "................................",
+                                          "................................",
+                                          "................................"};
 
 class DrawSketchHandlerCopy: public DrawSketchHandler
 {
 public:
-    DrawSketchHandlerCopy(string geoidlist, int origingeoid,
-                          Sketcher::PointPos originpos, int nelements,
-                          SketcherCopy::Op op)
-    : Mode(STATUS_SEEK_First)
-    , snapMode(SnapMode::Free)
-    , geoIdList(geoidlist)
-    , Origin()
-    , OriginGeoId(origingeoid)
-    , OriginPos(originpos)
-    , nElements(nelements)
-    , Op(op)
-    , EditCurve(2)
-    {
-    }
+    DrawSketchHandlerCopy(string geoidlist, int origingeoid, Sketcher::PointPos originpos,
+                          int nelements, SketcherCopy::Op op)
+        : Mode(STATUS_SEEK_First), snapMode(SnapMode::Free), geoIdList(geoidlist), Origin(),
+          OriginGeoId(origingeoid), OriginPos(originpos), nElements(nelements), Op(op), EditCurve(2)
+    {}
 
-    ~DrawSketchHandlerCopy() override{}
+    ~DrawSketchHandlerCopy() override {}
     /// mode table
-    enum SelectMode {
-        STATUS_SEEK_First,      /**< enum value ----. */
+    enum SelectMode
+    {
+        STATUS_SEEK_First, /**< enum value ----. */
         STATUS_End
     };
 
-    enum class SnapMode {
+    enum class SnapMode
+    {
         Free,
         Snap5Degree
     };
@@ -1110,10 +1116,10 @@ public:
     {
         if (Mode == STATUS_SEEK_First) {
 
-             if(QApplication::keyboardModifiers() == Qt::ControlModifier)
-                    snapMode = SnapMode::Snap5Degree;
-                else
-                    snapMode = SnapMode::Free;
+            if (QApplication::keyboardModifiers() == Qt::ControlModifier)
+                snapMode = SnapMode::Snap5Degree;
+            else
+                snapMode = SnapMode::Free;
 
             float length = (onSketchPos - EditCurve[0]).Length();
             float angle = (onSketchPos - EditCurve[0]).Angle();
@@ -1121,8 +1127,8 @@ public:
             Base::Vector2d endpoint = onSketchPos;
 
             if (snapMode == SnapMode::Snap5Degree) {
-                angle = round(angle / (M_PI/36)) * M_PI/36;
-                endpoint = EditCurve[0] + length * Base::Vector2d(cos(angle),sin(angle));
+                angle = round(angle / (M_PI / 36)) * M_PI / 36;
+                endpoint = EditCurve[0] + length * Base::Vector2d(cos(angle), sin(angle));
             }
 
             if (showCursorCoords()) {
@@ -1135,7 +1141,8 @@ public:
 
             EditCurve[1] = endpoint;
             drawEdit(EditCurve);
-            if (seekAutoConstraint(sugConstr1, endpoint, Base::Vector2d(0.0, 0.0), AutoConstraint::VERTEX)) {
+            if (seekAutoConstraint(sugConstr1, endpoint, Base::Vector2d(0.0, 0.0),
+                                   AutoConstraint::VERTEX)) {
                 renderSuggestConstraintsCursor(sugConstr1);
                 return;
             }
@@ -1155,16 +1162,16 @@ public:
     bool releaseButton(Base::Vector2d onSketchPos) override
     {
         Q_UNUSED(onSketchPos);
-        if (Mode == STATUS_End)
-        {
+        if (Mode == STATUS_End) {
             Base::Vector2d vector = EditCurve[1] - EditCurve[0];
             unsetCursor();
             resetPositionText();
 
-            int currentgeoid = static_cast<Sketcher::SketchObject *>(sketchgui->getObject())->getHighestCurveIndex();
+            int currentgeoid = static_cast<Sketcher::SketchObject *>(sketchgui->getObject())
+                                   ->getHighestCurveIndex();
             Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Copy/clone/move geometry"));
 
-            try{
+            try {
                 if (Op != SketcherCopy::Move) {
                     Gui::cmdAppObjectArgs(sketchgui->getObject(),
                                           "addCopy(%s, App.Vector(%f, %f, 0), %s)",
@@ -1173,12 +1180,12 @@ public:
                 }
                 else {
                     Gui::cmdAppObjectArgs(sketchgui->getObject(),
-                                          "addMove(%s, App.Vector(%f, %f, 0))",
-                                          geoIdList.c_str(), vector.x, vector.y);
+                                          "addMove(%s, App.Vector(%f, %f, 0))", geoIdList.c_str(),
+                                          vector.x, vector.y);
                 }
                 Gui::Command::commitCommand();
             }
-            catch (const Base::Exception& e) {
+            catch (const Base::Exception &e) {
                 Base::Console().Error("%s\n", e.what());
                 Gui::Command::abortCommand();
             }
@@ -1186,7 +1193,7 @@ public:
             if (Op != SketcherCopy::Move) {
                 // add auto constraints for the destination copy
                 if (!sugConstr1.empty()) {
-                    createAutoConstraints(sugConstr1, currentgeoid+nElements, OriginPos);
+                    createAutoConstraints(sugConstr1, currentgeoid + nElements, OriginPos);
                     sugConstr1.clear();
                 }
             }
@@ -1197,7 +1204,8 @@ public:
                 }
             }
 
-            tryAutoRecomputeIfNotSolve(static_cast<Sketcher::SketchObject *>(sketchgui->getObject()));
+            tryAutoRecomputeIfNotSolve(
+                static_cast<Sketcher::SketchObject *>(sketchgui->getObject()));
             EditCurve.clear();
             drawEdit(EditCurve);
 
@@ -1206,13 +1214,16 @@ public:
         }
         return true;
     }
+
 private:
     void activated() override
     {
         setCursor(QPixmap(cursor_createcopy), 7, 7);
-        Origin = static_cast<Sketcher::SketchObject *>(sketchgui->getObject())->getPoint(OriginGeoId, OriginPos);
+        Origin = static_cast<Sketcher::SketchObject *>(sketchgui->getObject())
+                     ->getPoint(OriginGeoId, OriginPos);
         EditCurve[0] = Base::Vector2d(Origin.x, Origin.y);
     }
+
 protected:
     SelectMode Mode;
     SnapMode snapMode;
@@ -1227,8 +1238,7 @@ protected:
 };
 
 /*---- SketcherCopy definition ----*/
-SketcherCopy::SketcherCopy(const char* name): Command(name)
-{}
+SketcherCopy::SketcherCopy(const char *name) : Command(name) {}
 
 void SketcherCopy::activate(SketcherCopy::Op op)
 {
@@ -1237,8 +1247,7 @@ void SketcherCopy::activate(SketcherCopy::Op op)
 
     // only one sketch with its subelements are allowed to be selected
     if (selection.size() != 1) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
                              QObject::tr("Select elements from a single sketch."));
         return;
     }
@@ -1246,13 +1255,12 @@ void SketcherCopy::activate(SketcherCopy::Op op)
     // get the needed lists and objects
     const std::vector<std::string> &SubNames = selection[0].getSubNames();
     if (SubNames.empty()) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
                              QObject::tr("Select elements from a single sketch."));
         return;
     }
 
-    Sketcher::SketchObject* Obj = static_cast<Sketcher::SketchObject*>(selection[0].getObject());
+    Sketcher::SketchObject *Obj = static_cast<Sketcher::SketchObject *>(selection[0].getObject());
     getSelection().clearSelection();
 
     int LastGeoId = 0;
@@ -1262,10 +1270,11 @@ void SketcherCopy::activate(SketcherCopy::Op op)
     // create python command with list of elements
     std::stringstream stream;
     int geoids = 0;
-    for (std::vector<std::string>::const_iterator it=SubNames.begin(); it != SubNames.end(); ++it) {
+    for (std::vector<std::string>::const_iterator it = SubNames.begin(); it != SubNames.end();
+         ++it) {
         // only handle non-external edges
-        if (it->size() > 4 && it->substr(0,4) == "Edge") {
-            LastGeoId = std::atoi(it->substr(4,4000).c_str()) - 1;
+        if (it->size() > 4 && it->substr(0, 4) == "Edge") {
+            LastGeoId = std::atoi(it->substr(4, 4000).c_str()) - 1;
             LastPointPos = Sketcher::PointPos::none;
             LastGeo = Obj->getGeometry(LastGeoId);
             // lines to copy
@@ -1274,9 +1283,9 @@ void SketcherCopy::activate(SketcherCopy::Op op)
                 stream << LastGeoId << ",";
             }
         }
-        else if (it->size() > 6 && it->substr(0,6) == "Vertex") {
+        else if (it->size() > 6 && it->substr(0, 6) == "Vertex") {
             // only if it is a GeomPoint
-            int VtId = std::atoi(it->substr(6,4000).c_str()) - 1;
+            int VtId = std::atoi(it->substr(6, 4000).c_str()) - 1;
             int GeoId;
             Sketcher::PointPos PosId;
             Obj->getGeoVertexIndex(VtId, GeoId, PosId);
@@ -1293,8 +1302,8 @@ void SketcherCopy::activate(SketcherCopy::Op op)
     }
 
     // check if last selected element is a Vertex, not being a GeomPoint
-    if (SubNames.rbegin()->size() > 6 && SubNames.rbegin()->substr(0,6) == "Vertex") {
-        int VtId = std::atoi(SubNames.rbegin()->substr(6,4000).c_str()) - 1;
+    if (SubNames.rbegin()->size() > 6 && SubNames.rbegin()->substr(0, 6) == "Vertex") {
+        int VtId = std::atoi(SubNames.rbegin()->substr(6, 4000).c_str()) - 1;
         int GeoId;
         Sketcher::PointPos PosId;
         Obj->getGeoVertexIndex(VtId, GeoId, PosId);
@@ -1305,9 +1314,9 @@ void SketcherCopy::activate(SketcherCopy::Op op)
     }
 
     if (geoids < 1) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
-                             QObject::tr("A copy requires at least one selected non-external geometric element"));
+        QMessageBox::warning(
+            Gui::getMainWindow(), QObject::tr("Wrong selection"),
+            QObject::tr("A copy requires at least one selected non-external geometric element"));
         return;
     }
 
@@ -1322,8 +1331,8 @@ void SketcherCopy::activate(SketcherCopy::Op op)
     // if the last element is not a point serving as a reference for the copy process
     // then make the start point of the last element the copy reference (if it exists, if not the center point)
     if (LastPointPos == Sketcher::PointPos::none) {
-        if (LastGeo->getTypeId() == Part::GeomCircle::getClassTypeId() ||
-            LastGeo->getTypeId() == Part::GeomEllipse::getClassTypeId()) {
+        if (LastGeo->getTypeId() == Part::GeomCircle::getClassTypeId()
+            || LastGeo->getTypeId() == Part::GeomEllipse::getClassTypeId()) {
             LastPointPos = Sketcher::PointPos::mid;
         }
         else {
@@ -1332,7 +1341,7 @@ void SketcherCopy::activate(SketcherCopy::Op op)
     }
 
     // Ask the user if they want to clone or to simple copy
-/*
+    /*
     int ret = QMessageBox::question(Gui::getMainWindow(), QObject::tr("Dimensional/Geometric constraints"),
                                     QObject::tr("Do you want to clone the object, i.e. substitute dimensional constraints by geometric constraints?"),
                                     QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
@@ -1347,35 +1356,35 @@ void SketcherCopy::activate(SketcherCopy::Op op)
 */
 
     ActivateHandler(getActiveGuiDocument(),
-                               new DrawSketchHandlerCopy(geoIdList, LastGeoId, LastPointPos, geoids, op));
+                    new DrawSketchHandlerCopy(geoIdList, LastGeoId, LastPointPos, geoids, op));
 }
 
 
-class CmdSketcherCopy : public SketcherCopy
+class CmdSketcherCopy: public SketcherCopy
 {
 public:
     CmdSketcherCopy();
-    ~CmdSketcherCopy() override{}
-    const char* className() const override
-    { return "CmdSketcherCopy"; }
+    ~CmdSketcherCopy() override {}
+    const char *className() const override { return "CmdSketcherCopy"; }
     void activate() override;
+
 protected:
     void activated(int iMsg) override;
     bool isActive() override;
 };
 
-CmdSketcherCopy::CmdSketcherCopy()
-    :SketcherCopy("Sketcher_Copy")
+CmdSketcherCopy::CmdSketcherCopy() : SketcherCopy("Sketcher_Copy")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Copy");
-    sToolTipText    = QT_TR_NOOP("Creates a simple copy of the geometry taking as reference the last selected point");
-    sWhatsThis      = "Sketcher_Copy";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_Copy";
-    sAccel          = "Z, C";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Copy");
+    sToolTipText = QT_TR_NOOP(
+        "Creates a simple copy of the geometry taking as reference the last selected point");
+    sWhatsThis = "Sketcher_Copy";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_Copy";
+    sAccel = "Z, C";
+    eType = ForEdit;
 }
 
 void CmdSketcherCopy::activated(int iMsg)
@@ -1385,43 +1394,37 @@ void CmdSketcherCopy::activated(int iMsg)
 }
 
 
-void CmdSketcherCopy::activate()
-{
-    SketcherCopy::activate(SketcherCopy::Copy);
-}
+void CmdSketcherCopy::activate() { SketcherCopy::activate(SketcherCopy::Copy); }
 
-bool CmdSketcherCopy::isActive()
-{
-    return isCommandActive(getActiveGuiDocument(), true);
-}
+bool CmdSketcherCopy::isActive() { return isCommandActive(getActiveGuiDocument(), true); }
 
 // ================================================================================
 
-class CmdSketcherClone : public SketcherCopy
+class CmdSketcherClone: public SketcherCopy
 {
 public:
     CmdSketcherClone();
-    ~CmdSketcherClone() override{}
-    const char* className() const override
-    { return "CmdSketcherClone"; }
+    ~CmdSketcherClone() override {}
+    const char *className() const override { return "CmdSketcherClone"; }
     void activate() override;
+
 protected:
     void activated(int iMsg) override;
     bool isActive() override;
 };
 
-CmdSketcherClone::CmdSketcherClone()
-    :SketcherCopy("Sketcher_Clone")
+CmdSketcherClone::CmdSketcherClone() : SketcherCopy("Sketcher_Clone")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Clone");
-    sToolTipText    = QT_TR_NOOP("Creates a clone of the geometry taking as reference the last selected point");
-    sWhatsThis      = "Sketcher_Clone";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_Clone";
-    sAccel          = "Z, L";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Clone");
+    sToolTipText =
+        QT_TR_NOOP("Creates a clone of the geometry taking as reference the last selected point");
+    sWhatsThis = "Sketcher_Clone";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_Clone";
+    sAccel = "Z, L";
+    eType = ForEdit;
 }
 
 void CmdSketcherClone::activated(int iMsg)
@@ -1430,41 +1433,34 @@ void CmdSketcherClone::activated(int iMsg)
     SketcherCopy::activate(SketcherCopy::Clone);
 }
 
-void CmdSketcherClone::activate()
-{
-    SketcherCopy::activate(SketcherCopy::Clone);
-}
+void CmdSketcherClone::activate() { SketcherCopy::activate(SketcherCopy::Clone); }
 
-bool CmdSketcherClone::isActive()
-{
-    return isCommandActive(getActiveGuiDocument(), true);
-}
+bool CmdSketcherClone::isActive() { return isCommandActive(getActiveGuiDocument(), true); }
 
-class CmdSketcherMove : public SketcherCopy
+class CmdSketcherMove: public SketcherCopy
 {
 public:
     CmdSketcherMove();
-    ~CmdSketcherMove() override{}
-    const char* className() const override
-    { return "CmdSketcherMove"; }
+    ~CmdSketcherMove() override {}
+    const char *className() const override { return "CmdSketcherMove"; }
     void activate() override;
+
 protected:
     void activated(int iMsg) override;
     bool isActive() override;
 };
 
-CmdSketcherMove::CmdSketcherMove()
-    :SketcherCopy("Sketcher_Move")
+CmdSketcherMove::CmdSketcherMove() : SketcherCopy("Sketcher_Move")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Move");
-    sToolTipText    = QT_TR_NOOP("Moves the geometry taking as reference the last selected point");
-    sWhatsThis      = "Sketcher_Move";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_Move";
-    sAccel          = "Z, M";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Move");
+    sToolTipText = QT_TR_NOOP("Moves the geometry taking as reference the last selected point");
+    sWhatsThis = "Sketcher_Move";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_Move";
+    sAccel = "Z, M";
+    eType = ForEdit;
 }
 
 void CmdSketcherMove::activated(int iMsg)
@@ -1473,47 +1469,40 @@ void CmdSketcherMove::activated(int iMsg)
     SketcherCopy::activate(SketcherCopy::Move);
 }
 
-void CmdSketcherMove::activate()
-{
-    SketcherCopy::activate(SketcherCopy::Move);
-}
+void CmdSketcherMove::activate() { SketcherCopy::activate(SketcherCopy::Move); }
 
-bool CmdSketcherMove::isActive()
-{
-    return isCommandActive(getActiveGuiDocument(), true);
-}
+bool CmdSketcherMove::isActive() { return isCommandActive(getActiveGuiDocument(), true); }
 
 // ================================================================================
 
 DEF_STD_CMD_ACL(CmdSketcherCompCopy)
 
-CmdSketcherCompCopy::CmdSketcherCompCopy()
-    : Command("Sketcher_CompCopy")
+CmdSketcherCompCopy::CmdSketcherCompCopy() : Command("Sketcher_CompCopy")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Copy");
-    sToolTipText    = QT_TR_NOOP("Creates a clone of the geometry taking as reference the last selected point");
-    sWhatsThis      = "Sketcher_CompCopy";
-    sStatusTip      = sToolTipText;
-    sAccel          = "";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Copy");
+    sToolTipText =
+        QT_TR_NOOP("Creates a clone of the geometry taking as reference the last selected point");
+    sWhatsThis = "Sketcher_CompCopy";
+    sStatusTip = sToolTipText;
+    sAccel = "";
+    eType = ForEdit;
 }
 
 void CmdSketcherCompCopy::activated(int iMsg)
 {
-    if (iMsg<0 || iMsg>2)
-        return;
+    if (iMsg < 0 || iMsg > 2) return;
 
     // Since the default icon is reset when enabling/disabling the command we have
     // to explicitly set the icon of the used command.
-    Gui::ActionGroup* pcAction = qobject_cast<Gui::ActionGroup*>(_pcAction);
-    QList<QAction*> a = pcAction->actions();
+    Gui::ActionGroup *pcAction = qobject_cast<Gui::ActionGroup *>(_pcAction);
+    QList<QAction *> a = pcAction->actions();
 
     assert(iMsg < a.size());
     pcAction->setIcon(a[iMsg]->icon());
 
-    if (iMsg == 0){
+    if (iMsg == 0) {
         CmdSketcherClone sc;
         sc.activate();
         pcAction->setShortcut(QString::fromLatin1(this->getAccel()));
@@ -1530,17 +1519,17 @@ void CmdSketcherCompCopy::activated(int iMsg)
     }
 }
 
-Gui::Action * CmdSketcherCompCopy::createAction()
+Gui::Action *CmdSketcherCompCopy::createAction()
 {
-    Gui::ActionGroup* pcAction = new Gui::ActionGroup(this, Gui::getMainWindow());
+    Gui::ActionGroup *pcAction = new Gui::ActionGroup(this, Gui::getMainWindow());
     pcAction->setDropDownMenu(true);
     applyCommandData(this->className(), pcAction);
 
-    QAction* clone = pcAction->addAction(QString());
+    QAction *clone = pcAction->addAction(QString());
     clone->setIcon(Gui::BitmapFactory().iconFromTheme("Sketcher_Clone"));
-    QAction* copy = pcAction->addAction(QString());
+    QAction *copy = pcAction->addAction(QString());
     copy->setIcon(Gui::BitmapFactory().iconFromTheme("Sketcher_Copy"));
-    QAction* move = pcAction->addAction(QString());
+    QAction *move = pcAction->addAction(QString());
     move->setIcon(Gui::BitmapFactory().iconFromTheme("Sketcher_Move"));
 
     _pcAction = pcAction;
@@ -1559,71 +1548,76 @@ void CmdSketcherCompCopy::languageChange()
 {
     Command::languageChange();
 
-    if (!_pcAction)
-        return;
-    Gui::ActionGroup* pcAction = qobject_cast<Gui::ActionGroup*>(_pcAction);
-    QList<QAction*> a = pcAction->actions();
+    if (!_pcAction) return;
+    Gui::ActionGroup *pcAction = qobject_cast<Gui::ActionGroup *>(_pcAction);
+    QList<QAction *> a = pcAction->actions();
 
-    QAction* clone = a[0];
-    clone->setText(QApplication::translate("Sketcher_CompCopy","Clone"));
-    clone->setToolTip(QApplication::translate("Sketcher_Clone","Creates a clone of the geometry taking as reference the last selected point"));
-    clone->setStatusTip(QApplication::translate("Sketcher_Clone","Creates a clone of the geometry taking as reference the last selected point"));
-    QAction* copy = a[1];
-    copy->setText(QApplication::translate("Sketcher_CompCopy","Copy"));
-    copy->setToolTip(QApplication::translate("Sketcher_Copy","Creates a simple copy of the geometry taking as reference the last selected point"));
-    copy->setStatusTip(QApplication::translate("Sketcher_Copy","Creates a simple copy of the geometry taking as reference the last selected point"));
-    QAction* move = a[2];
-    move->setText(QApplication::translate("Sketcher_CompCopy","Move"));
-    move->setToolTip(QApplication::translate("Sketcher_Move","Moves the geometry taking as reference the last selected point"));
-    move->setStatusTip(QApplication::translate("Sketcher_Move","Moves the geometry taking as reference the last selected point"));
+    QAction *clone = a[0];
+    clone->setText(QApplication::translate("Sketcher_CompCopy", "Clone"));
+    clone->setToolTip(QApplication::translate(
+        "Sketcher_Clone",
+        "Creates a clone of the geometry taking as reference the last selected point"));
+    clone->setStatusTip(QApplication::translate(
+        "Sketcher_Clone",
+        "Creates a clone of the geometry taking as reference the last selected point"));
+    QAction *copy = a[1];
+    copy->setText(QApplication::translate("Sketcher_CompCopy", "Copy"));
+    copy->setToolTip(QApplication::translate(
+        "Sketcher_Copy",
+        "Creates a simple copy of the geometry taking as reference the last selected point"));
+    copy->setStatusTip(QApplication::translate(
+        "Sketcher_Copy",
+        "Creates a simple copy of the geometry taking as reference the last selected point"));
+    QAction *move = a[2];
+    move->setText(QApplication::translate("Sketcher_CompCopy", "Move"));
+    move->setToolTip(QApplication::translate(
+        "Sketcher_Move", "Moves the geometry taking as reference the last selected point"));
+    move->setStatusTip(QApplication::translate(
+        "Sketcher_Move", "Moves the geometry taking as reference the last selected point"));
 }
 
-bool CmdSketcherCompCopy::isActive()
-{
-    return isCommandActive( getActiveGuiDocument(), true );
-}
+bool CmdSketcherCompCopy::isActive() { return isCommandActive(getActiveGuiDocument(), true); }
 
 // ================================================================================
 
 // TODO: replace XPM cursor with SVG file
 /* XPM */
-static const char *cursor_createrectangulararray[]={
-    "32 32 3 1",
-    "+ c white",
-    "# c red",
-    ". c None",
-    "................................",
-    ".......+........................",
-    ".......+........................",
-    ".......+........................",
-    ".......+........................",
-    ".......+........................",
-    "................................",
-    ".+++++...+++++..................",
-    ".......................###......",
-    ".......+...............###......",
-    ".......+...............###......",
-    ".......+...............###......",
-    ".......+......###......###......",
-    ".......+......###......###......",
-    "..............###......###......",
-    "..............###......###......",
-    ".....###......###......###......",
-    ".....###......###......###......",
-    ".....###......###......###......",
-    ".....###......###......###......",
-    ".....###......###......###......",
-    ".....###......###......###......",
-    ".....###......###...............",
-    ".....###......###...............",
-    ".....###......###...............",
-    ".....###......###...............",
-    ".....###........................",
-    ".....###........................",
-    ".....###........................",
-    ".....###........................",
-    "................................",
-    "................................"};
+static const char *cursor_createrectangulararray[] = {"32 32 3 1",
+                                                      "+ c white",
+                                                      "# c red",
+                                                      ". c None",
+                                                      "................................",
+                                                      ".......+........................",
+                                                      ".......+........................",
+                                                      ".......+........................",
+                                                      ".......+........................",
+                                                      ".......+........................",
+                                                      "................................",
+                                                      ".+++++...+++++..................",
+                                                      ".......................###......",
+                                                      ".......+...............###......",
+                                                      ".......+...............###......",
+                                                      ".......+...............###......",
+                                                      ".......+......###......###......",
+                                                      ".......+......###......###......",
+                                                      "..............###......###......",
+                                                      "..............###......###......",
+                                                      ".....###......###......###......",
+                                                      ".....###......###......###......",
+                                                      ".....###......###......###......",
+                                                      ".....###......###......###......",
+                                                      ".....###......###......###......",
+                                                      ".....###......###......###......",
+                                                      ".....###......###...............",
+                                                      ".....###......###...............",
+                                                      ".....###......###...............",
+                                                      ".....###......###...............",
+                                                      ".....###........................",
+                                                      ".....###........................",
+                                                      ".....###........................",
+                                                      ".....###........................",
+                                                      "................................",
+                                                      "................................"};
 
 class DrawSketchHandlerRectangularArray: public DrawSketchHandler
 {
@@ -1632,41 +1626,34 @@ public:
                                       Sketcher::PointPos originpos, int nelements, bool clone,
                                       int rows, int cols, bool constraintSeparation,
                                       bool equalVerticalHorizontalSpacing)
-        : Mode(STATUS_SEEK_First)
-        , snapMode(SnapMode::Free)
-        , geoIdList(geoidlist)
-        , OriginGeoId(origingeoid)
-        , OriginPos(originpos)
-        , nElements(nelements)
-        , Clone(clone)
-        , Rows(rows)
-        , Cols(cols)
-        , ConstraintSeparation(constraintSeparation)
-        , EqualVerticalHorizontalSpacing(equalVerticalHorizontalSpacing)
-        , EditCurve(2)
-    {
-    }
+        : Mode(STATUS_SEEK_First), snapMode(SnapMode::Free), geoIdList(geoidlist),
+          OriginGeoId(origingeoid), OriginPos(originpos), nElements(nelements), Clone(clone),
+          Rows(rows), Cols(cols), ConstraintSeparation(constraintSeparation),
+          EqualVerticalHorizontalSpacing(equalVerticalHorizontalSpacing), EditCurve(2)
+    {}
 
-    ~DrawSketchHandlerRectangularArray() override{}
+    ~DrawSketchHandlerRectangularArray() override {}
     /// mode table
-    enum SelectMode {
-        STATUS_SEEK_First,      /**< enum value ----. */
+    enum SelectMode
+    {
+        STATUS_SEEK_First, /**< enum value ----. */
         STATUS_End
     };
 
-    enum class SnapMode {
+    enum class SnapMode
+    {
         Free,
         Snap5Degree
     };
 
     void mouseMove(Base::Vector2d onSketchPos) override
     {
-        if (Mode==STATUS_SEEK_First) {
+        if (Mode == STATUS_SEEK_First) {
 
-            if(QApplication::keyboardModifiers() == Qt::ControlModifier)
-                    snapMode = SnapMode::Snap5Degree;
-                else
-                    snapMode = SnapMode::Free;
+            if (QApplication::keyboardModifiers() == Qt::ControlModifier)
+                snapMode = SnapMode::Snap5Degree;
+            else
+                snapMode = SnapMode::Free;
 
             float length = (onSketchPos - EditCurve[0]).Length();
             float angle = (onSketchPos - EditCurve[0]).Angle();
@@ -1674,26 +1661,25 @@ public:
             Base::Vector2d endpoint = onSketchPos;
 
             if (snapMode == SnapMode::Snap5Degree) {
-                angle = round(angle / (M_PI/36)) * M_PI/36;
-                endpoint = EditCurve[0] + length * Base::Vector2d(cos(angle),sin(angle));
+                angle = round(angle / (M_PI / 36)) * M_PI / 36;
+                endpoint = EditCurve[0] + length * Base::Vector2d(cos(angle), sin(angle));
             }
 
             if (showCursorCoords()) {
                 SbString text;
                 std::string lengthString = lengthToDisplayFormat(length, 1);
-                std::string angleString = angleToDisplayFormat(angle *180.0 / M_PI, 1);
+                std::string angleString = angleToDisplayFormat(angle * 180.0 / M_PI, 1);
                 text.sprintf(" (%s, %s)", lengthString.c_str(), angleString.c_str());
                 setPositionText(endpoint, text);
             }
 
             EditCurve[1] = endpoint;
             drawEdit(EditCurve);
-            if (seekAutoConstraint(sugConstr1, endpoint, Base::Vector2d(0.0, 0.0), AutoConstraint::VERTEX))
-            {
+            if (seekAutoConstraint(sugConstr1, endpoint, Base::Vector2d(0.0, 0.0),
+                                   AutoConstraint::VERTEX)) {
                 renderSuggestConstraintsCursor(sugConstr1);
                 return;
             }
-
         }
         applyCursor();
     }
@@ -1718,26 +1704,26 @@ public:
             Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Create copy of geometry"));
 
             try {
-                Gui::cmdAppObjectArgs(sketchgui->getObject(),
-                                      "addRectangularArray(%s, App.Vector(%f, %f, 0), %s, %d, %d, %s, %f)",
-                                      geoIdList.c_str(), vector.x, vector.y,
-                                      (Clone ? "True" : "False"),
-                                      Cols, Rows,
-                                      (ConstraintSeparation ? "True" : "False"),
-                                      (EqualVerticalHorizontalSpacing ? 1.0 : 0.5));
+                Gui::cmdAppObjectArgs(
+                    sketchgui->getObject(),
+                    "addRectangularArray(%s, App.Vector(%f, %f, 0), %s, %d, %d, %s, %f)",
+                    geoIdList.c_str(), vector.x, vector.y, (Clone ? "True" : "False"), Cols, Rows,
+                    (ConstraintSeparation ? "True" : "False"),
+                    (EqualVerticalHorizontalSpacing ? 1.0 : 0.5));
                 Gui::Command::commitCommand();
             }
-            catch (const Base::Exception& e) {
+            catch (const Base::Exception &e) {
                 Base::Console().Error("%s\n", e.what());
                 Gui::Command::abortCommand();
             }
 
             // add auto constraints for the destination copy
             if (!sugConstr1.empty()) {
-                createAutoConstraints(sugConstr1, OriginGeoId+nElements, OriginPos);
+                createAutoConstraints(sugConstr1, OriginGeoId + nElements, OriginPos);
                 sugConstr1.clear();
             }
-            tryAutoRecomputeIfNotSolve(static_cast<Sketcher::SketchObject *>(sketchgui->getObject()));
+            tryAutoRecomputeIfNotSolve(
+                static_cast<Sketcher::SketchObject *>(sketchgui->getObject()));
 
             EditCurve.clear();
             drawEdit(EditCurve);
@@ -1747,13 +1733,16 @@ public:
         }
         return true;
     }
+
 private:
     void activated() override
     {
         setCursor(QPixmap(cursor_createrectangulararray), 7, 7);
-        Origin = static_cast<Sketcher::SketchObject *>(sketchgui->getObject())->getPoint(OriginGeoId, OriginPos);
+        Origin = static_cast<Sketcher::SketchObject *>(sketchgui->getObject())
+                     ->getPoint(OriginGeoId, OriginPos);
         EditCurve[0] = Base::Vector2d(Origin.x, Origin.y);
     }
+
 protected:
     SelectMode Mode;
     SnapMode snapMode;
@@ -1773,18 +1762,18 @@ protected:
 
 DEF_STD_CMD_A(CmdSketcherRectangularArray)
 
-CmdSketcherRectangularArray::CmdSketcherRectangularArray()
-    :Command("Sketcher_RectangularArray")
+CmdSketcherRectangularArray::CmdSketcherRectangularArray() : Command("Sketcher_RectangularArray")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Rectangular array");
-    sToolTipText    = QT_TR_NOOP("Creates a rectangular array pattern of the geometry taking as reference the last selected point");
-    sWhatsThis      = "Sketcher_RectangularArray";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_RectangularArray";
-    sAccel          = "Z, A";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Rectangular array");
+    sToolTipText = QT_TR_NOOP("Creates a rectangular array pattern of the geometry taking as "
+                              "reference the last selected point");
+    sWhatsThis = "Sketcher_RectangularArray";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_RectangularArray";
+    sAccel = "Z, A";
+    eType = ForEdit;
 }
 
 void CmdSketcherRectangularArray::activated(int iMsg)
@@ -1796,8 +1785,7 @@ void CmdSketcherRectangularArray::activated(int iMsg)
 
     // only one sketch with its subelements are allowed to be selected
     if (selection.size() != 1) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
                              QObject::tr("Select elements from a single sketch."));
         return;
     }
@@ -1805,13 +1793,12 @@ void CmdSketcherRectangularArray::activated(int iMsg)
     // get the needed lists and objects
     const std::vector<std::string> &SubNames = selection[0].getSubNames();
     if (SubNames.empty()) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
                              QObject::tr("Select elements from a single sketch."));
         return;
     }
 
-    Sketcher::SketchObject* Obj = static_cast<Sketcher::SketchObject*>(selection[0].getObject());
+    Sketcher::SketchObject *Obj = static_cast<Sketcher::SketchObject *>(selection[0].getObject());
 
     getSelection().clearSelection();
 
@@ -1823,10 +1810,11 @@ void CmdSketcherRectangularArray::activated(int iMsg)
     std::stringstream stream;
     int geoids = 0;
 
-    for (std::vector<std::string>::const_iterator it=SubNames.begin(); it != SubNames.end(); ++it) {
+    for (std::vector<std::string>::const_iterator it = SubNames.begin(); it != SubNames.end();
+         ++it) {
         // only handle non-external edges
-        if (it->size() > 4 && it->substr(0,4) == "Edge") {
-            LastGeoId = std::atoi(it->substr(4,4000).c_str()) - 1;
+        if (it->size() > 4 && it->substr(0, 4) == "Edge") {
+            LastGeoId = std::atoi(it->substr(4, 4000).c_str()) - 1;
             LastPointPos = Sketcher::PointPos::none;
             LastGeo = Obj->getGeometry(LastGeoId);
 
@@ -1836,9 +1824,9 @@ void CmdSketcherRectangularArray::activated(int iMsg)
                 stream << LastGeoId << ",";
             }
         }
-        else if (it->size() > 6 && it->substr(0,6) == "Vertex") {
+        else if (it->size() > 6 && it->substr(0, 6) == "Vertex") {
             // only if it is a GeomPoint
-            int VtId = std::atoi(it->substr(6,4000).c_str()) - 1;
+            int VtId = std::atoi(it->substr(6, 4000).c_str()) - 1;
             int GeoId;
             Sketcher::PointPos PosId;
             Obj->getGeoVertexIndex(VtId, GeoId, PosId);
@@ -1855,8 +1843,8 @@ void CmdSketcherRectangularArray::activated(int iMsg)
     }
 
     // check if last selected element is a Vertex, not being a GeomPoint
-    if (SubNames.rbegin()->size() > 6 && SubNames.rbegin()->substr(0,6) == "Vertex") {
-        int VtId = std::atoi(SubNames.rbegin()->substr(6,4000).c_str()) - 1;
+    if (SubNames.rbegin()->size() > 6 && SubNames.rbegin()->substr(0, 6) == "Vertex") {
+        int VtId = std::atoi(SubNames.rbegin()->substr(6, 4000).c_str()) - 1;
         int GeoId;
         Sketcher::PointPos PosId;
         Obj->getGeoVertexIndex(VtId, GeoId, PosId);
@@ -1867,9 +1855,9 @@ void CmdSketcherRectangularArray::activated(int iMsg)
     }
 
     if (geoids < 1) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
-                             QObject::tr("A copy requires at least one selected non-external geometric element"));
+        QMessageBox::warning(
+            Gui::getMainWindow(), QObject::tr("Wrong selection"),
+            QObject::tr("A copy requires at least one selected non-external geometric element"));
         return;
     }
 
@@ -1884,8 +1872,8 @@ void CmdSketcherRectangularArray::activated(int iMsg)
     // if the last element is not a point serving as a reference for the copy process
     // then make the start point of the last element the copy reference (if it exists, if not the center point)
     if (LastPointPos == Sketcher::PointPos::none) {
-        if (LastGeo->getTypeId() == Part::GeomCircle::getClassTypeId() ||
-            LastGeo->getTypeId() == Part::GeomEllipse::getClassTypeId()) {
+        if (LastGeo->getTypeId() == Part::GeomCircle::getClassTypeId()
+            || LastGeo->getTypeId() == Part::GeomEllipse::getClassTypeId()) {
             LastPointPos = Sketcher::PointPos::mid;
         }
         else {
@@ -1898,9 +1886,10 @@ void CmdSketcherRectangularArray::activated(int iMsg)
 
     if (slad.exec() == QDialog::Accepted) {
         ActivateHandler(getActiveGuiDocument(),
-            new DrawSketchHandlerRectangularArray(geoIdList, LastGeoId, LastPointPos, geoids, slad.Clone,
-                                                  slad.Rows, slad.Cols, slad.ConstraintSeparation,
-                                                  slad.EqualVerticalHorizontalSpacing));
+                        new DrawSketchHandlerRectangularArray(geoIdList, LastGeoId, LastPointPos,
+                                                              geoids, slad.Clone, slad.Rows,
+                                                              slad.Cols, slad.ConstraintSeparation,
+                                                              slad.EqualVerticalHorizontalSpacing));
     }
 }
 
@@ -1913,51 +1902,52 @@ bool CmdSketcherRectangularArray::isActive()
 
 DEF_STD_CMD_A(CmdSketcherDeleteAllGeometry)
 
-CmdSketcherDeleteAllGeometry::CmdSketcherDeleteAllGeometry()
-    :Command("Sketcher_DeleteAllGeometry")
+CmdSketcherDeleteAllGeometry::CmdSketcherDeleteAllGeometry() : Command("Sketcher_DeleteAllGeometry")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Delete all geometry");
-    sToolTipText    = QT_TR_NOOP("Delete all geometry and constraints in the current sketch, "
-                                 "with the exception of external geometry");
-    sWhatsThis      = "Sketcher_DeleteAllGeometry";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_DeleteGeometry";
-    sAccel          = "";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Delete all geometry");
+    sToolTipText = QT_TR_NOOP("Delete all geometry and constraints in the current sketch, "
+                              "with the exception of external geometry");
+    sWhatsThis = "Sketcher_DeleteAllGeometry";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_DeleteGeometry";
+    sAccel = "";
+    eType = ForEdit;
 }
 
 void CmdSketcherDeleteAllGeometry::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
 
-    int ret = QMessageBox::question(Gui::getMainWindow(), QObject::tr("Delete All Geometry"),
-                                    QObject::tr("Are you really sure you want to delete all geometry and constraints?"),
-                                    QMessageBox::Yes, QMessageBox::Cancel);
+    int ret = QMessageBox::question(
+        Gui::getMainWindow(), QObject::tr("Delete All Geometry"),
+        QObject::tr("Are you really sure you want to delete all geometry and constraints?"),
+        QMessageBox::Yes, QMessageBox::Cancel);
     // use an equality constraint
     if (ret == QMessageBox::Yes) {
         getSelection().clearSelection();
-        Gui::Document * doc= getActiveGuiDocument();
+        Gui::Document *doc = getActiveGuiDocument();
         ReleaseHandler(doc);
-        SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-        Sketcher::SketchObject* Obj= vp->getSketchObject();
+        SketcherGui::ViewProviderSketch *vp =
+            static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+        Sketcher::SketchObject *Obj = vp->getSketchObject();
 
         try {
             Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Delete all geometry"));
             Gui::cmdAppObjectArgs(Obj, "deleteAllGeometry()");
             Gui::Command::commitCommand();
         }
-        catch (const Base::Exception& e) {
+        catch (const Base::Exception &e) {
             Base::Console().Error("Failed to delete all geometry: %s\n", e.what());
             Gui::Command::abortCommand();
         }
 
-        ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Sketcher");
+        ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/Preferences/Mod/Sketcher");
         bool autoRecompute = hGrp->GetBool("AutoRecompute", false);
 
-        if (autoRecompute)
-            Gui::Command::updateActive();
+        if (autoRecompute) Gui::Command::updateActive();
         else
             Obj->solve();
     }
@@ -1977,49 +1967,51 @@ bool CmdSketcherDeleteAllGeometry::isActive()
 DEF_STD_CMD_A(CmdSketcherDeleteAllConstraints)
 
 CmdSketcherDeleteAllConstraints::CmdSketcherDeleteAllConstraints()
-    :Command("Sketcher_DeleteAllConstraints")
+    : Command("Sketcher_DeleteAllConstraints")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Delete all constraints");
-    sToolTipText    = QT_TR_NOOP("Delete all constraints in the sketch");
-    sWhatsThis      = "Sketcher_DeleteAllConstraints";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_DeleteConstraints";
-    sAccel          = "";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Delete all constraints");
+    sToolTipText = QT_TR_NOOP("Delete all constraints in the sketch");
+    sWhatsThis = "Sketcher_DeleteAllConstraints";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_DeleteConstraints";
+    sAccel = "";
+    eType = ForEdit;
 }
 
 void CmdSketcherDeleteAllConstraints::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
 
-    int ret = QMessageBox::question(Gui::getMainWindow(), QObject::tr("Delete All Constraints"),
-                                    QObject::tr("Are you really sure you want to delete all the constraints?"),
-                                    QMessageBox::Yes, QMessageBox::Cancel);
+    int ret = QMessageBox::question(
+        Gui::getMainWindow(), QObject::tr("Delete All Constraints"),
+        QObject::tr("Are you really sure you want to delete all the constraints?"),
+        QMessageBox::Yes, QMessageBox::Cancel);
 
     if (ret == QMessageBox::Yes) {
         getSelection().clearSelection();
-        Gui::Document * doc= getActiveGuiDocument();
+        Gui::Document *doc = getActiveGuiDocument();
         ReleaseHandler(doc);
-        SketcherGui::ViewProviderSketch* vp = static_cast<SketcherGui::ViewProviderSketch*>(doc->getInEdit());
-        Sketcher::SketchObject* Obj= vp->getSketchObject();
+        SketcherGui::ViewProviderSketch *vp =
+            static_cast<SketcherGui::ViewProviderSketch *>(doc->getInEdit());
+        Sketcher::SketchObject *Obj = vp->getSketchObject();
 
         try {
             Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Delete All Constraints"));
             Gui::cmdAppObjectArgs(Obj, "deleteAllConstraints()");
             Gui::Command::commitCommand();
         }
-        catch (const Base::Exception& e) {
+        catch (const Base::Exception &e) {
             Base::Console().Error("Failed to delete All Constraints: %s\n", e.what());
             Gui::Command::abortCommand();
         }
 
-        ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Sketcher");
-        bool autoRecompute = hGrp->GetBool("AutoRecompute",false);
+        ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/Preferences/Mod/Sketcher");
+        bool autoRecompute = hGrp->GetBool("AutoRecompute", false);
 
-        if (autoRecompute)
-            Gui::Command::updateActive();
+        if (autoRecompute) Gui::Command::updateActive();
         else
             Obj->solve();
     }
@@ -2027,7 +2019,6 @@ void CmdSketcherDeleteAllConstraints::activated(int iMsg)
         // do nothing
         return;
     }
-
 }
 
 bool CmdSketcherDeleteAllConstraints::isActive()
@@ -2041,17 +2032,18 @@ bool CmdSketcherDeleteAllConstraints::isActive()
 DEF_STD_CMD_A(CmdSketcherRemoveAxesAlignment)
 
 CmdSketcherRemoveAxesAlignment::CmdSketcherRemoveAxesAlignment()
-    :Command("Sketcher_RemoveAxesAlignment")
+    : Command("Sketcher_RemoveAxesAlignment")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Remove axes alignment");
-    sToolTipText    = QT_TR_NOOP("Modifies constraints to remove axes alignment while trying to preserve the constraint relationship of the selection");
-    sWhatsThis      = "Sketcher_RemoveAxesAlignment";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_RemoveAxesAlignment";
-    sAccel          = "Z, R";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Remove axes alignment");
+    sToolTipText = QT_TR_NOOP("Modifies constraints to remove axes alignment while trying to "
+                              "preserve the constraint relationship of the selection");
+    sWhatsThis = "Sketcher_RemoveAxesAlignment";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_RemoveAxesAlignment";
+    sAccel = "Z, R";
+    eType = ForEdit;
 }
 
 void CmdSketcherRemoveAxesAlignment::activated(int iMsg)
@@ -2063,8 +2055,7 @@ void CmdSketcherRemoveAxesAlignment::activated(int iMsg)
 
     // only one sketch with its subelements are allowed to be selected
     if (selection.size() != 1) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
                              QObject::tr("Select elements from a single sketch."));
         return;
     }
@@ -2072,13 +2063,12 @@ void CmdSketcherRemoveAxesAlignment::activated(int iMsg)
     // get the needed lists and objects
     const std::vector<std::string> &SubNames = selection[0].getSubNames();
     if (SubNames.empty()) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
                              QObject::tr("Select elements from a single sketch."));
         return;
     }
 
-    Sketcher::SketchObject* Obj = static_cast<Sketcher::SketchObject*>(selection[0].getObject());
+    Sketcher::SketchObject *Obj = static_cast<Sketcher::SketchObject *>(selection[0].getObject());
 
     getSelection().clearSelection();
 
@@ -2088,10 +2078,11 @@ void CmdSketcherRemoveAxesAlignment::activated(int iMsg)
     std::stringstream stream;
     int geoids = 0;
 
-    for (std::vector<std::string>::const_iterator it=SubNames.begin(); it != SubNames.end(); ++it) {
+    for (std::vector<std::string>::const_iterator it = SubNames.begin(); it != SubNames.end();
+         ++it) {
         // only handle non-external edges
-        if (it->size() > 4 && it->substr(0,4) == "Edge") {
-            LastGeoId = std::atoi(it->substr(4,4000).c_str()) - 1;
+        if (it->size() > 4 && it->substr(0, 4) == "Edge") {
+            LastGeoId = std::atoi(it->substr(4, 4000).c_str()) - 1;
 
             // lines to copy
             if (LastGeoId >= 0) {
@@ -2099,9 +2090,9 @@ void CmdSketcherRemoveAxesAlignment::activated(int iMsg)
                 stream << LastGeoId << ",";
             }
         }
-        else if (it->size() > 6 && it->substr(0,6) == "Vertex") {
+        else if (it->size() > 6 && it->substr(0, 6) == "Vertex") {
             // only if it is a GeomPoint
-            int VtId = std::atoi(it->substr(6,4000).c_str()) - 1;
+            int VtId = std::atoi(it->substr(6, 4000).c_str()) - 1;
             int GeoId;
             Sketcher::PointPos PosId;
             Obj->getGeoVertexIndex(VtId, GeoId, PosId);
@@ -2117,9 +2108,9 @@ void CmdSketcherRemoveAxesAlignment::activated(int iMsg)
     }
 
     if (geoids < 1) {
-        QMessageBox::warning(Gui::getMainWindow(),
-                             QObject::tr("Wrong selection"),
-                             QObject::tr("Removal of axes alignment requires at least one selected non-external geometric element"));
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
+                             QObject::tr("Removal of axes alignment requires at least one selected "
+                                         "non-external geometric element"));
         return;
     }
 
@@ -2134,18 +2125,15 @@ void CmdSketcherRemoveAxesAlignment::activated(int iMsg)
     Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Remove Axes Alignment"));
 
     try {
-        Gui::cmdAppObjectArgs(  Obj,
-                                "removeAxesAlignment(%s)",
-                                geoIdList.c_str());
+        Gui::cmdAppObjectArgs(Obj, "removeAxesAlignment(%s)", geoIdList.c_str());
         Gui::Command::commitCommand();
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         Base::Console().Error("%s\n", e.what());
         Gui::Command::abortCommand();
     }
 
     tryAutoRecomputeIfNotSolve(static_cast<Sketcher::SketchObject *>(Obj));
-
 }
 
 bool CmdSketcherRemoveAxesAlignment::isActive()

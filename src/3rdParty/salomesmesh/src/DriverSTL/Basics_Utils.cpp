@@ -35,107 +35,94 @@
 
 namespace Kernel_Utils
 {
-  // threadsafe
-  std::string GetHostname()
-  {
+// threadsafe
+std::string GetHostname()
+{
     int ls = 100, r = 1;
     char *s;
-    
-    while (ls < 10000 && r)
-      {
+
+    while (ls < 10000 && r) {
         ls *= 2;
         s = new char[ls];
-        r = gethostname(s, ls-1);//threadsafe see man 7 pthread
-        switch (r) 
-          {
-          case 0:
-            break;
-          default:
+        r = gethostname(s, ls - 1); //threadsafe see man 7 pthread
+        switch (r) {
+            case 0: break;
+            default:
 #ifdef EINVAL
-          case EINVAL:
+            case EINVAL:
 #endif
 #ifdef ENAMETOOLONG
-          case ENAMETOOLONG:
+            case ENAMETOOLONG:
 #endif
 #ifdef WIN32
-          case WSAEFAULT:  
+            case WSAEFAULT:
 #endif
-            delete [] s;
-            continue;
-          }
-        
-      }
-    
-    if (r != 0)
-      {
+                delete[] s;
+                continue;
+        }
+    }
+
+    if (r != 0) {
         s = new char[50];
         strcpy(s, "localhost");
-      }
-    
+    }
+
     // remove all after '.'
-    char *aDot = (strchr(s,'.'));
+    char *aDot = (strchr(s, '.'));
     if (aDot) aDot[0] = '\0';
-    
+
     std::string p = s;
-    delete [] s;
+    delete[] s;
     return p;
-  }
-  
-  Localizer::Localizer()
-  {
+}
+
+Localizer::Localizer()
+{
     myCurLocale = setlocale(LC_NUMERIC, 0);
     setlocale(LC_NUMERIC, "C");
-  }
+}
 
-  Localizer::~Localizer()
-  {
-    setlocale(LC_NUMERIC, myCurLocale.c_str());
-  }
+Localizer::~Localizer() { setlocale(LC_NUMERIC, myCurLocale.c_str()); }
 
-  std::string GetGUID( GUIDtype type )
-  {
+std::string GetGUID(GUIDtype type)
+{
     std::string guid;
 
-    switch ( type ) {
-    case DefUserID:
-      guid = "FFFFFFFF-D9CD-11d6-945D-1050DA506788"; break;
-    case ObjectdID:
-      guid = "C08F3C95-F112-4023-8776-78F1427D0B6D"; break;
+    switch (type) {
+        case DefUserID: guid = "FFFFFFFF-D9CD-11d6-945D-1050DA506788"; break;
+        case ObjectdID: guid = "C08F3C95-F112-4023-8776-78F1427D0B6D"; break;
     }
 
     return guid;
-  }
+}
 
 #ifndef WIN32
-  void print_traceback()
-  {
+void print_traceback()
+{
     void *array[50];
     size_t size;
     char **strings;
     size_t i;
 
-    size = backtrace (array, 40);
-    strings = backtrace_symbols (array, size);
+    size = backtrace(array, 40);
+    strings = backtrace_symbols(array, size);
 
-    for (i = 0; i < size; i++)
-      {
-        std::cerr << strings[i] << std::endl;
-      }
+    for (i = 0; i < size; i++) { std::cerr << strings[i] << std::endl; }
 
-    free (strings);
-  }
+    free(strings);
+}
 #else
-  #if (_MSC_VER >= 1400) // Visual Studio 2005
-  #include <sstream>
-  int setenv(const char *name, const char *value, int rewrite)
-  {
+#if (_MSC_VER >= 1400) // Visual Studio 2005
+#include <sstream>
+int setenv(const char *name, const char *value, int rewrite)
+{
     std::stringstream sstr;
-    sstr<<name<<'='<<value;
-    if(rewrite || std::string(getenv(name)).length() == 0)
-      return _putenv(sstr.str().c_str());
-    else return -1;
-  }
-  #endif
+    sstr << name << '=' << value;
+    if (rewrite || std::string(getenv(name)).length() == 0) return _putenv(sstr.str().c_str());
+    else
+        return -1;
+}
+#endif
 #endif
 
-}
+} // namespace Kernel_Utils

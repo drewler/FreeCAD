@@ -32,13 +32,15 @@
 #include "Mesh.h"
 #include "MeshProperties.h"
 
-namespace Base{
-  class XMLReader;
-  class Writer;
-}
+namespace Base
+{
+class XMLReader;
+class Writer;
+} // namespace Base
 
-namespace MeshCore {
-  class MeshKernel;
+namespace MeshCore
+{
+class MeshKernel;
 }
 
 namespace Mesh
@@ -51,7 +53,7 @@ class MeshFeaturePy;
  * This class holds a MeshKernel object.
  * \author Werner Mayer
  */
-class MeshExport Feature : public App::GeoFeature
+class MeshExport Feature: public App::GeoFeature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Mesh::Feature);
 
@@ -70,19 +72,15 @@ public:
     //@{
     /// recalculate the Feature
     App::DocumentObjectExecReturn *execute() override;
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     //@}
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "MeshGui::ViewProviderMeshFaceSet";
-    }
-    const App::PropertyComplexGeoData* getPropertyOfGeometry() const override {
-        return &Mesh;
-    }
+    const char *getViewProviderName() const override { return "MeshGui::ViewProviderMeshFaceSet"; }
+    const App::PropertyComplexGeoData *getPropertyOfGeometry() const override { return &Mesh; }
 
     /// handles the MeshPy object
-    PyObject* getPyObject() override;
+    PyObject *getPyObject() override;
 };
 
 using FeatureCustom = App::FeatureCustomT<Feature>;
@@ -91,5 +89,4 @@ using FeaturePython = App::FeaturePythonT<Feature>;
 } //namespace Mesh
 
 
-
-#endif 
+#endif

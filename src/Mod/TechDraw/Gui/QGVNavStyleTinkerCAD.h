@@ -28,16 +28,17 @@
 
 #include "QGVNavStyle.h"
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 class QGVPage;
 
-class TechDrawGuiExport QGVNavStyleTinkerCAD : public QGVNavStyle
+class TechDrawGuiExport QGVNavStyleTinkerCAD: public QGVNavStyle
 {
-//    TYPESYSTEM_HEADER();
+    //    TYPESYSTEM_HEADER();
 
 public:
-    explicit QGVNavStyleTinkerCAD(QGVPage* qgvp);
+    explicit QGVNavStyleTinkerCAD(QGVPage *qgvp);
     ~QGVNavStyleTinkerCAD() override;
 
     void handleMouseMoveEvent(QMouseEvent *event) override;
@@ -46,8 +47,7 @@ public:
 
 protected:
 private:
-
 };
 
-}
+} // namespace TechDrawGui
 #endif // TECHDRAW_TINKERNAVSTYLE_H

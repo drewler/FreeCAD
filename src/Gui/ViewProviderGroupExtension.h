@@ -29,7 +29,7 @@
 namespace Gui
 {
 
-class GuiExport ViewProviderGroupExtension : public ViewProviderExtension
+class GuiExport ViewProviderGroupExtension: public ViewProviderExtension
 {
     EXTENSION_PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderGroupExtension);
 
@@ -38,13 +38,13 @@ public:
     ViewProviderGroupExtension();
     ~ViewProviderGroupExtension() override;
 
-    std::vector<App::DocumentObject*> extensionClaimChildren()const override;
+    std::vector<App::DocumentObject *> extensionClaimChildren() const override;
     bool extensionCanDragObjects() const override;
-    bool extensionCanDragObject(App::DocumentObject*) const override;
-    void extensionDragObject(App::DocumentObject*) override;
+    bool extensionCanDragObject(App::DocumentObject *) const override;
+    void extensionDragObject(App::DocumentObject *) override;
     bool extensionCanDropObjects() const override;
-    bool extensionCanDropObject(App::DocumentObject*) const override;
-    void extensionDropObject(App::DocumentObject*) override;
+    bool extensionCanDropObject(App::DocumentObject *) const override;
+    void extensionDropObject(App::DocumentObject *) override;
 
     void extensionHide() override;
     void extensionShow() override;
@@ -53,10 +53,11 @@ public:
 
 private:
     bool guard;
-    std::vector<ViewProvider*> nodes;
+    std::vector<ViewProvider *> nodes;
 };
 
-using ViewProviderGroupExtensionPython = ViewProviderExtensionPythonT<Gui::ViewProviderGroupExtension>;
+using ViewProviderGroupExtensionPython =
+    ViewProviderExtensionPythonT<Gui::ViewProviderGroupExtension>;
 
 } //namespace Gui
 

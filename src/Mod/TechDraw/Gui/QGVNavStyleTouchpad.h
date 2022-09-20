@@ -28,14 +28,15 @@
 
 #include "QGVNavStyle.h"
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 class QGVPage;
 
-class TechDrawGuiExport QGVNavStyleTouchpad : public QGVNavStyle
+class TechDrawGuiExport QGVNavStyleTouchpad: public QGVNavStyle
 {
 public:
-    explicit QGVNavStyleTouchpad(QGVPage* qgvp);
+    explicit QGVNavStyleTouchpad(QGVPage *qgvp);
     ~QGVNavStyleTouchpad() override;
 
     void handleKeyPressEvent(QKeyEvent *event) override;
@@ -46,8 +47,7 @@ protected:
     void setAnchor() override;
 
 private:
-
 };
 
-}
+} // namespace TechDrawGui
 #endif // TECHDRAW_TOUCHPADNAVSTYLE_H

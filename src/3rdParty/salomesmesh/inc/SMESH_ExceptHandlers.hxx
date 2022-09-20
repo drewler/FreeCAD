@@ -33,13 +33,13 @@
 
 #if defined SMESH_EXPORTS
 #if defined WIN32
-#define SMESH_EXPORT __declspec( dllexport )
+#define SMESH_EXPORT __declspec(dllexport)
 #else
 #define SMESH_EXPORT
 #endif
 #else
 #if defined WNT
-#define SMESH_EXPORT __declspec( dllimport )
+#define SMESH_EXPORT __declspec(dllimport)
 #else
 #define SMESH_EXPORT
 #endif
@@ -47,41 +47,47 @@
 
 typedef void (*PVF)();
 
-class SMESH_EXPORT Unexpect { //save / retrieve unexpected exceptions treatment
-  PVF old;
-  public :
+class SMESH_EXPORT Unexpect
+{ //save / retrieve unexpected exceptions treatment
+    PVF old;
+
+public:
 #ifndef _MSC_VER
-  // std::set_unexpected has been removed in C++17
-    Unexpect( PVF f ) 
-      { /*old = std::set_unexpected(f);*/old = f; }
-  ~Unexpect() { /*std::set_unexpected(old);*/ }
+    // std::set_unexpected has been removed in C++17
+    Unexpect(PVF f)
+    { /*old = std::set_unexpected(f);*/
+        old = f;
+    }
+    ~Unexpect()
+    { /*std::set_unexpected(old);*/
+    }
 #else
-    Unexpect( PVF f ) 
-	  { old = ::set_unexpected(f); }
-  ~Unexpect() { ::set_unexpected(old); }
+    Unexpect(PVF f) { old = ::set_unexpected(f); }
+    ~Unexpect() { ::set_unexpected(old); }
 #endif
 };
 
-class SMESH_EXPORT Terminate {//save / retrieve terminate function
-  
-  PVF old;
-  public :
+class SMESH_EXPORT Terminate
+{ //save / retrieve terminate function
+
+    PVF old;
+
+public:
 #ifndef _MSC_VER
-    Terminate( PVF f ) 
-      { old = std::set_terminate(f); }
-  ~Terminate() { std::set_terminate(old); }
+    Terminate(PVF f) { old = std::set_terminate(f); }
+    ~Terminate() { std::set_terminate(old); }
 #else
-    Terminate( PVF f ) 
-	  { old = std::set_terminate(f); }
-  ~Terminate() { std::set_terminate(old); }
+    Terminate(PVF f) { old = std::set_terminate(f); }
+    ~Terminate() { std::set_terminate(old); }
 #endif
 };
 
-#define UNEXPECT_CATCH(FuncName, ExceptionConstructor) \
-inline void FuncName () {\
-   throw ExceptionConstructor (); \
-}
-//Example of the usage 
+#define UNEXPECT_CATCH(FuncName, ExceptionConstructor)                                             \
+    inline void FuncName()                                                                         \
+    {                                                                                              \
+        throw ExceptionConstructor();                                                              \
+    }
+//Example of the usage
 
 // void DTC_NotFound () {
 //   throw (SMESH_DataTypeCatalog::NotFound());
@@ -96,5 +102,5 @@ inline void FuncName () {\
 
 
 //Definitions :
-SMESH_EXPORT void SmeshException ();
+SMESH_EXPORT void SmeshException();
 #endif

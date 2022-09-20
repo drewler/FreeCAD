@@ -26,13 +26,13 @@ namespace Wm4
 class WM4_FOUNDATION_ITEM EdgeKey
 {
 public:
-    EdgeKey (int iV0 = -1, int iV1 = -1);
-    bool operator< (const EdgeKey& rkKey) const;
-    operator size_t () const;
+    EdgeKey(int iV0 = -1, int iV1 = -1);
+    bool operator<(const EdgeKey &rkKey) const;
+    operator size_t() const;
     int V[2];
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4EdgeKey.inl"
 

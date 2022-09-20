@@ -32,13 +32,15 @@
 #include "ViewProviderDrawingView.h"
 
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawRichAnno;
 }
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderRichAnno : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderRichAnno: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderRichAnno);
 
@@ -48,33 +50,31 @@ public:
     /// destructor
     ~ViewProviderRichAnno() override;
 
-    App::PropertyLength      LineWidth;
+    App::PropertyLength LineWidth;
     App::PropertyEnumeration LineStyle;
-    App::PropertyColor       LineColor;
+    App::PropertyColor LineColor;
 
-    bool useNewSelectionModel() const override {return false;}
-    void updateData(const App::Property*) override;
-    void onChanged(const App::Property* p) override;
+    bool useNewSelectionModel() const override { return false; }
+    void updateData(const App::Property *) override;
+    void onChanged(const App::Property *p) override;
     bool doubleClicked() override;
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
 
-    static const char* LineStyleEnums[];
+    static const char *LineStyleEnums[];
 
-    TechDraw::DrawRichAnno* getViewObject() const override;
-    TechDraw::DrawRichAnno* getFeature()  const;
+    TechDraw::DrawRichAnno *getViewObject() const override;
+    TechDraw::DrawRichAnno *getFeature() const;
 
 protected:
     App::Color getDefLineColor();
     std::string getDefFont();
     double getDefFontSize();
     double getDefLineWeight();
-    void handleChangedPropertyType(Base::XMLReader &reader,
-                                   const char *TypeName,
-                                   App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
 private:
     static App::PropertyIntegerConstraint::Constraints LineStyleRange;
-
 };
 
 } // namespace TechDrawGui

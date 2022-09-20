@@ -33,7 +33,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Draft : public DressUp
+class PartDesignExport Draft: public DressUp
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Draft);
 
@@ -51,13 +51,12 @@ public:
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
-        return "PartDesignGui::ViewProviderDraft";
-    }
+    const char *getViewProviderName() const override { return "PartDesignGui::ViewProviderDraft"; }
     //@}
 
 private:
-    void handleChangedPropertyType(Base::XMLReader &reader, const char * TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
     static const App::PropertyAngle::Constraints floatAngle;
 };
 

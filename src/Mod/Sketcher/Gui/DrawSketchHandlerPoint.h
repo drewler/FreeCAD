@@ -27,7 +27,8 @@
 #include "GeometryCreationMode.h"
 #include "Utils.h"
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 extern GeometryCreationMode geometryCreationMode; // defined in CommandCreateGeo.cpp
 
@@ -40,7 +41,7 @@ public:
     void mouseMove(Base::Vector2d onSketchPos) override
     {
         setPositionText(onSketchPos);
-        if (seekAutoConstraint(sugConstr, onSketchPos, Base::Vector2d(0.f,0.f))) {
+        if (seekAutoConstraint(sugConstr, onSketchPos, Base::Vector2d(0.f, 0.f))) {
             renderSuggestConstraintsCursor(sugConstr);
             return;
         }
@@ -57,18 +58,19 @@ public:
     bool releaseButton(Base::Vector2d onSketchPos) override
     {
         Q_UNUSED(onSketchPos);
-        if (selectionDone){
+        if (selectionDone) {
             unsetCursor();
             resetPositionText();
 
             try {
                 Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Add sketch point"));
-                Gui::cmdAppObjectArgs(sketchgui->getObject(), "addGeometry(Part.Point(App.Vector(%f,%f,0)))",
-                          EditPoint.x,EditPoint.y);
+                Gui::cmdAppObjectArgs(sketchgui->getObject(),
+                                      "addGeometry(Part.Point(App.Vector(%f,%f,0)))", EditPoint.x,
+                                      EditPoint.y);
 
                 Gui::Command::commitCommand();
             }
-            catch (const Base::Exception& e) {
+            catch (const Base::Exception &e) {
                 Base::Console().Error("Failed to add point: %s\n", e.what());
                 Gui::Command::abortCommand();
             }
@@ -79,11 +81,13 @@ public:
                 sugConstr.clear();
             }
 
-            tryAutoRecomputeIfNotSolve(static_cast<Sketcher::SketchObject *>(sketchgui->getObject()));
+            tryAutoRecomputeIfNotSolve(
+                static_cast<Sketcher::SketchObject *>(sketchgui->getObject()));
 
-            ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Sketcher");
-            bool continuousMode = hGrp->GetBool("ContinuousCreationMode",true);
-            if(continuousMode){
+            ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
+                "User parameter:BaseApp/Preferences/Mod/Sketcher");
+            bool continuousMode = hGrp->GetBool("ContinuousCreationMode", true);
+            if (continuousMode) {
                 // This code enables the continuous creation mode.
                 applyCursor();
                 /* It is ok not to call to purgeHandler
@@ -91,8 +95,9 @@ public:
                 * handler is destroyed by the quit() method on pressing the
                 * right button of the mouse */
             }
-            else{
-                sketchgui->purgeHandler(); // no code after this line, Handler get deleted in ViewProvider
+            else {
+                sketchgui
+                    ->purgeHandler(); // no code after this line, Handler get deleted in ViewProvider
             }
         }
         return true;
@@ -115,4 +120,3 @@ protected:
 
 
 #endif // SKETCHERGUI_DrawSketchHandlerPoint_H
-

@@ -39,26 +39,25 @@
  */
 class MESHDRIVERSTL_EXPORT DriverSTL_W_SMDS_Mesh: public Driver_SMDS_Mesh
 {
- public:
-  
-  DriverSTL_W_SMDS_Mesh();
-  ~DriverSTL_W_SMDS_Mesh();
-  virtual Status Perform();
-  void    SetIsAscii( const bool theIsAscii = false );
+public:
+    DriverSTL_W_SMDS_Mesh();
+    ~DriverSTL_W_SMDS_Mesh();
+    virtual Status Perform();
+    void SetIsAscii(const bool theIsAscii = false);
 
- private:
-  // PRIVATE METHODS
-  Status  writeAscii  () const;
-  Status  writeBinary () const;
-  void    findVolumeTriangles();
+private:
+    // PRIVATE METHODS
+    Status writeAscii() const;
+    Status writeBinary() const;
+    void findVolumeTriangles();
 
-  SMDS_ElemIteratorPtr getFaces() const;
+    SMDS_ElemIteratorPtr getFaces() const;
 
- private:
-  // PRIVATE FIELDS
-  bool myIsAscii;
-  int                                  myNbVolumeTrias;
-  std::vector<const SMDS_MeshElement*> myVolumeFacets; // tmp faces
+private:
+    // PRIVATE FIELDS
+    bool myIsAscii;
+    int myNbVolumeTrias;
+    std::vector<const SMDS_MeshElement *> myVolumeFacets; // tmp faces
 };
 
 #endif

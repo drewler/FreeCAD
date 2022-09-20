@@ -47,9 +47,11 @@ using namespace Gui;
 
 /* TRANSLATOR PartDesignGui::TaskHelixParameters */
 
-TaskHelixParameters::TaskHelixParameters(PartDesignGui::ViewProviderHelix* HelixView, QWidget* parent)
-    : TaskSketchBasedParameters(HelixView, parent, "PartDesign_AdditiveHelix", tr("Helix parameters"))
-    , ui(new Ui_TaskHelixParameters)
+TaskHelixParameters::TaskHelixParameters(PartDesignGui::ViewProviderHelix *HelixView,
+                                         QWidget *parent)
+    : TaskSketchBasedParameters(HelixView, parent, "PartDesign_AdditiveHelix",
+                                tr("Helix parameters")),
+      ui(new Ui_TaskHelixParameters)
 {
     // we need a separate container widget to add all controls to
     proxy = new QWidget(this);
@@ -73,7 +75,7 @@ TaskHelixParameters::TaskHelixParameters(PartDesignGui::ViewProviderHelix* Helix
 
 void TaskHelixParameters::initializeHelix()
 {
-    PartDesign::Helix* helix = static_cast<PartDesign::Helix*>(vp->getObject());
+    PartDesign::Helix *helix = static_cast<PartDesign::Helix *>(vp->getObject());
     if (!(helix->HasBeenEdited).getValue()) {
         helix->proposeParameters();
         recomputeFeature();
@@ -82,7 +84,7 @@ void TaskHelixParameters::initializeHelix()
 
 void TaskHelixParameters::assignProperties()
 {
-    PartDesign::Helix* helix = static_cast<PartDesign::Helix*>(vp->getObject());
+    PartDesign::Helix *helix = static_cast<PartDesign::Helix *>(vp->getObject());
     propAngle = &(helix->Angle);
     propGrowth = &(helix->Growth);
     propPitch = &(helix->Pitch);
@@ -122,7 +124,7 @@ void TaskHelixParameters::setValuesFromProperties()
 
 void TaskHelixParameters::bindProperties()
 {
-    PartDesign::Helix* helix = static_cast<PartDesign::Helix*>(vp->getObject());
+    PartDesign::Helix *helix = static_cast<PartDesign::Helix *>(vp->getObject());
     ui->pitch->bind(helix->Pitch);
     ui->height->bind(helix->Height);
     ui->turns->bind(helix->Turns);
@@ -134,42 +136,32 @@ void TaskHelixParameters::connectSlots()
 {
     QMetaObject::connectSlotsByName(this);
 
-    connect(ui->pitch, SIGNAL(valueChanged(double)),
-        this, SLOT(onPitchChanged(double)));
-    connect(ui->height, SIGNAL(valueChanged(double)),
-        this, SLOT(onHeightChanged(double)));
-    connect(ui->turns, SIGNAL(valueChanged(double)),
-        this, SLOT(onTurnsChanged(double)));
-    connect(ui->coneAngle, SIGNAL(valueChanged(double)),
-        this, SLOT(onAngleChanged(double)));
-    connect(ui->growth, SIGNAL(valueChanged(double)),
-        this, SLOT(onGrowthChanged(double)));
-    connect(ui->axis, SIGNAL(activated(int)),
-        this, SLOT(onAxisChanged(int)));
-    connect(ui->checkBoxLeftHanded, SIGNAL(toggled(bool)),
-        this, SLOT(onLeftHandedChanged(bool)));
-    connect(ui->checkBoxReversed, SIGNAL(toggled(bool)),
-        this, SLOT(onReversedChanged(bool)));
-    connect(ui->checkBoxUpdateView, SIGNAL(toggled(bool)),
-        this, SLOT(onUpdateView(bool)));
-    connect(ui->inputMode, SIGNAL(activated(int)),
-        this, SLOT(onModeChanged(int)));
-    connect(ui->checkBoxOutside, SIGNAL(toggled(bool)),
-        this, SLOT(onOutsideChanged(bool)));
+    connect(ui->pitch, SIGNAL(valueChanged(double)), this, SLOT(onPitchChanged(double)));
+    connect(ui->height, SIGNAL(valueChanged(double)), this, SLOT(onHeightChanged(double)));
+    connect(ui->turns, SIGNAL(valueChanged(double)), this, SLOT(onTurnsChanged(double)));
+    connect(ui->coneAngle, SIGNAL(valueChanged(double)), this, SLOT(onAngleChanged(double)));
+    connect(ui->growth, SIGNAL(valueChanged(double)), this, SLOT(onGrowthChanged(double)));
+    connect(ui->axis, SIGNAL(activated(int)), this, SLOT(onAxisChanged(int)));
+    connect(ui->checkBoxLeftHanded, SIGNAL(toggled(bool)), this, SLOT(onLeftHandedChanged(bool)));
+    connect(ui->checkBoxReversed, SIGNAL(toggled(bool)), this, SLOT(onReversedChanged(bool)));
+    connect(ui->checkBoxUpdateView, SIGNAL(toggled(bool)), this, SLOT(onUpdateView(bool)));
+    connect(ui->inputMode, SIGNAL(activated(int)), this, SLOT(onModeChanged(int)));
+    connect(ui->checkBoxOutside, SIGNAL(toggled(bool)), this, SLOT(onOutsideChanged(bool)));
 }
 
 void TaskHelixParameters::showCoordinateAxes()
 {
     //show the parts coordinate system axis for selection
-    PartDesign::Body* body = PartDesign::Body::findBodyOf(vp->getObject());
+    PartDesign::Body *body = PartDesign::Body::findBodyOf(vp->getObject());
     if (body) {
         try {
-            App::Origin* origin = body->getOrigin();
-            ViewProviderOrigin* vpOrigin;
-            vpOrigin = static_cast<ViewProviderOrigin*>(Gui::Application::Instance->getViewProvider(origin));
+            App::Origin *origin = body->getOrigin();
+            ViewProviderOrigin *vpOrigin;
+            vpOrigin = static_cast<ViewProviderOrigin *>(
+                Gui::Application::Instance->getViewProvider(origin));
             vpOrigin->setTemporaryVisibility(true, false);
         }
-        catch (const Base::Exception& ex) {
+        catch (const Base::Exception &ex) {
             ex.ReportException();
         }
     }
@@ -180,8 +172,7 @@ void TaskHelixParameters::fillAxisCombo(bool forceRefill)
     bool oldVal_blockUpdate = blockUpdate;
     blockUpdate = true;
 
-    if (axesInList.empty())
-        forceRefill = true;//not filled yet, full refill
+    if (axesInList.empty()) forceRefill = true; //not filled yet, full refill
 
     if (forceRefill) {
         ui->axis->clear();
@@ -199,16 +190,15 @@ void TaskHelixParameters::fillAxisCombo(bool forceRefill)
 
     //add current link, if not in list and highlight it
     int indexOfCurrent = addCurrentLink();
-    if (indexOfCurrent != -1)
-        ui->axis->setCurrentIndex(indexOfCurrent);
+    if (indexOfCurrent != -1) ui->axis->setCurrentIndex(indexOfCurrent);
 
     blockUpdate = oldVal_blockUpdate;
 }
 
 void TaskHelixParameters::addSketchAxes()
 {
-    PartDesign::ProfileBased* pcFeat = static_cast<PartDesign::ProfileBased*>(vp->getObject());
-    Part::Part2DObject* pcSketch = dynamic_cast<Part::Part2DObject*>(pcFeat->Profile.getValue());
+    PartDesign::ProfileBased *pcFeat = static_cast<PartDesign::ProfileBased *>(vp->getObject());
+    Part::Part2DObject *pcSketch = dynamic_cast<Part::Part2DObject *>(pcFeat->Profile.getValue());
     if (pcSketch) {
         addAxisToCombo(pcSketch, "N_Axis", tr("Normal sketch axis"));
         addAxisToCombo(pcSketch, "V_Axis", tr("Vertical sketch axis"));
@@ -224,16 +214,16 @@ void TaskHelixParameters::addSketchAxes()
 
 void TaskHelixParameters::addPartAxes()
 {
-    PartDesign::ProfileBased* pcFeat = static_cast<PartDesign::ProfileBased*>(vp->getObject());
-    PartDesign::Body* body = PartDesign::Body::findBodyOf(pcFeat);
+    PartDesign::ProfileBased *pcFeat = static_cast<PartDesign::ProfileBased *>(vp->getObject());
+    PartDesign::Body *body = PartDesign::Body::findBodyOf(pcFeat);
     if (body) {
         try {
-            App::Origin* orig = body->getOrigin();
+            App::Origin *orig = body->getOrigin();
             addAxisToCombo(orig->getX(), "", tr("Base X axis"));
             addAxisToCombo(orig->getY(), "", tr("Base Y axis"));
             addAxisToCombo(orig->getZ(), "", tr("Base Z axis"));
         }
-        catch (const Base::Exception& ex) {
+        catch (const Base::Exception &ex) {
             ex.ReportException();
         }
     }
@@ -242,8 +232,8 @@ void TaskHelixParameters::addPartAxes()
 int TaskHelixParameters::addCurrentLink()
 {
     int indexOfCurrent = -1;
-    App::DocumentObject* ax = propReferenceAxis->getValue();
-    const std::vector<std::string>& subList = propReferenceAxis->getSubValues();
+    App::DocumentObject *ax = propReferenceAxis->getValue();
+    const std::vector<std::string> &subList = propReferenceAxis->getSubValues();
     for (size_t i = 0; i < axesInList.size(); i++) {
         if (ax == axesInList[i]->getValue() && subList == axesInList[i]->getSubValues()) {
             indexOfCurrent = i;
@@ -254,8 +244,7 @@ int TaskHelixParameters::addCurrentLink()
     if (indexOfCurrent == -1 && ax) {
         assert(subList.size() <= 1);
         std::string sub;
-        if (!subList.empty())
-            sub = subList[0];
+        if (!subList.empty()) sub = subList[0];
         addAxisToCombo(ax, sub, getRefStr(ax, subList));
         indexOfCurrent = axesInList.size() - 1;
     }
@@ -263,17 +252,18 @@ int TaskHelixParameters::addCurrentLink()
     return indexOfCurrent;
 }
 
-void TaskHelixParameters::addAxisToCombo(App::DocumentObject* linkObj, std::string linkSubname, QString itemText)
+void TaskHelixParameters::addAxisToCombo(App::DocumentObject *linkObj, std::string linkSubname,
+                                         QString itemText)
 {
     this->ui->axis->addItem(itemText);
     this->axesInList.emplace_back(new App::PropertyLinkSub);
-    App::PropertyLinkSub& lnk = *(axesInList.back());
+    App::PropertyLinkSub &lnk = *(axesInList.back());
     lnk.setValue(linkObj, std::vector<std::string>(1, linkSubname));
 }
 
 void TaskHelixParameters::updateStatus()
 {
-    auto pcHelix = static_cast<PartDesign::Helix*>(vp->getObject());
+    auto pcHelix = static_cast<PartDesign::Helix *>(vp->getObject());
     auto status = std::string(pcHelix->getStatusString());
     if (status.compare("Valid") == 0 || status.compare("Touched") == 0) {
         if (pcHelix->safePitch() > pcHelix->Pitch.getValue())
@@ -304,9 +294,8 @@ void TaskHelixParameters::adaptVisibilityToMode()
     bool isAngleVisible = false;
     bool isGrowthVisible = false;
 
-    auto pcHelix = static_cast<PartDesign::Helix*>(vp->getObject());
-    if (pcHelix->getAddSubType() == PartDesign::FeatureAddSub::Subtractive)
-        isOutsideVisible = true;
+    auto pcHelix = static_cast<PartDesign::Helix *>(vp->getObject());
+    if (pcHelix->getAddSubType() == PartDesign::FeatureAddSub::Subtractive) isOutsideVisible = true;
 
     HelixMode mode = static_cast<HelixMode>(propMode->getValue());
     if (mode == HelixMode::pitch_height_angle) {
@@ -353,8 +342,9 @@ void TaskHelixParameters::adaptVisibilityToMode()
 
 void TaskHelixParameters::assignToolTipsFromPropertyDocs()
 {
-    auto pcHelix = static_cast<PartDesign::Helix*>(vp->getObject());
-    const char* propCategory = "App::Property"; // cf. https://tracker.freecadweb.org/view.php?id=0002524
+    auto pcHelix = static_cast<PartDesign::Helix *>(vp->getObject());
+    const char *propCategory =
+        "App::Property"; // cf. https://tracker.freecadweb.org/view.php?id=0002524
     QString toolTip;
 
     // Beware that "Axis" in the GUI actually represents the property "ReferenceAxis"!
@@ -397,11 +387,11 @@ void TaskHelixParameters::assignToolTipsFromPropertyDocs()
     ui->checkBoxOutside->setToolTip(toolTip);
 }
 
-void TaskHelixParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
+void TaskHelixParameters::onSelectionChanged(const Gui::SelectionChanges &msg)
 {
     if (msg.Type == Gui::SelectionChanges::AddSelection) {
         std::vector<std::string> axis;
-        App::DocumentObject* selObj;
+        App::DocumentObject *selObj;
         if (getReferencedSelection(vp->getObject(), msg, selObj, axis) && selObj) {
             exitSelectionMode();
             propReferenceAxis->setValue(selObj, axis);
@@ -448,24 +438,20 @@ void TaskHelixParameters::onGrowthChanged(double len)
 
 void TaskHelixParameters::onAxisChanged(int num)
 {
-    PartDesign::ProfileBased* pcHelix = static_cast<PartDesign::ProfileBased*>(vp->getObject());
+    PartDesign::ProfileBased *pcHelix = static_cast<PartDesign::ProfileBased *>(vp->getObject());
 
-    if (axesInList.empty())
-        return;
+    if (axesInList.empty()) return;
 
-    App::DocumentObject* oldRefAxis = propReferenceAxis->getValue();
+    App::DocumentObject *oldRefAxis = propReferenceAxis->getValue();
     std::vector<std::string> oldSubRefAxis = propReferenceAxis->getSubValues();
     std::string oldRefName;
-    if (!oldSubRefAxis.empty())
-        oldRefName = oldSubRefAxis.front();
+    if (!oldSubRefAxis.empty()) oldRefName = oldSubRefAxis.front();
 
-    App::PropertyLinkSub& lnk = *(axesInList[num]);
+    App::PropertyLinkSub &lnk = *(axesInList[num]);
     if (!lnk.getValue()) {
         // enter reference selection mode
-        TaskSketchBasedParameters::onSelectReference(
-            AllowSelection::EDGE |
-            AllowSelection::PLANAR |
-            AllowSelection::CIRCLE);
+        TaskSketchBasedParameters::onSelectReference(AllowSelection::EDGE | AllowSelection::PLANAR
+                                                     | AllowSelection::CIRCLE);
         return;
     }
     else {
@@ -480,15 +466,13 @@ void TaskHelixParameters::onAxisChanged(int num)
     }
 
     try {
-        App::DocumentObject* newRefAxis = propReferenceAxis->getValue();
-        const std::vector<std::string>& newSubRefAxis = propReferenceAxis->getSubValues();
+        App::DocumentObject *newRefAxis = propReferenceAxis->getValue();
+        const std::vector<std::string> &newSubRefAxis = propReferenceAxis->getSubValues();
         std::string newRefName;
-        if (!newSubRefAxis.empty())
-            newRefName = newSubRefAxis.front();
+        if (!newSubRefAxis.empty()) newRefName = newSubRefAxis.front();
 
-        if (oldRefAxis != newRefAxis ||
-            oldSubRefAxis.size() != newSubRefAxis.size() ||
-            oldRefName != newRefName) {
+        if (oldRefAxis != newRefAxis || oldSubRefAxis.size() != newSubRefAxis.size()
+            || oldRefName != newRefName) {
             bool reversed = propReversed->getValue();
             if (reversed != propReversed->getValue()) {
                 propReversed->setValue(reversed);
@@ -501,7 +485,7 @@ void TaskHelixParameters::onAxisChanged(int num)
         recomputeFeature();
         updateStatus();
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         e.ReportException();
     }
 }
@@ -546,21 +530,21 @@ TaskHelixParameters::~TaskHelixParameters()
 {
     try {
         //hide the parts coordinate system axis for selection
-        PartDesign::Body* body = vp ? PartDesign::Body::findBodyOf(vp->getObject()) : nullptr;
+        PartDesign::Body *body = vp ? PartDesign::Body::findBodyOf(vp->getObject()) : nullptr;
         if (body) {
-            App::Origin* origin = body->getOrigin();
-            ViewProviderOrigin* vpOrigin;
-            vpOrigin = static_cast<ViewProviderOrigin*>(Gui::Application::Instance->getViewProvider(origin));
+            App::Origin *origin = body->getOrigin();
+            ViewProviderOrigin *vpOrigin;
+            vpOrigin = static_cast<ViewProviderOrigin *>(
+                Gui::Application::Instance->getViewProvider(origin));
             vpOrigin->resetTemporaryVisibility();
         }
     }
-    catch (const Base::Exception& ex) {
+    catch (const Base::Exception &ex) {
         ex.ReportException();
     }
-
 }
 
-void TaskHelixParameters::changeEvent(QEvent* e)
+void TaskHelixParameters::changeEvent(QEvent *e)
 {
     TaskBox::changeEvent(e);
     if (e->type() == QEvent::LanguageChange) {
@@ -574,24 +558,25 @@ void TaskHelixParameters::changeEvent(QEvent* e)
         fillAxisCombo(true);
 
         // restore the indexes
-        if (axis < ui->axis->count())
-            ui->axis->setCurrentIndex(axis);
+        if (axis < ui->axis->count()) ui->axis->setCurrentIndex(axis);
         ui->inputMode->setCurrentIndex(mode);
     }
 }
 
-void TaskHelixParameters::getReferenceAxis(App::DocumentObject*& obj, std::vector<std::string>& sub) const
+void TaskHelixParameters::getReferenceAxis(App::DocumentObject *&obj,
+                                           std::vector<std::string> &sub) const
 {
-    if (axesInList.empty())
-        throw Base::RuntimeError("Not initialized!");
+    if (axesInList.empty()) throw Base::RuntimeError("Not initialized!");
 
     int num = ui->axis->currentIndex();
-    const App::PropertyLinkSub& lnk = *(axesInList.at(num));
+    const App::PropertyLinkSub &lnk = *(axesInList.at(num));
     if (!lnk.getValue()) {
-        throw Base::RuntimeError("Still in reference selection mode; reference wasn't selected yet");
+        throw Base::RuntimeError(
+            "Still in reference selection mode; reference wasn't selected yet");
     }
     else {
-        PartDesign::ProfileBased* pcRevolution = static_cast<PartDesign::ProfileBased*>(vp->getObject());
+        PartDesign::ProfileBased *pcRevolution =
+            static_cast<PartDesign::ProfileBased *>(vp->getObject());
         if (!pcRevolution->getDocument()->isIn(lnk.getValue())) {
             throw Base::RuntimeError("Object was deleted");
         }
@@ -601,39 +586,40 @@ void TaskHelixParameters::getReferenceAxis(App::DocumentObject*& obj, std::vecto
     }
 }
 
-bool TaskHelixParameters::showPreview(PartDesign::Helix* helix)
+bool TaskHelixParameters::showPreview(PartDesign::Helix *helix)
 {
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/PartDesign");
-    if ((hGrp->GetBool("SubractiveHelixPreview", true) && helix->getAddSubType() == PartDesign::FeatureAddSub::Subtractive) ||
-        (hGrp->GetBool("AdditiveHelixPreview", false) && helix->getAddSubType() == PartDesign::FeatureAddSub::Additive)) {
+    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Mod/PartDesign");
+    if ((hGrp->GetBool("SubractiveHelixPreview", true)
+         && helix->getAddSubType() == PartDesign::FeatureAddSub::Subtractive)
+        || (hGrp->GetBool("AdditiveHelixPreview", false)
+            && helix->getAddSubType() == PartDesign::FeatureAddSub::Additive)) {
         return true;
     }
 
     return false;
 }
 
-void TaskHelixParameters::startReferenceSelection(App::DocumentObject* profile, App::DocumentObject* base)
+void TaskHelixParameters::startReferenceSelection(App::DocumentObject *profile,
+                                                  App::DocumentObject *base)
 {
-    PartDesign::Helix* pcHelix = dynamic_cast<PartDesign::Helix*>(vp->getObject());
+    PartDesign::Helix *pcHelix = dynamic_cast<PartDesign::Helix *>(vp->getObject());
     if (pcHelix && showPreview(pcHelix)) {
-        Gui::Document* doc = vp->getDocument();
-        if (doc) {
-            doc->setHide(profile->getNameInDocument());
-        }
+        Gui::Document *doc = vp->getDocument();
+        if (doc) { doc->setHide(profile->getNameInDocument()); }
     }
     else {
         TaskSketchBasedParameters::startReferenceSelection(profile, base);
     }
 }
 
-void TaskHelixParameters::finishReferenceSelection(App::DocumentObject* profile, App::DocumentObject* base)
+void TaskHelixParameters::finishReferenceSelection(App::DocumentObject *profile,
+                                                   App::DocumentObject *base)
 {
-    PartDesign::Helix* pcHelix = dynamic_cast<PartDesign::Helix*>(vp->getObject());
+    PartDesign::Helix *pcHelix = dynamic_cast<PartDesign::Helix *>(vp->getObject());
     if (pcHelix && showPreview(pcHelix)) {
-        Gui::Document* doc = vp->getDocument();
-        if (doc) {
-            doc->setShow(profile->getNameInDocument());
-        }
+        Gui::Document *doc = vp->getDocument();
+        if (doc) { doc->setShow(profile->getNameInDocument()); }
     }
     else {
         TaskSketchBasedParameters::finishReferenceSelection(profile, base);
@@ -644,7 +630,7 @@ void TaskHelixParameters::finishReferenceSelection(App::DocumentObject* profile,
 void TaskHelixParameters::apply()
 {
     std::vector<std::string> sub;
-    App::DocumentObject* obj;
+    App::DocumentObject *obj;
     getReferenceAxis(obj, sub);
     std::string axis = buildLinkSingleSubPythonStr(obj, sub);
     auto tobj = vp->getObject();
@@ -664,7 +650,7 @@ void TaskHelixParameters::apply()
 //**************************************************************************
 // TaskDialog
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-TaskDlgHelixParameters::TaskDlgHelixParameters(ViewProviderHelix* HelixView)
+TaskDlgHelixParameters::TaskDlgHelixParameters(ViewProviderHelix *HelixView)
     : TaskDlgSketchBasedParameters(HelixView)
 {
     assert(HelixView);

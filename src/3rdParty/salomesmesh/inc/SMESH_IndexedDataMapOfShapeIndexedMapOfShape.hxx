@@ -50,13 +50,12 @@
 #ifndef __BORLANDC__
 typedef NCollection_IndexedMap<TopoDS_Shape> SMESH_IndexedMapOfShape;
 #else
-DEFINE_BASECOLLECTION (SMESH_BaseCollectionShape, TopoDS_Shape)
-SMESH_DEFINE_INDEXEDMAP (SMESH_IndexedMapOfShape, SMESH_BaseCollectionShape, TopoDS_Shape)
+DEFINE_BASECOLLECTION(SMESH_BaseCollectionShape, TopoDS_Shape)
+SMESH_DEFINE_INDEXEDMAP(SMESH_IndexedMapOfShape, SMESH_BaseCollectionShape, TopoDS_Shape)
 #endif
 #else
-DEFINE_INDEXEDMAP (SMESH_IndexedMapOfShape, SMESH_BaseCollectionShape, TopoDS_Shape)
+DEFINE_INDEXEDMAP(SMESH_IndexedMapOfShape, SMESH_BaseCollectionShape, TopoDS_Shape)
 #endif
-
 
 
 #endif
@@ -74,13 +73,13 @@ DEFINE_INDEXEDMAP (SMESH_IndexedMapOfShape, SMESH_BaseCollectionShape, TopoDS_Sh
 
 
 #if OCC_VERSION_HEX >= 0x060703
-typedef NCollection_IndexedDataMap<SMESH_IndexedMapOfShape,TopoDS_Shape> SMESH_IndexedDataMapOfShapeIndexedMapOfShape;
+typedef NCollection_IndexedDataMap<SMESH_IndexedMapOfShape, TopoDS_Shape>
+    SMESH_IndexedDataMapOfShapeIndexedMapOfShape;
 #else
 #include <NCollection_DefineIndexedDataMap.hxx>
 ///  Class SMESH_IndexedDataMapOfShapeIndexedMapOfShape
-DEFINE_BASECOLLECTION (SMESH_BaseCollectionIndexedMapOfShape, SMESH_IndexedMapOfShape)
-DEFINE_INDEXEDDATAMAP (SMESH_IndexedDataMapOfShapeIndexedMapOfShape,
-                       SMESH_BaseCollectionIndexedMapOfShape, TopoDS_Shape,
-                       SMESH_IndexedMapOfShape)
+DEFINE_BASECOLLECTION(SMESH_BaseCollectionIndexedMapOfShape, SMESH_IndexedMapOfShape)
+DEFINE_INDEXEDDATAMAP(SMESH_IndexedDataMapOfShapeIndexedMapOfShape,
+                      SMESH_BaseCollectionIndexedMapOfShape, TopoDS_Shape, SMESH_IndexedMapOfShape)
 #endif
-#endif 
+#endif

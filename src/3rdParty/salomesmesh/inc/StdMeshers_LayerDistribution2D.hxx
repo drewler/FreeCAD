@@ -38,16 +38,13 @@
 // =========================================================
 // =========================================================
 
-class STDMESHERS_EXPORT StdMeshers_LayerDistribution2D
-                        :public StdMeshers_LayerDistribution
+class STDMESHERS_EXPORT StdMeshers_LayerDistribution2D: public StdMeshers_LayerDistribution
 {
 public:
-  // Constructor
-  StdMeshers_LayerDistribution2D(int hypId, int studyId, SMESH_Gen* gen);
-  // Destructor
-  virtual ~StdMeshers_LayerDistribution2D();
-
+    // Constructor
+    StdMeshers_LayerDistribution2D(int hypId, int studyId, SMESH_Gen *gen);
+    // Destructor
+    virtual ~StdMeshers_LayerDistribution2D();
 };
 
 #endif
-

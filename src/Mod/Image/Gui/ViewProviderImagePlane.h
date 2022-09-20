@@ -29,13 +29,13 @@
 
 class SoCoordinate3;
 class SoDrawStyle;
-class SoTexture2; 
+class SoTexture2;
 class QImage;
 
 namespace ImageGui
 {
 
-class ImageGuiExport ViewProviderImagePlane : public Gui::ViewProviderGeometryObject
+class ImageGuiExport ViewProviderImagePlane: public Gui::ViewProviderGeometryObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(RobotGui::ViewProviderImagePlane);
 
@@ -47,19 +47,19 @@ public:
     ~ViewProviderImagePlane() override;
 
     void attach(App::DocumentObject *pcObject) override;
-    void setDisplayMode(const char* ModeName) override;
+    void setDisplayMode(const char *ModeName) override;
     std::vector<std::string> getDisplayModes() const override;
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
 
 private:
-    bool loadSvg(const char*, float x, float y, QImage& img);
+    bool loadSvg(const char *, float x, float y, QImage &img);
 
 protected:
-    SoCoordinate3         * pcCoords;
-    SoTexture2            * texture;
- };
+    SoCoordinate3 *pcCoords;
+    SoTexture2 *texture;
+};
 
-} //namespace RobotGui
+} // namespace ImageGui
 
 
 #endif // IMAGE_ViewProviderImagePlane_H

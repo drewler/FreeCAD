@@ -26,22 +26,25 @@
 
 #include "ViewProviderTransformed.h"
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderLinearPattern : public ViewProviderTransformed
+class PartDesignGuiExport ViewProviderLinearPattern: public ViewProviderTransformed
 {
     Q_DECLARE_TR_FUNCTIONS(PartDesignGui::ViewProviderLinearPattern)
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderLinearPattern);
+
 public:
     ViewProviderLinearPattern()
-        { featureName = std::string("LinearPattern");
-          menuName = tr("LinearPattern parameters");
-          sPixmap = "PartDesign_LinearPattern.svg"; }
+    {
+        featureName = std::string("LinearPattern");
+        menuName = tr("LinearPattern parameters");
+        sPixmap = "PartDesign_LinearPattern.svg";
+    }
 
 protected:
     /// Returns a newly create dialog for the part to be placed in the task view
     TaskDlgFeatureParameters *getEditDialog() override;
-
 };
 
 

@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QPushButton>
+#include <QPushButton>
 #endif
 
 #include "RemoveComponents.h"
@@ -36,8 +36,7 @@
 using namespace MeshGui;
 
 
-RemoveComponents::RemoveComponents(QWidget* parent, Qt::WindowFlags fl)
-  : QWidget(parent, fl)
+RemoveComponents::RemoveComponents(QWidget *parent, Qt::WindowFlags fl) : QWidget(parent, fl)
 {
     ui = new Ui_RemoveComponents;
     ui->setupUi(this);
@@ -60,21 +59,13 @@ RemoveComponents::~RemoveComponents()
 
 void RemoveComponents::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     QWidget::changeEvent(e);
 }
 
-void RemoveComponents::on_selectRegion_clicked()
-{
-    meshSel.startSelection();
-}
+void RemoveComponents::on_selectRegion_clicked() { meshSel.startSelection(); }
 
-void RemoveComponents::on_deselectRegion_clicked()
-{
-    meshSel.startDeselection();
-}
+void RemoveComponents::on_deselectRegion_clicked() { meshSel.startDeselection(); }
 
 void RemoveComponents::on_selectAll_clicked()
 {
@@ -112,34 +103,23 @@ void RemoveComponents::on_screenTriangles_toggled(bool on)
     meshSel.setCheckOnlyPointToUserTriangles(on);
 }
 
-void RemoveComponents::on_cbSelectComp_toggled(bool on)
-{
-    meshSel.setAddComponentOnClick(on);
-}
+void RemoveComponents::on_cbSelectComp_toggled(bool on) { meshSel.setAddComponentOnClick(on); }
 
-void RemoveComponents::on_cbDeselectComp_toggled(bool on)
-{
-    meshSel.setRemoveComponentOnClick(on);
-}
+void RemoveComponents::on_cbDeselectComp_toggled(bool on) { meshSel.setRemoveComponentOnClick(on); }
 
 void RemoveComponents::deleteSelection()
 {
-    Gui::Document* doc = Gui::Application::Instance->activeDocument();
-    if (!doc)
-        return;
+    Gui::Document *doc = Gui::Application::Instance->activeDocument();
+    if (!doc) return;
     // delete all selected faces
     doc->openCommand(QT_TRANSLATE_NOOP("Command", "Delete selection"));
     bool ok = meshSel.deleteSelection();
-    if (!ok)
-        doc->abortCommand();
+    if (!ok) doc->abortCommand();
     else
         doc->commitCommand();
 }
 
-void RemoveComponents::invertSelection()
-{
-    meshSel.invertSelection();
-}
+void RemoveComponents::invertSelection() { meshSel.invertSelection(); }
 
 void RemoveComponents::on_selectTriangle_clicked()
 {
@@ -162,30 +142,26 @@ void RemoveComponents::reject()
 
 // -------------------------------------------------
 
-RemoveComponentsDialog::RemoveComponentsDialog(QWidget* parent, Qt::WindowFlags fl)
-  : QDialog(parent, fl)
+RemoveComponentsDialog::RemoveComponentsDialog(QWidget *parent, Qt::WindowFlags fl)
+    : QDialog(parent, fl)
 {
     widget = new RemoveComponents(this);
     this->setWindowTitle(widget->windowTitle());
 
-    QVBoxLayout* hboxLayout = new QVBoxLayout(this);
-    QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
-    buttonBox->setStandardButtons(QDialogButtonBox::Close|QDialogButtonBox::Ok);
-    QPushButton* okButton = buttonBox->button(QDialogButtonBox::Ok);
+    QVBoxLayout *hboxLayout = new QVBoxLayout(this);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
+    buttonBox->setStandardButtons(QDialogButtonBox::Close | QDialogButtonBox::Ok);
+    QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
     okButton->setText(MeshGui::TaskRemoveComponents::tr("Delete"));
-    buttonBox->addButton(MeshGui::TaskRemoveComponents::tr("Invert"),
-        QDialogButtonBox::ActionRole);
-    
-    connect(buttonBox, SIGNAL(clicked(QAbstractButton*)),
-            this, SLOT(clicked(QAbstractButton*)));
+    buttonBox->addButton(MeshGui::TaskRemoveComponents::tr("Invert"), QDialogButtonBox::ActionRole);
+
+    connect(buttonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(clicked(QAbstractButton *)));
 
     hboxLayout->addWidget(widget);
     hboxLayout->addWidget(buttonBox);
 }
 
-RemoveComponentsDialog::~RemoveComponentsDialog()
-{
-}
+RemoveComponentsDialog::~RemoveComponentsDialog() {}
 
 void RemoveComponentsDialog::reject()
 {
@@ -193,13 +169,11 @@ void RemoveComponentsDialog::reject()
     QDialog::reject();
 }
 
-void RemoveComponentsDialog::clicked(QAbstractButton* btn)
+void RemoveComponentsDialog::clicked(QAbstractButton *btn)
 {
-    QDialogButtonBox* buttonBox = qobject_cast<QDialogButtonBox*>(sender());
+    QDialogButtonBox *buttonBox = qobject_cast<QDialogButtonBox *>(sender());
     QDialogButtonBox::StandardButton id = buttonBox->standardButton(btn);
-    if (id == QDialogButtonBox::Ok) {
-        widget->deleteSelection();
-    }
+    if (id == QDialogButtonBox::Ok) { widget->deleteSelection(); }
     else if (id == QDialogButtonBox::Close) {
         this->reject();
     }
@@ -215,8 +189,7 @@ void RemoveComponentsDialog::clicked(QAbstractButton* btn)
 TaskRemoveComponents::TaskRemoveComponents()
 {
     widget = new RemoveComponents();
-    taskbox = new Gui::TaskView::TaskBox(
-        QPixmap(), widget->windowTitle(), false, nullptr);
+    taskbox = new Gui::TaskView::TaskBox(QPixmap(), widget->windowTitle(), false, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
@@ -226,23 +199,18 @@ TaskRemoveComponents::~TaskRemoveComponents()
     // automatically deleted in the sub-class
 }
 
-void TaskRemoveComponents::modifyStandardButtons(QDialogButtonBox* box)
+void TaskRemoveComponents::modifyStandardButtons(QDialogButtonBox *box)
 {
-    QPushButton* btn = box->button(QDialogButtonBox::Ok);
+    QPushButton *btn = box->button(QDialogButtonBox::Ok);
     btn->setText(tr("Delete"));
     box->addButton(tr("Invert"), QDialogButtonBox::ActionRole);
 }
 
-bool TaskRemoveComponents::accept()
-{
-    return false;
-}
+bool TaskRemoveComponents::accept() { return false; }
 
 void TaskRemoveComponents::clicked(int id)
 {
-    if (id == QDialogButtonBox::Ok) {
-        widget->deleteSelection();
-    }
+    if (id == QDialogButtonBox::Ok) { widget->deleteSelection(); }
     else if (id == QDialogButtonBox::Close) {
         widget->reject();
     }

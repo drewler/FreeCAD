@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <fstream>      
+#include <fstream>
 #include <iomanip>
 
 #include "UNV2412_Structure.hxx"
@@ -37,7 +37,7 @@ using namespace UNV2412;
 // Owner:  Simulation
 // Revision Date: 14-AUG-1992
 // -----------------------------------------------------------------------
- 
+
 // Record 1:        FORMAT(6I10)
 //                  Field 1       -- element label
 //                  Field 2       -- fe descriptor id
@@ -45,26 +45,26 @@ using namespace UNV2412;
 //                  Field 4       -- material property table number
 //                  Field 5       -- color
 //                  Field 6       -- number of nodes on element
- 
+
 // Record 2:  *** FOR NON-BEAM ELEMENTS ***
 //                  FORMAT(8I10)
 //                  Fields 1-n    -- node labels defining element
- 
+
 // Record 2:  *** FOR BEAM ELEMENTS ONLY ***
 //                  FORMAT(3I10)
 //                  Field 1       -- beam orientation node number
 //                  Field 2       -- beam fore-end cross section number
 //                  Field 3       -- beam  aft-end cross section number
- 
+
 // Record 3:  *** FOR BEAM ELEMENTS ONLY ***
 //                  FORMAT(8I10)
 //                  Fields 1-n    -- node labels defining element
- 
+
 // Records 1 and 2 are repeated for each non-beam element in the model.
 // Records 1 - 3 are repeated for each beam element in the model.
- 
+
 // Example:
- 
+
 //     -1
 //   2412
 //          1        11         1      5380         7         2
@@ -179,179 +179,169 @@ using namespace UNV2412;
 //    232 Axisymentric parabolic rigid surface
 
 
-
 static string _label_dataset = "2412";
 
-UNV2412::TRecord::TRecord():
-  label(-1),
-  fe_descriptor_id(-1),
-  phys_prop_tab_num(2),
-  mat_prop_tab_num(1),
-  color(7),
-  beam_orientation(0),
-  beam_fore_end(1), // default values
-  beam_aft_end(1) // default values
+UNV2412::TRecord::TRecord()
+    : label(-1), fe_descriptor_id(-1), phys_prop_tab_num(2), mat_prop_tab_num(1), color(7),
+      beam_orientation(0), beam_fore_end(1), // default values
+      beam_aft_end(1)                        // default values
 {}
 
-void UNV2412::Read(std::ifstream& in_stream, TDataSet& theDataSet)
+void UNV2412::Read(std::ifstream &in_stream, TDataSet &theDataSet)
 {
-  if(!in_stream.good())
-    EXCEPTION(runtime_error,"ERROR: Input file not good.");
+    if (!in_stream.good()) EXCEPTION(runtime_error, "ERROR: Input file not good.");
 
-  /*
+    /*
    * adjust the \p istream to our
    * position
    */
-  if(!beginning_of_dataset(in_stream,_label_dataset))
-    EXCEPTION(runtime_error,"ERROR: Could not find "<<_label_dataset<<" dataset!");
+    if (!beginning_of_dataset(in_stream, _label_dataset))
+        EXCEPTION(runtime_error, "ERROR: Could not find " << _label_dataset << " dataset!");
 
-  TRecord aRec;
-  while( !in_stream.eof())
-  {
-    in_stream >> aRec.label ;
-    if (aRec.label == -1)
-      // end of dataset is reached
-      break;
-    
-    int n_nodes;
-    in_stream>>aRec.fe_descriptor_id;
-    in_stream>>aRec.phys_prop_tab_num;
-    in_stream>>aRec.mat_prop_tab_num;
-    in_stream>>aRec.color;
-    in_stream>>n_nodes;
+    TRecord aRec;
+    while (!in_stream.eof()) {
+        in_stream >> aRec.label;
+        if (aRec.label == -1)
+            // end of dataset is reached
+            break;
 
-    if(IsBeam(aRec.fe_descriptor_id)){
-      in_stream>>aRec.beam_orientation;
-      in_stream>>aRec.beam_fore_end;
-      in_stream>>aRec.beam_aft_end;
+        int n_nodes;
+        in_stream >> aRec.fe_descriptor_id;
+        in_stream >> aRec.phys_prop_tab_num;
+        in_stream >> aRec.mat_prop_tab_num;
+        in_stream >> aRec.color;
+        in_stream >> n_nodes;
+
+        if (IsBeam(aRec.fe_descriptor_id)) {
+            in_stream >> aRec.beam_orientation;
+            in_stream >> aRec.beam_fore_end;
+            in_stream >> aRec.beam_aft_end;
+        }
+
+        aRec.node_labels.resize(n_nodes);
+        for (int j = 0; j < n_nodes; j++)
+            // read node labels
+            in_stream >> aRec.node_labels[j];
+
+        theDataSet.push_back(aRec);
     }
-
-    aRec.node_labels.resize(n_nodes);
-    for(int j=0; j < n_nodes; j++)
-      // read node labels
-      in_stream>>aRec.node_labels[j];             
-
-    theDataSet.push_back(aRec);
-  }
-
 }
 
 
-void UNV2412::Write(std::ofstream& out_stream, const TDataSet& theDataSet)
+void UNV2412::Write(std::ofstream &out_stream, const TDataSet &theDataSet)
 {
-  if(!out_stream.good())
-    EXCEPTION(runtime_error,"ERROR: Output file not good.");
-  
-  /*
+    if (!out_stream.good()) EXCEPTION(runtime_error, "ERROR: Output file not good.");
+
+    /*
    * Write beginning of dataset
    */
-  out_stream<<"    -1\n";
-  out_stream<<"  "<<_label_dataset<<"\n";
+    out_stream << "    -1\n";
+    out_stream << "  " << _label_dataset << "\n";
 
-  TDataSet::const_iterator anIter = theDataSet.begin();
-  for(; anIter != theDataSet.end(); anIter++)
-  {
-    const TRecord& aRec = *anIter;
-    out_stream<<std::setw(10)<<aRec.label;  /* element ID */
-    out_stream<<std::setw(10)<<aRec.fe_descriptor_id;  /* type of element */
-    out_stream<<std::setw(10)<<aRec.phys_prop_tab_num;
-    out_stream<<std::setw(10)<<aRec.mat_prop_tab_num;
-    out_stream<<std::setw(10)<<aRec.color;
-    out_stream<<std::setw(10)<<aRec.node_labels.size()<<std::endl;  /* No. of nodes per element */
+    TDataSet::const_iterator anIter = theDataSet.begin();
+    for (; anIter != theDataSet.end(); anIter++) {
+        const TRecord &aRec = *anIter;
+        out_stream << std::setw(10) << aRec.label;            /* element ID */
+        out_stream << std::setw(10) << aRec.fe_descriptor_id; /* type of element */
+        out_stream << std::setw(10) << aRec.phys_prop_tab_num;
+        out_stream << std::setw(10) << aRec.mat_prop_tab_num;
+        out_stream << std::setw(10) << aRec.color;
+        out_stream << std::setw(10) << aRec.node_labels.size()
+                   << std::endl; /* No. of nodes per element */
 
-    if(IsBeam(aRec.fe_descriptor_id))
-    {
-      out_stream<<std::setw(10)<<aRec.beam_orientation;
-      out_stream<<std::setw(10)<<aRec.beam_fore_end;
-      out_stream<<std::setw(10)<<aRec.beam_aft_end<<std::endl;
+        if (IsBeam(aRec.fe_descriptor_id)) {
+            out_stream << std::setw(10) << aRec.beam_orientation;
+            out_stream << std::setw(10) << aRec.beam_fore_end;
+            out_stream << std::setw(10) << aRec.beam_aft_end << std::endl;
+        }
+
+        int n_nodes = aRec.node_labels.size();
+        int iEnd = (n_nodes - 1) / 8 + 1;
+        for (int i = 0, k = 0; i < iEnd; i++) {
+            int jEnd = n_nodes - 8 * (i + 1);
+            if (jEnd < 0) jEnd = 8 + jEnd;
+            else
+                jEnd = 8;
+            for (int j = 0; j < jEnd; k++, j++) {
+                out_stream << std::setw(10) << aRec.node_labels[k];
+            }
+            out_stream << std::endl;
+        }
     }
 
-    int n_nodes = aRec.node_labels.size();
-    int iEnd = (n_nodes-1)/8 + 1;
-    for(int i = 0, k = 0; i < iEnd; i++){
-      int jEnd = n_nodes - 8*(i+1);
-      if(jEnd < 0) 
-        jEnd = 8 + jEnd;
-      else
-        jEnd = 8;
-      for(int j = 0; j < jEnd ; k++, j++){
-        out_stream<<std::setw(10)<<aRec.node_labels[k];
-      }
-      out_stream<<std::endl;
-    }
-  }
-
-  /*
+    /*
    * Write end of dataset
    */
-  out_stream<<"    -1\n";
+    out_stream << "    -1\n";
 }
 
 
-bool UNV2412::IsBeam(int theFeDescriptorId){
-  switch (theFeDescriptorId){
-  case 11: // edge with 2 nodes
-  case 21: 
-  case 22: // edge with 3 nodes
-  case 23: // curved beam
-  case 24:
-  case 25:
-    return true;
-  }
-  return false;
+bool UNV2412::IsBeam(int theFeDescriptorId)
+{
+    switch (theFeDescriptorId) {
+        case 11: // edge with 2 nodes
+        case 21:
+        case 22: // edge with 3 nodes
+        case 23: // curved beam
+        case 24:
+        case 25: return true;
+    }
+    return false;
 }
 
 
-bool UNV2412::IsFace(int theFeDescriptorId){
-  return ( 41 <= theFeDescriptorId && theFeDescriptorId <= 96 );
-//   switch (theFeDescriptorId){
-    
-//   case 71: // TRI3
-//   case 72:
-//   case 74:
+bool UNV2412::IsFace(int theFeDescriptorId)
+{
+    return (41 <= theFeDescriptorId && theFeDescriptorId <= 96);
+    //   switch (theFeDescriptorId){
 
-//   case 41: // Plane Stress Linear Triangle - TRI3
-//   case 51: // Plane Strain Linear Triangle
-//   case 91: // Thin Shell Linear Triangle - TRI3
+    //   case 71: // TRI3
+    //   case 72:
+    //   case 74:
 
-//   case 42: // Plane Stress Quadratic Triangle - TRI6
-//   case 52: // Plane Strain Parabolic Triangle
-//   case 92: // Thin Shell Quadratic Triangle - TRI6
+    //   case 41: // Plane Stress Linear Triangle - TRI3
+    //   case 51: // Plane Strain Linear Triangle
+    //   case 91: // Thin Shell Linear Triangle - TRI3
 
-//   case 43: // Plane Stress Cubic Triangle
+    //   case 42: // Plane Stress Quadratic Triangle - TRI6
+    //   case 52: // Plane Strain Parabolic Triangle
+    //   case 92: // Thin Shell Quadratic Triangle - TRI6
 
-//   case 44: // Plane Stress Linear Quadrilateral - QUAD4
-//   case 94: // Thin Shell   Linear Quadrilateral -  QUAD4
+    //   case 43: // Plane Stress Cubic Triangle
 
-//   case 45: // Plane Stress Quadratic Quadrilateral - QUAD8
-//   case 95: // Thin Shell   Quadratic Quadrilateral - QUAD8
+    //   case 44: // Plane Stress Linear Quadrilateral - QUAD4
+    //   case 94: // Thin Shell   Linear Quadrilateral -  QUAD4
 
-//   case 46: // Plane Stress Cubic Quadrilateral
+    //   case 45: // Plane Stress Quadratic Quadrilateral - QUAD8
+    //   case 95: // Thin Shell   Quadratic Quadrilateral - QUAD8
 
-//     return true;
-//   }
-//  return false;
+    //   case 46: // Plane Stress Cubic Quadrilateral
+
+    //     return true;
+    //   }
+    //  return false;
 }
 
 
-bool UNV2412::IsVolume(int theFeDescriptorId){
-  //if(!IsBeam(theFeDescriptorId) && !IsFace(theFeDescriptorId))
-  //  return true;
-  switch (theFeDescriptorId){
+bool UNV2412::IsVolume(int theFeDescriptorId)
+{
+    //if(!IsBeam(theFeDescriptorId) && !IsFace(theFeDescriptorId))
+    //  return true;
+    switch (theFeDescriptorId) {
 
-  case 111: // Solid Linear Tetrahedron - TET4
-  case 118: // Solid Quadratic Tetrahedron - TET10
+        case 111: // Solid Linear Tetrahedron - TET4
+        case 118: // Solid Quadratic Tetrahedron - TET10
 
-  case 112: // Solid Linear Prism - PRISM6
-  case 113: // Solid Quadratic Prism - PRISM15
+        case 112: // Solid Linear Prism - PRISM6
+        case 113: // Solid Quadratic Prism - PRISM15
 
-  case 115: // Solid Linear Brick - HEX8
-  case 116: // Solid Quadratic Brick - HEX20
+        case 115: // Solid Linear Brick - HEX8
+        case 116: // Solid Quadratic Brick - HEX20
 
-  case 117: // Solid Cubic Brick
+        case 117: // Solid Cubic Brick
 
-  case 114: // pyramid of 13 nodes (quadratic)
-    return true;
-  }
-  return false;
+        case 114: // pyramid of 13 nodes (quadratic)
+            return true;
+    }
+    return false;
 }

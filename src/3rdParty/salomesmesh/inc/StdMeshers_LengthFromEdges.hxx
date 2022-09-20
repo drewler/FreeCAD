@@ -34,23 +34,22 @@
 #include "SMESH_Hypothesis.hxx"
 #include "Utils_SALOME_Exception.hxx"
 
-class STDMESHERS_EXPORT StdMeshers_LengthFromEdges:
-  public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_LengthFromEdges: public SMESH_Hypothesis
 {
 public:
-  StdMeshers_LengthFromEdges(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_LengthFromEdges();
+    StdMeshers_LengthFromEdges(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_LengthFromEdges();
 
-  void SetMode(int mode);
+    void SetMode(int mode);
 
-  int GetMode();
+    int GetMode();
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  friend std::ostream & operator << (std::ostream & save, StdMeshers_LengthFromEdges & hyp);
-  friend std::istream & operator >> (std::istream & load, StdMeshers_LengthFromEdges & hyp);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    friend std::ostream &operator<<(std::ostream &save, StdMeshers_LengthFromEdges &hyp);
+    friend std::istream &operator>>(std::istream &load, StdMeshers_LengthFromEdges &hyp);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by the mesh built on the geometry
     * \param theMesh - the built mesh
     * \param theShape - the geometry of interest
@@ -58,16 +57,16 @@ public:
     *
     * Just return false as this hypothesis does not have parameters values
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
 protected:
-  int _mode;
+    int _mode;
 };
 
 #endif

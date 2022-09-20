@@ -24,11 +24,6 @@
 
 using namespace std;
 
-Driver_SMDS_Mesh::Driver_SMDS_Mesh():
-  myMesh(NULL)
-{}
+Driver_SMDS_Mesh::Driver_SMDS_Mesh() : myMesh(NULL) {}
 
-void Driver_SMDS_Mesh::SetMesh(SMDS_Mesh *theMesh)
-{
-  myMesh = theMesh;
-}
+void Driver_SMDS_Mesh::SetMesh(SMDS_Mesh *theMesh) { myMesh = theMesh; }

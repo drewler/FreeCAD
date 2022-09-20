@@ -20,56 +20,48 @@
 namespace Wm4
 {
 //----------------------------------------------------------------------------
-template <class Real, class TVector>
-Intersector<Real,TVector>::Intersector ()
+template<class Real, class TVector> Intersector<Real, TVector>::Intersector()
 {
     m_fContactTime = (Real)0.0;
     m_iIntersectionType = IT_EMPTY;
 }
 //----------------------------------------------------------------------------
-template <class Real, class TVector>
-Intersector<Real,TVector>::~Intersector ()
-{
-}
+template<class Real, class TVector> Intersector<Real, TVector>::~Intersector() {}
 //----------------------------------------------------------------------------
-template <class Real, class TVector>
-Real Intersector<Real,TVector>::GetContactTime () const
+template<class Real, class TVector> Real Intersector<Real, TVector>::GetContactTime() const
 {
     return m_fContactTime;
 }
 //----------------------------------------------------------------------------
-template <class Real, class TVector>
-int Intersector<Real,TVector>::GetIntersectionType () const
+template<class Real, class TVector> int Intersector<Real, TVector>::GetIntersectionType() const
 {
     return m_iIntersectionType;
 }
 //----------------------------------------------------------------------------
-template <class Real, class TVector>
-bool Intersector<Real,TVector>::Test ()
+template<class Real, class TVector> bool Intersector<Real, TVector>::Test()
 {
     // stub for derived class
     assert(false);
     return false;
 }
 //----------------------------------------------------------------------------
-template <class Real, class TVector>
-bool Intersector<Real,TVector>::Find ()
+template<class Real, class TVector> bool Intersector<Real, TVector>::Find()
 {
     // stub for derived class
     assert(false);
     return false;
 }
 //----------------------------------------------------------------------------
-template <class Real, class TVector>
-bool Intersector<Real,TVector>::Test (Real, const TVector&, const TVector&)
+template<class Real, class TVector>
+bool Intersector<Real, TVector>::Test(Real, const TVector &, const TVector &)
 {
     // stub for derived class
     assert(false);
     return false;
 }
 //----------------------------------------------------------------------------
-template <class Real, class TVector>
-bool Intersector<Real,TVector>::Find (Real, const TVector&, const TVector&)
+template<class Real, class TVector>
+bool Intersector<Real, TVector>::Find(Real, const TVector &, const TVector &)
 {
     // stub for derived class
     assert(false);
@@ -80,16 +72,12 @@ bool Intersector<Real,TVector>::Find (Real, const TVector&, const TVector&)
 //----------------------------------------------------------------------------
 // explicit instantiation
 //----------------------------------------------------------------------------
-template WM4_FOUNDATION_ITEM
-class Intersector<float,Vector2f>;
+template WM4_FOUNDATION_ITEM class Intersector<float, Vector2f>;
 
-template WM4_FOUNDATION_ITEM
-class Intersector<float,Vector3f>;
+template WM4_FOUNDATION_ITEM class Intersector<float, Vector3f>;
 
-template WM4_FOUNDATION_ITEM
-class Intersector<double,Vector2d>;
+template WM4_FOUNDATION_ITEM class Intersector<double, Vector2d>;
 
-template WM4_FOUNDATION_ITEM
-class Intersector<double,Vector3d>;
+template WM4_FOUNDATION_ITEM class Intersector<double, Vector3d>;
 //----------------------------------------------------------------------------
-}
+} // namespace Wm4

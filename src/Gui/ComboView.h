@@ -29,37 +29,43 @@
 class QTabWidget;
 class QTreeView;
 
-namespace App {
-  class PropertyContainer;
+namespace App
+{
+class PropertyContainer;
 }
 
-namespace Gui {
-    class TreeWidget;
-    class PropertyView;
-    class ProjectWidget;
-    class TreePanel;
-namespace PropertyEditor {
+namespace Gui
+{
+class TreeWidget;
+class PropertyView;
+class ProjectWidget;
+class TreePanel;
+namespace PropertyEditor
+{
 class EditableListView;
 class EditableItem;
 class PropertyEditor;
 } // namespace PropertyEditor
 
-namespace TaskView {
+namespace TaskView
+{
 class TaskView;
 class TaskDialog;
 } // namespace TaskView
 } // namespace Gui
 
 
-namespace Gui {
-    class ControlSingleton;
-namespace DockWnd {
+namespace Gui
+{
+class ControlSingleton;
+namespace DockWnd
+{
 
 /** Combo View
   * is a combination of a tree, property and TaskPanel for
   * integrated user action.
  */
-class GuiExport ComboView : public Gui::DockWindow
+class GuiExport ComboView: public Gui::DockWindow
 {
     Q_OBJECT
 
@@ -68,7 +74,7 @@ public:
      * A constructor.
      * A more elaborate description of the constructor.
      */
-    ComboView(bool showModel, Gui::Document*  pcDocument, QWidget *parent=nullptr);
+    ComboView(bool showModel, Gui::Document *pcDocument, QWidget *parent = nullptr);
 
     /**
      * A destructor.
@@ -76,8 +82,8 @@ public:
     */
     ~ComboView() override;
 
-    Gui::TaskView::TaskView *getTaskPanel(){return taskPanel;}
-    QTabWidget* getTabPanel() const { return tabs;}
+    Gui::TaskView::TaskView *getTaskPanel() { return taskPanel; }
+    QTabWidget *getTabPanel() const { return tabs; }
 
 
     friend class Gui::ControlSingleton;
@@ -98,11 +104,11 @@ private:
     int oldTabIndex;
     int modelIndex;
     int taskIndex;
-    QTabWidget                         * tabs;
-    Gui::PropertyView                  * prop;
-    Gui::TreePanel                     * tree;
-    Gui::TaskView::TaskView            * taskPanel;
-  //Gui::ProjectWidget                 * projectView;
+    QTabWidget *tabs;
+    Gui::PropertyView *prop;
+    Gui::TreePanel *tree;
+    Gui::TaskView::TaskView *taskPanel;
+    //Gui::ProjectWidget                 * projectView;
 };
 
 } // namespace DockWnd

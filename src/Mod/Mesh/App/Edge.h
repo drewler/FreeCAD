@@ -40,16 +40,16 @@ class MeshObject;
  * convenient access to the Mesh data structure. This class should not be used
  * for programming algorithms in C++. Use Mesh Core classes instead!
  */
-class MeshExport Edge : public MeshCore::MeshGeomEdge
+class MeshExport Edge: public MeshCore::MeshGeomEdge
 {
 public:
     Edge();
-    Edge(const Edge& f);
+    Edge(const Edge &f);
     ~Edge();
 
-    bool isBound() const {return Index != -1;}
+    bool isBound() const { return Index != -1; }
     void unbound();
-    void operator = (const Edge& f);
+    void operator=(const Edge &f);
 
     int Index;
     MeshCore::PointIndex PIndex[2];

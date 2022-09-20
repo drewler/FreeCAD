@@ -46,12 +46,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_MaxElementArea::StdMeshers_MaxElementArea(int hypId, int studyId, SMESH_Gen* gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_MaxElementArea::StdMeshers_MaxElementArea(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _maxArea =1.;
-  _name = "MaxElementArea";
-  _param_algo_dim = 2; 
+    _maxArea = 1.;
+    _name = "MaxElementArea";
+    _param_algo_dim = 2;
 }
 
 //=============================================================================
@@ -60,9 +60,7 @@ StdMeshers_MaxElementArea::StdMeshers_MaxElementArea(int hypId, int studyId, SME
  */
 //=============================================================================
 
-StdMeshers_MaxElementArea::~StdMeshers_MaxElementArea()
-{
-}
+StdMeshers_MaxElementArea::~StdMeshers_MaxElementArea() {}
 
 //=============================================================================
 /*!
@@ -72,12 +70,10 @@ StdMeshers_MaxElementArea::~StdMeshers_MaxElementArea()
 
 void StdMeshers_MaxElementArea::SetMaxArea(double maxArea)
 {
-  double oldArea = _maxArea;
-  if (maxArea <= 0) 
-    throw SALOME_Exception(LOCALIZED("maxArea must be positive"));
-  _maxArea = maxArea;
-  if (_maxArea != oldArea)
-    NotifySubMeshesHypothesisModification();
+    double oldArea = _maxArea;
+    if (maxArea <= 0) throw SALOME_Exception(LOCALIZED("maxArea must be positive"));
+    _maxArea = maxArea;
+    if (_maxArea != oldArea) NotifySubMeshesHypothesisModification();
 }
 
 //=============================================================================
@@ -86,9 +82,18 @@ void StdMeshers_MaxElementArea::SetMaxArea(double maxArea)
  */
 //=============================================================================
 
-double StdMeshers_MaxElementArea::GetMaxArea() const
+double StdMeshers_MaxElementArea::GetMaxArea() const { return _maxArea; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &StdMeshers_MaxElementArea::SaveTo(ostream &save)
 {
-  return _maxArea;
+    save << this->_maxArea;
+    return save;
 }
 
 //=============================================================================
@@ -97,10 +102,15 @@ double StdMeshers_MaxElementArea::GetMaxArea() const
  */
 //=============================================================================
 
-ostream & StdMeshers_MaxElementArea::SaveTo(ostream & save)
+istream &StdMeshers_MaxElementArea::LoadFrom(istream &load)
 {
-  save << this->_maxArea;
-  return save;
+    bool isOK = true;
+    double a;
+    isOK = (bool)(load >> a);
+    if (isOK) this->_maxArea = a;
+    else
+        load.clear(ios::badbit | load.rdstate());
+    return load;
 }
 
 //=============================================================================
@@ -109,17 +119,7 @@ ostream & StdMeshers_MaxElementArea::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_MaxElementArea::LoadFrom(istream & load)
-{
-  bool isOK = true;
-  double a;
-  isOK = (bool)(load >> a);
-  if (isOK) 
-    this->_maxArea = a;
-  else 
-    load.clear(ios::badbit | load.rdstate());
-  return load;
-}
+ostream &operator<<(ostream &save, StdMeshers_MaxElementArea &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -127,21 +127,7 @@ istream & StdMeshers_MaxElementArea::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator << (ostream & save, StdMeshers_MaxElementArea & hyp)
-{
-  return hyp.SaveTo( save );
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-istream & operator >> (istream & load, StdMeshers_MaxElementArea & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+istream &operator>>(istream &load, StdMeshers_MaxElementArea &hyp) { return hyp.LoadFrom(load); }
 
 //================================================================================
 /*!
@@ -152,37 +138,33 @@ istream & operator >> (istream & load, StdMeshers_MaxElementArea & hyp)
  */
 //================================================================================
 
-bool StdMeshers_MaxElementArea::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                    const TopoDS_Shape& theShape)
+bool StdMeshers_MaxElementArea::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                    const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _maxArea = 0;
+    _maxArea = 0;
 
-  SMESH::Controls::Area areaControl;
-  SMESH::Controls::TSequenceOfXYZ nodesCoords;
+    SMESH::Controls::Area areaControl;
+    SMESH::Controls::TSequenceOfXYZ nodesCoords;
 
-  SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* >( theMesh )->GetMeshDS();
+    SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
 
-  TopTools_IndexedMapOfShape faceMap;
-  TopExp::MapShapes( theShape, TopAbs_FACE, faceMap );
-  for ( int iF = 1; iF <= faceMap.Extent(); ++iF )
-  {
-    SMESHDS_SubMesh * subMesh = aMeshDS->MeshElements( faceMap( iF ));
-    if ( !subMesh )
-      return false;
-    SMDS_ElemIteratorPtr fIt = subMesh->GetElements();
-    while ( fIt->more() )
-    {
-      const SMDS_MeshElement* elem = fIt->next();
-      if ( elem->GetType() == SMDSAbs_Face ) {
-        areaControl.GetPoints( elem, nodesCoords );
-        _maxArea = max( _maxArea, areaControl.GetValue( nodesCoords ));
-      }
+    TopTools_IndexedMapOfShape faceMap;
+    TopExp::MapShapes(theShape, TopAbs_FACE, faceMap);
+    for (int iF = 1; iF <= faceMap.Extent(); ++iF) {
+        SMESHDS_SubMesh *subMesh = aMeshDS->MeshElements(faceMap(iF));
+        if (!subMesh) return false;
+        SMDS_ElemIteratorPtr fIt = subMesh->GetElements();
+        while (fIt->more()) {
+            const SMDS_MeshElement *elem = fIt->next();
+            if (elem->GetType() == SMDSAbs_Face) {
+                areaControl.GetPoints(elem, nodesCoords);
+                _maxArea = max(_maxArea, areaControl.GetValue(nodesCoords));
+            }
+        }
     }
-  }
-  return _maxArea > 0;
+    return _maxArea > 0;
 }
 //================================================================================
 /*!
@@ -191,9 +173,8 @@ bool StdMeshers_MaxElementArea::SetParametersByMesh(const SMESH_Mesh*   theMesh,
  */
 //================================================================================
 
-bool StdMeshers_MaxElementArea::SetParametersByDefaults(const TDefaults&  dflts,
-                                                        const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_MaxElementArea::SetParametersByDefaults(const TDefaults &dflts,
+                                                        const SMESH_Mesh * /*theMesh*/)
 {
-  return ( _maxArea = dflts._elemLength*dflts._elemLength );
+    return (_maxArea = dflts._elemLength * dflts._elemLength);
 }
-

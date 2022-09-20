@@ -30,7 +30,8 @@
 #include "Window.h"
 
 
-namespace Gui {
+namespace Gui
+{
 class CompletionBox;
 class SyntaxHighlighter;
 
@@ -52,7 +53,7 @@ class SyntaxHighlighter;
  * @author Werner Mayer
  */
 class CompletionList;
-class GuiExport TextEdit : public QPlainTextEdit
+class GuiExport TextEdit: public QPlainTextEdit
 {
     Q_OBJECT
 
@@ -81,18 +82,18 @@ private:
 };
 
 class SyntaxHighlighter;
-class GuiExport TextEditor : public TextEdit, public WindowParameter
+class GuiExport TextEditor: public TextEdit, public WindowParameter
 {
     Q_OBJECT
 
 public:
     explicit TextEditor(QWidget *parent = nullptr);
     ~TextEditor() override;
-    void setSyntaxHighlighter(SyntaxHighlighter*);
+    void setSyntaxHighlighter(SyntaxHighlighter *);
 
-    void OnChange(Base::Subject<const char*> &rCaller,const char* rcReason) override;
+    void OnChange(Base::Subject<const char *> &rCaller, const char *rcReason) override;
 
-    void lineNumberAreaPaintEvent(QPaintEvent* );
+    void lineNumberAreaPaintEvent(QPaintEvent *);
     int lineNumberAreaWidth();
 
 private Q_SLOTS:
@@ -101,34 +102,33 @@ private Q_SLOTS:
     void highlightCurrentLine();
 
 protected:
-    void keyPressEvent (QKeyEvent * e) override;
+    void keyPressEvent(QKeyEvent *e) override;
     /** Draw a beam in the line where the cursor is. */
-    void paintEvent (QPaintEvent * e) override;
-    void resizeEvent(QResizeEvent* e) override;
-    QWidget* getMarker() const
-    { return lineNumberArea; }
-    virtual void drawMarker(int line, int x, int y, QPainter*);
+    void paintEvent(QPaintEvent *e) override;
+    void resizeEvent(QResizeEvent *e) override;
+    QWidget *getMarker() const { return lineNumberArea; }
+    virtual void drawMarker(int line, int x, int y, QPainter *);
 
 private:
-    SyntaxHighlighter* highlighter;
-    QWidget* lineNumberArea;
-    struct TextEditorP* d;
+    SyntaxHighlighter *highlighter;
+    QWidget *lineNumberArea;
+    struct TextEditorP *d;
 
     friend class SyntaxHighlighter;
 };
 
-class LineMarker : public QWidget
+class LineMarker: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit LineMarker(TextEditor* editor);
+    explicit LineMarker(TextEditor *editor);
     ~LineMarker() override;
 
     QSize sizeHint() const override;
 
 protected:
-    void paintEvent (QPaintEvent *) override;
+    void paintEvent(QPaintEvent *) override;
 
 private:
     TextEditor *textEditor;
@@ -139,17 +139,17 @@ private:
  * an accelerator to complete the current word they are typing in.
  * @author Werner Mayer
  */
-class CompletionList : public QListWidget
+class CompletionList: public QListWidget
 {
     Q_OBJECT
 
 public:
     /// Construction
-    explicit CompletionList(QPlainTextEdit* parent);
+    explicit CompletionList(QPlainTextEdit *parent);
     /// Destruction
     ~CompletionList() override;
 
-    void findCurrentWord(const QString&);
+    void findCurrentWord(const QString &);
 
 protected:
     bool eventFilter(QObject *, QEvent *) override;
@@ -158,7 +158,7 @@ private Q_SLOTS:
     void completionItem(QListWidgetItem *item);
 
 private:
-    QPlainTextEdit* textEdit;
+    QPlainTextEdit *textEdit;
 };
 
 } // namespace Gui

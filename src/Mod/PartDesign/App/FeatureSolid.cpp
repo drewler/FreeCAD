@@ -26,15 +26,13 @@
 #include "FeatureSolid.h"
 
 
-namespace PartDesign {
-
-
-PROPERTY_SOURCE(PartDesign::Solid,PartDesign::Feature)
-
-Solid::Solid()
+namespace PartDesign
 {
-}
 
 
+PROPERTY_SOURCE(PartDesign::Solid, PartDesign::Feature)
 
-}
+Solid::Solid() {}
+
+
+} // namespace PartDesign

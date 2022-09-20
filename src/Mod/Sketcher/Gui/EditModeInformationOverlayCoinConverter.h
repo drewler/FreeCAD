@@ -28,21 +28,23 @@
 
 #include "ViewProviderSketch.h"
 
-namespace Base {
-    template< typename T >
-    class Vector3;
+namespace Base
+{
+template<typename T> class Vector3;
 
-    class Vector2d;
+class Vector2d;
+} // namespace Base
+
+namespace Part
+{
+class Geometry;
 }
 
-namespace Part {
-    class Geometry;
-}
-
-namespace SketcherGui {
-    class ViewProviderSketch;
-    struct OverlayParameters;
-    struct DrawingParameters;
+namespace SketcherGui
+{
+class ViewProviderSketch;
+struct OverlayParameters;
+struct DrawingParameters;
 
 /** @brief      Class for creating the Overlay information layer
  *  @details
@@ -72,9 +74,9 @@ namespace SketcherGui {
  * currently the information layer is generally so small that no parallel execution would actually result in a performance gain.
  *
  */
-class EditModeInformationOverlayCoinConverter {
+class EditModeInformationOverlayCoinConverter
+{
 private:
-
     enum class CalculationType
     {
         BSplineDegree,
@@ -101,19 +103,17 @@ private:
     //
     // a struct Node template enables to define the VisualisationType and
     // the CalculationType so that uniform treatment can be provided
-    template< VisualisationType vtype, CalculationType ctype >
-    struct Node {
+    template<VisualisationType vtype, CalculationType ctype> struct Node {
         static constexpr VisualisationType visualisationType = vtype;
         static constexpr CalculationType calculationType = ctype;
     };
 
-    template< CalculationType ctype >
-    struct NodeText : public Node<VisualisationType::Text, ctype> {
+    template<CalculationType ctype> struct NodeText: public Node<VisualisationType::Text, ctype> {
         std::vector<std::string> strings;
         std::vector<Vector3d> positions;
     };
 
-    template< CalculationType ctype >
+    template<CalculationType ctype>
     struct NodePolygon: public Node<VisualisationType::Polygon, ctype> {
         std::vector<Vector3d> coordinates;
         std::vector<int> indices;
@@ -121,12 +121,14 @@ private:
 
 private:
     // Node Position in the Coin Scenograph for the different types of nodes
-    enum class TextNodePosition {
+    enum class TextNodePosition
+    {
         TextCoordinates = 0,
         TextInformation = 3
     };
 
-    enum class PolygonNodePosition {
+    enum class PolygonNodePosition
+    {
         PolygonCoordinates = 1,
         PolygonLineSet = 2
     };
@@ -142,10 +144,9 @@ public:
      * @param overlayparameters: Parameters for controlling the overlay
      * @param drawingparameters: Parameters for drawing the overlay information
      */
-    EditModeInformationOverlayCoinConverter(    ViewProviderSketch &vp,
-                                                SoGroup * infogroup,
-                                                OverlayParameters & overlayparameters,
-                                                DrawingParameters & drawingparameters);
+    EditModeInformationOverlayCoinConverter(ViewProviderSketch &vp, SoGroup *infogroup,
+                                            OverlayParameters &overlayparameters,
+                                            DrawingParameters &drawingparameters);
 
     /**
     * extracts information from the geometry and converts it into an information overlay in the
@@ -153,42 +154,36 @@ public:
     *
     * @param geometry: the geometry to be processed
     */
-    void convert(const Part::Geometry * geometry, int geoid);
+    void convert(const Part::Geometry *geometry, int geoid);
 
 private:
-    template < CalculationType calculation >
-    void calculate(const Part::Geometry * geometry, [[maybe_unused]] int geoid);
+    template<CalculationType calculation>
+    void calculate(const Part::Geometry *geometry, [[maybe_unused]] int geoid);
 
-    template <typename Result>
-    void addUpdateNode(const Result & result);
+    template<typename Result> void addUpdateNode(const Result &result);
 
-    template < CalculationType calculation >
-    bool isVisible();
+    template<CalculationType calculation> bool isVisible();
 
-    template < typename Result >
-    void setPolygon(const Result & result, SoLineSet *polygonlineset, SoCoordinate3 *polygoncoords);
+    template<typename Result>
+    void setPolygon(const Result &result, SoLineSet *polygonlineset, SoCoordinate3 *polygoncoords);
 
-    template < int line = 1 >
-    void setText(const std::string & string, SoText2 * text);
+    template<int line = 1> void setText(const std::string &string, SoText2 *text);
 
-    void addToInfoGroup(SoSwitch * sw);
+    void addToInfoGroup(SoSwitch *sw);
 
-    template < typename Result >
-    void clearCalculation(Result & result);
+    template<typename Result> void clearCalculation(Result &result);
 
-    template < typename Result>
-    void addNode(const Result & result);
+    template<typename Result> void addNode(const Result &result);
 
-    template < typename Result >
-    void updateNode(const Result & result);
+    template<typename Result> void updateNode(const Result &result);
 
 private:
     /// Reference to ViewProviderSketch in order to access the public and the Attorney Interface
-    ViewProviderSketch & viewProvider;
+    ViewProviderSketch &viewProvider;
 
-    SoGroup * infoGroup;
-    OverlayParameters & overlayParameters;
-    DrawingParameters & drawingParameters;
+    SoGroup *infoGroup;
+    OverlayParameters &overlayParameters;
+    DrawingParameters &drawingParameters;
 
     // Calculations
     NodeText<CalculationType::BSplineDegree> degree;
@@ -206,4 +201,3 @@ private:
 
 
 #endif // SKETCHERGUI_InformationOverlayCoinConverter_H
-

@@ -45,9 +45,9 @@
 // Define macros to catch and convert some of possible exceptions into text or SALOME_Exception
 
 //-------------------------------------------------------------------------------------
-#define SMESH_TRY                               \
-  try {                                         \
-  OCC_CATCH_SIGNALS                             \
+#define SMESH_TRY                                                                                  \
+    try {                                                                                          \
+        OCC_CATCH_SIGNALS
 
 //-------------------------------------------------------------------------------------
 // A macro to add a custom catch clause to SMESH_CATCH
@@ -65,45 +65,43 @@
 // Two onExceptionFun() are defined here: SMESH::throwSalomeEx() and SMESH::doNothing().
 // To add your own catch close, define SMY_OWN_CATCH macro before including this file.
 
-#define SMESH_CATCH( onExceptionFun )                                   \
-  }                                                                     \
-  catch (Standard_Failure& ex)                                          \
-  {                                                                     \
-    SMESH_Comment text("OCCT Exception: ");                             \
-    text << ": " << ex.DynamicType()->Name();                           \
-    if ( ex.GetMessageString() && strlen( ex.GetMessageString() ))      \
-      text << ": " << ex.GetMessageString();                            \
-    SMESH_CAUGHT onExceptionFun( text );                                \
-  }                                                                     \
-  catch ( ::SMESH_ComputeError& ce )                                    \
-  {                                                                     \
-    if ( !ce.myComment.empty() )                                        \
-      SMESH_CAUGHT onExceptionFun( ce.myComment.c_str() );              \
-    else if ( ce.IsCommon() )                                           \
-      SMESH_CAUGHT onExceptionFun( ce.CommonName().c_str() );           \
-    else                                                                \
-      SMESH_CAUGHT onExceptionFun                                       \
-        (SMESH_Comment("SMESH_ComputeError: ") << ce.myName );          \
-  }                                                                     \
-  catch ( const std::exception& ex)                                     \
-  {                                                                     \
-    SMESH_CAUGHT onExceptionFun( ex.what() );                           \
-  }                                                                     \
-                                                                        \
-  SMY_OWN_CATCH                                                         \
-                                                                        \
-  catch (...)                                                           \
-  {                                                                     \
-    SMESH_CAUGHT onExceptionFun("Unknown Exception caught");            \
-  }
+#define SMESH_CATCH(onExceptionFun)                                                                \
+    }                                                                                              \
+    catch (Standard_Failure & ex)                                                                  \
+    {                                                                                              \
+        SMESH_Comment text("OCCT Exception: ");                                                    \
+        text << ": " << ex.DynamicType()->Name();                                                  \
+        if (ex.GetMessageString() && strlen(ex.GetMessageString()))                                \
+            text << ": " << ex.GetMessageString();                                                 \
+        SMESH_CAUGHT onExceptionFun(text);                                                         \
+    }                                                                                              \
+    catch (::SMESH_ComputeError & ce)                                                              \
+    {                                                                                              \
+        if (!ce.myComment.empty()) SMESH_CAUGHT onExceptionFun(ce.myComment.c_str());              \
+        else if (ce.IsCommon())                                                                    \
+            SMESH_CAUGHT onExceptionFun(ce.CommonName().c_str());                                  \
+        else                                                                                       \
+            SMESH_CAUGHT onExceptionFun(SMESH_Comment("SMESH_ComputeError: ") << ce.myName);       \
+    }                                                                                              \
+    catch (const std::exception &ex)                                                               \
+    {                                                                                              \
+        SMESH_CAUGHT onExceptionFun(ex.what());                                                    \
+    }                                                                                              \
+                                                                                                   \
+    SMY_OWN_CATCH                                                                                  \
+                                                                                                   \
+    catch (...)                                                                                    \
+    {                                                                                              \
+        SMESH_CAUGHT onExceptionFun("Unknown Exception caught");                                   \
+    }
 
 //-------------------------------------------------------------------------------------
 // Functions that can be used as an argument of SMESH_CATCH
 
 namespace SMESH
 {
-  SMESHUtils_EXPORT void throwSalomeEx(const char* txt);
-  SMESHUtils_EXPORT void doNothing(const char* txt);
-}
+SMESHUtils_EXPORT void throwSalomeEx(const char *txt);
+SMESHUtils_EXPORT void doNothing(const char *txt);
+} // namespace SMESH
 
 #endif

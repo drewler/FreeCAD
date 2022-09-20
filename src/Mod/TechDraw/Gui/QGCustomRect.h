@@ -37,26 +37,27 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGCustomRect : public QGraphicsRectItem
+class TechDrawGuiExport QGCustomRect: public QGraphicsRectItem
 {
 public:
     explicit QGCustomRect(void);
     ~QGCustomRect() {}
 
-    enum {Type = QGraphicsItem::UserType + 133};
-    int type() const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 133
+    };
+    int type() const { return Type; }
 
-    virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr );
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr);
     virtual void centerAt(QPointF centerPos);
     virtual void centerAt(double cX, double cY);
 
 protected:
-
 private:
-
 };
 
-} // namespace MDIViewPageGui
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGCUSTOMRECT_H
-

@@ -46,10 +46,8 @@
 using namespace TechDrawGui;
 using namespace TechDraw;
 
-QGIDecoration::QGIDecoration() :
-    m_colCurrent(Qt::black),
-    m_styleCurrent(Qt::SolidLine),
-    m_brushCurrent(Qt::SolidPattern)
+QGIDecoration::QGIDecoration()
+    : m_colCurrent(Qt::black), m_styleCurrent(Qt::SolidLine), m_brushCurrent(Qt::SolidPattern)
 {
     setCacheMode(QGraphicsItem::NoCache);
     setAcceptHoverEvents(false);
@@ -60,15 +58,15 @@ QGIDecoration::QGIDecoration() :
     setWidth(1.0);
 }
 
-void QGIDecoration::draw()
-{
-}
+void QGIDecoration::draw() {}
 
-void QGIDecoration::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGIDecoration::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                          QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
-    QGraphicsItemGroup::paint (painter, &myOption, widget);
+    QGraphicsItemGroup::paint(painter, &myOption, widget);
 }
 
 void QGIDecoration::setWidth(double w)
@@ -91,30 +89,18 @@ void QGIDecoration::setColor(QColor c)
     m_brush.setColor(m_colCurrent);
 }
 
-QColor QGIDecoration::prefNormalColor()
-{
-    return PreferencesGui::normalQColor();
-}
+QColor QGIDecoration::prefNormalColor() { return PreferencesGui::normalQColor(); }
 
-QColor QGIDecoration::prefPreColor()
-{
-    return PreferencesGui::preselectQColor();
-}
+QColor QGIDecoration::prefPreColor() { return PreferencesGui::preselectQColor(); }
 
-QColor QGIDecoration::prefSelectColor()
-{
-    return PreferencesGui::selectQColor();
-}
+QColor QGIDecoration::prefSelectColor() { return PreferencesGui::selectQColor(); }
 
-QRectF QGIDecoration::boundingRect() const
-{
-    return childrenBoundingRect();
-}
+QRectF QGIDecoration::boundingRect() const { return childrenBoundingRect(); }
 
 
 void QGIDecoration::makeMark(double x, double y)
 {
-    QGICMark* cmItem = new QGICMark(-1);
+    QGICMark *cmItem = new QGICMark(-1);
     cmItem->setParentItem(this);
     cmItem->setPos(x, y);
     cmItem->setThick(2.0);
@@ -122,9 +108,4 @@ void QGIDecoration::makeMark(double x, double y)
     cmItem->setZValue(ZVALUE::VERTEX);
 }
 
-void QGIDecoration::makeMark(Base::Vector3d v)
-{
-    makeMark(v.x, v.y);
-}
-
-
+void QGIDecoration::makeMark(Base::Vector3d v) { makeMark(v.x, v.y); }

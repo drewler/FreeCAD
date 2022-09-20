@@ -42,103 +42,91 @@
 #define REST_NODES_FAMILY 1
 #define FIRST_NODE_FAMILY 2
 
-#define REST_EDGES_FAMILY   -1
-#define REST_FACES_FAMILY   -2
+#define REST_EDGES_FAMILY -1
+#define REST_FACES_FAMILY -2
 #define REST_VOLUMES_FAMILY -3
-#define REST_0DELEM_FAMILY  -4
-#define REST_BALL_FAMILY    -5
-#define FIRST_ELEM_FAMILY   -6
+#define REST_0DELEM_FAMILY -4
+#define REST_BALL_FAMILY -5
+#define FIRST_ELEM_FAMILY -6
 
-typedef std::list<DriverMED_FamilyPtr               > DriverMED_FamilyPtrList;
-typedef std::map<int,SMESHDS_SubMesh*               > SMESHDS_SubMeshPtrMap;
-typedef std::list<SMESHDS_GroupBase*                > SMESHDS_GroupBasePtrList;
-typedef std::set<const SMDS_MeshElement*,TIDCompare > ElementsSet;
+typedef std::list<DriverMED_FamilyPtr> DriverMED_FamilyPtrList;
+typedef std::map<int, SMESHDS_SubMesh *> SMESHDS_SubMeshPtrMap;
+typedef std::list<SMESHDS_GroupBase *> SMESHDS_GroupBasePtrList;
+typedef std::set<const SMDS_MeshElement *, TIDCompare> ElementsSet;
 
 class MESHDRIVERMED_EXPORT DriverMED_Family
 {
- public:
+public:
+    DriverMED_Family();
 
-  DriverMED_Family();
-
-  //! Methods for groups storing to MED
-  /*!
+    //! Methods for groups storing to MED
+    /*!
     Split each group from list <theGroups> and each sub-mesh from list <theSubMeshes>
     on some parts (families) on the basis of the elements membership in other groups
     from <theGroups> and other sub-meshes from <theSubMeshes>.
     Resulting families have no common elements.
   */
-  static 
-  DriverMED_FamilyPtrList
-  MakeFamilies (SMESHDS_SubMeshIteratorPtr      theSubMeshes,
-                const SMESHDS_GroupBasePtrList& theGroups,
-                const bool doGroupOfNodes,
-                const bool doGroupOfEdges,
-                const bool doGroupOfFaces,
-                const bool doGroupOfVolumes,
-                const bool doGroupOf0DElems,
-                const bool doGroupOfBalls);
+    static DriverMED_FamilyPtrList
+    MakeFamilies(SMESHDS_SubMeshIteratorPtr theSubMeshes, const SMESHDS_GroupBasePtrList &theGroups,
+                 const bool doGroupOfNodes, const bool doGroupOfEdges, const bool doGroupOfFaces,
+                 const bool doGroupOfVolumes, const bool doGroupOf0DElems,
+                 const bool doGroupOfBalls);
 
-  //! Create TFamilyInfo for this family
-  MED::PFamilyInfo 
-  GetFamilyInfo (const MED::PWrapper& theWrapper, 
-                 const MED::PMeshInfo& theMeshInfo) const;
+    //! Create TFamilyInfo for this family
+    MED::PFamilyInfo GetFamilyInfo(const MED::PWrapper &theWrapper,
+                                   const MED::PMeshInfo &theMeshInfo) const;
 
-  //! Returns elements of this family
-  const ElementsSet& GetElements () const;
+    //! Returns elements of this family
+    const ElementsSet &GetElements() const;
 
-  //! Returns a family ID
-  int GetId () const;
+    //! Returns a family ID
+    int GetId() const;
 
-  //! Sets a family ID
-  void SetId (const int theId);
+    //! Sets a family ID
+    void SetId(const int theId);
 
- public:
+public:
+    // Methods for groups reading from MED
 
-  // Methods for groups reading from MED
+    void AddElement(const SMDS_MeshElement *theElement);
 
-  void AddElement(const SMDS_MeshElement* theElement);
+    const MED::TStringSet &GetGroupNames() const;
+    void AddGroupName(std::string theGroupName);
 
-  const MED::TStringSet& GetGroupNames() const;
-  void AddGroupName(std::string theGroupName);
+    void SetType(const SMDSAbs_ElementType theType);
+    SMDSAbs_ElementType GetType();
+    const std::set<SMDSAbs_ElementType> &GetTypes() const;
 
-  void SetType(const SMDSAbs_ElementType theType);
-  SMDSAbs_ElementType GetType();
-  const std::set< SMDSAbs_ElementType >& GetTypes() const;
+    bool MemberOf(std::string theGroupName) const;
 
-  bool MemberOf(std::string theGroupName) const;
+    int GetGroupAttributVal() const;
+    void SetGroupAttributVal(int theValue);
 
-  int GetGroupAttributVal() const;
-  void SetGroupAttributVal( int theValue);
+private:
+    //! Initialize the tool by SMESHDS_GroupBase
+    void Init(SMESHDS_GroupBase *group);
 
- private:
-  //! Initialize the tool by SMESHDS_GroupBase
-  void Init (SMESHDS_GroupBase* group);
-
-  //! Split <theSubMesh> on some parts (families) on the basis of the elements type.
-  static
-  DriverMED_FamilyPtrList 
-  SplitByType(SMESHDS_SubMesh* theSubMesh,
-              const int        theId);
+    //! Split <theSubMesh> on some parts (families) on the basis of the elements type.
+    static DriverMED_FamilyPtrList SplitByType(SMESHDS_SubMesh *theSubMesh, const int theId);
 
 
-  /*! Remove from <Elements> elements, common with <by>,
+    /*! Remove from <Elements> elements, common with <by>,
     Remove from <by> elements, common with <Elements>,
     Create family <common> from common elements, with combined groups list.
   */
-  void Split (DriverMED_FamilyPtr by,
-              DriverMED_FamilyPtr common);
+    void Split(DriverMED_FamilyPtr by, DriverMED_FamilyPtr common);
 
-  //! Check, if this family has empty list of elements
-  bool IsEmpty () const;
+    //! Check, if this family has empty list of elements
+    bool IsEmpty() const;
 
 
- private:
-  int                           myId;
-  SMDSAbs_ElementType           myType;
-  ElementsSet                   myElements;
-  MED::TStringSet               myGroupNames;
-  int                           myGroupAttributVal;
-  std::set<SMDSAbs_ElementType> myTypes; // Issue 0020576
+private:
+    int myId;
+    SMDSAbs_ElementType myType;
+    ElementsSet myElements;
+    MED::TStringSet myGroupNames;
+    int myGroupAttributVal;
+    std::set<SMDSAbs_ElementType> myTypes; // Issue 0020576
 };
 
 #endif

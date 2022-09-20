@@ -20,31 +20,27 @@
 namespace Wm4
 {
 //----------------------------------------------------------------------------
-template <class Real>
-DelPolyhedronFace<Real>::DelPolyhedronFace (int iV0, int iV1, int iV2,
-    int iNullIndex, DelTetrahedron<Real>* pkTetra)
-    :
-    ETManifoldMesh::Triangle(iV0,iV1,iV2)
+template<class Real>
+DelPolyhedronFace<Real>::DelPolyhedronFace(int iV0, int iV1, int iV2, int iNullIndex,
+                                           DelTetrahedron<Real> *pkTetra)
+    : ETManifoldMesh::Triangle(iV0, iV1, iV2)
 {
     NullIndex = iNullIndex;
     Tetra = pkTetra;
 }
 //----------------------------------------------------------------------------
-template <class Real>
-ETManifoldMesh::TPtr DelPolyhedronFace<Real>::TCreator (int iV0, int iV1,
-    int iV2)
+template<class Real>
+ETManifoldMesh::TPtr DelPolyhedronFace<Real>::TCreator(int iV0, int iV1, int iV2)
 {
-    return WM4_NEW DelPolyhedronFace<Real>(iV0,iV1,iV2,0,nullptr);
+    return WM4_NEW DelPolyhedronFace<Real>(iV0, iV1, iV2, 0, nullptr);
 }
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // explicit instantiation
 //----------------------------------------------------------------------------
-template WM4_FOUNDATION_ITEM
-class DelPolyhedronFace<float>;
+template WM4_FOUNDATION_ITEM class DelPolyhedronFace<float>;
 
-template WM4_FOUNDATION_ITEM
-class DelPolyhedronFace<double>;
+template WM4_FOUNDATION_ITEM class DelPolyhedronFace<double>;
 //----------------------------------------------------------------------------
-}
+} // namespace Wm4

@@ -54,29 +54,27 @@ public:
     App::PropertyFloatConstraint Scale;
     App::PropertyEnumeration ProjectionType; // First or Third Angle
 
-    App::PropertyInteger  NextBalloonIndex;
+    App::PropertyInteger NextBalloonIndex;
 
     /** @name methods override Feature */
     //@{
     /// recalculate the Feature
     App::DocumentObjectExecReturn *execute() override;
     //@}
-    void handleChangedPropertyType(
-            Base::XMLReader &reader, const char * TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
     int addView(App::DocumentObject *docObj);
-    int removeView(App::DocumentObject* docObj);
+    int removeView(App::DocumentObject *docObj);
     short mustExecute() const override;
-    boost::signals2::signal<void (const DrawPage*)> signalGuiPaint;
+    boost::signals2::signal<void(const DrawPage *)> signalGuiPaint;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderPage";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderPage"; }
 
     PyObject *getPyObject() override;
 
-//App::DocumentObjectExecReturn * recompute(void);
+    //App::DocumentObjectExecReturn * recompute(void);
 
     /// Check whether we've got a valid template
     /*!
@@ -93,12 +91,12 @@ public:
      * \throws Base::Exception if no template is loaded.
      */
     double getPageHeight() const;
-    const char* getPageOrientation() const;
+    const char *getPageOrientation() const;
     int getOrientation() const;
     bool isUnsetting() { return nowUnsetting; }
     void requestPaint();
-    std::vector<App::DocumentObject*> getAllViews() ;
-    DrawViewPart *balloonParent;    //could be many balloons on page?
+    std::vector<App::DocumentObject *> getAllViews();
+    DrawViewPart *balloonParent; //could be many balloons on page?
 
     int getNextBalloonIndex();
 
@@ -106,24 +104,23 @@ public:
     static bool GlobalUpdateDrawings();
     static bool AllowPageOverride();
     void forceRedraw(bool b) { m_forceRedraw = b; }
-    bool forceRedraw()   { return m_forceRedraw; }
+    bool forceRedraw() { return m_forceRedraw; }
     void redrawCommand();
 
     bool canUpdate() const;
 
 protected:
-    void onBeforeChange(const App::Property* prop) override;
-    void onChanged(const App::Property* prop) override;
+    void onBeforeChange(const App::Property *prop) override;
+    void onChanged(const App::Property *prop) override;
     void onDocumentRestored() override;
     void unsetupObject() override;
 
     bool m_forceRedraw;
 
 private:
-    static const char* ProjectionTypeEnums[];
+    static const char *ProjectionTypeEnums[];
     bool nowUnsetting;
     static App::PropertyFloatConstraint::Constraints scaleRange;
-
 };
 
 using DrawPagePython = App::FeaturePythonT<DrawPage>;
@@ -132,4 +129,3 @@ using DrawPagePython = App::FeaturePythonT<DrawPage>;
 
 
 #endif
-

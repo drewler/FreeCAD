@@ -38,19 +38,27 @@
 class SoEvent;
 class QEvent;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
-class QUARTER_DLL_API SpaceNavigatorDevice : public InputDevice {
- public:
-  SpaceNavigatorDevice(QuarterWidget* quarter);
-  SpaceNavigatorDevice();
-  virtual ~SpaceNavigatorDevice();
-  virtual const SoEvent * translateEvent(QEvent * event);
+class QUARTER_DLL_API SpaceNavigatorDevice: public InputDevice
+{
+public:
+    SpaceNavigatorDevice(QuarterWidget *quarter);
+    SpaceNavigatorDevice();
+    virtual ~SpaceNavigatorDevice();
+    virtual const SoEvent *translateEvent(QEvent *event);
 
- private:
-  class SpaceNavigatorDeviceP * pimpl;
-  friend class SpaceNavigatorDeviceP;
+private:
+    class SpaceNavigatorDeviceP *pimpl;
+    friend class SpaceNavigatorDeviceP;
 };
 
-}}}
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 #endif // !QUARTER_SPACENAVIGATORDEVICE_H

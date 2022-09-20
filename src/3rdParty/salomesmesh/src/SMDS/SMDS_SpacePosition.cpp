@@ -28,18 +28,10 @@
 
 #include "SMDS_SpacePosition.hxx"
 
-SMDS_SpacePosition* SMDS_SpacePosition::_originPosition = new SMDS_SpacePosition();
+SMDS_SpacePosition *SMDS_SpacePosition::_originPosition = new SMDS_SpacePosition();
 
-SMDS_SpacePosition::SMDS_SpacePosition(double x, double y, double z)
-{
-}
+SMDS_SpacePosition::SMDS_SpacePosition(double x, double y, double z) {}
 
-SMDS_TypeOfPosition SMDS_SpacePosition::GetTypeOfPosition() const
-{
-  return SMDS_TOP_3DSPACE;
-}
+SMDS_TypeOfPosition SMDS_SpacePosition::GetTypeOfPosition() const { return SMDS_TOP_3DSPACE; }
 
-SMDS_PositionPtr SMDS_SpacePosition::originSpacePosition()
-{
-  return _originPosition;
-}
+SMDS_PositionPtr SMDS_SpacePosition::originSpacePosition() { return _originPosition; }

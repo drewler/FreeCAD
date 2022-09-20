@@ -23,12 +23,12 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Inventor/nodes/SoGroup.h>
-# include <Inventor/nodes/SoTexture2.h>
-# include <QImage>
-# include <QImageReader>
-# include <QKeyEvent>
-# include <QMessageBox>
+#include <Inventor/nodes/SoGroup.h>
+#include <Inventor/nodes/SoTexture2.h>
+#include <QImage>
+#include <QImageReader>
+#include <QKeyEvent>
+#include <QMessageBox>
 #endif
 
 #include <Inventor/nodes/SoTextureCoordinateEnvironment.h>
@@ -46,8 +46,8 @@ using namespace Gui::Dialog;
 
 /* TRANSLATOR Gui::Dialog::TextureMapping */
 
-TextureMapping::TextureMapping(QWidget* parent, Qt::WindowFlags fl)
-  : QDialog(parent, fl), grp(nullptr), tex(nullptr), env(nullptr)
+TextureMapping::TextureMapping(QWidget *parent, Qt::WindowFlags fl)
+    : QDialog(parent, fl), grp(nullptr), tex(nullptr), env(nullptr)
 {
     ui = new Ui_TextureMapping();
     ui->setupUi(this);
@@ -85,17 +85,13 @@ TextureMapping::~TextureMapping()
     delete ui;
 }
 
-void TextureMapping::accept()
-{
-    QDialog::accept();
-}
+void TextureMapping::accept() { QDialog::accept(); }
 
 void TextureMapping::reject()
 {
     if (this->grp) {
         this->grp->removeChild(this->tex);
-        if (this->grp->findChild(this->env) > -1)
-            this->grp->removeChild(this->env);
+        if (this->grp->findChild(this->env) > -1) this->grp->removeChild(this->env);
         this->grp->unref();
     }
 
@@ -104,9 +100,7 @@ void TextureMapping::reject()
 
 void TextureMapping::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QDialog::changeEvent(e);
     }
@@ -119,7 +113,7 @@ void TextureMapping::keyPressEvent(QKeyEvent *e)
     e->ignore();
 }
 
-void TextureMapping::on_fileChooser_fileNameSelected(const QString& s)
+void TextureMapping::on_fileChooser_fileNameSelected(const QString &s)
 {
     QImage image;
     if (!image.load(s)) {
@@ -128,23 +122,23 @@ void TextureMapping::on_fileChooser_fileNameSelected(const QString& s)
         // there is a check to report the last selected file name (which might
         // be an empty string) only once.
         if (fileName != s) {
-            QMessageBox::warning(this, tr("No image"), tr("The specified file is not a valid image file."));
+            QMessageBox::warning(this, tr("No image"),
+                                 tr("The specified file is not a valid image file."));
             fileName = s;
         }
         return;
     }
 
     if (!this->grp) {
-        Gui::Document* doc = Gui::Application::Instance->activeDocument();
+        Gui::Document *doc = Gui::Application::Instance->activeDocument();
         if (doc) {
-            Gui::MDIView* mdi = doc->getActiveView();
+            Gui::MDIView *mdi = doc->getActiveView();
             if (mdi && mdi->isDerivedFrom(View3DInventor::getClassTypeId())) {
-                Gui::View3DInventorViewer* view = static_cast<View3DInventor*>(mdi)->getViewer();
+                Gui::View3DInventorViewer *view = static_cast<View3DInventor *>(mdi)->getViewer();
                 this->grp = static_cast<SoGroup *>(view->getSceneGraph());
                 this->grp->ref();
-                this->grp->insertChild(this->tex,1);
-                if (ui->checkEnv->isChecked())
-                    this->grp->insertChild(this->env,2);
+                this->grp->insertChild(this->tex, 1);
+                if (ui->checkEnv->isChecked()) this->grp->insertChild(this->env, 2);
             }
         }
     }
@@ -158,16 +152,13 @@ void TextureMapping::on_fileChooser_fileNameSelected(const QString& s)
     Gui::BitmapFactory().convert(image, texture);
     this->tex->image = texture;
     //this->tex->filename = (const char*)s.toUtf8();
-    App::GetApplication().Config()["TextureImage"] = (const char*)s.toUtf8();
+    App::GetApplication().Config()["TextureImage"] = (const char *)s.toUtf8();
 }
 
 void TextureMapping::on_checkEnv_toggled(bool b)
 {
-    if (!this->grp)
-        return;
-    if (b) {
-        this->grp->insertChild(this->env,2);
-    }
+    if (!this->grp) return;
+    if (b) { this->grp->insertChild(this->env, 2); }
     else {
         this->grp->removeChild(this->env);
     }

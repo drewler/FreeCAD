@@ -29,23 +29,23 @@
 // Importing of App classes
 #ifdef FC_OS_WIN32
 //# define DrawingAppExport __declspec(dllimport)
-# define TechDrawExport      __declspec(dllimport)
-# define PartExport         __declspec(dllimport)
-# define TechDrawGuiExport   __declspec(dllexport)
-# define ImportExport  __declspec(dllimport)
+#define TechDrawExport __declspec(dllimport)
+#define PartExport __declspec(dllimport)
+#define TechDrawGuiExport __declspec(dllexport)
+#define ImportExport __declspec(dllimport)
 #else // for Linux
-# define TechDrawExport
-# define PartExport
-# define TechDrawGuiExport
-# define ImportExport
+#define TechDrawExport
+#define PartExport
+#define TechDrawGuiExport
+#define ImportExport
 #endif
 
 #ifdef _MSC_VER
-#   pragma warning(disable : 4005)
+#pragma warning(disable : 4005)
 #endif
 
 #ifdef FC_OS_WIN32
-#   define NOMINMAX
+#define NOMINMAX
 #endif
 
 #ifdef _PreComp_
@@ -67,15 +67,15 @@
 #include <bitset>
 
 #ifdef FC_OS_WIN32
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef small
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef small
 #endif
 
 
 // Qt Toolkit
 #ifndef _QtAll__
-# include <Gui/QtAll.h>
+#include <Gui/QtAll.h>
 #endif
 #include <QGLWidget>
 #include <QPaintEngine>

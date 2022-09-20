@@ -25,16 +25,17 @@
 
 #include <Gui/InputVector.h>
 
-namespace PartGui {
+namespace PartGui
+{
 class Ui_DlgPartCylinder;
 using Ui_DlgPartCylinderPtr = std::shared_ptr<Ui_DlgPartCylinder>;
 
-class DlgPartCylinderImp : public Gui::LocationDialogUiImp
+class DlgPartCylinderImp: public Gui::LocationDialogUiImp
 {
     Q_OBJECT
 
 public:
-    explicit DlgPartCylinderImp(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgPartCylinderImp(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgPartCylinderImp() override;
 
     double getRadius() const;

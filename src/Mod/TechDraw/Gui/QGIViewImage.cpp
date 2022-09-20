@@ -83,46 +83,39 @@ void QGIViewImage::setViewImageFeature(TechDraw::DrawViewImage *obj)
 
 void QGIViewImage::updateView(bool update)
 {
-    auto viewImage( dynamic_cast<TechDraw::DrawViewImage *>(getViewObject()) );
-    if (!viewImage)
-        return;
+    auto viewImage(dynamic_cast<TechDraw::DrawViewImage *>(getViewObject()));
+    if (!viewImage) return;
 
-    if (update ||
-        viewImage->isTouched() ||
-        viewImage->Width.isTouched() ||
-        viewImage->Height.isTouched() ||
-        viewImage->ImageFile.isTouched()) {
+    if (update || viewImage->isTouched() || viewImage->Width.isTouched()
+        || viewImage->Height.isTouched() || viewImage->ImageFile.isTouched()) {
         draw();
     }
 
-    if (viewImage->Scale.isTouched()) {
-        draw();
-    }
+    if (viewImage->Scale.isTouched()) { draw(); }
 
     QGIView::updateView(update);
 }
 
 void QGIViewImage::draw()
 {
-    if (!isVisible()) {
-        return;
-    }
+    if (!isVisible()) { return; }
 
-    auto viewImage( dynamic_cast<TechDraw::DrawViewImage*>(getViewObject()) );
-    if (!viewImage)
-        return;
+    auto viewImage(dynamic_cast<TechDraw::DrawViewImage *>(getViewObject()));
+    if (!viewImage) return;
 
-    auto vp = static_cast<ViewProviderImage*>(getViewProvider(getViewObject()));
-    if (!vp)
-        return;
+    auto vp = static_cast<ViewProviderImage *>(getViewProvider(getViewObject()));
+    if (!vp) return;
     bool crop = vp->Crop.getValue();
 
     drawImage();
     if (crop) {
-        QRectF cropRect(0.0, 0.0, Rez::guiX(viewImage->Width.getValue()), Rez::guiX(viewImage->Height.getValue()));
+        QRectF cropRect(0.0, 0.0, Rez::guiX(viewImage->Width.getValue()),
+                        Rez::guiX(viewImage->Height.getValue()));
         m_cliparea->setRect(cropRect);
-    } else {
-        QRectF cropRect(0.0, 0.0, m_imageItem->imageSize().width(), m_imageItem->imageSize().height());
+    }
+    else {
+        QRectF cropRect(0.0, 0.0, m_imageItem->imageSize().width(),
+                        m_imageItem->imageSize().height());
         m_cliparea->setRect(cropRect);
     }
     m_cliparea->centerAt(0.0, 0.0);
@@ -132,17 +125,17 @@ void QGIViewImage::draw()
 
 void QGIViewImage::drawImage()
 {
-    auto viewImage( dynamic_cast<TechDraw::DrawViewImage *>(getViewObject()) );
-    if (!viewImage)
-        return;
+    auto viewImage(dynamic_cast<TechDraw::DrawViewImage *>(getViewObject()));
+    if (!viewImage) return;
 
     if (!viewImage->ImageIncluded.isEmpty()) {
-        QString fileSpec = QString::fromUtf8(viewImage->ImageIncluded.getValue(), strlen(viewImage->ImageIncluded.getValue()));
+        QString fileSpec = QString::fromUtf8(viewImage->ImageIncluded.getValue(),
+                                             strlen(viewImage->ImageIncluded.getValue()));
         m_imageItem->load(fileSpec);
         m_imageItem->setScale(viewImage->getScale());
         QRectF br = m_cliparea->rect();
-        double midX = br.width()/2.0;
-        double midY = br.height()/2.0;
+        double midX = br.width() / 2.0;
+        double midY = br.height() / 2.0;
         m_imageItem->centerAt(midX, midY);
         m_imageItem->show();
     }

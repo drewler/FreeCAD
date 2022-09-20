@@ -37,7 +37,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QExtensionManager;
 
-class Wizard : public QDialog
+class Wizard: public QDialog
 {
     Q_OBJECT
     Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex)
@@ -56,8 +56,8 @@ public:
     void setCurrentIndex(int index);
     QWidget *widget(int index);
 
-    QPushButton* backButton() const;
-    QPushButton* nextButton() const;
+    QPushButton *backButton() const;
+    QPushButton *nextButton() const;
 
     QString pageTitle() const;
     void setPageTitle(QString const &newTitle);
@@ -72,8 +72,8 @@ Q_SIGNALS:
 
 private:
     QLabel *textLabel;
-    QFrame* topLine;
-    QFrame* bottomLine;
+    QFrame *topLine;
+    QFrame *bottomLine;
     QStackedWidget *stackWidget;
     QPushButton *_cancelButton;
     QPushButton *_backButton;
@@ -83,7 +83,7 @@ private:
     QVBoxLayout *mainLayout;
 };
 
-class WizardExtension : public QObject, public QDesignerContainerExtension
+class WizardExtension: public QObject, public QDesignerContainerExtension
 {
     Q_OBJECT
     Q_INTERFACES(QDesignerContainerExtension)
@@ -105,7 +105,7 @@ private:
 
 class QExtensionManager;
 
-class WizardExtensionFactory : public QExtensionFactory
+class WizardExtensionFactory: public QExtensionFactory
 {
     Q_OBJECT
 

@@ -27,8 +27,10 @@
 #include "PropertyPage.h"
 #include <memory>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgSettingsDocument;
 
 /**
@@ -36,12 +38,12 @@ class Ui_DlgSettingsDocument;
  * for the document.
  * \author Jürgen Riegel
  */
-class DlgSettingsDocumentImp : public PreferencePage
+class DlgSettingsDocumentImp: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsDocumentImp( QWidget* parent = nullptr );
+    explicit DlgSettingsDocumentImp(QWidget *parent = nullptr);
     ~DlgSettingsDocumentImp() override;
 
     void saveSettings() override;

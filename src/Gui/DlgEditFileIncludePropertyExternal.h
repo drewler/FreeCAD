@@ -27,26 +27,29 @@
 #include "DlgRunExternal.h"
 #include <App/PropertyFile.h>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 
 /**
  *
  * \author Jürgen Riegel
  */
-class GuiExport DlgEditFileIncludePropertyExternal : public DlgRunExternal
+class GuiExport DlgEditFileIncludePropertyExternal: public DlgRunExternal
 {
     Q_OBJECT
 
 public:
-    DlgEditFileIncludePropertyExternal( App::PropertyFileIncluded& Prop, QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags() );
+    DlgEditFileIncludePropertyExternal(App::PropertyFileIncluded &Prop, QWidget *parent = nullptr,
+                                       Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgEditFileIncludePropertyExternal() override;
 
     int Do();
 
 protected Q_SLOTS:
 protected:
-    App::PropertyFileIncluded& Prop;
+    App::PropertyFileIncluded &Prop;
 };
 
 } // namespace Dialog

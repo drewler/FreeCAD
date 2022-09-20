@@ -29,22 +29,26 @@
 
 class Ui_TaskPadPocketParameters;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace PartDesign {
+namespace PartDesign
+{
 class ProfileBased;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 
-class TaskExtrudeParameters : public TaskSketchBasedParameters
+class TaskExtrudeParameters: public TaskSketchBasedParameters
 {
     Q_OBJECT
 
-    enum DirectionModes {
+    enum DirectionModes
+    {
         Normal,
         Select,
         Custom,
@@ -53,21 +57,23 @@ class TaskExtrudeParameters : public TaskSketchBasedParameters
 
 public:
     TaskExtrudeParameters(ViewProviderSketchBased *SketchBasedView, QWidget *parent,
-                          const std::string& pixmapname, const QString& parname);
+                          const std::string &pixmapname, const QString &parname);
     ~TaskExtrudeParameters() override;
 
     void saveHistory() override;
 
     void fillDirectionCombo();
-    void addAxisToCombo(App::DocumentObject* linkObj, std::string linkSubname, QString itemText,
-        bool hasSketch = true);
+    void addAxisToCombo(App::DocumentObject *linkObj, std::string linkSubname, QString itemText,
+                        bool hasSketch = true);
     void applyParameters(QString facename);
 
-    enum class Type {
+    enum class Type
+    {
         Pad,
         Pocket
     };
-    enum class Modes {
+    enum class Modes
+    {
         Dimension,
         ThroughAll,
         ToLast = ThroughAll,
@@ -91,7 +97,7 @@ protected Q_SLOTS:
     void onMidplaneChanged(bool);
     void onReversedChanged(bool);
     void onButtonFace(const bool checked = true);
-    void onFaceName(const QString& text);
+    void onFaceName(const QString &text);
     virtual void onModeChanged(int);
 
 protected:
@@ -99,21 +105,21 @@ protected:
     void setupDialog();
     void readValuesFromHistory();
     void changeEvent(QEvent *e) override;
-    App::PropertyLinkSub* propReferenceAxis;
-    void getReferenceAxis(App::DocumentObject*& obj, std::vector<std::string>& sub) const;
+    App::PropertyLinkSub *propReferenceAxis;
+    void getReferenceAxis(App::DocumentObject *&obj, std::vector<std::string> &sub) const;
 
     double getOffset(void) const;
-    bool   getAlongSketchNormal(void) const;
-    bool   getCustom(void) const;
+    bool getAlongSketchNormal(void) const;
+    bool getCustom(void) const;
     std::string getReferenceAxis(void) const;
     double getXDirection(void) const;
     double getYDirection(void) const;
     double getZDirection(void) const;
-    bool   getReversed(void) const;
-    bool   getMidplane(void) const;
-    int    getMode(void) const;
+    bool getReversed(void) const;
+    bool getMidplane(void) const;
+    int getMode(void) const;
     QString getFaceName(void) const;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     virtual void translateModeList(int index);
     virtual void updateUI(int index);
     void updateDirectionEdits(void);
@@ -125,12 +131,12 @@ private:
     void tryRecomputeFeature();
     void translateFaceName();
     void connectSlots();
-    bool hasProfileFace(PartDesign::ProfileBased*) const;
-    void selectedReferenceAxis(const Gui::SelectionChanges& msg);
+    bool hasProfileFace(PartDesign::ProfileBased *) const;
+    void selectedReferenceAxis(const Gui::SelectionChanges &msg);
     void clearFaceName();
 
 protected:
-    QWidget* proxy;
+    QWidget *proxy;
     std::unique_ptr<Ui_TaskPadPocketParameters> ui;
     bool selectionFace;
     std::vector<std::unique_ptr<App::PropertyLinkSub>> axesInList;

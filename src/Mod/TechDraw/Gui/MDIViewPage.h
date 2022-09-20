@@ -41,11 +41,12 @@ class QGraphicsItem;
 class QGraphicsScene;
 QT_END_NAMESPACE
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawPage;
 class DrawTemplate;
 class DrawView;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -55,20 +56,20 @@ class QGVPage;
 class QGSPage;
 class QGIView;
 
-class TechDrawGuiExport MDIViewPage : public Gui::MDIView, public Gui::SelectionObserver
+class TechDrawGuiExport MDIViewPage: public Gui::MDIView, public Gui::SelectionObserver
 {
     Q_OBJECT
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-    MDIViewPage(ViewProviderPage *page, Gui::Document* doc, QWidget* parent = nullptr);
+    MDIViewPage(ViewProviderPage *page, Gui::Document *doc, QWidget *parent = nullptr);
     ~MDIViewPage() override;
 
     void addChildrenToPage();
 
 
     /// Observer message from the Tree Selection mechanism
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     void preSelectionChanged(const QPoint &pos);
 
     /// QGraphicsScene selection routines
@@ -76,48 +77,41 @@ public:
     void clearSceneSelection();
     void blockSceneSelection(bool isBlocked);
 
-    bool onMsg(const char* pMsg, const char** ppReturn) override;
-    bool onHasMsg(const char* pMsg) const override;
+    bool onMsg(const char *pMsg, const char **ppReturn) override;
+    bool onHasMsg(const char *pMsg) const override;
 
     void print() override;
-    void print(QPrinter* printer) override;
+    void print(QPrinter *printer) override;
     void printPdf() override;
     void printPdf(std::string file);
     void printPreview() override;
     static void printAllPages();
-    static void printAll(QPrinter* printer,
-                         App::Document* doc);
-    static void printAllPdf(QPrinter* printer,
-                            App::Document* doc);
-    static void printBannerPage(QPrinter* printer, QPainter& painter,
-                                QPageLayout& pageLayout,
-                                App::Document* doc,
-                                std::vector<App::DocumentObject*>& docObjs);
-    static void renderPage(ViewProviderPage* vpp,
-                           QPainter& painter,
-                           QRectF& sourceRect,
-                           QRect& targetRect);
-    static void setPageLayout(QPageLayout& pageLayout,
-                              TechDraw::DrawPage* dPage,
-                              double& width, double& height);
+    static void printAll(QPrinter *printer, App::Document *doc);
+    static void printAllPdf(QPrinter *printer, App::Document *doc);
+    static void printBannerPage(QPrinter *printer, QPainter &painter, QPageLayout &pageLayout,
+                                App::Document *doc, std::vector<App::DocumentObject *> &docObjs);
+    static void renderPage(ViewProviderPage *vpp, QPainter &painter, QRectF &sourceRect,
+                           QRect &targetRect);
+    static void setPageLayout(QPageLayout &pageLayout, TechDraw::DrawPage *dPage, double &width,
+                              double &height);
 
     void saveSVG(std::string file);
     void saveDXF(std::string file);
     void savePDF(std::string file);
 
-    void setDocumentObject(const std::string&);
-    void setDocumentName(const std::string&);
+    void setDocumentObject(const std::string &);
+    void setDocumentName(const std::string &);
 
-    PyObject* getPyObject() override;
-    TechDraw::DrawPage * getPage() { return m_vpPage->getDrawPage(); }
+    PyObject *getPyObject() override;
+    TechDraw::DrawPage *getPage() { return m_vpPage->getDrawPage(); }
 
-    ViewProviderPage* getViewProviderPage() {return m_vpPage;}
+    ViewProviderPage *getViewProviderPage() { return m_vpPage; }
 
     void setTabText(std::string tabText);
 
     void contextMenuEvent(QContextMenuEvent *event) override;
 
-    void setScene(QGSPage* scene, QGVPage* view);
+    void setScene(QGSPage *scene, QGVPage *view);
 
 public Q_SLOTS:
     void viewAll() override;
@@ -130,13 +124,14 @@ public Q_SLOTS:
     void printAll();
 
 protected:
-    void closeEvent(QCloseEvent* event) override;
+    void closeEvent(QCloseEvent *event) override;
 
-    void showStatusMsg(const char* string1, const char* string2, const char* string3) const;
+    void showStatusMsg(const char *string1, const char *string2, const char *string3) const;
 
-    void onDeleteObject(const App::DocumentObject& obj);
+    void onDeleteObject(const App::DocumentObject &obj);
 
-    bool compareSelections(std::vector<Gui::SelectionObject> treeSel, QList<QGraphicsItem*> sceneSel);
+    bool compareSelections(std::vector<Gui::SelectionObject> treeSel,
+                           QList<QGraphicsItem *> sceneSel);
     void setTreeToSceneSelect();
     void sceneSelectionManager();
 
@@ -157,18 +152,17 @@ private:
     QPointer<QGSPage> m_scene;
 
     QString m_currentPath;
-    ViewProviderPage* m_vpPage;
+    ViewProviderPage *m_vpPage;
 
-    QList<QGraphicsItem*> m_qgSceneSelected;        //items in selection order
+    QList<QGraphicsItem *> m_qgSceneSelected; //items in selection order
 
     void getPaperAttributes();
     QPageLayout::Orientation m_orientation;
     QPageSize::PageSizeId m_paperSize;
     double m_pagewidth, m_pageheight;
-
 };
 
-class MDIViewPagePy : public Py::PythonExtension<MDIViewPagePy>
+class MDIViewPagePy: public Py::PythonExtension<MDIViewPagePy>
 {
 public:
     using BaseType = Py::PythonExtension<MDIViewPagePy>;
@@ -178,17 +172,17 @@ public:
     ~MDIViewPagePy() override;
 
     Py::Object repr() override;
-    Py::Object getattr(const char * attrName) override;
-    Py::Object getPage(const Py::Tuple&);
-    Py::Object cast_to_base(const Py::Tuple&);
+    Py::Object getattr(const char *attrName) override;
+    Py::Object getPage(const Py::Tuple &);
+    Py::Object cast_to_base(const Py::Tuple &);
 
-    MDIViewPage* getMDIViewPagePtr();
+    MDIViewPage *getMDIViewPagePtr();
 
 protected:
     Gui::MDIViewPy base;
 };
 
 
-} // namespace MDIViewPageGui
+} // namespace TechDrawGui
 
 #endif // TECHDRAWGUI_MDIVIEWPAGE_H

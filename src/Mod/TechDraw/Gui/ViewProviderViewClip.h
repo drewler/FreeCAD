@@ -31,9 +31,10 @@
 #include "ViewProviderDrawingView.h"
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderViewClip : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderViewClip: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderViewClip);
 
@@ -43,19 +44,18 @@ public:
     /// destructor
     ~ViewProviderViewClip() override;
 
-    bool useNewSelectionModel() const override {return false;}
+    bool useNewSelectionModel() const override { return false; }
 
-    TechDraw::DrawViewClip* getViewObject() const override;
-    TechDraw::DrawViewClip* getObject() const;
+    TechDraw::DrawViewClip *getViewObject() const override;
+    TechDraw::DrawViewClip *getObject() const;
 
     /// Hide the object in the view
     void hide() override;
     /// Show the object in the view
     void show() override;
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    std::vector<App::DocumentObject *> claimChildren() const override;
 
-    bool canDelete(App::DocumentObject* obj) const override;
-
+    bool canDelete(App::DocumentObject *obj) const override;
 };
 } // namespace TechDrawGui
 

@@ -30,8 +30,10 @@
 
 class QDoubleSpinBox;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgSettingsNavigation;
 
 /**
@@ -39,12 +41,12 @@ class Ui_DlgSettingsNavigation;
  * for the Inventor viewer.
  * \author Werner Mayer
  */
-class DlgSettingsNavigation : public PreferencePage
+class DlgSettingsNavigation: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsNavigation(QWidget* parent = nullptr);
+    explicit DlgSettingsNavigation(QWidget *parent = nullptr);
     ~DlgSettingsNavigation() override;
 
     void saveSettings() override;
@@ -63,25 +65,25 @@ private:
     double q0, q1, q2, q3;
 };
 
-class CameraDialog : public QDialog
+class CameraDialog: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit CameraDialog(QWidget* parent=nullptr);
+    explicit CameraDialog(QWidget *parent = nullptr);
     ~CameraDialog() override;
     void setValues(double q0, double q1, double q2, double q3);
-    void getValues(double& q0, double& q1, double& q2, double& q3) const;
+    void getValues(double &q0, double &q1, double &q2, double &q3) const;
 
 
 private Q_SLOTS:
     void on_currentView_clicked();
 
 private:
-    QDoubleSpinBox* sb0;
-    QDoubleSpinBox* sb1;
-    QDoubleSpinBox* sb2;
-    QDoubleSpinBox* sb3;
+    QDoubleSpinBox *sb0;
+    QDoubleSpinBox *sb1;
+    QDoubleSpinBox *sb2;
+    QDoubleSpinBox *sb3;
 };
 
 } // namespace Dialog

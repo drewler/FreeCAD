@@ -77,7 +77,6 @@ QGIViewAnnotation::QGIViewAnnotation()
     //QObject::connect(QGraphicsTextItem::document(), SIGNAL(contentsChanged()), m_textItem, SLOT(updateText()));  //not tested
     addToGroup(m_textItem);
     m_textItem->setPos(0., 0.);
-
 }
 
 void QGIViewAnnotation::setViewAnnoFeature(TechDraw::DrawViewAnnotation *obj)
@@ -88,16 +87,11 @@ void QGIViewAnnotation::setViewAnnoFeature(TechDraw::DrawViewAnnotation *obj)
 
 void QGIViewAnnotation::updateView(bool update)
 {
-    auto viewAnno( dynamic_cast<TechDraw::DrawViewAnnotation *>(getViewObject()) );
-    if (!viewAnno)
-        return;
+    auto viewAnno(dynamic_cast<TechDraw::DrawViewAnnotation *>(getViewObject()));
+    if (!viewAnno) return;
 
-    if (update ||
-        viewAnno->isTouched() ||
-        viewAnno->Text.isTouched() ||
-        viewAnno->Font.isTouched() ||
-        viewAnno->TextColor.isTouched() ||
-        viewAnno->TextSize.isTouched() ) {
+    if (update || viewAnno->isTouched() || viewAnno->Text.isTouched() || viewAnno->Font.isTouched()
+        || viewAnno->TextColor.isTouched() || viewAnno->TextSize.isTouched()) {
 
         draw();
     }
@@ -107,26 +101,21 @@ void QGIViewAnnotation::updateView(bool update)
 
 void QGIViewAnnotation::draw()
 {
-    if (!isVisible()) {
-        return;
-    }
+    if (!isVisible()) { return; }
 
     drawAnnotation();
     QGIView::draw();
     rotateView();
-
 }
 
 //TODO: text is positioned slightly high (and left??) on page save to SVG file
 
 void QGIViewAnnotation::drawAnnotation()
 {
-    auto viewAnno( dynamic_cast<TechDraw::DrawViewAnnotation *>(getViewObject()) );
-    if (!viewAnno) {
-        return;
-    }
+    auto viewAnno(dynamic_cast<TechDraw::DrawViewAnnotation *>(getViewObject()));
+    if (!viewAnno) { return; }
 
-    const std::vector<std::string>& annoText = viewAnno->Text.getValues();
+    const std::vector<std::string> &annoText = viewAnno->Text.getValues();
     int scaledSize = exactFontSize(viewAnno->Font.getValue(), viewAnno->TextSize.getValue());
 
     //build HTML/CSS formatting around Text lines
@@ -135,15 +124,17 @@ void QGIViewAnnotation::drawAnnotation()
     ss << "p {";
     ss << "font-family:" << viewAnno->Font.getValue() << "; ";
     ss << "font-size:" << scaledSize << "px; ";
-    if (viewAnno->TextStyle.isValue("Normal")) {
-        ss << "font-weight:normal; font-style:normal; ";
-    } else if (viewAnno->TextStyle.isValue("Bold")) {
+    if (viewAnno->TextStyle.isValue("Normal")) { ss << "font-weight:normal; font-style:normal; "; }
+    else if (viewAnno->TextStyle.isValue("Bold")) {
         ss << "font-weight:bold; font-style:normal; ";
-    } else if (viewAnno->TextStyle.isValue("Italic")) {
+    }
+    else if (viewAnno->TextStyle.isValue("Italic")) {
         ss << "font-weight:normal; font-style:italic; ";
-    } else if (viewAnno->TextStyle.isValue("Bold-Italic")) {
+    }
+    else if (viewAnno->TextStyle.isValue("Bold-Italic")) {
         ss << "font-weight:bold; font-style:italic; ";
-    } else {
+    }
+    else {
         Base::Console().Warning("%s has invalid TextStyle\n", viewAnno->getNameInDocument());
         ss << "font-weight:normal; font-style:normal; ";
     }
@@ -151,13 +142,12 @@ void QGIViewAnnotation::drawAnnotation()
     App::Color c = viewAnno->TextColor.getValue();
     ss << "color:" << c.asHexString() << "; ";
     ss << "}\n</style>\n</head>\n<body>\n<p>";
-    for(std::vector<std::string>::const_iterator it = annoText.begin(); it != annoText.end(); it++) {
-        if (it != annoText.begin()) {
-            ss << "<br>";
-        }
+    for (std::vector<std::string>::const_iterator it = annoText.begin(); it != annoText.end();
+         it++) {
+        if (it != annoText.begin()) { ss << "<br>"; }
 
         //"less than" symbol chops off line.  need to use html sub.
-        std::string lt   = std::regex_replace((*it), std::regex("<"), "&lt;");
+        std::string lt = std::regex_replace((*it), std::regex("<"), "&lt;");
         ss << lt;
     }
     ss << "</p>\n</body>\n</html> ";
@@ -177,14 +167,13 @@ void QGIViewAnnotation::rotateView()
     m_textItem->setRotation(-rot);
 }
 
-void QGIViewAnnotation::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+void QGIViewAnnotation::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    TechDraw::DrawViewAnnotation *annotation = dynamic_cast<TechDraw::DrawViewAnnotation *>(getViewObject());
-    if (!annotation) {
-        return;
-    }
+    TechDraw::DrawViewAnnotation *annotation =
+        dynamic_cast<TechDraw::DrawViewAnnotation *>(getViewObject());
+    if (!annotation) { return; }
 
     const std::vector<std::string> &values = annotation->Text.getValues();
     QString text;
@@ -218,9 +207,7 @@ void QGIViewAnnotation::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
             QStringList list = newText.split(QChar::fromLatin1('\n'));
             std::vector<std::string> newValues;
 
-            for (int i = 0; i < list.size(); ++i) {
-                newValues.push_back(list[i].toStdString());
-            }
+            for (int i = 0; i < list.size(); ++i) { newValues.push_back(list[i].toStdString()); }
 
             App::GetApplication().setActiveTransaction("Set Annotation Text");
             annotation->Text.setValues(newValues);

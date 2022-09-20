@@ -24,11 +24,11 @@
 #ifndef SKETCHERGUI_AutoConstraint_H
 #define SKETCHERGUI_AutoConstraint_H
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 // A Simple data type to hold basic information for suggested constraints
-struct AutoConstraint
-{
+struct AutoConstraint {
     enum TargetType
     {
         VERTEX,
@@ -44,4 +44,3 @@ struct AutoConstraint
 
 
 #endif // SKETCHERGUI_AutoConstraint_H
-

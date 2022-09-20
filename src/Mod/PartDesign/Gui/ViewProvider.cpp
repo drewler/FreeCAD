@@ -24,10 +24,10 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMessageBox>
-# include <QAction>
-# include <QApplication>
-# include <QMenu>
+#include <QMessageBox>
+#include <QAction>
+#include <QApplication>
+#include <QMenu>
 #endif
 
 #include <Base/Exception.h>
@@ -49,15 +49,12 @@ using namespace PartDesignGui;
 
 PROPERTY_SOURCE_WITH_EXTENSIONS(PartDesignGui::ViewProvider, PartGui::ViewProviderPart)
 
-ViewProvider::ViewProvider()
-: oldTip(nullptr), isSetTipIcon(false)
+ViewProvider::ViewProvider() : oldTip(nullptr), isSetTipIcon(false)
 {
     PartGui::ViewProviderAttachExtension::initExtension(this);
 }
 
-ViewProvider::~ViewProvider()
-{
-}
+ViewProvider::~ViewProvider() {}
 
 bool ViewProvider::doubleClicked()
 {
@@ -66,16 +63,16 @@ bool ViewProvider::doubleClicked()
         Gui::Command::openCommand(text.toUtf8());
         FCMD_SET_EDIT(pcObject);
     }
-    catch (const Base::Exception&) {
+    catch (const Base::Exception &) {
         Gui::Command::abortCommand();
     }
     return true;
 }
 
-void ViewProvider::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProvider::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     QIcon iconObject = mergeGreyableOverlayIcons(Gui::BitmapFactory().pixmap("Part_ColorFace.svg"));
-    QAction* act = menu->addAction(iconObject, QObject::tr("Set colors..."), receiver, member);
+    QAction *act = menu->addAction(iconObject, QObject::tr("Set colors..."), receiver, member);
     act->setData(QVariant((int)ViewProvider::Color));
     // Call the extensions
     Gui::ViewProvider::setupContextMenu(menu, receiver, member);
@@ -83,7 +80,7 @@ void ViewProvider::setupContextMenu(QMenu* menu, QObject* receiver, const char* 
 
 bool ViewProvider::setEdit(int ModNum)
 {
-    if (ModNum == ViewProvider::Default ) {
+    if (ModNum == ViewProvider::Default) {
         // When double-clicking on the item for this feature the
         // object unsets and sets its edit mode without closing
         // the task panel
@@ -100,9 +97,8 @@ bool ViewProvider::setEdit(int ModNum)
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
             msgBox.setDefaultButton(QMessageBox::Yes);
             int ret = msgBox.exec();
-            if (ret == QMessageBox::Yes) {
-                Gui::Control().reject();
-            } else {
+            if (ret == QMessageBox::Yes) { Gui::Control().reject(); }
+            else {
                 return false;
             }
         }
@@ -117,19 +113,21 @@ bool ViewProvider::setEdit(int ModNum)
         if (!featureDlg) {
             featureDlg = this->getEditDialog();
             if (!featureDlg) { // Shouldn't generally happen
-                throw Base::RuntimeError ("Failed to create new edit dialog.");
+                throw Base::RuntimeError("Failed to create new edit dialog.");
             }
         }
 
         Gui::Control().showDialog(featureDlg);
         return true;
-    } else {
+    }
+    else {
         return PartGui::ViewProviderPart::setEdit(ModNum);
     }
 }
 
 
-TaskDlgFeatureParameters *ViewProvider::getEditDialog() {
+TaskDlgFeatureParameters *ViewProvider::getEditDialog()
+{
     throw Base::NotImplementedError("getEditDialog() not implemented");
 }
 
@@ -137,8 +135,7 @@ TaskDlgFeatureParameters *ViewProvider::getEditDialog() {
 void ViewProvider::unsetEdit(int ModNum)
 {
     // return to the WB we were in before editing the PartDesign feature
-    if (!oldWb.empty())
-        Gui::Command::assureWorkbench(oldWb.c_str());
+    if (!oldWb.empty()) Gui::Command::assureWorkbench(oldWb.c_str());
 
     if (ModNum == ViewProvider::Default) {
         // when pressing ESC make sure to close the dialog
@@ -161,33 +158,34 @@ void ViewProvider::unsetEdit(int ModNum)
     }
 }
 
-void ViewProvider::updateData(const App::Property* prop)
+void ViewProvider::updateData(const App::Property *prop)
 {
     // TODO What's that? (2015-07-24, Fat-Zer)
-    if (prop->getTypeId() == Part::PropertyPartShape::getClassTypeId() &&
-        strcmp(prop->getName(),"AddSubShape") == 0) {
+    if (prop->getTypeId() == Part::PropertyPartShape::getClassTypeId()
+        && strcmp(prop->getName(), "AddSubShape") == 0) {
         return;
     }
 
     inherited::updateData(prop);
 }
 
-void ViewProvider::onChanged(const App::Property* prop) {
+void ViewProvider::onChanged(const App::Property *prop)
+{
 
     //if the object is inside of a body we make sure it is the only visible one on activation
-    if(prop == &Visibility && Visibility.getValue()) {
+    if (prop == &Visibility && Visibility.getValue()) {
 
-        Part::BodyBase* body = Part::BodyBase::findBodyOf(getObject());
-        if(body) {
+        Part::BodyBase *body = Part::BodyBase::findBodyOf(getObject());
+        if (body) {
 
             //hide all features in the body other than this object
-            for(App::DocumentObject* obj : body->Group.getValues()) {
+            for (App::DocumentObject *obj : body->Group.getValues()) {
 
-                if(obj->isDerivedFrom(PartDesign::Feature::getClassTypeId()) && obj != getObject()) {
-                   auto vpd = Base::freecad_dynamic_cast<Gui::ViewProviderDocumentObject>(
-                           Gui::Application::Instance->getViewProvider(obj));
-                   if(vpd && vpd->Visibility.getValue())
-                       vpd->Visibility.setValue(false);
+                if (obj->isDerivedFrom(PartDesign::Feature::getClassTypeId())
+                    && obj != getObject()) {
+                    auto vpd = Base::freecad_dynamic_cast<Gui::ViewProviderDocumentObject>(
+                        Gui::Application::Instance->getViewProvider(obj));
+                    if (vpd && vpd->Visibility.getValue()) vpd->Visibility.setValue(false);
                 }
             }
         }
@@ -196,47 +194,38 @@ void ViewProvider::onChanged(const App::Property* prop) {
     PartGui::ViewProviderPartExt::onChanged(prop);
 }
 
-void ViewProvider::setTipIcon(bool onoff) {
+void ViewProvider::setTipIcon(bool onoff)
+{
     isSetTipIcon = onoff;
 
     signalChangeIcon();
 }
 
-QIcon ViewProvider::mergeColorfulOverlayIcons (const QIcon & orig) const
+QIcon ViewProvider::mergeColorfulOverlayIcons(const QIcon &orig) const
 {
     QIcon mergedicon = orig;
 
-    if(isSetTipIcon) {
+    if (isSetTipIcon) {
         QPixmap px;
 
-        static const char * const feature_tip_xpm[]={
-            "9 9 3 1",
-            ". c None",
-            "# c #00cc00",
-            "a c #ffffff",
-            "...###...",
-            ".##aaa##.",
-            ".##aaa##.",
-            "###aaa###",
-            "##aaaaa##",
-            "##aaaaa##",
-            ".##aaa##.",
-            ".##aaa##.",
-            "...###..."};
+        static const char *const feature_tip_xpm[] = {
+            "9 9 3 1",   ". c None",  "# c #00cc00", "a c #ffffff", "...###...",
+            ".##aaa##.", ".##aaa##.", "###aaa###",   "##aaaaa##",   "##aaaaa##",
+            ".##aaa##.", ".##aaa##.", "...###..."};
         px = QPixmap(feature_tip_xpm);
 
-        mergedicon = Gui::BitmapFactoryInst::mergePixmap(mergedicon, px, Gui::BitmapFactoryInst::BottomRight);
-
+        mergedicon = Gui::BitmapFactoryInst::mergePixmap(mergedicon, px,
+                                                         Gui::BitmapFactoryInst::BottomRight);
     }
 
-    return Gui::ViewProvider::mergeColorfulOverlayIcons (mergedicon);
+    return Gui::ViewProvider::mergeColorfulOverlayIcons(mergedicon);
 }
 
 bool ViewProvider::onDelete(const std::vector<std::string> &)
 {
-    PartDesign::Feature* feature = static_cast<PartDesign::Feature*>(getObject());
+    PartDesign::Feature *feature = static_cast<PartDesign::Feature *>(getObject());
 
-    App::DocumentObject* previousfeat = feature->BaseFeature.getValue();
+    App::DocumentObject *previousfeat = feature->BaseFeature.getValue();
 
     // Visibility - we want:
     // 1. If the visible object is not the one being deleted, we leave that one visible.
@@ -246,7 +235,7 @@ bool ViewProvider::onDelete(const std::vector<std::string> &)
     }
 
     // find surrounding features in the tree
-    Part::BodyBase* body = PartDesign::Body::findBodyOf(getObject());
+    Part::BodyBase *body = PartDesign::Body::findBodyOf(getObject());
 
     if (body) {
         // Deletion from the tree of a feature is handled by Document.removeObject, which has no clue
@@ -262,31 +251,28 @@ bool ViewProvider::onDelete(const std::vector<std::string> &)
         //
         // fixes (#3084)
 
-        FCMD_OBJ_CMD(body,"removeObject(" << Gui::Command::getObjectCmd(feature) << ')');
+        FCMD_OBJ_CMD(body, "removeObject(" << Gui::Command::getObjectCmd(feature) << ')');
     }
 
     return true;
 }
 
-void ViewProvider::setBodyMode(bool bodymode) {
+void ViewProvider::setBodyMode(bool bodymode)
+{
 
-    std::vector<App::Property*> props;
+    std::vector<App::Property *> props;
     getPropertyList(props);
 
     auto vp = getBodyViewProvider();
-    if(!vp)
-        return;
+    if (!vp) return;
 
-    for(App::Property* prop : props) {
+    for (App::Property *prop : props) {
 
         //we keep visibility and selectibility per object
-        if(prop == &Visibility ||
-           prop == &Selectable)
-            continue;
+        if (prop == &Visibility || prop == &Selectable) continue;
 
         //we hide only properties which are available in the body, not special ones
-        if(!vp->getPropertyByName(prop->getName()))
-            continue;
+        if (!vp->getPropertyByName(prop->getName())) continue;
 
         prop->setStatus(App::Property::Hidden, bodymode);
     }
@@ -296,44 +282,41 @@ void ViewProvider::makeTemporaryVisible(bool onoff)
 {
     //make sure to not use the overridden versions, as they change properties
     if (onoff) {
-        if (VisualTouched) {
-            updateVisual();
-        }
+        if (VisualTouched) { updateVisual(); }
         Gui::ViewProvider::show();
     }
     else
         Gui::ViewProvider::hide();
 }
 
-PyObject* ViewProvider::getPyObject()
+PyObject *ViewProvider::getPyObject()
 {
-    if (!pyViewObject)
-        pyViewObject = new ViewProviderPy(this);
+    if (!pyViewObject) pyViewObject = new ViewProviderPy(this);
     pyViewObject->IncRef();
     return pyViewObject;
 }
 
-ViewProviderBody* ViewProvider::getBodyViewProvider() {
+ViewProviderBody *ViewProvider::getBodyViewProvider()
+{
 
     auto body = PartDesign::Body::findBodyOf(getObject());
     auto doc = getDocument();
-    if(body && doc) {
+    if (body && doc) {
         auto vp = doc->getViewProvider(body);
-        if(vp && vp->isDerivedFrom(ViewProviderBody::getClassTypeId()))
-           return static_cast<ViewProviderBody*>(vp);
+        if (vp && vp->isDerivedFrom(ViewProviderBody::getClassTypeId()))
+            return static_cast<ViewProviderBody *>(vp);
     }
 
     return nullptr;
 }
 
 
-
-namespace Gui {
+namespace Gui
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(PartDesignGui::ViewProviderPython, PartDesignGui::ViewProvider)
 /// @endcond
 
 // explicit template instantiation
 template class PartDesignGuiExport ViewProviderPythonFeatureT<PartDesignGui::ViewProvider>;
-}
-
+} // namespace Gui

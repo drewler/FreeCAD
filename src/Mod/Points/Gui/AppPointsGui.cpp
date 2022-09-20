@@ -48,8 +48,9 @@ void loadPointsResource()
     Gui::Translator::instance()->refresh();
 }
 
-namespace PointsGui {
-class Module : public Py::ExtensionModule<Module>
+namespace PointsGui
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("PointsGui")
@@ -62,10 +63,7 @@ public:
 private:
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace PointsGui
 
@@ -82,25 +80,24 @@ PyMOD_INIT_FUNC(PointsGui)
     try {
         Base::Interpreter().loadModule("Points");
     }
-    catch(const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         PyErr_SetString(PyExc_ImportError, e.what());
         PyMOD_Return(nullptr);
     }
 
     Base::Console().Log("Loading GUI of Points module... done\n");
-    PyObject* mod = PointsGui::initModule();
+    PyObject *mod = PointsGui::initModule();
 
     // instantiating the commands
     CreatePointsCommands();
 
-    PointsGui::ViewProviderPoints       ::init();
-    PointsGui::ViewProviderScattered    ::init();
-    PointsGui::ViewProviderStructured   ::init();
-    PointsGui::ViewProviderPython       ::init();
-    PointsGui::Workbench                ::init();
-    Gui::ViewProviderBuilder::add(
-        Points::PropertyPointKernel::getClassTypeId(),
-        PointsGui::ViewProviderPoints::getClassTypeId());
+    PointsGui::ViewProviderPoints ::init();
+    PointsGui::ViewProviderScattered ::init();
+    PointsGui::ViewProviderStructured ::init();
+    PointsGui::ViewProviderPython ::init();
+    PointsGui::Workbench ::init();
+    Gui::ViewProviderBuilder::add(Points::PropertyPointKernel::getClassTypeId(),
+                                  PointsGui::ViewProviderPoints::getClassTypeId());
 
     // add resources and reloads the translators
     loadPointsResource();

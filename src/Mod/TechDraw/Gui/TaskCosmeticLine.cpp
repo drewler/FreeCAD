@@ -62,14 +62,9 @@ using namespace TechDraw;
 using namespace TechDrawGui;
 
 //ctor for edit
-TaskCosmeticLine::TaskCosmeticLine(TechDraw::DrawViewPart* partFeat,
-                                   std::string edgeName) :
-    ui(new Ui_TaskCosmeticLine),
-    m_partFeat(partFeat),
-    m_edgeName(edgeName),
-    m_ce(nullptr),
-    m_saveCE(nullptr),
-    m_createMode(false)
+TaskCosmeticLine::TaskCosmeticLine(TechDraw::DrawViewPart *partFeat, std::string edgeName)
+    : ui(new Ui_TaskCosmeticLine), m_partFeat(partFeat), m_edgeName(edgeName), m_ce(nullptr),
+      m_saveCE(nullptr), m_createMode(false)
 {
     //existence of partFeat is checked in calling command
 
@@ -85,16 +80,10 @@ TaskCosmeticLine::TaskCosmeticLine(TechDraw::DrawViewPart* partFeat,
 }
 
 //ctor for creation
-TaskCosmeticLine::TaskCosmeticLine(TechDraw::DrawViewPart* partFeat,
-                                   std::vector<Base::Vector3d> points,
-                                   std::vector<bool> is3d) :
-    ui(new Ui_TaskCosmeticLine),
-    m_partFeat(partFeat),
-    m_ce(nullptr),
-    m_saveCE(nullptr),
-    m_points(points),
-    m_is3d(is3d),
-    m_createMode(true)
+TaskCosmeticLine::TaskCosmeticLine(TechDraw::DrawViewPart *partFeat,
+                                   std::vector<Base::Vector3d> points, std::vector<bool> is3d)
+    : ui(new Ui_TaskCosmeticLine), m_partFeat(partFeat), m_ce(nullptr), m_saveCE(nullptr),
+      m_points(points), m_is3d(is3d), m_createMode(true)
 {
     //existence of partFeat is checked in calling command
 
@@ -105,23 +94,19 @@ TaskCosmeticLine::TaskCosmeticLine(TechDraw::DrawViewPart* partFeat,
 
 TaskCosmeticLine::~TaskCosmeticLine()
 {
-    if (m_saveCE) {
-        delete m_saveCE;
-    }
+    if (m_saveCE) { delete m_saveCE; }
 }
 
 void TaskCosmeticLine::updateTask()
 {
-//    blockUpdate = true;
+    //    blockUpdate = true;
 
-//    blockUpdate = false;
+    //    blockUpdate = false;
 }
 
 void TaskCosmeticLine::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
 }
 
 void TaskCosmeticLine::setUiPrimary()
@@ -131,14 +116,16 @@ void TaskCosmeticLine::setUiPrimary()
     if (m_is3d.front()) {
         ui->rb2d1->setChecked(false);
         ui->rb3d1->setChecked(true);
-    } else {
+    }
+    else {
         ui->rb2d1->setChecked(true);
         ui->rb3d1->setChecked(false);
     }
     if (m_is3d.back()) {
         ui->rb2d2->setChecked(false);
         ui->rb3d2->setChecked(true);
-    } else {
+    }
+    else {
         ui->rb2d2->setChecked(true);
         ui->rb3d2->setChecked(false);
     }
@@ -232,12 +219,12 @@ void TaskCosmeticLine::updateCosmeticLine(void)
     gp_Pnt gp1(p0.x, p0.y, p0.z);
     gp_Pnt gp2(p1.x, p1.y, p1.z);
     TopoDS_Edge e = BRepBuilderAPI_MakeEdge(gp1, gp2);
-//    auto oldGeom = m_ce->m_geometry;
+    //    auto oldGeom = m_ce->m_geometry;
     m_ce->m_geometry = TechDraw::BaseGeom::baseFactory(e);
-//    delete oldGeom;
+    //    delete oldGeom;
 
-//    Gui::Command::updateActive();
-//    Gui::Command::commitCommand();
+    //    Gui::Command::updateActive();
+    //    Gui::Command::commitCommand();
 }
 
 //******************************************************************************
@@ -249,7 +236,8 @@ bool TaskCosmeticLine::accept()
         m_partFeat->add1CEToGE(m_tag);
         m_partFeat->refreshCEGeoms();
         m_partFeat->requestPaint();
-    } else {
+    }
+    else {
         //update mode
         Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Update CosmeticLine"));
         updateCosmeticLine();
@@ -271,46 +259,40 @@ bool TaskCosmeticLine::reject()
     return false;
 }
 ////////////////////////////////////////////////////////////////////////////////
-TaskDlgCosmeticLine::TaskDlgCosmeticLine(TechDraw::DrawViewPart* partFeat,
-                                     std::vector<Base::Vector3d> points,
-                                     std::vector<bool> is3d)
+TaskDlgCosmeticLine::TaskDlgCosmeticLine(TechDraw::DrawViewPart *partFeat,
+                                         std::vector<Base::Vector3d> points, std::vector<bool> is3d)
     : TaskDialog()
 {
-    widget  = new TaskCosmeticLine(partFeat, points, is3d);
-    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("actions/TechDraw_Line2Points"),
-                                             widget->windowTitle(), true, nullptr);
+    widget = new TaskCosmeticLine(partFeat, points, is3d);
+    taskbox =
+        new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("actions/TechDraw_Line2Points"),
+                                   widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
 
-TaskDlgCosmeticLine::TaskDlgCosmeticLine(TechDraw::DrawViewPart* partFeat,
-                                     std::string edgeName)
+TaskDlgCosmeticLine::TaskDlgCosmeticLine(TechDraw::DrawViewPart *partFeat, std::string edgeName)
     : TaskDialog()
 {
-    widget  = new TaskCosmeticLine(partFeat, edgeName);
-    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("actions/TechDraw_Line2Points"),
-                                             widget->windowTitle(), true, nullptr);
+    widget = new TaskCosmeticLine(partFeat, edgeName);
+    taskbox =
+        new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("actions/TechDraw_Line2Points"),
+                                   widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
 
-TaskDlgCosmeticLine::~TaskDlgCosmeticLine()
-{
-}
+TaskDlgCosmeticLine::~TaskDlgCosmeticLine() {}
 
 void TaskDlgCosmeticLine::update()
 {
-//    widget->updateTask();
+    //    widget->updateTask();
 }
 
 //==== calls from the TaskView ===============================================================
-void TaskDlgCosmeticLine::open()
-{
-}
+void TaskDlgCosmeticLine::open() {}
 
-void TaskDlgCosmeticLine::clicked(int)
-{
-}
+void TaskDlgCosmeticLine::clicked(int) {}
 
 bool TaskDlgCosmeticLine::accept()
 {

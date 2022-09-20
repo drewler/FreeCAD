@@ -23,8 +23,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <TopExp_Explorer.hxx>
-# include <QMessageBox>
+#include <TopExp_Explorer.hxx>
+#include <QMessageBox>
 #endif
 
 #include "Tessellation.h"
@@ -53,8 +53,7 @@ using namespace MeshPartGui;
 
 /* TRANSLATOR MeshPartGui::Tessellation */
 
-Tessellation::Tessellation(QWidget* parent)
-  : QWidget(parent), ui(new Ui_Tessellation)
+Tessellation::Tessellation(QWidget *parent) : QWidget(parent), ui(new Ui_Tessellation)
 {
     ui->setupUi(this);
     gmsh = new Mesh2ShapeGmsh(this);
@@ -62,8 +61,8 @@ Tessellation::Tessellation(QWidget* parent)
 
     ui->stackedWidget->addTab(gmsh, tr("Gmsh"));
 
-    ParameterGrp::handle handle = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/Mod/Mesh/Meshing/Standard");
+    ParameterGrp::handle handle = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Mod/Mesh/Meshing/Standard");
     double value = ui->spinSurfaceDeviation->value().getValue();
     value = handle->GetFloat("LinearDeflection", value);
     double angle = ui->spinAngularDeviation->value().getValue();
@@ -81,10 +80,10 @@ Tessellation::Tessellation(QWidget* parent)
     ui->comboFineness->setCurrentIndex(2);
     on_comboFineness_currentIndexChanged(2);
 
-#if !defined (HAVE_MEFISTO)
+#if !defined(HAVE_MEFISTO)
     ui->stackedWidget->setTabEnabled(Mefisto, false);
 #endif
-#if !defined (HAVE_NETGEN)
+#if !defined(HAVE_NETGEN)
     ui->stackedWidget->setTabEnabled(Netgen, false);
 #endif
 
@@ -98,14 +97,9 @@ Tessellation::Tessellation(QWidget* parent)
     }
 }
 
-Tessellation::~Tessellation()
-{
-}
+Tessellation::~Tessellation() {}
 
-void Tessellation::meshingMethod(int id)
-{
-    ui->stackedWidget->setCurrentIndex(id);
-}
+void Tessellation::meshingMethod(int id) { ui->stackedWidget->setCurrentIndex(id); }
 
 void Tessellation::on_comboFineness_currentIndexChanged(int index)
 {
@@ -121,53 +115,49 @@ void Tessellation::on_comboFineness_currentIndexChanged(int index)
     }
 
     switch (index) {
-    case 0: // Very coarse
-        ui->doubleGrading->setValue(0.7);
-        ui->spinEdgeElements->setValue(0.3);
-        ui->spinCurvatureElements->setValue(1.0);
-        break;
-    case 1: // Coarse
-        ui->doubleGrading->setValue(0.5);
-        ui->spinEdgeElements->setValue(0.5);
-        ui->spinCurvatureElements->setValue(1.5);
-        break;
-    case 2: // Moderate
-        ui->doubleGrading->setValue(0.3);
-        ui->spinEdgeElements->setValue(1.0);
-        ui->spinCurvatureElements->setValue(2.0);
-        break;
-    case 3: // Fine
-        ui->doubleGrading->setValue(0.2);
-        ui->spinEdgeElements->setValue(2.0);
-        ui->spinCurvatureElements->setValue(3.0);
-        break;
-    case 4: // Very fine
-        ui->doubleGrading->setValue(0.1);
-        ui->spinEdgeElements->setValue(3.0);
-        ui->spinCurvatureElements->setValue(5.0);
-        break;
-    default:
-        break;
+        case 0: // Very coarse
+            ui->doubleGrading->setValue(0.7);
+            ui->spinEdgeElements->setValue(0.3);
+            ui->spinCurvatureElements->setValue(1.0);
+            break;
+        case 1: // Coarse
+            ui->doubleGrading->setValue(0.5);
+            ui->spinEdgeElements->setValue(0.5);
+            ui->spinCurvatureElements->setValue(1.5);
+            break;
+        case 2: // Moderate
+            ui->doubleGrading->setValue(0.3);
+            ui->spinEdgeElements->setValue(1.0);
+            ui->spinCurvatureElements->setValue(2.0);
+            break;
+        case 3: // Fine
+            ui->doubleGrading->setValue(0.2);
+            ui->spinEdgeElements->setValue(2.0);
+            ui->spinCurvatureElements->setValue(3.0);
+            break;
+        case 4: // Very fine
+            ui->doubleGrading->setValue(0.1);
+            ui->spinEdgeElements->setValue(3.0);
+            ui->spinCurvatureElements->setValue(5.0);
+            break;
+        default: break;
     }
 }
 
 void Tessellation::on_checkSecondOrder_toggled(bool on)
 {
-    if (on)
-        ui->checkQuadDominated->setChecked(false);
+    if (on) ui->checkQuadDominated->setChecked(false);
 }
 
 void Tessellation::on_checkQuadDominated_toggled(bool on)
 {
-    if (on)
-        ui->checkSecondOrder->setChecked(false);
+    if (on) ui->checkSecondOrder->setChecked(false);
 }
 
 void Tessellation::gmshProcessed()
 {
     bool doClose = !ui->checkBoxDontQuit->isChecked();
-    if (doClose)
-        Gui::Control().reject();
+    if (doClose) Gui::Control().reject();
 }
 
 void Tessellation::changeEvent(QEvent *e)
@@ -182,19 +172,15 @@ void Tessellation::changeEvent(QEvent *e)
 
 void Tessellation::on_estimateMaximumEdgeLength_clicked()
 {
-    App::Document* activeDoc = App::GetApplication().getActiveDocument();
-    if (!activeDoc) {
-        return;
-    }
+    App::Document *activeDoc = App::GetApplication().getActiveDocument();
+    if (!activeDoc) { return; }
 
-    Gui::Document* activeGui = Gui::Application::Instance->getDocument(activeDoc);
-    if (!activeGui) {
-        return;
-    }
+    Gui::Document *activeGui = Gui::Application::Instance->getDocument(activeDoc);
+    if (!activeGui) { return; }
 
     double edgeLen = 0;
     for (auto &sel : Gui::Selection().getSelection("*", Gui::ResolveMode::NoResolve)) {
-        auto shape = Part::Feature::getTopoShape(sel.pObject,sel.SubName);
+        auto shape = Part::Feature::getTopoShape(sel.pObject, sel.SubName);
         if (shape.hasSubShape(TopAbs_FACE)) {
             Base::BoundBox3d bbox = shape.getBoundBox();
             edgeLen = std::max<double>(edgeLen, bbox.LengthX());
@@ -203,19 +189,19 @@ void Tessellation::on_estimateMaximumEdgeLength_clicked()
         }
     }
 
-    ui->spinMaximumEdgeLength->setValue(edgeLen/10);
+    ui->spinMaximumEdgeLength->setValue(edgeLen / 10);
 }
 
 bool Tessellation::accept()
 {
     std::list<App::SubObjectT> shapeObjects;
-    App::Document* activeDoc = App::GetApplication().getActiveDocument();
+    App::Document *activeDoc = App::GetApplication().getActiveDocument();
     if (!activeDoc) {
         QMessageBox::critical(this, windowTitle(), tr("No active document"));
         return false;
     }
 
-    Gui::Document* activeGui = Gui::Application::Instance->getDocument(activeDoc);
+    Gui::Document *activeGui = Gui::Application::Instance->getDocument(activeDoc);
     if (!activeGui) {
         QMessageBox::critical(this, windowTitle(), tr("No active document"));
         return false;
@@ -226,31 +212,30 @@ bool Tessellation::accept()
     bool bodyWithNoTip = false;
     bool partWithNoFace = false;
     for (auto &sel : Gui::Selection().getSelection("*", Gui::ResolveMode::NoResolve)) {
-        auto shape = Part::Feature::getTopoShape(sel.pObject,sel.SubName);
-        if (shape.hasSubShape(TopAbs_FACE)) {
-            shapeObjects.emplace_back(sel.pObject, sel.SubName);
-        }
+        auto shape = Part::Feature::getTopoShape(sel.pObject, sel.SubName);
+        if (shape.hasSubShape(TopAbs_FACE)) { shapeObjects.emplace_back(sel.pObject, sel.SubName); }
         else if (sel.pObject) {
             if (sel.pObject->isDerivedFrom(Part::Feature::getClassTypeId())) {
                 partWithNoFace = true;
             }
             if (sel.pObject->isDerivedFrom(Part::BodyBase::getClassTypeId())) {
-                Part::BodyBase* body = static_cast<Part::BodyBase*>(sel.pObject);
-                if (!body->Tip.getValue()) {
-                    bodyWithNoTip = true;
-                }
+                Part::BodyBase *body = static_cast<Part::BodyBase *>(sel.pObject);
+                if (!body->Tip.getValue()) { bodyWithNoTip = true; }
             }
         }
     }
 
     if (shapeObjects.empty()) {
         if (bodyWithNoTip) {
-            QMessageBox::critical(this, windowTitle(), tr("You have selected a body without tip.\n"
-                                                          "Either set the tip of the body or select a different shape, please."));
+            QMessageBox::critical(
+                this, windowTitle(),
+                tr("You have selected a body without tip.\n"
+                   "Either set the tip of the body or select a different shape, please."));
         }
         else if (partWithNoFace) {
-            QMessageBox::critical(this, windowTitle(), tr("You have selected a shape without faces.\n"
-                                                          "Select a different shape, please."));
+            QMessageBox::critical(this, windowTitle(),
+                                  tr("You have selected a shape without faces.\n"
+                                     "Select a different shape, please."));
         }
         else {
             QMessageBox::critical(this, windowTitle(), tr("Select a shape for meshing, first."));
@@ -273,7 +258,8 @@ bool Tessellation::accept()
     }
 }
 
-void Tessellation::process(int method, App::Document* doc, const std::list<App::SubObjectT>& shapeObjects)
+void Tessellation::process(int method, App::Document *doc,
+                           const std::list<App::SubObjectT> &shapeObjects)
 {
     try {
         Gui::WaitCursor wc;
@@ -286,32 +272,25 @@ void Tessellation::process(int method, App::Document* doc, const std::list<App::
             QString objname = QString::fromLatin1(info.getObjectName().c_str());
 
             auto obj = info.getObject();
-            if (!obj)
-                continue;
+            if (!obj) continue;
             auto sobj = obj->getSubObject(info.getSubName().c_str());
-            if (!sobj)
-                continue;
+            if (!sobj) continue;
             sobj = sobj->getLinkedObject(true);
-            if (!sobj)
-                continue;
+            if (!sobj) continue;
 
             QString label = QString::fromUtf8(sobj->Label.getValue());
 
             QString param = getMeshingParameters(method, sobj);
 
-            QString cmd = QString::fromLatin1(
-                "__doc__=FreeCAD.getDocument(\"%1\")\n"
-                "__mesh__=__doc__.addObject(\"Mesh::Feature\",\"Mesh\")\n"
-                "__part__=__doc__.getObject(\"%2\")\n"
-                "__shape__=Part.getShape(__part__,\"%3\")\n"
-                "__mesh__.Mesh=MeshPart.meshFromShape(%4)\n"
-                "__mesh__.Label=\"%5 (Meshed)\"\n"
-                "del __doc__, __mesh__, __part__, __shape__\n")
-                .arg(this->document,
-                     objname,
-                     subname,
-                     param,
-                     label);
+            QString cmd =
+                QString::fromLatin1("__doc__=FreeCAD.getDocument(\"%1\")\n"
+                                    "__mesh__=__doc__.addObject(\"Mesh::Feature\",\"Mesh\")\n"
+                                    "__part__=__doc__.getObject(\"%2\")\n"
+                                    "__shape__=Part.getShape(__part__,\"%3\")\n"
+                                    "__mesh__.Mesh=MeshPart.meshFromShape(%4)\n"
+                                    "__mesh__.Label=\"%5 (Meshed)\"\n"
+                                    "del __doc__, __mesh__, __part__, __shape__\n")
+                    .arg(this->document, objname, subname, param, label);
 
             Gui::Command::runCommand(Gui::Command::Doc, cmd.toUtf8());
 
@@ -319,7 +298,7 @@ void Tessellation::process(int method, App::Document* doc, const std::list<App::
         }
         doc->commitTransaction();
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         doc->abortTransaction();
         Base::Console().Error(e.what());
     }
@@ -328,8 +307,8 @@ void Tessellation::process(int method, App::Document* doc, const std::list<App::
 void Tessellation::saveParameters(int method)
 {
     if (method == Standard) {
-        ParameterGrp::handle handle = App::GetApplication().GetParameterGroupByPath
-            ("User parameter:BaseApp/Preferences/Mod/Mesh/Meshing/Standard");
+        ParameterGrp::handle handle = App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/Preferences/Mod/Mesh/Meshing/Standard");
         double value = ui->spinSurfaceDeviation->value().getValue();
         handle->SetFloat("LinearDeflection", value);
         double angle = ui->spinAngularDeviation->value().getValue();
@@ -339,47 +318,41 @@ void Tessellation::saveParameters(int method)
     }
 }
 
-void Tessellation::setFaceColors(int method, App::Document* doc, App::DocumentObject* obj)
+void Tessellation::setFaceColors(int method, App::Document *doc, App::DocumentObject *obj)
 {
     // if Standard mesher is used and face colors should be applied
     if (method == Standard) {
         if (ui->meshShapeColors->isChecked()) {
-            Gui::ViewProvider* vpm = Gui::Application::Instance->getViewProvider
-                    (doc->getActiveObject());
-            MeshGui::ViewProviderMesh* vpmesh = dynamic_cast<MeshGui::ViewProviderMesh*>(vpm);
+            Gui::ViewProvider *vpm =
+                Gui::Application::Instance->getViewProvider(doc->getActiveObject());
+            MeshGui::ViewProviderMesh *vpmesh = dynamic_cast<MeshGui::ViewProviderMesh *>(vpm);
 
             auto svp = Base::freecad_dynamic_cast<PartGui::ViewProviderPartExt>(
-                    Gui::Application::Instance->getViewProvider(obj));
+                Gui::Application::Instance->getViewProvider(obj));
             if (vpmesh && svp) {
                 std::vector<App::Color> diff_col = svp->DiffuseColor.getValues();
-                if (ui->groupsFaceColors->isChecked()) {
-                    diff_col = getUniqueColors(diff_col);
-                }
+                if (ui->groupsFaceColors->isChecked()) { diff_col = getUniqueColors(diff_col); }
                 vpmesh->highlightSegments(diff_col);
             }
         }
     }
 }
 
-std::vector<App::Color> Tessellation::getUniqueColors(const std::vector<App::Color>& colors) const
+std::vector<App::Color> Tessellation::getUniqueColors(const std::vector<App::Color> &colors) const
 {
     // unique colors
     std::set<uint32_t> col_set;
-    for (const auto& it : colors)
-        col_set.insert(it.getPackedValue());
+    for (const auto &it : colors) col_set.insert(it.getPackedValue());
 
     std::vector<App::Color> unique;
-    for (const auto& it : col_set)
-        unique.emplace_back(it);
+    for (const auto &it : col_set) unique.emplace_back(it);
     return unique;
 }
 
-QString Tessellation::getMeshingParameters(int method, App::DocumentObject* obj) const
+QString Tessellation::getMeshingParameters(int method, App::DocumentObject *obj) const
 {
     QString param;
-    if (method == Standard) {
-        param = getStandardParameters(obj);
-    }
+    if (method == Standard) { param = getStandardParameters(obj); }
     else if (method == Mefisto) {
         param = getMefistoParameters();
     }
@@ -390,7 +363,7 @@ QString Tessellation::getMeshingParameters(int method, App::DocumentObject* obj)
     return param;
 }
 
-QString Tessellation::getStandardParameters(App::DocumentObject* obj) const
+QString Tessellation::getStandardParameters(App::DocumentObject *obj) const
 {
     double devFace = ui->spinSurfaceDeviation->value().getValue();
     double devAngle = ui->spinAngularDeviation->value().getValue();
@@ -402,14 +375,13 @@ QString Tessellation::getStandardParameters(App::DocumentObject* obj) const
                                 "LinearDeflection=%1, "
                                 "AngularDeflection=%2, "
                                 "Relative=%3")
-        .arg(devFace)
-        .arg(devAngle)
-        .arg(relative ? QString::fromLatin1("True") : QString::fromLatin1("False"));
-    if (ui->meshShapeColors->isChecked())
-        param += QString::fromLatin1(",Segments=True");
+                .arg(devFace)
+                .arg(devAngle)
+                .arg(relative ? QString::fromLatin1("True") : QString::fromLatin1("False"));
+    if (ui->meshShapeColors->isChecked()) param += QString::fromLatin1(",Segments=True");
 
     auto svp = Base::freecad_dynamic_cast<PartGui::ViewProviderPartExt>(
-            Gui::Application::Instance->getViewProvider(obj));
+        Gui::Application::Instance->getViewProvider(obj));
     if (ui->groupsFaceColors->isChecked() && svp) {
         // TODO: currently, we can only retrieve part feature
         // color. The problem is that if the feature is linked,
@@ -422,7 +394,8 @@ QString Tessellation::getStandardParameters(App::DocumentObject* obj) const
         //
         // PartGui::ViewProviderPartExt::getShapeColors().
         //
-        param += QString::fromLatin1(",GroupColors=Gui.getDocument('%1').getObject('%2').DiffuseColor")
+        param +=
+            QString::fromLatin1(",GroupColors=Gui.getDocument('%1').getObject('%2').DiffuseColor")
                 .arg(QString::fromLatin1(obj->getDocument()->getName()),
                      QString::fromLatin1(obj->getNameInDocument()));
     }
@@ -433,8 +406,7 @@ QString Tessellation::getStandardParameters(App::DocumentObject* obj) const
 QString Tessellation::getMefistoParameters() const
 {
     double maxEdge = ui->spinMaximumEdgeLength->value().getValue();
-    if (!ui->spinMaximumEdgeLength->isEnabled())
-        maxEdge = 0;
+    if (!ui->spinMaximumEdgeLength->isEnabled()) maxEdge = 0;
     return QString::fromLatin1("Shape=__shape__,MaxLength=%1").arg(maxEdge);
 }
 
@@ -450,21 +422,22 @@ QString Tessellation::getNetgenParameters() const
     bool allowquad = ui->checkQuadDominated->isChecked();
     if (fineness < 5) {
         param = QString::fromLatin1("Shape=__shape__,"
-            "Fineness=%1,SecondOrder=%2,Optimize=%3,AllowQuad=%4")
-            .arg(fineness)
-            .arg(secondOrder ? 1 : 0)
-            .arg(optimize ? 1 : 0)
-            .arg(allowquad ? 1 : 0);
+                                    "Fineness=%1,SecondOrder=%2,Optimize=%3,AllowQuad=%4")
+                    .arg(fineness)
+                    .arg(secondOrder ? 1 : 0)
+                    .arg(optimize ? 1 : 0)
+                    .arg(allowquad ? 1 : 0);
     }
     else {
         param = QString::fromLatin1("Shape=__shape__,"
-            "GrowthRate=%1,SegPerEdge=%2,SegPerRadius=%3,SecondOrder=%4,Optimize=%5,AllowQuad=%6")
-            .arg(growthRate)
-            .arg(nbSegPerEdge)
-            .arg(nbSegPerRadius)
-            .arg(secondOrder ? 1 : 0)
-            .arg(optimize ? 1 : 0)
-            .arg(allowquad ? 1 : 0);
+                                    "GrowthRate=%1,SegPerEdge=%2,SegPerRadius=%3,SecondOrder=%4,"
+                                    "Optimize=%5,AllowQuad=%6")
+                    .arg(growthRate)
+                    .arg(nbSegPerEdge)
+                    .arg(nbSegPerRadius)
+                    .arg(secondOrder ? 1 : 0)
+                    .arg(optimize ? 1 : 0)
+                    .arg(allowquad ? 1 : 0);
     }
 
     return param;
@@ -472,7 +445,8 @@ QString Tessellation::getNetgenParameters() const
 
 // ---------------------------------------
 
-class Mesh2ShapeGmsh::Private {
+class Mesh2ShapeGmsh::Private
+{
 public:
     std::string label;
     std::list<App::SubObjectT> shapes;
@@ -482,20 +456,17 @@ public:
     std::string geoFile;
 };
 
-Mesh2ShapeGmsh::Mesh2ShapeGmsh(QWidget* parent, Qt::WindowFlags fl)
-  : GmshWidget(parent, fl)
-  , d(new Private())
+Mesh2ShapeGmsh::Mesh2ShapeGmsh(QWidget *parent, Qt::WindowFlags fl)
+    : GmshWidget(parent, fl), d(new Private())
 {
     d->cadFile = App::Application::getTempFileName() + "mesh.brep";
     d->stlFile = App::Application::getTempFileName() + "mesh.stl";
     d->geoFile = App::Application::getTempFileName() + "mesh.geo";
 }
 
-Mesh2ShapeGmsh::~Mesh2ShapeGmsh()
-{
-}
+Mesh2ShapeGmsh::~Mesh2ShapeGmsh() {}
 
-void Mesh2ShapeGmsh::process(App::Document* doc, const std::list<App::SubObjectT>& objs)
+void Mesh2ShapeGmsh::process(App::Document *doc, const std::list<App::SubObjectT> &objs)
 {
     d->doc = doc;
     d->shapes = objs;
@@ -504,13 +475,13 @@ void Mesh2ShapeGmsh::process(App::Document* doc, const std::list<App::SubObjectT
     accept();
 }
 
-bool Mesh2ShapeGmsh::writeProject(QString& inpFile, QString& outFile)
+bool Mesh2ShapeGmsh::writeProject(QString &inpFile, QString &outFile)
 {
     if (!d->shapes.empty()) {
         App::SubObjectT sub = d->shapes.front();
         d->shapes.pop_front();
 
-        App::DocumentObject* part = sub.getObject();
+        App::DocumentObject *part = sub.getObject();
         if (part) {
             Part::TopoShape shape = Part::Feature::getTopoShape(part, sub.getSubName().c_str());
             shape.exportBrep(d->cadFile.c_str());
@@ -519,40 +490,44 @@ bool Mesh2ShapeGmsh::writeProject(QString& inpFile, QString& outFile)
             // Parameters
             int algorithm = meshingAlgorithm();
             double maxSize = getMaxSize();
-            if (maxSize == 0.0)
-                maxSize = 1.0e22;
+            if (maxSize == 0.0) maxSize = 1.0e22;
             double minSize = getMinSize();
 
             // Gmsh geo file
             Base::FileInfo geo(d->geoFile);
             Base::ofstream geoOut(geo, std::ios::out);
             geoOut << "// geo file for meshing with Gmsh meshing software created by FreeCAD\n"
-                << "// open brep geometry\n"
-                << "Merge \"" << d->cadFile << "\";\n\n"
-                << "// Characteristic Length\n"
-                << "// no boundary layer settings for this mesh\n"
-                << "// min, max Characteristic Length\n"
-                << "Mesh.CharacteristicLengthMax = " << maxSize << ";\n"
-                << "Mesh.CharacteristicLengthMin = " << minSize << ";\n\n"
-                << "// optimize the mesh\n"
-                << "Mesh.Optimize = 1;\n"
-                << "Mesh.OptimizeNetgen = 0;\n"
-                << "// High-order meshes optimization (0=none, 1=optimization, 2=elastic+optimization, 3=elastic, 4=fast curving)\n"
-                << "Mesh.HighOrderOptimize = 0;\n\n"
-                << "// mesh order\n"
-                << "Mesh.ElementOrder = 2;\n"
-                << "// Second order nodes are created by linear interpolation instead by curvilinear\n"
-                << "Mesh.SecondOrderLinear = 1;\n\n"
-                << "// mesh algorithm, only a few algorithms are usable with 3D boundary layer generation\n"
-                << "// 2D mesh algorithm (1=MeshAdapt, 2=Automatic, 5=Delaunay, 6=Frontal, 7=BAMG, 8=DelQuad, 9=Packing of Parallelograms)\n"
-                << "Mesh.Algorithm = " << algorithm << ";\n"
-                << "// 3D mesh algorithm (1=Delaunay, 2=New Delaunay, 4=Frontal, 7=MMG3D, 9=R-tree, 10=HTX)\n"
-                << "Mesh.Algorithm3D = 1;\n\n"
-                << "// meshing\n"
-                << "// set geometrical tolerance (also used for merging nodes)\n"
-                << "Geometry.Tolerance = 1e-06;\n"
-                << "Mesh  2;\n"
-                << "Coherence Mesh; // Remove duplicate vertices\n";
+                   << "// open brep geometry\n"
+                   << "Merge \"" << d->cadFile << "\";\n\n"
+                   << "// Characteristic Length\n"
+                   << "// no boundary layer settings for this mesh\n"
+                   << "// min, max Characteristic Length\n"
+                   << "Mesh.CharacteristicLengthMax = " << maxSize << ";\n"
+                   << "Mesh.CharacteristicLengthMin = " << minSize << ";\n\n"
+                   << "// optimize the mesh\n"
+                   << "Mesh.Optimize = 1;\n"
+                   << "Mesh.OptimizeNetgen = 0;\n"
+                   << "// High-order meshes optimization (0=none, 1=optimization, "
+                      "2=elastic+optimization, 3=elastic, 4=fast curving)\n"
+                   << "Mesh.HighOrderOptimize = 0;\n\n"
+                   << "// mesh order\n"
+                   << "Mesh.ElementOrder = 2;\n"
+                   << "// Second order nodes are created by linear interpolation instead by "
+                      "curvilinear\n"
+                   << "Mesh.SecondOrderLinear = 1;\n\n"
+                   << "// mesh algorithm, only a few algorithms are usable with 3D boundary layer "
+                      "generation\n"
+                   << "// 2D mesh algorithm (1=MeshAdapt, 2=Automatic, 5=Delaunay, 6=Frontal, "
+                      "7=BAMG, 8=DelQuad, 9=Packing of Parallelograms)\n"
+                   << "Mesh.Algorithm = " << algorithm << ";\n"
+                   << "// 3D mesh algorithm (1=Delaunay, 2=New Delaunay, 4=Frontal, 7=MMG3D, "
+                      "9=R-tree, 10=HTX)\n"
+                   << "Mesh.Algorithm3D = 1;\n\n"
+                   << "// meshing\n"
+                   << "// set geometrical tolerance (also used for merging nodes)\n"
+                   << "Geometry.Tolerance = 1e-06;\n"
+                   << "Mesh  2;\n"
+                   << "Coherence Mesh; // Remove duplicate vertices\n";
             geoOut.close();
 
             inpFile = QString::fromUtf8(d->geoFile.c_str());
@@ -562,9 +537,8 @@ bool Mesh2ShapeGmsh::writeProject(QString& inpFile, QString& outFile)
         }
     }
     else {
-        App::Document* doc = d->doc.getDocument();
-        if (doc)
-            doc->commitTransaction();
+        App::Document *doc = d->doc.getDocument();
+        if (doc) doc->commitTransaction();
 
         Q_EMIT processed();
     }
@@ -574,9 +548,8 @@ bool Mesh2ShapeGmsh::writeProject(QString& inpFile, QString& outFile)
 
 bool Mesh2ShapeGmsh::loadOutput()
 {
-    App::Document* doc = d->doc.getDocument();
-    if (!doc)
-        return false;
+    App::Document *doc = d->doc.getDocument();
+    if (!doc) return false;
 
     // Now read-in the mesh
     Base::FileInfo stl(d->stlFile);
@@ -589,7 +562,7 @@ bool Mesh2ShapeGmsh::loadOutput()
     stlIn.close();
     kernel.harmonizeNormals();
 
-    Mesh::Feature* fea = static_cast<Mesh::Feature*>(doc->addObject("Mesh::Feature", "Mesh"));
+    Mesh::Feature *fea = static_cast<Mesh::Feature *>(doc->addObject("Mesh::Feature", "Mesh"));
     fea->Label.setValue(d->label);
     fea->Mesh.setValue(kernel.getKernel());
     stl.deleteFile();
@@ -606,9 +579,9 @@ bool Mesh2ShapeGmsh::loadOutput()
 TaskTessellation::TaskTessellation()
 {
     widget = new Tessellation();
-    Gui::TaskView::TaskBox* taskbox = new Gui::TaskView::TaskBox(
-        QPixmap()/*Gui::BitmapFactory().pixmap("MeshPart_Mesher")*/,
-        widget->windowTitle(), true, nullptr);
+    Gui::TaskView::TaskBox *taskbox =
+        new Gui::TaskView::TaskBox(QPixmap() /*Gui::BitmapFactory().pixmap("MeshPart_Mesher")*/,
+                                   widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
@@ -618,22 +591,12 @@ TaskTessellation::~TaskTessellation()
     // automatically deleted in the sub-class
 }
 
-void TaskTessellation::open()
-{
-}
+void TaskTessellation::open() {}
 
-void TaskTessellation::clicked(int)
-{
-}
+void TaskTessellation::clicked(int) {}
 
-bool TaskTessellation::accept()
-{
-    return widget->accept();
-}
+bool TaskTessellation::accept() { return widget->accept(); }
 
-bool TaskTessellation::reject()
-{
-    return true;
-}
+bool TaskTessellation::reject() { return true; }
 
 #include "moc_Tessellation.cpp"

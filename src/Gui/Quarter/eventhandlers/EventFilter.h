@@ -39,29 +39,37 @@
 class QEvent;
 class QPoint;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
 class InputDevice;
 
-class QUARTER_DLL_API EventFilter : public QObject {
-  Q_OBJECT
+class QUARTER_DLL_API EventFilter: public QObject
+{
+    Q_OBJECT
 
 public:
-  EventFilter(QObject * parent);
-  ~EventFilter();
+    EventFilter(QObject *parent);
+    ~EventFilter();
 
-  void registerInputDevice(InputDevice * device);
-  void unregisterInputDevice(InputDevice * device);
+    void registerInputDevice(InputDevice *device);
+    void unregisterInputDevice(InputDevice *device);
 
-  const QPoint & globalMousePosition() const;
+    const QPoint &globalMousePosition() const;
 
 protected:
-  bool eventFilter(QObject * obj, QEvent * event);
+    bool eventFilter(QObject *obj, QEvent *event);
 
 private:
-  class EventFilterP * pimpl;
+    class EventFilterP *pimpl;
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_EVENTFILTER_H

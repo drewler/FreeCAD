@@ -38,19 +38,27 @@ class SbImage;
 class SbString;
 class QImage;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
-class ImageReader {
+class ImageReader
+{
 public:
-  ImageReader();
-  ~ImageReader();
+    ImageReader();
+    ~ImageReader();
 
-  SbBool readImage(const SbString & filename, SbImage & image) const;
+    SbBool readImage(const SbString &filename, SbImage &image) const;
 
 private:
-  static SbBool readImageCB(const SbString & filename, SbImage * image, void * closure);
+    static SbBool readImageCB(const SbString &filename, SbImage *image, void *closure);
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_IMAGELOADER_H

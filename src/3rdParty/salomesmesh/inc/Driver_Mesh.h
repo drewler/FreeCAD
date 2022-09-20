@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  SMESH Driver : implementation of driver for reading and writing  
+//  SMESH Driver : implementation of driver for reading and writing
 //  File   : Mesh_Reader.h
 //  Module : SMESH
 //
@@ -33,51 +33,51 @@
 #include <vector>
 
 #ifdef WIN32
- #if defined MESHDRIVER_EXPORTS || defined MeshDriver_EXPORTS
-  #define MESHDRIVER_EXPORT __declspec( dllexport )
- #else
-  #define MESHDRIVER_EXPORT __declspec( dllimport )
- #endif
+#if defined MESHDRIVER_EXPORTS || defined MeshDriver_EXPORTS
+#define MESHDRIVER_EXPORT __declspec(dllexport)
 #else
- #define MESHDRIVER_EXPORT
+#define MESHDRIVER_EXPORT __declspec(dllimport)
+#endif
+#else
+#define MESHDRIVER_EXPORT
 #endif
 
 class MESHDRIVER_EXPORT Driver_Mesh
 {
- public:
-  Driver_Mesh();
-  virtual ~Driver_Mesh(){}
+public:
+    Driver_Mesh();
+    virtual ~Driver_Mesh() {}
 
-  enum Status {
-    DRS_OK,
-    DRS_EMPTY,          // a file contains no mesh with the given name
-    DRS_WARN_RENUMBER,  // a file has overlapped ranges of element numbers,
-                        // so the numbers from the file are ignored
-    DRS_WARN_SKIP_ELEM, // some elements were skipped due to incorrect file data
-    DRS_WARN_DESCENDING, // some elements were skipped due to descending connectivity
-    DRS_FAIL            // general failure (exception etc.)
-  };
+    enum Status
+    {
+        DRS_OK,
+        DRS_EMPTY,           // a file contains no mesh with the given name
+        DRS_WARN_RENUMBER,   // a file has overlapped ranges of element numbers,
+                             // so the numbers from the file are ignored
+        DRS_WARN_SKIP_ELEM,  // some elements were skipped due to incorrect file data
+        DRS_WARN_DESCENDING, // some elements were skipped due to descending connectivity
+        DRS_FAIL             // general failure (exception etc.)
+    };
 
-  void                SetMeshId(int theMeshId);
-  virtual void        SetFile(const std::string& theFileName);
-  virtual void        SetMeshName(const std::string& theMeshName);
-  virtual std::string GetMeshName() const;
+    void SetMeshId(int theMeshId);
+    virtual void SetFile(const std::string &theFileName);
+    virtual void SetMeshName(const std::string &theMeshName);
+    virtual std::string GetMeshName() const;
 
-  virtual void        SetOption(const std::string& optionName,
-                                const std::string& optionValue) {}
+    virtual void SetOption(const std::string &optionName, const std::string &optionValue) {}
 
-  virtual Status Perform() = 0;
+    virtual Status Perform() = 0;
 
-  virtual SMESH_ComputeErrorPtr GetError();
+    virtual SMESH_ComputeErrorPtr GetError();
 
- protected:
-  std::string myFile;
-  std::string myMeshName;
-  int         myMeshId;
+protected:
+    std::string myFile;
+    std::string myMeshName;
+    int myMeshId;
 
-  Status addMessage(const std::string& msg, const bool isFatal=false);
-  std::vector< std::string > myErrorMessages;
-  Status                     myStatus;
+    Status addMessage(const std::string &msg, const bool isFatal = false);
+    std::vector<std::string> myErrorMessages;
+    Status myStatus;
 };
 
 #endif

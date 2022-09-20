@@ -23,16 +23,15 @@
 namespace Wm4
 {
 
-template <int ISIZE>
-class RVector2 : public TRVector<2,ISIZE>
+template<int ISIZE> class RVector2: public TRVector<2, ISIZE>
 {
 public:
     // construction
-    RVector2 ();
-    RVector2 (const RVector2& rkV);
+    RVector2();
+    RVector2(const RVector2 &rkV);
 
 #ifdef WM4_USING_VC70
-    RVector2 (const TRVector<2,ISIZE>& rkV)
+    RVector2(const TRVector<2, ISIZE> &rkV)
     {
         // The inline body is here because of an apparent MSVC++ .NET 2002
         // compiler bug.  If placed in the *.inl file, the compiler complains:
@@ -54,22 +53,22 @@ public:
         m_akTuple[1] = rkV[1];
     }
 #else
-    RVector2 (const TRVector<2,ISIZE>& rkV);
+    RVector2(const TRVector<2, ISIZE> &rkV);
 #endif
 
-    RVector2 (const TRational<ISIZE>& rkX, const TRational<ISIZE>& rkY);
+    RVector2(const TRational<ISIZE> &rkX, const TRational<ISIZE> &rkY);
 
     // member access
-    TRational<ISIZE> X () const;
-    TRational<ISIZE>& X ();
-    TRational<ISIZE> Y () const;
-    TRational<ISIZE>& Y ();
+    TRational<ISIZE> X() const;
+    TRational<ISIZE> &X();
+    TRational<ISIZE> Y() const;
+    TRational<ISIZE> &Y();
 
     // assignment
-    RVector2& operator= (const RVector2& rkV);
+    RVector2 &operator=(const RVector2 &rkV);
 
 #ifdef WM4_USING_VC70
-    RVector2& operator= (const TRVector<2,ISIZE>& rkV)
+    RVector2 &operator=(const TRVector<2, ISIZE> &rkV)
     {
         // The inline body is here because of an apparent MSVC++ .NET 2002
         // compiler bug.  If placed in the *.inl file, the compiler complains:
@@ -90,23 +89,23 @@ public:
         return *this;
     }
 #else
-    RVector2& operator= (const TRVector<2,ISIZE>& rkV);
+    RVector2 &operator=(const TRVector<2, ISIZE> &rkV);
 #endif
 
     // returns Dot(this,V)
-    TRational<ISIZE> Dot (const RVector2& rkV) const;
+    TRational<ISIZE> Dot(const RVector2 &rkV) const;
 
     // returns (y,-x)
-    RVector2 Perp () const;
+    RVector2 Perp() const;
 
     // returns Cross((x,y,0),(V.x,V.y,0)) = x*V.y - y*V.x
-    TRational<ISIZE> DotPerp (const RVector2& rkV) const;
+    TRational<ISIZE> DotPerp(const RVector2 &rkV) const;
 
 protected:
-    using TRVector<2,ISIZE>::m_akTuple;
+    using TRVector<2, ISIZE>::m_akTuple;
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4RVector2.inl"
 

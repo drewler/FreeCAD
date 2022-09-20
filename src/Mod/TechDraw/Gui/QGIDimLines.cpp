@@ -53,9 +53,7 @@ QGIDimLines::QGIDimLines()
     m_width = 0.5;
 }
 
-void QGIDimLines::draw()
-{
-}
+void QGIDimLines::draw() {}
 
 QPainterPath QGIDimLines::shape() const
 {
@@ -66,10 +64,7 @@ QPainterPath QGIDimLines::shape() const
     return outline;
 }
 
-double QGIDimLines::getEdgeFuzz() const
-{
-    return PreferencesGui::edgeFuzz();
-}
+double QGIDimLines::getEdgeFuzz() const { return PreferencesGui::edgeFuzz(); }
 
 
 QRectF QGIDimLines::boundingRect() const

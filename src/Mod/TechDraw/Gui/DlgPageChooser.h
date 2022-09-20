@@ -26,17 +26,17 @@
 
 #include <QDialog>
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 class Ui_DlgPageChooser;
-class TechDrawGuiExport DlgPageChooser : public QDialog
+class TechDrawGuiExport DlgPageChooser: public QDialog
 {
     Q_OBJECT
 
 public:
-    DlgPageChooser(const std::vector<std::string> labels,
-                   const std::vector<std::string> names,
-                   QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    DlgPageChooser(const std::vector<std::string> labels, const std::vector<std::string> names,
+                   QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgPageChooser();
 
     std::string getSelection() const;
@@ -48,11 +48,10 @@ private Q_SLOTS:
 private:
     void fillList(std::vector<std::string> labels, std::vector<std::string> names);
 
-    Ui_DlgPageChooser* ui;
+    Ui_DlgPageChooser *ui;
 };
 
-} // namespace Gui
+} // namespace TechDrawGui
 
 
 #endif // GUI_DLGPAGECHOOSER_H
-

@@ -45,28 +45,26 @@ using namespace std;
 
 //=======================================================================
 //function : StdMeshers_PolygonPerFace_2D
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-StdMeshers_PolygonPerFace_2D::StdMeshers_PolygonPerFace_2D(int        hypId,
-                                                           int        studyId,
-                                                           SMESH_Gen* gen)
-  :SMESH_2D_Algo(hypId, studyId, gen)
+StdMeshers_PolygonPerFace_2D::StdMeshers_PolygonPerFace_2D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_2D_Algo(hypId, studyId, gen)
 {
-  _name = "PolygonPerFace_2D";
+    _name = "PolygonPerFace_2D";
 }
 
 //=======================================================================
 //function : CheckHypothesis
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_PolygonPerFace_2D::CheckHypothesis(SMESH_Mesh&                          theMesh,
-                                                   const TopoDS_Shape&                  theShape,
-                                                   SMESH_Hypothesis::Hypothesis_Status& theStatus)
+bool StdMeshers_PolygonPerFace_2D::CheckHypothesis(SMESH_Mesh &theMesh,
+                                                   const TopoDS_Shape &theShape,
+                                                   SMESH_Hypothesis::Hypothesis_Status &theStatus)
 {
-  theStatus = HYP_OK;
-  return true;
+    theStatus = HYP_OK;
+    return true;
 }
 
 //=======================================================================
@@ -74,92 +72,77 @@ bool StdMeshers_PolygonPerFace_2D::CheckHypothesis(SMESH_Mesh&                  
 //purpose  :
 //=======================================================================
 
-bool StdMeshers_PolygonPerFace_2D::Compute(SMESH_Mesh&         theMesh,
-                                           const TopoDS_Shape& theShape)
+bool StdMeshers_PolygonPerFace_2D::Compute(SMESH_Mesh &theMesh, const TopoDS_Shape &theShape)
 {
-  const TopoDS_Face& face = TopoDS::Face( theShape );
+    const TopoDS_Face &face = TopoDS::Face(theShape);
 
-  SMESH_MesherHelper helper( theMesh );
-  helper.SetElementsOnShape( true );
-  _quadraticMesh = helper.IsQuadraticSubMesh( face );
+    SMESH_MesherHelper helper(theMesh);
+    helper.SetElementsOnShape(true);
+    _quadraticMesh = helper.IsQuadraticSubMesh(face);
 
-  SMESH_ProxyMesh::Ptr proxyMesh = StdMeshers_ViscousLayers2D::Compute( theMesh, face );
-  if ( !proxyMesh )
-    return false;
+    SMESH_ProxyMesh::Ptr proxyMesh = StdMeshers_ViscousLayers2D::Compute(theMesh, face);
+    if (!proxyMesh) return false;
 
-  TError erorr;
-  TSideVector wires = StdMeshers_FaceSide::GetFaceWires(face, theMesh,
-                                                        /*skipMediumNodes=*/_quadraticMesh,
-                                                        erorr, proxyMesh,
-                                                        /*checkVertexNodes=*/false);
-  if ( wires.size() != 1 )
-    return error( COMPERR_BAD_SHAPE, SMESH_Comment("One wire required, not ") << wires.size() );
+    TError erorr;
+    TSideVector wires =
+        StdMeshers_FaceSide::GetFaceWires(face, theMesh,
+                                          /*skipMediumNodes=*/_quadraticMesh, erorr, proxyMesh,
+                                          /*checkVertexNodes=*/false);
+    if (wires.size() != 1)
+        return error(COMPERR_BAD_SHAPE, SMESH_Comment("One wire required, not ") << wires.size());
 
-  vector<const SMDS_MeshNode*> nodes = wires[0]->GetOrderedNodes();
-  int nbNodes = int( nodes.size() ) - 1; // 1st node is repeated at end
+    vector<const SMDS_MeshNode *> nodes = wires[0]->GetOrderedNodes();
+    int nbNodes = int(nodes.size()) - 1; // 1st node is repeated at end
 
-  switch ( nbNodes ) {
-  case 3:
-    helper.AddFace( nodes[0], nodes[1], nodes[2] );
-    break;
-  case 4:
-    helper.AddFace( nodes[0], nodes[1], nodes[2], nodes[3] );
-    break;
-  default:
-    if ( nbNodes < 3 )
-      return error( COMPERR_BAD_INPUT_MESH, "Less that 3 nodes on the wire" );
-    nodes.resize( nodes.size() - 1 );
-    helper.AddPolygonalFace ( nodes );
-  }
+    switch (nbNodes) {
+        case 3: helper.AddFace(nodes[0], nodes[1], nodes[2]); break;
+        case 4: helper.AddFace(nodes[0], nodes[1], nodes[2], nodes[3]); break;
+        default:
+            if (nbNodes < 3) return error(COMPERR_BAD_INPUT_MESH, "Less that 3 nodes on the wire");
+            nodes.resize(nodes.size() - 1);
+            helper.AddPolygonalFace(nodes);
+    }
 
-  return true;
+    return true;
 }
 
 //=======================================================================
 //function : Evaluate
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_PolygonPerFace_2D::Evaluate(SMESH_Mesh&         theMesh,
-                                            const TopoDS_Shape& theShape,
-                                            MapShapeNbElems&    theResMap)
+bool StdMeshers_PolygonPerFace_2D::Evaluate(SMESH_Mesh &theMesh, const TopoDS_Shape &theShape,
+                                            MapShapeNbElems &theResMap)
 {
-  // count nb segments
-  int nbLinSegs = 0, nbQuadSegs = 0;
-  TopExp_Explorer edge( theShape, TopAbs_EDGE );
-  for ( ; edge.More(); edge.Next() )
-  {
-    SMESH_subMesh* sm = theMesh.GetSubMesh( edge.Current() );
-    MapShapeNbElems::iterator sm2vec = theResMap.find( sm );
-    if ( sm2vec == theResMap.end() )
-      continue;
-    nbLinSegs  += sm2vec->second.at( SMDSEntity_Edge );
-    nbQuadSegs += sm2vec->second.at( SMDSEntity_Quad_Edge );
-  }
+    // count nb segments
+    int nbLinSegs = 0, nbQuadSegs = 0;
+    TopExp_Explorer edge(theShape, TopAbs_EDGE);
+    for (; edge.More(); edge.Next()) {
+        SMESH_subMesh *sm = theMesh.GetSubMesh(edge.Current());
+        MapShapeNbElems::iterator sm2vec = theResMap.find(sm);
+        if (sm2vec == theResMap.end()) continue;
+        nbLinSegs += sm2vec->second.at(SMDSEntity_Edge);
+        nbQuadSegs += sm2vec->second.at(SMDSEntity_Quad_Edge);
+    }
 
-  std::vector<int> aVec( SMDSEntity_Last, 0 );
-  switch ( nbLinSegs + nbQuadSegs ) {
-  case 3:
-    aVec[ nbQuadSegs ? SMDSEntity_Quad_Triangle : SMDSEntity_Triangle ] = 1;
-    break;
-  case 4:
-    aVec[ nbQuadSegs ? SMDSEntity_Quad_Quadrangle : SMDSEntity_Quadrangle ] = 1;
-    break;
-  default:
-    if ( nbLinSegs + nbQuadSegs < 3 )
-      return error( COMPERR_BAD_INPUT_MESH, "Less that 3 nodes on the wire" );  
+    std::vector<int> aVec(SMDSEntity_Last, 0);
+    switch (nbLinSegs + nbQuadSegs) {
+        case 3: aVec[nbQuadSegs ? SMDSEntity_Quad_Triangle : SMDSEntity_Triangle] = 1; break;
+        case 4: aVec[nbQuadSegs ? SMDSEntity_Quad_Quadrangle : SMDSEntity_Quadrangle] = 1; break;
+        default:
+            if (nbLinSegs + nbQuadSegs < 3)
+                return error(COMPERR_BAD_INPUT_MESH, "Less that 3 nodes on the wire");
 #ifndef VTK_NO_QUAD_POLY
-    aVec[ nbQuadSegs ? SMDSEntity_Quad_Polygon : SMDSEntity_Polygon ] = 1;
+            aVec[nbQuadSegs ? SMDSEntity_Quad_Polygon : SMDSEntity_Polygon] = 1;
 #else
-    if(nbQuadSegs)
-        throw SALOME_Exception("Quadratic polygon not supported with VTK <6.2");
-    
-    aVec[ SMDSEntity_Polygon ] = 1;
+            if (nbQuadSegs) throw SALOME_Exception("Quadratic polygon not supported with VTK <6.2");
+
+            aVec[SMDSEntity_Polygon] = 1;
 #endif
-  }
+    }
 
-  SMESH_subMesh * sm = theMesh.GetSubMesh(theShape);
-  theResMap.insert(std::make_pair(sm,aVec));
+    SMESH_subMesh *sm = theMesh.GetSubMesh(theShape);
+    theResMap.insert(std::make_pair(sm, aVec));
 
-  return true;
+    return true;
 }

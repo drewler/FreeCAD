@@ -38,17 +38,8 @@
 using namespace TechDraw;
 
 // returns a string which represents the object e.g. when printed in python
-std::string DrawRichAnnoPy::representation() const
-{
-    return std::string("<DrawRichAnno object>");
-}
+std::string DrawRichAnnoPy::representation() const { return std::string("<DrawRichAnno object>"); }
 
-PyObject *DrawRichAnnoPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *DrawRichAnnoPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int DrawRichAnnoPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int DrawRichAnnoPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

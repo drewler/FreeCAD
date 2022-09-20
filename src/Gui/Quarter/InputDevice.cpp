@@ -50,10 +50,7 @@ using namespace SIM::Coin3D::Quarter;
   devices.
 */
 
-InputDevice::InputDevice() : quarter(nullptr)
-{
-  this->mousepos = SbVec2s(0, 0);
-}
+InputDevice::InputDevice() : quarter(nullptr) { this->mousepos = SbVec2s(0, 0); }
 
 InputDevice::InputDevice(QuarterWidget *quarter) : quarter(quarter)
 {
@@ -66,22 +63,14 @@ InputDevice::InputDevice(QuarterWidget *quarter) : quarter(quarter)
   \param[in] pos position of mouse in pixelcoordinates
 */
 
-void
-InputDevice::setMousePosition(const SbVec2s & pos)
-{
-  this->mousepos = pos;
-}
+void InputDevice::setMousePosition(const SbVec2s &pos) { this->mousepos = pos; }
 
 /*!
   Sets the window size of the owning window
 
   \param[in] size in pixels
 */
-void
-InputDevice::setWindowSize(const SbVec2s & size)
-{
-  this->windowsize = size;
-}
+void InputDevice::setWindowSize(const SbVec2s &size) { this->windowsize = size; }
 
 /*!
   Transforms a qevent into an soevent
@@ -89,18 +78,17 @@ InputDevice::setWindowSize(const SbVec2s & size)
   \param[in,out] soevent the transformed event
   \param[in] qevent incoming qevent
 */
-void
-InputDevice::setModifiers(SoEvent * soevent, const QInputEvent * qevent)
+void InputDevice::setModifiers(SoEvent *soevent, const QInputEvent *qevent)
 {
-  // FIXME: How do we get the time from the qevent? (20070306 frodo)
-  soevent->setTime(SbTime::getTimeOfDay());
+    // FIXME: How do we get the time from the qevent? (20070306 frodo)
+    soevent->setTime(SbTime::getTimeOfDay());
 
-  // Note: On Mac OS X, the ControlModifier value corresponds to the
-  // Command keys on the Macintosh keyboard, and the MetaModifier
-  // value corresponds to the Control keys.
-  soevent->setShiftDown(qevent->modifiers() & Qt::ShiftModifier);
-  soevent->setAltDown(qevent->modifiers() & Qt::AltModifier);
-  soevent->setCtrlDown(qevent->modifiers() & Qt::ControlModifier);
+    // Note: On Mac OS X, the ControlModifier value corresponds to the
+    // Command keys on the Macintosh keyboard, and the MetaModifier
+    // value corresponds to the Control keys.
+    soevent->setShiftDown(qevent->modifiers() & Qt::ShiftModifier);
+    soevent->setAltDown(qevent->modifiers() & Qt::AltModifier);
+    soevent->setCtrlDown(qevent->modifiers() & Qt::ControlModifier);
 }
 
 /*!

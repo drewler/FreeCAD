@@ -27,19 +27,12 @@ using namespace std;
 
 int UNV::PrefixPrinter::myCounter = 0;
 
-UNV::PrefixPrinter::PrefixPrinter()
-{
-  myCounter++;
-}
+UNV::PrefixPrinter::PrefixPrinter() { myCounter++; }
 
-UNV::PrefixPrinter::~PrefixPrinter()
-{
-  myCounter--;
-}
+UNV::PrefixPrinter::~PrefixPrinter() { myCounter--; }
 
 string UNV::PrefixPrinter::GetPrefix()
 {
-  if(myCounter)
-    return string(myCounter*2,' ');
-  return "";
+    if (myCounter) return string(myCounter * 2, ' ');
+    return "";
 }

@@ -40,11 +40,9 @@ using namespace Gui;
 
 TYPESYSTEM_SOURCE_ABSTRACT(Gui::SelectionObject, Base::BaseClass)
 
-SelectionObject::SelectionObject()
-{
-}
+SelectionObject::SelectionObject() {}
 
-SelectionObject::SelectionObject(const Gui::SelectionChanges& msg)
+SelectionObject::SelectionObject(const Gui::SelectionChanges &msg)
 {
     FeatName = msg.pObjectName ? msg.pObjectName : "";
     DocName = msg.pDocName ? msg.pDocName : "";
@@ -55,54 +53,50 @@ SelectionObject::SelectionObject(const Gui::SelectionChanges& msg)
     }
 }
 
-SelectionObject::SelectionObject(App::DocumentObject* obj)
+SelectionObject::SelectionObject(App::DocumentObject *obj)
 {
     FeatName = obj->getNameInDocument();
     DocName = obj->getDocument()->getName();
     TypeName = obj->getTypeId().getName();
 }
 
-SelectionObject::~SelectionObject()
-{
-}
+SelectionObject::~SelectionObject() {}
 
-const App::DocumentObject * SelectionObject::getObject() const
+const App::DocumentObject *SelectionObject::getObject() const
 {
     if (!DocName.empty()) {
         App::Document *doc = App::GetApplication().getDocument(DocName.c_str());
-        if (doc && !FeatName.empty())
-            return doc->getObject(FeatName.c_str());
+        if (doc && !FeatName.empty()) return doc->getObject(FeatName.c_str());
     }
     return nullptr;
 }
 
-App::DocumentObject * SelectionObject::getObject()
+App::DocumentObject *SelectionObject::getObject()
 {
     if (!DocName.empty()) {
         App::Document *doc = App::GetApplication().getDocument(DocName.c_str());
-        if (doc && !FeatName.empty())
-            return doc->getObject(FeatName.c_str());
+        if (doc && !FeatName.empty()) return doc->getObject(FeatName.c_str());
     }
     return nullptr;
 }
 
-bool SelectionObject::isObjectTypeOf(const Base::Type& typeId) const
+bool SelectionObject::isObjectTypeOf(const Base::Type &typeId) const
 {
-    const App::DocumentObject* obj = getObject();
+    const App::DocumentObject *obj = getObject();
     return (obj && obj->getTypeId().isDerivedFrom(typeId));
 }
 
-std::string SelectionObject::getAsPropertyLinkSubString()const
+std::string SelectionObject::getAsPropertyLinkSubString() const
 {
     std::ostringstream str;
     str << "(" << Gui::Command::getObjectCmd(getObject()) << ",[";
-    for(std::vector<std::string>::const_iterator it = SubNames.begin();it!=SubNames.end();++it)
+    for (std::vector<std::string>::const_iterator it = SubNames.begin(); it != SubNames.end(); ++it)
         str << "'" << *it << "',";
     str << "])";
     return str.str();
 }
 
-PyObject* SelectionObject::getPyObject()
+PyObject *SelectionObject::getPyObject()
 {
     return new SelectionObjectPy(new SelectionObject(*this));
 }

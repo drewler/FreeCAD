@@ -52,13 +52,13 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_LocalLength::StdMeshers_LocalLength(int hypId, int studyId, SMESH_Gen * gen)
-  :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_LocalLength::StdMeshers_LocalLength(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _length = 1.;
-  _precision = Precision::Confusion();
-  _name = "LocalLength";
-  _param_algo_dim = 1; // is used by SMESH_Regular_1D
+    _length = 1.;
+    _precision = Precision::Confusion();
+    _name = "LocalLength";
+    _param_algo_dim = 1; // is used by SMESH_Regular_1D
 }
 
 //=============================================================================
@@ -67,9 +67,7 @@ StdMeshers_LocalLength::StdMeshers_LocalLength(int hypId, int studyId, SMESH_Gen
  */
 //=============================================================================
 
-StdMeshers_LocalLength::~StdMeshers_LocalLength()
-{
-}
+StdMeshers_LocalLength::~StdMeshers_LocalLength() {}
 
 //=============================================================================
 /*!
@@ -79,13 +77,11 @@ StdMeshers_LocalLength::~StdMeshers_LocalLength()
 
 void StdMeshers_LocalLength::SetLength(double length)
 {
-  double oldLength = _length;
-  if (length <= 0)
-    throw SALOME_Exception(LOCALIZED("length must be positive"));
-  _length = length;
-  const double precision = 1e-7;
-  if (fabs(oldLength - _length) > precision)
-    NotifySubMeshesHypothesisModification();
+    double oldLength = _length;
+    if (length <= 0) throw SALOME_Exception(LOCALIZED("length must be positive"));
+    _length = length;
+    const double precision = 1e-7;
+    if (fabs(oldLength - _length) > precision) NotifySubMeshesHypothesisModification();
 }
 
 //=============================================================================
@@ -94,9 +90,20 @@ void StdMeshers_LocalLength::SetLength(double length)
  */
 //=============================================================================
 
-double StdMeshers_LocalLength::GetLength() const
+double StdMeshers_LocalLength::GetLength() const { return _length; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+void StdMeshers_LocalLength::SetPrecision(double thePrecision)
 {
-  return _length;
+    double oldPrecision = _precision;
+    if (_precision < 0) throw SALOME_Exception(LOCALIZED("precision cannot be negative"));
+    _precision = thePrecision;
+    const double precision = 1e-8;
+    if (fabs(oldPrecision - _precision) > precision) NotifySubMeshesHypothesisModification();
 }
 
 //=============================================================================
@@ -104,26 +111,7 @@ double StdMeshers_LocalLength::GetLength() const
  *  
  */
 //=============================================================================
-void StdMeshers_LocalLength::SetPrecision (double thePrecision)
-{
-  double oldPrecision = _precision;
-  if (_precision < 0)
-    throw SALOME_Exception(LOCALIZED("precision cannot be negative"));
-  _precision = thePrecision;
-  const double precision = 1e-8;
-  if (fabs(oldPrecision - _precision) > precision)
-    NotifySubMeshesHypothesisModification();
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-double StdMeshers_LocalLength::GetPrecision() const
-{
-  return _precision;
-}
+double StdMeshers_LocalLength::GetPrecision() const { return _precision; }
 
 //=============================================================================
 /*!
@@ -131,10 +119,10 @@ double StdMeshers_LocalLength::GetPrecision() const
  */
 //=============================================================================
 
-ostream & StdMeshers_LocalLength::SaveTo(ostream & save)
+ostream &StdMeshers_LocalLength::SaveTo(ostream &save)
 {
-  save << this->_length << " " << this->_precision;
-  return save;
+    save << this->_length << " " << this->_precision;
+    return save;
 }
 
 //=============================================================================
@@ -143,28 +131,25 @@ ostream & StdMeshers_LocalLength::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_LocalLength::LoadFrom(istream & load)
+istream &StdMeshers_LocalLength::LoadFrom(istream &load)
 {
-  bool isOK = true;
-  double a;
+    bool isOK = true;
+    double a;
 
-  isOK = (bool)(load >> a);
-  if (isOK)
-    this->_length = a;
-  else
-    load.clear(ios::badbit | load.rdstate());
+    isOK = (bool)(load >> a);
+    if (isOK) this->_length = a;
+    else
+        load.clear(ios::badbit | load.rdstate());
 
-  isOK = (bool)(load >> a);
-  if (isOK)
-    this->_precision = a;
-  else
-  {
-    load.clear(ios::badbit | load.rdstate());
-    // old format, without precision
-    _precision = 0.;
-  }
+    isOK = (bool)(load >> a);
+    if (isOK) this->_precision = a;
+    else {
+        load.clear(ios::badbit | load.rdstate());
+        // old format, without precision
+        _precision = 0.;
+    }
 
-  return load;
+    return load;
 }
 
 //=============================================================================
@@ -173,10 +158,7 @@ istream & StdMeshers_LocalLength::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_LocalLength & hyp)
-{
-  return hyp.SaveTo( save );
-}
+ostream &operator<<(ostream &save, StdMeshers_LocalLength &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -184,10 +166,7 @@ ostream & operator <<(ostream & save, StdMeshers_LocalLength & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_LocalLength & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+istream &operator>>(istream &load, StdMeshers_LocalLength &hyp) { return hyp.LoadFrom(load); }
 
 //================================================================================
 /*!
@@ -198,43 +177,38 @@ istream & operator >>(istream & load, StdMeshers_LocalLength & hyp)
  */
 //================================================================================
 
-bool StdMeshers_LocalLength::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                 const TopoDS_Shape& theShape)
+bool StdMeshers_LocalLength::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                 const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _length = 0.;
+    _length = 0.;
 
-  Standard_Real UMin, UMax;
-  TopLoc_Location L;
+    Standard_Real UMin, UMax;
+    TopLoc_Location L;
 
-  int nbEdges = 0;
-  TopTools_IndexedMapOfShape edgeMap;
-  TopExp::MapShapes( theShape, TopAbs_EDGE, edgeMap );
-  for ( int iE = 1; iE <= edgeMap.Extent(); ++iE )
-  {
-    const TopoDS_Edge& edge = TopoDS::Edge( edgeMap( iE ));
-    Handle(Geom_Curve) C = BRep_Tool::Curve( edge, L, UMin, UMax );
-    if ( C.IsNull() )
-      continue;
-    GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
+    int nbEdges = 0;
+    TopTools_IndexedMapOfShape edgeMap;
+    TopExp::MapShapes(theShape, TopAbs_EDGE, edgeMap);
+    for (int iE = 1; iE <= edgeMap.Extent(); ++iE) {
+        const TopoDS_Edge &edge = TopoDS::Edge(edgeMap(iE));
+        Handle(Geom_Curve) C = BRep_Tool::Curve(edge, L, UMin, UMax);
+        if (C.IsNull()) continue;
+        GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
 
-    vector< double > params;
-    SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* >( theMesh )->GetMeshDS();
-    if ( SMESH_Algo::GetNodeParamOnEdge( aMeshDS, edge, params ))
-    {
-      for ( int i = 1; i < params.size(); ++i )
-        _length += GCPnts_AbscissaPoint::Length( AdaptCurve, params[ i-1 ], params[ i ]);
-      nbEdges += params.size() - 1;
+        vector<double> params;
+        SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
+        if (SMESH_Algo::GetNodeParamOnEdge(aMeshDS, edge, params)) {
+            for (int i = 1; i < params.size(); ++i)
+                _length += GCPnts_AbscissaPoint::Length(AdaptCurve, params[i - 1], params[i]);
+            nbEdges += params.size() - 1;
+        }
     }
-  }
-  if ( nbEdges )
-    _length /= nbEdges;
+    if (nbEdges) _length /= nbEdges;
 
-  _precision = Precision::Confusion();
+    _precision = Precision::Confusion();
 
-  return nbEdges;
+    return nbEdges;
 }
 //================================================================================
 /*!
@@ -243,9 +217,8 @@ bool StdMeshers_LocalLength::SetParametersByMesh(const SMESH_Mesh*   theMesh,
  */
 //================================================================================
 
-bool StdMeshers_LocalLength::SetParametersByDefaults(const TDefaults&  dflts,
-                                                     const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_LocalLength::SetParametersByDefaults(const TDefaults &dflts,
+                                                     const SMESH_Mesh * /*theMesh*/)
 {
-  return ( _length = dflts._elemLength );
+    return (_length = dflts._elemLength);
 }
-

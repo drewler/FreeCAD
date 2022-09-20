@@ -34,29 +34,27 @@
 
 #if defined(_USE_3DCONNEXION_SDK) || defined(SPNAV_FOUND)
 #if defined(Q_OS_LINUX)
-  #if defined(SPNAV_USE_X11)
-    #include "3Dconnexion/GuiNativeEventLinuxX11.h"
-  #else
-    #include "3Dconnexion/GuiNativeEventLinux.h"
-  #endif
+#if defined(SPNAV_USE_X11)
+#include "3Dconnexion/GuiNativeEventLinuxX11.h"
+#else
+#include "3Dconnexion/GuiNativeEventLinux.h"
+#endif
 #elif defined(Q_OS_WIN)
-  #include "3Dconnexion/GuiNativeEventWin32.h"
+#include "3Dconnexion/GuiNativeEventWin32.h"
 #elif defined(Q_OS_MACX)
-  #include "3Dconnexion/GuiNativeEventMac.h"
+#include "3Dconnexion/GuiNativeEventMac.h"
 #endif // Platform switch
 #endif // Spacemice
 
-Gui::GUIApplicationNativeEventAware::GUIApplicationNativeEventAware(int &argc, char *argv[]) :
-        QApplication (argc, argv), spaceballPresent(false)
+Gui::GUIApplicationNativeEventAware::GUIApplicationNativeEventAware(int &argc, char *argv[])
+    : QApplication(argc, argv), spaceballPresent(false)
 {
 #if defined(_USE_3DCONNEXION_SDK) || defined(SPNAV_FOUND)
     nativeEvent = new Gui::GuiNativeEvent(this);
 #endif
 }
 
-Gui::GUIApplicationNativeEventAware::~GUIApplicationNativeEventAware()
-{
-}
+Gui::GUIApplicationNativeEventAware::~GUIApplicationNativeEventAware() {}
 
 void Gui::GUIApplicationNativeEventAware::initSpaceball(QMainWindow *window)
 {
@@ -77,26 +75,20 @@ bool Gui::GUIApplicationNativeEventAware::processSpaceballEvent(QObject *object,
     }
 
     QApplication::notify(object, event);
-    if (event->type() == Spaceball::MotionEvent::MotionEventType)
-    {
-        auto motionEvent = dynamic_cast<Spaceball::MotionEvent*>(event);
-        if (!motionEvent)
-            return true;
-        if (!motionEvent->isHandled())
-        {
+    if (event->type() == Spaceball::MotionEvent::MotionEventType) {
+        auto motionEvent = dynamic_cast<Spaceball::MotionEvent *>(event);
+        if (!motionEvent) return true;
+        if (!motionEvent->isHandled()) {
             //make a new event and post to parent.
             auto newEvent = new Spaceball::MotionEvent(*motionEvent);
             postEvent(object->parent(), newEvent);
         }
     }
 
-    if (event->type() == Spaceball::ButtonEvent::ButtonEventType)
-    {
-        auto buttonEvent = dynamic_cast<Spaceball::ButtonEvent*>(event);
-        if (!buttonEvent)
-            return true;
-        if (!buttonEvent->isHandled())
-        {
+    if (event->type() == Spaceball::ButtonEvent::ButtonEventType) {
+        auto buttonEvent = dynamic_cast<Spaceball::ButtonEvent *>(event);
+        if (!buttonEvent) return true;
+        if (!buttonEvent->isHandled()) {
             //make a new event and post to parent.
             auto newEvent = new Spaceball::ButtonEvent(*buttonEvent);
             postEvent(object->parent(), newEvent);
@@ -107,10 +99,8 @@ bool Gui::GUIApplicationNativeEventAware::processSpaceballEvent(QObject *object,
 
 void Gui::GUIApplicationNativeEventAware::postMotionEvent(std::vector<int> motionDataArray)
 {
-	auto currentWidget(focusWidget());
-    if (!currentWidget) {
-        return;
-    }
+    auto currentWidget(focusWidget());
+    if (!currentWidget) { return; }
     importSettings(motionDataArray);
 
     auto motionEvent = new Spaceball::MotionEvent();
@@ -121,39 +111,33 @@ void Gui::GUIApplicationNativeEventAware::postMotionEvent(std::vector<int> motio
 
 void Gui::GUIApplicationNativeEventAware::postButtonEvent(int buttonNumber, int buttonPress)
 {
-	auto currentWidget(focusWidget());
-    if (!currentWidget) {
-        return;
-    }
+    auto currentWidget(focusWidget());
+    if (!currentWidget) { return; }
 
     auto buttonEvent = new Spaceball::ButtonEvent();
     buttonEvent->setButtonNumber(buttonNumber);
-    if (buttonPress)
-    {
-	  buttonEvent->setButtonStatus(Spaceball::BUTTON_PRESSED);
-    }
-    else
-    {
-	  buttonEvent->setButtonStatus(Spaceball::BUTTON_RELEASED);
+    if (buttonPress) { buttonEvent->setButtonStatus(Spaceball::BUTTON_PRESSED); }
+    else {
+        buttonEvent->setButtonStatus(Spaceball::BUTTON_RELEASED);
     }
     this->postEvent(currentWidget, buttonEvent);
 }
 
 float Gui::GUIApplicationNativeEventAware::convertPrefToSensitivity(int value)
 {
-    if (value < 0)
-    {
-        return ((0.9/50)*float(value) + 1);
-    }
-    else
-    {
-        return ((2.5/50)*float(value) + 1);
+    if (value < 0) { return ((0.9 / 50) * float(value) + 1); }
+    else {
+        return ((2.5 / 50) * float(value) + 1);
     }
 }
 
-void Gui::GUIApplicationNativeEventAware::importSettings(std::vector<int>& motionDataArray)
+void Gui::GUIApplicationNativeEventAware::importSettings(std::vector<int> &motionDataArray)
 {
-    ParameterGrp::handle group = App::GetApplication().GetUserParameter().GetGroup("BaseApp")->GetGroup("Spaceball")->GetGroup("Motion");
+    ParameterGrp::handle group = App::GetApplication()
+                                     .GetUserParameter()
+                                     .GetGroup("BaseApp")
+                                     ->GetGroup("Spaceball")
+                                     ->GetGroup("Motion");
 
     // Remapping of motion data
     long remap = group->GetInt("Remapping", 12345);
@@ -169,18 +153,18 @@ void Gui::GUIApplicationNativeEventAware::importSettings(std::vector<int>& motio
         std::string::size_type pos2 = std::string("012345").find_first_not_of(str);
         if (pos1 == std::string::npos && pos2 == std::string::npos) {
             std::vector<int> vec(str.size());
-            std::transform(str.begin(), str.end(), vec.begin(), [](char c) -> int { return c - '0';});
+            std::transform(str.begin(), str.end(), vec.begin(),
+                           [](char c) -> int { return c - '0'; });
 
             std::vector<int> copy = motionDataArray;
-            for (int i=0; i<6; i++) {
-                motionDataArray[i] = copy[vec[i]];
-            }
+            for (int i = 0; i < 6; i++) { motionDataArray[i] = copy[vec[i]]; }
         }
     }
 
     // here I import settings from a dialog. For now they are set as is
-    bool  dominant           = group->GetBool("Dominant"); // Is dominant checked
-    bool  flipXY             = group->GetBool("FlipYZ");; // Is Flip X/Y checked
+    bool dominant = group->GetBool("Dominant"); // Is dominant checked
+    bool flipXY = group->GetBool("FlipYZ");
+    ; // Is Flip X/Y checked
     float generalSensitivity = convertPrefToSensitivity(group->GetInt("GlobalSensitivity"));
 
     // array that has stored info about "Enabled" checkboxes of all axes
@@ -193,7 +177,7 @@ void Gui::GUIApplicationNativeEventAware::importSettings(std::vector<int>& motio
     enabled[5] = group->GetBool("Rotations", true) && group->GetBool("SpinEnable", true);
 
     // array that has stored info about "Reversed" checkboxes of all axes
-    bool  reversed[6];
+    bool reversed[6];
     reversed[0] = group->GetBool("PanLRReverse");
     reversed[1] = group->GetBool("PanUDReverse");
     reversed[2] = group->GetBool("ZoomReverse");
@@ -211,21 +195,19 @@ void Gui::GUIApplicationNativeEventAware::importSettings(std::vector<int>& motio
     sensitivity[4] = convertPrefToSensitivity(group->GetInt("RollSensitivity"));
     sensitivity[5] = convertPrefToSensitivity(group->GetInt("SpinSensitivity"));
 
-    if (group->GetBool("Calibrate"))
-    {
-        group->SetInt("CalibrationX",motionDataArray[0]);
-        group->SetInt("CalibrationY",motionDataArray[1]);
-        group->SetInt("CalibrationZ",motionDataArray[2]);
-        group->SetInt("CalibrationXr",motionDataArray[3]);
-        group->SetInt("CalibrationYr",motionDataArray[4]);
-        group->SetInt("CalibrationZr",motionDataArray[5]);
+    if (group->GetBool("Calibrate")) {
+        group->SetInt("CalibrationX", motionDataArray[0]);
+        group->SetInt("CalibrationY", motionDataArray[1]);
+        group->SetInt("CalibrationZ", motionDataArray[2]);
+        group->SetInt("CalibrationXr", motionDataArray[3]);
+        group->SetInt("CalibrationYr", motionDataArray[4]);
+        group->SetInt("CalibrationZr", motionDataArray[5]);
 
         group->RemoveBool("Calibrate");
 
         return;
     }
-    else
-    {
+    else {
         motionDataArray[0] = motionDataArray[0] - group->GetInt("CalibrationX");
         motionDataArray[1] = motionDataArray[1] - group->GetInt("CalibrationY");
         motionDataArray[2] = motionDataArray[2] - group->GetInt("CalibrationZ");
@@ -237,43 +219,43 @@ void Gui::GUIApplicationNativeEventAware::importSettings(std::vector<int>& motio
     int i;
 
     if (flipXY) {
-        bool  tempBool;
+        bool tempBool;
         float tempFloat;
 
-        tempBool   = enabled[1];
+        tempBool = enabled[1];
         enabled[1] = enabled[2];
         enabled[2] = tempBool;
 
-        tempBool   = enabled[4];
+        tempBool = enabled[4];
         enabled[4] = enabled[5];
         enabled[5] = tempBool;
 
 
-        tempBool    = reversed[1];
+        tempBool = reversed[1];
         reversed[1] = reversed[2];
         reversed[2] = tempBool;
 
-        tempBool    = reversed[4];
+        tempBool = reversed[4];
         reversed[4] = reversed[5];
         reversed[5] = tempBool;
 
 
-        tempFloat      = sensitivity[1];
+        tempFloat = sensitivity[1];
         sensitivity[1] = sensitivity[2];
         sensitivity[2] = tempFloat;
 
-        tempFloat      = sensitivity[4];
+        tempFloat = sensitivity[4];
         sensitivity[4] = sensitivity[5];
         sensitivity[5] = tempFloat;
 
 
         i = motionDataArray[1];
         motionDataArray[1] = motionDataArray[2];
-        motionDataArray[2] = - i;
+        motionDataArray[2] = -i;
 
         i = motionDataArray[4];
         motionDataArray[4] = motionDataArray[5];
-        motionDataArray[5] = - i;
+        motionDataArray[5] = -i;
     }
 
     if (dominant) { // if dominant is checked
@@ -283,9 +265,8 @@ void Gui::GUIApplicationNativeEventAware::importSettings(std::vector<int>& motio
             if (abs(motionDataArray[i]) > abs(max)) max = motionDataArray[i];
         }
         for (i = 0; i < 6; ++i) {
-            if ((motionDataArray[i] != max) || (flag)) {
-                motionDataArray[i] = 0;
-            } else if (motionDataArray[i] == max) {
+            if ((motionDataArray[i] != max) || (flag)) { motionDataArray[i] = 0; }
+            else if (motionDataArray[i] == max) {
                 flag = true;
             }
         }
@@ -293,12 +274,11 @@ void Gui::GUIApplicationNativeEventAware::importSettings(std::vector<int>& motio
 
     for (i = 0; i < 6; ++i) {
         if (motionDataArray[i] != 0) {
-            if (!enabled[i])
-                motionDataArray[i] = 0;
+            if (!enabled[i]) motionDataArray[i] = 0;
             else {
-                if (reversed[i])
-                    motionDataArray[i] = - motionDataArray[i];
-                motionDataArray[i] = (int)((float)(motionDataArray[i]) * sensitivity[i] * generalSensitivity);
+                if (reversed[i]) motionDataArray[i] = -motionDataArray[i];
+                motionDataArray[i] =
+                    (int)((float)(motionDataArray[i]) * sensitivity[i] * generalSensitivity);
             }
         }
     }

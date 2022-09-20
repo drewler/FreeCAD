@@ -20,8 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef BASE_PREFERENCEPACKMANAGER_H 
-#define BASE_PREFERENCEPACKMANAGER_H 
+#ifndef BASE_PREFERENCEPACKMANAGER_H
+#define BASE_PREFERENCEPACKMANAGER_H
 
 #include <vector>
 #include <string>
@@ -29,106 +29,104 @@
 
 #include "App/Metadata.h"
 
-namespace Gui {
+namespace Gui
+{
 
-    /**
+/**
      * \class PreferencePack A collection of user preferences stored in files on disk
      */
-    class PreferencePack {
+class PreferencePack
+{
 
-    public:
-
-        /**
+public:
+    /**
          * Construct a preferencePack from a directory
          *
          * \param path A path to a mod directory that contains a preferencePack
          * \param metadata The metadata from the package.xml file describing this preferencePack
          */
-        PreferencePack(const boost::filesystem::path& path, const App::Metadata& metadata);
+    PreferencePack(const boost::filesystem::path &path, const App::Metadata &metadata);
 
-        ~PreferencePack() = default;
+    ~PreferencePack() = default;
 
-        /**
+    /**
          * Get the name of the PreferencePack
          */
-        std::string name() const;
+    std::string name() const;
 
-        /**
+    /**
          * Apply the PreferencePack over the top of the current preferences set
          * \returns True if the preferencePack was applied, or false if not
          */
-        bool apply() const;
-
-        /**
-         * Get the complete metadata object for this preference pack
-         */
-        App::Metadata metadata() const;
-
-    private:
-
-        void applyConfigChanges() const;
-
-        boost::filesystem::path _path;
-        App::Metadata _metadata;
-
-    };
-
-
-
+    bool apply() const;
 
     /**
+         * Get the complete metadata object for this preference pack
+         */
+    App::Metadata metadata() const;
+
+private:
+    void applyConfigChanges() const;
+
+    boost::filesystem::path _path;
+    App::Metadata _metadata;
+};
+
+
+/**
      * \class PreferencePackManager handles storable and loadable collections of user preferences
      * 
      * This class provides some additional utility functions for allowing users to save their current
      * preferences as a PreferencePack based on a set of template files provided either in the main
      * FreeCAD distribution, or inside various installed mods. 
      */
-    class PreferencePackManager {
-    public:
-        PreferencePackManager();
-        ~PreferencePackManager() = default;
+class PreferencePackManager
+{
+public:
+    PreferencePackManager();
+    ~PreferencePackManager() = default;
 
-        /**
+    /**
          * Rescan the preferencePack directory and update the available PreferencePacks
          */
-        void rescan();
+    void rescan();
 
-        /**
+    /**
          * Get an alphabetical list of names of all visible PreferencePacks
          */
-        std::vector<std::string> preferencePackNames() const;
+    std::vector<std::string> preferencePackNames() const;
 
-        /**
+    /**
          * Get a map of all visible PreferencePack names and their associated packs
          */
-        std::map<std::string, PreferencePack> preferencePacks() const;
+    std::map<std::string, PreferencePack> preferencePacks() const;
 
-        /**
+    /**
          * Apply the named preferencePack
          * \return True if the preferencePack was applied, or false if it was not
          */
-        bool apply(const std::string& preferencePackName) const;
+    bool apply(const std::string &preferencePackName) const;
 
-        /**
+    /**
          * Check the visibility of the specified pack
          * \return True if the preferencePack is visible, or false if not. All packs are visible by default,
          * but can be marked as "invisible" (i.e. not returned by the manager in lists of packs) by using the
          * toggleVisibility function.
          */
-        bool isVisible(const std::string& addonName, const std::string& preferencePackName) const;
+    bool isVisible(const std::string &addonName, const std::string &preferencePackName) const;
 
-        /**
+    /**
          * Toggle the visibility of the named preference pack in a named addon
          */
-        void toggleVisibility(const std::string& addonName, const std::string& preferencePackName);
+    void toggleVisibility(const std::string &addonName, const std::string &preferencePackName);
 
-        /**
+    /**
          * Deletes the user-saved pack specified by name
          */
-        void deleteUserPack(const std::string& name);
+    void deleteUserPack(const std::string &name);
 
 
-        /**
+    /**
          * \struct TemplateFile A file containing a set of preferences that can be saved into 
          * a PreferencePack
          *
@@ -168,43 +166,41 @@ namespace Gui {
          * their preferences to a PreferencePack, or even to add additional templates representing
          * sets of core FreeCAD preferences.
          */
-        struct TemplateFile {
-            std::string group; // Generally the Add-On/Mod/Package name
-            std::string name;
-            boost::filesystem::path path;
-        };
+    struct TemplateFile {
+        std::string group; // Generally the Add-On/Mod/Package name
+        std::string name;
+        boost::filesystem::path path;
+    };
 
-        /**
+    /**
          * Save current settings as a (possibly new) preferencePack
          *
          * If the named preferencePack does not exist, this creates it on disk. If it does exist, this overwrites the original.
          */
-        void save(const std::string& name, const std::vector<TemplateFile>& templates);
+    void save(const std::string &name, const std::vector<TemplateFile> &templates);
 
 
-        std::vector<TemplateFile> templateFiles(bool rescan = false);
+    std::vector<TemplateFile> templateFiles(bool rescan = false);
 
-        /**
+    /**
          * Get a list of all available config file backups. Backups are currently stored for one week.
          */
-        std::vector<boost::filesystem::path> configBackups() const;
+    std::vector<boost::filesystem::path> configBackups() const;
 
-    private:
+private:
+    void FindPreferencePacksInPackage(const boost::filesystem::path &mod);
 
-        void FindPreferencePacksInPackage(const boost::filesystem::path& mod);
+    void BackupCurrentConfig() const;
 
-        void BackupCurrentConfig() const;
+    void DeleteOldBackups() const;
 
-        void DeleteOldBackups() const;
+    std::vector<boost::filesystem::path> _preferencePackPaths;
+    std::vector<TemplateFile> _templateFiles;
+    std::map<std::string, PreferencePack> _preferencePacks;
+    mutable std::mutex _mutex;
+};
 
-        std::vector<boost::filesystem::path> _preferencePackPaths;
-        std::vector<TemplateFile> _templateFiles;
-        std::map<std::string, PreferencePack> _preferencePacks;
-        mutable std::mutex _mutex;
-
-    };
-
-}
+} // namespace Gui
 
 Q_DECLARE_METATYPE(Gui::PreferencePackManager::TemplateFile) // So it can be used with QVariant
 

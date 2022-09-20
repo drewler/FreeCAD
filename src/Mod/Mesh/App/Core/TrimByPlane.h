@@ -26,7 +26,8 @@
 #include <Mod/Mesh/App/Core/Elements.h>
 #include <Mod/Mesh/App/Core/MeshKernel.h>
 
-namespace MeshCore {
+namespace MeshCore
+{
 
 /**
  * Trim the facets in 3D with a plane
@@ -35,30 +36,33 @@ namespace MeshCore {
 class MeshExport MeshTrimByPlane
 {
 public:
-    explicit MeshTrimByPlane(MeshKernel& mesh);
+    explicit MeshTrimByPlane(MeshKernel &mesh);
     ~MeshTrimByPlane();
 
 public:
     /**
      * Checks all facets for intersection with the plane and writes all touched facets into the vector
      */
-    void CheckFacets(const MeshFacetGrid& rclGrid, const Base::Vector3f& base, const Base::Vector3f& normal,
-                     std::vector<FacetIndex>& trimFacets, std::vector<FacetIndex>& removeFacets) const;
+    void CheckFacets(const MeshFacetGrid &rclGrid, const Base::Vector3f &base,
+                     const Base::Vector3f &normal, std::vector<FacetIndex> &trimFacets,
+                     std::vector<FacetIndex> &removeFacets) const;
 
     /**
      * The facets from \a trimFacets will be trimmed or deleted and \a trimmedFacets holds the newly generated facets
      */
-    void TrimFacets(const std::vector<FacetIndex>& trimFacets, const Base::Vector3f& base,
-                    const Base::Vector3f& normal, std::vector<MeshGeomFacet>& trimmedFacets);
+    void TrimFacets(const std::vector<FacetIndex> &trimFacets, const Base::Vector3f &base,
+                    const Base::Vector3f &normal, std::vector<MeshGeomFacet> &trimmedFacets);
 
 private:
-    void CreateOneFacet(const Base::Vector3f& base, const Base::Vector3f& normal, unsigned short shift,
-                        const MeshGeomFacet& facet, std::vector<MeshGeomFacet>& trimmedFacets) const;
-    void CreateTwoFacet(const Base::Vector3f& base, const Base::Vector3f& normal, unsigned short shift,
-                        const MeshGeomFacet& facet, std::vector<MeshGeomFacet>& trimmedFacets) const;
+    void CreateOneFacet(const Base::Vector3f &base, const Base::Vector3f &normal,
+                        unsigned short shift, const MeshGeomFacet &facet,
+                        std::vector<MeshGeomFacet> &trimmedFacets) const;
+    void CreateTwoFacet(const Base::Vector3f &base, const Base::Vector3f &normal,
+                        unsigned short shift, const MeshGeomFacet &facet,
+                        std::vector<MeshGeomFacet> &trimmedFacets) const;
 
 private:
-    MeshKernel& myMesh;
+    MeshKernel &myMesh;
 };
 
 } //namespace MeshCore

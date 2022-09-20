@@ -34,13 +34,14 @@
 #include <CXX/Extensions.hxx>
 
 
-namespace Gui {
+namespace Gui
+{
 
 /**
  * The SoFCOffscreenRenderer class is used for rendering scenes in offscreen buffers.
  * @author Werner Mayer
  */
-class GuiExport SoFCOffscreenRenderer : public SoOffscreenRenderer
+class GuiExport SoFCOffscreenRenderer: public SoOffscreenRenderer
 {
 public:
     /** The SoOffscreenRenderer base class seems to have a huge memory leak. Whenever
@@ -48,36 +49,36 @@ public:
      * Thus, SoFCOffscreenRenderer is implemented as singleton to allow to create only
      * one global instance. So, the memory is leaking for this instance only.
      */
-    static SoFCOffscreenRenderer& instance();
+    static SoFCOffscreenRenderer &instance();
 
 private:
-    SoFCOffscreenRenderer(const SoFCOffscreenRenderer&);
-    SoFCOffscreenRenderer& operator=(const SoFCOffscreenRenderer&);
-    static SoFCOffscreenRenderer* inst;
+    SoFCOffscreenRenderer(const SoFCOffscreenRenderer &);
+    SoFCOffscreenRenderer &operator=(const SoFCOffscreenRenderer &);
+    static SoFCOffscreenRenderer *inst;
 
 protected:
-  /**
+    /**
    * Constructor. Argument is the \a viewportregion we should use when rendering. An internal
    * SoGLRenderAction will be constructed.
    */
-  SoFCOffscreenRenderer (const SbViewportRegion &viewportregion);
-  /**
+    SoFCOffscreenRenderer(const SbViewportRegion &viewportregion);
+    /**
    * Constructor. Argument is the \a action we should apply to the scene graph when rendering the
    * scene. Information about the viewport is extracted from the \a action.
    */
-  SoFCOffscreenRenderer (SoGLRenderAction *action);
-  /**
+    SoFCOffscreenRenderer(SoGLRenderAction *action);
+    /**
    * Destructor.
    */
-  ~SoFCOffscreenRenderer();
+    ~SoFCOffscreenRenderer();
 
 public:
-  /**
+    /**
    * Writes the rendered image buffer directly into a QImage object
    * instead of an image file.
    */
-  void writeToImage (QImage&) const;
-  /**
+    void writeToImage(QImage &) const;
+    /**
    * Saves the buffer to \a filename, in the filetype specified by \a filetypeextensions.
    *
    * Note that you must still specify the full filename for the first argument, i.e. the second argument will
@@ -91,31 +92,32 @@ public:
    * This does basically the same as writeToFile() unless that all QImage file formats are supported if not
    * directly supported by Coin3D.
    */
-  void writeToImageFile(const char* filename, const char* comment, const SbMatrix& mat, const QImage& img);
-  /**
+    void writeToImageFile(const char *filename, const char *comment, const SbMatrix &mat,
+                          const QImage &img);
+    /**
    * This method returns all image file formats supported by Coin3D (see getWriteFiletypeInfo()) with all QImage file formats that are
    * not directly supported by Coin3D, if so.
    */
-  QStringList getWriteImageFiletypeInfo();
+    QStringList getWriteImageFiletypeInfo();
 
-  std::string createMIBA(const SbMatrix& mat) const;
+    std::string createMIBA(const SbMatrix &mat) const;
 };
 
 class GuiExport SoQtOffscreenRenderer
 {
 public:
-    SoQtOffscreenRenderer(const SbViewportRegion & viewportregion);
-    SoQtOffscreenRenderer(SoGLRenderAction * action);
+    SoQtOffscreenRenderer(const SbViewportRegion &viewportregion);
+    SoQtOffscreenRenderer(SoGLRenderAction *action);
     ~SoQtOffscreenRenderer();
 
-    void setViewportRegion(const SbViewportRegion & region);
-    const SbViewportRegion & getViewportRegion() const;
+    void setViewportRegion(const SbViewportRegion &region);
+    const SbViewportRegion &getViewportRegion() const;
 
-    void setBackgroundColor(const SbColor4f & color);
-    const SbColor4f & getBackgroundColor() const;
+    void setBackgroundColor(const SbColor4f &color);
+    const SbColor4f &getBackgroundColor() const;
 
-    void setGLRenderAction(SoGLRenderAction * action);
-    SoGLRenderAction * getGLRenderAction() const;
+    void setGLRenderAction(SoGLRenderAction *action);
+    SoGLRenderAction *getGLRenderAction() const;
 
     void setNumPasses(const int num);
     int getNumPasses() const;
@@ -123,57 +125,57 @@ public:
     void setInternalTextureFormat(GLenum internalTextureFormat);
     GLenum internalTextureFormat() const;
 
-    SbBool render(SoNode * scene);
-    SbBool render(SoPath * scene);
+    SbBool render(SoNode *scene);
+    SbBool render(SoPath *scene);
 
-    void writeToImage (QImage&) const;
+    void writeToImage(QImage &) const;
     QStringList getWriteImageFiletypeInfo() const;
 
 private:
-    void init(const SbViewportRegion & vpr, SoGLRenderAction * glrenderaction = nullptr);
-    static void pre_render_cb(void * userdata, SoGLRenderAction * action);
-    SbBool renderFromBase(SoBase * base);
+    void init(const SbViewportRegion &vpr, SoGLRenderAction *glrenderaction = nullptr);
+    static void pre_render_cb(void *userdata, SoGLRenderAction *action);
+    SbBool renderFromBase(SoBase *base);
     void makeFrameBuffer(int width, int height, int samples);
 
-    QtGLFramebufferObject*  framebuffer;
-    uint32_t                cache_context; // our unique context id
+    QtGLFramebufferObject *framebuffer;
+    uint32_t cache_context; // our unique context id
 
     SbViewportRegion viewport;
     SbColor4f backgroundcolor;
     SbColor4f backgroundopaque;
-    SoGLRenderAction * renderaction;
+    SoGLRenderAction *renderaction;
     SbBool didallocation;
     int numSamples;
     GLenum texFormat;
     QImage glImage;
 };
 
-class SoQtOffscreenRendererPy : public Py::PythonExtension<SoQtOffscreenRendererPy>
+class SoQtOffscreenRendererPy: public Py::PythonExtension<SoQtOffscreenRendererPy>
 {
 public:
     static void init_type();
 
-    explicit SoQtOffscreenRendererPy(const SbViewportRegion&);
+    explicit SoQtOffscreenRendererPy(const SbViewportRegion &);
     ~SoQtOffscreenRendererPy() override;
 
     Py::Object repr() override;
 
-    Py::Object setViewportRegion(const Py::Tuple&);
-    Py::Object getViewportRegion(const Py::Tuple&);
+    Py::Object setViewportRegion(const Py::Tuple &);
+    Py::Object getViewportRegion(const Py::Tuple &);
 
-    Py::Object setBackgroundColor(const Py::Tuple&);
-    Py::Object getBackgroundColor(const Py::Tuple&);
+    Py::Object setBackgroundColor(const Py::Tuple &);
+    Py::Object getBackgroundColor(const Py::Tuple &);
 
-    Py::Object setNumPasses(const Py::Tuple&);
-    Py::Object getNumPasses(const Py::Tuple&);
+    Py::Object setNumPasses(const Py::Tuple &);
+    Py::Object getNumPasses(const Py::Tuple &);
 
-    Py::Object setInternalTextureFormat(const Py::Tuple&);
-    Py::Object getInternalTextureFormat(const Py::Tuple&);
+    Py::Object setInternalTextureFormat(const Py::Tuple &);
+    Py::Object getInternalTextureFormat(const Py::Tuple &);
 
-    Py::Object render(const Py::Tuple&);
+    Py::Object render(const Py::Tuple &);
 
-    Py::Object writeToImage(const Py::Tuple&);
-    Py::Object getWriteImageFiletypeInfo(const Py::Tuple&);
+    Py::Object writeToImage(const Py::Tuple &);
+    Py::Object getWriteImageFiletypeInfo(const Py::Tuple &);
 
 private:
     static PyObject *PyMake(struct _typeobject *, PyObject *, PyObject *);

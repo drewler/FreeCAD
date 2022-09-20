@@ -32,20 +32,19 @@
 #include <Mod/Part/PartGlobal.h>
 
 
-namespace Part {
-
-struct Edgesort_gp_Pnt_Less
+namespace Part
 {
-    bool operator()(const gp_Pnt & _Left, const gp_Pnt & _Right) const
+
+struct Edgesort_gp_Pnt_Less {
+    bool operator()(const gp_Pnt &_Left, const gp_Pnt &_Right) const
     {
-        Standard_Real x1,y1,z1,x2,y2,z2;
-        _Left.Coord(x1,y1,z1);
-        _Right.Coord(x2,y2,z2);
-        if ( fabs(x1- x2) > 0.2 )
-            return x1 < x2;
-        else if ( fabs(y1 -y2) > 0.2 )
+        Standard_Real x1, y1, z1, x2, y2, z2;
+        _Left.Coord(x1, y1, z1);
+        _Right.Coord(x2, y2, z2);
+        if (fabs(x1 - x2) > 0.2) return x1 < x2;
+        else if (fabs(y1 - y2) > 0.2)
             return y1 < y2;
-        else if ( fabs(z1 -z2) > 0.2 )
+        else if (fabs(z1 - z2) > 0.2)
             return z1 < z2;
         return false;
     }
@@ -53,24 +52,24 @@ struct Edgesort_gp_Pnt_Less
 
 
 using tEdgeVector = std::vector<TopoDS_Edge>;
-using tMapPntEdge = std::map<gp_Pnt,tEdgeVector,Edgesort_gp_Pnt_Less>;
-using tMapPntEdgePair = std::pair<gp_Pnt,tEdgeVector>;
-using tEdgeClusterVector = std::vector<std::vector<TopoDS_Edge> >;
+using tMapPntEdge = std::map<gp_Pnt, tEdgeVector, Edgesort_gp_Pnt_Less>;
+using tMapPntEdgePair = std::pair<gp_Pnt, tEdgeVector>;
+using tEdgeClusterVector = std::vector<std::vector<TopoDS_Edge>>;
 
 
 class PartExport Edgecluster
 {
 public:
-    explicit Edgecluster(const std::vector<TopoDS_Edge>& usorted_edges);
+    explicit Edgecluster(const std::vector<TopoDS_Edge> &usorted_edges);
     virtual ~Edgecluster();
 
     tEdgeClusterVector GetClusters();
 
 private:
     void Perform();
-    void Perform(const TopoDS_Edge& edge);
-    bool PerformEdges(gp_Pnt& point);
-    bool IsValidEdge(const TopoDS_Edge& edge);
+    void Perform(const TopoDS_Edge &edge);
+    bool PerformEdges(gp_Pnt &point);
+    bool IsValidEdge(const TopoDS_Edge &edge);
 
     tEdgeClusterVector m_final_cluster;
     tEdgeVector m_unsortededges;
@@ -80,9 +79,8 @@ private:
     bool m_done;
 
     tEdgeVector::const_iterator m_edgeIter;
-
 };
 
-}
+} // namespace Part
 
 #endif // PART_EDGECLUSTER_H

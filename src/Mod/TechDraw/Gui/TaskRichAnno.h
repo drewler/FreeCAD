@@ -39,7 +39,7 @@ namespace TechDraw
 class DrawPage;
 class DrawView;
 class DrawRichAnno;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -51,14 +51,13 @@ class QGIRichAnno;
 class ViewProviderRichAnno;
 class ViewProviderPage;
 
-class TaskRichAnno : public QWidget
+class TaskRichAnno: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskRichAnno(TechDraw::DrawView* baseFeat,
-                 TechDraw::DrawPage* page);
-    explicit TaskRichAnno(TechDrawGui::ViewProviderRichAnno* annoVP);
+    TaskRichAnno(TechDraw::DrawView *baseFeat, TechDraw::DrawPage *page);
+    explicit TaskRichAnno(TechDrawGui::ViewProviderRichAnno *annoVP);
     ~TaskRichAnno() = default;
 
     virtual bool accept();
@@ -66,8 +65,7 @@ public:
     virtual void setCreateMode(bool mode) { m_createMode = mode; }
     virtual bool getCreateMode() { return m_createMode; }
     void updateTask();
-    void saveButtons(QPushButton* btnOK,
-                     QPushButton* btnCancel);
+    void saveButtons(QPushButton *btnOK, QPushButton *btnCancel);
     void enableTaskButtons(bool enable);
 
 public Q_SLOTS:
@@ -97,12 +95,12 @@ protected Q_SLOTS:
 private:
     std::unique_ptr<Ui_TaskRichAnno> ui;
 
-    ViewProviderPage* m_vpp;
-    ViewProviderRichAnno* m_annoVP;
-    TechDraw::DrawView* m_baseFeat;
-    TechDraw::DrawPage* m_basePage;
-    TechDraw::DrawRichAnno* m_annoFeat;
-    QGIView* m_qgParent;
+    ViewProviderPage *m_vpp;
+    ViewProviderRichAnno *m_annoVP;
+    TechDraw::DrawView *m_baseFeat;
+    TechDraw::DrawPage *m_basePage;
+    TechDraw::DrawRichAnno *m_annoFeat;
+    QGIView *m_qgParent;
     std::string m_qgParentName;
 
     Base::Vector3d m_attachPoint;
@@ -111,22 +109,21 @@ private:
 
     bool m_inProgressLock;
 
-    QPushButton* m_btnOK;
-    QPushButton* m_btnCancel;
+    QPushButton *m_btnOK;
+    QPushButton *m_btnCancel;
 
-    QDialog* m_textDialog;
-    MRichTextEdit* m_rte;
+    QDialog *m_textDialog;
+    MRichTextEdit *m_rte;
     QString m_title;
 };
 
-class TaskDlgRichAnno : public Gui::TaskView::TaskDialog
+class TaskDlgRichAnno: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    TaskDlgRichAnno(TechDraw::DrawView* baseFeat,
-                    TechDraw::DrawPage* page);
-    explicit TaskDlgRichAnno(TechDrawGui::ViewProviderRichAnno* annoVP);
+    TaskDlgRichAnno(TechDraw::DrawView *baseFeat, TechDraw::DrawPage *page);
+    explicit TaskDlgRichAnno(TechDrawGui::ViewProviderRichAnno *annoVP);
     ~TaskDlgRichAnno() override;
 
 public:
@@ -139,17 +136,15 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    bool isAllowedAlterDocument() const override
-                        { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
     void update();
 
-    void modifyStandardButtons(QDialogButtonBox* box) override;
+    void modifyStandardButtons(QDialogButtonBox *box) override;
 
 protected:
-
 private:
-    TaskRichAnno * widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskRichAnno *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

@@ -31,7 +31,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Point : public Part::Datum
+class PartDesignExport Point: public Part::Datum
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Point);
 
@@ -39,7 +39,8 @@ public:
     Point();
     ~Point() override;
 
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "PartDesignGui::ViewProviderDatumPoint";
     }
 
@@ -48,12 +49,11 @@ public:
     using Superclass = Part::Datum;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     void onDocumentRestored() override;
 
 private:
     void makeShape();
-
 };
 
 } //namespace PartDesign

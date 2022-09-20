@@ -42,7 +42,7 @@ public:
     void setNextCheckpoint();
     static bool checkMemory();
     static bool dumpLeaks();
-    static bool isValidHeapPointer(const void*);
+    static bool isValidHeapPointer(const void *);
 
 private:
     _CrtMemState s1, s2, s3;
@@ -53,4 +53,3 @@ private:
 } //namespace Base
 
 #endif // BASE_MEMDEBUG_H
-

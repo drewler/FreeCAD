@@ -33,7 +33,7 @@
 namespace Part
 {
 
-class PartExport Extrusion : public Part::Feature
+class PartExport Extrusion: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::Extrusion);
 
@@ -67,7 +67,9 @@ public:
         double taperAngleFwd; //in radians
         double taperAngleRev;
         std::string faceMakerClass;
-        ExtrusionParameters(): lengthFwd(0), lengthRev(0), solid(false), taperAngleFwd(0), taperAngleRev(0) {}// constructor to keep garbage out
+        ExtrusionParameters()
+            : lengthFwd(0), lengthRev(0), solid(false), taperAngleFwd(0), taperAngleRev(0)
+        {} // constructor to keep garbage out
     };
 
     /** @name methods override feature */
@@ -76,7 +78,8 @@ public:
     App::DocumentObjectExecReturn *execute(void) override;
     short mustExecute() const override;
     /// returns the type name of the view provider
-    const char* getViewProviderName(void) const override {
+    const char *getViewProviderName(void) const override
+    {
         return "PartGui::ViewProviderExtrusion";
     }
     //@}
@@ -87,7 +90,7 @@ public:
      * @param params: extrusion parameters
      * @return result of extrusion
      */
-    static TopoShape extrudeShape(const TopoShape& source, const ExtrusionParameters& params);
+    static TopoShape extrudeShape(const TopoShape &source, const ExtrusionParameters &params);
 
     /**
      * @brief fetchAxisLink: read AxisLink to obtain the direction and
@@ -99,9 +102,8 @@ public:
      * @return true if link was fetched. false if link was empty. Throws if the
      * link is wrong.
      */
-    static bool fetchAxisLink(const App::PropertyLinkSub& axisLink,
-                              Base::Vector3d& basepoint,
-                              Base::Vector3d& dir);
+    static bool fetchAxisLink(const App::PropertyLinkSub &axisLink, Base::Vector3d &basepoint,
+                              Base::Vector3d &dir);
 
     /**
      * @brief computeFinalParameters: applies mode logic and fetches links, to
@@ -110,15 +112,16 @@ public:
      */
     ExtrusionParameters computeFinalParameters();
 
-    static Base::Vector3d calculateShapeNormal(const App::PropertyLink& shapeLink);
+    static Base::Vector3d calculateShapeNormal(const App::PropertyLink &shapeLink);
 
 public: //mode enumerations
-    enum eDirMode{
+    enum eDirMode
+    {
         dmCustom,
         dmEdge,
         dmNormal
     };
-    static const char* eDirModeStrings[];
+    static const char *eDirModeStrings[];
 
 protected:
     void setupObject() override;
@@ -132,12 +135,13 @@ protected:
 class FaceMakerExtrusion: public FaceMakerCheese
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
+
 public:
     std::string getUserFriendlyName() const override;
     std::string getBriefExplanation() const override;
 
 #if OCC_VERSION_HEX >= 0x070600
-    void Build(const Message_ProgressRange& theRange = Message_ProgressRange()) override;
+    void Build(const Message_ProgressRange &theRange = Message_ProgressRange()) override;
 #else
     void Build() override;
 #endif

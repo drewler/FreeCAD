@@ -23,12 +23,12 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <climits>
-# include <QKeyEvent>
-# include <QLineEdit>
-# include <QStyle>
-# include <QStyleOptionSpinBox>
-# include <QStylePainter>
+#include <climits>
+#include <QKeyEvent>
+#include <QLineEdit>
+#include <QStyle>
+#include <QStyleOptionSpinBox>
+#include <QStylePainter>
 #endif
 
 #include <boost/math/special_functions/round.hpp>
@@ -47,31 +47,27 @@ using namespace Gui;
 using namespace App;
 using namespace Base;
 
-ExpressionSpinBox::ExpressionSpinBox(QAbstractSpinBox* sb)
-  : spinbox(sb)
+ExpressionSpinBox::ExpressionSpinBox(QAbstractSpinBox *sb) : spinbox(sb)
 {
-    lineedit = spinbox->findChild<QLineEdit*>();
+    lineedit = spinbox->findChild<QLineEdit *>();
     makeLabel(lineedit);
-    QObject::connect(iconLabel, &ExpressionLabel::clicked, [=]() {
-        this->openFormulaDialog();
-    });
+    QObject::connect(iconLabel, &ExpressionLabel::clicked, [=]() { this->openFormulaDialog(); });
 }
 
-ExpressionSpinBox::~ExpressionSpinBox()
-{
-}
+ExpressionSpinBox::~ExpressionSpinBox() {}
 
 void ExpressionSpinBox::bind(const App::ObjectIdentifier &_path)
 {
     ExpressionBinding::bind(_path);
 
     int frameWidth = spinbox->style()->pixelMetric(QStyle::PM_SpinBoxFrameWidth);
-    lineedit->setStyleSheet(QString::fromLatin1("QLineEdit { padding-right: %1px } ").arg(iconLabel->sizeHint().width() + frameWidth + 1));
+    lineedit->setStyleSheet(QString::fromLatin1("QLineEdit { padding-right: %1px } ")
+                                .arg(iconLabel->sizeHint().width() + frameWidth + 1));
 
     iconLabel->show();
 }
 
-void ExpressionSpinBox::showInvalidExpression(const QString& tip)
+void ExpressionSpinBox::showInvalidExpression(const QString &tip)
 {
     spinbox->setReadOnly(true);
     QPalette p(lineedit->palette());
@@ -83,19 +79,17 @@ void ExpressionSpinBox::showInvalidExpression(const QString& tip)
 void ExpressionSpinBox::showValidExpression(ExpressionSpinBox::Number number)
 {
     std::unique_ptr<Expression> result(getExpression()->eval());
-    auto * value = freecad_dynamic_cast<NumberExpression>(result.get());
+    auto *value = freecad_dynamic_cast<NumberExpression>(result.get());
 
     if (value) {
         switch (number) {
-        case Number::SetIfNumber:
-            setNumberExpression(value);
-            break;
-        case Number::KeepCurrent:
-            break;
+            case Number::SetIfNumber: setNumberExpression(value); break;
+            case Number::KeepCurrent: break;
         }
 
         spinbox->setReadOnly(true);
-        iconLabel->setPixmap(getIcon(":/icons/bound-expression.svg", QSize(iconHeight, iconHeight)));
+        iconLabel->setPixmap(
+            getIcon(":/icons/bound-expression.svg", QSize(iconHeight, iconHeight)));
 
         QPalette p(lineedit->palette());
         p.setColor(QPalette::Text, Qt::lightGray);
@@ -119,14 +113,12 @@ void ExpressionSpinBox::clearExpression()
 void ExpressionSpinBox::updateExpression()
 {
     try {
-        if (isBound() && getExpression()) {
-            showValidExpression(Number::KeepCurrent);
-        }
+        if (isBound() && getExpression()) { showValidExpression(Number::KeepCurrent); }
         else {
             clearExpression();
         }
     }
-    catch (const Base::Exception & e) {
+    catch (const Base::Exception &e) {
         showInvalidExpression(QString::fromLatin1(e.what()));
     }
 }
@@ -138,7 +130,7 @@ void ExpressionSpinBox::setExpression(std::shared_ptr<Expression> expr)
     try {
         ExpressionBinding::setExpression(expr);
     }
-    catch (const Base::Exception & e) {
+    catch (const Base::Exception &e) {
         showInvalidExpression(QString::fromLatin1(e.what()));
     }
 }
@@ -147,9 +139,7 @@ void ExpressionSpinBox::onChange()
 {
     Q_ASSERT(isBound());
 
-    if (getExpression()) {
-        showValidExpression(Number::SetIfNumber);
-    }
+    if (getExpression()) { showValidExpression(Number::SetIfNumber); }
     else {
         clearExpression();
     }
@@ -168,16 +158,14 @@ void ExpressionSpinBox::openFormulaDialog()
 {
     Q_ASSERT(isBound());
 
-    auto * qprop = freecad_dynamic_cast<PropertyQuantity>(getPath().getProperty());
+    auto *qprop = freecad_dynamic_cast<PropertyQuantity>(getPath().getProperty());
     Unit unit;
 
-    if (qprop)
-        unit = qprop->getUnit();
+    if (qprop) unit = qprop->getUnit();
 
     auto box = new Gui::Dialog::DlgExpressionInput(getPath(), getExpression(), unit, spinbox);
     QObject::connect(box, &Gui::Dialog::DlgExpressionInput::finished, [=]() {
-        if (box->result() == QDialog::Accepted)
-            setExpression(box->getExpression());
+        if (box->result() == QDialog::Accepted) setExpression(box->getExpression());
         else if (box->discardedFormula())
             setExpression(std::shared_ptr<Expression>());
 
@@ -185,12 +173,12 @@ void ExpressionSpinBox::openFormulaDialog()
     });
     box->show();
 
-    QPoint pos = spinbox->mapToGlobal(QPoint(0,0));
-    box->move(pos-box->expressionPosition());
+    QPoint pos = spinbox->mapToGlobal(QPoint(0, 0));
+    box->move(pos - box->expressionPosition());
     box->setExpressionInputSize(spinbox->width(), spinbox->height());
 }
 
-bool ExpressionSpinBox::handleKeyEvent(const QString& text)
+bool ExpressionSpinBox::handleKeyEvent(const QString &text)
 {
     if (text == QLatin1String("=") && isBound()) {
         openFormulaDialog();
@@ -200,7 +188,7 @@ bool ExpressionSpinBox::handleKeyEvent(const QString& text)
     return false;
 }
 
-void ExpressionSpinBox::drawControl(QStyleOptionSpinBox& opt)
+void ExpressionSpinBox::drawControl(QStyleOptionSpinBox &opt)
 {
     if (hasExpression()) {
         opt.activeSubControls &= ~QStyle::SC_SpinBoxUp;
@@ -215,37 +203,31 @@ void ExpressionSpinBox::drawControl(QStyleOptionSpinBox& opt)
 
 // ----------------------------------------------------------------------------
 
-UnsignedValidator::UnsignedValidator( QObject * parent )
-  : QValidator( parent )
+UnsignedValidator::UnsignedValidator(QObject *parent) : QValidator(parent)
 {
-    b =  0;
-    t =  UINT_MAX;
+    b = 0;
+    t = UINT_MAX;
 }
 
-UnsignedValidator::UnsignedValidator( uint minimum, uint maximum, QObject * parent )
-  : QValidator( parent )
+UnsignedValidator::UnsignedValidator(uint minimum, uint maximum, QObject *parent)
+    : QValidator(parent)
 {
     b = minimum;
     t = maximum;
 }
 
-UnsignedValidator::~UnsignedValidator()
-{
+UnsignedValidator::~UnsignedValidator() {}
 
-}
-
-QValidator::State UnsignedValidator::validate( QString & input, int & ) const
+QValidator::State UnsignedValidator::validate(QString &input, int &) const
 {
     QString stripped = input.trimmed();
-    if ( stripped.isEmpty() )
-        return Intermediate;
+    if (stripped.isEmpty()) return Intermediate;
     bool ok;
-    uint entered = input.toUInt( &ok );
-    if ( !ok )
-        return Invalid;
-    else if ( entered < b )
+    uint entered = input.toUInt(&ok);
+    if (!ok) return Invalid;
+    else if (entered < b)
         return Intermediate;
-    else if ( entered > t )
+    else if (entered > t)
         return Invalid;
     //  else if ( entered < b || entered > t )
     //	  return Invalid;
@@ -253,69 +235,67 @@ QValidator::State UnsignedValidator::validate( QString & input, int & ) const
         return Acceptable;
 }
 
-void UnsignedValidator::setRange( uint minimum, uint maximum )
+void UnsignedValidator::setRange(uint minimum, uint maximum)
 {
     b = minimum;
     t = maximum;
 }
 
-void UnsignedValidator::setBottom( uint bottom )
-{
-    setRange( bottom, top() );
-}
+void UnsignedValidator::setBottom(uint bottom) { setRange(bottom, top()); }
 
-void UnsignedValidator::setTop( uint top )
-{
-    setRange( bottom(), top );
-}
+void UnsignedValidator::setTop(uint top) { setRange(bottom(), top); }
 
-namespace Gui {
+namespace Gui
+{
 class UIntSpinBoxPrivate
 {
 public:
-    UnsignedValidator * mValidator;
+    UnsignedValidator *mValidator;
 
-    UIntSpinBoxPrivate() : mValidator(nullptr)
-    {
-    }
-    uint mapToUInt( int v ) const
+    UIntSpinBoxPrivate() : mValidator(nullptr) {}
+    uint mapToUInt(int v) const
     {
         uint ui;
-        if ( v == INT_MIN ) {
-            ui = 0;
-        } else if ( v == INT_MAX ) {
+        if (v == INT_MIN) { ui = 0; }
+        else if (v == INT_MAX) {
             ui = UINT_MAX;
-        } else if ( v < 0 ) {
-            v -= INT_MIN; ui = (uint)v;
-        } else {
-            ui = (uint)v; ui -= INT_MIN;
-        } return ui;
+        }
+        else if (v < 0) {
+            v -= INT_MIN;
+            ui = (uint)v;
+        }
+        else {
+            ui = (uint)v;
+            ui -= INT_MIN;
+        }
+        return ui;
     }
-    int mapToInt( uint v ) const
+    int mapToInt(uint v) const
     {
         int in;
-        if ( v == UINT_MAX ) {
-            in = INT_MAX;
-        } else if ( v == 0 ) {
+        if (v == UINT_MAX) { in = INT_MAX; }
+        else if (v == 0) {
             in = INT_MIN;
-        } else if ( v > INT_MAX ) {
-            v += INT_MIN; in = (int)v;
-        } else {
-            in = v; in += INT_MIN;
-        } return in;
+        }
+        else if (v > INT_MAX) {
+            v += INT_MIN;
+            in = (int)v;
+        }
+        else {
+            in = v;
+            in += INT_MIN;
+        }
+        return in;
     }
 };
 
 } // namespace Gui
 
-UIntSpinBox::UIntSpinBox (QWidget* parent)
-  : QSpinBox (parent)
-  , ExpressionSpinBox(this)
+UIntSpinBox::UIntSpinBox(QWidget *parent) : QSpinBox(parent), ExpressionSpinBox(this)
 {
     d = new UIntSpinBoxPrivate;
-    d->mValidator =  new UnsignedValidator(this->minimum(), this->maximum(), this);
-    connect(this, SIGNAL(valueChanged(int)),
-            this, SLOT(valueChange(int)));
+    d->mValidator = new UnsignedValidator(this->minimum(), this->maximum(), this);
+    connect(this, SIGNAL(valueChanged(int)), this, SLOT(valueChange(int)));
     setRange(0, 99);
     setValue(0);
     updateValidator();
@@ -324,7 +304,8 @@ UIntSpinBox::UIntSpinBox (QWidget* parent)
 UIntSpinBox::~UIntSpinBox()
 {
     delete d->mValidator;
-    delete d; d = nullptr;
+    delete d;
+    d = nullptr;
 }
 
 void UIntSpinBox::setRange(uint minVal, uint maxVal)
@@ -335,53 +316,36 @@ void UIntSpinBox::setRange(uint minVal, uint maxVal)
     updateValidator();
 }
 
-QValidator::State UIntSpinBox::validate (QString & input, int & pos) const
+QValidator::State UIntSpinBox::validate(QString &input, int &pos) const
 {
     return d->mValidator->validate(input, pos);
 }
 
-uint UIntSpinBox::value() const
-{
-    return d->mapToUInt(QSpinBox::value());
-}
+uint UIntSpinBox::value() const { return d->mapToUInt(QSpinBox::value()); }
 
-void UIntSpinBox::setValue(uint value)
-{
-    QSpinBox::setValue(d->mapToInt(value));
-}
+void UIntSpinBox::setValue(uint value) { QSpinBox::setValue(d->mapToInt(value)); }
 
-void UIntSpinBox::valueChange(int value)
-{
-    Q_EMIT valueChanged(d->mapToUInt(value));
-}
+void UIntSpinBox::valueChange(int value) { Q_EMIT valueChanged(d->mapToUInt(value)); }
 
-uint UIntSpinBox::minimum() const
-{
-    return d->mapToUInt(QSpinBox::minimum());
-}
+uint UIntSpinBox::minimum() const { return d->mapToUInt(QSpinBox::minimum()); }
 
 void UIntSpinBox::setMinimum(uint minVal)
 {
     uint maxVal = maximum();
-    if (maxVal < minVal)
-        maxVal = minVal;
+    if (maxVal < minVal) maxVal = minVal;
     setRange(minVal, maxVal);
 }
 
-uint UIntSpinBox::maximum() const
-{
-    return d->mapToUInt(QSpinBox::maximum());
-}
+uint UIntSpinBox::maximum() const { return d->mapToUInt(QSpinBox::maximum()); }
 
 void UIntSpinBox::setMaximum(uint maxVal)
 {
     uint minVal = minimum();
-    if (minVal > maxVal)
-        minVal = maxVal;
+    if (minVal > maxVal) minVal = maxVal;
     setRange(minVal, maxVal);
 }
 
-QString UIntSpinBox::textFromValue (int v) const
+QString UIntSpinBox::textFromValue(int v) const
 {
     uint val = d->mapToUInt(v);
     QString s;
@@ -389,7 +353,7 @@ QString UIntSpinBox::textFromValue (int v) const
     return s;
 }
 
-int UIntSpinBox::valueFromText (const QString & text) const
+int UIntSpinBox::valueFromText(const QString &text) const
 {
     bool ok;
     QString s = text;
@@ -402,12 +366,9 @@ int UIntSpinBox::valueFromText (const QString & text) const
     return d->mapToInt(newVal);
 }
 
-void UIntSpinBox::updateValidator()
-{
-    d->mValidator->setRange(this->minimum(), this->maximum());
-}
+void UIntSpinBox::updateValidator() { d->mValidator->setRange(this->minimum(), this->maximum()); }
 
-bool UIntSpinBox::apply(const std::string & propName)
+bool UIntSpinBox::apply(const std::string &propName)
 {
     if (!ExpressionBinding::apply(propName)) {
         Gui::Command::doCommand(Gui::Command::Doc, "%s = %u", propName.c_str(), value());
@@ -417,12 +378,12 @@ bool UIntSpinBox::apply(const std::string & propName)
         return false;
 }
 
-void UIntSpinBox::setNumberExpression(App::NumberExpression* expr)
+void UIntSpinBox::setNumberExpression(App::NumberExpression *expr)
 {
     setValue(boost::math::round(expr->getValue()));
 }
 
-void UIntSpinBox::resizeEvent(QResizeEvent * event)
+void UIntSpinBox::resizeEvent(QResizeEvent *event)
 {
     QAbstractSpinBox::resizeEvent(event);
     resizeWidget();
@@ -430,11 +391,10 @@ void UIntSpinBox::resizeEvent(QResizeEvent * event)
 
 void UIntSpinBox::keyPressEvent(QKeyEvent *event)
 {
-    if (!handleKeyEvent(event->text()))
-        QAbstractSpinBox::keyPressEvent(event);
+    if (!handleKeyEvent(event->text())) QAbstractSpinBox::keyPressEvent(event);
 }
 
-void UIntSpinBox::paintEvent(QPaintEvent*)
+void UIntSpinBox::paintEvent(QPaintEvent *)
 {
     QStyleOptionSpinBox opt;
     initStyleOption(&opt);
@@ -443,18 +403,11 @@ void UIntSpinBox::paintEvent(QPaintEvent*)
 
 // ----------------------------------------------------------------------------
 
-IntSpinBox::IntSpinBox(QWidget* parent)
-    : QSpinBox(parent)
-    , ExpressionSpinBox(this)
-{
-}
+IntSpinBox::IntSpinBox(QWidget *parent) : QSpinBox(parent), ExpressionSpinBox(this) {}
 
-IntSpinBox::~IntSpinBox()
-{
+IntSpinBox::~IntSpinBox() {}
 
-}
-
-bool IntSpinBox::apply(const std::string& propName)
+bool IntSpinBox::apply(const std::string &propName)
 {
     if (!ExpressionBinding::apply(propName)) {
         Gui::Command::doCommand(Gui::Command::Doc, "%s = %d", propName.c_str(), value());
@@ -464,12 +417,12 @@ bool IntSpinBox::apply(const std::string& propName)
         return false;
 }
 
-void IntSpinBox::setNumberExpression(App::NumberExpression* expr)
+void IntSpinBox::setNumberExpression(App::NumberExpression *expr)
 {
     setValue(boost::math::round(expr->getValue()));
 }
 
-void IntSpinBox::resizeEvent(QResizeEvent * event)
+void IntSpinBox::resizeEvent(QResizeEvent *event)
 {
     QAbstractSpinBox::resizeEvent(event);
     resizeWidget();
@@ -477,11 +430,10 @@ void IntSpinBox::resizeEvent(QResizeEvent * event)
 
 void IntSpinBox::keyPressEvent(QKeyEvent *event)
 {
-    if (!handleKeyEvent(event->text()))
-        QAbstractSpinBox::keyPressEvent(event);
+    if (!handleKeyEvent(event->text())) QAbstractSpinBox::keyPressEvent(event);
 }
 
-void IntSpinBox::paintEvent(QPaintEvent*)
+void IntSpinBox::paintEvent(QPaintEvent *)
 {
     QStyleOptionSpinBox opt;
     initStyleOption(&opt);
@@ -490,18 +442,11 @@ void IntSpinBox::paintEvent(QPaintEvent*)
 
 // ----------------------------------------------------------------------------
 
-DoubleSpinBox::DoubleSpinBox(QWidget* parent)
-    : QDoubleSpinBox(parent)
-    , ExpressionSpinBox(this)
-{
-}
+DoubleSpinBox::DoubleSpinBox(QWidget *parent) : QDoubleSpinBox(parent), ExpressionSpinBox(this) {}
 
-DoubleSpinBox::~DoubleSpinBox()
-{
+DoubleSpinBox::~DoubleSpinBox() {}
 
-}
-
-bool DoubleSpinBox::apply(const std::string& propName)
+bool DoubleSpinBox::apply(const std::string &propName)
 {
     if (!ExpressionBinding::apply(propName)) {
         Gui::Command::doCommand(Gui::Command::Doc, "%s = %f", propName.c_str(), value());
@@ -511,12 +456,9 @@ bool DoubleSpinBox::apply(const std::string& propName)
     return false;
 }
 
-void DoubleSpinBox::setNumberExpression(App::NumberExpression* expr)
-{
-    setValue(expr->getValue());
-}
+void DoubleSpinBox::setNumberExpression(App::NumberExpression *expr) { setValue(expr->getValue()); }
 
-void DoubleSpinBox::resizeEvent(QResizeEvent * event)
+void DoubleSpinBox::resizeEvent(QResizeEvent *event)
 {
     QAbstractSpinBox::resizeEvent(event);
     resizeWidget();
@@ -524,11 +466,10 @@ void DoubleSpinBox::resizeEvent(QResizeEvent * event)
 
 void DoubleSpinBox::keyPressEvent(QKeyEvent *event)
 {
-    if (!handleKeyEvent(event->text()))
-        QDoubleSpinBox::keyPressEvent(event);
+    if (!handleKeyEvent(event->text())) QDoubleSpinBox::keyPressEvent(event);
 }
 
-void DoubleSpinBox::paintEvent(QPaintEvent*)
+void DoubleSpinBox::paintEvent(QPaintEvent *)
 {
     QStyleOptionSpinBox opt;
     initStyleOption(&opt);

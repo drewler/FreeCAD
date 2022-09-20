@@ -29,12 +29,14 @@
 #include <CXX/Extensions.hxx>
 #include "Selection.h"
 
-namespace App {
-    class DocumentObject;
+namespace App
+{
+class DocumentObject;
 }
 
-namespace Gui {
-    struct Node_Block;
+namespace Gui
+{
+struct Node_Block;
 
 
 /** Selection filter definition
@@ -52,15 +54,13 @@ class GuiExport SelectionFilter
 
 public:
     /** Constructs a SelectionFilter object. */
-    explicit SelectionFilter(const char* filter);
-    explicit SelectionFilter(const std::string& filter);
+    explicit SelectionFilter(const char *filter);
+    explicit SelectionFilter(const std::string &filter);
     virtual ~SelectionFilter();
 
     /// Set a new filter string
-    void setFilter(const char* filter);
-    const std::string& getFilter() const {
-        return Filter;
-    }
+    void setFilter(const char *filter);
+    const std::string &getFilter() const { return Filter; }
     /** Test to current selection
      *  This method tests the current selection set
      *  against the filter and returns true if the
@@ -72,16 +72,16 @@ public:
      *  filter. If SubName is not NULL the Subelement gets also
      *  tested.
      */
-    bool test(App::DocumentObject*pObj, const char*sSubName);
+    bool test(App::DocumentObject *pObj, const char *sSubName);
 
-    void addError(const char* e);
+    void addError(const char *e);
 
     friend class SelectionSingleton;
 
-    std::vector<std::vector<SelectionObject> > Result;
+    std::vector<std::vector<SelectionObject>> Result;
 
     /// true if a valid filter is set
-    bool isValid() const {return Ast ? true : false;}
+    bool isValid() const { return Ast ? true : false; }
 
 protected:
     std::string Filter;
@@ -103,19 +103,15 @@ class GuiExport SelectionFilterGate: public SelectionGate
 {
 public:
     /// construct with the filter string
-    explicit SelectionFilterGate(const char* filter);
-    explicit SelectionFilterGate(SelectionFilter* filter);
+    explicit SelectionFilterGate(const char *filter);
+    explicit SelectionFilterGate(SelectionFilter *filter);
     ~SelectionFilterGate() override;
-    bool allow(App::Document*,App::DocumentObject*, const char*) override;
+    bool allow(App::Document *, App::DocumentObject *, const char *) override;
 
 protected:
-    static SelectionFilter* nullPointer() {
-        return nullptr;
-    }
+    static SelectionFilter *nullPointer() { return nullptr; }
 
-    static const char* nullString() {
-        return nullptr;
-    }
+    static const char *nullString() { return nullptr; }
     SelectionFilterGate();
 
 protected:
@@ -126,14 +122,14 @@ protected:
  * A wrapper around a Python class that implements the SelectionGate interface
  * @author Werner Mayer
  */
-class SelectionGatePython : public SelectionGate
+class SelectionGatePython: public SelectionGate
 {
 public:
     /// Constructor
-    explicit SelectionGatePython(const Py::Object& obj);
+    explicit SelectionGatePython(const Py::Object &obj);
     ~SelectionGatePython() override;
 
-    bool allow(App::Document*, App::DocumentObject*, const char*) override;
+    bool allow(App::Document *, App::DocumentObject *, const char *) override;
 
 private:
     Py::Object gate;
@@ -148,22 +144,22 @@ private:
  * @see SelectionFilter
  * @author Werner Mayer
  */
-class SelectionFilterPy : public Py::PythonExtension<SelectionFilterPy>
+class SelectionFilterPy: public Py::PythonExtension<SelectionFilterPy>
 {
 public:
     SelectionFilter filter;
 
 public:
-    static void init_type();    // announce properties and methods
+    static void init_type(); // announce properties and methods
 
-    explicit SelectionFilterPy(const std::string&);
+    explicit SelectionFilterPy(const std::string &);
     ~SelectionFilterPy() override;
 
     Py::Object repr() override;
-    Py::Object match(const Py::Tuple&);
-    Py::Object result(const Py::Tuple&);
-    Py::Object test(const Py::Tuple&);
-    Py::Object setFilter(const Py::Tuple&);
+    Py::Object match(const Py::Tuple &);
+    Py::Object result(const Py::Tuple &);
+    Py::Object test(const Py::Tuple &);
+    Py::Object setFilter(const Py::Tuple &);
 
 private:
     static PyObject *PyMake(struct _typeobject *, PyObject *, PyObject *);
@@ -185,53 +181,42 @@ private:
  * \endcode
  * @author Werner Mayer
  */
-class SelectionFilterGatePython : public SelectionGate
+class SelectionFilterGatePython: public SelectionGate
 {
 public:
     /// Constructor
-    explicit SelectionFilterGatePython(SelectionFilterPy* obj);
+    explicit SelectionFilterGatePython(SelectionFilterPy *obj);
     ~SelectionFilterGatePython() override;
 
-    bool allow(App::Document*, App::DocumentObject*, const char*) override;
+    bool allow(App::Document *, App::DocumentObject *, const char *) override;
 
 private:
-    SelectionFilterPy* filter;
+    SelectionFilterPy *filter;
 };
 
 // === Abstract syntax tree (AST) ===========================================
 
-struct Node_Slice
-{
-    explicit Node_Slice(int min=1,int max=INT_MAX):Min(min),Max(max){}
-    int Min,Max;
-
+struct Node_Slice {
+    explicit Node_Slice(int min = 1, int max = INT_MAX) : Min(min), Max(max) {}
+    int Min, Max;
 };
 
 
-struct Node_Object
-{
-    Node_Object(std::string *type,std::string *subname,Node_Slice* slc )
-        :Slice(slc)
+struct Node_Object {
+    Node_Object(std::string *type, std::string *subname, Node_Slice *slc) : Slice(slc)
     {
         ObjectType = Base::Type::fromName(type->c_str());
-        if (subname) {
-            SubName = *subname;
-        }
+        if (subname) { SubName = *subname; }
     }
-    ~Node_Object(){
-        delete Slice;
-    }
+    ~Node_Object() { delete Slice; }
     Base::Type ObjectType;
-    Node_Slice  *Slice;
+    Node_Slice *Slice;
     std::string SubName;
 };
 using Node_ObjectPtr = std::shared_ptr<Node_Object>;
 
-struct Node_Block
-{
-    explicit Node_Block(Node_Object* obj){
-        Objects.emplace_back(obj);
-    }
+struct Node_Block {
+    explicit Node_Block(Node_Object *obj) { Objects.emplace_back(obj); }
     std::vector<Node_ObjectPtr> Objects;
 };
 
@@ -240,4 +225,3 @@ struct Node_Block
 
 
 #endif // GUI_SelectionFilter_H
-

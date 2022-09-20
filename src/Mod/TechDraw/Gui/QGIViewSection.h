@@ -30,18 +30,20 @@
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGIViewSection : public QGIViewPart
+class TechDrawGuiExport QGIViewSection: public QGIViewPart
 {
 public:
-
     QGIViewSection() = default;
     ~QGIViewSection() override = default;
 
     void draw() override;
     void updateView(bool update = false) override;
-    enum {Type = QGraphicsItem::UserType + 108};
-    int type() const override { return Type;}
-    void drawSectionLine(TechDraw::DrawViewSection* s, bool b) override;
+    enum
+    {
+        Type = QGraphicsItem::UserType + 108
+    };
+    int type() const override { return Type; }
+    void drawSectionLine(TechDraw::DrawViewSection *s, bool b) override;
 
 
 protected:

@@ -35,7 +35,7 @@
 namespace TechDraw
 {
 
-class TechDrawExport DrawViewArch : public TechDraw::DrawViewSymbol
+class TechDrawExport DrawViewArch: public TechDraw::DrawViewSymbol
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawViewArch);
 
@@ -44,16 +44,16 @@ public:
     DrawViewArch();
     ~DrawViewArch() = default;
 
-    App::PropertyLink         Source;
-    App::PropertyBool         AllOn;
-    App::PropertyEnumeration  RenderMode; // "Wireframe", "Solid"
-    App::PropertyBool         FillSpaces;
-    App::PropertyBool         ShowHidden;
-    App::PropertyBool         ShowFill;
-    App::PropertyFloat        LineWidth;
-    App::PropertyFloat        FontSize;
-    App::PropertyFloat        CutLineWidth;
-    App::PropertyBool         JoinArch;
+    App::PropertyLink Source;
+    App::PropertyBool AllOn;
+    App::PropertyEnumeration RenderMode; // "Wireframe", "Solid"
+    App::PropertyBool FillSpaces;
+    App::PropertyBool ShowHidden;
+    App::PropertyBool ShowFill;
+    App::PropertyFloat LineWidth;
+    App::PropertyFloat FontSize;
+    App::PropertyFloat CutLineWidth;
+    App::PropertyBool JoinArch;
 
     /** @name methods override Feature */
     //@{
@@ -62,21 +62,19 @@ public:
     //@}
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderArch";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderArch"; }
 
     short mustExecute() const override;
 
 
 protected:
-/*    virtual void onChanged(const App::Property* prop) override;*/
+    /*    virtual void onChanged(const App::Property* prop) override;*/
     Base::BoundBox3d bbox;
     std::string getSVGHead();
     std::string getSVGTail();
 
 private:
-    static const char* RenderModeEnums[];
+    static const char *RenderModeEnums[];
 };
 
 } //namespace TechDraw

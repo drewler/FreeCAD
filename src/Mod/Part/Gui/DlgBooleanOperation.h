@@ -29,29 +29,31 @@
 
 class QTreeWidgetItem;
 
-namespace App {
+namespace App
+{
 class DocumentObject;
 class Property;
-}
-namespace PartGui {
+} // namespace App
+namespace PartGui
+{
 
 using Connection = boost::signals2::connection;
 class Ui_DlgBooleanOperation;
-class DlgBooleanOperation : public QWidget
+class DlgBooleanOperation: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit DlgBooleanOperation(QWidget* parent = nullptr);
+    explicit DlgBooleanOperation(QWidget *parent = nullptr);
     ~DlgBooleanOperation() override;
     void accept();
 
 private:
     void findShapes();
-    bool indexOfCurrentItem(QTreeWidgetItem*, int&, int&) const;
-    void slotCreatedObject(const App::DocumentObject&);
-    void slotChangedObject(const App::DocumentObject&, const App::Property&);
-    bool hasSolids(const App::DocumentObject*) const;
+    bool indexOfCurrentItem(QTreeWidgetItem *, int &, int &) const;
+    void slotCreatedObject(const App::DocumentObject &);
+    void slotChangedObject(const App::DocumentObject &, const App::Property &);
+    bool hasSolids(const App::DocumentObject *) const;
 
 protected:
     void changeEvent(QEvent *e) override;
@@ -60,16 +62,16 @@ public Q_SLOTS:
     void on_swapButton_clicked();
 
 private Q_SLOTS:
-    void currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
+    void currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *);
 
 private:
     std::unique_ptr<Ui_DlgBooleanOperation> ui;
     Connection connectNewObject;
     Connection connectModObject;
-    std::list<const App::DocumentObject*> observe;
+    std::list<const App::DocumentObject *> observe;
 };
 
-class TaskBooleanOperation : public Gui::TaskView::TaskDialog
+class TaskBooleanOperation: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -81,15 +83,15 @@ public:
     void clicked(int) override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Apply | QDialogButtonBox::Close; }
-    bool isAllowedAlterDocument() const override
-    { return true; }
-    bool needsFullSpace() const override
-    { return true; }
+    {
+        return QDialogButtonBox::Apply | QDialogButtonBox::Close;
+    }
+    bool isAllowedAlterDocument() const override { return true; }
+    bool needsFullSpace() const override { return true; }
 
 private:
-    DlgBooleanOperation* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    DlgBooleanOperation *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } // namespace PartGui

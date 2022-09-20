@@ -36,13 +36,14 @@
 #include "FileInfo.h"
 
 
-namespace zipios {
+namespace zipios
+{
 class ZipInputStream;
 }
 
 XERCES_CPP_NAMESPACE_BEGIN
-    class DefaultHandler;
-    class SAX2XMLReader;
+class DefaultHandler;
+class SAX2XMLReader;
 XERCES_CPP_NAMESPACE_END
 
 namespace Base
@@ -114,17 +115,20 @@ void PropertyContainer::Restore(Base::Reader &reader)
  * \see Base::Persistence
  * \author Juergen Riegel
  */
-class BaseExport XMLReader : public XERCES_CPP_NAMESPACE_QUALIFIER DefaultHandler
+class BaseExport XMLReader: public XERCES_CPP_NAMESPACE_QUALIFIER DefaultHandler
 {
 public:
-    enum ReaderStatus {
-        PartialRestore = 0,                     // This bit indicates that a partial restore took place somewhere in this Document
-        PartialRestoreInDocumentObject = 1,     // This bit is local to the DocumentObject being read indicating a partial restore therein
-        PartialRestoreInProperty = 2,           // Local to the Property
-        PartialRestoreInObject = 3              // Local to the object partially restored itself
+    enum ReaderStatus
+    {
+        PartialRestore =
+            0, // This bit indicates that a partial restore took place somewhere in this Document
+        PartialRestoreInDocumentObject =
+            1, // This bit is local to the DocumentObject being read indicating a partial restore therein
+        PartialRestoreInProperty = 2, // Local to the Property
+        PartialRestoreInObject = 3    // Local to the object partially restored itself
     };
     /// open the file and read the first element
-    XMLReader(const char* FileName, std::istream&);
+    XMLReader(const char *FileName, std::istream &);
     ~XMLReader() override;
 
     bool isValid() const { return _valid; }
@@ -134,11 +138,11 @@ public:
     /** @name Parser handling */
     //@{
     /// get the local name of the current Element
-    const char* localName() const;
+    const char *localName() const;
     /// get the current element level
     int level() const;
     /// read until a start element is found (\<name\>) or start-end element (\<name/\>) (with special name if given)
-    void readElement   (const char* ElementName=nullptr);
+    void readElement(const char *ElementName = nullptr);
 
     /** read until an end element is found
      *
@@ -154,11 +158,11 @@ public:
      * child element may have the same name as its parent, otherwise, using \c
      * ElementName is enough.
      */
-    void readEndElement(const char* ElementName=nullptr, int level=-1);
+    void readEndElement(const char *ElementName = nullptr, int level = -1);
     /// read until characters are found
     void readCharacters();
     /// read binary file
-    void readBinFile(const char*);
+    void readBinFile(const char *);
     //@}
 
     /** @name Attribute handling */
@@ -166,27 +170,27 @@ public:
     /// get the number of attributes of the current element
     unsigned int getAttributeCount() const;
     /// check if the read element has a special attribute
-    bool hasAttribute(const char* AttrName) const;
+    bool hasAttribute(const char *AttrName) const;
     /// return the named attribute as an interer (does type checking)
-    long getAttributeAsInteger(const char* AttrName) const;
-    unsigned long getAttributeAsUnsigned(const char* AttrName) const;
+    long getAttributeAsInteger(const char *AttrName) const;
+    unsigned long getAttributeAsUnsigned(const char *AttrName) const;
     /// return the named attribute as a double floating point (does type checking)
-    double getAttributeAsFloat(const char* AttrName) const;
+    double getAttributeAsFloat(const char *AttrName) const;
     /// return the named attribute as a double floating point (does type checking)
-    const char* getAttribute(const char* AttrName) const;
+    const char *getAttribute(const char *AttrName) const;
     //@}
 
     /** @name additional file reading */
     //@{
     /// add a read request of a persistent object
-    const char *addFile(const char* Name, Base::Persistence *Object);
+    const char *addFile(const char *Name, Base::Persistence *Object);
     /// process the requested file writes
     void readFiles(zipios::ZipInputStream &zipstream) const;
     /// get all registered file names
-    const std::vector<std::string>& getFilenames() const;
+    const std::vector<std::string> &getFilenames() const;
     bool isRegistered(Base::Persistence *Object) const;
-    virtual void addName(const char*, const char*);
-    virtual const char* getName(const char*) const;
+    virtual void addName(const char *, const char *);
+    virtual const char *getName(const char *) const;
     virtual bool doNameMapping() const;
     //@}
 
@@ -225,16 +229,19 @@ protected:
     //@{
     void startDocument() override;
     void endDocument() override;
-    void startElement(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs) override;
-    void endElement  (const XMLCh* const uri, const XMLCh *const localname, const XMLCh *const qname) override;
-    void characters         (const XMLCh* const chars, const XMLSize_t length) override;
-    void ignorableWhitespace(const XMLCh* const chars, const XMLSize_t length) override;
+    void startElement(const XMLCh *const uri, const XMLCh *const localname,
+                      const XMLCh *const qname,
+                      const XERCES_CPP_NAMESPACE_QUALIFIER Attributes &attrs) override;
+    void endElement(const XMLCh *const uri, const XMLCh *const localname,
+                    const XMLCh *const qname) override;
+    void characters(const XMLCh *const chars, const XMLSize_t length) override;
+    void ignorableWhitespace(const XMLCh *const chars, const XMLSize_t length) override;
     //@}
 
     /** @name Lexical handler */
     //@{
-    void startCDATA  () override;
-    void endCDATA    () override;
+    void startCDATA() override;
+    void endCDATA() override;
     //@}
 
     /** @name Document handler */
@@ -248,9 +255,9 @@ protected:
     // -----------------------------------------------------------------------
     /** @name Error handler */
     //@{
-    void warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& exc) override;
-    void error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& exc) override;
-    void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& exc) override;
+    void warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException &exc) override;
+    void error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException &exc) override;
+    void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException &exc) override;
     void resetErrors() override;
     //@}
 
@@ -260,10 +267,11 @@ protected:
     std::string Characters;
     unsigned int CharacterCount;
 
-    std::map<std::string,std::string> AttrMap;
-    using AttrMapType = std::map<std::string,std::string>;
+    std::map<std::string, std::string> AttrMap;
+    using AttrMapType = std::map<std::string, std::string>;
 
-    enum {
+    enum
+    {
         None = 0,
         Chars,
         StartDocument,
@@ -273,11 +281,11 @@ protected:
         EndElement,
         StartCDATA,
         EndCDATA
-    }   ReadType;
+    } ReadType;
 
 
     FileInfo _File;
-    XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader* parser;
+    XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader *parser;
     XERCES_CPP_NAMESPACE_QUALIFIER XMLPScanToken token;
     bool _valid;
     bool _verbose;
@@ -287,24 +295,24 @@ protected:
     std::bitset<32> StatusBits;
 };
 
-class BaseExport Reader : public std::istream
+class BaseExport Reader: public std::istream
 {
 public:
-    Reader(std::istream&, const std::string&, int version);
-    std::istream& getStream();
+    Reader(std::istream &, const std::string &, int version);
+    std::istream &getStream();
     std::string getFileName() const;
     int getFileVersion() const;
     void initLocalReader(std::shared_ptr<Base::XMLReader>);
     std::shared_ptr<Base::XMLReader> getLocalReader() const;
 
 private:
-    std::istream& _str;
+    std::istream &_str;
     std::string _name;
     int fileVersion;
     std::shared_ptr<Base::XMLReader> localreader;
 };
 
-}
+} // namespace Base
 
 
 #endif

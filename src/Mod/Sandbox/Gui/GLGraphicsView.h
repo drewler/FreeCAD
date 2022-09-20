@@ -37,34 +37,42 @@ class SoCamera;
 class SoSeparator;
 class SoRenderManager;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 class InputDevice;
-}}}
+}
+} // namespace Coin3D
+} // namespace SIM
 
-namespace Gui {
+namespace Gui
+{
 
-class SceneEventFilter : public QObject
+class SceneEventFilter: public QObject
 {
     Q_OBJECT
 
 public:
-    SceneEventFilter(QObject * parent);
+    SceneEventFilter(QObject *parent);
     ~SceneEventFilter();
 
-    void registerInputDevice(SIM::Coin3D::Quarter::InputDevice * device);
-    void unregisterInputDevice(SIM::Coin3D::Quarter::InputDevice * device);
+    void registerInputDevice(SIM::Coin3D::Quarter::InputDevice *device);
+    void unregisterInputDevice(SIM::Coin3D::Quarter::InputDevice *device);
 
-    const QPoint & globalMousePosition(void) const;
+    const QPoint &globalMousePosition(void) const;
 
 protected:
-    bool eventFilter(QObject * obj, QEvent * event);
+    bool eventFilter(QObject *obj, QEvent *event);
 
 private:
     class Private;
-    Private* pimpl;
+    Private *pimpl;
 };
 
-class /*GuiExport*/ GraphicsScene : public QGraphicsScene
+class /*GuiExport*/ GraphicsScene: public QGraphicsScene
 {
     Q_OBJECT
 
@@ -74,39 +82,36 @@ public:
 
     void drawBackground(QPainter *painter, const QRectF &rect);
 
-    void setBackgroundColor(const QColor&);
+    void setBackgroundColor(const QColor &);
     void viewAll();
 
-    void setSceneGraph(SoNode * node);
-    SoNode* getSceneGraph() const;
+    void setSceneGraph(SoNode *node);
+    SoNode *getSceneGraph() const;
 
-    SceneEventFilter *
-    getEventFilter(void) const;
+    SceneEventFilter *getEventFilter(void) const;
 
-    void addStateMachine(SoScXMLStateMachine * statemachine);
-    void removeStateMachine(SoScXMLStateMachine * statemachine);
-    void setNavigationModeFile(const QUrl&);
+    void addStateMachine(SoScXMLStateMachine *statemachine);
+    void removeStateMachine(SoScXMLStateMachine *statemachine);
+    void setNavigationModeFile(const QUrl &);
 
-    bool processSoEvent(const SoEvent * event);
+    bool processSoEvent(const SoEvent *event);
 
-    SoRenderManager *
-    getSoRenderManager(void) const;
+    SoRenderManager *getSoRenderManager(void) const;
 
-    SoEventManager *
-    getSoEventManager(void) const;
+    SoEventManager *getSoEventManager(void) const;
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void wheelEvent(QGraphicsSceneWheelEvent * wheelEvent);
+    void wheelEvent(QGraphicsSceneWheelEvent *wheelEvent);
 
 private Q_SLOTS:
-    void onSceneRectChanged(const QRectF & rect);
+    void onSceneRectChanged(const QRectF &rect);
 
 private:
     QDialog *createDialog(const QString &windowTitle) const;
-    SoCamera* searchForCamera(SoNode * root);
+    SoCamera *searchForCamera(SoNode *root);
 
 private:
     QColor m_backgroundColor;
@@ -120,16 +125,16 @@ private:
     QLabel *m_labels[4];
     QWidget *m_modelButton;
 
-    mutable SoNode* sceneNode;
-    SoNode* headlight;
+    mutable SoNode *sceneNode;
+    SoNode *headlight;
 
     QGraphicsRectItem *m_lightItem;
-    SoRenderManager* sorendermanager;
-    SoEventManager* soeventmanager;
-    SceneEventFilter* eventfilter;
+    SoRenderManager *sorendermanager;
+    SoEventManager *soeventmanager;
+    SceneEventFilter *eventfilter;
 };
 
-class GraphicsView : public QGraphicsView
+class GraphicsView: public QGraphicsView
 {
 public:
     GraphicsView();
@@ -137,21 +142,19 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event);
-    bool viewportEvent(QEvent* event);
+    bool viewportEvent(QEvent *event);
 };
 
-class /*GuiExport*/ GraphicsView3D : public Gui::MDIView
-                                   , public ParameterGrp::ObserverType
+class /*GuiExport*/ GraphicsView3D: public Gui::MDIView, public ParameterGrp::ObserverType
 {
     Q_OBJECT
 
 public:
-    GraphicsView3D(Gui::Document* doc, QWidget* parent = 0);
+    GraphicsView3D(Gui::Document *doc, QWidget *parent = 0);
     virtual ~GraphicsView3D();
-    GraphicsScene* getScene()
-    { return m_scene; }
+    GraphicsScene *getScene() { return m_scene; }
 
-    virtual void OnChange(ParameterGrp::SubjectType &rCaller,ParameterGrp::MessageType Reason);
+    virtual void OnChange(ParameterGrp::SubjectType &rCaller, ParameterGrp::MessageType Reason);
 
 private:
     GraphicsScene *m_scene;
@@ -161,5 +164,4 @@ private:
 
 } // namespace Gui
 
-#endif  // GUI_GRAPHICSVIEW_H
-
+#endif // GUI_GRAPHICSVIEW_H

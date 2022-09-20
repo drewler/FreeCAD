@@ -65,7 +65,7 @@ namespace QSint
 
     \endcode
 */
-class QSINT_EXPORT ActionLabel : public QToolButton
+class QSINT_EXPORT ActionLabel: public QToolButton
 {
     Q_OBJECT
 
@@ -89,6 +89,6 @@ protected:
 };
 
 
-} // namespace
+} // namespace QSint
 
 #endif // ACTIONLABEL_H

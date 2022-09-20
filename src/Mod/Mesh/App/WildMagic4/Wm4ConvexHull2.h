@@ -16,8 +16,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM ConvexHull2 : public ConvexHull<Real>
+template<class Real> class WM4_FOUNDATION_ITEM ConvexHull2: public ConvexHull<Real>
 {
 public:
     // The input to the constructor is the array of vertices whose convex hull
@@ -32,15 +31,15 @@ public:
     // exact arithmetic, but is the slowest choice.  The choice Query::QT_REAL
     // uses floating-point arithmetic, but is not robust in all cases.
 
-    ConvexHull2 (int iVertexQuantity, Vector2<Real>* akVertex, Real fEpsilon,
-        bool bOwner, Query::Type eQueryType);
-    virtual ~ConvexHull2 ();
+    ConvexHull2(int iVertexQuantity, Vector2<Real> *akVertex, Real fEpsilon, bool bOwner,
+                Query::Type eQueryType);
+    virtual ~ConvexHull2();
 
     // If GetDimension() returns 1, then the points lie on a line.  You must
     // create a ConvexHull1 object using the function provided.
-    const Vector2<Real>& GetLineOrigin () const;
-    const Vector2<Real>& GetLineDirection () const;
-    ConvexHull1<Real>* GetConvexHull1 () const;
+    const Vector2<Real> &GetLineOrigin() const;
+    const Vector2<Real> &GetLineDirection() const;
+    ConvexHull1<Real> *GetConvexHull1() const;
 
 private:
     using ConvexHull<Real>::m_eQueryType;
@@ -54,35 +53,35 @@ private:
     class WM4_FOUNDATION_ITEM Edge
     {
     public:
-        Edge (int iV0, int iV1);
+        Edge(int iV0, int iV1);
 
-        int GetSign (int i, const Query2<Real>* pkQuery);
+        int GetSign(int i, const Query2<Real> *pkQuery);
 
-        void Insert (Edge* pkAdj0, Edge* pkAdj1);
-        void DeleteSelf ();
-        void DeleteAll ();
+        void Insert(Edge *pkAdj0, Edge *pkAdj1);
+        void DeleteSelf();
+        void DeleteAll();
 
-        void GetIndices (int& riHQuantity, int*& raiHIndex);
+        void GetIndices(int &riHQuantity, int *&raiHIndex);
 
         int V[2];
-        Edge* A[2];
+        Edge *A[2];
         int Sign;
         int Time;
     };
 
     // Support for streaming to/from disk.
-    ConvexHull2 (const char* acFilename);
-    bool Load (const char* acFilename);
-    bool Save (const char* acFilename) const;
+    ConvexHull2(const char *acFilename);
+    bool Load(const char *acFilename);
+    bool Save(const char *acFilename) const;
 
-    bool Update (Edge*& rpkHull, int i);
+    bool Update(Edge *&rpkHull, int i);
 
     // The input points.
-    Vector2<Real>* m_akVertex;
+    Vector2<Real> *m_akVertex;
 
     // Support for robust queries.
-    Vector2<Real>* m_akSVertex;
-    Query2<Real>* m_pkQuery;
+    Vector2<Real> *m_akSVertex;
+    Query2<Real> *m_pkQuery;
 
     // The line of containment if the dimension is 1.
     Vector2<Real> m_kLineOrigin, m_kLineDirection;
@@ -91,6 +90,6 @@ private:
 typedef ConvexHull2<float> ConvexHull2f;
 typedef ConvexHull2<double> ConvexHull2d;
 
-}
+} // namespace Wm4
 
 #endif

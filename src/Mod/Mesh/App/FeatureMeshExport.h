@@ -38,19 +38,17 @@ namespace Mesh
  * The Export class writes any supported mesh format into a file.
  * @author Werner Mayer
  */
-class MeshExport Export : public App::DocumentObject
+class MeshExport Export: public App::DocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Mesh::Export);
 
 public:
     Export();
 
-    App::PropertyLink   Source;
+    App::PropertyLink Source;
     App::PropertyString FileName;
     App::PropertyString Format;
-    const char* getViewProviderName() const override {
-        return "MeshGui::ViewProviderExport";
-    }
+    const char *getViewProviderName() const override { return "MeshGui::ViewProviderExport"; }
 
     /** @name methods override feature */
     //@{
@@ -60,6 +58,6 @@ public:
     //@}
 };
 
-}
+} // namespace Mesh
 
-#endif // MESH_FEATUREMESHEXPORT_H 
+#endif // MESH_FEATUREMESHEXPORT_H

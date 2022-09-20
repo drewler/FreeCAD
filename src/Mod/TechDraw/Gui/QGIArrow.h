@@ -27,7 +27,7 @@
 
 #include <Base/Vector3D.h>
 
-# include "QGIPrimPath.h"
+#include "QGIPrimPath.h"
 
 QT_BEGIN_NAMESPACE
 class QPainter;
@@ -48,14 +48,17 @@ namespace TechDrawGui
 /*    NONE*/
 /*};*/
 
-class TechDrawGuiExport QGIArrow : public QGIPrimPath
+class TechDrawGuiExport QGIArrow: public QGIPrimPath
 {
 public:
     explicit QGIArrow();
     ~QGIArrow() {}
 
-    enum {Type = QGraphicsItem::UserType + 109};
-    int type() const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 109
+    };
+    int type() const { return Type; }
 
 public:
     void draw();
@@ -99,6 +102,6 @@ private:
     Base::Vector3d m_dir;
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMARROW_H

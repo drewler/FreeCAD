@@ -32,16 +32,18 @@
 #include <Mod/TechDraw/App/DrawView.h>
 
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawView;
 }
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 class QGIView;
 class MDIViewPage;
 class ViewProviderPage;
 
-class TechDrawGuiExport ViewProviderDrawingView : public Gui::ViewProviderDocumentObject
+class TechDrawGuiExport ViewProviderDrawingView: public Gui::ViewProviderDocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderDrawingView);
 
@@ -51,11 +53,11 @@ public:
     /// destructor
     ~ViewProviderDrawingView() override;
 
-    App::PropertyBool  KeepLabel;
+    App::PropertyBool KeepLabel;
     App::PropertyInteger StackOrder;
 
     void attach(App::DocumentObject *) override;
-    bool useNewSelectionModel() const override {return false;}
+    bool useNewSelectionModel() const override { return false; }
     /// Hide the object in the view
     void hide() override;
     /// Show the object in the view
@@ -63,12 +65,12 @@ public:
     bool isShow() const override;
 
     void onChanged(const App::Property *prop) override;
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
 
-    QGIView* getQView();
-    MDIViewPage* getMDIViewPage() const;
+    QGIView *getQView();
+    MDIViewPage *getMDIViewPage() const;
     Gui::MDIView *getMDIView() const override;
-    ViewProviderPage* getViewProviderPage() const;
+    ViewProviderPage *getViewProviderPage() const;
 
     /** @name Restoring view provider from document load */
     //@{
@@ -76,13 +78,12 @@ public:
     void finishRestoring() override;
     //@}
 
-    virtual TechDraw::DrawView* getViewObject() const;
+    virtual TechDraw::DrawView *getViewObject() const;
     void showProgressMessage(const std::string featureName, const std::string text) const;
 
-    void onGuiRepaint(const TechDraw::DrawView* dv);
-    void onProgressMessage(const TechDraw::DrawView* dv,
-                         const std::string featureName,
-                         const std::string text);
+    void onGuiRepaint(const TechDraw::DrawView *dv);
+    void onProgressMessage(const TechDraw::DrawView *dv, const std::string featureName,
+                           const std::string text);
     using Connection = boost::signals2::scoped_connection;
     Connection connectGuiRepaint;
     Connection connectProgressMessage;
@@ -91,13 +92,11 @@ public:
     virtual void stackDown();
     virtual void stackTop();
     virtual void stackBottom();
-    virtual int getZ() {return StackOrder.getValue();}
+    virtual int getZ() { return StackOrder.getValue(); }
 
 private:
-    void multiParentPaint(std::vector<TechDraw::DrawPage*>& pages);
-    void singleParentPaint(const TechDraw::DrawView* dv);
-
-
+    void multiParentPaint(std::vector<TechDraw::DrawPage *> &pages);
+    void singleParentPaint(const TechDraw::DrawView *dv);
 };
 
 } // namespace TechDrawGui

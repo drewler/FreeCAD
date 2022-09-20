@@ -23,16 +23,15 @@
 namespace Wm4
 {
 
-template <int ISIZE>
-class RVector3 : public TRVector<3,ISIZE>
+template<int ISIZE> class RVector3: public TRVector<3, ISIZE>
 {
 public:
     // construction
-    RVector3 ();
-    RVector3 (const RVector3& rkV);
+    RVector3();
+    RVector3(const RVector3 &rkV);
 
 #ifdef WM4_USING_VC70
-    RVector3 (const TRVector<3,ISIZE>& rkV)
+    RVector3(const TRVector<3, ISIZE> &rkV)
     {
         // The inline body is here because of an apparent MSVC++ .NET 2002
         // compiler bug.  If placed in the *.inl file, the compiler complains:
@@ -55,25 +54,24 @@ public:
         m_akTuple[2] = rkV[2];
     }
 #else
-    RVector3 (const TRVector<3,ISIZE>& rkV);
+    RVector3(const TRVector<3, ISIZE> &rkV);
 #endif
 
-    RVector3 (const TRational<ISIZE>& rkX, const TRational<ISIZE>& rkY,
-        const TRational<ISIZE>& rkZ);
+    RVector3(const TRational<ISIZE> &rkX, const TRational<ISIZE> &rkY, const TRational<ISIZE> &rkZ);
 
     // member access
-    TRational<ISIZE> X () const;
-    TRational<ISIZE>& X ();
-    TRational<ISIZE> Y () const;
-    TRational<ISIZE>& Y ();
-    TRational<ISIZE> Z () const;
-    TRational<ISIZE>& Z ();
+    TRational<ISIZE> X() const;
+    TRational<ISIZE> &X();
+    TRational<ISIZE> Y() const;
+    TRational<ISIZE> &Y();
+    TRational<ISIZE> Z() const;
+    TRational<ISIZE> &Z();
 
     // assignment
-    RVector3& operator= (const RVector3& rkV);
+    RVector3 &operator=(const RVector3 &rkV);
 
 #ifdef WM4_USING_VC70
-    RVector3& operator= (const TRVector<3,ISIZE>& rkV)
+    RVector3 &operator=(const TRVector<3, ISIZE> &rkV)
     {
         // The inline body is here because of an apparent MSVC++ .NET 2002
         // compiler bug.  If placed in the *.inl file, the compiler complains:
@@ -95,24 +93,23 @@ public:
         return *this;
     }
 #else
-    RVector3& operator= (const TRVector<3,ISIZE>& rkV);
+    RVector3 &operator=(const TRVector<3, ISIZE> &rkV);
 #endif
 
     // returns Dot(this,V)
-    TRational<ISIZE> Dot (const RVector3& rkV) const;
+    TRational<ISIZE> Dot(const RVector3 &rkV) const;
 
     // returns Cross(this,V)
-    RVector3 Cross (const RVector3& rkV) const;
+    RVector3 Cross(const RVector3 &rkV) const;
 
     // returns Dot(this,Cross(U,V))
-    TRational<ISIZE> TripleScalar (const RVector3& rkU, const RVector3& rkV)
-        const;
+    TRational<ISIZE> TripleScalar(const RVector3 &rkU, const RVector3 &rkV) const;
 
 protected:
-    using TRVector<3,ISIZE>::m_akTuple;
+    using TRVector<3, ISIZE>::m_akTuple;
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4RVector3.inl"
 

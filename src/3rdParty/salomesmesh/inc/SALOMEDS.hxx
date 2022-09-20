@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  SALOME SALOMEDS : data structure of SALOME and sources of Salome data server 
+//  SALOME SALOMEDS : data structure of SALOME and sources of Salome data server
 //  File   : SALOMEDS.hxx
 //  Author : Sergey ANIKIN
 //  Module : SALOME
@@ -35,34 +35,34 @@
 
 namespace SALOMEDS
 {
-  // PAL8065: san -- Implementation of convenient locker based on simple recursive 
-  // mutex for POSIX platforms.
-  // This class is to protect SALOMEDS CORBA methods which deal with OCC calls from 
-  // parallel access by several threads
-  // To protect some method, an instance of Locker class should be created
-  // on the stack at the beginning of guarded code:
-  //
-  //    Locker lock;
-  //
-  class SALOMEDS_EXPORT Locker : public Utils_Locker
-  {
-  public:
+// PAL8065: san -- Implementation of convenient locker based on simple recursive
+// mutex for POSIX platforms.
+// This class is to protect SALOMEDS CORBA methods which deal with OCC calls from
+// parallel access by several threads
+// To protect some method, an instance of Locker class should be created
+// on the stack at the beginning of guarded code:
+//
+//    Locker lock;
+//
+class SALOMEDS_EXPORT Locker: public Utils_Locker
+{
+public:
     Locker();
     virtual ~Locker();
 
-  private:
+private:
     static Utils_Mutex MutexDS;
 
     friend void lock();
     friend void unlock();
-  };
-
-  // Convenient functions to lock/unlock the global SALOMEDS mutex temporarily.
-  // In particular, "unlock-dosomething-lock" scheme should be used, when some non-SALOMEDS
-  // CORBA interface is called (component's engine), to avoid deadlocks in case of 
-  // indirect recursion.
-  void lock();
-  void unlock();
 };
+
+// Convenient functions to lock/unlock the global SALOMEDS mutex temporarily.
+// In particular, "unlock-dosomething-lock" scheme should be used, when some non-SALOMEDS
+// CORBA interface is called (component's engine), to avoid deadlocks in case of
+// indirect recursion.
+void lock();
+void unlock();
+}; // namespace SALOMEDS
 
 #endif

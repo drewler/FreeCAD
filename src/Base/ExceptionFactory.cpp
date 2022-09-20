@@ -28,23 +28,21 @@
 
 using namespace Base;
 
-ExceptionFactory* ExceptionFactory::_pcSingleton = nullptr;
+ExceptionFactory *ExceptionFactory::_pcSingleton = nullptr;
 
-ExceptionFactory& ExceptionFactory::Instance()
+ExceptionFactory &ExceptionFactory::Instance()
 {
-    if (!_pcSingleton)
-        _pcSingleton = new ExceptionFactory;
+    if (!_pcSingleton) _pcSingleton = new ExceptionFactory;
     return *_pcSingleton;
 }
 
-void ExceptionFactory::Destruct ()
+void ExceptionFactory::Destruct()
 {
-    if (_pcSingleton)
-        delete _pcSingleton;
+    if (_pcSingleton) delete _pcSingleton;
     _pcSingleton = nullptr;
 }
 
-void ExceptionFactory::raiseException (PyObject * pydict) const
+void ExceptionFactory::raiseException(PyObject *pydict) const
 {
     std::string classname;
 
@@ -52,12 +50,10 @@ void ExceptionFactory::raiseException (PyObject * pydict) const
     if (edict.hasKey("sclassname")) {
         classname = static_cast<std::string>(Py::String(edict.getItem("sclassname")));
 
-        std::map<const std::string, AbstractProducer*>::const_iterator pProd;
+        std::map<const std::string, AbstractProducer *>::const_iterator pProd;
 
         pProd = _mpcProducers.find(classname.c_str());
         if (pProd != _mpcProducers.end())
             static_cast<AbstractExceptionProducer *>(pProd->second)->raiseException(pydict);
     }
 }
-
-

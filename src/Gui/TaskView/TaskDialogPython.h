@@ -28,38 +28,40 @@
 #include "TaskWatcher.h"
 
 
-namespace Gui {
-namespace TaskView {
+namespace Gui
+{
+namespace TaskView
+{
 
-class ControlPy : public Py::PythonExtension<ControlPy> 
+class ControlPy: public Py::PythonExtension<ControlPy>
 {
 public:
-    static void init_type();    // announce properties and methods
-    static ControlPy* getInstance();
+    static void init_type(); // announce properties and methods
+    static ControlPy *getInstance();
 
     ControlPy();
     ~ControlPy() override;
 
     Py::Object repr() override;
-    Py::Object showDialog(const Py::Tuple&);
-    Py::Object activeDialog(const Py::Tuple&);
-    Py::Object closeDialog(const Py::Tuple&);
-    Py::Object addTaskWatcher(const Py::Tuple&);
-    Py::Object clearTaskWatcher(const Py::Tuple&);
-    Py::Object isAllowedAlterDocument(const Py::Tuple&);
-    Py::Object isAllowedAlterView(const Py::Tuple&);
-    Py::Object isAllowedAlterSelection(const Py::Tuple&);
-    Py::Object showTaskView(const Py::Tuple&);
-    Py::Object showModelView(const Py::Tuple&);
+    Py::Object showDialog(const Py::Tuple &);
+    Py::Object activeDialog(const Py::Tuple &);
+    Py::Object closeDialog(const Py::Tuple &);
+    Py::Object addTaskWatcher(const Py::Tuple &);
+    Py::Object clearTaskWatcher(const Py::Tuple &);
+    Py::Object isAllowedAlterDocument(const Py::Tuple &);
+    Py::Object isAllowedAlterView(const Py::Tuple &);
+    Py::Object isAllowedAlterSelection(const Py::Tuple &);
+    Py::Object showTaskView(const Py::Tuple &);
+    Py::Object showModelView(const Py::Tuple &);
 
 private:
-    static ControlPy* instance;
+    static ControlPy *instance;
 };
 
-class GuiExport TaskWatcherPython : public TaskWatcher
+class GuiExport TaskWatcherPython: public TaskWatcher
 {
 public:
-    explicit TaskWatcherPython(const Py::Object&);
+    explicit TaskWatcherPython(const Py::Object &);
     ~TaskWatcherPython() override;
     bool shouldShow() override;
 
@@ -67,14 +69,14 @@ private:
     Py::Object watcher;
 };
 
-class GuiExport TaskDialogPython : public TaskDialog
+class GuiExport TaskDialogPython: public TaskDialog
 {
 public:
-    explicit TaskDialogPython(const Py::Object&);
+    explicit TaskDialogPython(const Py::Object &);
     ~TaskDialogPython() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override;
-    void modifyStandardButtons(QDialogButtonBox*) override;
+    void modifyStandardButtons(QDialogButtonBox *) override;
 
     /*!
       Indicates whether this task dialog allows other commands to modify
@@ -102,7 +104,7 @@ public:
     bool accept() override;
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
-    /// is called by the framework if the user press the help button 
+    /// is called by the framework if the user press the help button
     void helpRequested() override;
 
 private:
@@ -116,4 +118,3 @@ private:
 } //namespace Gui
 
 #endif // GUI_TASKVIEW_TASKDIALOGPYTHON_H
-

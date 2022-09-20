@@ -28,41 +28,39 @@
 
 using namespace Gui;
 
-Gui::WorkbenchFactoryInst* Gui::WorkbenchFactoryInst::_pcSingleton = nullptr;
+Gui::WorkbenchFactoryInst *Gui::WorkbenchFactoryInst::_pcSingleton = nullptr;
 
-WorkbenchFactoryInst& WorkbenchFactoryInst::instance()
+WorkbenchFactoryInst &WorkbenchFactoryInst::instance()
 {
-  if (!_pcSingleton)
-    _pcSingleton = new WorkbenchFactoryInst;
-  return *_pcSingleton;
+    if (!_pcSingleton) _pcSingleton = new WorkbenchFactoryInst;
+    return *_pcSingleton;
 }
 
-void WorkbenchFactoryInst::destruct ()
+void WorkbenchFactoryInst::destruct()
 {
-  if (_pcSingleton)
-    delete _pcSingleton;
-  _pcSingleton = nullptr;
+    if (_pcSingleton) delete _pcSingleton;
+    _pcSingleton = nullptr;
 }
 
-Workbench* WorkbenchFactoryInst::createWorkbench ( const char* sName ) const
+Workbench *WorkbenchFactoryInst::createWorkbench(const char *sName) const
 {
-    auto obj = (Workbench*)Produce( sName );
-    auto w = dynamic_cast<Workbench*>(obj);
-  if ( !w )
-  {
-    delete obj; // delete the unknown object as no workbench object
-    return nullptr;
-  }
+    auto obj = (Workbench *)Produce(sName);
+    auto w = dynamic_cast<Workbench *>(obj);
+    if (!w) {
+        delete obj; // delete the unknown object as no workbench object
+        return nullptr;
+    }
 
-  w->setName( sName );
-  return w;
+    w->setName(sName);
+    return w;
 }
 
 std::list<std::string> WorkbenchFactoryInst::workbenches() const
 {
-  std::list<std::string> wb;
-  for (std::map<const std::string, Base::AbstractProducer*>::const_iterator
-      it = _mpcProducers.begin(); it != _mpcProducers.end(); ++it)
-      wb.push_back(it->first);
-  return wb;
+    std::list<std::string> wb;
+    for (std::map<const std::string, Base::AbstractProducer *>::const_iterator it =
+             _mpcProducers.begin();
+         it != _mpcProducers.end(); ++it)
+        wb.push_back(it->first);
+    return wb;
 }

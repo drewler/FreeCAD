@@ -27,7 +27,4 @@
 #include "FcLodHandler.h"
 
 
-void FcLodHandler::startLod()
-{
-	Base::Console().Log("FcLodHandler::startLod()");
-}
+void FcLodHandler::startLod() { Base::Console().Log("FcLodHandler::startLod()"); }

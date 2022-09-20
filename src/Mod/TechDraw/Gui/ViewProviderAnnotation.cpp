@@ -35,35 +35,25 @@ PROPERTY_SOURCE(TechDrawGui::ViewProviderAnnotation, TechDrawGui::ViewProviderDr
 //**************************************************************************
 // Construction/Destruction
 
-ViewProviderAnnotation::ViewProviderAnnotation()
-{
-    sPixmap = "actions/TechDraw_Annotation";
-}
+ViewProviderAnnotation::ViewProviderAnnotation() { sPixmap = "actions/TechDraw_Annotation"; }
 
-ViewProviderAnnotation::~ViewProviderAnnotation()
-{
-}
+ViewProviderAnnotation::~ViewProviderAnnotation() {}
 
-void ViewProviderAnnotation::updateData(const App::Property* prop)
+void ViewProviderAnnotation::updateData(const App::Property *prop)
 {
-    if (prop == &(getViewObject()->Text)   ||
-        prop == &(getViewObject()->Font)   ||
-        prop == &(getViewObject()->TextColor)   ||
-        prop == &(getViewObject()->TextSize)   ||
-        prop == &(getViewObject()->LineSpace)   ||
-        prop == &(getViewObject()->TextStyle)   ||
-        prop == &(getViewObject()->MaxWidth) ) {
+    if (prop == &(getViewObject()->Text) || prop == &(getViewObject()->Font)
+        || prop == &(getViewObject()->TextColor) || prop == &(getViewObject()->TextSize)
+        || prop == &(getViewObject()->LineSpace) || prop == &(getViewObject()->TextStyle)
+        || prop == &(getViewObject()->MaxWidth)) {
         // redraw QGIVP
-        QGIView* qgiv = getQView();
-        if (qgiv) {
-            qgiv->updateView(true);
-        }
+        QGIView *qgiv = getQView();
+        if (qgiv) { qgiv->updateView(true); }
     }
 
     ViewProviderDrawingView::updateData(prop);
 }
 
-TechDraw::DrawViewAnnotation* ViewProviderAnnotation::getViewObject() const
+TechDraw::DrawViewAnnotation *ViewProviderAnnotation::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawViewAnnotation*>(pcObject);
+    return dynamic_cast<TechDraw::DrawViewAnnotation *>(pcObject);
 }

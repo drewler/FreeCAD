@@ -36,10 +36,12 @@ QT_BEGIN_NAMESPACE
 class QDir;
 QT_END_NAMESPACE
 
-namespace Gui {
-  namespace Dialog{
-    class PreferencePage;
-  }
+namespace Gui
+{
+namespace Dialog
+{
+class PreferencePage;
+}
 
 /**
  * The widget factory provides methods for the dynamic creation of widgets.
@@ -48,27 +50,25 @@ namespace Gui {
  * preference page use PrefPageProducer instead.
  * \author Werner Mayer
  */
-class GuiExport WidgetFactoryInst : public Base::Factory
+class GuiExport WidgetFactoryInst: public Base::Factory
 {
 public:
-    static WidgetFactoryInst& instance();
-    static void destruct ();
+    static WidgetFactoryInst &instance();
+    static void destruct();
 
-    QWidget* createWidget (const char* sName, QWidget* parent=nullptr) const;
-    Gui::Dialog::PreferencePage* createPreferencePage (const char* sName, QWidget* parent=nullptr) const;
-    QWidget* createPrefWidget(const char* sName, QWidget* parent, const char* sPref);
+    QWidget *createWidget(const char *sName, QWidget *parent = nullptr) const;
+    Gui::Dialog::PreferencePage *createPreferencePage(const char *sName,
+                                                      QWidget *parent = nullptr) const;
+    QWidget *createPrefWidget(const char *sName, QWidget *parent, const char *sPref);
 
 private:
-    static WidgetFactoryInst* _pcSingleton;
+    static WidgetFactoryInst *_pcSingleton;
 
-    WidgetFactoryInst(){}
-    ~WidgetFactoryInst() override{}
+    WidgetFactoryInst() {}
+    ~WidgetFactoryInst() override {}
 };
 
-inline WidgetFactoryInst& WidgetFactory()
-{
-    return WidgetFactoryInst::instance();
-}
+inline WidgetFactoryInst &WidgetFactory() { return WidgetFactoryInst::instance(); }
 
 // --------------------------------------------------------------------
 
@@ -77,28 +77,24 @@ inline WidgetFactoryInst& WidgetFactory()
  * the ability to create widgets dynamically.
  * \author Werner Mayer
  */
-template <class CLASS>
-class WidgetProducer : public Base::AbstractProducer
+template<class CLASS> class WidgetProducer: public Base::AbstractProducer
 {
 public:
     /**
      * Register a special type of widget to the WidgetFactoryInst.
      */
-    WidgetProducer ()
+    WidgetProducer()
     {
-        const char* cname = CLASS::staticMetaObject.className();
+        const char *cname = CLASS::staticMetaObject.className();
         WidgetFactoryInst::instance().AddProducer(cname, this);
     }
 
-    ~WidgetProducer () override{}
+    ~WidgetProducer() override {}
 
     /**
      * Creates an instance of the specified widget.
      */
-    void* Produce () const override
-    {
-        return (new CLASS);
-    }
+    void *Produce() const override { return (new CLASS); }
 };
 
 // --------------------------------------------------------------------
@@ -108,16 +104,15 @@ public:
  * the ability to create preference pages dynamically.
  * \author Werner Mayer
  */
-template <class CLASS>
-class PrefPageProducer : public Base::AbstractProducer
+template<class CLASS> class PrefPageProducer: public Base::AbstractProducer
 {
 public:
     /**
      * Register a special type of preference page to the WidgetFactoryInst.
      */
-    PrefPageProducer (const char* group)
+    PrefPageProducer(const char *group)
     {
-        const char* cname = CLASS::staticMetaObject.className();
+        const char *cname = CLASS::staticMetaObject.className();
         if (strcmp(cname, Gui::Dialog::PreferencePage::staticMetaObject.className()) == 0)
             qWarning("The class '%s' lacks of Q_OBJECT macro", typeid(CLASS).name());
         if (WidgetFactoryInst::instance().CanProduce(cname)) {
@@ -129,15 +124,12 @@ public:
         }
     }
 
-    ~PrefPageProducer () override{}
+    ~PrefPageProducer() override {}
 
     /**
      * Creates an instance of the specified widget.
      */
-    void* Produce () const override
-    {
-        return (new CLASS);
-    }
+    void *Produce() const override { return (new CLASS); }
 };
 
 /**
@@ -145,18 +137,18 @@ public:
  * dynamically from an external UI file.
  * @author Werner Mayer
  */
-class GuiExport PrefPageUiProducer : public Base::AbstractProducer
+class GuiExport PrefPageUiProducer: public Base::AbstractProducer
 {
 public:
     /**
      * Register a special type of preference page to the WidgetFactoryInst.
      */
-    PrefPageUiProducer (const char* filename, const char* group);
-    ~PrefPageUiProducer () override;
+    PrefPageUiProducer(const char *filename, const char *group);
+    ~PrefPageUiProducer() override;
     /**
      * Creates an instance of the specified widget.
      */
-    void* Produce () const override;
+    void *Produce() const override;
 
 private:
     QString fn;
@@ -167,18 +159,18 @@ private:
  * dynamically from a Python class.
  * @author Werner Mayer
  */
-class GuiExport PrefPagePyProducer : public Base::AbstractProducer
+class GuiExport PrefPagePyProducer: public Base::AbstractProducer
 {
 public:
     /**
      * Register a special type of preference page to the WidgetFactoryInst.
      */
-    PrefPagePyProducer (const Py::Object&, const char* group);
-    ~PrefPagePyProducer () override;
+    PrefPagePyProducer(const Py::Object &, const char *group);
+    ~PrefPagePyProducer() override;
     /**
      * Creates an instance of the specified widget.
      */
-    void* Produce () const override;
+    void *Produce() const override;
 
 private:
     Py::Object type;
@@ -191,16 +183,15 @@ private:
  * the ability to create custom pages dynamically.
  * \author Werner Mayer
  */
-template <class CLASS>
-class CustomPageProducer : public Base::AbstractProducer
+template<class CLASS> class CustomPageProducer: public Base::AbstractProducer
 {
 public:
     /**
      * Register a special type of customize page to the WidgetFactoryInst.
      */
-    CustomPageProducer ()
+    CustomPageProducer()
     {
-        const char* cname = CLASS::staticMetaObject.className();
+        const char *cname = CLASS::staticMetaObject.className();
         if (strcmp(cname, Gui::Dialog::CustomizeActionPage::staticMetaObject.className()) == 0)
             qWarning("The class '%s' lacks of Q_OBJECT macro", typeid(CLASS).name());
         if (WidgetFactoryInst::instance().CanProduce(cname)) {
@@ -212,15 +203,12 @@ public:
         }
     }
 
-    ~CustomPageProducer () override{}
+    ~CustomPageProducer() override {}
 
     /**
      * Creates an instance of the specified widget.
      */
-    void* Produce () const override
-    {
-        return (new CLASS);
-    }
+    void *Produce() const override { return (new CLASS); }
 };
 
 // --------------------------------------------------------------------
@@ -256,19 +244,19 @@ inline WidgetFactorySupplier &GetWidgetFactorySupplier()
  * At most this class is used to embed widgets which are created from .ui files.
  * \author Werner Mayer
  */
-class ContainerDialog : public QDialog
+class ContainerDialog: public QDialog
 {
     Q_OBJECT
 
 public:
-    ContainerDialog( QWidget* templChild );
+    ContainerDialog(QWidget *templChild);
     ~ContainerDialog() override;
 
-    QPushButton* buttonOk; /**< The Ok button. */
-    QPushButton* buttonCancel; /**< The cancel button. */
+    QPushButton *buttonOk;     /**< The Ok button. */
+    QPushButton *buttonCancel; /**< The cancel button. */
 
 private:
-    QGridLayout* MyDialogLayout;
+    QGridLayout *MyDialogLayout;
 };
 
 // ----------------------------------------------------
@@ -326,27 +314,27 @@ private:
  * \author Werner Mayer
  */
 
-class PyResource : public Py::PythonExtension<PyResource>
+class PyResource: public Py::PythonExtension<PyResource>
 {
 public:
-    static void init_type();    // announce properties and methods
+    static void init_type(); // announce properties and methods
 
     PyResource();
     ~PyResource() override;
 
-    void load(const char* name);
-    bool connect(const char* sender, const char* signal, PyObject* cb);
+    void load(const char *name);
+    bool connect(const char *sender, const char *signal, PyObject *cb);
 
     Py::Object repr() override;
 
-    Py::Object value(const Py::Tuple&);
-    Py::Object setValue(const Py::Tuple&);
-    Py::Object show(const Py::Tuple&);
-    Py::Object connect(const Py::Tuple&);
+    Py::Object value(const Py::Tuple &);
+    Py::Object setValue(const Py::Tuple &);
+    Py::Object show(const Py::Tuple &);
+    Py::Object connect(const Py::Tuple &);
 
 private:
-    std::vector<class SignalConnect*> mySignals;
-    QDialog* myDlg;
+    std::vector<class SignalConnect *> mySignals;
+    QDialog *myDlg;
 };
 
 /**
@@ -355,34 +343,35 @@ private:
  * This mechanism is used in the Python/Qt framework.
  * \author Werner Mayer
  */
-class SignalConnect : public QObject
+class SignalConnect: public QObject
 {
     Q_OBJECT
 
 public:
-    SignalConnect(PyObject* res, PyObject* cb);
+    SignalConnect(PyObject *res, PyObject *cb);
     ~SignalConnect() override;
 
 public Q_SLOTS:
     void onExecute();
 
 private:
-    PyObject* myResource;
-    PyObject* myCallback;
+    PyObject *myResource;
+    PyObject *myCallback;
 };
 
 // ----------------------------------------------------
-namespace Dialog {
+namespace Dialog
+{
 
 /** Subclass that embeds a form from a Python class.
  * \author Werner Mayer
  */
-class GuiExport PreferencePagePython : public PreferencePage
+class GuiExport PreferencePagePython: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    PreferencePagePython(const Py::Object& dlg, QWidget* parent = nullptr);
+    PreferencePagePython(const Py::Object &dlg, QWidget *parent = nullptr);
     ~PreferencePagePython() override;
 
     void loadSettings() override;

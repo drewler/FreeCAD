@@ -23,22 +23,21 @@
 namespace Wm4
 {
 
-template <class Real>
-class Mapper3
+template<class Real> class Mapper3
 {
 public:
     // Construction and destruction.  The value of epsilon is used as a
     // relative error when computing the dimension of the point set.
-    Mapper3 (int iVQuantity, const Vector3<Real>* akVertex, Real fEpsilon);
-    ~Mapper3 ();
+    Mapper3(int iVQuantity, const Vector3<Real> *akVertex, Real fEpsilon);
+    ~Mapper3();
 
     // Axis-aligned bounding box of the input points.
-    const Vector3<Real>& GetMin () const;
-    const Vector3<Real>& GetMax () const;
-    Real GetMaxRange () const;
+    const Vector3<Real> &GetMin() const;
+    const Vector3<Real> &GetMax() const;
+    Real GetMaxRange() const;
 
     // Dimension d of the set (0, 1, 2, or 3).
-    int GetDimension () const;
+    int GetDimension() const;
 
     // Coordinate system.  The origin is valid for any dimension d.  The
     // unit-length direction vector is valid only for 0 <= i < d.  The extreme
@@ -54,14 +53,14 @@ public:
     // to a triangle.  The next extreme index corresponds to the input point
     // that is farthest from this triangle in a direction perpendicular to
     // the triangle.
-    const Vector3<Real>& GetOrigin () const;
-    const Vector3<Real>& GetDirection (int i) const;
-    int GetExtremeIndex (int i) const;
+    const Vector3<Real> &GetOrigin() const;
+    const Vector3<Real> &GetDirection(int i) const;
+    int GetExtremeIndex(int i) const;
 
     // If d = 3, the direction vectors {U0,U1,U2} form a right-handed set.
     // The four extreme points form a tetrahedron.  This function indicates
     // if that tetrahedron is counterclockwise ordered.
-    bool GetExtremeCCW () const;
+    bool GetExtremeCCW() const;
 
 private:
     // Axis-aligned bounding box of input points.  The maximum range is the
@@ -103,6 +102,6 @@ namespace Wm4
 {
 typedef Mapper3<float> Mapper3f;
 typedef Mapper3<double> Mapper3d;
-}
+} // namespace Wm4
 
 #endif

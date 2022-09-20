@@ -32,66 +32,67 @@
 class SbViewVolume;
 class SoBaseColor;
 
-namespace Gui {
-  class SoFCSelection;
-  class AbstractMouseModel;
-}
-namespace MeshGui {
+namespace Gui
+{
+class SoFCSelection;
+class AbstractMouseModel;
+} // namespace Gui
+namespace MeshGui
+{
 
 /**
  * The ViewProviderMeshNode class creates a node representing the mesh data structure.
  * @author Werner Mayer
  */
-class MeshGuiExport ViewProviderMeshNode : public Gui::ViewProviderGeometryObject
+class MeshGuiExport ViewProviderMeshNode: public Gui::ViewProviderGeometryObject
 {
-  PROPERTY_HEADER(TriangulationGui::ViewProviderMeshNode);
+    PROPERTY_HEADER(TriangulationGui::ViewProviderMeshNode);
 
 public:
-  ViewProviderMeshNode();
-  virtual ~ViewProviderMeshNode();
-  
-  // Display properties
-  App::PropertyFloatConstraint LineWidth;
-  App::PropertyFloatConstraint PointSize;
-  App::PropertyBool OpenEdges;
+    ViewProviderMeshNode();
+    virtual ~ViewProviderMeshNode();
 
-  void attach(App::DocumentObject *pcFeat);
-  virtual void updateData(const App::Property*);
-  virtual QIcon getIcon() const;
-  virtual void setDisplayMode(const char* ModeName);
-  virtual std::vector<std::string> getDisplayModes() const;
+    // Display properties
+    App::PropertyFloatConstraint LineWidth;
+    App::PropertyFloatConstraint PointSize;
+    App::PropertyBool OpenEdges;
 
-  /** @name Polygon picking */
-	//@{
-  // Draws the picked polygon
-  bool handleEvent(const SoEvent * const ev,Gui::View3DInventorViewer &Viewer);
-  /// Sets the edit mnode
-  bool setEdit(int ModNum=0);
-  /// Unsets the edit mode
-  void unsetEdit(void);
-  /// Returns the edit mode
-  const char* getEditModeName(void);
-	//@}
+    void attach(App::DocumentObject *pcFeat);
+    virtual void updateData(const App::Property *);
+    virtual QIcon getIcon() const;
+    virtual void setDisplayMode(const char *ModeName);
+    virtual std::vector<std::string> getDisplayModes() const;
+
+    /** @name Polygon picking */
+    //@{
+    // Draws the picked polygon
+    bool handleEvent(const SoEvent *const ev, Gui::View3DInventorViewer &Viewer);
+    /// Sets the edit mnode
+    bool setEdit(int ModNum = 0);
+    /// Unsets the edit mode
+    void unsetEdit(void);
+    /// Returns the edit mode
+    const char *getEditModeName(void);
+    //@}
 
 protected:
-  /// get called by the container whenever a property has been changed
-  void onChanged(const App::Property* prop);
-  void showOpenEdges( bool );
-  void setOpenEdgeColorFrom( const App::Color& col );
+    /// get called by the container whenever a property has been changed
+    void onChanged(const App::Property *prop);
+    void showOpenEdges(bool);
+    void setOpenEdgeColorFrom(const App::Color &col);
 
-  SoDrawStyle    *pcLineStyle;
-  SoDrawStyle    *pcPointStyle;
-  SoSeparator    *pcOpenEdge;
-  SoBaseColor    *pOpenColor;
+    SoDrawStyle *pcLineStyle;
+    SoDrawStyle *pcPointStyle;
+    SoSeparator *pcOpenEdge;
+    SoBaseColor *pOpenColor;
 
 private:
-  bool m_bEdit;
+    bool m_bEdit;
 
-  static App::PropertyFloatConstraint::Constraints floatRange;
+    static App::PropertyFloatConstraint::Constraints floatRange;
 };
 
 } // namespace MeshGui
 
 
 #endif // MESHGUI_VIEWPROVIDERMESHNODE_H
-

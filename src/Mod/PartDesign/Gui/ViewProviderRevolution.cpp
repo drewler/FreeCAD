@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMenu>
+#include <QMenu>
 #endif
 
 #include "TaskRevolutionParameters.h"
@@ -32,18 +32,13 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderRevolution,PartDesignGui::ViewProviderSketchBased)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderRevolution, PartDesignGui::ViewProviderSketchBased)
 
-ViewProviderRevolution::ViewProviderRevolution()
-{
-    sPixmap = "Tree_PartDesign_Revolution.svg";
-}
+ViewProviderRevolution::ViewProviderRevolution() { sPixmap = "Tree_PartDesign_Revolution.svg"; }
 
-ViewProviderRevolution::~ViewProviderRevolution()
-{
-}
+ViewProviderRevolution::~ViewProviderRevolution() {}
 
-void ViewProviderRevolution::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderRevolution::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     addDefaultAction(menu, QObject::tr("Edit revolution"));
     PartDesignGui::ViewProviderSketchBased::setupContextMenu(menu, receiver, member);
@@ -51,5 +46,5 @@ void ViewProviderRevolution::setupContextMenu(QMenu* menu, QObject* receiver, co
 
 TaskDlgFeatureParameters *ViewProviderRevolution::getEditDialog()
 {
-    return new TaskDlgRevolutionParameters( this );
+    return new TaskDlgRevolutionParameters(this);
 }

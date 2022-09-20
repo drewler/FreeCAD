@@ -33,16 +33,18 @@
 
 #include "ConstraintFilters.h"
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class ViewProviderSketch;
 class Ui_TaskSketcherConstraints;
 
-class ConstraintView : public QListWidget
+class ConstraintView: public QListWidget
 {
     Q_OBJECT
 
@@ -51,7 +53,7 @@ public:
     ~ConstraintView() override;
 
 protected:
-    void contextMenuEvent (QContextMenuEvent* event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 Q_SIGNALS:
     void onUpdateDrivingStatus(QListWidgetItem *item, bool status);
@@ -73,11 +75,12 @@ protected Q_SLOTS:
     void hideConstraints();
 };
 
-class TaskSketcherConstraints : public Gui::TaskView::TaskBox, public Gui::SelectionObserver
+class TaskSketcherConstraints: public Gui::TaskView::TaskBox, public Gui::SelectionObserver
 {
     Q_OBJECT
 
-    enum class ActionTarget {
+    enum class ActionTarget
+    {
         All,
         Selected
     };
@@ -87,11 +90,11 @@ public:
     ~TaskSketcherConstraints() override;
 
     /// Observer message from the Selection
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
 
 private:
     void slotConstraintsChanged();
-    bool isConstraintFiltered(QListWidgetItem * item);
+    bool isConstraintFiltered(QListWidgetItem *item);
     void change3DViewVisibilityToTrackFilter();
     void changeFilteredVisibility(bool show, ActionTarget target = ActionTarget::All);
     void updateSelectionFilter();
@@ -99,16 +102,15 @@ private:
     void updateList();
     void createVisibilityButtonActions();
 
-    template <class T>
-    bool isFilter(T filterValue);
+    template<class T> bool isFilter(T filterValue);
 
-    void getSelectionGeoId(QString expr, int & geoid, Sketcher::PointPos & pos);
+    void getSelectionGeoId(QString expr, int &geoid, Sketcher::PointPos &pos);
 
 public Q_SLOTS:
     void on_comboBoxFilter_currentIndexChanged(int);
     void on_listWidgetConstraints_itemSelectionChanged();
     void on_listWidgetConstraints_itemActivated(QListWidgetItem *item);
-    void on_listWidgetConstraints_itemChanged(QListWidgetItem * item);
+    void on_listWidgetConstraints_itemChanged(QListWidgetItem *item);
     void on_listWidgetConstraints_updateDrivingStatus(QListWidgetItem *item, bool status);
     void on_listWidgetConstraints_updateActiveStatus(QListWidgetItem *item, bool status);
     void on_listWidgetConstraints_emitCenterSelectedItems();
@@ -131,12 +133,15 @@ protected:
     Connection connectionConstraintsChanged;
 
 private:
-    QWidget* proxy;
+    QWidget *proxy;
     bool inEditMode;
     std::unique_ptr<Ui_TaskSketcherConstraints> ui;
-    ConstraintFilter::FilterValueBitset multiFilterStatus; // Stores the filters to be aggregated to form the multifilter.
-    std::vector<unsigned int> selectionFilter; // holds the constraint ids of the selected constraints
-    std::vector<unsigned int> associatedConstraintsFilter; // holds the constraint ids of the constraints associated with the selected geometry
+    ConstraintFilter::FilterValueBitset
+        multiFilterStatus; // Stores the filters to be aggregated to form the multifilter.
+    std::vector<unsigned int>
+        selectionFilter; // holds the constraint ids of the selected constraints
+    std::vector<unsigned int>
+        associatedConstraintsFilter; // holds the constraint ids of the constraints associated with the selected geometry
 };
 
 } //namespace SketcherGui

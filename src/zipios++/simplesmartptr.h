@@ -3,7 +3,8 @@
 
 #include "zipios-config.h"
 
-namespace zipios {
+namespace zipios
+{
 
 /** SimpleSmartPointer is a simple reference counting smart pointer
     template. The type pointed to must keep a reference count that is
@@ -11,79 +12,88 @@ namespace zipios {
     int unref() const. The type must also handle the reference count
     properly. The easiest way to do that is to use the ReferenceCount
     template class. */
-template< class Type >
-class SimpleSmartPointer {
+template<class Type> class SimpleSmartPointer
+{
 public:
-  Type *operator-> () const { return _p ;  }
+    Type *operator->() const { return _p; }
 
-  Type &operator* ()  const { return *_p ; }
+    Type &operator*() const { return *_p; }
 
-  SimpleSmartPointer( Type *p = 0 ) : _p( p ) { ref() ; }
+    SimpleSmartPointer(Type *p = 0) : _p(p) { ref(); }
 
-  template< class T2 > SimpleSmartPointer( const SimpleSmartPointer< T2 > &src ) 
-    : _p( src.get() ) { ref() ; }
+    template<class T2> SimpleSmartPointer(const SimpleSmartPointer<T2> &src) : _p(src.get())
+    {
+        ref();
+    }
 
-  SimpleSmartPointer( const SimpleSmartPointer &src ) : _p( src.get() ) { 
-    ref() ; 
-  }
+    SimpleSmartPointer(const SimpleSmartPointer &src) : _p(src.get()) { ref(); }
 
-  ~SimpleSmartPointer () { if ( unref() == 0 ) deleteIt() ; }
+    ~SimpleSmartPointer()
+    {
+        if (unref() == 0) deleteIt();
+    }
 
-  template< class T2 > 
-  SimpleSmartPointer &operator= ( const SimpleSmartPointer< T2 > &src ) {
-    ref( src.get() ) ;
-    if ( unref() == 0 )
-      deleteIt() ;
-    _p = src.get() ;
-    return *this ;
-  }
+    template<class T2> SimpleSmartPointer &operator=(const SimpleSmartPointer<T2> &src)
+    {
+        ref(src.get());
+        if (unref() == 0) deleteIt();
+        _p = src.get();
+        return *this;
+    }
 
-  SimpleSmartPointer &operator= ( const SimpleSmartPointer &src ) {
-    ref( src.get() ) ;
-    if ( unref() == 0 )
-      deleteIt() ;
-    _p = src.get() ;
-    return *this ;
-  }
+    SimpleSmartPointer &operator=(const SimpleSmartPointer &src)
+    {
+        ref(src.get());
+        if (unref() == 0) deleteIt();
+        _p = src.get();
+        return *this;
+    }
 
-  SimpleSmartPointer &operator=( Type *src ) {
-    _p = src ;
-    ref() ; 
-    return *this ;
-  }
+    SimpleSmartPointer &operator=(Type *src)
+    {
+        _p = src;
+        ref();
+        return *this;
+    }
 
-  bool operator== ( const Type *p )                const { return _p == p     ; }
-  bool operator!= ( const Type *p )                const { return _p != p     ; }
-  bool operator== ( const SimpleSmartPointer &sp ) const { return _p == sp.get() ; }
-  bool operator!= ( const SimpleSmartPointer &sp ) const { return _p != sp.get() ; }
-  bool operator!  ()                               const { return ! _p        ; }
-  // This next method is inspired by iostream, and is for use with 
-  // if ( some_smart_pointer ).
-  operator void*() const { return _p ? (void *)(-1) : (void *)(0) ; }
+    bool operator==(const Type *p) const { return _p == p; }
+    bool operator!=(const Type *p) const { return _p != p; }
+    bool operator==(const SimpleSmartPointer &sp) const { return _p == sp.get(); }
+    bool operator!=(const SimpleSmartPointer &sp) const { return _p != sp.get(); }
+    bool operator!() const { return !_p; }
+    // This next method is inspired by iostream, and is for use with
+    // if ( some_smart_pointer ).
+    operator void *() const { return _p ? (void *)(-1) : (void *)(0); }
 
-  Type *get() const { return _p ; }
+    Type *get() const { return _p; }
 
-  /** Returns the reference count - For debugging purposes. */
-  unsigned int getReferenceCount() const { return _p->getReferenceCount(); }
+    /** Returns the reference count - For debugging purposes. */
+    unsigned int getReferenceCount() const { return _p->getReferenceCount(); }
 
 
 private:
-  template< class T2 >
-  void ref( const T2 *ptr ) { if ( ptr ) ptr->ref() ; }
+    template<class T2> void ref(const T2 *ptr)
+    {
+        if (ptr) ptr->ref();
+    }
 
-  void ref() const { if ( _p ) _p->ref() ; }
-  unsigned int unref() const {
-    if ( _p )
-      return _p->unref();
-    else
-      return 0 ;
-  }
-  void deleteIt() {
-//      if( _p )
-//        cerr << "SimpleSmartPointer: Deleting object!" << endl ;
-    delete _p ;
-  }
-  Type *_p ;
+    void ref() const
+    {
+        if (_p) _p->ref();
+    }
+    unsigned int unref() const
+    {
+        if (_p) return _p->unref();
+        else
+            return 0;
+    }
+    void deleteIt()
+    {
+        //      if( _p )
+        //        cerr << "SimpleSmartPointer: Deleting object!" << endl ;
+        delete _p;
+    }
+    Type *_p;
 };
 
 
@@ -95,57 +105,56 @@ private:
     variable to a class and write two methods 'void ref() const' and
     'unsigned int unref() const' that invoke the same methods in the
     ReferenceCount variable. */
-template< class Type >
-class ReferenceCount {
-  /** SimpleSmartPointer needs to be a friend to invoke the private
+template<class Type> class ReferenceCount
+{
+    /** SimpleSmartPointer needs to be a friend to invoke the private
       ref() and unref() methods.  */
-  friend class SimpleSmartPointer< Type > ;
-  friend class SimpleSmartPointer< const Type > ;
-  /** Type also needs to be a friend to invoke the private ref() and
+    friend class SimpleSmartPointer<Type>;
+    friend class SimpleSmartPointer<const Type>;
+    /** Type also needs to be a friend to invoke the private ref() and
       unref() methods, in case Type doesn't want to inherit
       ReferenceCount and thus needs to invoke ref() and unref()
       through forwarding member functions. */
-  //
-  //  Originally the following template parameter was made a friend.
-  //  This is not allowed by the standard so comment it out:
-  //
-  // friend Type ;
-  //
-  //  Initially hack things by making the necessary classes friends
-  //  even though we don't know really which they are.  This is an
-  //  Hideous Hack.
-  friend class FileEntry ;
-  friend class Bogus ;
-  
+    //
+    //  Originally the following template parameter was made a friend.
+    //  This is not allowed by the standard so comment it out:
+    //
+    // friend Type ;
+    //
+    //  Initially hack things by making the necessary classes friends
+    //  even though we don't know really which they are.  This is an
+    //  Hideous Hack.
+    friend class FileEntry;
+    friend class Bogus;
+
 public:
-  /** Constructor initializes count to zero. */
-  ReferenceCount() : _ref_count( 0 ) {}
+    /** Constructor initializes count to zero. */
+    ReferenceCount() : _ref_count(0) {}
 
-  /** Copy-constructor initializes count to zero. It doesn't copy it
+    /** Copy-constructor initializes count to zero. It doesn't copy it
       from src. */
-  ReferenceCount( const ReferenceCount & /*src*/ ) : _ref_count( 0 ) {}
+    ReferenceCount(const ReferenceCount & /*src*/) : _ref_count(0) {}
 
-  /** The assignment operator doesn't copy the reference count, it
+    /** The assignment operator doesn't copy the reference count, it
       leaves it unchanged.  */
-  const ReferenceCount &operator= ( const ReferenceCount & /*src*/ ) { return *this; }
+    const ReferenceCount &operator=(const ReferenceCount & /*src*/) { return *this; }
+
 private:
+    /** Increases the reference count. */
+    void ref() const { ++_ref_count; }
 
-  /** Increases the reference count. */
-  void ref() const           { ++_ref_count ;        }
+    /** Decreases the reference count. */
+    unsigned int unref() const { return --_ref_count; }
 
-  /** Decreases the reference count. */
-  unsigned int unref() const { return --_ref_count ; }
+    /** Returns the reference count - For debugging purposes. */
+    unsigned int getReferenceCount() const { return _ref_count; }
 
-  /** Returns the reference count - For debugging purposes. */
-  unsigned int getReferenceCount() const { return _ref_count; }
-
-  /** Holds the actual reference count */
-  mutable unsigned short _ref_count ;
+    /** Holds the actual reference count */
+    mutable unsigned short _ref_count;
 };
 
 
-
-} // namespace
+} // namespace zipios
 
 #endif
 

@@ -26,12 +26,13 @@
 
 #include <Gui/Workbench.h>
 
-namespace StartGui {
+namespace StartGui
+{
 
 /**
  * @author Werner Mayer
  */
-class Workbench : public Gui::StdWorkbench
+class Workbench: public Gui::StdWorkbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -40,7 +41,7 @@ public:
     ~Workbench() override;
 
     /** Defines the standard context menu. */
-    void setupContextMenu(const char* recipient,Gui::MenuItem*) const override;
+    void setupContextMenu(const char *recipient, Gui::MenuItem *) const override;
     /** Run some actions when the workbench gets activated. */
     void activated() override;
 
@@ -48,15 +49,15 @@ public:
 
 protected:
     /** Defines the standard menus. */
-    Gui::MenuItem* setupMenuBar() const override;
+    Gui::MenuItem *setupMenuBar() const override;
     /** Defines the standard toolbars. */
-    Gui::ToolBarItem* setupToolBars() const override;
+    Gui::ToolBarItem *setupToolBars() const override;
     /** Defines the standard command bars. */
-    Gui::ToolBarItem* setupCommandBars() const override;
+    Gui::ToolBarItem *setupCommandBars() const override;
     /** Returns a DockWindowItems structure of dock windows this workbench. */
-    Gui::DockWindowItems* setupDockWindows() const override;
+    Gui::DockWindowItems *setupDockWindows() const override;
 
 }; // namespace StartGui
 
-}
+} // namespace StartGui
 #endif // START_WORKBENCH_H

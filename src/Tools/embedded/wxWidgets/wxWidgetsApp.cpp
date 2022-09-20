@@ -22,7 +22,7 @@ IMPLEMENT_APP(wxWidgetsApp);
 
 bool wxWidgetsApp::OnInit()
 {
-    wxWidgetsFrame* frame = new wxWidgetsFrame(0L, _("wxWidgets Application Template"));
+    wxWidgetsFrame *frame = new wxWidgetsFrame(0L, _("wxWidgets Application Template"));
 
     frame->Show();
 

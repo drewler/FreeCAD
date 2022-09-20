@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Precision.hxx>
+#include <Precision.hxx>
 #endif
 
 #include <Mod/PartDesign/App/FeaturePad.h>
@@ -57,14 +57,10 @@ TaskPadParameters::TaskPadParameters(ViewProviderPad *PadView, QWidget *parent, 
     setupDialog();
 
     // if it is a newly created object use the last value of the history
-    if (newObj) {
-        readValuesFromHistory();
-    }
+    if (newObj) { readValuesFromHistory(); }
 }
 
-TaskPadParameters::~TaskPadParameters()
-{
-}
+TaskPadParameters::~TaskPadParameters() {}
 
 void TaskPadParameters::translateModeList(int index)
 {
@@ -87,31 +83,26 @@ void TaskPadParameters::updateUI(int index)
 
 void TaskPadParameters::onModeChanged(int index)
 {
-    PartDesign::Pad* pcPad = static_cast<PartDesign::Pad*>(vp->getObject());
+    PartDesign::Pad *pcPad = static_cast<PartDesign::Pad *>(vp->getObject());
 
     switch (static_cast<Modes>(index)) {
-    case Modes::Dimension:
-        pcPad->Type.setValue("Length");
-        // Avoid error message
-        if (ui->lengthEdit->value() < Base::Quantity(Precision::Confusion(), Base::Unit::Length))
-            ui->lengthEdit->setValue(5.0);
-        break;
-    case Modes::ToLast:
-        pcPad->Type.setValue("UpToLast");
-        break;
-    case Modes::ToFirst:
-        pcPad->Type.setValue("UpToFirst");
-        break;
-    case Modes::ToFace:
-        pcPad->Type.setValue("UpToFace");
-        if (ui->lineFaceName->text().isEmpty()) {
-            ui->buttonFace->setChecked(true);
-            handleLineFaceNameClick(); // sets placeholder text
-        }
-        break;
-    case Modes::TwoDimensions:
-        pcPad->Type.setValue("TwoLengths");
-        break;
+        case Modes::Dimension:
+            pcPad->Type.setValue("Length");
+            // Avoid error message
+            if (ui->lengthEdit->value()
+                < Base::Quantity(Precision::Confusion(), Base::Unit::Length))
+                ui->lengthEdit->setValue(5.0);
+            break;
+        case Modes::ToLast: pcPad->Type.setValue("UpToLast"); break;
+        case Modes::ToFirst: pcPad->Type.setValue("UpToFirst"); break;
+        case Modes::ToFace:
+            pcPad->Type.setValue("UpToFace");
+            if (ui->lineFaceName->text().isEmpty()) {
+                ui->buttonFace->setChecked(true);
+                handleLineFaceNameClick(); // sets placeholder text
+            }
+            break;
+        case Modes::TwoDimensions: pcPad->Type.setValue("TwoLengths"); break;
     }
 
     updateUI(index);
@@ -121,9 +112,7 @@ void TaskPadParameters::onModeChanged(int index)
 void TaskPadParameters::apply()
 {
     QString facename = QString::fromLatin1("None");
-    if (static_cast<Modes>(getMode()) == Modes::ToFace) {
-        facename = getFaceName();
-    }
+    if (static_cast<Modes>(getMode()) == Modes::ToFace) { facename = getFaceName(); }
     applyParameters(facename);
 }
 
@@ -136,7 +125,7 @@ TaskDlgPadParameters::TaskDlgPadParameters(ViewProviderPad *PadView, bool /*newO
     : TaskDlgSketchBasedParameters(PadView)
 {
     assert(vp);
-    Content.push_back ( new TaskPadParameters(PadView ) );
+    Content.push_back(new TaskPadParameters(PadView));
 }
 
 //==== calls from the TaskView ===============================================================

@@ -24,8 +24,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMessageBox>
-# include <QTextStream>
+#include <QMessageBox>
+#include <QTextStream>
 #endif
 
 #include "ui_TaskOffset.h"
@@ -54,19 +54,14 @@ class OffsetWidget::Private
 {
 public:
     Ui_TaskOffset ui;
-    Part::Offset* offset;
-    Private() : offset(nullptr)
-    {
-    }
-    ~Private()
-    {
-    }
+    Part::Offset *offset;
+    Private() : offset(nullptr) {}
+    ~Private() {}
 };
 
 /* TRANSLATOR PartGui::OffsetWidget */
 
-OffsetWidget::OffsetWidget(Part::Offset* offset, QWidget* parent)
-  : d(new Private())
+OffsetWidget::OffsetWidget(Part::Offset *offset, QWidget *parent) : d(new Private())
 {
     Q_UNUSED(parent);
     Gui::Command::runCommand(Gui::Command::App, "from FreeCAD import Base");
@@ -81,8 +76,7 @@ OffsetWidget::OffsetWidget(Part::Offset* offset, QWidget* parent)
 
     bool is_2d = d->offset->isDerivedFrom(Part::Offset2D::getClassTypeId());
     d->ui.selfIntersection->setVisible(!is_2d);
-    if(is_2d)
-        d->ui.modeType->removeItem(2);//remove Recto-Verso mode, not supported by 2d offset
+    if (is_2d) d->ui.modeType->removeItem(2); //remove Recto-Verso mode, not supported by 2d offset
 
     //block signals to fill values read out from feature...
     bool block = true;
@@ -99,11 +93,9 @@ OffsetWidget::OffsetWidget(Part::Offset* offset, QWidget* parent)
     d->ui.intersection->setChecked(offset->Intersection.getValue());
     d->ui.selfIntersection->setChecked(offset->SelfIntersection.getValue());
     long mode = offset->Mode.getValue();
-    if (mode >= 0 && mode < d->ui.modeType->count())
-        d->ui.modeType->setCurrentIndex(mode);
+    if (mode >= 0 && mode < d->ui.modeType->count()) d->ui.modeType->setCurrentIndex(mode);
     long join = offset->Join.getValue();
-    if (join >= 0 && join < d->ui.joinType->count())
-        d->ui.joinType->setCurrentIndex(join);
+    if (join >= 0 && join < d->ui.joinType->count()) d->ui.joinType->setCurrentIndex(join);
 
     //unblock signals
     block = false;
@@ -117,63 +109,49 @@ OffsetWidget::OffsetWidget(Part::Offset* offset, QWidget* parent)
     d->ui.spinOffset->bind(d->offset->Value);
 }
 
-OffsetWidget::~OffsetWidget()
-{
-    delete d;
-}
+OffsetWidget::~OffsetWidget() { delete d; }
 
-Part::Offset* OffsetWidget::getObject() const
-{
-    return d->offset;
-}
+Part::Offset *OffsetWidget::getObject() const { return d->offset; }
 
 void OffsetWidget::on_spinOffset_valueChanged(double val)
 {
     d->offset->Value.setValue(val);
-    if (d->ui.updateView->isChecked())
-        d->offset->getDocument()->recomputeFeature(d->offset);
+    if (d->ui.updateView->isChecked()) d->offset->getDocument()->recomputeFeature(d->offset);
 }
 
 void OffsetWidget::on_modeType_activated(int val)
 {
     d->offset->Mode.setValue(val);
-    if (d->ui.updateView->isChecked())
-        d->offset->getDocument()->recomputeFeature(d->offset);
+    if (d->ui.updateView->isChecked()) d->offset->getDocument()->recomputeFeature(d->offset);
 }
 
 void OffsetWidget::on_joinType_activated(int val)
 {
     d->offset->Join.setValue((long)val);
-    if (d->ui.updateView->isChecked())
-        d->offset->getDocument()->recomputeFeature(d->offset);
+    if (d->ui.updateView->isChecked()) d->offset->getDocument()->recomputeFeature(d->offset);
 }
 
 void OffsetWidget::on_intersection_toggled(bool on)
 {
     d->offset->Intersection.setValue(on);
-    if (d->ui.updateView->isChecked())
-        d->offset->getDocument()->recomputeFeature(d->offset);
+    if (d->ui.updateView->isChecked()) d->offset->getDocument()->recomputeFeature(d->offset);
 }
 
 void OffsetWidget::on_selfIntersection_toggled(bool on)
 {
     d->offset->SelfIntersection.setValue(on);
-    if (d->ui.updateView->isChecked())
-        d->offset->getDocument()->recomputeFeature(d->offset);
+    if (d->ui.updateView->isChecked()) d->offset->getDocument()->recomputeFeature(d->offset);
 }
 
 void OffsetWidget::on_fillOffset_toggled(bool on)
 {
     d->offset->Fill.setValue(on);
-    if (d->ui.updateView->isChecked())
-        d->offset->getDocument()->recomputeFeature(d->offset);
+    if (d->ui.updateView->isChecked()) d->offset->getDocument()->recomputeFeature(d->offset);
 }
 
 void OffsetWidget::on_updateView_toggled(bool on)
 {
-    if (on) {
-        d->offset->getDocument()->recomputeFeature(d->offset);
-    }
+    if (on) { d->offset->getDocument()->recomputeFeature(d->offset); }
 }
 
 bool OffsetWidget::accept()
@@ -184,17 +162,19 @@ bool OffsetWidget::accept()
         d->ui.spinOffset->apply();
         Gui::cmdAppObjectArgs(d->offset, "Mode = %i", d->ui.modeType->currentIndex());
         Gui::cmdAppObjectArgs(d->offset, "Join = %i", d->ui.joinType->currentIndex());
-        Gui::cmdAppObjectArgs(d->offset, "Intersection = %s", d->ui.intersection->isChecked() ? "True" : "False");
-        Gui::cmdAppObjectArgs(d->offset, "SelfIntersection = %s", d->ui.selfIntersection->isChecked() ? "True" : "False");
-        Gui::cmdAppObjectArgs(d->offset, "Fill = %s", d->ui.fillOffset->isChecked() ? "True" : "False");
+        Gui::cmdAppObjectArgs(d->offset, "Intersection = %s",
+                              d->ui.intersection->isChecked() ? "True" : "False");
+        Gui::cmdAppObjectArgs(d->offset, "SelfIntersection = %s",
+                              d->ui.selfIntersection->isChecked() ? "True" : "False");
+        Gui::cmdAppObjectArgs(d->offset, "Fill = %s",
+                              d->ui.fillOffset->isChecked() ? "True" : "False");
 
-        Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.recompute()");
-        if (!d->offset->isValid())
-            throw Base::CADKernelError(d->offset->getStatusString());
-        Gui::Command::doCommand(Gui::Command::Gui,"Gui.ActiveDocument.resetEdit()");
+        Gui::Command::doCommand(Gui::Command::Doc, "App.ActiveDocument.recompute()");
+        if (!d->offset->isValid()) throw Base::CADKernelError(d->offset->getStatusString());
+        Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
         Gui::Command::commitCommand();
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         QMessageBox::warning(this, tr("Input error"), QString::fromLatin1(e.what()));
         return false;
     }
@@ -205,14 +185,12 @@ bool OffsetWidget::accept()
 bool OffsetWidget::reject()
 {
     // get the support and Sketch
-    App::DocumentObject* source = d->offset->Source.getValue();
-    if (source){
-        Gui::Application::Instance->getViewProvider(source)->show();
-    }
+    App::DocumentObject *source = d->offset->Source.getValue();
+    if (source) { Gui::Application::Instance->getViewProvider(source)->show(); }
 
     // roll back the done things
     Gui::Command::abortCommand();
-    Gui::Command::doCommand(Gui::Command::Gui,"Gui.ActiveDocument.resetEdit()");
+    Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
     Gui::Command::updateActive();
 
     return true;
@@ -221,49 +199,31 @@ bool OffsetWidget::reject()
 void OffsetWidget::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
-    if (e->type() == QEvent::LanguageChange) {
-        d->ui.retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { d->ui.retranslateUi(this); }
 }
 
 
 /* TRANSLATOR PartGui::TaskOffset */
 
-TaskOffset::TaskOffset(Part::Offset* offset)
+TaskOffset::TaskOffset(Part::Offset *offset)
 {
     widget = new OffsetWidget(offset);
-    taskbox = new Gui::TaskView::TaskBox(
-        Gui::BitmapFactory().pixmap("Part_Offset"),
-        widget->windowTitle(), true, nullptr);
+    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("Part_Offset"),
+                                         widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
 
-TaskOffset::~TaskOffset()
-{
-}
+TaskOffset::~TaskOffset() {}
 
-Part::Offset* TaskOffset::getObject() const
-{
-    return widget->getObject();
-}
+Part::Offset *TaskOffset::getObject() const { return widget->getObject(); }
 
-void TaskOffset::open()
-{
-}
+void TaskOffset::open() {}
 
-void TaskOffset::clicked(int)
-{
-}
+void TaskOffset::clicked(int) {}
 
-bool TaskOffset::accept()
-{
-    return widget->accept();
-}
+bool TaskOffset::accept() { return widget->accept(); }
 
-bool TaskOffset::reject()
-{
-    return widget->reject();
-}
+bool TaskOffset::reject() { return widget->reject(); }
 
 #include "moc_TaskOffset.cpp"

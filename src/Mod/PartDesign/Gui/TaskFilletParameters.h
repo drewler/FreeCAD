@@ -29,14 +29,15 @@
 
 class Ui_TaskFilletParameters;
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class TaskFilletParameters : public TaskDressUpParameters
+class TaskFilletParameters: public TaskDressUpParameters
 {
     Q_OBJECT
 
 public:
-    explicit TaskFilletParameters(ViewProviderDressUp *DressUpView, QWidget *parent=nullptr);
+    explicit TaskFilletParameters(ViewProviderDressUp *DressUpView, QWidget *parent = nullptr);
     ~TaskFilletParameters() override;
 
     void apply() override;
@@ -52,14 +53,14 @@ protected:
     void clearButtons(const selectionModes notThis) override;
     bool event(QEvent *e) override;
     void changeEvent(QEvent *e) override;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
 
 private:
     std::unique_ptr<Ui_TaskFilletParameters> ui;
 };
 
 /// simulation dialog for the TaskView
-class TaskDlgFilletParameters : public TaskDlgDressUpParameters
+class TaskDlgFilletParameters: public TaskDlgDressUpParameters
 {
     Q_OBJECT
 

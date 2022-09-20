@@ -29,7 +29,8 @@
 #include <FCGlobal.h>
 #endif
 
-namespace Base {
+namespace Base
+{
 
 // forward declarations
 class Matrix4D;
@@ -40,32 +41,32 @@ public:
     /** Construction. */
     //@{
     Rotation();
-    Rotation(const Vector3d& axis, const double fAngle);
-    Rotation(const Matrix4D& matrix);
+    Rotation(const Vector3d &axis, const double fAngle);
+    Rotation(const Matrix4D &matrix);
     Rotation(const double q[4]);
     Rotation(const double q0, const double q1, const double q2, const double q3);
-    Rotation(const Vector3d& rotateFrom, const Vector3d& rotateTo);
-    Rotation(const Rotation& rot);
+    Rotation(const Vector3d &rotateFrom, const Vector3d &rotateTo);
+    Rotation(const Rotation &rot);
     //@}
 
     /** Methods to get or set rotations. */
     //@{
-    const double * getValue() const;
-    void getValue(double & q0, double & q1, double & q2, double & q3) const;
+    const double *getValue() const;
+    void getValue(double &q0, double &q1, double &q2, double &q3) const;
     void setValue(const double q0, const double q1, const double q2, const double q3);
     /// If not a null quaternion then \a axis will be normalized
-    void getValue(Vector3d & axis, double & rfAngle) const;
+    void getValue(Vector3d &axis, double &rfAngle) const;
     /// Does the same as the method above unless normalizing the axis.
-    void getRawValue(Vector3d & axis, double & rfAngle) const;
-    void getValue(Matrix4D & matrix) const;
+    void getRawValue(Vector3d &axis, double &rfAngle) const;
+    void getValue(Matrix4D &matrix) const;
     void setValue(const double q[4]);
-    void setValue(const Matrix4D& matrix);
-    void setValue(const Vector3d & axis, const double fAngle);
-    void setValue(const Vector3d & rotateFrom, const Vector3d & rotateTo);
+    void setValue(const Matrix4D &matrix);
+    void setValue(const Vector3d &axis, const double fAngle);
+    void setValue(const Vector3d &rotateFrom, const Vector3d &rotateTo);
     /// Euler angles in yaw,pitch,roll notation
     void setYawPitchRoll(double y, double p, double r);
     /// Euler angles in yaw,pitch,roll notation
-    void getYawPitchRoll(double& y, double& p, double& r) const;
+    void getYawPitchRoll(double &y, double &p, double &r) const;
 
     enum EulerSequence
     {
@@ -119,34 +120,34 @@ public:
 
     /** Invert rotations. */
     //@{
-    Rotation & invert();
+    Rotation &invert();
     Rotation inverse() const;
     //@}
 
     /** Operators. */
     //@{
-    Rotation & operator*=(const Rotation & q);
-    Rotation operator *(const Rotation & q) const;
-    bool operator==(const Rotation & q) const;
-    bool operator!=(const Rotation & q) const;
-    double & operator [] (unsigned short usIndex){return quat[usIndex];}
-    const double & operator [] (unsigned short usIndex) const{return quat[usIndex];}
-    void operator = (const Rotation&);
+    Rotation &operator*=(const Rotation &q);
+    Rotation operator*(const Rotation &q) const;
+    bool operator==(const Rotation &q) const;
+    bool operator!=(const Rotation &q) const;
+    double &operator[](unsigned short usIndex) { return quat[usIndex]; }
+    const double &operator[](unsigned short usIndex) const { return quat[usIndex]; }
+    void operator=(const Rotation &);
 
-    Rotation& multRight(const Base::Rotation& q);
-    Rotation& multLeft(const Base::Rotation& q);
+    Rotation &multRight(const Base::Rotation &q);
+    Rotation &multLeft(const Base::Rotation &q);
 
-    void multVec(const Vector3d & src, Vector3d & dst) const;
-    Vector3d multVec(const Vector3d & src) const;
-    void multVec(const Vector3f & src, Vector3f & dst) const;
-    Vector3f multVec(const Vector3f & src) const;
+    void multVec(const Vector3d &src, Vector3d &dst) const;
+    Vector3d multVec(const Vector3d &src) const;
+    void multVec(const Vector3f &src, Vector3f &dst) const;
+    Vector3f multVec(const Vector3f &src) const;
     void scaleAngle(const double scaleFactor);
-    bool isSame(const Rotation&) const;
-    bool isSame(const Rotation&, double tol) const;
+    bool isSame(const Rotation &) const;
+    bool isSame(const Rotation &, double tol) const;
     //@}
 
     /** Specialty constructors */
-    static Rotation slerp(const Rotation & rot0, const Rotation & rot1, double t);
+    static Rotation slerp(const Rotation &rot0, const Rotation &rot1, double t);
     static Rotation identity();
 
     /**
@@ -163,16 +164,17 @@ public:
      *
      * If only one vector provided is nonzero, the other two directions are picked automatically.
      */
-    static Rotation makeRotationByAxes(Vector3d xdir, Vector3d ydir, Vector3d zdir, const char* priorityOrder = "ZXY");
+    static Rotation makeRotationByAxes(Vector3d xdir, Vector3d ydir, Vector3d zdir,
+                                       const char *priorityOrder = "ZXY");
 
 private:
     void normalize();
-    void evaluateVector ();
+    void evaluateVector();
     double quat[4];
     Vector3d _axis; // the axis kept not to lose direction when angle is 0
-    double _angle; // this angle to keep the angle chosen by the user
+    double _angle;  // this angle to keep the angle chosen by the user
 };
 
-}
+} // namespace Base
 
 #endif // BASE_ROTATION_H

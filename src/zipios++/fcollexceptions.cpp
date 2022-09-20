@@ -5,119 +5,93 @@
 
 #include "fcollexceptions.h"
 
-namespace zipios {
+namespace zipios
+{
 
-using std::cerr ;
-using std::endl ;
+using std::cerr;
+using std::endl;
 
-IOException::IOException() throw () 
-  : _what( "I/O exception" ) {}
+IOException::IOException() throw() : _what("I/O exception") {}
 
-IOException::IOException( const string &msg ) throw () 
-  : _what( msg ) {}
+IOException::IOException(const string &msg) throw() : _what(msg) {}
 
-IOException::IOException( const IOException &src ) throw () 
-  : std::exception(), _what( src._what ) {}
+IOException::IOException(const IOException &src) throw() : std::exception(), _what(src._what) {}
 
 
-IOException &IOException::operator= ( const IOException &src ) throw () {
-  _what = src._what ;
-  return *this ;
+IOException &IOException::operator=(const IOException &src) throw()
+{
+    _what = src._what;
+    return *this;
 }
 
-  
-const char *IOException::what() const throw () {
-  return _what.c_str() ;
+
+const char *IOException::what() const throw() { return _what.c_str(); }
+
+IOException::~IOException() throw() {}
+
+
+FCollException::FCollException() throw() : _what("FileCollection exception") {}
+
+FCollException::FCollException(const string &msg) throw() : _what(msg) {}
+
+FCollException::FCollException(const FCollException &src) throw()
+    : std::exception(), _what(src._what)
+{}
+
+
+FCollException &FCollException::operator=(const FCollException &src) throw()
+{
+    _what = src._what;
+    return *this;
 }
 
-IOException::~IOException() throw () {}
+
+const char *FCollException::what() const throw() { return _what.c_str(); }
+
+FCollException::~FCollException() throw() {}
 
 
+InvalidStateException::InvalidStateException() throw() : _what("InvalidState exception") {}
+
+InvalidStateException::InvalidStateException(const string &msg) throw() : _what(msg) {}
+
+InvalidStateException::InvalidStateException(const InvalidStateException &src) throw()
+    : std::exception(), _what(src._what)
+{}
 
 
-
-
-FCollException::FCollException() throw () 
-  : _what( "FileCollection exception" ) {}
-
-FCollException::FCollException( const string &msg ) throw () 
-  : _what( msg ) {}
-
-FCollException::FCollException( const FCollException &src ) throw () 
-  : std::exception(),_what( src._what ) {}
-
-
-FCollException &FCollException::operator= ( const FCollException &src ) throw () {
-  _what = src._what ;
-  return *this ;
+InvalidStateException &InvalidStateException::operator=(const InvalidStateException &src) throw()
+{
+    _what = src._what;
+    return *this;
 }
 
-  
-const char *FCollException::what() const throw () {
-  return _what.c_str() ;
+
+const char *InvalidStateException::what() const throw() { return _what.c_str(); }
+
+InvalidStateException::~InvalidStateException() throw() {}
+
+
+Exception::Exception() throw() : _what("Exception") {}
+
+Exception::Exception(const string &msg) throw() : _what(msg) {}
+
+Exception::Exception(const Exception &src) throw() : std::exception(), _what(src._what) {}
+
+
+Exception &Exception::operator=(const Exception &src) throw()
+{
+    _what = src._what;
+    return *this;
 }
 
-FCollException::~FCollException() throw () {}
+
+const char *Exception::what() const throw() { return _what.c_str(); }
+
+Exception::~Exception() throw() {}
 
 
-
-
-
-
-InvalidStateException::InvalidStateException() throw () 
-  : _what( "InvalidState exception" ) {}
-
-InvalidStateException::InvalidStateException( const string &msg ) throw () 
-  : _what( msg ) {}
-
-InvalidStateException::
-InvalidStateException( const InvalidStateException &src ) throw () 
-  : std::exception(), _what( src._what ) {}
-
-
-InvalidStateException &InvalidStateException::
-operator= ( const InvalidStateException &src ) throw () {
-  _what = src._what ;
-  return *this ;
-}
-
-  
-const char *InvalidStateException::what() const throw () {
-  return _what.c_str() ;
-}
-
-InvalidStateException::~InvalidStateException() throw () {} 
-
-
-
-
-
-Exception::Exception() throw () 
-  : _what( "Exception" ) {}
-
-Exception::Exception( const string &msg ) throw () 
-  : _what( msg ) {}
-
-Exception::
-Exception( const Exception &src ) throw () 
-  : std::exception(),_what( src._what ) {}
-
-
-Exception &Exception::
-operator= ( const Exception &src ) throw () {
-  _what = src._what ;
-  return *this ;
-}
-
-  
-const char *Exception::what() const throw () {
-  return _what.c_str() ;
-}
-
-Exception::~Exception() throw () {} 
-
-
-} // namespace
+} // namespace zipios
 
 /** \file
     Implementation of a number of Exceptions used by FileCollection and its

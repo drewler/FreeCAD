@@ -20,24 +20,16 @@
 namespace Wm4
 {
 //----------------------------------------------------------------------------
-template <class Real>
-Surface<Real>::Surface ()
-{
-}
+template<class Real> Surface<Real>::Surface() {}
 //----------------------------------------------------------------------------
-template <class Real>
-Surface<Real>::~Surface ()
-{
-}
+template<class Real> Surface<Real>::~Surface() {}
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // explicit instantiation
 //----------------------------------------------------------------------------
-template WM4_FOUNDATION_ITEM
-class Surface<float>;
+template WM4_FOUNDATION_ITEM class Surface<float>;
 
-template WM4_FOUNDATION_ITEM
-class Surface<double>;
+template WM4_FOUNDATION_ITEM class Surface<double>;
 //----------------------------------------------------------------------------
-}
+} // namespace Wm4

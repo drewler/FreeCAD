@@ -44,13 +44,13 @@ PROPERTY_SOURCE(Mesh::TransformDemolding, Mesh::Transform)
 
 TransformDemolding::TransformDemolding()
 {
-    ADD_PROPERTY(Source,(nullptr));
-    ADD_PROPERTY(Rotation,(0.0));
-    ADD_PROPERTY(Axis,(0.0,0.0,1.0));
+    ADD_PROPERTY(Source, (nullptr));
+    ADD_PROPERTY(Rotation, (0.0));
+    ADD_PROPERTY(Axis, (0.0, 0.0, 1.0));
 }
 
 App::DocumentObjectExecReturn *TransformDemolding::execute()
-{/*
+{ /*
   Feature *pcFirst  = dynamic_cast<Feature*>(Source.getValue());
   if(!pcFirst || pcFirst->isError())
     return new App::DocumentObjectExecReturn("Unknown Error");
@@ -64,4 +64,3 @@ App::DocumentObjectExecReturn *TransformDemolding::execute()
  */
     return App::DocumentObject::StdReturn;
 }
-

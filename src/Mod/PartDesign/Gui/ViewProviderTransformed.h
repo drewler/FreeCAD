@@ -26,50 +26,49 @@
 
 #include "ViewProvider.h"
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 class TaskDlgTransformedParameters;
 
-class PartDesignGuiExport ViewProviderTransformed : public ViewProvider
+class PartDesignGuiExport ViewProviderTransformed: public ViewProvider
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderTransformed);
 
 public:
     /// constructor
-    ViewProviderTransformed()
-        : featureName("undefined"), pcRejectedRoot(nullptr) {}
+    ViewProviderTransformed() : featureName("undefined"), pcRejectedRoot(nullptr) {}
     /// destructor
-    ~ViewProviderTransformed() override
-        {}
+    ~ViewProviderTransformed() override {}
 
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
     bool onDelete(const std::vector<std::string> &) override;
 
     /// signals if the transformation contains errors
-    boost::signals2::signal<void (QString msg)> signalDiagnosis;
+    boost::signals2::signal<void(QString msg)> signalDiagnosis;
 
     // The feature name of the subclass
     std::string featureName;
     // Name of menu dialog
     QString menuName;
 
-    Gui::ViewProvider *startEditing(int ModNum=0) override;
+    Gui::ViewProvider *startEditing(int ModNum = 0) override;
 
 protected:
     bool setEdit(int ModNum) override;
     void unsetEdit(int ModNum) override;
 
-    bool checkDlgOpen(TaskDlgTransformedParameters* transformedDlg);
+    bool checkDlgOpen(TaskDlgTransformedParameters *transformedDlg);
 
     // node for the representation of rejected repetitions
-    SoGroup           * pcRejectedRoot;
+    SoGroup *pcRejectedRoot;
 
     QString diagMessage;
 
 public:
-    void recomputeFeature(bool recompute=true);
-    QString getMessage() const {return diagMessage;}
+    void recomputeFeature(bool recompute = true);
+    QString getMessage() const { return diagMessage; }
 
 private:
     void showRejectedShape(TopoDS_Shape shape);

@@ -22,12 +22,12 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepBuilderAPI_MakeFace.hxx>
-# include <BRepBuilderAPI_MakeWire.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Builder.hxx>
-# include <TopoDS_Iterator.hxx>
-# include <QtGlobal>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Builder.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <QtGlobal>
 #endif
 
 #include <memory>
@@ -39,52 +39,42 @@
 TYPESYSTEM_SOURCE_ABSTRACT(Part::FaceMaker, Base::BaseClass)
 TYPESYSTEM_SOURCE_ABSTRACT(Part::FaceMakerPublic, Part::FaceMaker)
 
-void Part::FaceMaker::addWire(const TopoDS_Wire& w)
-{
-    this->addShape(w);
-}
+void Part::FaceMaker::addWire(const TopoDS_Wire &w) { this->addShape(w); }
 
-void Part::FaceMaker::addShape(const TopoDS_Shape& sh)
+void Part::FaceMaker::addShape(const TopoDS_Shape &sh)
 {
-    if(sh.IsNull())
-        throw Base::ValueError("Input shape is null.");
-    switch(sh.ShapeType()){
-        case TopAbs_COMPOUND:
-            this->myCompounds.push_back(TopoDS::Compound(sh));
-        break;
-        case TopAbs_WIRE:
-            this->myWires.push_back(TopoDS::Wire(sh));
-        break;
+    if (sh.IsNull()) throw Base::ValueError("Input shape is null.");
+    switch (sh.ShapeType()) {
+        case TopAbs_COMPOUND: this->myCompounds.push_back(TopoDS::Compound(sh)); break;
+        case TopAbs_WIRE: this->myWires.push_back(TopoDS::Wire(sh)); break;
         case TopAbs_EDGE:
             this->myWires.push_back(BRepBuilderAPI_MakeWire(TopoDS::Edge(sh)).Wire());
-        break;
+            break;
         default:
-            throw Base::TypeError("Shape must be a wire, edge or compound. Something else was supplied.");
-        break;
+            throw Base::TypeError(
+                "Shape must be a wire, edge or compound. Something else was supplied.");
+            break;
     }
     this->mySourceShapes.push_back(sh);
 }
 
-void Part::FaceMaker::useCompound(const TopoDS_Compound& comp)
+void Part::FaceMaker::useCompound(const TopoDS_Compound &comp)
 {
     TopoDS_Iterator it(comp);
-    for(; it.More(); it.Next()){
-        this->addShape(it.Value());
-    }
+    for (; it.More(); it.Next()) { this->addShape(it.Value()); }
 }
 
-const TopoDS_Face& Part::FaceMaker::Face()
+const TopoDS_Face &Part::FaceMaker::Face()
 {
     const TopoDS_Shape &sh = this->Shape();
-    if(sh.IsNull())
-        throw NullShapeException("Part::FaceMaker: result shape is null.");
+    if (sh.IsNull()) throw NullShapeException("Part::FaceMaker: result shape is null.");
     if (sh.ShapeType() != TopAbs_FACE)
         throw Base::TypeError("Part::FaceMaker: return shape is not a single face.");
     return TopoDS::Face(sh);
 }
 
 #if OCC_VERSION_HEX >= 0x070600
-void Part::FaceMaker::Build(const Message_ProgressRange&)
+void Part::FaceMaker::Build(const Message_ProgressRange &)
 #else
 void Part::FaceMaker::Build()
 #endif
@@ -93,51 +83,50 @@ void Part::FaceMaker::Build()
     this->myShapesToReturn.clear();
     this->myGenerated.Clear();
 
-    this->Build_Essence();//adds stuff to myShapesToReturn
+    this->Build_Essence(); //adds stuff to myShapesToReturn
 
-    for(const TopoDS_Compound& cmp : this->myCompounds){
-        std::unique_ptr<FaceMaker> facemaker = Part::FaceMaker::ConstructFromType(this->getTypeId());
+    for (const TopoDS_Compound &cmp : this->myCompounds) {
+        std::unique_ptr<FaceMaker> facemaker =
+            Part::FaceMaker::ConstructFromType(this->getTypeId());
 
         facemaker->useCompound(cmp);
 
         facemaker->Build();
         const TopoDS_Shape &subfaces = facemaker->Shape();
-        if (subfaces.IsNull())
-            continue;
-        if (subfaces.ShapeType() == TopAbs_COMPOUND){
-            this->myShapesToReturn.push_back(subfaces);
-        } else {
+        if (subfaces.IsNull()) continue;
+        if (subfaces.ShapeType() == TopAbs_COMPOUND) { this->myShapesToReturn.push_back(subfaces); }
+        else {
             //result is not a compound (probably, a face)... but we want to follow compounding structure of input, so wrap it into compound.
             TopoDS_Builder builder;
             TopoDS_Compound cmp_res;
             builder.MakeCompound(cmp_res);
-            builder.Add(cmp_res,subfaces);
+            builder.Add(cmp_res, subfaces);
             this->myShapesToReturn.push_back(cmp_res);
         }
     }
 
-    if(this->myShapesToReturn.empty()){
+    if (this->myShapesToReturn.empty()) {
         //nothing to do, null shape will be returned.
-    } else if (this->myShapesToReturn.size() == 1){
+    }
+    else if (this->myShapesToReturn.size() == 1) {
         this->myShape = this->myShapesToReturn[0];
-    } else {
+    }
+    else {
         TopoDS_Builder builder;
         TopoDS_Compound cmp_res;
         builder.MakeCompound(cmp_res);
-        for(TopoDS_Shape &sh: this->myShapesToReturn){
-            builder.Add(cmp_res,sh);
-        }
+        for (TopoDS_Shape &sh : this->myShapesToReturn) { builder.Add(cmp_res, sh); }
         this->myShape = cmp_res;
     }
     this->Done();
 }
 
-std::unique_ptr<Part::FaceMaker> Part::FaceMaker::ConstructFromType(const char* className)
+std::unique_ptr<Part::FaceMaker> Part::FaceMaker::ConstructFromType(const char *className)
 {
     Base::Type fmType = Base::Type::fromName(className);
-    if (fmType.isBad()){
+    if (fmType.isBad()) {
         std::stringstream ss;
-        ss << "Class '"<< className <<"' not found.";
+        ss << "Class '" << className << "' not found.";
         throw Base::TypeError(ss.str().c_str());
     }
     return Part::FaceMaker::ConstructFromType(fmType);
@@ -145,13 +134,13 @@ std::unique_ptr<Part::FaceMaker> Part::FaceMaker::ConstructFromType(const char* 
 
 std::unique_ptr<Part::FaceMaker> Part::FaceMaker::ConstructFromType(Base::Type type)
 {
-    if (!type.isDerivedFrom(Part::FaceMaker::getClassTypeId())){
+    if (!type.isDerivedFrom(Part::FaceMaker::getClassTypeId())) {
         std::stringstream ss;
         ss << "Class '" << type.getName() << "' is not derived from Part::FaceMaker.";
         throw Base::TypeError(ss.str().c_str());
     }
-    std::unique_ptr<FaceMaker> instance(static_cast<Part::FaceMaker*>(type.createInstance()));
-    if (!instance){
+    std::unique_ptr<FaceMaker> instance(static_cast<Part::FaceMaker *>(type.createInstance()));
+    if (!instance) {
         std::stringstream ss;
         ss << "Cannot create FaceMaker from abstract type '" << type.getName() << "'";
         throw Base::TypeError(ss.str().c_str());
@@ -172,17 +161,20 @@ TYPESYSTEM_SOURCE(Part::FaceMakerSimple, Part::FaceMakerPublic)
 
 std::string Part::FaceMakerSimple::getUserFriendlyName() const
 {
-    return std::string(QT_TRANSLATE_NOOP("Part_FaceMaker","Simple"));
+    return std::string(QT_TRANSLATE_NOOP("Part_FaceMaker", "Simple"));
 }
 
 std::string Part::FaceMakerSimple::getBriefExplanation() const
 {
-    return std::string(QT_TRANSLATE_NOOP("Part_FaceMaker","Makes separate plane face from every wire independently. No support for holes; wires can be on different planes."));
+    return std::string(
+        QT_TRANSLATE_NOOP("Part_FaceMaker",
+                          "Makes separate plane face from every wire independently. No support for "
+                          "holes; wires can be on different planes."));
 }
 
 void Part::FaceMakerSimple::Build_Essence()
 {
-    for(TopoDS_Wire &w: myWires){
+    for (TopoDS_Wire &w : myWires) {
         this->myShapesToReturn.push_back(BRepBuilderAPI_MakeFace(w).Shape());
     }
 }

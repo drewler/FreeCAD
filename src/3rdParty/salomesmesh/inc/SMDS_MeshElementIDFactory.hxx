@@ -36,28 +36,27 @@
 class SMDS_MeshElement;
 class SMDS_Mesh;
 
-class SMDS_EXPORT SMDS_MeshElementIDFactory:public SMDS_MeshNodeIDFactory
+class SMDS_EXPORT SMDS_MeshElementIDFactory: public SMDS_MeshNodeIDFactory
 {
 public:
-  friend class SMDS_Mesh;
-  
-  SMDS_MeshElementIDFactory();
-  bool BindID(int ID, SMDS_MeshElement * elem);
-  int SetInVtkGrid(SMDS_MeshElement * elem);
-  SMDS_MeshElement * MeshElement(int ID);
-  virtual int GetFreeID();
-  virtual void ReleaseID(int ID, int vtkId = -1);
-  SMDS_ElemIteratorPtr elementsIterator() const;
-  virtual void Clear();
+    friend class SMDS_Mesh;
+
+    SMDS_MeshElementIDFactory();
+    bool BindID(int ID, SMDS_MeshElement *elem);
+    int SetInVtkGrid(SMDS_MeshElement *elem);
+    SMDS_MeshElement *MeshElement(int ID);
+    virtual int GetFreeID();
+    virtual void ReleaseID(int ID, int vtkId = -1);
+    SMDS_ElemIteratorPtr elementsIterator() const;
+    virtual void Clear();
 
 protected:
-  void updateMinMax() const;
-  void updateMinMax(int id) const
-  {
-    if (id > myMax) myMax = id;
-    if (id < myMin) myMin = id;
-  }
-
+    void updateMinMax() const;
+    void updateMinMax(int id) const
+    {
+        if (id > myMax) myMax = id;
+        if (id < myMin) myMin = id;
+    }
 };
 
 #endif

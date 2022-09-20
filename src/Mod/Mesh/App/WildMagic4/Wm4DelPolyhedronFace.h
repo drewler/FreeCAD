@@ -24,22 +24,21 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM DelPolyhedronFace : public ETManifoldMesh::Triangle
+template<class Real> class WM4_FOUNDATION_ITEM DelPolyhedronFace: public ETManifoldMesh::Triangle
 {
 public:
-    DelPolyhedronFace (int iV0 = -1, int iV1 = -1, int iV2 = -1,
-        int iNullIndex = -1, DelTetrahedron<Real>* pkTri = 0);
+    DelPolyhedronFace(int iV0 = -1, int iV1 = -1, int iV2 = -1, int iNullIndex = -1,
+                      DelTetrahedron<Real> *pkTri = 0);
 
-    static ETManifoldMesh::TPtr TCreator (int iV0, int iV1, int iV2);
+    static ETManifoldMesh::TPtr TCreator(int iV0, int iV1, int iV2);
 
     int NullIndex;
-    DelTetrahedron<Real>* Tetra;
+    DelTetrahedron<Real> *Tetra;
 };
 
 typedef DelPolyhedronFace<float> DelPolyhedronFacef;
 typedef DelPolyhedronFace<double> DelPolyhedronFaced;
 
-}
+} // namespace Wm4
 
 #endif

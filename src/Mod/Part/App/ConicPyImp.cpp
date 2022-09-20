@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Geom_Conic.hxx>
+#include <Geom_Conic.hxx>
 #endif
 
 #include <Base/GeometryPyCXX.h>
@@ -36,24 +36,18 @@
 using namespace Part;
 
 // returns a string which represents the object e.g. when printed in python
-std::string ConicPy::representation() const
-{
-    return "<Conic object>";
-}
+std::string ConicPy::representation() const { return "<Conic object>"; }
 
-PyObject *ConicPy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *ConicPy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     // never create such objects with the constructor
     PyErr_SetString(PyExc_RuntimeError,
-        "You cannot create an instance of the abstract class 'Conic'.");
+                    "You cannot create an instance of the abstract class 'Conic'.");
     return nullptr;
 }
 
 // constructor method
-int ConicPy::PyInit(PyObject* /*args*/, PyObject* /*kwds*/)
-{
-    return 0;
-}
+int ConicPy::PyInit(PyObject * /*args*/, PyObject * /*kwds*/) { return 0; }
 
 Py::Object ConicPy::getCenter() const
 {
@@ -69,34 +63,36 @@ Py::Object ConicPy::getLocation() const
     return Py::Vector(Base::Vector3d(loc.X(), loc.Y(), loc.Z()));
 }
 
-void  ConicPy::setCenter(Py::Object arg)
+void ConicPy::setCenter(Py::Object arg)
 {
-    PyObject* p = arg.ptr();
+    PyObject *p = arg.ptr();
     if (PyObject_TypeCheck(p, &(Base::VectorPy::Type))) {
-        Base::Vector3d loc = static_cast<Base::VectorPy*>(p)->value();
+        Base::Vector3d loc = static_cast<Base::VectorPy *>(p)->value();
         getGeomConicPtr()->setLocation(loc);
     }
     else if (PyObject_TypeCheck(p, &PyTuple_Type)) {
         Base::Vector3d loc = Base::getVectorFromTuple<double>(p);
         getGeomConicPtr()->setLocation(loc);
-    } else {
+    }
+    else {
         std::string error = std::string("type must be 'Vector', not ");
         error += p->ob_type->tp_name;
         throw Py::TypeError(error);
     }
 }
 
-void  ConicPy::setLocation(Py::Object arg)
+void ConicPy::setLocation(Py::Object arg)
 {
-    PyObject* p = arg.ptr();
+    PyObject *p = arg.ptr();
     if (PyObject_TypeCheck(p, &(Base::VectorPy::Type))) {
-        Base::Vector3d loc = static_cast<Base::VectorPy*>(p)->value();
+        Base::Vector3d loc = static_cast<Base::VectorPy *>(p)->value();
         getGeomConicPtr()->setLocation(loc);
     }
     else if (PyObject_TypeCheck(p, &PyTuple_Type)) {
         Base::Vector3d loc = Base::getVectorFromTuple<double>(p);
         getGeomConicPtr()->setLocation(loc);
-    } else {
+    }
+    else {
         std::string error = std::string("type must be 'Vector', not ");
         error += p->ob_type->tp_name;
         throw Py::TypeError(error);
@@ -109,15 +105,9 @@ Py::Float ConicPy::getEccentricity() const
     return Py::Float(conic->Eccentricity());
 }
 
-Py::Float ConicPy::getAngleXU() const
-{
-    return Py::Float(getGeomConicPtr()->getAngleXU());
-}
+Py::Float ConicPy::getAngleXU() const { return Py::Float(getGeomConicPtr()->getAngleXU()); }
 
-void ConicPy::setAngleXU(Py::Float arg)
-{
-    getGeomConicPtr()->setAngleXU((double)arg);
-}
+void ConicPy::setAngleXU(Py::Float arg) { getGeomConicPtr()->setAngleXU((double)arg); }
 
 Py::Object ConicPy::getAxis() const
 {
@@ -127,12 +117,12 @@ Py::Object ConicPy::getAxis() const
     return Py::Vector(Base::Vector3d(dir.X(), dir.Y(), dir.Z()));
 }
 
-void  ConicPy::setAxis(Py::Object arg)
+void ConicPy::setAxis(Py::Object arg)
 {
-    PyObject* p = arg.ptr();
+    PyObject *p = arg.ptr();
     Base::Vector3d val;
     if (PyObject_TypeCheck(p, &(Base::VectorPy::Type))) {
-        val = static_cast<Base::VectorPy*>(p)->value();
+        val = static_cast<Base::VectorPy *>(p)->value();
     }
     else if (PyTuple_Check(p)) {
         val = Base::getVectorFromTuple<double>(p);
@@ -150,7 +140,7 @@ void  ConicPy::setAxis(Py::Object arg)
         axis.SetDirection(gp_Dir(val.x, val.y, val.z));
         conic->SetAxis(axis);
     }
-    catch (Standard_Failure&) {
+    catch (Standard_Failure &) {
         throw Py::RuntimeError("cannot set axis");
     }
 }
@@ -163,12 +153,12 @@ Py::Object ConicPy::getXAxis() const
     return Py::Vector(Base::Vector3d(dir.X(), dir.Y(), dir.Z()));
 }
 
-void  ConicPy::setXAxis(Py::Object arg)
+void ConicPy::setXAxis(Py::Object arg)
 {
-    PyObject* p = arg.ptr();
+    PyObject *p = arg.ptr();
     Base::Vector3d val;
     if (PyObject_TypeCheck(p, &(Base::VectorPy::Type))) {
-        val = static_cast<Base::VectorPy*>(p)->value();
+        val = static_cast<Base::VectorPy *>(p)->value();
     }
     else if (PyTuple_Check(p)) {
         val = Base::getVectorFromTuple<double>(p);
@@ -186,7 +176,7 @@ void  ConicPy::setXAxis(Py::Object arg)
         pos.SetXDirection(gp_Dir(val.x, val.y, val.z));
         conic->SetPosition(pos);
     }
-    catch (Standard_Failure&) {
+    catch (Standard_Failure &) {
         throw Py::RuntimeError("cannot set X axis");
     }
 }
@@ -199,12 +189,12 @@ Py::Object ConicPy::getYAxis() const
     return Py::Vector(Base::Vector3d(dir.X(), dir.Y(), dir.Z()));
 }
 
-void  ConicPy::setYAxis(Py::Object arg)
+void ConicPy::setYAxis(Py::Object arg)
 {
-    PyObject* p = arg.ptr();
+    PyObject *p = arg.ptr();
     Base::Vector3d val;
     if (PyObject_TypeCheck(p, &(Base::VectorPy::Type))) {
-        val = static_cast<Base::VectorPy*>(p)->value();
+        val = static_cast<Base::VectorPy *>(p)->value();
     }
     else if (PyTuple_Check(p)) {
         val = Base::getVectorFromTuple<double>(p);
@@ -222,17 +212,11 @@ void  ConicPy::setYAxis(Py::Object arg)
         pos.SetYDirection(gp_Dir(val.x, val.y, val.z));
         conic->SetPosition(pos);
     }
-    catch (Standard_Failure&) {
+    catch (Standard_Failure &) {
         throw Py::RuntimeError("cannot set Y axis");
     }
 }
 
-PyObject *ConicPy::getCustomAttributes(const char* ) const
-{
-    return nullptr;
-}
+PyObject *ConicPy::getCustomAttributes(const char *) const { return nullptr; }
 
-int ConicPy::setCustomAttributes(const char* , PyObject *)
-{
-    return 0; 
-}
+int ConicPy::setCustomAttributes(const char *, PyObject *) { return 0; }

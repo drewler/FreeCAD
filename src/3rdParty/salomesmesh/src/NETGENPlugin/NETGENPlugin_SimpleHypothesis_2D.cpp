@@ -41,17 +41,14 @@ using namespace std;
  *  
  */
 //=============================================================================
-NETGENPlugin_SimpleHypothesis_2D::NETGENPlugin_SimpleHypothesis_2D (int         hypId,
-                                                                    int         studyId,
-                                                                    SMESH_Gen * gen)
-  : SMESH_Hypothesis(hypId, studyId, gen),
-    _nbSegments ((int)NETGENPlugin_Hypothesis::GetDefaultNbSegPerEdge()),
-    _segmentLength(0),
-    _area         (0.),
-    _allowQuad    (false)
+NETGENPlugin_SimpleHypothesis_2D::NETGENPlugin_SimpleHypothesis_2D(int hypId, int studyId,
+                                                                   SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen),
+      _nbSegments((int)NETGENPlugin_Hypothesis::GetDefaultNbSegPerEdge()), _segmentLength(0),
+      _area(0.), _allowQuad(false)
 {
-  _name = "NETGEN_SimpleParameters_2D";
-  _param_algo_dim = 2;
+    _name = "NETGEN_SimpleParameters_2D";
+    _param_algo_dim = 2;
 }
 
 //=============================================================================
@@ -61,14 +58,12 @@ NETGENPlugin_SimpleHypothesis_2D::NETGENPlugin_SimpleHypothesis_2D (int         
 //=============================================================================
 void NETGENPlugin_SimpleHypothesis_2D::SetNumberOfSegments(int nb)
 {
-  if ( nb < 1 )
-    throw SALOME_Exception("Number of segments must be positive");
-  if (nb != _nbSegments)
-  {
-    _nbSegments = nb;
-    if ( _nbSegments ) _segmentLength = 0.;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (nb < 1) throw SALOME_Exception("Number of segments must be positive");
+    if (nb != _nbSegments) {
+        _nbSegments = nb;
+        if (_nbSegments) _segmentLength = 0.;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -78,14 +73,12 @@ void NETGENPlugin_SimpleHypothesis_2D::SetNumberOfSegments(int nb)
 //=============================================================================
 void NETGENPlugin_SimpleHypothesis_2D::SetLocalLength(double segmentLength)
 {
-  if ( segmentLength < DBL_MIN )
-    throw SALOME_Exception("segment length must be more than zero");
-  if (segmentLength != _segmentLength)
-  {
-    _segmentLength = segmentLength;
-    if ( _segmentLength > DBL_MIN ) _nbSegments = 0;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (segmentLength < DBL_MIN) throw SALOME_Exception("segment length must be more than zero");
+    if (segmentLength != _segmentLength) {
+        _segmentLength = segmentLength;
+        if (_segmentLength > DBL_MIN) _nbSegments = 0;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -95,11 +88,10 @@ void NETGENPlugin_SimpleHypothesis_2D::SetLocalLength(double segmentLength)
 //=============================================================================
 void NETGENPlugin_SimpleHypothesis_2D::LengthFromEdges()
 {
-  if (_area > DBL_MIN )
-  {
-    _area = 0;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (_area > DBL_MIN) {
+        _area = 0;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -109,13 +101,11 @@ void NETGENPlugin_SimpleHypothesis_2D::LengthFromEdges()
 //=============================================================================
 void NETGENPlugin_SimpleHypothesis_2D::SetMaxElementArea(double area)
 {
-  if ( area < DBL_MIN )
-    area = 0.;
-  if (_area != area)
-  {
-    _area = area;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (area < DBL_MIN) area = 0.;
+    if (_area != area) {
+        _area = area;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=======================================================================
@@ -125,11 +115,10 @@ void NETGENPlugin_SimpleHypothesis_2D::SetMaxElementArea(double area)
 
 void NETGENPlugin_SimpleHypothesis_2D::SetAllowQuadrangles(bool toAllow)
 {
-  if ( _allowQuad != toAllow )
-  {
-    _allowQuad = toAllow;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (_allowQuad != toAllow) {
+        _allowQuad = toAllow;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=======================================================================
@@ -137,9 +126,18 @@ void NETGENPlugin_SimpleHypothesis_2D::SetAllowQuadrangles(bool toAllow)
 //purpose  : Returns true if generation of quadrangular faces is enabled
 //=======================================================================
 
-bool NETGENPlugin_SimpleHypothesis_2D::GetAllowQuadrangles() const
+bool NETGENPlugin_SimpleHypothesis_2D::GetAllowQuadrangles() const { return _allowQuad; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+ostream &NETGENPlugin_SimpleHypothesis_2D::SaveTo(ostream &save)
 {
-  return _allowQuad;
+    save << _nbSegments << " " << _segmentLength << " " << _area << " " << _allowQuad;
+
+    return save;
 }
 
 //=============================================================================
@@ -147,44 +145,29 @@ bool NETGENPlugin_SimpleHypothesis_2D::GetAllowQuadrangles() const
  *  
  */
 //=============================================================================
-ostream & NETGENPlugin_SimpleHypothesis_2D::SaveTo(ostream & save)
+istream &NETGENPlugin_SimpleHypothesis_2D::LoadFrom(istream &load)
 {
-  save << _nbSegments << " " << _segmentLength << " " << _area << " " << _allowQuad;
+    bool isOK = true;
+    double val;
 
-  return save;
-}
+    isOK = (bool)(load >> val);
+    if (isOK) _nbSegments = (int)val;
+    else
+        load.clear(ios::badbit | load.rdstate());
 
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-istream & NETGENPlugin_SimpleHypothesis_2D::LoadFrom(istream & load)
-{
-  bool isOK = true;
-  double val;
+    isOK = (bool)(load >> val);
+    if (isOK) _segmentLength = val;
+    else
+        load.clear(ios::badbit | load.rdstate());
 
-  isOK = (bool)(load >> val);
-  if (isOK)
-    _nbSegments = (int) val;
-  else
-    load.clear(ios::badbit | load.rdstate());
+    isOK = (bool)(load >> val);
+    if (isOK) _area = val;
+    else
+        load.clear(ios::badbit | load.rdstate());
 
-  isOK = (bool)(load >> val);
-  if (isOK)
-    _segmentLength = val;
-  else
-    load.clear(ios::badbit | load.rdstate());
+    load >> _allowQuad;
 
-  isOK = (bool)(load >> val);
-  if (isOK)
-    _area = val;
-  else
-    load.clear(ios::badbit | load.rdstate());
-
-  load >> _allowQuad;
-
-  return load;
+    return load;
 }
 
 //================================================================================
@@ -195,40 +178,39 @@ istream & NETGENPlugin_SimpleHypothesis_2D::LoadFrom(istream & load)
  * \retval bool - always false
  */
 //================================================================================
-bool NETGENPlugin_SimpleHypothesis_2D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                           const TopoDS_Shape& theShape)
+bool NETGENPlugin_SimpleHypothesis_2D::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                           const TopoDS_Shape &theShape)
 {
-  // Find out nb of segments.
-  int nbSeg = 0, nbEdges = 0;
-  TopExp_Explorer exp( theShape, TopAbs_EDGE );
-  for ( ; exp.More(); exp.Next() ) {
-    SMESH_subMesh* sm = theMesh->GetSubMeshContaining( exp.Current() );
-    if ( sm && !sm->IsEmpty() ) {
-      nbSeg += sm->GetSubMeshDS()->NbElements();
-      nbEdges++;
+    // Find out nb of segments.
+    int nbSeg = 0, nbEdges = 0;
+    TopExp_Explorer exp(theShape, TopAbs_EDGE);
+    for (; exp.More(); exp.Next()) {
+        SMESH_subMesh *sm = theMesh->GetSubMeshContaining(exp.Current());
+        if (sm && !sm->IsEmpty()) {
+            nbSeg += sm->GetSubMeshDS()->NbElements();
+            nbEdges++;
+        }
     }
-  }
-  if ( nbEdges )
-    _nbSegments = nbSeg / nbEdges;
+    if (nbEdges) _nbSegments = nbSeg / nbEdges;
 
-  // Find out max face area
-  _area = 0;
-  SMESH::Controls::Area areaControl;
-  SMESH::Controls::TSequenceOfXYZ nodesCoords;
-  const int nbFacesToCheck = 100;
-  for ( exp.Init( theShape, TopAbs_FACE ); exp.More(); exp.Next() ) {
-    SMESH_subMesh* sm = theMesh->GetSubMeshContaining( exp.Current() );
-    if ( sm && !sm->IsEmpty() ) {
-      SMDS_ElemIteratorPtr fIt = sm->GetSubMeshDS()->GetElements();
-      int nbCheckedFaces = 0;
-      while ( fIt->more() && nbCheckedFaces++ < nbFacesToCheck ) {
-        const SMDS_MeshElement* elem = fIt->next();
-        areaControl.GetPoints( elem, nodesCoords );
-        _area = max( _area, areaControl.GetValue( nodesCoords ));
-      }
+    // Find out max face area
+    _area = 0;
+    SMESH::Controls::Area areaControl;
+    SMESH::Controls::TSequenceOfXYZ nodesCoords;
+    const int nbFacesToCheck = 100;
+    for (exp.Init(theShape, TopAbs_FACE); exp.More(); exp.Next()) {
+        SMESH_subMesh *sm = theMesh->GetSubMeshContaining(exp.Current());
+        if (sm && !sm->IsEmpty()) {
+            SMDS_ElemIteratorPtr fIt = sm->GetSubMeshDS()->GetElements();
+            int nbCheckedFaces = 0;
+            while (fIt->more() && nbCheckedFaces++ < nbFacesToCheck) {
+                const SMDS_MeshElement *elem = fIt->next();
+                areaControl.GetPoints(elem, nodesCoords);
+                _area = max(_area, areaControl.GetValue(nodesCoords));
+            }
+        }
     }
-  }
-  return nbEdges;
+    return nbEdges;
 }
 
 //================================================================================
@@ -238,11 +220,10 @@ bool NETGENPlugin_SimpleHypothesis_2D::SetParametersByMesh(const SMESH_Mesh*   t
  */
 //================================================================================
 
-bool NETGENPlugin_SimpleHypothesis_2D::SetParametersByDefaults(const TDefaults&    dflts,
-                                                               const SMESH_Mesh* /*theMesh*/)
+bool NETGENPlugin_SimpleHypothesis_2D::SetParametersByDefaults(const TDefaults &dflts,
+                                                               const SMESH_Mesh * /*theMesh*/)
 {
-  _nbSegments    = dflts._nbSegments;
-  _segmentLength = dflts._elemLength;
-  return _nbSegments && _segmentLength > 0;
+    _nbSegments = dflts._nbSegments;
+    _segmentLength = dflts._elemLength;
+    return _nbSegments && _segmentLength > 0;
 }
-

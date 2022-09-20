@@ -41,14 +41,14 @@
 
 using namespace Surface;
 
-const App::PropertyIntegerConstraint::Constraints SampleRange = {2,INT_MAX,1};
-const App::PropertyFloatConstraint::Constraints ToleranceRange = {0.0,10.0,0.01};
-const App::PropertyFloatConstraint::Constraints ExtendRange = {-0.5,10.0,0.01};
+const App::PropertyIntegerConstraint::Constraints SampleRange = {2, INT_MAX, 1};
+const App::PropertyFloatConstraint::Constraints ToleranceRange = {0.0, 10.0, 0.01};
+const App::PropertyFloatConstraint::Constraints ExtendRange = {-0.5, 10.0, 0.01};
 PROPERTY_SOURCE(Surface::Extend, Part::Spline)
 
 Extend::Extend() : lockOnChangeMutex(false)
 {
-    ADD_PROPERTY(Face,(nullptr));
+    ADD_PROPERTY(Face, (nullptr));
     Face.setScope(App::LinkScope::Global);
     ADD_PROPERTY(Tolerance, (0.1));
     Tolerance.setConstraints(&ToleranceRange);
@@ -71,40 +71,33 @@ Extend::Extend() : lockOnChangeMutex(false)
     SampleV.setConstraints(&SampleRange);
 }
 
-Extend::~Extend()
-{
-}
+Extend::~Extend() {}
 
 short Extend::mustExecute() const
 {
-    if (Face.isTouched())
-        return 1;
-    if (ExtendUNeg.isTouched())
-        return 1;
-    if (ExtendUPos.isTouched())
-      return 1;
-    if (ExtendVNeg.isTouched())
-        return 1;
-    if (ExtendVPos.isTouched())
-      return 1;
+    if (Face.isTouched()) return 1;
+    if (ExtendUNeg.isTouched()) return 1;
+    if (ExtendUPos.isTouched()) return 1;
+    if (ExtendVNeg.isTouched()) return 1;
+    if (ExtendVPos.isTouched()) return 1;
     return 0;
 }
 
 App::DocumentObjectExecReturn *Extend::execute()
 {
-    App::DocumentObject* part = Face.getValue();
+    App::DocumentObject *part = Face.getValue();
     if (!part || !part->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId()))
         return new App::DocumentObjectExecReturn("No shape linked.");
-    const auto& faces = Face.getSubValues();
+    const auto &faces = Face.getSubValues();
     if (faces.size() != 1)
         return new App::DocumentObjectExecReturn("Not exactly one sub-shape linked.");
 
-    TopoDS_Shape shape = static_cast<Part::Feature*>(part)
-            ->Shape.getShape().getSubShape(faces[0].c_str());
+    TopoDS_Shape shape =
+        static_cast<Part::Feature *>(part)->Shape.getShape().getSubShape(faces[0].c_str());
     if (shape.IsNull() || shape.ShapeType() != TopAbs_FACE)
         return new App::DocumentObjectExecReturn("Sub-shape is not a face.");
 
-    const TopoDS_Face& face = TopoDS::Face(shape);
+    const TopoDS_Face &face = TopoDS::Face(shape);
     BRepAdaptor_Surface adapt(face);
     double u1 = adapt.FirstUParameter();
     double u2 = adapt.LastUParameter();
@@ -113,23 +106,23 @@ App::DocumentObjectExecReturn *Extend::execute()
 
     double ur = u2 - u1;
     double vr = v2 - v1;
-    double eu1 = u1 - ur*ExtendUNeg.getValue();
-    double eu2 = u2 + ur*ExtendUPos.getValue();
-    double ev1 = v1 - vr*ExtendVNeg.getValue();
-    double ev2 = v2 + vr*ExtendVPos.getValue();
+    double eu1 = u1 - ur * ExtendUNeg.getValue();
+    double eu2 = u2 + ur * ExtendUPos.getValue();
+    double ev1 = v1 - vr * ExtendVNeg.getValue();
+    double ev2 = v2 + vr * ExtendVPos.getValue();
     double eur = eu2 - eu1;
     double evr = ev2 - ev1;
 
     long numU = SampleU.getValue();
     long numV = SampleV.getValue();
     TColgp_Array2OfPnt approxPoints(1, numU, 1, numV);
-    for (long u=0; u<numU; u++) {
-        double uu = eu1 + u * eur / (numU-1);
-        for (long v=0; v<numV; v++) {
-            double vv = ev1 + v * evr / (numV-1);
-            BRepLProp_SLProps prop(adapt,uu,vv,0,Precision::Confusion());
-            const gp_Pnt& pnt = prop.Value();
-            approxPoints(u+1, v+1) = pnt;
+    for (long u = 0; u < numU; u++) {
+        double uu = eu1 + u * eur / (numU - 1);
+        for (long v = 0; v < numV; v++) {
+            double vv = ev1 + v * evr / (numV - 1);
+            BRepLProp_SLProps prop(adapt, uu, vv, 0, Precision::Confusion());
+            const gp_Pnt &pnt = prop.Value();
+            approxPoints(u + 1, v + 1) = pnt;
         }
     }
 
@@ -150,33 +143,26 @@ App::DocumentObjectExecReturn *Extend::execute()
     return StdReturn;
 }
 
-void Extend::onChanged(const App::Property* prop)
+void Extend::onChanged(const App::Property *prop)
 {
     // using a mutex and lock to protect a recursive calling when setting the new values
-    if (lockOnChangeMutex)
-        return;
+    if (lockOnChangeMutex) return;
     Base::StateLocker lock(lockOnChangeMutex);
 
-    if (ExtendUSymetric.getValue())
-    {
-        if (prop == &ExtendUNeg || prop == &ExtendUPos)
-        {
-            auto changedValue = dynamic_cast<const App::PropertyFloat*>(prop);
-            if (changedValue)
-            {
+    if (ExtendUSymetric.getValue()) {
+        if (prop == &ExtendUNeg || prop == &ExtendUPos) {
+            auto changedValue = dynamic_cast<const App::PropertyFloat *>(prop);
+            if (changedValue) {
                 ExtendUNeg.setValue(changedValue->getValue());
                 ExtendUPos.setValue(changedValue->getValue());
             }
         }
     }
 
-    if (ExtendVSymetric.getValue())
-    {
-        if (prop == &ExtendVNeg || prop == &ExtendVPos)
-        {
-            auto changedValue = dynamic_cast<const App::PropertyFloat*>(prop);
-            if (changedValue)
-            {
+    if (ExtendVSymetric.getValue()) {
+        if (prop == &ExtendVNeg || prop == &ExtendVPos) {
+            auto changedValue = dynamic_cast<const App::PropertyFloat *>(prop);
+            if (changedValue) {
                 ExtendVNeg.setValue(changedValue->getValue());
                 ExtendVPos.setValue(changedValue->getValue());
             }
@@ -185,18 +171,19 @@ void Extend::onChanged(const App::Property* prop)
     Part::Spline::onChanged(prop);
 }
 
-void Extend::handleChangedPropertyName(Base::XMLReader &reader,
-                                       const char * TypeName,
+void Extend::handleChangedPropertyName(Base::XMLReader &reader, const char *TypeName,
                                        const char *PropName)
 {
     Base::Type type = Base::Type::fromName(TypeName);
-    if (App::PropertyFloatConstraint::getClassTypeId() == type && strcmp(PropName, "ExtendU") == 0) {
+    if (App::PropertyFloatConstraint::getClassTypeId() == type
+        && strcmp(PropName, "ExtendU") == 0) {
         App::PropertyFloatConstraint v;
         v.Restore(reader);
         ExtendUNeg.setValue(v.getValue());
         ExtendUPos.setValue(v.getValue());
     }
-    else if (App::PropertyFloatConstraint::getClassTypeId() == type && strcmp(PropName, "ExtendV") == 0) {
+    else if (App::PropertyFloatConstraint::getClassTypeId() == type
+             && strcmp(PropName, "ExtendV") == 0) {
         App::PropertyFloatConstraint v;
         v.Restore(reader);
         ExtendVNeg.setValue(v.getValue());

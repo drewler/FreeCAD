@@ -30,7 +30,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Mirrored : public PartDesign::Transformed
+class PartDesignExport Mirrored: public PartDesign::Transformed
 {
     PROPERTY_HEADER(PartDesign::Mirrored);
 
@@ -39,14 +39,12 @@ public:
 
     App::PropertyLinkSub MirrorPlane;
 
-   /** @name methods override feature */
+    /** @name methods override feature */
     //@{
     short mustExecute() const;
 
     /// returns the type name of the view provider
-    const char* getViewProviderName() const {
-        return "PartDesignGui::ViewProviderMirrored";
-    }
+    const char *getViewProviderName() const { return "PartDesignGui::ViewProviderMirrored"; }
     //@}
 
     /** Create transformations
@@ -55,7 +53,7 @@ public:
       * If MirrorPlane contains a feature and a face name, then the mirror plane will be
       * the given face, which must be planar
       */
-    const std::list<gp_Trsf> getTransformations(const std::vector<App::DocumentObject*>);
+    const std::list<gp_Trsf> getTransformations(const std::vector<App::DocumentObject *>);
 };
 
 } //namespace PartDesign

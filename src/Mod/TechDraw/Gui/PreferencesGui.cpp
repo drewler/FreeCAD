@@ -57,13 +57,10 @@ QFont PreferencesGui::labelFontQFont()
 
 int PreferencesGui::labelFontSizePX()
 {
-    return (int) (Rez::guiX(Preferences::labelFontSizeMM()) + 0.5);
+    return (int)(Rez::guiX(Preferences::labelFontSizeMM()) + 0.5);
 }
 
-int PreferencesGui::dimFontSizePX()
-{
-    return (int) (Rez::guiX(Preferences::dimFontSizeMM()) + 0.5);
-}
+int PreferencesGui::dimFontSizePX() { return (int)(Rez::guiX(Preferences::dimFontSizeMM()) + 0.5); }
 
 QColor PreferencesGui::normalQColor()
 {
@@ -85,82 +82,80 @@ QColor PreferencesGui::preselectQColor()
 
 App::Color PreferencesGui::sectionLineColor()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/Decorations");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Decorations");
     App::Color fcColor;
     fcColor.setPackedValue(hGrp->GetUnsigned("SectionColor", 0x000000FF));
     return fcColor;
 }
 
-QColor PreferencesGui::sectionLineQColor()
-{
-    return sectionLineColor().asValue<QColor>();
-}
+QColor PreferencesGui::sectionLineQColor() { return sectionLineColor().asValue<QColor>(); }
 
 App::Color PreferencesGui::centerColor()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/Decorations");
-    App::Color fcColor = App::Color((uint32_t) hGrp->GetUnsigned("CenterColor", 0x000000FF));
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Decorations");
+    App::Color fcColor = App::Color((uint32_t)hGrp->GetUnsigned("CenterColor", 0x000000FF));
     return fcColor;
 }
 
-QColor PreferencesGui::centerQColor()
-{
-    return centerColor().asValue<QColor>();
-}
+QColor PreferencesGui::centerQColor() { return centerColor().asValue<QColor>(); }
 
-QColor PreferencesGui::vertexQColor()
-{
-    return Preferences::vertexColor().asValue<QColor>();
-}
+QColor PreferencesGui::vertexQColor() { return Preferences::vertexColor().asValue<QColor>(); }
 
 App::Color PreferencesGui::dimColor()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/Dimensions");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Dimensions");
     App::Color result;
-    result.setPackedValue(hGrp->GetUnsigned("Color", 0x000000FF));  //#000000 black
+    result.setPackedValue(hGrp->GetUnsigned("Color", 0x000000FF)); //#000000 black
     return result;
 }
 
-QColor PreferencesGui::dimQColor()
-{
-    return PreferencesGui::dimColor().asValue<QColor>();
-}
+QColor PreferencesGui::dimQColor() { return PreferencesGui::dimColor().asValue<QColor>(); }
 
 
 App::Color PreferencesGui::leaderColor()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/LeaderLine");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/LeaderLine");
     App::Color result;
-    result.setPackedValue(hGrp->GetUnsigned("Color", 0x000000FF));  //#000000 black
+    result.setPackedValue(hGrp->GetUnsigned("Color", 0x000000FF)); //#000000 black
     return result;
 }
 
-QColor PreferencesGui::leaderQColor()
-{
-    return PreferencesGui::leaderColor().asValue<QColor>();
-}
+QColor PreferencesGui::leaderQColor() { return PreferencesGui::leaderColor().asValue<QColor>(); }
 
 int PreferencesGui::dimArrowStyle()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/Dimensions");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Dimensions");
     int style = hGrp->GetInt("ArrowStyle", 0);
     return style;
 }
 
 double PreferencesGui::dimArrowSize()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/Dimensions");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Dimensions");
     double size = hGrp->GetFloat("ArrowSize", Preferences::dimFontSizeMM());
     return size;
 }
@@ -168,33 +163,39 @@ double PreferencesGui::dimArrowSize()
 
 double PreferencesGui::edgeFuzz()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/General");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/General");
     double result = hGrp->GetFloat("EdgeFuzz", 10.0);
     return result;
 }
 
 Qt::PenStyle PreferencesGui::sectionLineStyle()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/Decorations");
-    Qt::PenStyle sectStyle = static_cast<Qt::PenStyle> (hGrp->GetInt("SectionLine", 2));
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Decorations");
+    Qt::PenStyle sectStyle = static_cast<Qt::PenStyle>(hGrp->GetInt("SectionLine", 2));
     return sectStyle;
 }
 
 
 QString PreferencesGui::weldingDirectory()
 {
-    std::string defaultDir = App::Application::getResourceDir() + "Mod/TechDraw/Symbols/Welding/AWS/";
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp")->
-                                         GetGroup("Preferences")->GetGroup("Mod/TechDraw/Files");
+    std::string defaultDir =
+        App::Application::getResourceDir() + "Mod/TechDraw/Symbols/Welding/AWS/";
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Files");
 
     std::string symbolDir = hGrp->GetASCII("WeldingDir", defaultDir.c_str());
-    if (symbolDir.empty()) {
-        symbolDir = defaultDir;
-    }
+    if (symbolDir.empty()) { symbolDir = defaultDir; }
     QString qSymbolDir = QString::fromUtf8(symbolDir.c_str());
     Base::FileInfo fi(symbolDir);
     if (!fi.isReadable()) {
@@ -207,33 +208,36 @@ QString PreferencesGui::weldingDirectory()
 
 App::Color PreferencesGui::gridColor()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/Colors");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Colors");
     App::Color result;
-    result.setPackedValue(hGrp->GetUnsigned("gridColor", 0x000000FF));  //#000000 black
+    result.setPackedValue(hGrp->GetUnsigned("gridColor", 0x000000FF)); //#000000 black
     return result;
 }
 
-QColor PreferencesGui::gridQColor()
-{
-    return PreferencesGui::gridColor().asValue<QColor>();
-}
+QColor PreferencesGui::gridQColor() { return PreferencesGui::gridColor().asValue<QColor>(); }
 
 double PreferencesGui::gridSpacing()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/General");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/General");
     double spacing = hGrp->GetFloat("gridSpacing", 10.0);
     return spacing;
 }
 
 bool PreferencesGui::showGrid()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/General");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/General");
     bool show = hGrp->GetBool("showGrid", false);
     return show;
 }

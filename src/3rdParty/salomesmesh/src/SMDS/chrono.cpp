@@ -22,41 +22,37 @@
 
 using namespace std;
 
-cntStruct* counters::_ctrs = 0;
+cntStruct *counters::_ctrs = 0;
 int counters::_nbChrono = 0;
 
 counters::counters(int nb)
 {
-  MESSAGE("counters::counters(int nb)");
-  _nbChrono = nb;
-  _ctrs = new cntStruct[_nbChrono];
+    MESSAGE("counters::counters(int nb)");
+    _nbChrono = nb;
+    _ctrs = new cntStruct[_nbChrono];
 
-  for (int i = 0; i < _nbChrono; i++)
-    {
-      _ctrs[i]._ctrNames = 0;
-      _ctrs[i]._ctrLines = 0;
-      _ctrs[i]._ctrOccur = 0;
-      _ctrs[i]._ctrCumul = 0;
+    for (int i = 0; i < _nbChrono; i++) {
+        _ctrs[i]._ctrNames = 0;
+        _ctrs[i]._ctrLines = 0;
+        _ctrs[i]._ctrOccur = 0;
+        _ctrs[i]._ctrCumul = 0;
     }
 
-  MESSAGE("counters::counters()");
+    MESSAGE("counters::counters()");
 }
 
-counters::~counters()
-{
-  stats();
-}
+counters::~counters() { stats(); }
 
 void counters::stats()
 {
-  MESSAGE("counters::stats()");
-  for (int i = 0; i < _nbChrono; i++)
-    if (_ctrs[i]._ctrOccur)
-      {
-        MESSAGE("Compteur[" << i << "]: "<< _ctrs[i]._ctrNames << "[" << _ctrs[i]._ctrLines << "]");
-        MESSAGE("  " << _ctrs[i]._ctrOccur);
-        MESSAGE("  " << _ctrs[i]._ctrCumul);
-      }
+    MESSAGE("counters::stats()");
+    for (int i = 0; i < _nbChrono; i++)
+        if (_ctrs[i]._ctrOccur) {
+            MESSAGE("Compteur[" << i << "]: " << _ctrs[i]._ctrNames << "[" << _ctrs[i]._ctrLines
+                                << "]");
+            MESSAGE("  " << _ctrs[i]._ctrOccur);
+            MESSAGE("  " << _ctrs[i]._ctrCumul);
+        }
 }
 /*
 chrono::chrono(int i) :

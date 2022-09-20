@@ -30,39 +30,26 @@
 using namespace Gui;
 
 VectorTableModel::VectorTableModel(int decimals, QObject *parent)
-    : QAbstractTableModel(parent)
-    , decimals(decimals)
-{
-}
+    : QAbstractTableModel(parent), decimals(decimals)
+{}
 
 QVariant VectorTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role == Qt::DisplayRole && orientation == Qt::Vertical)
-        return section + 1;
+    if (role == Qt::DisplayRole && orientation == Qt::Vertical) return section + 1;
 
-    if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
-        return QVariant();
-    if (section == 0)
-        return QVariant(QLatin1Char('x'));
-    if (section == 1)
-        return QVariant(QLatin1Char('y'));
-    if (section == 2)
-        return QVariant(QLatin1Char('z'));
+    if (role != Qt::DisplayRole || orientation != Qt::Horizontal) return QVariant();
+    if (section == 0) return QVariant(QLatin1Char('x'));
+    if (section == 1) return QVariant(QLatin1Char('y'));
+    if (section == 2) return QVariant(QLatin1Char('z'));
     else
         return QVariant();
 }
 
-int VectorTableModel::columnCount(const QModelIndex&) const
-{
-    return 3;
-}
+int VectorTableModel::columnCount(const QModelIndex &) const { return 3; }
 
-int VectorTableModel::rowCount(const QModelIndex &) const
-{
-    return vectors.size();
-}
+int VectorTableModel::rowCount(const QModelIndex &) const { return vectors.size(); }
 
-Qt::ItemFlags VectorTableModel::flags (const QModelIndex & index) const
+Qt::ItemFlags VectorTableModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags fl = QAbstractTableModel::flags(index);
     fl = fl | Qt::ItemIsEditable;
@@ -81,8 +68,7 @@ bool VectorTableModel::setData(const QModelIndex &index, const QVariant &value, 
         }
         else if (c < 3) {
             double d = value.toDouble();
-            if (c == 0)
-                vectors[r].x = d;
+            if (c == 0) vectors[r].x = d;
             else if (c == 1)
                 vectors[r].y = d;
             else if (c == 2)
@@ -101,8 +87,7 @@ QVariant VectorTableModel::data(const QModelIndex &index, int role) const
         int c = index.column();
         if (r < vectors.size() && c < 3) {
             double d = 0.0;
-            if (c == 0)
-                d = vectors[r].x;
+            if (c == 0) d = vectors[r].x;
             else if (c == 1)
                 d = vectors[r].y;
             else if (c == 2)
@@ -120,30 +105,23 @@ QVariant VectorTableModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QModelIndex VectorTableModel::parent(const QModelIndex &) const
-{
-    return QModelIndex();
-}
+QModelIndex VectorTableModel::parent(const QModelIndex &) const { return QModelIndex(); }
 
-void VectorTableModel::setValues(const QList<Base::Vector3d>& d)
+void VectorTableModel::setValues(const QList<Base::Vector3d> &d)
 {
     vectors = d;
     beginResetModel();
     endResetModel();
 }
 
-const QList<Base::Vector3d>& VectorTableModel::values() const
-{
-    return vectors;
-}
+const QList<Base::Vector3d> &VectorTableModel::values() const { return vectors; }
 
 bool VectorTableModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     if (vectors.size() >= row) {
-        beginInsertRows(parent, row, row+count-1);
+        beginInsertRows(parent, row, row + count - 1);
         Base::Vector3d v;
-        for (int i=0; i<count; i++)
-            vectors.insert(row, v);
+        for (int i = 0; i < count; i++) vectors.insert(row, v);
         endInsertRows();
         return true;
     }
@@ -154,9 +132,8 @@ bool VectorTableModel::insertRows(int row, int count, const QModelIndex &parent)
 bool VectorTableModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     if (vectors.size() > row) {
-        beginRemoveRows(parent, row, row+count-1);
-        for (int i=0; i<count; i++)
-            vectors.removeAt(row);
+        beginRemoveRows(parent, row, row + count - 1);
+        for (int i = 0; i < count; i++) vectors.removeAt(row);
         endRemoveRows();
         return true;
     }
@@ -167,12 +144,11 @@ bool VectorTableModel::removeRows(int row, int count, const QModelIndex &parent)
 // --------------------------------------------------------------
 
 VectorTableDelegate::VectorTableDelegate(int decimals, QObject *parent)
-    : QItemDelegate(parent)
-    , decimals(decimals)
-{
-}
+    : QItemDelegate(parent), decimals(decimals)
+{}
 
-QWidget *VectorTableDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */,
+QWidget *VectorTableDelegate::createEditor(QWidget *parent,
+                                           const QStyleOptionViewItem & /* option */,
                                            const QModelIndex & /*index*/) const
 {
     auto editor = new QDoubleSpinBox(parent);
@@ -188,21 +164,21 @@ void VectorTableDelegate::setEditorData(QWidget *editor, const QModelIndex &inde
 {
     double value = index.model()->data(index, Qt::EditRole).toDouble();
 
-    auto spinBox = static_cast<QDoubleSpinBox*>(editor);
+    auto spinBox = static_cast<QDoubleSpinBox *>(editor);
     spinBox->setValue(value);
 }
 
 void VectorTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                        const QModelIndex &index) const
 {
-    auto spinBox = static_cast<QDoubleSpinBox*>(editor);
+    auto spinBox = static_cast<QDoubleSpinBox *>(editor);
     spinBox->interpretText();
     double value = spinBox->value();
     model->setData(index, value, Qt::EditRole);
 }
 
 void VectorTableDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-                                               const QModelIndex &/* index */) const
+                                               const QModelIndex & /* index */) const
 {
     editor->setGeometry(option.rect);
 }
@@ -211,10 +187,8 @@ void VectorTableDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
 
 /* TRANSLATOR Gui::VectorListEditor */
 
-VectorListEditor::VectorListEditor(int decimals, QWidget* parent)
-  : QDialog(parent)
-  , ui(new Ui_VectorListEditor)
-  , model(new VectorTableModel(decimals))
+VectorListEditor::VectorListEditor(int decimals, QWidget *parent)
+    : QDialog(parent), ui(new Ui_VectorListEditor), model(new VectorTableModel(decimals))
 {
     ui->setupUi(this);
     ui->tableWidget->setItemDelegate(new VectorTableDelegate(decimals, this));
@@ -240,11 +214,9 @@ VectorListEditor::VectorListEditor(int decimals, QWidget* parent)
     connect(ui->tableWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(clickedRow(QModelIndex)));
 }
 
-VectorListEditor::~VectorListEditor()
-{
-}
+VectorListEditor::~VectorListEditor() {}
 
-void VectorListEditor::setValues(const QList<Base::Vector3d>& v)
+void VectorListEditor::setValues(const QList<Base::Vector3d> &v)
 {
     data = v;
     model->setValues(v);
@@ -262,10 +234,7 @@ void VectorListEditor::setValues(const QList<Base::Vector3d>& v)
     }
 }
 
-const QList<Base::Vector3d>& VectorListEditor::getValues() const
-{
-    return data;
-}
+const QList<Base::Vector3d> &VectorListEditor::getValues() const { return data; }
 
 void VectorListEditor::accept()
 {
@@ -273,12 +242,9 @@ void VectorListEditor::accept()
     QDialog::accept();
 }
 
-void VectorListEditor::reject()
-{
-    QDialog::reject();
-}
+void VectorListEditor::reject() { QDialog::reject(); }
 
-void VectorListEditor::clickedRow(const QModelIndex& index)
+void VectorListEditor::clickedRow(const QModelIndex &index)
 {
     QSignalBlocker blocker(ui->spinBox);
     ui->spinBox->setValue(index.row() + 1);
@@ -324,9 +290,7 @@ void VectorListEditor::removeRow()
 {
     model->removeRow(ui->tableWidget->currentIndex().row());
     int rowCount = model->rowCount();
-    if (rowCount > 0) {
-        ui->spinBox->setRange(1, rowCount);
-    }
+    if (rowCount > 0) { ui->spinBox->setRange(1, rowCount); }
     else {
         ui->spinBox->setEnabled(false);
         ui->toolButtonRemove->setEnabled(false);

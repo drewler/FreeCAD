@@ -22,21 +22,21 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Inventor/SbViewportRegion.h>
-# include <Inventor/SoPickedPoint.h>
-# include <Inventor/actions/SoGetBoundingBoxAction.h>
-# include <Inventor/errors/SoDebugError.h>
-# include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/nodes/SoCamera.h>
-# include <Inventor/nodes/SoOrthographicCamera.h>
-# include <Inventor/nodes/SoPerspectiveCamera.h>
-# include <Inventor/projectors/SbSphereSheetProjector.h>
-# include <QAction>
-# include <QActionGroup>
-# include <QApplication>
-# include <QByteArray>
-# include <QCursor>
-# include <QMenu>
+#include <Inventor/SbViewportRegion.h>
+#include <Inventor/SoPickedPoint.h>
+#include <Inventor/actions/SoGetBoundingBoxAction.h>
+#include <Inventor/errors/SoDebugError.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoCamera.h>
+#include <Inventor/nodes/SoOrthographicCamera.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/projectors/SbSphereSheetProjector.h>
+#include <QAction>
+#include <QActionGroup>
+#include <QApplication>
+#include <QByteArray>
+#include <QCursor>
+#include <QMenu>
 #endif
 
 #include <App/Application.h>
@@ -51,7 +51,8 @@
 
 using namespace Gui;
 
-namespace Gui {
+namespace Gui
+{
 struct NavigationStyleP {
     int animationsteps;
     int animationdelta;
@@ -60,7 +61,7 @@ struct NavigationStyleP {
     SbBool rotationCenterFound;
     NavigationStyle::RotationCenterModes rotationCenterMode;
     SbRotation endRotation;
-    SoTimerSensor * animsensor;
+    SoTimerSensor *animsensor;
     float sensitivity;
     SbBool resetcursorpos;
 
@@ -72,48 +73,42 @@ struct NavigationStyleP {
         this->sensitivity = 2.0f;
         this->resetcursorpos = false;
         this->rotationCenterFound = false;
-        this->rotationCenterMode = NavigationStyle::RotationCenterMode::ScenePointAtCursor |
-                                   NavigationStyle::RotationCenterMode::FocalPointAtCursor;
+        this->rotationCenterMode = NavigationStyle::RotationCenterMode::ScenePointAtCursor
+            | NavigationStyle::RotationCenterMode::FocalPointAtCursor;
     }
-    static void viewAnimationCB(void * data, SoSensor * sensor);
+    static void viewAnimationCB(void *data, SoSensor *sensor);
 };
-}
+} // namespace Gui
 
-class FCSphereSheetProjector : public SbSphereSheetProjector {
+class FCSphereSheetProjector: public SbSphereSheetProjector
+{
     using inherited = SbSphereSheetProjector;
 
 public:
-    enum OrbitStyle {
+    enum OrbitStyle
+    {
         Turntable,
         Trackball
     };
 
-    FCSphereSheetProjector(const SbSphere & sph, const SbBool orienttoeye = true)
+    FCSphereSheetProjector(const SbSphere &sph, const SbBool orienttoeye = true)
         : SbSphereSheetProjector(sph, orienttoeye), orbit(Trackball)
-    {
-    }
+    {}
 
-    void setViewVolume (const SbViewVolume &vol) override
-    {
-        inherited::setViewVolume(vol);
-    }
+    void setViewVolume(const SbViewVolume &vol) override { inherited::setViewVolume(vol); }
 
-    void setWorkingSpace (const SbMatrix &space) override
+    void setWorkingSpace(const SbMatrix &space) override
     {
         //inherited::setWorkingSpace(space);
         this->worldToScreen = space.inverse();
     }
 
-    SbVec3f project(const SbVec2f &point) override
-    {
-        return inherited::project(point);
-    }
+    SbVec3f project(const SbVec2f &point) override { return inherited::project(point); }
 
     SbRotation getRotation(const SbVec3f &point1, const SbVec3f &point2) override
     {
         SbRotation rot = inherited::getRotation(point1, point2);
-        if (orbit == Trackball)
-            return rot;
+        if (orbit == Trackball) return rot;
 
         // 0000333: Turntable camera rotation
         SbVec3f axis;
@@ -121,21 +116,18 @@ public:
         rot.getValue(axis, angle);
         SbVec3f dif = point1 - point2;
         if (fabs(dif[1]) > fabs(dif[0])) {
-            SbVec3f xaxis(1,0,0);
-            if (dif[1] < 0)
-                angle = -angle;
+            SbVec3f xaxis(1, 0, 0);
+            if (dif[1] < 0) angle = -angle;
             rot.setValue(xaxis, angle);
         }
         else {
-            SbVec3f zaxis(0,0,1);
+            SbVec3f zaxis(0, 0, 1);
             this->worldToScreen.multDirMatrix(zaxis, zaxis);
             if (zaxis[1] < 0) {
-                if (dif[0] < 0)
-                    angle = -angle;
+                if (dif[0] < 0) angle = -angle;
             }
             else {
-                if (dif[0] > 0)
-                    angle = -angle;
+                if (dif[0] > 0) angle = -angle;
             }
             rot.setValue(zaxis, angle);
         }
@@ -143,39 +135,25 @@ public:
         return rot;
     }
 
-    void setOrbitStyle(OrbitStyle style)
-    {
-        this->orbit = style;
-    }
+    void setOrbitStyle(OrbitStyle style) { this->orbit = style; }
 
-    OrbitStyle getOrbitStyle() const
-    {
-        return this->orbit;
-    }
+    OrbitStyle getOrbitStyle() const { return this->orbit; }
 
 private:
     SbMatrix worldToScreen;
     OrbitStyle orbit;
 };
 
-NavigationStyleEvent::NavigationStyleEvent(const Base::Type& s)
-  : QEvent(QEvent::User), t(s)
-{
-}
+NavigationStyleEvent::NavigationStyleEvent(const Base::Type &s) : QEvent(QEvent::User), t(s) {}
 
-NavigationStyleEvent::~NavigationStyleEvent()
-{
-}
+NavigationStyleEvent::~NavigationStyleEvent() {}
 
-const Base::Type& NavigationStyleEvent::style() const
-{
-    return t;
-}
+const Base::Type &NavigationStyleEvent::style() const { return t; }
 
 #define PRIVATE(ptr) (ptr->pimpl)
 #define PUBLIC(ptr) (ptr->pub)
 
-TYPESYSTEM_SOURCE_ABSTRACT(Gui::NavigationStyle,Base::BaseClass)
+TYPESYSTEM_SOURCE_ABSTRACT(Gui::NavigationStyle, Base::BaseClass)
 
 NavigationStyle::NavigationStyle() : viewer(nullptr), mouseSelection(nullptr)
 {
@@ -187,26 +165,22 @@ NavigationStyle::NavigationStyle() : viewer(nullptr), mouseSelection(nullptr)
 NavigationStyle::~NavigationStyle()
 {
     finalize();
-    if (PRIVATE(this)->animsensor->isScheduled())
-        PRIVATE(this)->animsensor->unschedule();
+    if (PRIVATE(this)->animsensor->isScheduled()) PRIVATE(this)->animsensor->unschedule();
     delete PRIVATE(this)->animsensor;
     delete PRIVATE(this);
 }
 
-NavigationStyle& NavigationStyle::operator = (const NavigationStyle& ns)
+NavigationStyle &NavigationStyle::operator=(const NavigationStyle &ns)
 {
     this->panningplane = ns.panningplane;
     this->menuenabled = ns.menuenabled;
     this->spinanimatingallowed = ns.spinanimatingallowed;
-    static_cast<FCSphereSheetProjector*>(this->spinprojector)->setOrbitStyle
-        (static_cast<FCSphereSheetProjector*>(ns.spinprojector)->getOrbitStyle());
+    static_cast<FCSphereSheetProjector *>(this->spinprojector)
+        ->setOrbitStyle(static_cast<FCSphereSheetProjector *>(ns.spinprojector)->getOrbitStyle());
     return *this;
 }
 
-void NavigationStyle::setViewer(View3DInventorViewer* view)
-{
-    this->viewer = view;
-}
+void NavigationStyle::setViewer(View3DInventorViewer *view) { this->viewer = view; }
 
 void NavigationStyle::initialize()
 {
@@ -226,8 +200,8 @@ void NavigationStyle::initialize()
     this->spinprojector->setViewVolume(volume);
 
     this->log.size = 16;
-    this->log.position = new SbVec2s [ 16 ];
-    this->log.time = new SbTime [ 16 ];
+    this->log.position = new SbVec2s[16];
+    this->log.time = new SbTime[16];
     this->log.historysize = 0;
 
     this->menuenabled = true;
@@ -237,24 +211,26 @@ void NavigationStyle::initialize()
     this->ctrldown = false;
     this->shiftdown = false;
     this->altdown = false;
-    this->invertZoom = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View")->GetBool("InvertZoom",true);
-    this->zoomAtCursor = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View")->GetBool("ZoomAtCursor",true);
-    this->zoomStep = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View")->GetFloat("ZoomStep",0.2f);
-    long mode = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View")->GetInt("RotationMode", 1);
-    if (mode == 0) {
-        setRotationCenterMode(NavigationStyle::RotationCenterMode::WindowCenter);
-    }
+    this->invertZoom = App::GetApplication()
+                           .GetParameterGroupByPath("User parameter:BaseApp/Preferences/View")
+                           ->GetBool("InvertZoom", true);
+    this->zoomAtCursor = App::GetApplication()
+                             .GetParameterGroupByPath("User parameter:BaseApp/Preferences/View")
+                             ->GetBool("ZoomAtCursor", true);
+    this->zoomStep = App::GetApplication()
+                         .GetParameterGroupByPath("User parameter:BaseApp/Preferences/View")
+                         ->GetFloat("ZoomStep", 0.2f);
+    long mode = App::GetApplication()
+                    .GetParameterGroupByPath("User parameter:BaseApp/Preferences/View")
+                    ->GetInt("RotationMode", 1);
+    if (mode == 0) { setRotationCenterMode(NavigationStyle::RotationCenterMode::WindowCenter); }
     else if (mode == 1) {
-        setRotationCenterMode(NavigationStyle::RotationCenterMode::ScenePointAtCursor |
-                              NavigationStyle::RotationCenterMode::FocalPointAtCursor);
+        setRotationCenterMode(NavigationStyle::RotationCenterMode::ScenePointAtCursor
+                              | NavigationStyle::RotationCenterMode::FocalPointAtCursor);
     }
     else if (mode == 2) {
-        setRotationCenterMode(NavigationStyle::RotationCenterMode::ScenePointAtCursor |
-                              NavigationStyle::RotationCenterMode::BoundingBoxCenter);
+        setRotationCenterMode(NavigationStyle::RotationCenterMode::ScenePointAtCursor
+                              | NavigationStyle::RotationCenterMode::BoundingBoxCenter);
     }
 }
 
@@ -265,75 +241,50 @@ void NavigationStyle::finalize()
     delete[] this->log.time;
 }
 
-void NavigationStyle::interactiveCountInc()
-{
-    viewer->interactiveCountInc();
-}
+void NavigationStyle::interactiveCountInc() { viewer->interactiveCountInc(); }
 
-void NavigationStyle::interactiveCountDec()
-{
-    viewer->interactiveCountDec();
-}
+void NavigationStyle::interactiveCountDec() { viewer->interactiveCountDec(); }
 
-int NavigationStyle::getInteractiveCount() const
-{
-    return viewer->getInteractiveCount();
-}
+int NavigationStyle::getInteractiveCount() const { return viewer->getInteractiveCount(); }
 
 void NavigationStyle::setOrbitStyle(NavigationStyle::OrbitStyle style)
 {
-    auto projector = static_cast<FCSphereSheetProjector*>(this->spinprojector);
+    auto projector = static_cast<FCSphereSheetProjector *>(this->spinprojector);
     projector->setOrbitStyle(FCSphereSheetProjector::OrbitStyle(style));
 }
 
 NavigationStyle::OrbitStyle NavigationStyle::getOrbitStyle() const
 {
-    auto projector = static_cast<FCSphereSheetProjector*>(this->spinprojector);
+    auto projector = static_cast<FCSphereSheetProjector *>(this->spinprojector);
     return NavigationStyle::OrbitStyle(projector->getOrbitStyle());
 }
 
-SbBool NavigationStyle::isViewing() const
-{
-    return viewer->isViewing();
-}
+SbBool NavigationStyle::isViewing() const { return viewer->isViewing(); }
 
-void NavigationStyle::setViewing(SbBool enable)
-{
-    viewer->setViewing(enable);
-}
+void NavigationStyle::setViewing(SbBool enable) { viewer->setViewing(enable); }
 
-SbBool NavigationStyle::isSeekMode() const
-{
-    return viewer->isSeekMode();
-}
+SbBool NavigationStyle::isSeekMode() const { return viewer->isSeekMode(); }
 
-void NavigationStyle::setSeekMode(SbBool enable)
-{
-    viewer->setSeekMode(enable);
-}
+void NavigationStyle::setSeekMode(SbBool enable) { viewer->setSeekMode(enable); }
 
 SbBool NavigationStyle::seekToPoint(const SbVec2s screenpos)
 {
     return viewer->seekToPoint(screenpos);
 }
 
-void NavigationStyle::seekToPoint(const SbVec3f& scenepos)
-{
-    viewer->seekToPoint(scenepos);
-}
+void NavigationStyle::seekToPoint(const SbVec3f &scenepos) { viewer->seekToPoint(scenepos); }
 
 SbBool NavigationStyle::lookAtPoint(const SbVec2s screenpos)
 {
-    SoCamera* cam = viewer->getSoRenderManager()->getCamera();
-    if (!cam)
-        return false;
+    SoCamera *cam = viewer->getSoRenderManager()->getCamera();
+    if (!cam) return false;
 
     SoRayPickAction rpaction(viewer->getSoRenderManager()->getViewportRegion());
     rpaction.setPoint(screenpos);
     rpaction.setRadius(viewer->getPickRadius());
     rpaction.apply(viewer->getSoRenderManager()->getSceneGraph());
 
-    SoPickedPoint * picked = rpaction.getPickedPoint();
+    SoPickedPoint *picked = rpaction.getPickedPoint();
     if (!picked) {
         this->interactiveCountInc();
         return false;
@@ -345,23 +296,20 @@ SbBool NavigationStyle::lookAtPoint(const SbVec2s screenpos)
     return true;
 }
 
-void NavigationStyle::lookAtPoint(const SbVec3f& pos)
+void NavigationStyle::lookAtPoint(const SbVec3f &pos)
 {
-    SoCamera* cam = viewer->getSoRenderManager()->getCamera();
-    if (!cam)
-        return;
+    SoCamera *cam = viewer->getSoRenderManager()->getCamera();
+    if (!cam) return;
     PRIVATE(this)->rotationCenterFound = false;
 
     // Find global coordinates of focal point.
     SbVec3f direction;
     cam->orientation.getValue().multVec(SbVec3f(0, 0, -1), direction);
-    PRIVATE(this)->focal1 = cam->position.getValue() +
-                            cam->focalDistance.getValue() * direction;
+    PRIVATE(this)->focal1 = cam->position.getValue() + cam->focalDistance.getValue() * direction;
     PRIVATE(this)->focal2 = pos;
 
     // avoid to interfere with spinning (fixes #3101462)
-    if (this->isAnimating())
-        this->stopAnimating();
+    if (this->isAnimating()) this->stopAnimating();
 
     if (PRIVATE(this)->animsensor->isScheduled()) {
         PRIVATE(this)->animsensor->unschedule();
@@ -375,16 +323,16 @@ void NavigationStyle::lookAtPoint(const SbVec3f& pos)
         dir2 = pos - cam->position.getValue();
         dir2.normalize();
         SbRotation rot(dir1, dir2);
-        float val = 0.5f*(1.0f + dir1.dot(dir2)); // value in range [0,1]
+        float val = 0.5f * (1.0f + dir1.dot(dir2)); // value in range [0,1]
         int div = (int)(val * 20.0f);
-        int steps = 20-div; // do it with max. 20 steps
+        int steps = 20 - div; // do it with max. 20 steps
 
         // check whether a movement is required
         if (steps > 0) {
             PRIVATE(this)->endRotation = cam_rot;
             this->spinRotation = cam_rot;
             PRIVATE(this)->animationsteps = 5;
-            PRIVATE(this)->animationdelta = std::max<int>(100/steps, 5);
+            PRIVATE(this)->animationdelta = std::max<int>(100 / steps, 5);
             PRIVATE(this)->animsensor->setBaseTime(SbTime::getTimeOfDay());
             PRIVATE(this)->animsensor->schedule();
             this->interactiveCountInc();
@@ -404,17 +352,15 @@ void NavigationStyle::lookAtPoint(const SbVec3f& pos)
     }
 }
 
-void NavigationStyle::setCameraOrientation(const SbRotation& rot, SbBool moveToCenter)
+void NavigationStyle::setCameraOrientation(const SbRotation &rot, SbBool moveToCenter)
 {
-    SoCamera* cam = viewer->getSoRenderManager()->getCamera();
-    if (!cam)
-        return;
+    SoCamera *cam = viewer->getSoRenderManager()->getCamera();
+    if (!cam) return;
 
     // Find global coordinates of focal point.
     SbVec3f direction;
     cam->orientation.getValue().multVec(SbVec3f(0, 0, -1), direction);
-    PRIVATE(this)->focal1 = cam->position.getValue() +
-                            cam->focalDistance.getValue() * direction;
+    PRIVATE(this)->focal1 = cam->position.getValue() + cam->focalDistance.getValue() * direction;
     PRIVATE(this)->focal2 = PRIVATE(this)->focal1;
     if (moveToCenter) {
         SoGetBoundingBoxAction action(viewer->getSoRenderManager()->getViewportRegion());
@@ -431,8 +377,7 @@ void NavigationStyle::setCameraOrientation(const SbRotation& rot, SbBool moveToC
     }
 
     // avoid to interfere with spinning (fixes #3101462)
-    if (this->isAnimating())
-        this->stopAnimating();
+    if (this->isAnimating()) this->stopAnimating();
 
     if (PRIVATE(this)->animsensor->isScheduled()) {
         PRIVATE(this)->animsensor->unschedule();
@@ -445,16 +390,16 @@ void NavigationStyle::setCameraOrientation(const SbRotation& rot, SbBool moveToC
         SbRotation cam_rot = cam->orientation.getValue();
         cam_rot.multVec(SbVec3f(0, 0, -1), dir1);
         rot.multVec(SbVec3f(0, 0, -1), dir2);
-        float val = 0.5f*(1.0f + dir1.dot(dir2)); // value in range [0,1]
+        float val = 0.5f * (1.0f + dir1.dot(dir2)); // value in range [0,1]
         int div = (int)(val * 20.0f);
-        int steps = 20-div; // do it with max. 20 steps
+        int steps = 20 - div; // do it with max. 20 steps
 
         // check whether a movement is required
         if (steps > 0) {
             PRIVATE(this)->endRotation = rot; // this is the final camera orientation
             this->spinRotation = cam_rot;
             PRIVATE(this)->animationsteps = 5;
-            PRIVATE(this)->animationdelta = std::max<int>(100/steps, 5);
+            PRIVATE(this)->animationdelta = std::max<int>(100 / steps, 5);
             PRIVATE(this)->animsensor->setBaseTime(SbTime::getTimeOfDay());
             PRIVATE(this)->animsensor->schedule();
             this->interactiveCountInc();
@@ -474,19 +419,19 @@ void NavigationStyle::setCameraOrientation(const SbRotation& rot, SbBool moveToC
     }
 }
 
-void NavigationStyleP::viewAnimationCB(void * data, SoSensor * sensor)
+void NavigationStyleP::viewAnimationCB(void *data, SoSensor *sensor)
 {
     Q_UNUSED(sensor);
-    auto that = static_cast<NavigationStyle*>(data);
+    auto that = static_cast<NavigationStyle *>(data);
     if (PRIVATE(that)->animationsteps > 0) {
         // here the camera rotates from the current rotation to a given
         // rotation (e.g. the standard views). To get this movement animated
         // we calculate an interpolated rotation and update the view after
         // each step
-        float step = std::min<float>((float)PRIVATE(that)->animationsteps/100.0f, 1.0f);
+        float step = std::min<float>((float)PRIVATE(that)->animationsteps / 100.0f, 1.0f);
         SbRotation slerp = SbRotation::slerp(that->spinRotation, PRIVATE(that)->endRotation, step);
-        SbVec3f focalpoint = (1.0f-step)*PRIVATE(that)->focal1 + step*PRIVATE(that)->focal2;
-        SoCamera* cam = that->viewer->getSoRenderManager()->getCamera();
+        SbVec3f focalpoint = (1.0f - step) * PRIVATE(that)->focal1 + step * PRIVATE(that)->focal2;
+        SoCamera *cam = that->viewer->getSoRenderManager()->getCamera();
         if (!cam) // no camera
             return;
 
@@ -498,7 +443,7 @@ void NavigationStyleP::viewAnimationCB(void * data, SoSensor * sensor)
         PRIVATE(that)->animationsteps += PRIVATE(that)->animationdelta;
         if (PRIVATE(that)->animationsteps > 100) {
             // now we have reached the end of the movement
-            PRIVATE(that)->animationsteps=0;
+            PRIVATE(that)->animationsteps = 0;
             PRIVATE(that)->animsensor->unschedule();
             that->interactiveCountDec();
             // set to the actual given rotation
@@ -509,44 +454,44 @@ void NavigationStyleP::viewAnimationCB(void * data, SoSensor * sensor)
     }
 }
 
-void NavigationStyle::boxZoom(const SbBox2s& box)
+void NavigationStyle::boxZoom(const SbBox2s &box)
 {
-    SoCamera* cam = viewer->getSoRenderManager()->getCamera();
+    SoCamera *cam = viewer->getSoRenderManager()->getCamera();
     if (!cam) // no camera
         return;
-    const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+    const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
     SbViewVolume vv = cam->getViewVolume(vp.getViewportAspectRatio());
 
-    short sizeX,sizeY;
+    short sizeX, sizeY;
     box.getSize(sizeX, sizeY);
     SbVec2s size = vp.getViewportSizePixels();
 
     // The bbox must not be empty i.e. width and length is zero, but it is possible that
     // either width or length is zero
-    if (sizeX == 0 && sizeY == 0)
-        return;
+    if (sizeX == 0 && sizeY == 0) return;
 
     // Get the new center in normalized pixel coordinates
-    short xmin,xmax,ymin,ymax;
-    box.getBounds(xmin,ymin,xmax,ymax);
-    const SbVec2f center((float) ((xmin+xmax)/2) / (float) std::max((int)(size[0] - 1), 1),
-                         (float) (size[1]-(ymin+ymax)/2) / (float) std::max((int)(size[1] - 1), 1));
+    short xmin, xmax, ymin, ymax;
+    box.getBounds(xmin, ymin, xmax, ymax);
+    const SbVec2f center((float)((xmin + xmax) / 2) / (float)std::max((int)(size[0] - 1), 1),
+                         (float)(size[1] - (ymin + ymax) / 2)
+                             / (float)std::max((int)(size[1] - 1), 1));
 
     SbPlane plane = vv.getPlane(cam->focalDistance.getValue());
-    panCamera(cam,vp.getViewportAspectRatio(),plane, SbVec2f(0.5,0.5), center);
+    panCamera(cam, vp.getViewportAspectRatio(), plane, SbVec2f(0.5, 0.5), center);
 
     // Set height or height angle of the camera
-    float scaleX = (float)sizeX/(float)size[0];
-    float scaleY = (float)sizeY/(float)size[1];
+    float scaleX = (float)sizeX / (float)size[0];
+    float scaleY = (float)sizeY / (float)size[1];
     float scale = std::max<float>(scaleX, scaleY);
     if (cam->getTypeId() == SoOrthographicCamera::getClassTypeId()) {
-        float height = static_cast<SoOrthographicCamera*>(cam)->height.getValue() * scale;
-        static_cast<SoOrthographicCamera*>(cam)->height = height;
+        float height = static_cast<SoOrthographicCamera *>(cam)->height.getValue() * scale;
+        static_cast<SoOrthographicCamera *>(cam)->height = height;
     }
     else if (cam->getTypeId() == SoPerspectiveCamera::getClassTypeId()) {
-        float height = static_cast<SoPerspectiveCamera*>(cam)->heightAngle.getValue() / 2.0f;
+        float height = static_cast<SoPerspectiveCamera *>(cam)->heightAngle.getValue() / 2.0f;
         height = 2.0f * atan(tan(height) * scale);
-        static_cast<SoPerspectiveCamera*>(cam)->heightAngle = height;
+        static_cast<SoPerspectiveCamera *>(cam)->heightAngle = height;
     }
 }
 
@@ -556,37 +501,33 @@ void NavigationStyle::viewAll()
     SoGetBoundingBoxAction action(viewer->getSoRenderManager()->getViewportRegion());
     action.apply(viewer->getSceneGraph());
     SbBox3f box = action.getBoundingBox();
-    if (box.isEmpty())
-        return;
+    if (box.isEmpty()) return;
 
 
-    SoCamera* cam = viewer->getSoRenderManager()->getCamera();
-    if (!cam)
-        return;
+    SoCamera *cam = viewer->getSoRenderManager()->getCamera();
+    if (!cam) return;
 
-    SbViewVolume  vol = cam->getViewVolume();
-    if (vol.ulf == vol.llf)
-        return; // empty frustum (no view up vector defined)
+    SbViewVolume vol = cam->getViewVolume();
+    if (vol.ulf == vol.llf) return; // empty frustum (no view up vector defined)
     SbVec2f s = vol.projectBox(box);
     SbVec2s size = viewer->getSoRenderManager()->getSize();
 
     SbVec3f pt1, pt2, pt3, tmp;
-    vol.projectPointToLine( SbVec2f(0.0f,0.0f), pt1, tmp );
-    vol.projectPointToLine( SbVec2f(s[0],0.0f), pt2, tmp );
-    vol.projectPointToLine( SbVec2f(0.0f,s[1]), pt3, tmp );
+    vol.projectPointToLine(SbVec2f(0.0f, 0.0f), pt1, tmp);
+    vol.projectPointToLine(SbVec2f(s[0], 0.0f), pt2, tmp);
+    vol.projectPointToLine(SbVec2f(0.0f, s[1]), pt3, tmp);
 
-    float cam_width = (pt2-pt1).length();
-    float cam_height = (pt3-pt1).length();
+    float cam_width = (pt2 - pt1).length();
+    float cam_height = (pt3 - pt1).length();
 
     // add a small border
-    cam_height = 1.08f * std::max<float>((cam_width*(float)size[1])/(float)size[0],cam_height);
+    cam_height = 1.08f * std::max<float>((cam_width * (float)size[1]) / (float)size[0], cam_height);
 
     float aspect = cam->aspectRatio.getValue();
 
     if (cam->getTypeId() == SoOrthographicCamera::getClassTypeId()) {
-        auto ocam = (SoOrthographicCamera *)cam;  // safe downward cast, knows the type
-        if (aspect < 1.0f)
-            ocam->height = cam_height / aspect;
+        auto ocam = (SoOrthographicCamera *)cam; // safe downward cast, knows the type
+        if (aspect < 1.0f) ocam->height = cam_height / aspect;
         else
             ocam->height = cam_height;
     }
@@ -595,16 +536,14 @@ void NavigationStyle::viewAll()
 /** Rotate the camera by the given amount, then reposition it so we're
  * still pointing at the same focal point.
  */
-void NavigationStyle::reorientCamera(SoCamera * cam, const SbRotation & rot)
+void NavigationStyle::reorientCamera(SoCamera *cam, const SbRotation &rot)
 {
-    if (!cam)
-        return;
+    if (!cam) return;
 
     // Find global coordinates of focal point.
     SbVec3f direction;
     cam->orientation.getValue().multVec(SbVec3f(0, 0, -1), direction);
-    SbVec3f focalpoint = cam->position.getValue() +
-                         cam->focalDistance.getValue() * direction;
+    SbVec3f focalpoint = cam->position.getValue() + cam->focalDistance.getValue() * direction;
 
     // Set new orientation value by accumulating the new rotation.
     cam->orientation = rot * cam->orientation.getValue();
@@ -614,8 +553,8 @@ void NavigationStyle::reorientCamera(SoCamera * cam, const SbRotation & rot)
     cam->position = focalpoint - cam->focalDistance.getValue() * direction;
 }
 
-void NavigationStyle::panCamera(SoCamera * cam, float aspectratio, const SbPlane & panplane,
-                                const SbVec2f & currpos, const SbVec2f & prevpos)
+void NavigationStyle::panCamera(SoCamera *cam, float aspectratio, const SbPlane &panplane,
+                                const SbVec2f &currpos, const SbVec2f &prevpos)
 {
     if (!cam) // can happen for empty scenegraph
         return;
@@ -627,8 +566,7 @@ void NavigationStyle::panCamera(SoCamera * cam, float aspectratio, const SbPlane
     SbViewVolume vv = cam->getViewVolume(aspectratio);
 
     // See note in Coin docs for SoCamera::getViewVolume re:viewport mapping
-    if(aspectratio < 1.0)
-        vv.scale(1.0 / aspectratio);
+    if (aspectratio < 1.0) vv.scale(1.0 / aspectratio);
 
     SbLine line;
     vv.projectPointToLine(currpos, line);
@@ -643,7 +581,7 @@ void NavigationStyle::panCamera(SoCamera * cam, float aspectratio, const SbPlane
     cam->position = cam->position.getValue() - (current_planept - old_planept);
 }
 
-void NavigationStyle::pan(SoCamera* camera)
+void NavigationStyle::pan(SoCamera *camera)
 {
     // The plane we're projecting the mouse coordinates to get 3D
     // coordinates should stay the same during the whole pan
@@ -652,23 +590,22 @@ void NavigationStyle::pan(SoCamera* camera)
         this->panningplane = SbPlane(SbVec3f(0, 0, 1), 0);
     }
     else {
-        const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+        const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
         float aspectratio = vp.getViewportAspectRatio();
         SbViewVolume vv = camera->getViewVolume(aspectratio);
 
         // See note in Coin docs for SoCamera::getViewVolume re:viewport mapping
-        if(aspectratio < 1.0)
-            vv.scale(1.0 / aspectratio);
+        if (aspectratio < 1.0) vv.scale(1.0 / aspectratio);
 
         this->panningplane = vv.getPlane(camera->focalDistance.getValue());
     }
 }
 
-void NavigationStyle::panToCenter(const SbPlane & pplane, const SbVec2f & currpos)
+void NavigationStyle::panToCenter(const SbPlane &pplane, const SbVec2f &currpos)
 {
-    const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+    const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
     float ratio = vp.getViewportAspectRatio();
-    panCamera(viewer->getSoRenderManager()->getCamera(), ratio, pplane, SbVec2f(0.5,0.5), currpos);
+    panCamera(viewer->getSoRenderManager()->getCamera(), ratio, pplane, SbVec2f(0.5, 0.5), currpos);
     PRIVATE(this)->rotationCenterFound = false;
 }
 
@@ -676,7 +613,7 @@ void NavigationStyle::panToCenter(const SbPlane & pplane, const SbVec2f & currpo
  * height of the viewport (orthogonal camera) or move the camera
  * closer or further away from the focal point in the scene.
  */
-void NavigationStyle::zoom(SoCamera * cam, float diffvalue)
+void NavigationStyle::zoom(SoCamera *cam, float diffvalue)
 {
     if (!cam) // can happen for empty scenegraph
         return;
@@ -694,15 +631,13 @@ void NavigationStyle::zoom(SoCamera * cam, float diffvalue)
         // "shrink" the projection size of the model / scene.
         auto oc = (SoOrthographicCamera *)cam;
         oc->height = oc->height.getValue() * multiplicator;
-
     }
     else {
         // FrustumCamera can be found in the SmallChange CVS module (it's
         // a camera that lets you specify (for instance) an off-center
         // frustum (similar to glFrustum())
-        if (!t.isDerivedFrom(SoPerspectiveCamera::getClassTypeId()) &&
-            tname != "FrustumCamera") {
- /*         static SbBool first = true;
+        if (!t.isDerivedFrom(SoPerspectiveCamera::getClassTypeId()) && tname != "FrustumCamera") {
+            /*         static SbBool first = true;
             if (first) {
                 SoDebugError::postWarning("SoGuiFullViewerP::zoom",
                                           "Unknown camera type, "
@@ -749,39 +684,28 @@ void NavigationStyle::zoom(SoCamera * cam, float diffvalue)
 
 // Calculate a zoom/dolly factor from the difference of the current
 // cursor position and the last.
-void NavigationStyle::zoomByCursor(const SbVec2f & thispos, const SbVec2f & prevpos)
+void NavigationStyle::zoomByCursor(const SbVec2f &thispos, const SbVec2f &prevpos)
 {
     // There is no "geometrically correct" value, 20 just seems to give
     // about the right "feel".
-    float value = (thispos[1] - prevpos[1]) * 10.0f/*20.0f*/;
-    if (this->invertZoom)
-        value = -value;
+    float value = (thispos[1] - prevpos[1]) * 10.0f /*20.0f*/;
+    if (this->invertZoom) value = -value;
     zoom(viewer->getSoRenderManager()->getCamera(), value);
 }
 
-void NavigationStyle::zoomIn()
-{
-    zoom(viewer->getSoRenderManager()->getCamera(), -this->zoomStep);
-}
+void NavigationStyle::zoomIn() { zoom(viewer->getSoRenderManager()->getCamera(), -this->zoomStep); }
 
-void NavigationStyle::zoomOut()
-{
-    zoom(viewer->getSoRenderManager()->getCamera(), this->zoomStep);
-}
+void NavigationStyle::zoomOut() { zoom(viewer->getSoRenderManager()->getCamera(), this->zoomStep); }
 
 /*!
  * Returns the steps if the mouse wheel is rotated
  */
-int NavigationStyle::getDelta() const
-{
-    return 120;
-}
+int NavigationStyle::getDelta() const { return 120; }
 
-void NavigationStyle::doZoom(SoCamera* camera, int wheeldelta, const SbVec2f& pos)
+void NavigationStyle::doZoom(SoCamera *camera, int wheeldelta, const SbVec2f &pos)
 {
     float value = this->zoomStep * wheeldelta / float(getDelta());
-    if (this->invertZoom)
-        value = -value;
+    if (this->invertZoom) value = -value;
     doZoom(camera, value, pos);
 }
 
@@ -789,69 +713,70 @@ void NavigationStyle::doZoom(SoCamera* camera, int wheeldelta, const SbVec2f& po
  *\brief NavigationStyle::doZoom Zooms in or out by specified factor, keeping the point on screen specified by parameter pos fixed
  *  or not according to user preference (NavigationStyle::zoomAtCursor). Ignores invertZoom user preference.
  */
-void NavigationStyle::doZoom(SoCamera* camera, float logfactor, const SbVec2f& pos)
+void NavigationStyle::doZoom(SoCamera *camera, float logfactor, const SbVec2f &pos)
 {
     // something is asking for big zoom factor. This func is made for interactive zooming,
     // where the changes are per mouse move and thus are small.
-    if (fabs(logfactor)>4.0)
-        return;
+    if (fabs(logfactor) > 4.0) return;
     SbBool zoomAtCur = this->zoomAtCursor;
     if (zoomAtCur) {
-        const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+        const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
         float ratio = vp.getViewportAspectRatio();
         SbViewVolume vv = camera->getViewVolume(vp.getViewportAspectRatio());
         SbPlane panplane = vv.getPlane(camera->focalDistance.getValue());
-        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, SbVec2f(0.5,0.5), pos);
+        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, SbVec2f(0.5, 0.5),
+                  pos);
     }
 
     zoom(camera, logfactor);
 
     if (zoomAtCur) {
-        const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+        const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
         float ratio = vp.getViewportAspectRatio();
         SbViewVolume vv = camera->getViewVolume(vp.getViewportAspectRatio());
         SbPlane panplane = vv.getPlane(camera->focalDistance.getValue());
-        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, pos, SbVec2f(0.5,0.5));
+        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, pos,
+                  SbVec2f(0.5, 0.5));
     }
 }
 
-void NavigationStyle::doRotate(SoCamera * camera, float angle, const SbVec2f& pos)
+void NavigationStyle::doRotate(SoCamera *camera, float angle, const SbVec2f &pos)
 {
     SbBool zoomAtCur = this->zoomAtCursor;
     if (zoomAtCur) {
-        const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+        const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
         float ratio = vp.getViewportAspectRatio();
         SbViewVolume vv = camera->getViewVolume(vp.getViewportAspectRatio());
         SbPlane panplane = vv.getPlane(camera->focalDistance.getValue());
-        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, SbVec2f(0.5,0.5), pos);
+        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, SbVec2f(0.5, 0.5),
+                  pos);
     }
 
     SbRotation rotcam = camera->orientation.getValue();
     //get view direction
     SbVec3f vdir;
-    rotcam.multVec(SbVec3f(0,0,-1),vdir);
+    rotcam.multVec(SbVec3f(0, 0, -1), vdir);
     //rotate
-    SbRotation drot(vdir,angle);
+    SbRotation drot(vdir, angle);
     camera->orientation.setValue(rotcam * drot);
 
     if (zoomAtCur) {
-        const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+        const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
         float ratio = vp.getViewportAspectRatio();
         SbViewVolume vv = camera->getViewVolume(vp.getViewportAspectRatio());
         SbPlane panplane = vv.getPlane(camera->focalDistance.getValue());
-        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, pos, SbVec2f(0.5,0.5));
+        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, pos,
+                  SbVec2f(0.5, 0.5));
     }
-
 }
 
-SbVec3f NavigationStyle::getRotationCenter(SbBool* ok) const
+SbVec3f NavigationStyle::getRotationCenter(SbBool *ok) const
 {
-    if (ok)
-        *ok = PRIVATE(this)->rotationCenterFound;
+    if (ok) *ok = PRIVATE(this)->rotationCenterFound;
     return PRIVATE(this)->rotationCenter;
 }
 
-void NavigationStyle::setRotationCenter(const SbVec3f& cnt)
+void NavigationStyle::setRotationCenter(const SbVec3f &cnt)
 {
     PRIVATE(this)->rotationCenter = cnt;
     PRIVATE(this)->rotationCenterFound = true;
@@ -859,40 +784,39 @@ void NavigationStyle::setRotationCenter(const SbVec3f& cnt)
 
 SbVec3f NavigationStyle::getFocalPoint() const
 {
-    SoCamera* cam = viewer->getSoRenderManager()->getCamera();
-    if (!cam)
-        return SbVec3f(0,0,0);
+    SoCamera *cam = viewer->getSoRenderManager()->getCamera();
+    if (!cam) return SbVec3f(0, 0, 0);
 
     // Find global coordinates of focal point.
     SbVec3f direction;
     cam->orientation.getValue().multVec(SbVec3f(0, 0, -1), direction);
-    SbVec3f focal = cam->position.getValue() +
-                    cam->focalDistance.getValue() * direction;
+    SbVec3f focal = cam->position.getValue() + cam->focalDistance.getValue() * direction;
     return focal;
 }
 
 /** Uses the sphere sheet projector to map the mouseposition onto
  * a 3D point and find a rotation from this and the last calculated point.
  */
-void NavigationStyle::spin(const SbVec2f & pointerpos)
+void NavigationStyle::spin(const SbVec2f &pointerpos)
 {
-    if (this->log.historysize < 2)
-        return;
+    if (this->log.historysize < 2) return;
     assert(this->spinprojector);
 
-    const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+    const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
     SbVec2s glsize(vp.getViewportSizePixels());
     SbVec2f lastpos;
-    lastpos[0] = float(this->log.position[1][0]) / float(std::max((int)(glsize[0]-1), 1));
-    lastpos[1] = float(this->log.position[1][1]) / float(std::max((int)(glsize[1]-1), 1));
+    lastpos[0] = float(this->log.position[1][0]) / float(std::max((int)(glsize[0] - 1), 1));
+    lastpos[1] = float(this->log.position[1][1]) / float(std::max((int)(glsize[1] - 1), 1));
 
     if (PRIVATE(this)->rotationCenterMode && PRIVATE(this)->rotationCenterFound) {
         SbVec3f hitpoint = PRIVATE(this)->rotationCenter;
 
         // set to the given position
         SbVec3f direction;
-        viewer->getSoRenderManager()->getCamera()->orientation.getValue().multVec(SbVec3f(0, 0, -1), direction);
-        viewer->getSoRenderManager()->getCamera()->position = hitpoint - viewer->getSoRenderManager()->getCamera()->focalDistance.getValue() * direction;
+        viewer->getSoRenderManager()->getCamera()->orientation.getValue().multVec(SbVec3f(0, 0, -1),
+                                                                                  direction);
+        viewer->getSoRenderManager()->getCamera()->position = hitpoint
+            - viewer->getSoRenderManager()->getCamera()->focalDistance.getValue() * direction;
     }
 
     // 0000333: Turntable camera rotation
@@ -916,12 +840,15 @@ void NavigationStyle::spin(const SbVec2f & pointerpos)
 
     if (PRIVATE(this)->rotationCenterMode && PRIVATE(this)->rotationCenterFound) {
         float ratio = vp.getViewportAspectRatio();
-        SbViewVolume vv = viewer->getSoRenderManager()->getCamera()->getViewVolume(vp.getViewportAspectRatio());
-        SbPlane panplane = vv.getPlane(viewer->getSoRenderManager()->getCamera()->focalDistance.getValue());
+        SbViewVolume vv =
+            viewer->getSoRenderManager()->getCamera()->getViewVolume(vp.getViewportAspectRatio());
+        SbPlane panplane =
+            vv.getPlane(viewer->getSoRenderManager()->getCamera()->focalDistance.getValue());
         SbVec2f posn;
-        posn[0] = float(this->localPos[0]) / float(std::max((int)(glsize[0]-1), 1));
-        posn[1] = float(this->localPos[1]) / float(std::max((int)(glsize[1]-1), 1));
-        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, posn, SbVec2f(0.5,0.5));
+        posn[0] = float(this->localPos[0]) / float(std::max((int)(glsize[0] - 1), 1));
+        posn[1] = float(this->localPos[1]) / float(std::max((int)(glsize[1] - 1), 1));
+        panCamera(viewer->getSoRenderManager()->getCamera(), ratio, panplane, posn,
+                  SbVec2f(0.5, 0.5));
     }
 
     // Calculate an average angle magnitude value to make the transition
@@ -955,7 +882,8 @@ void NavigationStyle::spin(const SbVec2f & pointerpos)
  * \param curpos  current normalized position or mouse pointer
  * \param prevpos  previous normalized position of mouse pointer
  */
-void NavigationStyle::spin_simplified(SoCamera* cam, SbVec2f curpos, SbVec2f prevpos){
+void NavigationStyle::spin_simplified(SoCamera *cam, SbVec2f curpos, SbVec2f prevpos)
+{
     assert(this->spinprojector);
 
     // 0000333: Turntable camera rotation
@@ -976,7 +904,6 @@ void NavigationStyle::spin_simplified(SoCamera* cam, SbVec2f curpos, SbVec2f pre
     }
     r.invert();
     this->reorientCamera(cam, r);
-
 }
 
 SbBool NavigationStyle::doSpin()
@@ -984,10 +911,11 @@ SbBool NavigationStyle::doSpin()
     if (this->log.historysize >= 3) {
         SbTime stoptime = (SbTime::getTimeOfDay() - this->log.time[0]);
         if (this->spinanimatingallowed && stoptime.getValue() < 0.100) {
-            const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+            const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
             const SbVec2s glsize(vp.getViewportSizePixels());
-            SbVec3f from = this->spinprojector->project(SbVec2f(float(this->log.position[2][0]) / float(std::max(glsize[0]-1, 1)),
-                                                                float(this->log.position[2][1]) / float(std::max(glsize[1]-1, 1))));
+            SbVec3f from = this->spinprojector->project(
+                SbVec2f(float(this->log.position[2][0]) / float(std::max(glsize[0] - 1, 1)),
+                        float(this->log.position[2][1]) / float(std::max(glsize[1] - 1, 1))));
             SbVec3f to = this->spinprojector->project(this->lastmouseposition);
             SbRotation rot = this->spinprojector->getRotation(from, to);
 
@@ -1009,7 +937,7 @@ SbBool NavigationStyle::doSpin()
     return false;
 }
 
-void NavigationStyle::saveCursorPosition(const SoEvent * const ev)
+void NavigationStyle::saveCursorPosition(const SoEvent *const ev)
 {
     this->globalPos.setValue(QCursor::pos().x(), QCursor::pos().y());
     this->localPos = ev->getPosition();
@@ -1017,13 +945,14 @@ void NavigationStyle::saveCursorPosition(const SoEvent * const ev)
     //Option to get point on model (slow) or always on focal plane (fast)
     //
     // mode is ScenePointAtCursor to get exact point if possible
-    if (PRIVATE(this)->rotationCenterMode & NavigationStyle::RotationCenterMode::ScenePointAtCursor) {
+    if (PRIVATE(this)->rotationCenterMode
+        & NavigationStyle::RotationCenterMode::ScenePointAtCursor) {
         SoRayPickAction rpaction(viewer->getSoRenderManager()->getViewportRegion());
         rpaction.setPoint(this->localPos);
         rpaction.setRadius(viewer->getPickRadius());
         rpaction.apply(viewer->getSoRenderManager()->getSceneGraph());
 
-        SoPickedPoint * picked = rpaction.getPickedPoint();
+        SoPickedPoint *picked = rpaction.getPickedPoint();
         if (picked) {
             setRotationCenter(picked->getPoint());
             return;
@@ -1031,12 +960,13 @@ void NavigationStyle::saveCursorPosition(const SoEvent * const ev)
     }
 
     // mode is FocalPointAtCursor or a ScenePointAtCursor failed
-    if (PRIVATE(this)->rotationCenterMode & NavigationStyle::RotationCenterMode::FocalPointAtCursor) {
+    if (PRIVATE(this)->rotationCenterMode
+        & NavigationStyle::RotationCenterMode::FocalPointAtCursor) {
         // get the intersection point of the ray and the focal plane
-        const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+        const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
         float ratio = vp.getViewportAspectRatio();
 
-        SoCamera* cam = viewer->getSoRenderManager()->getCamera();
+        SoCamera *cam = viewer->getSoRenderManager()->getCamera();
         if (!cam) // no camera
             return;
         SbViewVolume vv = cam->getViewVolume(ratio);
@@ -1052,11 +982,12 @@ void NavigationStyle::saveCursorPosition(const SoEvent * const ev)
     }
 
     // mode is BoundingBoxCenter or a ScenePointAtCursor failed
-    if (PRIVATE(this)->rotationCenterMode & NavigationStyle::RotationCenterMode::BoundingBoxCenter) {
-        const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+    if (PRIVATE(this)->rotationCenterMode
+        & NavigationStyle::RotationCenterMode::BoundingBoxCenter) {
+        const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
         float ratio = vp.getViewportAspectRatio();
 
-        SoCamera* cam = viewer->getSoRenderManager()->getCamera();
+        SoCamera *cam = viewer->getSoRenderManager()->getCamera();
         if (!cam) // no camera
             return;
 
@@ -1080,29 +1011,27 @@ void NavigationStyle::saveCursorPosition(const SoEvent * const ev)
 
 SbVec2f NavigationStyle::normalizePixelPos(SbVec2s pixpos)
 {
-    const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+    const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
     const SbVec2s size(vp.getViewportSizePixels());
-    return SbVec2f ((float) pixpos[0] / (float) std::max((int)(size[0] - 1), 1),
-                    (float) pixpos[1] / (float) std::max((int)(size[1] - 1), 1));
+    return SbVec2f((float)pixpos[0] / (float)std::max((int)(size[0] - 1), 1),
+                   (float)pixpos[1] / (float)std::max((int)(size[1] - 1), 1));
 }
 
 SbVec2f NavigationStyle::normalizePixelPos(SbVec2f pixpos)
 {
-    const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
+    const SbViewportRegion &vp = viewer->getSoRenderManager()->getViewportRegion();
     const SbVec2s size(vp.getViewportSizePixels());
-    return SbVec2f ( pixpos[0] / (float) std::max((int)(size[0] - 1), 1),
-                     pixpos[1] / (float) std::max((int)(size[1] - 1), 1));
+    return SbVec2f(pixpos[0] / (float)std::max((int)(size[0] - 1), 1),
+                   pixpos[1] / (float)std::max((int)(size[1] - 1), 1));
 }
 
 void NavigationStyle::moveCursorPosition()
 {
-    if (!isResetCursorPosition())
-        return;
+    if (!isResetCursorPosition()) return;
 
     QPoint cpos = QCursor::pos();
-    if (abs(cpos.x()-globalPos[0]) > 10 ||
-        abs(cpos.y()-globalPos[1]) > 10) {
-        QCursor::setPos(globalPos[0], globalPos[1]-1);
+    if (abs(cpos.x() - globalPos[0]) > 10 || abs(cpos.y() - globalPos[1]) > 10) {
+        QCursor::setPos(globalPos[0], globalPos[1] - 1);
         this->log.position[0] = localPos;
     }
 }
@@ -1110,7 +1039,7 @@ void NavigationStyle::moveCursorPosition()
 void NavigationStyle::updateAnimation()
 {
     SbTime now = SbTime::getTimeOfDay();
-    double secs = now.getValue() -  prevRedrawTime.getValue();
+    double secs = now.getValue() - prevRedrawTime.getValue();
     this->prevRedrawTime = now;
 
     if (this->isAnimating()) {
@@ -1123,11 +1052,10 @@ void NavigationStyle::updateAnimation()
 
 void NavigationStyle::redraw()
 {
-    if (mouseSelection)
-        mouseSelection->redraw();
+    if (mouseSelection) mouseSelection->redraw();
 }
 
-SbBool NavigationStyle::handleEventInForeground(const SoEvent* const e)
+SbBool NavigationStyle::handleEventInForeground(const SoEvent *const e)
 {
     SoHandleEventAction action(viewer->getSoRenderManager()->getViewportRegion());
     action.setEvent(e);
@@ -1143,8 +1071,7 @@ SbBool NavigationStyle::handleEventInForeground(const SoEvent* const e)
   If the \a enable flag is \c false and we're currently animating, the
   spin will be stopped.
 */
-void
-NavigationStyle::setAnimationEnabled(const SbBool enable)
+void NavigationStyle::setAnimationEnabled(const SbBool enable)
 {
     this->spinanimatingallowed = enable;
     if (!enable && this->isAnimating()) { this->stopAnimating(); }
@@ -1155,11 +1082,7 @@ NavigationStyle::setAnimationEnabled(const SbBool enable)
   releasing the left mouse button while dragging the mouse.
 */
 
-SbBool
-NavigationStyle::isAnimationEnabled() const
-{
-    return this->spinanimatingallowed;
-}
+SbBool NavigationStyle::isAnimationEnabled() const { return this->spinanimatingallowed; }
 
 /*!
   Query if the model in the viewer is currently in spinning mode after
@@ -1174,10 +1097,9 @@ SbBool NavigationStyle::isAnimating() const
  * Starts programmatically the viewer in animation mode. The given axis direction
  * is always in screen coordinates, not in world coordinates.
  */
-void NavigationStyle::startAnimating(const SbVec3f& axis, float velocity)
+void NavigationStyle::startAnimating(const SbVec3f &axis, float velocity)
 {
-    if (!isAnimationEnabled())
-        return;
+    if (!isAnimationEnabled()) return;
 
     this->prevRedrawTime = SbTime::getTimeOfDay();
     this->spinincrement = SbRotation::identity();
@@ -1191,57 +1113,27 @@ void NavigationStyle::startAnimating(const SbVec3f& axis, float velocity)
 
 void NavigationStyle::stopAnimating()
 {
-    if (this->currentmode != NavigationStyle::SPINNING) {
-        return;
-    }
-    this->setViewingMode(this->isViewing() ?
-        NavigationStyle::IDLE : NavigationStyle::INTERACT);
+    if (this->currentmode != NavigationStyle::SPINNING) { return; }
+    this->setViewingMode(this->isViewing() ? NavigationStyle::IDLE : NavigationStyle::INTERACT);
 }
 
-void NavigationStyle::setSensitivity(float val)
-{
-    PRIVATE(this)->sensitivity = val;
-}
+void NavigationStyle::setSensitivity(float val) { PRIVATE(this)->sensitivity = val; }
 
-float NavigationStyle::getSensitivity() const
-{
-    return PRIVATE(this)->sensitivity;
-}
+float NavigationStyle::getSensitivity() const { return PRIVATE(this)->sensitivity; }
 
-void NavigationStyle::setResetCursorPosition(SbBool on)
-{
-    PRIVATE(this)->resetcursorpos = on;
-}
+void NavigationStyle::setResetCursorPosition(SbBool on) { PRIVATE(this)->resetcursorpos = on; }
 
-SbBool NavigationStyle::isResetCursorPosition() const
-{
-    return PRIVATE(this)->resetcursorpos;
-}
+SbBool NavigationStyle::isResetCursorPosition() const { return PRIVATE(this)->resetcursorpos; }
 
-void NavigationStyle::setZoomInverted(SbBool on)
-{
-    this->invertZoom = on;
-}
+void NavigationStyle::setZoomInverted(SbBool on) { this->invertZoom = on; }
 
-SbBool NavigationStyle::isZoomInverted() const
-{
-    return this->invertZoom;
-}
+SbBool NavigationStyle::isZoomInverted() const { return this->invertZoom; }
 
-void NavigationStyle::setZoomStep(float val)
-{
-    this->zoomStep = val;
-}
+void NavigationStyle::setZoomStep(float val) { this->zoomStep = val; }
 
-void NavigationStyle::setZoomAtCursor(SbBool on)
-{
-    this->zoomAtCursor = on;
-}
+void NavigationStyle::setZoomAtCursor(SbBool on) { this->zoomAtCursor = on; }
 
-SbBool NavigationStyle::isZoomAtCursor() const
-{
-    return this->zoomAtCursor;
-}
+SbBool NavigationStyle::isZoomAtCursor() const { return this->zoomAtCursor; }
 
 void NavigationStyle::setRotationCenterMode(NavigationStyle::RotationCenterModes mode)
 {
@@ -1253,10 +1145,9 @@ NavigationStyle::RotationCenterModes NavigationStyle::getRotationCenterMode() co
     return PRIVATE(this)->rotationCenterMode;
 }
 
-void NavigationStyle::startSelection(AbstractMouseSelection* mouse)
+void NavigationStyle::startSelection(AbstractMouseSelection *mouse)
 {
-    if (!mouse)
-        return;
+    if (!mouse) return;
 
     if (mouseSelection) {
         SoDebugError::postWarning("NavigationStyle::startSelection",
@@ -1269,34 +1160,19 @@ void NavigationStyle::startSelection(AbstractMouseSelection* mouse)
 
 void NavigationStyle::startSelection(NavigationStyle::SelectionMode mode)
 {
-    if (mouseSelection)
-        return;
-    if (isSelecting())
-        stopSelection();
+    if (mouseSelection) return;
+    if (isSelecting()) stopSelection();
 
-    switch (mode)
-    {
-    case Lasso:
-        mouseSelection = new PolyPickerSelection();
-        break;
-    case Rectangle:
-        mouseSelection = new RectangleSelection();
-        break;
-    case Rubberband:
-        mouseSelection = new RubberbandSelection();
-        break;
-    case BoxZoom:
-        mouseSelection = new BoxZoomSelection();
-        break;
-    case Clip:
-        mouseSelection = new PolyClipSelection();
-        break;
-    default:
-        break;
+    switch (mode) {
+        case Lasso: mouseSelection = new PolyPickerSelection(); break;
+        case Rectangle: mouseSelection = new RectangleSelection(); break;
+        case Rubberband: mouseSelection = new RubberbandSelection(); break;
+        case BoxZoom: mouseSelection = new BoxZoomSelection(); break;
+        case Clip: mouseSelection = new PolyClipSelection(); break;
+        default: break;
     }
 
-    if (mouseSelection)
-        mouseSelection->grabMouseModel(viewer);
+    if (mouseSelection) mouseSelection->grabMouseModel(viewer);
 }
 
 void NavigationStyle::abortSelection()
@@ -1319,15 +1195,11 @@ void NavigationStyle::stopSelection()
     }
 }
 
-SbBool NavigationStyle::isSelecting() const
-{
-    return (mouseSelection ? true : false);
-}
+SbBool NavigationStyle::isSelecting() const { return (mouseSelection ? true : false); }
 
-const std::vector<SbVec2s>& NavigationStyle::getPolygon(SelectionRole* role) const
+const std::vector<SbVec2s> &NavigationStyle::getPolygon(SelectionRole *role) const
 {
-    if (role)
-       *role = this->selectedRole;
+    if (role) *role = this->selectedRole;
     return pcPolygon;
 }
 
@@ -1337,11 +1209,9 @@ void NavigationStyle::addToLog(const SbVec2s pos, const SbTime time)
 {
     // In case someone changes the const size setting at the top of this
     // file too small.
-    assert (this->log.size > 2 && "mouse log too small!");
+    assert(this->log.size > 2 && "mouse log too small!");
 
-    if (this->log.historysize > 0 && pos == this->log.position[0]) {
-        return;
-    }
+    if (this->log.historysize > 0 && pos == this->log.position[0]) { return; }
 
     int lastidx = this->log.historysize;
     // If we've filled up the log, we should throw away the last item:
@@ -1349,36 +1219,26 @@ void NavigationStyle::addToLog(const SbVec2s pos, const SbTime time)
 
     assert(lastidx < this->log.size);
     for (int i = lastidx; i > 0; i--) {
-        this->log.position[i] = this->log.position[i-1];
-        this->log.time[i] = this->log.time[i-1];
+        this->log.position[i] = this->log.position[i - 1];
+        this->log.time[i] = this->log.time[i - 1];
     }
 
     this->log.position[0] = pos;
     this->log.time[0] = time;
-    if (this->log.historysize < this->log.size)
-        this->log.historysize += 1;
+    if (this->log.historysize < this->log.size) this->log.historysize += 1;
 }
 
 // This method "clears" the mouse location log, used for spin
 // animation calculations.
-void NavigationStyle::clearLog()
-{
-    this->log.historysize = 0;
-}
+void NavigationStyle::clearLog() { this->log.historysize = 0; }
 
-void NavigationStyle::syncModifierKeys(const SoEvent * const ev)
+void NavigationStyle::syncModifierKeys(const SoEvent *const ev)
 {
     // Mismatches in state of the modifier keys happens if the user
     // presses or releases them outside the viewer window.
-    if (this->ctrldown != ev->wasCtrlDown()) {
-        this->ctrldown = ev->wasCtrlDown();
-    }
-    if (this->shiftdown != ev->wasShiftDown()) {
-        this->shiftdown = ev->wasShiftDown();
-    }
-    if (this->altdown != ev->wasAltDown()) {
-        this->altdown = ev->wasAltDown();
-    }
+    if (this->ctrldown != ev->wasCtrlDown()) { this->ctrldown = ev->wasCtrlDown(); }
+    if (this->shiftdown != ev->wasShiftDown()) { this->shiftdown = ev->wasShiftDown(); }
+    if (this->altdown != ev->wasAltDown()) { this->altdown = ev->wasAltDown(); }
 }
 
 // The viewer is a state machine, and all changes to the current state
@@ -1386,74 +1246,61 @@ void NavigationStyle::syncModifierKeys(const SoEvent * const ev)
 void NavigationStyle::setViewingMode(const ViewerMode newmode)
 {
     const ViewerMode oldmode = this->currentmode;
-    if (newmode == oldmode) {
-        return;
-    }
+    if (newmode == oldmode) { return; }
 
     switch (newmode) {
-    case DRAGGING:
-        // Set up initial projection point for the projector object when
-        // first starting a drag operation.
-        this->spinprojector->project(this->lastmouseposition);
-        this->interactiveCountInc();
-        this->clearLog();
-        break;
+        case DRAGGING:
+            // Set up initial projection point for the projector object when
+            // first starting a drag operation.
+            this->spinprojector->project(this->lastmouseposition);
+            this->interactiveCountInc();
+            this->clearLog();
+            break;
 
-    case SPINNING:
-        this->interactiveCountInc();
-        viewer->getSoRenderManager()->scheduleRedraw();
-        break;
+        case SPINNING:
+            this->interactiveCountInc();
+            viewer->getSoRenderManager()->scheduleRedraw();
+            break;
 
-    case PANNING:
-        pan(viewer->getSoRenderManager()->getCamera());
-        this->interactiveCountInc();
-        break;
+        case PANNING:
+            pan(viewer->getSoRenderManager()->getCamera());
+            this->interactiveCountInc();
+            break;
 
-    case ZOOMING:
-        this->interactiveCountInc();
-        break;
+        case ZOOMING: this->interactiveCountInc(); break;
 
-    case BOXZOOM:
-        this->interactiveCountInc();
-        break;
+        case BOXZOOM: this->interactiveCountInc(); break;
 
-    default: // include default to avoid compiler warnings.
-        break;
+        default: // include default to avoid compiler warnings.
+            break;
     }
 
     switch (oldmode) {
-    case SPINNING:
-    case DRAGGING:
-    case PANNING:
-    case ZOOMING:
-    case BOXZOOM:
-        this->interactiveCountDec();
-        break;
+        case SPINNING:
+        case DRAGGING:
+        case PANNING:
+        case ZOOMING:
+        case BOXZOOM: this->interactiveCountDec(); break;
 
-    default:
-        break;
+        default: break;
     }
 
     viewer->setCursorRepresentation(newmode);
     this->currentmode = newmode;
 }
 
-int NavigationStyle::getViewingMode() const
-{
-    return (int)this->currentmode;
-}
+int NavigationStyle::getViewingMode() const { return (int)this->currentmode; }
 
-SbBool NavigationStyle::processEvent(const SoEvent * const ev)
+SbBool NavigationStyle::processEvent(const SoEvent *const ev)
 {
     // If we're in picking mode then all events must be redirected to the
     // appropriate mouse model.
     if (mouseSelection) {
-        int hd=mouseSelection->handleEvent(ev,viewer->getSoRenderManager()->getViewportRegion());
-        if (hd==AbstractMouseSelection::Continue||
-            hd==AbstractMouseSelection::Restart) {
+        int hd = mouseSelection->handleEvent(ev, viewer->getSoRenderManager()->getViewportRegion());
+        if (hd == AbstractMouseSelection::Continue || hd == AbstractMouseSelection::Restart) {
             return true;
         }
-        else if (hd==AbstractMouseSelection::Finish) {
+        else if (hd == AbstractMouseSelection::Finish) {
             pcPolygon = mouseSelection->getPositions();
             selectedRole = mouseSelection->selectedRole();
             delete mouseSelection;
@@ -1461,7 +1308,7 @@ SbBool NavigationStyle::processEvent(const SoEvent * const ev)
             syncWithEvent(ev);
             return NavigationStyle::processSoEvent(ev);
         }
-        else if (hd==AbstractMouseSelection::Cancel) {
+        else if (hd == AbstractMouseSelection::Cancel) {
             pcPolygon.clear();
             delete mouseSelection;
             mouseSelection = nullptr;
@@ -1476,11 +1323,10 @@ SbBool NavigationStyle::processEvent(const SoEvent * const ev)
     processed = this->processSoEvent(ev);
 
     // check for left click without selecting something
-    if ((curmode == NavigationStyle::SELECTION || curmode == NavigationStyle::IDLE)
-            && !processed) {
+    if ((curmode == NavigationStyle::SELECTION || curmode == NavigationStyle::IDLE) && !processed) {
         if (ev->getTypeId().isDerivedFrom(SoMouseButtonEvent::getClassTypeId())) {
-            auto const e = (SoMouseButtonEvent *) ev;
-            if (SoMouseButtonEvent::isButtonReleaseEvent(e,SoMouseButtonEvent::BUTTON1)) {
+            auto const e = (SoMouseButtonEvent *)ev;
+            if (SoMouseButtonEvent::isButtonReleaseEvent(e, SoMouseButtonEvent::BUTTON1)) {
                 Gui::Selection().clearSelection();
             }
         }
@@ -1489,7 +1335,7 @@ SbBool NavigationStyle::processEvent(const SoEvent * const ev)
     return processed;
 }
 
-SbBool NavigationStyle::processSoEvent(const SoEvent * const ev)
+SbBool NavigationStyle::processSoEvent(const SoEvent *const ev)
 {
     bool processed = false;
     bool offeredtoViewerEventBase = false;
@@ -1502,21 +1348,17 @@ SbBool NavigationStyle::processSoEvent(const SoEvent * const ev)
         offeredtoViewerEventBase = true;
     }
 
-    if (!processed && !offeredtoViewerEventBase) {
-        processed = viewer->processSoEventBase(ev);
-    }
+    if (!processed && !offeredtoViewerEventBase) { processed = viewer->processSoEventBase(ev); }
 
     return processed;
 }
 
-void NavigationStyle::syncWithEvent(const SoEvent * const ev)
+void NavigationStyle::syncWithEvent(const SoEvent *const ev)
 {
     // Events when in "ready-to-seek" mode are ignored, except those
     // which influence the seek mode itself -- these are handled further
     // up the inheritance hierarchy.
-    if (this->isSeekMode()) {
-        return;
-    }
+    if (this->isSeekMode()) { return; }
 
     const SoType type(ev->getTypeId());
 
@@ -1526,54 +1368,39 @@ void NavigationStyle::syncWithEvent(const SoEvent * const ev)
 
     // Keyboard handling
     if (type.isDerivedFrom(SoKeyboardEvent::getClassTypeId())) {
-        auto const event = (const SoKeyboardEvent *) ev;
+        auto const event = (const SoKeyboardEvent *)ev;
         const SbBool press = event->getState() == SoButtonEvent::DOWN ? true : false;
         switch (event->getKey()) {
-        case SoKeyboardEvent::LEFT_CONTROL:
-        case SoKeyboardEvent::RIGHT_CONTROL:
-            this->ctrldown = press;
-            break;
-        case SoKeyboardEvent::LEFT_SHIFT:
-        case SoKeyboardEvent::RIGHT_SHIFT:
-            this->shiftdown = press;
-            break;
-        case SoKeyboardEvent::LEFT_ALT:
-        case SoKeyboardEvent::RIGHT_ALT:
-            this->altdown = press;
-            break;
-        default:
-            break;
+            case SoKeyboardEvent::LEFT_CONTROL:
+            case SoKeyboardEvent::RIGHT_CONTROL: this->ctrldown = press; break;
+            case SoKeyboardEvent::LEFT_SHIFT:
+            case SoKeyboardEvent::RIGHT_SHIFT: this->shiftdown = press; break;
+            case SoKeyboardEvent::LEFT_ALT:
+            case SoKeyboardEvent::RIGHT_ALT: this->altdown = press; break;
+            default: break;
         }
     }
 
     // Mouse Button / Spaceball Button handling
     if (type.isDerivedFrom(SoMouseButtonEvent::getClassTypeId())) {
-        auto const event = (const SoMouseButtonEvent *) ev;
+        auto const event = (const SoMouseButtonEvent *)ev;
         const int button = event->getButton();
         const SbBool press = event->getState() == SoButtonEvent::DOWN ? true : false;
 
         // SoDebugError::postInfo("processSoEvent", "button = %d", button);
         switch (button) {
-        case SoMouseButtonEvent::BUTTON1:
-            this->button1down = press;
-            break;
-        case SoMouseButtonEvent::BUTTON2:
-            this->button2down = press;
-            break;
-        case SoMouseButtonEvent::BUTTON3:
-            this->button3down = press;
-            break;
-        default:
-            break;
+            case SoMouseButtonEvent::BUTTON1: this->button1down = press; break;
+            case SoMouseButtonEvent::BUTTON2: this->button2down = press; break;
+            case SoMouseButtonEvent::BUTTON3: this->button3down = press; break;
+            default: break;
         }
     }
 }
 
-SbBool NavigationStyle::processMotionEvent(const SoMotion3Event * const ev)
+SbBool NavigationStyle::processMotionEvent(const SoMotion3Event *const ev)
 {
-    SoCamera * const camera = viewer->getSoRenderManager()->getCamera();
-    if (!camera)
-        return false;
+    SoCamera *const camera = viewer->getSoRenderManager()->getCamera();
+    if (!camera) return false;
 
     SbViewVolume volume(camera->getViewVolume());
     SbVec3f center(volume.getSightPoint(camera->focalDistance.getValue()));
@@ -1582,10 +1409,10 @@ SbBool NavigationStyle::processMotionEvent(const SoMotion3Event * const ev)
 
     SbVec3f dir = ev->getTranslation();
 
-    if (camera->getTypeId().isDerivedFrom(SoOrthographicCamera::getClassTypeId())){
+    if (camera->getTypeId().isDerivedFrom(SoOrthographicCamera::getClassTypeId())) {
         auto oCam = static_cast<SoOrthographicCamera *>(camera);
         oCam->scaleHeight(1.0 + (dir[2] * 0.0001));
-        dir[2] = 0.0;//don't move the cam for z translation.
+        dir[2] = 0.0; //don't move the cam for z translation.
     }
 
     SbRotation newRotation(ev->getRotation() * camera->orientation.getValue());
@@ -1594,68 +1421,58 @@ SbBool NavigationStyle::processMotionEvent(const SoMotion3Event * const ev)
     newPosition = center - (newDirection * camera->focalDistance.getValue());
 
     camera->orientation.setValue(newRotation);
-    camera->orientation.getValue().multVec(dir,dir);
+    camera->orientation.getValue().multVec(dir, dir);
     camera->position = newPosition + (dir * translationFactor);
 
     return true;
 }
 
-SbBool NavigationStyle::processKeyboardEvent(const SoKeyboardEvent * const event)
+SbBool NavigationStyle::processKeyboardEvent(const SoKeyboardEvent *const event)
 {
     SbBool processed = false;
     const SbBool press = event->getState() == SoButtonEvent::DOWN ? true : false;
     switch (event->getKey()) {
-    case SoKeyboardEvent::LEFT_CONTROL:
-    case SoKeyboardEvent::RIGHT_CONTROL:
-        this->ctrldown = press;
-        break;
-    case SoKeyboardEvent::LEFT_SHIFT:
-    case SoKeyboardEvent::RIGHT_SHIFT:
-        this->shiftdown = press;
-        break;
-    case SoKeyboardEvent::LEFT_ALT:
-    case SoKeyboardEvent::RIGHT_ALT:
-        this->altdown = press;
-        break;
-    case SoKeyboardEvent::H:
-        processed = true;
-        viewer->saveHomePosition();
-        break;
-    case SoKeyboardEvent::R:
-        processed = true;
-        viewer->resetToHomePosition();
-        break;
-    case SoKeyboardEvent::S:
-    case SoKeyboardEvent::HOME:
-    case SoKeyboardEvent::LEFT_ARROW:
-    case SoKeyboardEvent::UP_ARROW:
-    case SoKeyboardEvent::RIGHT_ARROW:
-    case SoKeyboardEvent::DOWN_ARROW:
-        if (!this->isViewing())
-            this->setViewing(true);
-        break;
-    case SoKeyboardEvent::PAGE_UP:
-    {
-        processed = true;
-        const SbVec2f posn = normalizePixelPos(event->getPosition());
-        doZoom(viewer->getSoRenderManager()->getCamera(), getDelta(), posn);
-        break;
-    }
-    case SoKeyboardEvent::PAGE_DOWN:
-    {
-        processed = true;
-        const SbVec2f posn = normalizePixelPos(event->getPosition());
-        doZoom(viewer->getSoRenderManager()->getCamera(), -getDelta(), posn);
-        break;
-    }
-    default:
-        break;
+        case SoKeyboardEvent::LEFT_CONTROL:
+        case SoKeyboardEvent::RIGHT_CONTROL: this->ctrldown = press; break;
+        case SoKeyboardEvent::LEFT_SHIFT:
+        case SoKeyboardEvent::RIGHT_SHIFT: this->shiftdown = press; break;
+        case SoKeyboardEvent::LEFT_ALT:
+        case SoKeyboardEvent::RIGHT_ALT: this->altdown = press; break;
+        case SoKeyboardEvent::H:
+            processed = true;
+            viewer->saveHomePosition();
+            break;
+        case SoKeyboardEvent::R:
+            processed = true;
+            viewer->resetToHomePosition();
+            break;
+        case SoKeyboardEvent::S:
+        case SoKeyboardEvent::HOME:
+        case SoKeyboardEvent::LEFT_ARROW:
+        case SoKeyboardEvent::UP_ARROW:
+        case SoKeyboardEvent::RIGHT_ARROW:
+        case SoKeyboardEvent::DOWN_ARROW:
+            if (!this->isViewing()) this->setViewing(true);
+            break;
+        case SoKeyboardEvent::PAGE_UP: {
+            processed = true;
+            const SbVec2f posn = normalizePixelPos(event->getPosition());
+            doZoom(viewer->getSoRenderManager()->getCamera(), getDelta(), posn);
+            break;
+        }
+        case SoKeyboardEvent::PAGE_DOWN: {
+            processed = true;
+            const SbVec2f posn = normalizePixelPos(event->getPosition());
+            doZoom(viewer->getSoRenderManager()->getCamera(), -getDelta(), posn);
+            break;
+        }
+        default: break;
     }
 
     return processed;
 }
 
-SbBool NavigationStyle::processClickEvent(const SoMouseButtonEvent * const event)
+SbBool NavigationStyle::processClickEvent(const SoMouseButtonEvent *const event)
 {
     // issue #0002433: avoid to swallow the UP event if down the
     // scene graph somewhere a dialog gets opened
@@ -1663,7 +1480,7 @@ SbBool NavigationStyle::processClickEvent(const SoMouseButtonEvent * const event
     const SbBool press = event->getState() == SoButtonEvent::DOWN ? true : false;
     if (press) {
         SbTime tmp = (event->getTime() - mouseDownConsumedEvent.getTime());
-        float dci = (float)QApplication::doubleClickInterval()/1000.0f;
+        float dci = (float)QApplication::doubleClickInterval() / 1000.0f;
         // a double-click?
         if (tmp.getValue() < dci) {
             mouseDownConsumedEvent = *event;
@@ -1688,28 +1505,21 @@ SbBool NavigationStyle::processClickEvent(const SoMouseButtonEvent * const event
     return processed;
 }
 
-SbBool NavigationStyle::processWheelEvent(const SoMouseWheelEvent * const event)
+SbBool NavigationStyle::processWheelEvent(const SoMouseWheelEvent *const event)
 {
     const SbVec2s pos(event->getPosition());
     const SbVec2f posn = normalizePixelPos(pos);
 
     //handle mouse wheel zoom
-    doZoom(viewer->getSoRenderManager()->getCamera(),
-           event->getDelta(), posn);
+    doZoom(viewer->getSoRenderManager()->getCamera(), event->getDelta(), posn);
     return true;
 }
 
-void NavigationStyle::setPopupMenuEnabled(const SbBool on)
-{
-    this->menuenabled = on;
-}
+void NavigationStyle::setPopupMenuEnabled(const SbBool on) { this->menuenabled = on; }
 
-SbBool NavigationStyle::isPopupMenuEnabled() const
-{
-    return this->menuenabled;
-}
+SbBool NavigationStyle::isPopupMenuEnabled() const { return this->menuenabled; }
 
-void NavigationStyle::openPopupMenu(const SbVec2s& position)
+void NavigationStyle::openPopupMenu(const SbVec2s &position)
 {
     Q_UNUSED(position);
     // ask workbenches and view provider, ...
@@ -1727,30 +1537,28 @@ void NavigationStyle::openPopupMenu(const SbVec2s& position)
 
     // add submenu at the end to select navigation style
     std::map<Base::Type, std::string> styles = UserNavigationStyle::getUserFriendlyNames();
-    for (const auto & style : styles) {
+    for (const auto &style : styles) {
         QByteArray data(style.first.getName());
         QString name = QApplication::translate(style.first.getName(), style.second.c_str());
 
-        QAction* item = subMenuGroup.addAction(name);
+        QAction *item = subMenuGroup.addAction(name);
         item->setData(data);
         item->setCheckable(true);
-        if (style.first == this->getTypeId())
-            item->setChecked(true);
+        if (style.first == this->getTypeId()) item->setChecked(true);
         subMenu.addAction(item);
     }
 
     delete view;
-    QAction* used = contextMenu.exec(QCursor::pos());
+    QAction *used = contextMenu.exec(QCursor::pos());
     if (used && subMenuGroup.actions().indexOf(used) >= 0 && used->isChecked()) {
         QByteArray type = used->data().toByteArray();
-        QWidget* widget = viewer->getWidget();
-        while (widget && !widget->inherits("Gui::View3DInventor"))
-            widget = widget->parentWidget();
+        QWidget *widget = viewer->getWidget();
+        while (widget && !widget->inherits("Gui::View3DInventor")) widget = widget->parentWidget();
         if (widget) {
             // this is the widget where the viewer is embedded
-            Base::Type style = Base::Type::fromName((const char*)type);
+            Base::Type style = Base::Type::fromName((const char *)type);
             if (style != this->getTypeId()) {
-                QEvent* event = new NavigationStyleEvent(style);
+                QEvent *event = new NavigationStyleEvent(style);
                 QApplication::postEvent(widget, event);
             }
         }
@@ -1759,20 +1567,18 @@ void NavigationStyle::openPopupMenu(const SbVec2s& position)
 
 // ----------------------------------------------------------------------------------
 
-TYPESYSTEM_SOURCE_ABSTRACT(Gui::UserNavigationStyle,Gui::NavigationStyle)
+TYPESYSTEM_SOURCE_ABSTRACT(Gui::UserNavigationStyle, Gui::NavigationStyle)
 
 std::string UserNavigationStyle::userFriendlyName() const
 {
     std::string name = this->getTypeId().getName();
     // remove namespaces
     std::size_t pos = name.rfind("::");
-    if (pos != std::string::npos)
-        name = name.substr(pos + 2);
+    if (pos != std::string::npos) name = name.substr(pos + 2);
 
     // remove 'NavigationStyle'
     pos = name.find("NavigationStyle");
-    if (pos != std::string::npos)
-        name = name.substr(0, pos);
+    if (pos != std::string::npos) name = name.substr(0, pos);
     return name;
 }
 
@@ -1782,12 +1588,11 @@ std::map<Base::Type, std::string> UserNavigationStyle::getUserFriendlyNames()
     std::vector<Base::Type> types;
     Base::Type::getAllDerivedFrom(UserNavigationStyle::getClassTypeId(), types);
 
-    for (auto & type : types) {
+    for (auto &type : types) {
         if (type != UserNavigationStyle::getClassTypeId()) {
-            std::unique_ptr<UserNavigationStyle> inst(static_cast<UserNavigationStyle*>(type.createInstance()));
-            if (inst) {
-                names[type] = inst->userFriendlyName();
-            }
+            std::unique_ptr<UserNavigationStyle> inst(
+                static_cast<UserNavigationStyle *>(type.createInstance()));
+            if (inst) { names[type] = inst->userFriendlyName(); }
         }
     }
     return names;

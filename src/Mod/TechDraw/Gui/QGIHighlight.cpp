@@ -65,10 +65,7 @@ QGIHighlight::QGIHighlight()
     setWidth(Rez::guiX(0.75));
 }
 
-QGIHighlight::~QGIHighlight()
-{
-
-}
+QGIHighlight::~QGIHighlight() {}
 
 void QGIHighlight::draw()
 {
@@ -86,7 +83,8 @@ void QGIHighlight::makeHighlight()
     if (getHoleStyle() == 0) {
         m_rect->hide();
         m_circle->show();
-    } else {
+    }
+    else {
         m_rect->show();
         m_circle->hide();
     }
@@ -95,9 +93,8 @@ void QGIHighlight::makeHighlight()
 void QGIHighlight::makeReference()
 {
     prepareGeometryChange();
-    int fontSize = QGIView::exactFontSize(Base::Tools::toStdString(m_refFont.family()),
-                                          m_refSize);
-    m_refFont .setPixelSize(fontSize);
+    int fontSize = QGIView::exactFontSize(Base::Tools::toStdString(m_refFont.family()), m_refSize);
+    m_refFont.setPixelSize(fontSize);
     m_reference->setFont(m_refFont);
     m_reference->setPlainText(m_refText);
     double fudge = Rez::guiX(1.0);
@@ -115,7 +112,7 @@ void QGIHighlight::makeReference()
 
 void QGIHighlight::setInteractive(bool state)
 {
-//    setAcceptHoverEvents(state);
+    //    setAcceptHoverEvents(state);
     setFlag(QGraphicsItem::ItemIsSelectable, state);
     setFlag(QGraphicsItem::ItemIsMovable, state);
     setFlag(QGraphicsItem::ItemSendsScenePositionChanges, state);
@@ -128,10 +125,7 @@ void QGIHighlight::setBounds(double x1, double y1, double x2, double y2)
     m_end = QPointF(Rez::guiX(x2), Rez::guiX(-y2));
 }
 
-void QGIHighlight::setReference(const char* ref)
-{
-    m_refText = QString::fromUtf8(ref);
-}
+void QGIHighlight::setReference(const char *ref) { m_refText = QString::fromUtf8(ref); }
 
 void QGIHighlight::setFont(QFont f, double fsize)
 {
@@ -141,29 +135,21 @@ void QGIHighlight::setFont(QFont f, double fsize)
 
 
 //obs?
-QColor QGIHighlight::getHighlightColor()
-{
-    return PreferencesGui::sectionLineQColor();
-}
+QColor QGIHighlight::getHighlightColor() { return PreferencesGui::sectionLineQColor(); }
 
 //obs??
-Qt::PenStyle QGIHighlight::getHighlightStyle()
-{
-    return PreferencesGui::sectionLineStyle();
-}
+Qt::PenStyle QGIHighlight::getHighlightStyle() { return PreferencesGui::sectionLineStyle(); }
 
-int QGIHighlight::getHoleStyle()
-{
-    return TechDraw::Preferences::mattingStyle();
-}
+int QGIHighlight::getHoleStyle() { return TechDraw::Preferences::mattingStyle(); }
 
-void QGIHighlight::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGIHighlight::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
-//    myOption.state &= ~QStyle::State_Selected;
+    //    myOption.state &= ~QStyle::State_Selected;
 
     setTools();
-//    painter->drawRect(boundingRect());          //good for debugging
-    QGIDecoration::paint (painter, &myOption, widget);
+    //    painter->drawRect(boundingRect());          //good for debugging
+    QGIDecoration::paint(painter, &myOption, widget);
 }
 
 void QGIHighlight::setTools()
@@ -179,4 +165,3 @@ void QGIHighlight::setTools()
 
     m_reference->setDefaultTextColor(m_colCurrent);
 }
-

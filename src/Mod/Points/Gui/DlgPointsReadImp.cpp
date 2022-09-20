@@ -30,13 +30,11 @@
 using namespace PointsGui;
 
 
-
-DlgPointsReadImp::DlgPointsReadImp(const char *FileName, QWidget* parent,  Qt::WindowFlags fl )
-    : QDialog( parent, fl )
-    , ui(new Ui_DlgPointsRead)
+DlgPointsReadImp::DlgPointsReadImp(const char *FileName, QWidget *parent, Qt::WindowFlags fl)
+    : QDialog(parent, fl), ui(new Ui_DlgPointsRead)
 {
-  ui->setupUi(this);
-  _FileName = FileName;
+    ui->setupUi(this);
+    _FileName = FileName;
 }
 
 /*
@@ -46,7 +44,6 @@ DlgPointsReadImp::~DlgPointsReadImp()
 {
     // no need to delete child widgets, Qt does it all for us
 }
-
 
 
 #include "moc_DlgPointsReadImp.cpp"

@@ -39,25 +39,28 @@ class SoRayPickAction;
 class SoPickedPoint;
 class SbVec3s;
 
-namespace Base {
-    template< typename T >
-    class Vector3;
+namespace Base
+{
+template<typename T> class Vector3;
 
-    class Vector2d;
+class Vector2d;
 
-    class Placement;
+class Placement;
+} // namespace Base
+
+namespace Part
+{
+class Geometry;
 }
 
-namespace Part {
-    class Geometry;
-}
+namespace Sketcher
+{
+class Constraint;
+class PropertyConstraintList;
+}; // namespace Sketcher
 
-namespace Sketcher {
-    class Constraint;
-    class PropertyConstraintList;
-};
-
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class ViewProviderSketch;
 
@@ -72,7 +75,8 @@ class SketcherGuiExport EditModeConstraintCoinManager
 {
 private:
     /// Coin Node indices for constraints
-    enum class ConstraintNodePosition {
+    enum class ConstraintNodePosition
+    {
         MaterialIndex = 0,
         DatumLabelIndex = 0,
         FirstTranslationIndex = 1,
@@ -82,19 +86,19 @@ private:
         SecondIconIndex = 5,
         SecondConstraintIdIndex = 6
     };
+
 public:
-    explicit EditModeConstraintCoinManager( ViewProviderSketch &vp,
-                                            DrawingParameters & drawingParams,
-                                            GeometryLayerParameters & geometryLayerParams,
-                                            ConstraintParameters & constraintParams,
-                                            EditModeScenegraphNodes & editModeScenegraph,
-                                            CoinMapping & coinMap);
+    explicit EditModeConstraintCoinManager(ViewProviderSketch &vp, DrawingParameters &drawingParams,
+                                           GeometryLayerParameters &geometryLayerParams,
+                                           ConstraintParameters &constraintParams,
+                                           EditModeScenegraphNodes &editModeScenegraph,
+                                           CoinMapping &coinMap);
     ~EditModeConstraintCoinManager();
 
 
     /** @name update coin nodes*/
     // geometry list to be used for constraints, which may be a temporal geometry
-    void processConstraints(const GeoListFacade & geolistfacade);
+    void processConstraints(const GeoListFacade &geolistfacade);
 
     void updateVirtualSpace();
 
@@ -103,12 +107,12 @@ public:
     void drawConstraintIcons();
 
     // This specific overload is to use a specific geometry list, which may be a temporal one
-    void drawConstraintIcons(const GeoListFacade & geolistfacade);
+    void drawConstraintIcons(const GeoListFacade &geolistfacade);
     //@}
 
     /** @name update coin colors*/
     //@{
-    void updateConstraintColor(const std::vector<Sketcher::Constraint *> & constraints);
+    void updateConstraintColor(const std::vector<Sketcher::Constraint *> &constraints);
     //@}
 
     /** @name coin nodes creation*/
@@ -120,21 +124,20 @@ public:
     void setConstraintSelectability(bool enabled = true);
     //@}
 
-    std::set<int> detectPreselectionConstr( const SoPickedPoint *Point,
-                                            const SbVec2s &cursorPos);
+    std::set<int> detectPreselectionConstr(const SoPickedPoint *Point, const SbVec2s &cursorPos);
 
-    SoSeparator * getConstraintIdSeparator(int i);
+    SoSeparator *getConstraintIdSeparator(int i);
 
     void createEditModeInventorNodes();
 
 private:
-    void rebuildConstraintNodes(const GeoListFacade & geolistfacade); // with specific geometry
+    void rebuildConstraintNodes(const GeoListFacade &geolistfacade); // with specific geometry
 
-    void rebuildConstraintNodes(const GeoListFacade & geolistfacade, const std::vector<Sketcher::Constraint *> constrlist, SbVec3f norm);
+    void rebuildConstraintNodes(const GeoListFacade &geolistfacade,
+                                const std::vector<Sketcher::Constraint *> constrlist, SbVec3f norm);
 
     /// finds a free position for placing a constraint icon
-    Base::Vector3d seekConstraintPosition(const Base::Vector3d &origPos,
-                                          const Base::Vector3d &norm,
+    Base::Vector3d seekConstraintPosition(const Base::Vector3d &origPos, const Base::Vector3d &norm,
                                           const Base::Vector3d &dir, float step,
                                           const SoNode *constraint);
 
@@ -173,7 +176,7 @@ private:
     // rendering tree) to a vector of those bounding boxes paired with relevant
     // constraint IDs.
 
-    using ConstrIconBB = std::pair<QRect, std::set<int> >;
+    using ConstrIconBB = std::pair<QRect, std::set<int>>;
     using ConstrIconBBVec = std::vector<ConstrIconBB>;
 
     std::map<QString, ConstrIconBBVec> combinedConstrBoxes;
@@ -217,11 +220,8 @@ private:
     void drawMergedConstraintIcons(IconQueue iconQueue);
 
     /// Helper for drawMergedConstraintIcons and drawTypicalConstraintIcon
-    QImage renderConstrIcon(const QString &type,
-                            const QColor &iconColor,
-                            const QStringList &labels,
-                            const QList<QColor> &labelColors,
-                            double iconRotation,
+    QImage renderConstrIcon(const QString &type, const QColor &iconColor, const QStringList &labels,
+                            const QList<QColor> &labelColors, double iconRotation,
                             //! Gets populated with bounding boxes (in icon
                             //! image coordinates) for the icon at left, then
                             //! labels for different constraints.
@@ -239,15 +239,15 @@ private:
     //@}
 
 private:
-    ViewProviderSketch & viewProvider;
+    ViewProviderSketch &viewProvider;
 
-    DrawingParameters & drawingParameters;
-    GeometryLayerParameters & geometryLayerParameters;
-    ConstraintParameters & constraintParameters;
+    DrawingParameters &drawingParameters;
+    GeometryLayerParameters &geometryLayerParameters;
+    ConstraintParameters &constraintParameters;
 
-    EditModeScenegraphNodes & editModeScenegraphNodes;
+    EditModeScenegraphNodes &editModeScenegraphNodes;
 
-    CoinMapping & coinMapping;
+    CoinMapping &coinMapping;
 };
 
 
@@ -255,4 +255,3 @@ private:
 
 
 #endif // SKETCHERGUI_EditModeConstraintCoinManager_H
-

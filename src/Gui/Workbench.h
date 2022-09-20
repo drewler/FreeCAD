@@ -30,11 +30,13 @@
 #include <Base/Parameter.h>
 #include <Gui/TaskView/TaskWatcher.h>
 
-namespace Base {
+namespace Base
+{
 class PyObjectBase;
 }
 
-namespace Gui {
+namespace Gui
+{
 
 class MenuItem;
 class ToolBarItem;
@@ -49,7 +51,7 @@ class WorkbenchManager;
  * loaded into RAM.
  * @author Werner Mayer
  */
-class GuiExport Workbench : public Base::BaseClass
+class GuiExport Workbench: public Base::BaseClass
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -64,19 +66,19 @@ public:
     /**
      * Set the name to the workbench object.
      */
-    void setName(const std::string&);
+    void setName(const std::string &);
     /**
      * The default implementation returns an instance of @ref WorkbenchPy.
      */
-    PyObject* getPyObject() override;
+    PyObject *getPyObject() override;
     /** Sets up the contextmenu for this workbench.
      * The default implementation does nothing.
      */
-    virtual void setupContextMenu(const char* recipient,MenuItem*) const;
+    virtual void setupContextMenu(const char *recipient, MenuItem *) const;
     /** Sets up the contextmenu for the main window for this workbench.
      * The default implementation does nothing.
      */
-    virtual void createMainWindowPopupMenu(MenuItem*) const;
+    virtual void createMainWindowPopupMenu(MenuItem *) const;
     /**
      * Activates the workbench and adds/removes GUI elements.
      */
@@ -91,7 +93,7 @@ public:
     virtual void deactivated();
 
     /// helper to add TaskWatcher to the TaskView
-    void addTaskWatcher(const std::vector<Gui::TaskView::TaskWatcher*> &Watcher);
+    void addTaskWatcher(const std::vector<Gui::TaskView::TaskWatcher *> &Watcher);
     /// remove the added TaskWatcher
     void removeTaskWatcher();
 
@@ -108,29 +110,29 @@ public:
     /// Add a permanent menu item \a cmd after an existing command \a after.
     /// Permanent menu items are always added independent of what the active workbench is.
     /// Adding it will only fail if the item \a after doesn't exist.
-    static void addPermanentMenuItem(const std::string& cmd, const std::string& after);
+    static void addPermanentMenuItem(const std::string &cmd, const std::string &after);
     /// Removes the command \a cmd from the permanent menu items.
-    static void removePermanentMenuItem(const std::string& cmd);
+    static void removePermanentMenuItem(const std::string &cmd);
 
 protected:
     /** Returns a MenuItem tree structure of menus for this workbench. */
-    virtual MenuItem* setupMenuBar() const=0;
+    virtual MenuItem *setupMenuBar() const = 0;
     /** Returns a ToolBarItem tree structure of toolbars for this workbench. */
-    virtual ToolBarItem* setupToolBars() const=0;
+    virtual ToolBarItem *setupToolBars() const = 0;
     /** Returns a ToolBarItem tree structure of command bars for this workbench. */
-    virtual ToolBarItem* setupCommandBars() const=0;
+    virtual ToolBarItem *setupCommandBars() const = 0;
     /** Returns a DockWindowItems structure of dock windows this workbench. */
-    virtual DockWindowItems* setupDockWindows() const=0;
+    virtual DockWindowItems *setupDockWindows() const = 0;
     /** Add permanent menu items to the structure */
-    void addPermanentMenuItems(MenuItem*) const;
+    void addPermanentMenuItems(MenuItem *) const;
 
 private:
     /**
      * The method imports the user defined toolbars or toolbox bars and creates
      * a ToolBarItem tree structure.
      */
-    void setupCustomToolbars(ToolBarItem* root, const char* toolbar) const;
-    void setupCustomToolbars(ToolBarItem* root, const Base::Reference<ParameterGrp>& hGrp) const;
+    void setupCustomToolbars(ToolBarItem *root, const char *toolbar) const;
+    void setupCustomToolbars(ToolBarItem *root, const Base::Reference<ParameterGrp> &hGrp) const;
     void setupCustomShortcuts() const;
 
 private:
@@ -144,7 +146,7 @@ private:
  * to have defined the standard GUI elements.
  * @author Werner Mayer
  */
-class GuiExport StdWorkbench : public Workbench
+class GuiExport StdWorkbench: public Workbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -154,18 +156,18 @@ public:
 
 public:
     /** Defines the standard context menu. */
-    void setupContextMenu(const char* recipient, MenuItem*) const override;
-    void createMainWindowPopupMenu(MenuItem*) const override;
+    void setupContextMenu(const char *recipient, MenuItem *) const override;
+    void createMainWindowPopupMenu(MenuItem *) const override;
 
 protected:
     /** Defines the standard menus. */
-    MenuItem* setupMenuBar() const override;
+    MenuItem *setupMenuBar() const override;
     /** Defines the standard toolbars. */
-    ToolBarItem* setupToolBars() const override;
+    ToolBarItem *setupToolBars() const override;
     /** Defines the standard command bars. */
-    ToolBarItem* setupCommandBars() const override;
+    ToolBarItem *setupCommandBars() const override;
     /** Returns a DockWindowItems structure of dock windows this workbench. */
-    DockWindowItems* setupDockWindows() const override;
+    DockWindowItems *setupDockWindows() const override;
 
     friend class PythonWorkbench;
 };
@@ -174,7 +176,7 @@ protected:
  * The BlankWorkbench class defines a complete empty workbench.
  * @author Werner Mayer
  */
-class GuiExport BlankWorkbench : public Workbench
+class GuiExport BlankWorkbench: public Workbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -183,7 +185,7 @@ public:
     ~BlankWorkbench() override;
 
     /** Defines the standard context menu. */
-    void setupContextMenu(const char* recipient,MenuItem*) const override;
+    void setupContextMenu(const char *recipient, MenuItem *) const override;
     /** Run some actions when the workbench gets activated. */
     void activated() override;
     /** Run some actions when the workbench gets deactivated. */
@@ -191,20 +193,20 @@ public:
 
 protected:
     /** Defines the standard menus. */
-    MenuItem* setupMenuBar() const override;
+    MenuItem *setupMenuBar() const override;
     /** Defines the standard toolbars. */
-    ToolBarItem* setupToolBars() const override;
+    ToolBarItem *setupToolBars() const override;
     /** Defines the standard command bars. */
-    ToolBarItem* setupCommandBars() const override;
+    ToolBarItem *setupCommandBars() const override;
     /** Returns a DockWindowItems structure of dock windows this workbench. */
-    DockWindowItems* setupDockWindows() const override;
+    DockWindowItems *setupDockWindows() const override;
 };
 
 /**
  * The NoneWorkbench class defines a slim workbench.
  * @author Werner Mayer
  */
-class GuiExport NoneWorkbench : public StdWorkbench
+class GuiExport NoneWorkbench: public StdWorkbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -213,20 +215,20 @@ public:
     ~NoneWorkbench() override;
 
     /** Defines the standard context menu. */
-    void setupContextMenu(const char* recipient,MenuItem*) const override;
+    void setupContextMenu(const char *recipient, MenuItem *) const override;
 
 protected:
     /** Defines the standard menus. */
-    MenuItem* setupMenuBar() const override;
+    MenuItem *setupMenuBar() const override;
     /** Defines the standard toolbars. */
-    ToolBarItem* setupToolBars() const override;
+    ToolBarItem *setupToolBars() const override;
     /** Defines the standard command bars. */
-    ToolBarItem* setupCommandBars() const override;
+    ToolBarItem *setupCommandBars() const override;
     /** Returns a DockWindowItems structure of dock windows this workbench. */
-    DockWindowItems* setupDockWindows() const override;
+    DockWindowItems *setupDockWindows() const override;
 };
 
-class GuiExport TestWorkbench : public StdWorkbench
+class GuiExport TestWorkbench: public StdWorkbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -235,9 +237,9 @@ public:
     ~TestWorkbench() override;
 
 protected:
-    MenuItem* setupMenuBar() const override;
-    ToolBarItem* setupToolBars() const override;
-    ToolBarItem* setupCommandBars() const override;
+    MenuItem *setupMenuBar() const override;
+    ToolBarItem *setupToolBars() const override;
+    ToolBarItem *setupCommandBars() const override;
 };
 
 /**
@@ -245,7 +247,7 @@ protected:
  * Therefore PythonWorkbenchPy provides the required Python interface.
  * @author Werner Mayer
  */
-class GuiExport PythonBaseWorkbench : public Workbench
+class GuiExport PythonBaseWorkbench: public Workbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -255,48 +257,49 @@ public:
     /**
      * Creates and returns immediately the corresponding Python workbench object.
      */
-    PyObject* getPyObject() override;
+    PyObject *getPyObject() override;
 
     /** @name Manipulation methods */
     //@{
     /// Appends a new menu
-    void appendMenu(const std::list<std::string>& menu, const std::list<std::string>& items) const;
+    void appendMenu(const std::list<std::string> &menu, const std::list<std::string> &items) const;
     /// Removes a menu
-    void removeMenu(const std::string& menu ) const;
+    void removeMenu(const std::string &menu) const;
 
     /// Appends new context menu items
-    void appendContextMenu(const std::list<std::string>& menu, const std::list<std::string>& items) const;
+    void appendContextMenu(const std::list<std::string> &menu,
+                           const std::list<std::string> &items) const;
     /// Removes a context menu
-    void removeContextMenu(const std::string& menu ) const;
-    void setupContextMenu(const char* recipient,MenuItem*) const override;
+    void removeContextMenu(const std::string &menu) const;
+    void setupContextMenu(const char *recipient, MenuItem *) const override;
     void clearContextMenu();
 
     /// Appends a new toolbar
-    void appendToolbar(const std::string& bar, const std::list<std::string>& items) const;
+    void appendToolbar(const std::string &bar, const std::list<std::string> &items) const;
     /// Removes a toolbar
-    void removeToolbar(const std::string& bar) const;
+    void removeToolbar(const std::string &bar) const;
 
     /// Appends a new command bar
-    void appendCommandbar(const std::string& bar, const std::list<std::string>& items) const;
+    void appendCommandbar(const std::string &bar, const std::list<std::string> &items) const;
     /// Removes a command bar
-    void removeCommandbar(const std::string& bar) const;
+    void removeCommandbar(const std::string &bar) const;
     //@}
 
 protected:
-    MenuItem* setupMenuBar() const override;
-    ToolBarItem* setupToolBars() const override;
-    ToolBarItem* setupCommandBars() const override;
-    DockWindowItems* setupDockWindows() const override;
+    MenuItem *setupMenuBar() const override;
+    ToolBarItem *setupToolBars() const override;
+    ToolBarItem *setupCommandBars() const override;
+    DockWindowItems *setupDockWindows() const override;
 
 protected:
-    MenuItem* _menuBar;
-    MenuItem* _contextMenu;
-    ToolBarItem* _toolBar;
-    ToolBarItem* _commandBar;
-    Base::PyObjectBase* _workbenchPy;
+    MenuItem *_menuBar;
+    MenuItem *_contextMenu;
+    ToolBarItem *_toolBar;
+    ToolBarItem *_commandBar;
+    Base::PyObjectBase *_workbenchPy;
 };
 
-class GuiExport PythonBlankWorkbench : public PythonBaseWorkbench
+class GuiExport PythonBlankWorkbench: public PythonBaseWorkbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -310,7 +313,7 @@ public:
  * Therefore PythonWorkbenchPy provides the required Python interface.
  * @author Werner Mayer
  */
-class GuiExport PythonWorkbench : public PythonBaseWorkbench
+class GuiExport PythonWorkbench: public PythonBaseWorkbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -319,14 +322,14 @@ public:
     ~PythonWorkbench() override;
 
     /** Defines the standard context menu. */
-    void setupContextMenu(const char* recipient, MenuItem*) const override;
-    void createMainWindowPopupMenu(MenuItem*) const override;
+    void setupContextMenu(const char *recipient, MenuItem *) const override;
+    void createMainWindowPopupMenu(MenuItem *) const override;
 
 protected:
-    MenuItem* setupMenuBar() const override;
-    ToolBarItem* setupToolBars() const override;
-    ToolBarItem* setupCommandBars() const override;
-    DockWindowItems* setupDockWindows() const override;
+    MenuItem *setupMenuBar() const override;
+    ToolBarItem *setupToolBars() const override;
+    ToolBarItem *setupCommandBars() const override;
+    DockWindowItems *setupDockWindows() const override;
 };
 
 } // namespace Gui

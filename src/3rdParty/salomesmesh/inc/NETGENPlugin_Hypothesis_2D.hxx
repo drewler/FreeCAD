@@ -37,24 +37,23 @@
 
 //  Parameters for work of NETGEN.
 // This class is just to give 2D dimension, actually
-// it inherits all behaviour of the parent 
+// it inherits all behaviour of the parent
 
-class NETGENPLUGIN_EXPORT  NETGENPlugin_Hypothesis_2D: public NETGENPlugin_Hypothesis
+class NETGENPLUGIN_EXPORT NETGENPlugin_Hypothesis_2D: public NETGENPlugin_Hypothesis
 {
 public:
+    NETGENPlugin_Hypothesis_2D(int hypId, int studyId, SMESH_Gen *gen);
 
-  NETGENPlugin_Hypothesis_2D(int hypId, int studyId, SMESH_Gen * gen);
+    // void SetQuadAllowed(bool theVal);
+    // bool GetQuadAllowed() const { return _quadAllowed; }
+    // static bool GetDefaultQuadAllowed();
 
-  // void SetQuadAllowed(bool theVal);
-  // bool GetQuadAllowed() const { return _quadAllowed; }
-  // static bool GetDefaultQuadAllowed();
+    // Persistence
+    // virtual ostream & SaveTo(ostream & save);
+    // virtual istream & LoadFrom(istream & load);
 
-  // Persistence
-  // virtual ostream & SaveTo(ostream & save);
-  // virtual istream & LoadFrom(istream & load);
-
-// private:
-//   bool _quadAllowed;
+    // private:
+    //   bool _quadAllowed;
 };
 
 #endif

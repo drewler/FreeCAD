@@ -27,9 +27,10 @@
 #include <Gui/ViewProviderPythonFeature.h>
 #include <Mod/Sketcher/Gui/ViewProviderSketch.h>
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
-class SketcherGuiExport ViewProviderCustom : public ViewProviderSketch
+class SketcherGuiExport ViewProviderCustom: public ViewProviderSketch
 {
     PROPERTY_HEADER_WITH_OVERRIDE(SketcherGui::ViewProviderCustom);
 
@@ -38,11 +39,11 @@ public:
     ViewProviderCustom();
     /// destructor
     ~ViewProviderCustom() override;
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
 
 protected:
-    void onChanged(const App::Property* prop) override;
-    std::map<const App::Property*, Gui::ViewProvider*> propView;
+    void onChanged(const App::Property *prop) override;
+    std::map<const App::Property *, Gui::ViewProvider *> propView;
 };
 
 using ViewProviderPython = Gui::ViewProviderPythonFeatureT<ViewProviderSketch>;
@@ -52,4 +53,3 @@ using ViewProviderCustomPython = Gui::ViewProviderPythonFeatureT<ViewProviderCus
 
 
 #endif // SketcherGui_VIEWPROVIDERPYTHON_H
-

@@ -22,11 +22,11 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <memory>
+#include <memory>
 
-# include <BRepAlgoAPI_BooleanOperation.hxx>
-# include <BRepCheck_Analyzer.hxx>
-# include <Standard_Failure.hxx>
+#include <BRepAlgoAPI_BooleanOperation.hxx>
+#include <BRepCheck_Analyzer.hxx>
+#include <Standard_Failure.hxx>
 #endif
 
 #include <App/Application.h>
@@ -43,27 +43,31 @@ PROPERTY_SOURCE_ABSTRACT(Part::Boolean, Part::Feature)
 
 Boolean::Boolean()
 {
-    ADD_PROPERTY(Base,(nullptr));
-    ADD_PROPERTY(Tool,(nullptr));
-    ADD_PROPERTY_TYPE(History,(ShapeHistory()), "Boolean", (App::PropertyType)
-        (App::Prop_Output|App::Prop_Transient|App::Prop_Hidden), "Shape history");
+    ADD_PROPERTY(Base, (nullptr));
+    ADD_PROPERTY(Tool, (nullptr));
+    ADD_PROPERTY_TYPE(
+        History, (ShapeHistory()), "Boolean",
+        (App::PropertyType)(App::Prop_Output | App::Prop_Transient | App::Prop_Hidden),
+        "Shape history");
     History.setSize(0);
 
-    ADD_PROPERTY_TYPE(Refine,(0),"Boolean",(App::PropertyType)(App::Prop_None),"Refine shape (clean up redundant edges) after this boolean operation");
+    ADD_PROPERTY_TYPE(Refine, (0), "Boolean", (App::PropertyType)(App::Prop_None),
+                      "Refine shape (clean up redundant edges) after this boolean operation");
 
     //init Refine property
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/Part/Boolean");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/Part/Boolean");
     this->Refine.setValue(hGrp->GetBool("RefineModel", false));
 }
 
 short Boolean::mustExecute() const
 {
     if (Base.getValue() && Tool.getValue()) {
-        if (Base.isTouched())
-            return 1;
-        if (Tool.isTouched())
-            return 1;
+        if (Base.isTouched()) return 1;
+        if (Tool.isTouched()) return 1;
     }
     return 0;
 }
@@ -71,7 +75,7 @@ short Boolean::mustExecute() const
 App::DocumentObjectExecReturn *Boolean::execute()
 {
     try {
-#if defined(__GNUC__) && defined (FC_OS_LINUX)
+#if defined(__GNUC__) && defined(FC_OS_LINUX)
         Base::SignalException se;
 #endif
         auto base = Base.getValue();
@@ -82,11 +86,9 @@ App::DocumentObjectExecReturn *Boolean::execute()
 
         // Now, let's get the TopoDS_Shape
         TopoDS_Shape BaseShape = Feature::getShape(base);
-        if (BaseShape.IsNull())
-            throw NullShapeException("Base shape is null");
+        if (BaseShape.IsNull()) throw NullShapeException("Base shape is null");
         TopoDS_Shape ToolShape = Feature::getShape(tool);
-        if (ToolShape.IsNull())
-            throw NullShapeException("Tool shape is null");
+        if (ToolShape.IsNull()) throw NullShapeException("Tool shape is null");
 
         std::unique_ptr<BRepAlgoAPI_BooleanOperation> mkBool(makeOperation(BaseShape, ToolShape));
         if (!mkBool->IsDone()) {
@@ -104,12 +106,15 @@ App::DocumentObjectExecReturn *Boolean::execute()
         if (resShape.IsNull()) {
             return new App::DocumentObjectExecReturn("Resulting shape is null");
         }
-        Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-            .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/Part/Boolean");
+        Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                                 .GetUserParameter()
+                                                 .GetGroup("BaseApp")
+                                                 ->GetGroup("Preferences")
+                                                 ->GetGroup("Mod/Part/Boolean");
 
         if (hGrp->GetBool("CheckModel", false)) {
             BRepCheck_Analyzer aChecker(resShape);
-            if (! aChecker.IsValid() ) {
+            if (!aChecker.IsValid()) {
                 return new App::DocumentObjectExecReturn("Resulting shape is invalid");
             }
         }
@@ -127,7 +132,7 @@ App::DocumentObjectExecReturn *Boolean::execute()
                 history[0] = joinHistory(history[0], hist);
                 history[1] = joinHistory(history[1], hist);
             }
-            catch (Standard_Failure&) {
+            catch (Standard_Failure &) {
                 // do nothing
             }
         }
@@ -137,6 +142,7 @@ App::DocumentObjectExecReturn *Boolean::execute()
         return App::DocumentObject::StdReturn;
     }
     catch (...) {
-        return new App::DocumentObjectExecReturn("A fatal error occurred when running boolean operation");
+        return new App::DocumentObjectExecReturn(
+            "A fatal error occurred when running boolean operation");
     }
 }

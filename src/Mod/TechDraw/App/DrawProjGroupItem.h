@@ -37,20 +37,23 @@
 namespace TechDraw
 {
 
-enum ProjItemType{ Front,
-          Left,
-          Right,
-          Rear,
-          Top,
-          Bottom,
-          FrontTopLeft,
-          FrontTopRight,
-          FrontBottomLeft,
-          FrontBottomRight };
+enum ProjItemType
+{
+    Front,
+    Left,
+    Right,
+    Rear,
+    Top,
+    Bottom,
+    FrontTopLeft,
+    FrontTopRight,
+    FrontBottomLeft,
+    FrontBottomRight
+};
 
 class DrawProjGroup;
 
-class TechDrawExport DrawProjGroupItem : public TechDraw::DrawViewPart
+class TechDrawExport DrawProjGroupItem: public TechDraw::DrawViewPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawProjGroupItem);
 
@@ -60,7 +63,7 @@ public:
     ~DrawProjGroupItem() = default;
 
     App::PropertyEnumeration Type;
-    App::PropertyVector      RotationVector;    //this is superseded by dvp xdirection
+    App::PropertyVector RotationVector; //this is superseded by dvp xdirection
 
     short mustExecute() const override;
     void onDocumentRestored() override;
@@ -68,24 +71,23 @@ public:
 
     void postHlrTasks(void) override;
 
-    DrawProjGroup* getPGroup() const;
+    DrawProjGroup *getPGroup() const;
     double getRotateAngle();
     Base::Vector3d getXDirection() const override;
-    Base::Vector3d getLegacyX(const Base::Vector3d& pt,
-                              const Base::Vector3d& axis,
-                              const bool flip = true)  const override;
+    Base::Vector3d getLegacyX(const Base::Vector3d &pt, const Base::Vector3d &axis,
+                              const bool flip = true) const override;
 
     App::DocumentObjectExecReturn *execute() override;
 
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "TechDrawGui::ViewProviderProjGroupItem";
     }
     //return PyObject as DrawProjGroupItemPy
     PyObject *getPyObject() override;
 
-    gp_Ax2 getViewAxis(const Base::Vector3d& pt,
-                       const Base::Vector3d& direction,
-                       const bool flip=true) const override;
+    gp_Ax2 getViewAxis(const Base::Vector3d &pt, const Base::Vector3d &direction,
+                       const bool flip = true) const override;
 
     double getScale() const override;
     void autoPosition();
@@ -93,20 +95,23 @@ public:
 
     //DPGI always fits on page since DPG handles scaling
     bool checkFit() const override { return true; }
-    bool checkFit(DrawPage* page) const override { (void) page;         //avoid unused variable warning
-                                                   return true; }
+    bool checkFit(DrawPage *page) const override
+    {
+        (void)page; //avoid unused variable warning
+        return true;
+    }
 
     int countParentPages() const override;
-    DrawPage* findParentPage() const override;
-    std::vector<DrawPage*> findAllParentPages() const override;
+    DrawPage *findParentPage() const override;
+    std::vector<DrawPage *> findAllParentPages() const override;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     bool isLocked() const override;
     bool showLock() const override;
 
 private:
-    static const char* TypeEnums[];
+    static const char *TypeEnums[];
 };
 
 } //namespace TechDraw

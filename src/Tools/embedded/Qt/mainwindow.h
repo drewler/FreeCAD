@@ -10,7 +10,7 @@ class QMenu;
 class QTextEdit;
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class MainWindow: public QMainWindow
 {
     Q_OBJECT
 

@@ -31,7 +31,7 @@
 namespace Image
 {
 
-class ImageExport ImagePlane : public App::GeoFeature
+class ImageExport ImagePlane: public App::GeoFeature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Image::ImagePlane);
 
@@ -41,13 +41,11 @@ public:
     ~ImagePlane() override;
 
     App::PropertyFileIncluded ImageFile;
-    App::PropertyLength       XSize;
-    App::PropertyLength       YSize;
+    App::PropertyLength XSize;
+    App::PropertyLength YSize;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "ImageGui::ViewProviderImagePlane";
-    }
+    const char *getViewProviderName() const override { return "ImageGui::ViewProviderImagePlane"; }
 };
 
 } //namespace Image

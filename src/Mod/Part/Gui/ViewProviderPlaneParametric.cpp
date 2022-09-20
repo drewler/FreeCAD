@@ -35,15 +35,9 @@ using namespace PartGui;
 PROPERTY_SOURCE(PartGui::ViewProviderPlaneParametric, PartGui::ViewProviderPrimitive)
 
 
-ViewProviderPlaneParametric::ViewProviderPlaneParametric()
-{
-    sPixmap = "Part_Plane_Parametric";
-}
+ViewProviderPlaneParametric::ViewProviderPlaneParametric() { sPixmap = "Part_Plane_Parametric"; }
 
-ViewProviderPlaneParametric::~ViewProviderPlaneParametric()
-{
-
-}
+ViewProviderPlaneParametric::~ViewProviderPlaneParametric() {}
 
 std::vector<std::string> ViewProviderPlaneParametric::getDisplayModes() const
 {
@@ -64,36 +58,31 @@ std::vector<std::string> ViewProviderPlaneParametric::getDisplayModes() const
 PROPERTY_SOURCE(PartGui::ViewProviderFace, PartGui::ViewProviderPlaneParametric)
 
 
-ViewProviderFace::ViewProviderFace()
+ViewProviderFace::ViewProviderFace() {}
+
+ViewProviderFace::~ViewProviderFace() {}
+
+std::vector<App::DocumentObject *> ViewProviderFace::claimChildren() const
 {
+    return std::vector<App::DocumentObject *>(
+        static_cast<Part::Face *>(getObject())->Sources.getValues());
 }
 
-ViewProviderFace::~ViewProviderFace()
-{
-}
+bool ViewProviderFace::canDragObjects() const { return true; }
 
-std::vector<App::DocumentObject*> ViewProviderFace::claimChildren() const
-{
-    return std::vector<App::DocumentObject*>(static_cast<Part::Face*>(getObject())->Sources.getValues());
-}
-
-bool ViewProviderFace::canDragObjects() const
-{
-    return true;
-}
-
-bool ViewProviderFace::canDragObject(App::DocumentObject* obj) const
+bool ViewProviderFace::canDragObject(App::DocumentObject *obj) const
 {
     (void)obj;
     // return Part::Feature::hasShapeOwner(obj);
     return true;
 }
 
-void ViewProviderFace::dragObject(App::DocumentObject* obj)
+void ViewProviderFace::dragObject(App::DocumentObject *obj)
 {
-    Part::Face* face = static_cast<Part::Face*>(getObject());
-    std::vector<App::DocumentObject*> sources = face->Sources.getValues();
-    for (std::vector<App::DocumentObject*>::iterator it = sources.begin(); it != sources.end(); ++it) {
+    Part::Face *face = static_cast<Part::Face *>(getObject());
+    std::vector<App::DocumentObject *> sources = face->Sources.getValues();
+    for (std::vector<App::DocumentObject *>::iterator it = sources.begin(); it != sources.end();
+         ++it) {
         if (*it == obj) {
             sources.erase(it);
             face->Sources.setValues(sources);
@@ -102,20 +91,14 @@ void ViewProviderFace::dragObject(App::DocumentObject* obj)
     }
 }
 
-bool ViewProviderFace::canDropObjects() const
-{
-    return true;
-}
+bool ViewProviderFace::canDropObjects() const { return true; }
 
-bool ViewProviderFace::canDropObject(App::DocumentObject* obj) const
-{
-    return canDragObject(obj);
-}
+bool ViewProviderFace::canDropObject(App::DocumentObject *obj) const { return canDragObject(obj); }
 
-void ViewProviderFace::dropObject(App::DocumentObject* obj)
+void ViewProviderFace::dropObject(App::DocumentObject *obj)
 {
-    Part::Face* face = static_cast<Part::Face*>(getObject());
-    std::vector<App::DocumentObject*> sources = face->Sources.getValues();
+    Part::Face *face = static_cast<Part::Face *>(getObject());
+    std::vector<App::DocumentObject *> sources = face->Sources.getValues();
     sources.push_back(obj);
     face->Sources.setValues(sources);
 }

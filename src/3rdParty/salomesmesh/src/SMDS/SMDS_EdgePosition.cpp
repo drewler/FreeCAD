@@ -33,35 +33,35 @@ using namespace std;
 
 //=======================================================================
 //function : SMDS_EdgePosition
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-SMDS_EdgePosition::SMDS_EdgePosition(const double aUParam): myUParameter(aUParam)
+SMDS_EdgePosition::SMDS_EdgePosition(const double aUParam) : myUParameter(aUParam)
 {
-  //MESSAGE("********************************* SMDS_EdgePosition " << myUParameter);
+    //MESSAGE("********************************* SMDS_EdgePosition " << myUParameter);
 }
 
 /**
 */
 SMDS_TypeOfPosition SMDS_EdgePosition::GetTypeOfPosition() const
 {
-  //MESSAGE("###################################### SMDS_EdgePosition::GetTypeOfPosition");
-        return SMDS_TOP_EDGE;
+    //MESSAGE("###################################### SMDS_EdgePosition::GetTypeOfPosition");
+    return SMDS_TOP_EDGE;
 }
 
 void SMDS_EdgePosition::SetUParameter(double aUparam)
 {
-  //MESSAGE("############################### SMDS_EdgePosition::SetUParameter " << aUparam);
-        myUParameter = aUparam;
+    //MESSAGE("############################### SMDS_EdgePosition::SetUParameter " << aUparam);
+    myUParameter = aUparam;
 }
 
 //=======================================================================
 //function : GetUParameter
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-double SMDS_EdgePosition::GetUParameter() const 
+double SMDS_EdgePosition::GetUParameter() const
 {
-  //MESSAGE("########################## SMDS_EdgePosition::GetUParameter " << myUParameter);
-        return myUParameter;
+    //MESSAGE("########################## SMDS_EdgePosition::GetUParameter " << myUParameter);
+    return myUParameter;
 }

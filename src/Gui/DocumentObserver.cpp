@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #endif
 
 #include <functional>
@@ -40,67 +40,40 @@ using namespace Gui;
 namespace sp = std::placeholders;
 
 
-DocumentT::DocumentT()
-{
-}
+DocumentT::DocumentT() {}
 
-DocumentT::DocumentT(Document* doc)
-{
-    document = doc->getDocument()->getName();
-}
+DocumentT::DocumentT(Document *doc) { document = doc->getDocument()->getName(); }
 
-DocumentT::DocumentT(const std::string& name)
-{
-    document = name;
-}
+DocumentT::DocumentT(const std::string &name) { document = name; }
 
-DocumentT::DocumentT(const DocumentT& doc)
+DocumentT::DocumentT(const DocumentT &doc) { document = doc.document; }
+
+DocumentT::~DocumentT() {}
+
+void DocumentT::operator=(const DocumentT &doc)
 {
+    if (this == &doc) return;
     document = doc.document;
 }
 
-DocumentT::~DocumentT()
-{
-}
+void DocumentT::operator=(const Document *doc) { document = doc->getDocument()->getName(); }
 
-void DocumentT::operator=(const DocumentT& doc)
-{
-    if (this == &doc)
-        return;
-    document = doc.document;
-}
+void DocumentT::operator=(const std::string &name) { document = name; }
 
-void DocumentT::operator=(const Document* doc)
-{
-    document = doc->getDocument()->getName();
-}
-
-void DocumentT::operator=(const std::string& name)
-{
-    document = name;
-}
-
-Document* DocumentT::getDocument() const
+Document *DocumentT::getDocument() const
 {
     return Application::Instance->getDocument(document.c_str());
 }
 
-std::string DocumentT::getDocumentName() const
-{
-    return document;
-}
+std::string DocumentT::getDocumentName() const { return document; }
 
 std::string DocumentT::getGuiDocumentPython() const
 {
     std::stringstream str;
-    Document* doc = Application::Instance->activeDocument();
-    if (doc && document == doc->getDocument()->getName()) {
-        str << "Gui.ActiveDocument";
-    }
+    Document *doc = Application::Instance->activeDocument();
+    if (doc && document == doc->getDocument()->getName()) { str << "Gui.ActiveDocument"; }
     else {
-        str << "Gui.getDocument(\""
-            << document
-            << "\")";
+        str << "Gui.getDocument(\"" << document << "\")";
     }
     return str.str();
 }
@@ -108,62 +81,43 @@ std::string DocumentT::getGuiDocumentPython() const
 std::string DocumentT::getAppDocumentPython() const
 {
     std::stringstream str;
-    Document* doc = Application::Instance->activeDocument();
-    if (doc && document == doc->getDocument()->getName()) {
-        str << "App.ActiveDocument";
-    }
+    Document *doc = Application::Instance->activeDocument();
+    if (doc && document == doc->getDocument()->getName()) { str << "App.ActiveDocument"; }
     else {
-        str << "App.getDocument(\""
-            << document
-            << "\")";
+        str << "App.getDocument(\"" << document << "\")";
     }
     return str.str();
 }
 
 // -----------------------------------------------------------------------------
 
-ViewProviderT::ViewProviderT()
-{
-}
+ViewProviderT::ViewProviderT() {}
 
-ViewProviderT::ViewProviderT(const ViewProviderT& other)
-{
-    *this = other;
-}
+ViewProviderT::ViewProviderT(const ViewProviderT &other) { *this = other; }
 
-ViewProviderT::ViewProviderT(ViewProviderT &&other)
-{
-    *this = std::move(other);
-}
+ViewProviderT::ViewProviderT(ViewProviderT &&other) { *this = std::move(other); }
 
-ViewProviderT::ViewProviderT(const ViewProviderDocumentObject* obj)
-{
-    *this = obj;
-}
+ViewProviderT::ViewProviderT(const ViewProviderDocumentObject *obj) { *this = obj; }
 
-ViewProviderT::~ViewProviderT()
-{
-}
+ViewProviderT::~ViewProviderT() {}
 
-ViewProviderT & ViewProviderT::operator=(const ViewProviderT& obj)
+ViewProviderT &ViewProviderT::operator=(const ViewProviderT &obj)
 {
-    if (this == &obj)
-        return *this;
+    if (this == &obj) return *this;
     object = obj.object;
     document = obj.document;
     return *this;
 }
 
-ViewProviderT &ViewProviderT::operator=(ViewProviderT&& obj)
+ViewProviderT &ViewProviderT::operator=(ViewProviderT &&obj)
 {
-    if (this == &obj)
-        return *this;
+    if (this == &obj) return *this;
     object = std::move(obj.object);
     document = std::move(obj.document);
     return *this;
 }
 
-void ViewProviderT::operator=(const ViewProviderDocumentObject* obj)
+void ViewProviderT::operator=(const ViewProviderDocumentObject *obj)
 {
     if (!obj) {
         object.clear();
@@ -175,20 +129,17 @@ void ViewProviderT::operator=(const ViewProviderDocumentObject* obj)
     }
 }
 
-bool ViewProviderT::operator==(const ViewProviderT &other) const {
-    return document == other.document
-        && object == other.object;
+bool ViewProviderT::operator==(const ViewProviderT &other) const
+{
+    return document == other.document && object == other.object;
 }
 
-Document* ViewProviderT::getDocument() const
+Document *ViewProviderT::getDocument() const
 {
     return Application::Instance->getDocument(document.c_str());
 }
 
-const std::string& ViewProviderT::getDocumentName() const
-{
-    return document;
-}
+const std::string &ViewProviderT::getDocumentName() const { return document; }
 
 std::string ViewProviderT::getGuiDocumentPython() const
 {
@@ -202,32 +153,26 @@ std::string ViewProviderT::getAppDocumentPython() const
     return doct.getAppDocumentPython();
 }
 
-ViewProviderDocumentObject* ViewProviderT::getViewProvider() const
+ViewProviderDocumentObject *ViewProviderT::getViewProvider() const
 {
-    ViewProviderDocumentObject* obj = nullptr;
-    Document* doc = getDocument();
+    ViewProviderDocumentObject *obj = nullptr;
+    Document *doc = getDocument();
     if (doc) {
-        obj = dynamic_cast<ViewProviderDocumentObject*>(doc->getViewProviderByName(object.c_str()));
+        obj =
+            dynamic_cast<ViewProviderDocumentObject *>(doc->getViewProviderByName(object.c_str()));
     }
     return obj;
 }
 
-const std::string& ViewProviderT::getObjectName() const
-{
-    return object;
-}
+const std::string &ViewProviderT::getObjectName() const { return object; }
 
 std::string ViewProviderT::getObjectPython() const
 {
     std::stringstream str;
-    Document* doc = Application::Instance->activeDocument();
-    if (doc && document == doc->getDocument()->getName()) {
-        str << "Gui.ActiveDocument.";
-    }
+    Document *doc = Application::Instance->activeDocument();
+    if (doc && document == doc->getDocument()->getName()) { str << "Gui.ActiveDocument."; }
     else {
-        str << "Gui.getDocument(\""
-            << document
-            << "\").";
+        str << "Gui.getDocument(\"" << document << "\").";
     }
 
     str << object;
@@ -236,114 +181,96 @@ std::string ViewProviderT::getObjectPython() const
 
 // -----------------------------------------------------------------------------
 
-class DocumentWeakPtrT::Private {
+class DocumentWeakPtrT::Private
+{
 public:
-    Private(Gui::Document* doc) : _document(doc) {
+    Private(Gui::Document *doc) : _document(doc)
+    {
         if (doc) {
-            connectApplicationDeletedDocument = doc->signalDeleteDocument.connect(std::bind
-                (&Private::deletedDocument, this, sp::_1));
+            connectApplicationDeletedDocument = doc->signalDeleteDocument.connect(
+                std::bind(&Private::deletedDocument, this, sp::_1));
         }
     }
 
-    void deletedDocument(const Gui::Document& doc) {
-        if (_document == &doc)
-            reset();
+    void deletedDocument(const Gui::Document &doc)
+    {
+        if (_document == &doc) reset();
     }
-    void reset() {
+    void reset()
+    {
         connectApplicationDeletedDocument.disconnect();
         _document = nullptr;
     }
 
-    Gui::Document* _document;
+    Gui::Document *_document;
     using Connection = boost::signals2::scoped_connection;
     Connection connectApplicationDeletedDocument;
 };
 
-DocumentWeakPtrT::DocumentWeakPtrT(Gui::Document* doc) noexcept
-  : d(new Private(doc))
-{
-}
+DocumentWeakPtrT::DocumentWeakPtrT(Gui::Document *doc) noexcept : d(new Private(doc)) {}
 
-DocumentWeakPtrT::~DocumentWeakPtrT()
-{
-}
+DocumentWeakPtrT::~DocumentWeakPtrT() {}
 
-void DocumentWeakPtrT::reset() noexcept
-{
-    d->reset();
-}
+void DocumentWeakPtrT::reset() noexcept { d->reset(); }
 
-bool DocumentWeakPtrT::expired() const noexcept
-{
-    return (d->_document == nullptr);
-}
+bool DocumentWeakPtrT::expired() const noexcept { return (d->_document == nullptr); }
 
-Gui::Document* DocumentWeakPtrT::operator*() const noexcept
-{
-    return d->_document;
-}
+Gui::Document *DocumentWeakPtrT::operator*() const noexcept { return d->_document; }
 
-Gui::Document* DocumentWeakPtrT::operator->() const noexcept
-{
-    return d->_document;
-}
+Gui::Document *DocumentWeakPtrT::operator->() const noexcept { return d->_document; }
 
 // -----------------------------------------------------------------------------
 
-class ViewProviderWeakPtrT::Private {
+class ViewProviderWeakPtrT::Private
+{
 public:
-    Private(ViewProviderDocumentObject* obj) : object(obj), indocument(false) {
-        set(obj);
-    }
-    void deletedDocument(const Gui::Document& doc) {
+    Private(ViewProviderDocumentObject *obj) : object(obj), indocument(false) { set(obj); }
+    void deletedDocument(const Gui::Document &doc)
+    {
         // When deleting document then there is no way to undo it
-        if (object && object->getDocument() == &doc) {
-            reset();
-        }
+        if (object && object->getDocument() == &doc) { reset(); }
     }
-    void createdObject(const Gui::ViewProvider& obj) noexcept {
+    void createdObject(const Gui::ViewProvider &obj) noexcept
+    {
         // When undoing the removal
-        if (object == &obj) {
-            indocument = true;
-        }
+        if (object == &obj) { indocument = true; }
     }
-    void deletedObject(const Gui::ViewProvider& obj) noexcept {
-        if (object == &obj) {
-            indocument = false;
-        }
+    void deletedObject(const Gui::ViewProvider &obj) noexcept
+    {
+        if (object == &obj) { indocument = false; }
     }
-    void reset() {
+    void reset()
+    {
         connectApplicationDeletedDocument.disconnect();
         connectDocumentCreatedObject.disconnect();
         connectDocumentDeletedObject.disconnect();
         object = nullptr;
         indocument = false;
     }
-    void set(ViewProviderDocumentObject* obj) {
+    void set(ViewProviderDocumentObject *obj)
+    {
         object = obj;
         try {
             if (obj) {
-                Gui::Document* doc = obj->getDocument();
+                Gui::Document *doc = obj->getDocument();
                 indocument = true;
-                connectApplicationDeletedDocument = doc->signalDeleteDocument.connect(std::bind
-                    (&Private::deletedDocument, this, sp::_1));
-                connectDocumentCreatedObject = doc->signalNewObject.connect(std::bind
-                    (&Private::createdObject, this, sp::_1));
-                connectDocumentDeletedObject = doc->signalDeletedObject.connect(std::bind
-                    (&Private::deletedObject, this, sp::_1));
+                connectApplicationDeletedDocument = doc->signalDeleteDocument.connect(
+                    std::bind(&Private::deletedDocument, this, sp::_1));
+                connectDocumentCreatedObject =
+                    doc->signalNewObject.connect(std::bind(&Private::createdObject, this, sp::_1));
+                connectDocumentDeletedObject = doc->signalDeletedObject.connect(
+                    std::bind(&Private::deletedObject, this, sp::_1));
             }
         }
-        catch (const Base::RuntimeError&) {
+        catch (const Base::RuntimeError &) {
             // getDocument() may raise an exception
             object = nullptr;
             indocument = false;
         }
     }
-    ViewProviderDocumentObject* get() const {
-        return indocument ? object : nullptr;
-    }
+    ViewProviderDocumentObject *get() const { return indocument ? object : nullptr; }
 
-    Gui::ViewProviderDocumentObject* object;
+    Gui::ViewProviderDocumentObject *object;
     bool indocument;
     using Connection = boost::signals2::scoped_connection;
     Connection connectApplicationDeletedDocument;
@@ -351,100 +278,71 @@ public:
     Connection connectDocumentDeletedObject;
 };
 
-ViewProviderWeakPtrT::ViewProviderWeakPtrT(ViewProviderDocumentObject* obj)
-  : d(new Private(obj))
-{
-}
+ViewProviderWeakPtrT::ViewProviderWeakPtrT(ViewProviderDocumentObject *obj) : d(new Private(obj)) {}
 
-ViewProviderWeakPtrT::~ViewProviderWeakPtrT()
-{
+ViewProviderWeakPtrT::~ViewProviderWeakPtrT() {}
 
-}
+ViewProviderDocumentObject *ViewProviderWeakPtrT::_get() const noexcept { return d->get(); }
 
-ViewProviderDocumentObject* ViewProviderWeakPtrT::_get() const noexcept
-{
-    return d->get();
-}
+void ViewProviderWeakPtrT::reset() { d->reset(); }
 
-void ViewProviderWeakPtrT::reset()
-{
-    d->reset();
-}
+bool ViewProviderWeakPtrT::expired() const noexcept { return !d->indocument; }
 
-bool ViewProviderWeakPtrT::expired() const noexcept
-{
-    return !d->indocument;
-}
-
-ViewProviderWeakPtrT& ViewProviderWeakPtrT::operator= (ViewProviderDocumentObject* p)
+ViewProviderWeakPtrT &ViewProviderWeakPtrT::operator=(ViewProviderDocumentObject *p)
 {
     d->reset();
     d->set(p);
     return *this;
 }
 
-ViewProviderDocumentObject* ViewProviderWeakPtrT::operator*() const noexcept
-{
-    return d->get();
-}
+ViewProviderDocumentObject *ViewProviderWeakPtrT::operator*() const noexcept { return d->get(); }
 
-ViewProviderDocumentObject* ViewProviderWeakPtrT::operator->() const noexcept
-{
-    return d->get();
-}
+ViewProviderDocumentObject *ViewProviderWeakPtrT::operator->() const noexcept { return d->get(); }
 
-bool ViewProviderWeakPtrT::operator== (const ViewProviderWeakPtrT& p) const noexcept
+bool ViewProviderWeakPtrT::operator==(const ViewProviderWeakPtrT &p) const noexcept
 {
     return d->get() == p.d->get();
 }
 
-bool ViewProviderWeakPtrT::operator!= (const ViewProviderWeakPtrT& p) const noexcept
+bool ViewProviderWeakPtrT::operator!=(const ViewProviderWeakPtrT &p) const noexcept
 {
     return d->get() != p.d->get();
 }
 
 // -----------------------------------------------------------------------------
 
-DocumentObserver::DocumentObserver()
-{
-}
+DocumentObserver::DocumentObserver() {}
 
-DocumentObserver::DocumentObserver(Document* doc)
-{
-    attachDocument(doc);
-}
+DocumentObserver::DocumentObserver(Document *doc) { attachDocument(doc); }
 
-DocumentObserver::~DocumentObserver()
-{
-}
+DocumentObserver::~DocumentObserver() {}
 
-void DocumentObserver::attachDocument(Document* doc)
+void DocumentObserver::attachDocument(Document *doc)
 {
     detachDocument();
 
-    if (!doc)
-        return;
+    if (!doc) return;
 
-    this->connectDocumentCreatedObject = doc->signalNewObject.connect(std::bind
-        (&DocumentObserver::slotCreatedObject, this, sp::_1));
-    this->connectDocumentDeletedObject = doc->signalDeletedObject.connect(std::bind
-        (&DocumentObserver::slotDeletedObject, this, sp::_1));
-    this->connectDocumentChangedObject = doc->signalChangedObject.connect(std::bind
-        (&DocumentObserver::slotChangedObject, this, sp::_1, sp::_2));
-    this->connectDocumentRelabelObject = doc->signalRelabelObject.connect(std::bind
-        (&DocumentObserver::slotRelabelObject, this, sp::_1));
-    this->connectDocumentActivateObject = doc->signalActivatedObject.connect(std::bind
-        (&DocumentObserver::slotActivatedObject, this, sp::_1));
-    this->connectDocumentEditObject = doc->signalInEdit.connect(std::bind
-        (&DocumentObserver::slotEnterEditObject, this, sp::_1));
-    this->connectDocumentResetObject = doc->signalResetEdit.connect(std::bind
-        (&DocumentObserver::slotResetEditObject, this, sp::_1));
-    this->connectDocumentUndo = doc->signalUndoDocument.connect(std::bind
-        (&DocumentObserver::slotUndoDocument, this, sp::_1));
-    this->connectDocumentRedo = doc->signalRedoDocument.connect(std::bind
-        (&DocumentObserver::slotRedoDocument, this, sp::_1));
-    this->connectDocumentDelete = doc->signalDeleteDocument.connect(std::bind
-        (&DocumentObserver::slotDeleteDocument, this, sp::_1));
+    this->connectDocumentCreatedObject =
+        doc->signalNewObject.connect(std::bind(&DocumentObserver::slotCreatedObject, this, sp::_1));
+    this->connectDocumentDeletedObject = doc->signalDeletedObject.connect(
+        std::bind(&DocumentObserver::slotDeletedObject, this, sp::_1));
+    this->connectDocumentChangedObject = doc->signalChangedObject.connect(
+        std::bind(&DocumentObserver::slotChangedObject, this, sp::_1, sp::_2));
+    this->connectDocumentRelabelObject = doc->signalRelabelObject.connect(
+        std::bind(&DocumentObserver::slotRelabelObject, this, sp::_1));
+    this->connectDocumentActivateObject = doc->signalActivatedObject.connect(
+        std::bind(&DocumentObserver::slotActivatedObject, this, sp::_1));
+    this->connectDocumentEditObject =
+        doc->signalInEdit.connect(std::bind(&DocumentObserver::slotEnterEditObject, this, sp::_1));
+    this->connectDocumentResetObject = doc->signalResetEdit.connect(
+        std::bind(&DocumentObserver::slotResetEditObject, this, sp::_1));
+    this->connectDocumentUndo = doc->signalUndoDocument.connect(
+        std::bind(&DocumentObserver::slotUndoDocument, this, sp::_1));
+    this->connectDocumentRedo = doc->signalRedoDocument.connect(
+        std::bind(&DocumentObserver::slotRedoDocument, this, sp::_1));
+    this->connectDocumentDelete = doc->signalDeleteDocument.connect(
+        std::bind(&DocumentObserver::slotDeleteDocument, this, sp::_1));
 }
 
 void DocumentObserver::detachDocument()
@@ -461,43 +359,24 @@ void DocumentObserver::detachDocument()
     this->connectDocumentDelete.disconnect();
 }
 
-void DocumentObserver::slotUndoDocument(const Document& /*Doc*/)
-{
-}
+void DocumentObserver::slotUndoDocument(const Document & /*Doc*/) {}
 
-void DocumentObserver::slotRedoDocument(const Document& /*Doc*/)
-{
-}
+void DocumentObserver::slotRedoDocument(const Document & /*Doc*/) {}
 
-void DocumentObserver::slotDeleteDocument(const Document& /*Doc*/)
-{
-}
+void DocumentObserver::slotDeleteDocument(const Document & /*Doc*/) {}
 
-void DocumentObserver::slotCreatedObject(const ViewProviderDocumentObject& /*Obj*/)
-{
-}
+void DocumentObserver::slotCreatedObject(const ViewProviderDocumentObject & /*Obj*/) {}
 
-void DocumentObserver::slotDeletedObject(const ViewProviderDocumentObject& /*Obj*/)
-{
-}
+void DocumentObserver::slotDeletedObject(const ViewProviderDocumentObject & /*Obj*/) {}
 
-void DocumentObserver::slotChangedObject(const ViewProviderDocumentObject& /*Obj*/,
-                                         const App::Property& /*Prop*/)
-{
-}
+void DocumentObserver::slotChangedObject(const ViewProviderDocumentObject & /*Obj*/,
+                                         const App::Property & /*Prop*/)
+{}
 
-void DocumentObserver::slotRelabelObject(const ViewProviderDocumentObject& /*Obj*/)
-{
-}
+void DocumentObserver::slotRelabelObject(const ViewProviderDocumentObject & /*Obj*/) {}
 
-void DocumentObserver::slotActivatedObject(const ViewProviderDocumentObject& /*Obj*/)
-{
-}
+void DocumentObserver::slotActivatedObject(const ViewProviderDocumentObject & /*Obj*/) {}
 
-void DocumentObserver::slotEnterEditObject(const ViewProviderDocumentObject& /*Obj*/)
-{
-}
+void DocumentObserver::slotEnterEditObject(const ViewProviderDocumentObject & /*Obj*/) {}
 
-void DocumentObserver::slotResetEditObject(const ViewProviderDocumentObject& /*Obj*/)
-{
-}
+void DocumentObserver::slotResetEditObject(const ViewProviderDocumentObject & /*Obj*/) {}

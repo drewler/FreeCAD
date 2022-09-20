@@ -46,23 +46,23 @@ class TopoDS_TShape;
  * S = S0 * f(L/Lmin) where f(x) = 1 + (2/Pi * 7 * atan(x/5) )
  */
 
-class STDMESHERS_EXPORT StdMeshers_AutomaticLength:public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_AutomaticLength: public SMESH_Hypothesis
 {
 public:
-  StdMeshers_AutomaticLength(int hypId, int studyId, SMESH_Gen * gen);
-  virtual ~ StdMeshers_AutomaticLength();
+    StdMeshers_AutomaticLength(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_AutomaticLength();
 
-  /*!
+    /*!
    * \brief Computes segment for a given edge
    */
-  double GetLength(const SMESH_Mesh* aMesh, const TopoDS_Shape& anEdge);
+    double GetLength(const SMESH_Mesh *aMesh, const TopoDS_Shape &anEdge);
 
-  /*!
+    /*!
    * \brief Computes segment length for an edge of given length
    */
-  double GetLength(const SMESH_Mesh* aMesh, const double edgeLength);
+    double GetLength(const SMESH_Mesh *aMesh, const double edgeLength);
 
-  /*!
+    /*!
    * \brief Set Fineness
     * \param theFineness - The Fineness value [0.0-1.0],
     *                        0 - coarse mesh
@@ -72,37 +72,37 @@ public:
    * The "Initial Number of Elements on the Shortest Edge" (S0)
    * is divided by (0.5 + 4.5 x theFineness)
    */
-  void SetFineness(double theFineness);
+    void SetFineness(double theFineness);
 
-  /*!
+    /*!
    * \brief Return mesh Fineness
     * \retval double - Fineness value [0.0-1.0]
    */
-  double GetFineness() const { return _fineness; }
+    double GetFineness() const { return _fineness; }
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  friend std::ostream & operator <<(std::ostream & save, StdMeshers_AutomaticLength & hyp);
-  friend std::istream & operator >>(std::istream & load, StdMeshers_AutomaticLength & hyp);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    friend std::ostream &operator<<(std::ostream &save, StdMeshers_AutomaticLength &hyp);
+    friend std::istream &operator>>(std::istream &load, StdMeshers_AutomaticLength &hyp);
 
-  /*!
+    /*!
    * \brief Initialize Fineness by the mesh built on the geometry
     * \param theMesh - the built mesh
     * \param theShape - the geometry of interest
     * \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
 protected:
-  std::map<const TopoDS_TShape*, double> _TShapeToLength;
-  const SMESH_Mesh* _mesh;
-  double _fineness, _S0, _minLen;
+    std::map<const TopoDS_TShape *, double> _TShapeToLength;
+    const SMESH_Mesh *_mesh;
+    double _fineness, _S0, _minLen;
 };
 
 #endif

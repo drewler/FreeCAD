@@ -26,14 +26,17 @@
 
 #include "ViewProviderTransformed.h"
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderScaled : public ViewProviderTransformed
+class PartDesignGuiExport ViewProviderScaled: public ViewProviderTransformed
 {
     Q_DECLARE_TR_FUNCTIONS(PartDesignGui::ViewProviderScaled)
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderScaled);
+
 public:
-    ViewProviderScaled() {
+    ViewProviderScaled()
+    {
         featureName = std::string("Scaled");
         menuName = tr("Scaled parameters");
         sPixmap = "PartDesign_Scaled.svg";
@@ -42,7 +45,6 @@ public:
 protected:
     /// Returns a newly create dialog for the part to be placed in the task view
     TaskDlgFeatureParameters *getEditDialog() override;
-
 };
 
 

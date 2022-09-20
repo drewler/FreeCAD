@@ -9,48 +9,48 @@
 
 #include "deflateoutputstreambuf.h"
 
-namespace zipios {
+namespace zipios
+{
 
 /** GZIPOutputStreambuf is a zip output streambuf filter.  */
-class BaseExport GZIPOutputStreambuf : public DeflateOutputStreambuf {
+class BaseExport GZIPOutputStreambuf: public DeflateOutputStreambuf
+{
 public:
-
-  /** GZIPOutputStreambuf constructor. A newly constructed GZIPOutputStreambuf
+    /** GZIPOutputStreambuf constructor. A newly constructed GZIPOutputStreambuf
       is ready to accept data.
       @param outbuf the streambuf to use for output.
       @param del_outbuf if true is specified outbuf will be deleted, when 
       the GZIPOutputStreambuf is destructed.  */
-  explicit GZIPOutputStreambuf( streambuf *outbuf, bool del_outbuf = false ) ;
+    explicit GZIPOutputStreambuf(streambuf *outbuf, bool del_outbuf = false);
 
-  void setFilename( const string &filename );
-  void setComment( const string &comment );
+    void setFilename(const string &filename);
+    void setComment(const string &comment);
 
-  /** Calls finish. */
-  void close() ;
+    /** Calls finish. */
+    void close();
 
-  /** Finishes the compression. */
-  void finish() ;
+    /** Finishes the compression. */
+    void finish();
 
-  /** Destructor. */
-  virtual ~GZIPOutputStreambuf() ;
+    /** Destructor. */
+    virtual ~GZIPOutputStreambuf();
 
 protected:
-  virtual int overflow( int c = EOF ) ;
-  virtual int sync() ;
+    virtual int overflow(int c = EOF);
+    virtual int sync();
 
 private:
-  void writeHeader();
-  void writeTrailer();
-  void writeInt(uint32 i);
-  
-  std::string _filename;
-  std::string _comment;
-  bool _open ;
+    void writeHeader();
+    void writeTrailer();
+    void writeInt(uint32 i);
+
+    std::string _filename;
+    std::string _comment;
+    bool _open;
 };
 
 
-} // namespace
-
+} // namespace zipios
 
 
 #endif

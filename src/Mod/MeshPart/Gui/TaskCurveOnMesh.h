@@ -27,7 +27,8 @@
 #include <Gui/TaskView/TaskView.h>
 #include <QPointer>
 
-namespace Gui {
+namespace Gui
+{
 class View3DInventor;
 }
 
@@ -37,12 +38,12 @@ namespace MeshPartGui
 class Ui_TaskCurveOnMesh;
 class CurveOnMeshHandler;
 
-class CurveOnMeshWidget : public QWidget
+class CurveOnMeshWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit CurveOnMeshWidget(Gui::View3DInventor* view, QWidget* parent=nullptr);
+    explicit CurveOnMeshWidget(Gui::View3DInventor *view, QWidget *parent = nullptr);
     ~CurveOnMeshWidget() override;
 
     void reject();
@@ -55,28 +56,30 @@ private Q_SLOTS:
     void on_startButton_clicked();
 
 private:
-    Ui_TaskCurveOnMesh* ui;
-    CurveOnMeshHandler* myCurveHandler;
+    Ui_TaskCurveOnMesh *ui;
+    CurveOnMeshHandler *myCurveHandler;
     QPointer<Gui::View3DInventor> myView;
 };
 
-class TaskCurveOnMesh : public Gui::TaskView::TaskDialog
+class TaskCurveOnMesh: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskCurveOnMesh(Gui::View3DInventor* view);
+    explicit TaskCurveOnMesh(Gui::View3DInventor *view);
     ~TaskCurveOnMesh() override;
 
 public:
     bool reject() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Close; }
+    {
+        return QDialogButtonBox::Close;
+    }
 
 private:
-    CurveOnMeshWidget* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    CurveOnMeshWidget *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace MeshPartGui

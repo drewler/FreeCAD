@@ -31,18 +31,17 @@ class SMESHDS_Document;
 
 class MESHDRIVER_EXPORT Driver_Document
 {
- public:
-  Driver_Document();
-  virtual ~Driver_Document(){}
+public:
+    Driver_Document();
+    virtual ~Driver_Document() {}
 
-  virtual void Perform() = 0;
-  void SetFile(const std::string& theFileName);
-  void SetDocument(SMESHDS_Document *theDocument);
+    virtual void Perform() = 0;
+    void SetFile(const std::string &theFileName);
+    void SetDocument(SMESHDS_Document *theDocument);
 
- protected:
-  SMESHDS_Document * myDocument;
-  std::string myFile;
-
+protected:
+    SMESHDS_Document *myDocument;
+    std::string myFile;
 };
 
 

@@ -29,7 +29,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Pad : public FeatureExtrude
+class PartDesignExport Pad: public FeatureExtrude
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Pad);
 
@@ -53,13 +53,11 @@ public:
       */
     App::DocumentObjectExecReturn *execute() override;
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
-        return "PartDesignGui::ViewProviderPad";
-    }
+    const char *getViewProviderName() const override { return "PartDesignGui::ViewProviderPad"; }
     //@}
 
 private:
-    static const char* TypeEnums[];
+    static const char *TypeEnums[];
 };
 
 } //namespace PartDesign

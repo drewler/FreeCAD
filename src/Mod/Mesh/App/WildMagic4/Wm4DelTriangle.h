@@ -23,18 +23,17 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM DelTriangle
+template<class Real> class WM4_FOUNDATION_ITEM DelTriangle
 {
 public:
-    DelTriangle (int iV0, int iV1, int iV2);
+    DelTriangle(int iV0, int iV1, int iV2);
 
-    bool IsInsertionComponent (int i, DelTriangle* pkAdj,
-        const Query2<Real>* pkQuery, const int* aiSupervertex);
-    int DetachFrom (int iAdj, DelTriangle* pkAdj);
+    bool IsInsertionComponent(int i, DelTriangle *pkAdj, const Query2<Real> *pkQuery,
+                              const int *aiSupervertex);
+    int DetachFrom(int iAdj, DelTriangle *pkAdj);
 
     int V[3];
-    DelTriangle* A[3];
+    DelTriangle *A[3];
     int Time;
     bool IsComponent;
     bool OnStack;
@@ -43,6 +42,6 @@ public:
 typedef DelTriangle<float> DelTrianglef;
 typedef DelTriangle<double> DelTriangled;
 
-}
+} // namespace Wm4
 
 #endif

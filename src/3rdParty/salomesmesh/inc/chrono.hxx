@@ -27,45 +27,47 @@
 #include <iostream>
 #include <ctime>
 
-typedef struct acnt
-{
-  char*  _ctrNames;
-  int    _ctrLines;
-  int    _ctrOccur;
-  double _ctrCumul;
+typedef struct acnt {
+    char *_ctrNames;
+    int _ctrLines;
+    int _ctrOccur;
+    double _ctrCumul;
 } cntStruct;
 
 class SMDS_EXPORT counters
 {
 public:
-  static cntStruct *_ctrs;
-  counters(int nb);
-  ~counters();
-  static void stats();
+    static cntStruct *_ctrs;
+    counters(int nb);
+    ~counters();
+    static void stats();
+
 protected:
-  static int _nbChrono;
+    static int _nbChrono;
 };
 
 class SMDS_EXPORT chrono
 {
 public:
-  chrono(int i);
-  ~chrono();
-  void stop();
+    chrono(int i);
+    ~chrono();
+    void stop();
+
 protected:
-  bool _run;
-  int _ctr;
-  clock_t _start, _end;
+    bool _run;
+    int _ctr;
+    clock_t _start, _end;
 };
 
 #ifdef CHRONODEF
-#define CHRONO(i) counters::_ctrs[i]._ctrNames = (char *)__FILE__; \
-  counters::_ctrs[i]._ctrLines = __LINE__; \
-  chrono aChrono##i(i);
+#define CHRONO(i)                                                                                  \
+    counters::_ctrs[i]._ctrNames = (char *)__FILE__;                                               \
+    counters::_ctrs[i]._ctrLines = __LINE__;                                                       \
+    chrono aChrono##i(i);
 
 #define CHRONOSTOP(i) aChrono##i.stop();
 
-#else  // CHRONODEF
+#else // CHRONODEF
 
 #define CHRONO(i)
 #define CHRONOSTOP(i)

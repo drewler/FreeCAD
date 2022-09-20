@@ -42,22 +42,16 @@ size_t Memory::ms_uiNumDeleteCalls = 0;
 size_t Memory::ms_uiMaxAllowedBytes = 0;
 size_t Memory::ms_uiNumBlocks = 0;
 size_t Memory::ms_uiNumBytes = 0;
-Memory::Block* Memory::ms_pkHead = 0;
-Memory::Block* Memory::ms_pkTail = 0;
+Memory::Block *Memory::ms_pkHead = 0;
+Memory::Block *Memory::ms_pkTail = 0;
 bool Memory::ms_bTrackSizes = false;
 size_t Memory::ms_uiMaxAllocatedBytes = 0;
 size_t Memory::ms_uiMaxBlockSize = 0;
-size_t Memory::ms_auiHistogram[32] =
-{
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0
-};
+size_t Memory::ms_auiHistogram[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 //----------------------------------------------------------------------------
-void* Memory::Allocate (size_t uiSize, char* acFile, unsigned int uiLine,
-    bool bIsArray)
+void *Memory::Allocate(size_t uiSize, char *acFile, unsigned int uiLine, bool bIsArray)
 {
     ms_uiNumNewCalls++;
 
@@ -68,10 +62,10 @@ void* Memory::Allocate (size_t uiSize, char* acFile, unsigned int uiLine,
 
     // Allocate additional storage for the block header information.
     size_t uiExtendedSize = sizeof(Block) + uiSize;
-    char* pcAddr = (char*)malloc(uiExtendedSize);
+    char *pcAddr = (char *)malloc(uiExtendedSize);
 
     // Save the allocation information.
-    Block* pkBlock = (Block*)pcAddr;
+    Block *pkBlock = (Block *)pcAddr;
     pkBlock->Size = uiSize;
     pkBlock->File = acFile;
     pkBlock->Line = uiLine;
@@ -85,54 +79,38 @@ void* Memory::Allocate (size_t uiSize, char* acFile, unsigned int uiLine,
     ms_uiNumBlocks++;
     ms_uiNumBytes += uiSize;
 
-    if (ms_uiMaxAllowedBytes > 0 && ms_uiNumBytes > ms_uiMaxAllowedBytes)
-    {
+    if (ms_uiMaxAllowedBytes > 0 && ms_uiNumBytes > ms_uiMaxAllowedBytes) {
         // The allocation has exceeded the maximum number of bytes.
         assert(false);
     }
 
     // Keep track of the maximum number of bytes allocated.
-    if (ms_uiNumBytes > ms_uiMaxAllocatedBytes)
-    {
-        ms_uiMaxAllocatedBytes = ms_uiNumBytes;
-    }
+    if (ms_uiNumBytes > ms_uiMaxAllocatedBytes) { ms_uiMaxAllocatedBytes = ms_uiNumBytes; }
 
     // Keep track of the distribution of sizes for allocations.
-    if (ms_bTrackSizes)
-    {
+    if (ms_bTrackSizes) {
         // Keep track of the largest block ever allocated.
-        if (uiSize > ms_uiMaxBlockSize)
-        {
-            ms_uiMaxBlockSize = uiSize;
-        }
+        if (uiSize > ms_uiMaxBlockSize) { ms_uiMaxBlockSize = uiSize; }
 
         unsigned int uiTwoPowerI = 1;
         int i;
-        for (i = 0; i <= 30; i++, uiTwoPowerI <<= 1)
-        {
-            if (uiSize <= uiTwoPowerI)
-            {
+        for (i = 0; i <= 30; i++, uiTwoPowerI <<= 1) {
+            if (uiSize <= uiTwoPowerI) {
                 ms_auiHistogram[i]++;
                 break;
             }
         }
-        if (i == 31)
-        {
-            ms_auiHistogram[i]++;
-        }
+        if (i == 31) { ms_auiHistogram[i]++; }
     }
 
-    return (void*)pcAddr;
+    return (void *)pcAddr;
 }
 //----------------------------------------------------------------------------
-void Memory::Deallocate (char* pcAddr, bool bIsArray)
+void Memory::Deallocate(char *pcAddr, bool bIsArray)
 {
     ms_uiNumDeleteCalls++;
 
-    if (!pcAddr)
-    {
-        return;
-    }
+    if (!pcAddr) { return; }
 
     // Move the pointer to the start of the actual allocated block.
     pcAddr -= sizeof(Block);
@@ -140,7 +118,7 @@ void Memory::Deallocate (char* pcAddr, bool bIsArray)
     // Get the allocation information and remove the block.  The removal
     // only modifies the Prev and Next pointers, so the block information is
     // accessible after the call.
-    Block* pkBlock = (Block*)pcAddr;
+    Block *pkBlock = (Block *)pcAddr;
     RemoveBlock(pkBlock);
 
 #ifdef WM4_ENABLE_NEW_DELETE_MISMATCH_ASSERT
@@ -161,18 +139,16 @@ void Memory::Deallocate (char* pcAddr, bool bIsArray)
     free(pcAddr);
 }
 //----------------------------------------------------------------------------
-void Memory::InsertBlock (Block* pkBlock)
+void Memory::InsertBlock(Block *pkBlock)
 {
     // New blocks are inserted at the tail of the doubly linked list.
-    if (ms_pkTail)
-    {
+    if (ms_pkTail) {
         pkBlock->Prev = ms_pkTail;
         pkBlock->Next = 0;
         ms_pkTail->Next = pkBlock;
         ms_pkTail = pkBlock;
     }
-    else
-    {
+    else {
         pkBlock->Prev = 0;
         pkBlock->Next = 0;
         ms_pkHead = pkBlock;
@@ -180,65 +156,49 @@ void Memory::InsertBlock (Block* pkBlock)
     }
 }
 //----------------------------------------------------------------------------
-void Memory::RemoveBlock (Block* pkBlock)
+void Memory::RemoveBlock(Block *pkBlock)
 {
-    if (pkBlock->Prev)
-    {
-        pkBlock->Prev->Next = pkBlock->Next;
-    }
-    else
-    {
+    if (pkBlock->Prev) { pkBlock->Prev->Next = pkBlock->Next; }
+    else {
         ms_pkHead = pkBlock->Next;
     }
-    
-    if (pkBlock->Next)
-    {
-        pkBlock->Next->Prev = pkBlock->Prev;
-    }
-    else
-    {
+
+    if (pkBlock->Next) { pkBlock->Next->Prev = pkBlock->Prev; }
+    else {
         ms_pkTail = pkBlock->Prev;
     }
 }
 //----------------------------------------------------------------------------
-void Memory::GenerateReport (const char* acFilename)
+void Memory::GenerateReport(const char *acFilename)
 {
     std::ofstream kOStr(acFilename);
     assert(kOStr);
-    if (!kOStr)
-    {
-        return;
-    }
+    if (!kOStr) { return; }
 
     // Total calls.
-    kOStr << "Total number of 'new' calls = "
-        << (unsigned int)ms_uiNumNewCalls << std::endl;
-    kOStr << "Total number of 'delete' calls = "
-        << (unsigned int)ms_uiNumDeleteCalls << std::endl;
-    kOStr << "Maximum number of allocated bytes = "
-        << (unsigned int)ms_uiMaxAllocatedBytes << std::endl << std::endl;
+    kOStr << "Total number of 'new' calls = " << (unsigned int)ms_uiNumNewCalls << std::endl;
+    kOStr << "Total number of 'delete' calls = " << (unsigned int)ms_uiNumDeleteCalls << std::endl;
+    kOStr << "Maximum number of allocated bytes = " << (unsigned int)ms_uiMaxAllocatedBytes
+          << std::endl
+          << std::endl;
 
     // Remaining counts.
-    kOStr << "Remaining number of blocks = "
-        << (unsigned int)ms_uiNumBlocks << std::endl;
-    kOStr << "Remaining number of bytes  = "
-        << (unsigned int)ms_uiNumBytes << std::endl << std::endl;
+    kOStr << "Remaining number of blocks = " << (unsigned int)ms_uiNumBlocks << std::endl;
+    kOStr << "Remaining number of bytes  = " << (unsigned int)ms_uiNumBytes << std::endl
+          << std::endl;
 
     // Count the blocks and bytes from known and unknown sources.
     size_t uiNumKnownBlocks = 0;
     size_t uiNumKnownBytes = 0;
     size_t uiNumUnknownBlocks = 0;
     size_t uiNumUnknownBytes = 0;
-    Block* pkBlock = ms_pkHead;
-    while (pkBlock)
-    {
-        if (pkBlock->File)
-        {
+    Block *pkBlock = ms_pkHead;
+    while (pkBlock) {
+        if (pkBlock->File) {
             uiNumKnownBlocks++;
             uiNumKnownBytes += pkBlock->Size;
         }
-        else
-        {
+        else {
             uiNumUnknownBlocks++;
             uiNumUnknownBytes += pkBlock->Size;
         }
@@ -251,30 +211,26 @@ void Memory::GenerateReport (const char* acFilename)
     assert(uiNumKnownBytes + uiNumUnknownBytes == ms_uiNumBytes);
 #endif
 
-    kOStr << "Remaining number of known blocks = "
-        << (unsigned int)uiNumKnownBlocks << std::endl;
-    kOStr << "Remaining number of known bytes  = "
-        << (unsigned int)uiNumKnownBytes << std::endl << std::endl;
+    kOStr << "Remaining number of known blocks = " << (unsigned int)uiNumKnownBlocks << std::endl;
+    kOStr << "Remaining number of known bytes  = " << (unsigned int)uiNumKnownBytes << std::endl
+          << std::endl;
 
-    kOStr << "Remaining number of unknown blocks = "
-        << (unsigned int)uiNumUnknownBlocks << std::endl;
-    kOStr << "Remaining number of unknown bytes  = "
-        << (unsigned int)uiNumUnknownBytes << std::endl << std::endl;
+    kOStr << "Remaining number of unknown blocks = " << (unsigned int)uiNumUnknownBlocks
+          << std::endl;
+    kOStr << "Remaining number of unknown bytes  = " << (unsigned int)uiNumUnknownBytes << std::endl
+          << std::endl;
 
     // Report the information for each block.
     pkBlock = ms_pkHead;
     size_t uiIndex = 0;
-    while (pkBlock)
-    {
+    while (pkBlock) {
         kOStr << "block = " << (unsigned int)uiIndex << std::endl;
         kOStr << "size  = " << (unsigned int)pkBlock->Size << std::endl;
-        if (pkBlock->File)
-        {
+        if (pkBlock->File) {
             kOStr << "file  = " << pkBlock->File << std::endl;
             kOStr << "line  = " << pkBlock->Line << std::endl;
         }
-        else
-        {
+        else {
             kOStr << "file  = unknown" << std::endl;
             kOStr << "line  = unknown" << std::endl;
         }
@@ -290,44 +246,32 @@ void Memory::GenerateReport (const char* acFilename)
 #endif
 }
 //----------------------------------------------------------------------------
-void* operator new (size_t uiSize)
+void *operator new(size_t uiSize) { return Memory::Allocate(uiSize, 0, 0, false); }
+//----------------------------------------------------------------------------
+void *operator new[](size_t uiSize) { return Memory::Allocate(uiSize, 0, 0, true); }
+//----------------------------------------------------------------------------
+void *operator new(size_t uiSize, char *acFile, unsigned int uiLine)
 {
-    return Memory::Allocate(uiSize,0,0,false);
+    return Memory::Allocate(uiSize, acFile, uiLine, false);
 }
 //----------------------------------------------------------------------------
-void* operator new[](size_t uiSize)
+void *operator new[](size_t uiSize, char *acFile, unsigned int uiLine)
 {
-    return Memory::Allocate(uiSize,0,0,true);
+    return Memory::Allocate(uiSize, acFile, uiLine, true);
 }
 //----------------------------------------------------------------------------
-void* operator new (size_t uiSize, char* acFile, unsigned int uiLine)
+void operator delete(void *pvAddr) { Memory::Deallocate((char *)pvAddr, false); }
+//----------------------------------------------------------------------------
+void operator delete[](void *pvAddr) { Memory::Deallocate((char *)pvAddr, true); }
+//----------------------------------------------------------------------------
+void operator delete(void *pvAddr, char *, unsigned int)
 {
-    return Memory::Allocate(uiSize,acFile,uiLine,false);
+    Memory::Deallocate((char *)pvAddr, false);
 }
 //----------------------------------------------------------------------------
-void* operator new[] (size_t uiSize, char* acFile, unsigned int uiLine)
+void operator delete[](void *pvAddr, char *, unsigned int)
 {
-    return Memory::Allocate(uiSize,acFile,uiLine,true);
-}
-//----------------------------------------------------------------------------
-void operator delete (void* pvAddr)
-{
-    Memory::Deallocate((char*)pvAddr,false);
-}
-//----------------------------------------------------------------------------
-void operator delete[] (void* pvAddr)
-{
-    Memory::Deallocate((char*)pvAddr,true);
-}
-//----------------------------------------------------------------------------
-void operator delete (void* pvAddr, char*, unsigned int)
-{
-    Memory::Deallocate((char*)pvAddr,false);
-}
-//----------------------------------------------------------------------------
-void operator delete[] (void* pvAddr, char*, unsigned int)
-{
-    Memory::Deallocate((char*)pvAddr,true);
+    Memory::Deallocate((char *)pvAddr, true);
 }
 //----------------------------------------------------------------------------
 

@@ -47,32 +47,32 @@ class SMESH_Gen;
 // =========================================================
 // =========================================================
 
-class STDMESHERS_EXPORT StdMeshers_LayerDistribution:  public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_LayerDistribution: public SMESH_Hypothesis
 {
 public:
-  // Constructor
-  StdMeshers_LayerDistribution( int hypId, int studyId, SMESH_Gen * gen );
-  // Destructor
-  virtual ~StdMeshers_LayerDistribution();
+    // Constructor
+    StdMeshers_LayerDistribution(int hypId, int studyId, SMESH_Gen *gen);
+    // Destructor
+    virtual ~StdMeshers_LayerDistribution();
 
-  /*!
+    /*!
    * \brief Sets  1D hypothesis specifying distribution of layers
     * \param hyp1D - 1D hypothesis
    */
-  void SetLayerDistribution(SMESH_Hypothesis* hyp1D);
+    void SetLayerDistribution(SMESH_Hypothesis *hyp1D);
 
-  /*!
+    /*!
    * \brief Returns 1D hypothesis specifying distribution of layers
     * \retval SMESH::SMESH_Hypothesis_ptr - 1D hypothesis
    */
-  SMESH_Hypothesis* GetLayerDistribution() const { return myHyp; }
+    SMESH_Hypothesis *GetLayerDistribution() const { return myHyp; }
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  friend std::ostream & operator <<(std::ostream & save, StdMeshers_LayerDistribution & hyp);
-  friend std::istream & operator >>(std::istream & load, StdMeshers_LayerDistribution & hyp);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    friend std::ostream &operator<<(std::ostream &save, StdMeshers_LayerDistribution &hyp);
+    friend std::istream &operator>>(std::istream &load, StdMeshers_LayerDistribution &hyp);
 
-  /*!
+    /*!
    * \brief Initialize parameters by the mesh built on the geometry
     * \param theMesh - the built mesh
     * \param theShape - the geometry of interest
@@ -80,18 +80,17 @@ public:
     *
     * Implementation does noting
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
 protected:
-  SMESH_Hypothesis* myHyp;
-  std::string       mySavedHyp;
+    SMESH_Hypothesis *myHyp;
+    std::string mySavedHyp;
 };
 
 #endif
-

@@ -37,7 +37,7 @@ namespace TechDraw
 {
 
 
-class TechDrawExport DrawViewAnnotation : public TechDraw::DrawView
+class TechDrawExport DrawViewAnnotation: public TechDraw::DrawView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawViewAnnotation);
 
@@ -46,13 +46,13 @@ public:
     DrawViewAnnotation();
     ~DrawViewAnnotation() = default;
 
-    App::PropertyStringList   Text;
-    App::PropertyFont         Font;
-    App::PropertyColor        TextColor;
-    App::PropertyLength       TextSize;
-    App::PropertyPercent      LineSpace;
-    App::PropertyEnumeration  TextStyle; // Plain, Bold, Italic, Bold-Italic
-    App::PropertyLength       MaxWidth;
+    App::PropertyStringList Text;
+    App::PropertyFont Font;
+    App::PropertyColor TextColor;
+    App::PropertyLength TextSize;
+    App::PropertyPercent LineSpace;
+    App::PropertyEnumeration TextStyle; // Plain, Bold, Italic, Bold-Italic
+    App::PropertyLength MaxWidth;
 
     QRectF getRect() const override;
 
@@ -63,16 +63,18 @@ public:
     //@}
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "TechDrawGui::ViewProviderAnnotation";
     }
 
 protected:
-    void onChanged(const App::Property* prop) override;
-    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property * prop) override;
+    void onChanged(const App::Property *prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
 private:
-    static const char* TextStyleEnums[];
+    static const char *TextStyleEnums[];
 };
 
 using DrawViewAnnotationPython = App::FeaturePythonT<DrawViewAnnotation>;

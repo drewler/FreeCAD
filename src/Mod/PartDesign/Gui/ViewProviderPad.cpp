@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMenu>
+#include <QMenu>
 #endif
 
 #include "TaskPadParameters.h"
@@ -32,18 +32,13 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderPad,PartDesignGui::ViewProviderSketchBased)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderPad, PartDesignGui::ViewProviderSketchBased)
 
-ViewProviderPad::ViewProviderPad()
-{
-    sPixmap = "Tree_PartDesign_Pad.svg";
-}
+ViewProviderPad::ViewProviderPad() { sPixmap = "Tree_PartDesign_Pad.svg"; }
 
-ViewProviderPad::~ViewProviderPad()
-{
-}
+ViewProviderPad::~ViewProviderPad() {}
 
-void ViewProviderPad::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderPad::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     addDefaultAction(menu, QObject::tr("Edit pad"));
     PartDesignGui::ViewProviderSketchBased::setupContextMenu(menu, receiver, member);
@@ -53,5 +48,5 @@ TaskDlgFeatureParameters *ViewProviderPad::getEditDialog()
 {
     // TODO fix setting values from the history: now it doesn't work neither in
     //      the master and in the migrated branch  (2015-07-26, Fat-Zer)
-    return new TaskDlgPadParameters( this );
+    return new TaskDlgPadParameters(this);
 }

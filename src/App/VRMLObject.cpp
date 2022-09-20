@@ -39,23 +39,21 @@ PROPERTY_SOURCE(App::VRMLObject, App::GeoFeature)
 
 VRMLObject::VRMLObject() : index(0)
 {
-    ADD_PROPERTY_TYPE(VrmlFile,(nullptr),"",Prop_None,"Included file with the VRML definition");
-    ADD_PROPERTY_TYPE(Urls,(""),"",static_cast<PropertyType>(Prop_ReadOnly|Prop_Output|Prop_Transient),
-        "Resource files loaded by the VRML file");
-    ADD_PROPERTY_TYPE(Resources,(""),"",static_cast<PropertyType>(Prop_ReadOnly|Prop_Output),
-        "Resource files loaded by the VRML file");
+    ADD_PROPERTY_TYPE(VrmlFile, (nullptr), "", Prop_None, "Included file with the VRML definition");
+    ADD_PROPERTY_TYPE(Urls, (""), "",
+                      static_cast<PropertyType>(Prop_ReadOnly | Prop_Output | Prop_Transient),
+                      "Resource files loaded by the VRML file");
+    ADD_PROPERTY_TYPE(Resources, (""), "", static_cast<PropertyType>(Prop_ReadOnly | Prop_Output),
+                      "Resource files loaded by the VRML file");
     Urls.setSize(0);
     Resources.setSize(0);
 }
 
 VRMLObject::~VRMLObject() = default;
 
-short VRMLObject::mustExecute() const
-{
-    return 0;
-}
+short VRMLObject::mustExecute() const { return 0; }
 
-void VRMLObject::onChanged(const App::Property* prop)
+void VRMLObject::onChanged(const App::Property *prop)
 {
     if (prop == &VrmlFile) {
         std::string orig = VrmlFile.getOriginalFileName();
@@ -68,9 +66,10 @@ void VRMLObject::onChanged(const App::Property* prop)
     else if (prop == &Urls) {
         // save the relative paths to the resource files in the project file
         Resources.setSize(Urls.getSize());
-        const std::vector<std::string>& urls = Urls.getValues();
-        int index=0;
-        for (std::vector<std::string>::const_iterator it = urls.begin(); it != urls.end(); ++it, ++index) {
+        const std::vector<std::string> &urls = Urls.getValues();
+        int index = 0;
+        for (std::vector<std::string>::const_iterator it = urls.begin(); it != urls.end();
+             ++it, ++index) {
             std::string output = getRelativePath(this->vrmlPath, *it);
             Resources.set1Value(index, output);
         }
@@ -80,14 +79,15 @@ void VRMLObject::onChanged(const App::Property* prop)
 
 PyObject *VRMLObject::getPyObject()
 {
-    if (PythonObject.is(Py::_None())){
+    if (PythonObject.is(Py::_None())) {
         // ref counter is set to 1
-        PythonObject = Py::Object(new DocumentObjectPy(this),true);
+        PythonObject = Py::Object(new DocumentObjectPy(this), true);
     }
-    return Py::new_reference_to(PythonObject); 
+    return Py::new_reference_to(PythonObject);
 }
 
-std::string VRMLObject::getRelativePath(const std::string& prefix, const std::string& resource) const
+std::string VRMLObject::getRelativePath(const std::string &prefix,
+                                        const std::string &resource) const
 {
     std::string str;
     std::string intname = this->getNameInDocument();
@@ -106,39 +106,36 @@ std::string VRMLObject::getRelativePath(const std::string& prefix, const std::st
     return str;
 }
 
-std::string VRMLObject::fixRelativePath(const std::string& name, const std::string& resource) const
+std::string VRMLObject::fixRelativePath(const std::string &name, const std::string &resource) const
 {
     // the part before the first '/' must match with object's internal name
     std::string::size_type pos = resource.find('/');
     if (pos != std::string::npos) {
         std::string prefix = resource.substr(0, pos);
         std::string suffix = resource.substr(pos);
-        if (prefix != name) {
-            return name + suffix;
-        }
+        if (prefix != name) { return name + suffix; }
     }
     return resource;
 }
 
-void VRMLObject::makeDirectories(const std::string& path, const std::string& subdir)
+void VRMLObject::makeDirectories(const std::string &path, const std::string &subdir)
 {
     std::string::size_type pos = subdir.find('/');
     while (pos != std::string::npos) {
         std::string sub = subdir.substr(0, pos);
         std::string dir = path + "/" + sub;
         Base::FileInfo fi(dir);
-        if (!fi.createDirectory())
-            break;
-        pos = subdir.find('/', pos+1);
+        if (!fi.createDirectory()) break;
+        pos = subdir.find('/', pos + 1);
     }
 }
 
-void VRMLObject::Save (Base::Writer &writer) const
+void VRMLObject::Save(Base::Writer &writer) const
 {
     App::GeoFeature::Save(writer);
 
     // save also the inline files if there
-    const std::vector<std::string>& urls = Resources.getValues();
+    const std::vector<std::string> &urls = Resources.getValues();
     for (std::vector<std::string>::const_iterator it = urls.begin(); it != urls.end(); ++it) {
         writer.addFile(it->c_str(), this);
     }
@@ -152,15 +149,15 @@ void VRMLObject::Restore(Base::XMLReader &reader)
     Urls.setSize(Resources.getSize());
 
     // restore also the inline files if there
-    const std::vector<std::string>& urls = Resources.getValues();
-    for(std::vector<std::string>::const_iterator it = urls.begin(); it != urls.end(); ++it) {
+    const std::vector<std::string> &urls = Resources.getValues();
+    for (std::vector<std::string>::const_iterator it = urls.begin(); it != urls.end(); ++it) {
         reader.addFile(it->c_str(), this);
     }
 
     this->index = 0;
 }
 
-void VRMLObject::SaveDocFile (Base::Writer &writer) const
+void VRMLObject::SaveDocFile(Base::Writer &writer) const
 {
     // store the inline files of the VRML file
     if (this->index < Urls.getSize()) {
@@ -179,9 +176,7 @@ void VRMLObject::SaveDocFile (Base::Writer &writer) const
 
         this->index++;
         Base::ifstream file(fi, std::ios::in | std::ios::binary);
-        if (file) {
-            writer.Stream() << file.rdbuf();
-        }
+        if (file) { writer.Stream() << file.rdbuf(); }
     }
 }
 

@@ -37,7 +37,8 @@ class QWheelEvent;
 class QContextMenuEvent;
 #include <Base/BaseClass.h>
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 class QGVPage;
 
@@ -59,14 +60,14 @@ private:
     std::vector<int> keys;
 };
 
-class TechDrawGuiExport QGVNavStyle : public Base::BaseClass
+class TechDrawGuiExport QGVNavStyle: public Base::BaseClass
 {
 public:
-    explicit QGVNavStyle(QGVPage* qgvp);
+    explicit QGVNavStyle(QGVPage *qgvp);
     ~QGVNavStyle() override;
 
-    void setViewer(QGVPage* qgvp) { m_viewer = qgvp;} ;
-    QGVPage* getViewer() { return m_viewer;};
+    void setViewer(QGVPage *qgvp) { m_viewer = qgvp; };
+    QGVPage *getViewer() { return m_viewer; };
 
     virtual void handleEnterEvent(QEvent *event);
     virtual void handleFocusOutEvent(QFocusEvent *event);
@@ -98,7 +99,7 @@ public:
 protected:
     virtual void initialize();
     virtual void setAnchor();
-    QGVPage* m_viewer;
+    QGVPage *m_viewer;
     int m_currentmode;
 
     bool ctrldown, shiftdown, altdown;
@@ -122,8 +123,7 @@ protected:
     int m_wheelDeltaCounter;
 
 private:
-
 };
 
-}
+} // namespace TechDrawGui
 #endif // TECHDRAW_NAVIGATIONSTYLE_H

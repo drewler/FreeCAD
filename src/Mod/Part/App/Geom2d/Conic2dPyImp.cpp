@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Geom2d_Conic.hxx>
+#include <Geom2d_Conic.hxx>
 #endif
 
 #include <Base/GeometryPyCXX.h>
@@ -35,24 +35,18 @@
 using namespace Part;
 
 // returns a string which represents the object e.g. when printed in python
-std::string Conic2dPy::representation() const
-{
-    return "<Conic2d object>";
-}
+std::string Conic2dPy::representation() const { return "<Conic2d object>"; }
 
-PyObject *Conic2dPy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *Conic2dPy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     // never create such objects with the constructor
     PyErr_SetString(PyExc_RuntimeError,
-        "You cannot create an instance of the abstract class 'Conic2d'.");
+                    "You cannot create an instance of the abstract class 'Conic2d'.");
     return nullptr;
 }
 
 // constructor method
-int Conic2dPy::PyInit(PyObject* /*args*/, PyObject* /*kwds*/)
-{
-    return 0;
-}
+int Conic2dPy::PyInit(PyObject * /*args*/, PyObject * /*kwds*/) { return 0; }
 
 Py::Object Conic2dPy::getLocation() const
 {
@@ -60,7 +54,7 @@ Py::Object Conic2dPy::getLocation() const
     return Base::Vector2dPy::create(loc);
 }
 
-void  Conic2dPy::setLocation(Py::Object arg)
+void Conic2dPy::setLocation(Py::Object arg)
 {
     Base::Vector2d loc = Py::toVector2d(arg.ptr());
     getGeom2dConicPtr()->setLocation(loc);
@@ -79,7 +73,7 @@ Py::Object Conic2dPy::getXAxis() const
     return Base::Vector2dPy::create(xdir.X(), xdir.Y());
 }
 
-void  Conic2dPy::setXAxis(Py::Object arg)
+void Conic2dPy::setXAxis(Py::Object arg)
 {
     Base::Vector2d dir = Py::toVector2d(arg.ptr());
     Handle(Geom2d_Conic) conic = Handle(Geom2d_Conic)::DownCast(getGeom2dConicPtr()->handle());
@@ -95,7 +89,7 @@ Py::Object Conic2dPy::getYAxis() const
     return Base::Vector2dPy::create(ydir.X(), ydir.Y());
 }
 
-void  Conic2dPy::setYAxis(Py::Object arg)
+void Conic2dPy::setYAxis(Py::Object arg)
 {
     Base::Vector2d dir = Py::toVector2d(arg.ptr());
     Handle(Geom2d_Conic) conic = Handle(Geom2d_Conic)::DownCast(getGeom2dConicPtr()->handle());
@@ -104,12 +98,6 @@ void  Conic2dPy::setYAxis(Py::Object arg)
     conic->SetYAxis(yaxis);
 }
 
-PyObject *Conic2dPy::getCustomAttributes(const char* ) const
-{
-    return nullptr;
-}
+PyObject *Conic2dPy::getCustomAttributes(const char *) const { return nullptr; }
 
-int Conic2dPy::setCustomAttributes(const char* , PyObject *)
-{
-    return 0; 
-}
+int Conic2dPy::setCustomAttributes(const char *, PyObject *) { return 0; }

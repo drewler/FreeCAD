@@ -35,33 +35,33 @@
 class STDMESHERS_EXPORT StdMeshers_Geometric1D: public StdMeshers_Reversible1D
 {
 public:
-  StdMeshers_Geometric1D(int hypId, int studyId, SMESH_Gen* gen);
+    StdMeshers_Geometric1D(int hypId, int studyId, SMESH_Gen *gen);
 
-  void SetStartLength(double length);
-  void SetCommonRatio(double factor);
+    void SetStartLength(double length);
+    void SetCommonRatio(double factor);
 
-  double GetStartLength() const;
-  double GetCommonRatio() const;
+    double GetStartLength() const;
+    double GetCommonRatio() const;
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
 
-  /*!
+    /*!
    * \brief Initialize start and end length by the mesh built on the geometry
     * \param theMesh - the built mesh
     * \param theShape - the geometry of interest
     * \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
 protected:
-  double _begLength, _ratio;
+    double _begLength, _ratio;
 };
 
 #endif

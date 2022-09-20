@@ -33,113 +33,91 @@ class TopoDS_Shape;
 class SMESH_Gen;
 class SMESH_Mesh;
 
-namespace Mesh { class MeshObject; }
-namespace MeshPart {
+namespace Mesh
+{
+class MeshObject;
+}
+namespace MeshPart
+{
 
 class Mesher
 {
 public:
-    enum Method {
+    enum Method
+    {
         None = 0,
         Mefisto = 1,
-#if defined (HAVE_NETGEN)
+#if defined(HAVE_NETGEN)
         Netgen = 2,
 #endif
         Standard = 3
     };
 
-    explicit Mesher(const TopoDS_Shape&);
+    explicit Mesher(const TopoDS_Shape &);
     ~Mesher();
 
-    void setMethod(Method m)
-    { method = m; }
-    Method getMethod() const
-    { return method; }
+    void setMethod(Method m) { method = m; }
+    Method getMethod() const { return method; }
 
     /** @name Mefisto settings */
     //@{
-    void setMaxLength(double s)
-    { maxLength = s; }
-    double getMaxLength() const
-    { return maxLength; }
-    void setMaxArea(double s)
-    { maxArea = s; }
-    double getMaxArea() const
-    { return maxArea; }
-    void setLocalLength(double s)
-    { localLength = s; }
-    double getLocalLength() const
-    { return localLength; }
-    void setDeflection(double s)
-    { deflection = s; }
-    double getDeflection() const
-    { return deflection; }
-    void setAngularDeflection(double s)
-    { angularDeflection = s; }
-    double getAngularDeflection() const
-    { return angularDeflection; }
+    void setMaxLength(double s) { maxLength = s; }
+    double getMaxLength() const { return maxLength; }
+    void setMaxArea(double s) { maxArea = s; }
+    double getMaxArea() const { return maxArea; }
+    void setLocalLength(double s) { localLength = s; }
+    double getLocalLength() const { return localLength; }
+    void setDeflection(double s) { deflection = s; }
+    double getDeflection() const { return deflection; }
+    void setAngularDeflection(double s) { angularDeflection = s; }
+    double getAngularDeflection() const { return angularDeflection; }
     void setMinMaxLengths(double f, double l)
-    { minLen = f; maxLen = l; }
-    void getMinMaxLengths(double& f, double& l) const
-    { f = minLen; l= maxLen; }
-    void setRegular(bool s)
-    { regular = s; }
-    bool isRegular() const
-    { return regular; }
-    void setRelative(bool s)
-    { relative = s; }
-    bool isRelative() const
-    { return relative; }
-    void setSegments(bool s)
-    { segments = s; }
-    bool isSegments() const
-    { return segments; }
-    void setColors(const std::vector<uint32_t>& c)
-    { colors = c; }
+    {
+        minLen = f;
+        maxLen = l;
+    }
+    void getMinMaxLengths(double &f, double &l) const
+    {
+        f = minLen;
+        l = maxLen;
+    }
+    void setRegular(bool s) { regular = s; }
+    bool isRegular() const { return regular; }
+    void setRelative(bool s) { relative = s; }
+    bool isRelative() const { return relative; }
+    void setSegments(bool s) { segments = s; }
+    bool isSegments() const { return segments; }
+    void setColors(const std::vector<uint32_t> &c) { colors = c; }
     //@}
 
-#if defined (HAVE_NETGEN)
+#if defined(HAVE_NETGEN)
     /** @name Netgen settings */
     //@{
-    void setFineness(int s)
-    { fineness = s; }
-    int getFineness() const
-    { return fineness; }
-    void setGrowthRate(double r)
-    { growthRate = r; }
-    double getGrowthRate() const
-    { return growthRate; }
-    void setNbSegPerEdge(double v)
-    { nbSegPerEdge = v;}
-    double getNbSegPerEdge() const
-    { return nbSegPerEdge; }
-    void setNbSegPerRadius(double v)
-    { nbSegPerRadius = v; }
-    double getNbSegPerRadius() const
-    { return nbSegPerRadius; }
-    void setSecondOrder(bool on)
-    { secondOrder = on; }
-    bool getSecondOrder() const
-    { return secondOrder; }
-    void setOptimize(bool on)
-    { optimize = on;}
-    bool getOptimize() const
-    { return optimize; }
-    void setQuadAllowed(bool on)
-    { allowquad = on;}
-    bool isQuadAllowed() const
-    { return allowquad; }
+    void setFineness(int s) { fineness = s; }
+    int getFineness() const { return fineness; }
+    void setGrowthRate(double r) { growthRate = r; }
+    double getGrowthRate() const { return growthRate; }
+    void setNbSegPerEdge(double v) { nbSegPerEdge = v; }
+    double getNbSegPerEdge() const { return nbSegPerEdge; }
+    void setNbSegPerRadius(double v) { nbSegPerRadius = v; }
+    double getNbSegPerRadius() const { return nbSegPerRadius; }
+    void setSecondOrder(bool on) { secondOrder = on; }
+    bool getSecondOrder() const { return secondOrder; }
+    void setOptimize(bool on) { optimize = on; }
+    bool getOptimize() const { return optimize; }
+    void setQuadAllowed(bool on) { allowquad = on; }
+    bool isQuadAllowed() const { return allowquad; }
     //@}
 #endif
 
-    Mesh::MeshObject* createMesh() const;
+    Mesh::MeshObject *createMesh() const;
 
 private:
-    Mesh::MeshObject* createStandard() const;
-    Mesh::MeshObject* createFrom(SMESH_Mesh*) const;
+    Mesh::MeshObject *createStandard() const;
+    Mesh::MeshObject *createFrom(SMESH_Mesh *) const;
 
 private:
-    const TopoDS_Shape& shape;
+    const TopoDS_Shape &shape;
     Method method;
     double maxLength;
     double maxArea;
@@ -150,7 +128,7 @@ private:
     bool relative;
     bool regular;
     bool segments;
-#if defined (HAVE_NETGEN)
+#if defined(HAVE_NETGEN)
     int fineness;
     double growthRate;
     double nbSegPerEdge;
@@ -164,7 +142,7 @@ private:
     static SMESH_Gen *_mesh_gen;
 };
 
-class MeshingOutput : public std::streambuf
+class MeshingOutput: public std::streambuf
 {
 public:
     MeshingOutput();

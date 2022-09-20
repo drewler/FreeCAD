@@ -72,29 +72,31 @@ class QGCustomImage;
 class QGTracker;
 class QGIVertex;
 
-class TechDrawGuiExport  QGIView : public QObject, public QGraphicsItemGroup
+class TechDrawGuiExport QGIView: public QObject, public QGraphicsItemGroup
 {
     Q_OBJECT
 public:
     QGIView();
     ~QGIView();
 
-    enum {Type = QGraphicsItem::UserType + 101};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 101
+    };
+    int type() const override { return Type; }
     QRectF boundingRect() const override;
-    void paint( QPainter *painter,
-                        const QStyleOptionGraphicsItem *option,
-                        QWidget *widget = nullptr ) override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget = nullptr) override;
 
-    const char *      getViewName() const;
+    const char *getViewName() const;
     const std::string getViewNameAsString() const;
     void setViewFeature(TechDraw::DrawView *obj);
-    TechDraw::DrawView * getViewObject() const;
-    MDIViewPage* getMDIViewPage() const;
+    TechDraw::DrawView *getViewObject() const;
+    MDIViewPage *getMDIViewPage() const;
 
     double getScale();
 
-    void hideFrame();               //used by derived classes that don't display a frame
+    void hideFrame(); //used by derived classes that don't display a frame
 
     virtual bool getFrameState();
     virtual void toggleCache(bool state);
@@ -120,29 +122,29 @@ public:
     bool isInnerView() const { return m_innerView; }
     void isInnerView(bool state) { m_innerView = state; }
     double getYInClip(double y);
-    QGIViewClip* getClipGroup();
+    QGIViewClip *getClipGroup();
 
 
-    void alignTo(QGraphicsItem*, const QString &alignment);
+    void alignTo(QGraphicsItem *, const QString &alignment);
     void setLocked(bool isLocked) { m_locked = isLocked; }
 
-    QColor prefNormalColor(); //preference
-    QColor getNormalColor() { return m_colNormal; }  //current setting
+    QColor prefNormalColor();                       //preference
+    QColor getNormalColor() { return m_colNormal; } //current setting
     void setNormalColor(QColor color) { m_colNormal = color; }
-    QColor getPreColor();     //preference
-    QColor getSelectColor();  //preference
+    QColor getPreColor();    //preference
+    QColor getSelectColor(); //preference
     QColor getCurrentColor() { return m_colCurrent; }
-    void setCurrentColor(QColor color)  {m_colCurrent = color; }
+    void setCurrentColor(QColor color) { m_colCurrent = color; }
     QColor getSettingColor() { return m_colSetting; }
-    void   setSettingColor(QColor color) { m_colSetting = color; }
+    void setSettingColor(QColor color) { m_colSetting = color; }
 
     virtual void setStack(int z);
     virtual void setStackFromVP();
-    
-    static Gui::ViewProvider* getViewProvider(App::DocumentObject* obj);
-    static ViewProviderPage* getViewProviderPage(TechDraw::DrawView* dView);
-    static QGVPage* getQGVPage(TechDraw::DrawView* dView);
-    static QGSPage* getQGSPage(TechDraw::DrawView* dView);
+
+    static Gui::ViewProvider *getViewProvider(App::DocumentObject *obj);
+    static ViewProviderPage *getViewProviderPage(TechDraw::DrawView *dView);
+    static QGVPage *getQGVPage(TechDraw::DrawView *dView);
+    static QGSPage *getQGSPage(TechDraw::DrawView *dView);
     static int calculateFontPixelSize(double sizeInMillimetres);
     static int calculateFontPixelWidth(const QFont &font);
     static const double DefaultFontSizeInMM;
@@ -155,29 +157,29 @@ public:
 
     static int exactFontSize(std::string fontFamily, double nominalSize);
 
-    virtual void removeChild(QGIView* child);
+    virtual void removeChild(QGIView *child);
 
-    virtual void addArbitraryItem(QGraphicsItem* qgi);
+    virtual void addArbitraryItem(QGraphicsItem *qgi);
 
     // Mouse handling
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
-    boost::signals2::signal<void (QGIView*, QPointF)> signalSelectPoint;
+    boost::signals2::signal<void(QGIView *, QPointF)> signalSelectPoint;
 
 public Q_SLOTS:
-    virtual void onSourceChange(TechDraw::DrawView* newParent);
+    virtual void onSourceChange(TechDraw::DrawView *newParent);
 
 protected:
-    QGIView* getQGIVByName(std::string name);
+    QGIView *getQGIVByName(std::string name);
 
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
     // Preselection events:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
     virtual QRectF customChildrenBoundingRect() const;
-    void dumpRect(const char* text, QRectF rect);
+    void dumpRect(const char *text, QRectF rect);
 
     Base::Reference<ParameterGrp> getParmGroupCol();
 
@@ -185,9 +187,9 @@ private:
     TechDraw::DrawView *viewObj;
     std::string viewName;
 
-    QHash<QString, QGraphicsItem*> alignHash;
+    QHash<QString, QGraphicsItem *> alignHash;
     bool m_locked;
-    bool m_innerView;                                                  //View is inside another View
+    bool m_innerView; //View is inside another View
 
     QPen m_pen;
     QBrush m_brush;
@@ -197,18 +199,17 @@ private:
     QColor m_colSel;
     QColor m_colSetting;
     QFont m_font;
-    QGCustomLabel* m_label;
-    QGCustomBorder* m_border;
-    QGICaption* m_caption;
-    QGCustomImage* m_lock;
+    QGCustomLabel *m_label;
+    QGCustomBorder *m_border;
+    QGICaption *m_caption;
+    QGCustomImage *m_lock;
     QPen m_decorPen;
     double m_lockWidth;
     double m_lockHeight;
     int m_dragState;
     int m_zOrder;
-
 };
 
-} // namespace
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMVIEW_H

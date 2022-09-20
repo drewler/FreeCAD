@@ -28,27 +28,30 @@
 #include <Gui/Selection.h>
 #include <boost_signals2.hpp>
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class Ui_TaskSketcherGeneral;
 class ViewProviderSketch;
 
-class SketcherGeneralWidget : public QWidget
+class SketcherGeneralWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SketcherGeneralWidget(QWidget *parent=nullptr);
+    explicit SketcherGeneralWidget(QWidget *parent = nullptr);
     ~SketcherGeneralWidget() override;
-    
+
     bool eventFilter(QObject *object, QEvent *event) override;
 
     void saveSettings();
@@ -78,8 +81,8 @@ private:
     std::unique_ptr<Ui_TaskSketcherGeneral> ui;
 };
 
-class TaskSketcherGeneral : public Gui::TaskView::TaskBox,
-                            public Gui::SelectionSingleton::ObserverType
+class TaskSketcherGeneral: public Gui::TaskView::TaskBox,
+                           public Gui::SelectionSingleton::ObserverType
 {
     Q_OBJECT
 
@@ -99,12 +102,11 @@ public Q_SLOTS:
     void onRenderOrderChanged();
 
 private:
-    void onChangedSketchView(const Gui::ViewProvider&,
-                             const App::Property&);
+    void onChangedSketchView(const Gui::ViewProvider &, const App::Property &);
 
 private:
     ViewProviderSketch *sketchView;
-    SketcherGeneralWidget* widget;
+    SketcherGeneralWidget *widget;
     boost::signals2::scoped_connection changedSketchView;
 };
 

@@ -24,12 +24,12 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QApplication>
-# include <QFile>
-# include <QDir>
-# include <QRunnable>
-# include <QTextStream>
-# include <QThreadPool>
+#include <QApplication>
+#include <QFile>
+#include <QDir>
+#include <QRunnable>
+#include <QTextStream>
+#include <QThreadPool>
 #endif
 
 #include <App/Application.h>
@@ -47,38 +47,36 @@
 #include "ViewProvider.h"
 #include "WaitCursor.h"
 
-FC_LOG_LEVEL_INIT("App",true,true)
+FC_LOG_LEVEL_INIT("App", true, true)
 
 using namespace Gui;
 namespace bp = boost::placeholders;
 
-AutoSaver* AutoSaver::self = nullptr;
+AutoSaver *AutoSaver::self = nullptr;
 
-AutoSaver::AutoSaver(QObject* parent)
-  : QObject(parent), timeout(900000), compressed(true)
+AutoSaver::AutoSaver(QObject *parent) : QObject(parent), timeout(900000), compressed(true)
 {
-    App::GetApplication().signalNewDocument.connect(boost::bind(&AutoSaver::slotCreateDocument, this, bp::_1));
-    App::GetApplication().signalDeleteDocument.connect(boost::bind(&AutoSaver::slotDeleteDocument, this, bp::_1));
+    App::GetApplication().signalNewDocument.connect(
+        boost::bind(&AutoSaver::slotCreateDocument, this, bp::_1));
+    App::GetApplication().signalDeleteDocument.connect(
+        boost::bind(&AutoSaver::slotDeleteDocument, this, bp::_1));
 }
 
-AutoSaver::~AutoSaver()
-{
-}
+AutoSaver::~AutoSaver() {}
 
-AutoSaver* AutoSaver::instance()
+AutoSaver *AutoSaver::instance()
 {
-    if (!self)
-        self = new AutoSaver(QApplication::instance());
+    if (!self) self = new AutoSaver(QApplication::instance());
     return self;
 }
 
 void AutoSaver::renameFile(QString dirName, QString file, QString tmpFile)
 {
-    FC_LOG("auto saver rename " << tmpFile.toUtf8().constData()
-            << " -> " << file.toUtf8().constData());
+    FC_LOG("auto saver rename " << tmpFile.toUtf8().constData() << " -> "
+                                << file.toUtf8().constData());
     QDir dir(dirName);
     dir.remove(file);
-    dir.rename(tmpFile,file);
+    dir.rename(tmpFile, file);
 }
 
 void AutoSaver::setTimeout(int ms)
@@ -86,24 +84,21 @@ void AutoSaver::setTimeout(int ms)
     timeout = Base::clamp<int>(ms, 0, 3600000); // between 0 and 60 min
 
     // go through the attached documents and apply the new timeout
-    for (std::map<std::string, AutoSaveProperty*>::iterator it = saverMap.begin(); it != saverMap.end(); ++it) {
-        if (it->second->timerId > 0)
-            killTimer(it->second->timerId);
+    for (std::map<std::string, AutoSaveProperty *>::iterator it = saverMap.begin();
+         it != saverMap.end(); ++it) {
+        if (it->second->timerId > 0) killTimer(it->second->timerId);
         int id = timeout > 0 ? startTimer(timeout) : 0;
         it->second->timerId = id;
     }
 }
 
-void AutoSaver::setCompressed(bool on)
-{
-    this->compressed = on;
-}
+void AutoSaver::setCompressed(bool on) { this->compressed = on; }
 
-void AutoSaver::slotCreateDocument(const App::Document& Doc)
+void AutoSaver::slotCreateDocument(const App::Document &Doc)
 {
     std::string name = Doc.getName();
     int id = timeout > 0 ? startTimer(timeout) : 0;
-    AutoSaveProperty* as = new AutoSaveProperty(&Doc);
+    AutoSaveProperty *as = new AutoSaveProperty(&Doc);
     as->timerId = id;
 
     if (!this->compressed) {
@@ -116,25 +111,23 @@ void AutoSaver::slotCreateDocument(const App::Document& Doc)
     saverMap.insert(std::make_pair(name, as));
 }
 
-void AutoSaver::slotDeleteDocument(const App::Document& Doc)
+void AutoSaver::slotDeleteDocument(const App::Document &Doc)
 {
     std::string name = Doc.getName();
-    std::map<std::string, AutoSaveProperty*>::iterator it = saverMap.find(name);
+    std::map<std::string, AutoSaveProperty *>::iterator it = saverMap.find(name);
     if (it != saverMap.end()) {
-        if (it->second->timerId > 0)
-            killTimer(it->second->timerId);
+        if (it->second->timerId > 0) killTimer(it->second->timerId);
         delete it->second;
         saverMap.erase(it);
     }
 }
 
-void AutoSaver::saveDocument(const std::string& name, AutoSaveProperty& saver)
+void AutoSaver::saveDocument(const std::string &name, AutoSaveProperty &saver)
 {
     Gui::WaitCursor wc;
-    App::Document* doc = App::GetApplication().getDocument(name.c_str());
+    App::Document *doc = App::GetApplication().getDocument(name.c_str());
     if (doc && !doc->testStatus(App::Document::PartialDoc)
-            && !doc->testStatus(App::Document::TempDoc))
-    {
+        && !doc->testStatus(App::Document::TempDoc)) {
         // Set the document's current transient directory
         std::string dirName = doc->TransientDir.getValue();
         dirName += "/fc_recovery_files";
@@ -142,27 +135,30 @@ void AutoSaver::saveDocument(const std::string& name, AutoSaveProperty& saver)
 
         // Write recovery meta file
         QFile file(QString::fromLatin1("%1/fc_recovery_file.xml")
-            .arg(QString::fromUtf8(doc->TransientDir.getValue())));
+                       .arg(QString::fromUtf8(doc->TransientDir.getValue())));
         if (file.open(QFile::WriteOnly)) {
             QTextStream str(&file);
             str.setCodec("UTF-8");
             str << "<?xml version='1.0' encoding='utf-8'?>\n"
                 << "<AutoRecovery SchemaVersion=\"1\">\n";
             str << "  <Status>Created</Status>\n";
-            str << "  <Label>" << QString::fromUtf8(doc->Label.getValue()) << "</Label>\n"; // store the document's current label
-            str << "  <FileName>" << QString::fromUtf8(doc->FileName.getValue()) << "</FileName>\n"; // store the document's current filename
+            str << "  <Label>" << QString::fromUtf8(doc->Label.getValue())
+                << "</Label>\n"; // store the document's current label
+            str << "  <FileName>" << QString::fromUtf8(doc->FileName.getValue())
+                << "</FileName>\n"; // store the document's current filename
             str << "</AutoRecovery>\n";
             file.close();
         }
 
         // make sure to tmp. disable saving thumbnails because this causes trouble if the
         // associated 3d view is not active
-        Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetParameterGroupByPath
-            ("User parameter:BaseApp/Preferences/Document");
-        bool save = hGrp->GetBool("SaveThumbnail",false);
-        hGrp->SetBool("SaveThumbnail",false);
+        Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/Preferences/Document");
+        bool save = hGrp->GetBool("SaveThumbnail", false);
+        hGrp->SetBool("SaveThumbnail", false);
 
-        getMainWindow()->showMessage(tr("Please wait until the AutoRecovery file has been saved..."), 5000);
+        getMainWindow()->showMessage(
+            tr("Please wait until the AutoRecovery file has been saved..."), 5000);
         //qApp->processEvents();
 
         // open extra scope to close ZipWriter properly
@@ -193,11 +189,9 @@ void AutoSaver::saveDocument(const std::string& name, AutoSaveProperty& saver)
                 fn += "/fc_recovery_file.fcstd";
                 Base::FileInfo tmp(fn);
                 Base::ofstream file(tmp, std::ios::out | std::ios::binary);
-                if (file.is_open())
-                {
+                if (file.is_open()) {
                     Base::ZipWriter writer(file);
-                    if (hGrp->GetBool("SaveBinaryBrep", true))
-                        writer.setMode("BinaryBrep");
+                    if (hGrp->GetBool("SaveBinaryBrep", true)) writer.setMode("BinaryBrep");
 
                     writer.setComment("AutoRecovery file");
                     writer.setLevel(1); // apparently the fastest compression
@@ -216,14 +210,15 @@ void AutoSaver::saveDocument(const std::string& name, AutoSaveProperty& saver)
 
         std::string str = watch.toString(watch.elapsed());
         Base::Console().Log("Save AutoRecovery file: %s\n", str.c_str());
-        hGrp->SetBool("SaveThumbnail",save);
+        hGrp->SetBool("SaveThumbnail", save);
     }
 }
 
-void AutoSaver::timerEvent(QTimerEvent * event)
+void AutoSaver::timerEvent(QTimerEvent *event)
 {
     int id = event->timerId();
-    for (std::map<std::string, AutoSaveProperty*>::iterator it = saverMap.begin(); it != saverMap.end(); ++it) {
+    for (std::map<std::string, AutoSaveProperty *>::iterator it = saverMap.begin();
+         it != saverMap.end(); ++it) {
         if (it->second->timerId == id) {
             try {
                 saveDocument(it->first, *it->second);
@@ -239,12 +234,12 @@ void AutoSaver::timerEvent(QTimerEvent * event)
 
 // ----------------------------------------------------------------------------
 
-AutoSaveProperty::AutoSaveProperty(const App::Document* doc) : timerId(-1)
+AutoSaveProperty::AutoSaveProperty(const App::Document *doc) : timerId(-1)
 {
-    documentNew = const_cast<App::Document*>(doc)->signalNewObject.connect
-        (boost::bind(&AutoSaveProperty::slotNewObject, this, bp::_1));
-    documentMod = const_cast<App::Document*>(doc)->signalChangedObject.connect
-        (boost::bind(&AutoSaveProperty::slotChangePropertyData, this, bp::_2));
+    documentNew = const_cast<App::Document *>(doc)->signalNewObject.connect(
+        boost::bind(&AutoSaveProperty::slotNewObject, this, bp::_1));
+    documentMod = const_cast<App::Document *>(doc)->signalChangedObject.connect(
+        boost::bind(&AutoSaveProperty::slotChangePropertyData, this, bp::_2));
 }
 
 AutoSaveProperty::~AutoSaveProperty()
@@ -253,19 +248,17 @@ AutoSaveProperty::~AutoSaveProperty()
     documentMod.disconnect();
 }
 
-void AutoSaveProperty::slotNewObject(const App::DocumentObject& obj)
+void AutoSaveProperty::slotNewObject(const App::DocumentObject &obj)
 {
-    std::vector<App::Property*> props;
+    std::vector<App::Property *> props;
     obj.getPropertyList(props);
 
     // if an object was deleted and then restored by an undo then add all properties
     // because this might be the data files which we may want to re-write
-    for (const auto & prop : props) {
-        slotChangePropertyData(*prop);
-    }
+    for (const auto &prop : props) { slotChangePropertyData(*prop); }
 }
 
-void AutoSaveProperty::slotChangePropertyData(const App::Property& prop)
+void AutoSaveProperty::slotChangePropertyData(const App::Property &prop)
 {
     std::stringstream str;
     str << static_cast<const void *>(&prop) << std::ends;
@@ -275,24 +268,20 @@ void AutoSaveProperty::slotChangePropertyData(const App::Property& prop)
 
 // ----------------------------------------------------------------------------
 
-RecoveryWriter::RecoveryWriter(AutoSaveProperty& saver)
-  : Base::FileWriter(saver.dirName.c_str()), saver(saver)
-{
-}
+RecoveryWriter::RecoveryWriter(AutoSaveProperty &saver)
+    : Base::FileWriter(saver.dirName.c_str()), saver(saver)
+{}
 
-RecoveryWriter::~RecoveryWriter()
-{
-}
+RecoveryWriter::~RecoveryWriter() {}
 
-bool RecoveryWriter::shouldWrite(const std::string& name, const Base::Persistence *object) const
+bool RecoveryWriter::shouldWrite(const std::string &name, const Base::Persistence *object) const
 {
     // Property files of a view provider can always be written because
     // these are rather small files.
     if (object->isDerivedFrom(App::Property::getClassTypeId())) {
-        const auto* prop = static_cast<const App::Property*>(object);
-        const App::PropertyContainer* parent = prop->getContainer();
-        if (parent && parent->isDerivedFrom(Gui::ViewProvider::getClassTypeId()))
-            return true;
+        const auto *prop = static_cast<const App::Property *>(object);
+        const App::PropertyContainer *parent = prop->getContainer();
+        if (parent && parent->isDerivedFrom(Gui::ViewProvider::getClassTypeId())) return true;
     }
     else if (object->isDerivedFrom(Gui::Document::getClassTypeId())) {
         return true;
@@ -315,14 +304,15 @@ bool RecoveryWriter::shouldWrite(const std::string& name, const Base::Persistenc
     return (jt != saver.touched.end());
 }
 
-namespace Gui {
+namespace Gui
+{
 
-class RecoveryRunnable : public QRunnable
+class RecoveryRunnable: public QRunnable
 {
 public:
-    RecoveryRunnable(const std::set<std::string>& modes, const char* dir, const char* file, const App::Property* p)
-        : prop(p->Copy())
-        , writer(dir)
+    RecoveryRunnable(const std::set<std::string> &modes, const char *dir, const char *file,
+                     const App::Property *p)
+        : prop(p->Copy()), writer(dir)
     {
         writer.setModes(modes);
 
@@ -331,10 +321,7 @@ public:
         tmpName = QString::fromLatin1("%1.tmp%2").arg(fileName).arg(rand());
         writer.putNextEntry(tmpName.toUtf8().constData());
     }
-    virtual ~RecoveryRunnable()
-    {
-        delete prop;
-    }
+    virtual ~RecoveryRunnable() { delete prop; }
     virtual void run()
     {
         prop->SaveDocFile(writer);
@@ -345,20 +332,20 @@ public:
         // the new file. So we ask the main thread to do it. There is still
         // possibility of crash caused by thread other than the main, but
         // that's the best we can do for now.
-        QMetaObject::invokeMethod(AutoSaver::instance(), "renameFile",
-                Qt::QueuedConnection, Q_ARG(QString,dirName)
-                ,Q_ARG(QString,fileName),Q_ARG(QString,tmpName));
+        QMetaObject::invokeMethod(AutoSaver::instance(), "renameFile", Qt::QueuedConnection,
+                                  Q_ARG(QString, dirName), Q_ARG(QString, fileName),
+                                  Q_ARG(QString, tmpName));
     }
 
 private:
-    App::Property* prop;
+    App::Property *prop;
     Base::FileWriter writer;
     QString dirName;
     QString fileName;
     QString tmpName;
 };
 
-}
+} // namespace Gui
 
 void RecoveryWriter::writeFiles()
 {
@@ -381,8 +368,9 @@ void RecoveryWriter::writeFiles()
 
             // For properties a copy can be created and then this can be written to disk in a thread
             if (entry.Object->isDerivedFrom(App::Property::getClassTypeId())) {
-                const auto* prop = static_cast<const App::Property*>(entry.Object);
-                QThreadPool::globalInstance()->start(new RecoveryRunnable(getModes(), DirName.c_str(), entry.FileName.c_str(), prop));
+                const auto *prop = static_cast<const App::Property *>(entry.Object);
+                QThreadPool::globalInstance()->start(new RecoveryRunnable(
+                    getModes(), DirName.c_str(), entry.FileName.c_str(), prop));
             }
             else {
                 std::string fileName = DirName + "/" + entry.FileName;

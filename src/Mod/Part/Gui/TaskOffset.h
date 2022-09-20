@@ -27,20 +27,24 @@
 #include <Gui/TaskView/TaskView.h>
 #include <Gui/TaskView/TaskDialog.h>
 
-namespace Part { class Offset; }
-namespace PartGui { 
+namespace Part
+{
+class Offset;
+}
+namespace PartGui
+{
 
-class OffsetWidget : public QWidget
+class OffsetWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit OffsetWidget(Part::Offset*, QWidget* parent = nullptr);
+    explicit OffsetWidget(Part::Offset *, QWidget *parent = nullptr);
     ~OffsetWidget() override;
 
     bool accept();
     bool reject();
-    Part::Offset* getObject() const;
+    Part::Offset *getObject() const;
 
 private Q_SLOTS:
     void on_spinOffset_valueChanged(double);
@@ -56,15 +60,15 @@ private:
 
 private:
     class Private;
-    Private* d;
+    Private *d;
 };
 
-class TaskOffset : public Gui::TaskView::TaskDialog
+class TaskOffset: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskOffset(Part::Offset*);
+    explicit TaskOffset(Part::Offset *);
     ~TaskOffset() override;
 
 public:
@@ -72,14 +76,16 @@ public:
     bool accept() override;
     bool reject() override;
     void clicked(int) override;
-    Part::Offset* getObject() const;
+    Part::Offset *getObject() const;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok|QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 private:
-    OffsetWidget* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    OffsetWidget *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace PartGui

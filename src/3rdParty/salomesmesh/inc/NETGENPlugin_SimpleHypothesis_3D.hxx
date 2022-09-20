@@ -39,28 +39,27 @@ using namespace std;
 class NETGENPLUGIN_EXPORT NETGENPlugin_SimpleHypothesis_3D: public NETGENPlugin_SimpleHypothesis_2D
 {
 public:
+    NETGENPlugin_SimpleHypothesis_3D(int hypId, int studyId, SMESH_Gen *gen);
 
-  NETGENPlugin_SimpleHypothesis_3D(int hypId, int studyId, SMESH_Gen * gen);
+    void LengthFromFaces();
 
-  void LengthFromFaces();
+    void SetMaxElementVolume(double value);
+    double GetMaxElementVolume() const { return _volume; }
 
-  void SetMaxElementVolume(double value);
-  double GetMaxElementVolume() const { return _volume; }
+    // Persistence
+    virtual ostream &SaveTo(ostream &save);
+    virtual istream &LoadFrom(istream &load);
 
-  // Persistence
-  virtual ostream & SaveTo(ostream & save);
-  virtual istream & LoadFrom(istream & load);
-
-  /*!
+    /*!
    * \brief Set parameters by mesh
    * \param theMesh - the built mesh
    * \param theShape - the geometry of interest
    * \retval bool - true if theShape is meshed
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
 private:
-  double _volume;
+    double _volume;
 };
 
 #endif

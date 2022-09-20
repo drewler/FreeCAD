@@ -31,7 +31,7 @@
 namespace App
 {
 
-class AppExport InventorObject : public GeoFeature
+class AppExport InventorObject: public GeoFeature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(App::InventorObject);
 
@@ -41,12 +41,8 @@ public:
     ~InventorObject() override;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "Gui::ViewProviderInventorObject";
-    }
-    DocumentObjectExecReturn *execute() override {
-        return DocumentObject::StdReturn;
-    }
+    const char *getViewProviderName() const override { return "Gui::ViewProviderInventorObject"; }
+    DocumentObjectExecReturn *execute() override { return DocumentObject::StdReturn; }
     short mustExecute() const override;
     PyObject *getPyObject() override;
 

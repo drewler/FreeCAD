@@ -43,13 +43,13 @@ public:
     static double getParameter(void);
     static double getRezFactor(void);
     static void setRezFactor(double f);
-//turn App side value to Gui side value
+    //turn App side value to Gui side value
     static double guiX(double x);
     static Base::Vector3d guiX(Base::Vector3d v);
     static Base::Vector2d guiX(Base::Vector3d v, bool planar);
     static QPointF guiX(QPointF p);
 
-//turn Gui side value to App side value
+    //turn Gui side value to App side value
     static double appX(double x);
     static Base::Vector3d appX(Base::Vector3d v);
     static QPointF appX(QPointF p);

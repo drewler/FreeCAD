@@ -28,7 +28,8 @@
 #include <queue>
 #include <memory>
 
-namespace Gui {
+namespace Gui
+{
 
 
 class GestureNavigationStyle: public UserNavigationStyle
@@ -40,15 +41,16 @@ class GestureNavigationStyle: public UserNavigationStyle
 public:
     GestureNavigationStyle();
     ~GestureNavigationStyle() override;
-    const char* mouseButtons(ViewerMode) override;
+    const char *mouseButtons(ViewerMode) override;
 
 protected:
-    SbBool processSoEvent(const SoEvent* const ev) override;
+    SbBool processSoEvent(const SoEvent *const ev) override;
+
 public:
     ///calls processSoEvent of NavigationStyle.
-    SbBool processSoEvent_bypass(const SoEvent* const ev);
+    SbBool processSoEvent_bypass(const SoEvent *const ev);
 
-protected://state machine classes
+protected: //state machine classes
     ///State machine event, a wrapper around SoEvent
     class Event;
 
@@ -75,13 +77,14 @@ protected://state machine classes
     class EventQueue: public std::queue<SoMouseButtonEvent>
     {
     public:
-        EventQueue(GestureNavigationStyle& ns):ns(ns){}
+        EventQueue(GestureNavigationStyle &ns) : ns(ns) {}
 
-        void post(const Event& ev);
+        void post(const Event &ev);
         void discardAll();
         void forwardAll();
+
     public:
-        GestureNavigationStyle& ns;
+        GestureNavigationStyle &ns;
     };
 
 
@@ -100,6 +103,7 @@ protected: // members variables
 
 protected: //helper functions
     bool isDraggerUnderCursor(SbVec2s pos);
+
 public:
     bool is2DViewing() const;
 
@@ -111,5 +115,5 @@ public: //gesture reactions
     void onSetRotationCenter(SbVec2s cursor);
 };
 
-}
+} // namespace Gui
 #endif // GESTURENAVIGATIONSTYLE2_H

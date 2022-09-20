@@ -23,12 +23,12 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QApplication>
-# include <QBuffer>
-# include <QByteArray>
-# include <QDateTime>
-# include <QImage>
-# include <QThread>
+#include <QApplication>
+#include <QBuffer>
+#include <QByteArray>
+#include <QDateTime>
+#include <QImage>
+#include <QThread>
 #endif
 
 #include <App/Application.h>
@@ -42,39 +42,25 @@
 
 using namespace Gui;
 
-Thumbnail::Thumbnail(int s) : viewer(nullptr), size(s)
-{
-}
+Thumbnail::Thumbnail(int s) : viewer(nullptr), size(s) {}
 
-Thumbnail::~Thumbnail()
-{
-}
+Thumbnail::~Thumbnail() {}
 
-void Thumbnail::setViewer(View3DInventorViewer* v)
-{
-    this->viewer = v;
-}
+void Thumbnail::setViewer(View3DInventorViewer *v) { this->viewer = v; }
 
-void Thumbnail::setSize(int s)
-{
-    this->size = s;
-}
+void Thumbnail::setSize(int s) { this->size = s; }
 
-void Thumbnail::setFileName(const char* fn)
+void Thumbnail::setFileName(const char *fn)
 {
     this->uri = QUrl::fromLocalFile(QString::fromUtf8(fn));
 }
 
-unsigned int Thumbnail::getMemSize () const
-{
-    return 0;
-}
+unsigned int Thumbnail::getMemSize() const { return 0; }
 
-void Thumbnail::Save (Base::Writer &writer) const
+void Thumbnail::Save(Base::Writer &writer) const
 {
     // It's only possible to add extra information if force of XML is disabled
-    if (!writer.isForceXML())
-        writer.addFile("thumbnails/Thumbnail.png", this);
+    if (!writer.isForceXML()) writer.addFile("thumbnails/Thumbnail.png", this);
 }
 
 void Thumbnail::Restore(Base::XMLReader &reader)
@@ -83,10 +69,9 @@ void Thumbnail::Restore(Base::XMLReader &reader)
     //reader.addFile("Thumbnail.png",this);
 }
 
-void Thumbnail::SaveDocFile (Base::Writer &writer) const
+void Thumbnail::SaveDocFile(Base::Writer &writer) const
 {
-    if (!this->viewer)
-        return;
+    if (!this->viewer) return;
     QImage img;
     if (this->viewer->isActiveWindow()) {
         if (this->viewer->thread() != QThread::currentThread()) {
@@ -100,13 +85,15 @@ void Thumbnail::SaveDocFile (Base::Writer &writer) const
 
     // Get app icon and resize to half size to insert in topbottom position over the current view snapshot
     QPixmap appIcon = Gui::BitmapFactory().pixmap(App::Application::Config()["AppIcon"].c_str());
-    QPixmap px =  appIcon;
+    QPixmap px = appIcon;
     if (!img.isNull()) {
-        if (App::GetApplication().GetParameterGroupByPath
-            ("User parameter:BaseApp/Preferences/Document")->GetBool("AddThumbnailLogo",true)) {
+        if (App::GetApplication()
+                .GetParameterGroupByPath("User parameter:BaseApp/Preferences/Document")
+                ->GetBool("AddThumbnailLogo", true)) {
             // only scale app icon if an offscreen image could be created
-            appIcon =  appIcon.scaled(this->size / 4, this->size /4);
-            px = BitmapFactory().merge(QPixmap::fromImage(img), appIcon, BitmapFactoryInst::BottomRight);
+            appIcon = appIcon.scaled(this->size / 4, this->size / 4);
+            px = BitmapFactory().merge(QPixmap::fromImage(img), appIcon,
+                                       BitmapFactoryInst::BottomRight);
         }
         else {
             px = QPixmap::fromImage(img);
@@ -118,7 +105,8 @@ void Thumbnail::SaveDocFile (Base::Writer &writer) const
         uint mt = QDateTime::currentDateTimeUtc().toTime_t();
         QString mtime = QString::fromLatin1("%1").arg(mt);
         img.setText(QLatin1String("Software"), qApp->applicationName());
-        img.setText(QLatin1String("Thumb::Mimetype"), QLatin1String("application/x-extension-fcstd"));
+        img.setText(QLatin1String("Thumb::Mimetype"),
+                    QLatin1String("application/x-extension-fcstd"));
         img.setText(QLatin1String("Thumb::MTime"), mtime);
         img.setText(QLatin1String("Thumb::URI"), this->uri.toString());
 
@@ -130,7 +118,4 @@ void Thumbnail::SaveDocFile (Base::Writer &writer) const
     }
 }
 
-void Thumbnail::RestoreDocFile(Base::Reader &reader)
-{
-    Q_UNUSED(reader);
-}
+void Thumbnail::RestoreDocFile(Base::Reader &reader) { Q_UNUSED(reader); }

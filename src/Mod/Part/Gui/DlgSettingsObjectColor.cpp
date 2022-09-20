@@ -38,9 +38,8 @@ using namespace PartGui;
  *  Constructs a DlgSettingsObjectColor which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-DlgSettingsObjectColor::DlgSettingsObjectColor(QWidget* parent)
-    : PreferencePage(parent)
-    , ui(new Ui_DlgSettingsObjectColor)
+DlgSettingsObjectColor::DlgSettingsObjectColor(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsObjectColor)
 {
     ui->setupUi(this);
     ui->DefaultShapeColor->setDisabled(ui->checkRandomColor->isChecked());
@@ -93,13 +92,10 @@ void DlgSettingsObjectColor::loadSettings()
  */
 void DlgSettingsObjectColor::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }
 }
 
 #include "moc_DlgSettingsObjectColor.cpp"
-

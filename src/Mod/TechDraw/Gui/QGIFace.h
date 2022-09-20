@@ -41,23 +41,27 @@ class QGCustomSvg;
 class QGCustomRect;
 class QGCustomImage;
 
-    const double SVGSIZEW = 64.0;                     //width and height of standard FC SVG pattern
-    const double SVGSIZEH = 64.0;
-    const std::string SVGCOLDEFAULT = "#000000";
+const double SVGSIZEW = 64.0; //width and height of standard FC SVG pattern
+const double SVGSIZEH = 64.0;
+const std::string SVGCOLDEFAULT = "#000000";
 
-class QGIFace : public QGIPrimPath
+class QGIFace: public QGIPrimPath
 {
 public:
     explicit QGIFace(int index = -1);
     ~QGIFace() override;
 
-    enum {Type = QGraphicsItem::UserType + 104};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 104
+    };
+    int type() const override { return Type; }
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
 
 public:
-    enum fillMode {
+    enum fillMode
+    {
         NoFill,
         FromFile,
         SvgFill,
@@ -74,11 +78,11 @@ public:
     void setPrettyPre() override;
     void setPrettySel() override;
     void setDrawEdges(bool b);
-    virtual void setOutline(const QPainterPath& path);
+    virtual void setOutline(const QPainterPath &path);
 
     //shared fill parms
-    void isHatched(bool s) {m_isHatched = s; }
-    bool isHatched() {return m_isHatched;}
+    void isHatched(bool s) { m_isHatched = s; }
+    bool isHatched() { return m_isHatched; }
     void setFillMode(fillMode m);
 
     //general hatch parms & methods
@@ -100,14 +104,16 @@ public:
     void setLineWeight(double w);
 
     void clearLineSets();
-    void addLineSet(TechDraw::LineSet& ls);
+    void addLineSet(TechDraw::LineSet &ls);
     void clearFillItems();
 
-    void lineSetToFillItems(TechDraw::LineSet& ls);
-    QGraphicsPathItem* geomToLine(TechDraw::BaseGeomPtr base, TechDraw::LineSet& ls);
-//    QGraphicsPathItem* geomToOffsetLine(TechDraw::BaseGeomPtr base, double offset, const TechDraw::LineSet& ls);
-    QGraphicsPathItem* geomToStubbyLine(TechDraw::BaseGeomPtr base, double offset, TechDraw::LineSet& ls);
-    QGraphicsPathItem* lineFromPoints(Base::Vector3d start, Base::Vector3d end, TechDraw::DashSpec ds);
+    void lineSetToFillItems(TechDraw::LineSet &ls);
+    QGraphicsPathItem *geomToLine(TechDraw::BaseGeomPtr base, TechDraw::LineSet &ls);
+    //    QGraphicsPathItem* geomToOffsetLine(TechDraw::BaseGeomPtr base, double offset, const TechDraw::LineSet& ls);
+    QGraphicsPathItem *geomToStubbyLine(TechDraw::BaseGeomPtr base, double offset,
+                                        TechDraw::LineSet &ls);
+    QGraphicsPathItem *lineFromPoints(Base::Vector3d start, Base::Vector3d end,
+                                      TechDraw::DashSpec ds);
 
     //bitmap texture fill parms method
     QPixmap textureFromBitmap(std::string fileSpec);
@@ -119,17 +125,18 @@ protected:
     void getParameters();
 
     std::vector<double> offsetDash(const std::vector<double> dv, const double offset);
-    QPainterPath dashedPPath(const std::vector<double> dv, const Base::Vector3d start, const Base::Vector3d end);
+    QPainterPath dashedPPath(const std::vector<double> dv, const Base::Vector3d start,
+                             const Base::Vector3d end);
     double dashRemain(const std::vector<double> dv, const double offset);
     double calcOffset(TechDraw::BaseGeomPtr g, TechDraw::LineSet ls);
-    int projIndex;                              //index of face in Projection. -1 for SectionFace.
+    int projIndex; //index of face in Projection. -1 for SectionFace.
     QGCustomRect *m_rect;
 
     QByteArray m_svgXML;
     std::string m_svgCol;
-    std::string m_fileSpec;   //for svg & bitmaps
+    std::string m_fileSpec; //for svg & bitmaps
 
-    QGCustomImage* m_image;
+    QGCustomImage *m_image;
 
     double m_fillScale;
     bool m_isHatched;
@@ -137,7 +144,7 @@ protected:
 
     QPen setGeomPen();
     std::vector<double> decodeDashSpec(TechDraw::DashSpec d);
-    std::vector<QGraphicsPathItem*> m_fillItems;
+    std::vector<QGraphicsPathItem *> m_fillItems;
     std::vector<TechDraw::LineSet> m_lineSets;
     std::vector<TechDraw::DashSpec> m_dashSpecs;
     long int m_segCount;
@@ -148,17 +155,17 @@ protected:
 
 
 private:
-    QPixmap m_texture;                          //
+    QPixmap m_texture; //
 
-    QPainterPath m_outline;                     //
+    QPainterPath m_outline; //
 
-    QPainterPath m_geomhatch;                  //crosshatch fill lines
+    QPainterPath m_geomhatch; //crosshatch fill lines
 
-    QColor m_geomColor;                        //color for crosshatch lines
-    double m_geomWeight;                       //lineweight for crosshatch lines
+    QColor m_geomColor;  //color for crosshatch lines
+    double m_geomWeight; //lineweight for crosshatch lines
     bool m_defClearFace;
     QColor m_defFaceColor;
 };
 
-}
+} // namespace TechDrawGui
 #endif // DRAWINGGUI_QGRAPHICSITEMFACE_H

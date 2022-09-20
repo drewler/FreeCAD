@@ -35,7 +35,7 @@
 namespace Base
 {
 
-template <class MessageType> class Subject;
+template<class MessageType> class Subject;
 
 
 /** Observer class
@@ -45,47 +45,43 @@ template <class MessageType> class Subject;
  *  Attach itself to the observed object.
  *  @see FCSubject
  */
-template <class _MessageType>
-class Observer
+template<class _MessageType> class Observer
 {
 public:
-
-  /**
+    /**
    * A constructor.
    * No special function so far.
    */
-  Observer() = default;
+    Observer() = default;
 
-  /**
+    /**
    * A destructor.
    * No special function so far.
    */
-  virtual ~Observer() = default;
+    virtual ~Observer() = default;
 
-  /**
+    /**
    * This method need to be reimplemented from the concrete Observer
    * and get called by the observed class
    * @param rCaller a reference to the calling object
    * @param rcReason
    * \todo undocumented parameter 2
    */
-  virtual void OnChange(Subject<_MessageType>& rCaller,_MessageType rcReason)=0;
+    virtual void OnChange(Subject<_MessageType> &rCaller, _MessageType rcReason) = 0;
 
-  /**
+    /**
    * This method need to be reimplemented from the concrete Observer
    * and get called by the observed class
    * @param rCaller a reference to the calling object
    */
-  virtual void OnDestroy(Subject<_MessageType> & rCaller) {
-    (void)rCaller;
-  }
+    virtual void OnDestroy(Subject<_MessageType> &rCaller) { (void)rCaller; }
 
-  /**
+    /**
    * This method can be reimplemented from the concrete Observer
    * and returns the name of the observer. Needed to use the Get
    * Method of the Subject.
    */
-  virtual const char *Name(){return nullptr;}
+    virtual const char *Name() { return nullptr; }
 };
 
 /** Subject class
@@ -95,125 +91,124 @@ public:
  *  Attach itself to the observed object.
  *  @see FCObserver
  */
-template <class _MessageType>
-class Subject
+template<class _MessageType> class Subject
 {
 public:
+    using ObserverType = Observer<_MessageType>;
+    using MessageType = _MessageType;
+    using SubjectType = Subject<_MessageType>;
 
-  using ObserverType = Observer<_MessageType>;
-  using MessageType  = _MessageType;
-  using SubjectType  = Subject<_MessageType>;
-
-  /**
+    /**
    * A constructor.
    * No special function so far.
    */
-  Subject() = default;
+    Subject() = default;
 
-  /**
+    /**
    * A destructor.
    * No special function so far.
    */
-  virtual ~Subject()
-  {
-    if (_ObserverSet.size() > 0)
+    virtual ~Subject()
     {
-      printf("Not detached all observers yet\n");
-      assert(0);
+        if (_ObserverSet.size() > 0) {
+            printf("Not detached all observers yet\n");
+            assert(0);
+        }
     }
-  }
 
-  /** Attach an Observer
+    /** Attach an Observer
    * Attach an Observer to the list of Observers which get
    * called when Notify is called.
    * @param ToObserv A pointer to a concrete Observer
    * @see Notify
    */
-  void Attach(Observer<_MessageType> *ToObserv)
-  {
+    void Attach(Observer<_MessageType> *ToObserv)
+    {
 #ifdef FC_DEBUG
-    size_t count = _ObserverSet.size();
-    //printf("Attach observer %p\n", ToObserv);
-    _ObserverSet.insert(ToObserv);
-    if ( _ObserverSet.size() == count )
-      printf("Observer %p already attached\n", static_cast<void*>(ToObserv));
+        size_t count = _ObserverSet.size();
+        //printf("Attach observer %p\n", ToObserv);
+        _ObserverSet.insert(ToObserv);
+        if (_ObserverSet.size() == count)
+            printf("Observer %p already attached\n", static_cast<void *>(ToObserv));
 #else
-    _ObserverSet.insert(ToObserv);
+        _ObserverSet.insert(ToObserv);
 #endif
-  }
+    }
 
-  /** Detach an Observer
+    /** Detach an Observer
    * Detach an Observer from the list of Observers which get
    * called when Notify is called.
    * @param ToObserv A pointer to a concrete Observer
    * @see Notify
    */
-  void Detach(Observer<_MessageType> *ToObserv)
-  {
+    void Detach(Observer<_MessageType> *ToObserv)
+    {
 #ifdef FC_DEBUG
-    size_t count = _ObserverSet.size();
-    //printf("Detach observer %p\n", ToObserv);
-    _ObserverSet.erase(ToObserv);
-    if ( _ObserverSet.size() == count )
-      printf("Observer %p already detached\n", static_cast<void*>(ToObserv));
+        size_t count = _ObserverSet.size();
+        //printf("Detach observer %p\n", ToObserv);
+        _ObserverSet.erase(ToObserv);
+        if (_ObserverSet.size() == count)
+            printf("Observer %p already detached\n", static_cast<void *>(ToObserv));
 #else
-    _ObserverSet.erase(ToObserv);
+        _ObserverSet.erase(ToObserv);
 #endif
-  }
+    }
 
-  /** Notify all Observers
+    /** Notify all Observers
    * Send a message to all Observers attached to this subject.
    * The Message depends on the implementation of a concrete
    * Oberserver and Subject.
    * @see Notify
    */
-  void Notify(_MessageType rcReason)
-  {
-    for(typename std::set<Observer<_MessageType> * >::iterator Iter=_ObserverSet.begin();Iter!=_ObserverSet.end();++Iter)
+    void Notify(_MessageType rcReason)
     {
-      try {
-        (*Iter)->OnChange(*this,rcReason);   // send OnChange-signal
-      } catch (Base::Exception &e) {
-        Base::Console().Error("Unhandled Base::Exception caught when notifying observer.\n"
-                              "The error message is: %s\n", e.what());
-      } catch (std::exception &e) {
-        Base::Console().Error("Unhandled std::exception caught when notifying observer\n"
-                              "The error message is: %s\n", e.what());
-      } catch (...) {
-        Base::Console().Error("Unhandled unknown exception caught in when notifying observer.\n");
-      }
+        for (typename std::set<Observer<_MessageType> *>::iterator Iter = _ObserverSet.begin();
+             Iter != _ObserverSet.end(); ++Iter) {
+            try {
+                (*Iter)->OnChange(*this, rcReason); // send OnChange-signal
+            }
+            catch (Base::Exception &e) {
+                Base::Console().Error("Unhandled Base::Exception caught when notifying observer.\n"
+                                      "The error message is: %s\n",
+                                      e.what());
+            }
+            catch (std::exception &e) {
+                Base::Console().Error("Unhandled std::exception caught when notifying observer\n"
+                                      "The error message is: %s\n",
+                                      e.what());
+            }
+            catch (...) {
+                Base::Console().Error(
+                    "Unhandled unknown exception caught in when notifying observer.\n");
+            }
+        }
     }
-  }
 
-  /** Get an Observer by name
+    /** Get an Observer by name
    * Get a observer by name if the observer reimplements the Name() mthode.
    * @see Observer
    */
-  Observer<_MessageType> * Get(const char *Name)
-  {
-    const char* OName;
-    for(typename std::set<Observer<_MessageType> * >::iterator Iter=_ObserverSet.begin();Iter!=_ObserverSet.end();++Iter)
+    Observer<_MessageType> *Get(const char *Name)
     {
-      OName = (*Iter)->Name();   // get the name
-      if(OName && strcmp(OName,Name) == 0)
-        return *Iter;
+        const char *OName;
+        for (typename std::set<Observer<_MessageType> *>::iterator Iter = _ObserverSet.begin();
+             Iter != _ObserverSet.end(); ++Iter) {
+            OName = (*Iter)->Name(); // get the name
+            if (OName && strcmp(OName, Name) == 0) return *Iter;
+        }
+
+        return nullptr;
     }
 
-    return nullptr;
-  }
-
-  /** Clears the list of all registered observers.
+    /** Clears the list of all registered observers.
    * @note Using this function in your code may be an indication of design problems.
    */
-  void ClearObserver()
-  {
-    _ObserverSet.clear();
-  }
+    void ClearObserver() { _ObserverSet.clear(); }
 
 
 protected:
-  /// Vector of attached observers
-  std::set<Observer <_MessageType> *> _ObserverSet;
+    /// Vector of attached observers
+    std::set<Observer<_MessageType> *> _ObserverSet;
 };
 
 

@@ -28,15 +28,12 @@
 #include "SMDS_MeshVolume.hxx"
 //=======================================================================
 //function : Print
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-SMDSAbs_ElementType SMDS_MeshVolume::GetType() const
-{
-        return SMDSAbs_Volume;
-}
+SMDSAbs_ElementType SMDS_MeshVolume::GetType() const { return SMDSAbs_Volume; }
 
 vtkIdType SMDS_MeshVolume::GetVtkType() const
 {
-  return VTK_CONVEX_POINT_SET; // --- must be reimplemented in derived classes
+    return VTK_CONVEX_POINT_SET; // --- must be reimplemented in derived classes
 }

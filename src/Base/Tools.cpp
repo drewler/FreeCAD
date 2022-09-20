@@ -23,39 +23,37 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <sstream>
-# include <locale>
-# include <iostream>
-# include <QElapsedTimer>
+#include <sstream>
+#include <locale>
+#include <iostream>
+#include <QElapsedTimer>
 #endif
 
 #include "PyExport.h"
 #include "Interpreter.h"
 #include "Tools.h"
 
-namespace Base {
-struct string_comp
+namespace Base
 {
+struct string_comp {
     // s1 and s2 must be numbers represented as string
-    bool operator()(const std::string& s1, const std::string& s2)
+    bool operator()(const std::string &s1, const std::string &s2)
     {
-        if (s1.size() < s2.size())
-            return true;
+        if (s1.size() < s2.size()) return true;
         else if (s1.size() > s2.size())
             return false;
         else
             return s1 < s2;
     }
-    static std::string increment(const std::string& s)
+    static std::string increment(const std::string &s)
     {
         std::string n = s;
-        int addcarry=1;
+        int addcarry = 1;
         for (std::string::reverse_iterator it = n.rbegin(); it != n.rend(); ++it) {
-            if (addcarry == 0)
-                break;
+            if (addcarry == 0) break;
             int d = *it - 48;
             d = d + addcarry;
-            *it = ((d%10) + 48);
+            *it = ((d % 10) + 48);
             addcarry = d / 10;
         }
         if (addcarry > 0) {
@@ -68,9 +66,10 @@ struct string_comp
         return n;
     }
 };
-}
+} // namespace Base
 
-std::string Base::Tools::getUniqueName(const std::string& name, const std::vector<std::string>& names, int d)
+std::string Base::Tools::getUniqueName(const std::string &name,
+                                       const std::vector<std::string> &names, int d)
 {
     // find highest suffix
     std::string num_suffix;
@@ -79,7 +78,7 @@ std::string Base::Tools::getUniqueName(const std::string& name, const std::vecto
             std::string suffix(it->substr(name.length()));
             if (suffix.size() > 0) {
                 std::string::size_type pos = suffix.find_first_not_of("0123456789");
-                if (pos==std::string::npos)
+                if (pos == std::string::npos)
                     num_suffix = std::max<std::string>(num_suffix, suffix, Base::string_comp());
             }
         }
@@ -95,7 +94,7 @@ std::string Base::Tools::getUniqueName(const std::string& name, const std::vecto
     return str.str();
 }
 
-std::string Base::Tools::addNumber(const std::string& name, unsigned int num, int d)
+std::string Base::Tools::addNumber(const std::string &name, unsigned int num, int d)
 {
     std::stringstream str;
     str << name;
@@ -107,38 +106,35 @@ std::string Base::Tools::addNumber(const std::string& name, unsigned int num, in
     return str.str();
 }
 
-std::string Base::Tools::getIdentifier(const std::string& name)
+std::string Base::Tools::getIdentifier(const std::string &name)
 {
     // check for first character whether it's a digit
     std::string CleanName = name;
-    if (!CleanName.empty() && CleanName[0] >= 48 && CleanName[0] <= 57)
-        CleanName[0] = '_';
+    if (!CleanName.empty() && CleanName[0] >= 48 && CleanName[0] <= 57) CleanName[0] = '_';
     // strip illegal chars
     for (std::string::iterator it = CleanName.begin(); it != CleanName.end(); ++it) {
-        if (!((*it>=48 && *it<=57) ||  // number
-             (*it>=65 && *it<=90)  ||  // uppercase letter
-             (*it>=97 && *it<=122)))   // lowercase letter
-             *it = '_'; // it's neither number nor letter
+        if (!((*it >= 48 && *it <= 57) || // number
+              (*it >= 65 && *it <= 90) || // uppercase letter
+              (*it >= 97 && *it <= 122))) // lowercase letter
+            *it = '_';                    // it's neither number nor letter
     }
 
     return CleanName;
 }
 
-std::wstring Base::Tools::widen(const std::string& str)
+std::wstring Base::Tools::widen(const std::string &str)
 {
     std::wostringstream wstm;
-    const std::ctype<wchar_t>& ctfacet = std::use_facet< std::ctype<wchar_t> >(wstm.getloc());
-    for (size_t i=0; i<str.size(); ++i)
-        wstm << ctfacet.widen(str[i]);
+    const std::ctype<wchar_t> &ctfacet = std::use_facet<std::ctype<wchar_t>>(wstm.getloc());
+    for (size_t i = 0; i < str.size(); ++i) wstm << ctfacet.widen(str[i]);
     return wstm.str();
 }
 
-std::string Base::Tools::narrow(const std::wstring& str)
+std::string Base::Tools::narrow(const std::wstring &str)
 {
     std::ostringstream stm;
-    const std::ctype<char>& ctfacet = std::use_facet< std::ctype<char> >(stm.getloc());
-    for (size_t i=0; i<str.size(); ++i)
-        stm << ctfacet.narrow(str[i], 0);
+    const std::ctype<char> &ctfacet = std::use_facet<std::ctype<char>>(stm.getloc());
+    for (size_t i = 0; i < str.size(); ++i) stm << ctfacet.narrow(str[i], 0);
     return stm.str();
 }
 
@@ -147,11 +143,10 @@ std::string Base::Tools::escapedUnicodeFromUtf8(const char *s)
     Base::PyGILStateLocker lock;
     std::string escapedstr;
 
-    PyObject* unicode = PyUnicode_FromString(s);
-    if (!unicode)
-        return escapedstr;
+    PyObject *unicode = PyUnicode_FromString(s);
+    if (!unicode) return escapedstr;
 
-    PyObject* escaped = PyUnicode_AsUnicodeEscapeString(unicode);
+    PyObject *escaped = PyUnicode_AsUnicodeEscapeString(unicode);
     if (escaped) {
         escapedstr = std::string(PyBytes_AsString(escaped));
         Py_DECREF(escaped);
@@ -161,29 +156,26 @@ std::string Base::Tools::escapedUnicodeFromUtf8(const char *s)
     return escapedstr;
 }
 
-std::string Base::Tools::escapedUnicodeToUtf8(const std::string& s)
+std::string Base::Tools::escapedUnicodeToUtf8(const std::string &s)
 {
     Base::PyGILStateLocker lock;
     std::string string;
 
-    PyObject* unicode = PyUnicode_DecodeUnicodeEscape(s.c_str(), static_cast<Py_ssize_t>(s.size()), "strict");
-    if (!unicode)
-        return string;
-    if (PyUnicode_Check(unicode)) {
-        string = PyUnicode_AsUTF8(unicode);
-    }
+    PyObject *unicode =
+        PyUnicode_DecodeUnicodeEscape(s.c_str(), static_cast<Py_ssize_t>(s.size()), "strict");
+    if (!unicode) return string;
+    if (PyUnicode_Check(unicode)) { string = PyUnicode_AsUTF8(unicode); }
     Py_DECREF(unicode);
     return string;
 }
 
-QString Base::Tools::escapeEncodeString(const QString& s)
+QString Base::Tools::escapeEncodeString(const QString &s)
 {
     QString result;
     const int len = s.length();
     result.reserve(int(len * 1.1));
     for (int i = 0; i < len; ++i) {
-        if (s.at(i) == QLatin1Char('\\'))
-            result += QLatin1String("\\\\");
+        if (s.at(i) == QLatin1Char('\\')) result += QLatin1String("\\\\");
         else if (s.at(i) == QLatin1Char('\"'))
             result += QLatin1String("\\\"");
         else if (s.at(i) == QLatin1Char('\''))
@@ -195,13 +187,12 @@ QString Base::Tools::escapeEncodeString(const QString& s)
     return result;
 }
 
-std::string Base::Tools::escapeEncodeString(const std::string& s)
+std::string Base::Tools::escapeEncodeString(const std::string &s)
 {
     std::string result;
     size_t len = s.size();
     for (size_t i = 0; i < len; ++i) {
-        if (s.at(i) == '\\')
-            result += "\\\\";
+        if (s.at(i) == '\\') result += "\\\\";
         else if (s.at(i) == '\"')
             result += "\\\"";
         else if (s.at(i) == '\'')
@@ -212,14 +203,13 @@ std::string Base::Tools::escapeEncodeString(const std::string& s)
     return result;
 }
 
-QString Base::Tools::escapeEncodeFilename(const QString& s)
+QString Base::Tools::escapeEncodeFilename(const QString &s)
 {
     QString result;
     const int len = s.length();
     result.reserve(int(len * 1.1));
     for (int i = 0; i < len; ++i) {
-        if (s.at(i) == QLatin1Char('\"'))
-            result += QLatin1String("\\\"");
+        if (s.at(i) == QLatin1Char('\"')) result += QLatin1String("\\\"");
         else if (s.at(i) == QLatin1Char('\''))
             result += QLatin1String("\\\'");
         else
@@ -229,13 +219,12 @@ QString Base::Tools::escapeEncodeFilename(const QString& s)
     return result;
 }
 
-std::string Base::Tools::escapeEncodeFilename(const std::string& s)
+std::string Base::Tools::escapeEncodeFilename(const std::string &s)
 {
     std::string result;
     size_t len = s.size();
     for (size_t i = 0; i < len; ++i) {
-        if (s.at(i) == '\"')
-            result += "\\\"";
+        if (s.at(i) == '\"') result += "\\\"";
         else if (s.at(i) == '\'')
             result += "\\\'";
         else
@@ -248,34 +237,19 @@ std::string Base::Tools::escapeEncodeFilename(const std::string& s)
 
 using namespace Base;
 
-struct StopWatch::Private
-{
+struct StopWatch::Private {
     QElapsedTimer t;
 };
 
-StopWatch::StopWatch() : d(new Private)
-{
-}
+StopWatch::StopWatch() : d(new Private) {}
 
-StopWatch::~StopWatch()
-{
-    delete d;
-}
+StopWatch::~StopWatch() { delete d; }
 
-void StopWatch::start()
-{
-    d->t.start();
-}
+void StopWatch::start() { d->t.start(); }
 
-int StopWatch::restart()
-{
-    return d->t.restart();
-}
+int StopWatch::restart() { return d->t.restart(); }
 
-int StopWatch::elapsed()
-{
-    return d->t.elapsed();
-}
+int StopWatch::elapsed() { return d->t.elapsed(); }
 
 std::string StopWatch::toString(int ms) const
 {
@@ -288,8 +262,7 @@ std::string StopWatch::toString(int ms) const
     int hour = total / 60;
     std::stringstream str;
     str << "Needed time: ";
-    if (hour > 0)
-        str << hour << "h " << mins << "m " << secs << "s";
+    if (hour > 0) str << hour << "h " << mins << "m " << secs << "s";
     else if (mins > 0)
         str << mins << "m " << secs << "s";
     else if (secs > 0)

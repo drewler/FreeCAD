@@ -23,8 +23,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <algorithm>
-# include <map>
+#include <algorithm>
+#include <map>
 #endif
 
 #include "Projection.h"
@@ -43,38 +43,30 @@ using namespace MeshCore;
 
 // ------------------------------------------------------------------------
 
-MeshProjection::MeshProjection(const MeshKernel& mesh)
-  : kernel(mesh)
-{
-}
+MeshProjection::MeshProjection(const MeshKernel &mesh) : kernel(mesh) {}
 
-MeshProjection::~MeshProjection()
-{
-}
+MeshProjection::~MeshProjection() {}
 
-bool MeshProjection::bboxInsideRectangle(const Base::BoundBox3f& bbox,
-                                         const Base::Vector3f& p1,
-                                         const Base::Vector3f& p2,
-                                         const Base::Vector3f& view) const
+bool MeshProjection::bboxInsideRectangle(const Base::BoundBox3f &bbox, const Base::Vector3f &p1,
+                                         const Base::Vector3f &p2, const Base::Vector3f &view) const
 {
     Base::Vector3f dir(p2 - p1);
     Base::Vector3f base(p1), normal(view % dir);
-    normal.Normalize(); 
+    normal.Normalize();
 
     if (bbox.IsCutPlane(base, normal)) {
         dir.Normalize();
         Base::Vector3f cnt(bbox.GetCenter());
 
-        return (fabs(cnt.DistanceToPlane(p1, dir)) +  fabs(cnt.DistanceToPlane(p2, dir))) <=
-               (bbox.CalcDiagonalLength() + (p2 - p1).Length());
+        return (fabs(cnt.DistanceToPlane(p1, dir)) + fabs(cnt.DistanceToPlane(p2, dir)))
+            <= (bbox.CalcDiagonalLength() + (p2 - p1).Length());
     }
 
     return false;
 }
 
-bool MeshProjection::isPointInsideDistance (const Base::Vector3f& p1,
-                                            const Base::Vector3f& p2,
-                                            const Base::Vector3f& pt) const
+bool MeshProjection::isPointInsideDistance(const Base::Vector3f &p1, const Base::Vector3f &p2,
+                                           const Base::Vector3f &pt) const
 {
     // project point on line
     Base::Vector3f proj, dir(p2 - p1);
@@ -84,31 +76,31 @@ bool MeshProjection::isPointInsideDistance (const Base::Vector3f& p1,
     return (((p1 - proj) * (p2 - proj)) < 0.0f);
 }
 
-bool MeshProjection::connectLines(std::list< std::pair<Base::Vector3f, Base::Vector3f> >& cutLines,
-                                  const Base::Vector3f& startPoint, const Base::Vector3f& endPoint,
-                                  std::vector<Base::Vector3f>& polyline) const
+bool MeshProjection::connectLines(std::list<std::pair<Base::Vector3f, Base::Vector3f>> &cutLines,
+                                  const Base::Vector3f &startPoint, const Base::Vector3f &endPoint,
+                                  std::vector<Base::Vector3f> &polyline) const
 {
     const float fMaxDist = float(sqrt(FLOAT_MAX)); // max. length of a gap
-    const float fMinEps  = 1.0e-4f;
+    const float fMinEps = 1.0e-4f;
 
     polyline.clear();
     polyline.push_back(startPoint);
 
     Base::Vector3f curr(startPoint);
     while ((curr != endPoint) && (!cutLines.empty())) {
-        std::list< std::pair<Base::Vector3f, Base::Vector3f> >::iterator it, pCurr = cutLines.end();
+        std::list<std::pair<Base::Vector3f, Base::Vector3f>>::iterator it, pCurr = cutLines.end();
 
         // get nearest line
-        float  fMin  = fMaxDist * fMaxDist;
+        float fMin = fMaxDist * fMaxDist;
 
-        bool  bPos = false;
+        bool bPos = false;
         for (it = cutLines.begin(); it != cutLines.end(); ++it) {
             float fD1 = Base::DistanceP2(curr, it->first);
             float fD2 = Base::DistanceP2(curr, it->second);
             if (std::min<float>(fD1, fD2) < fMin) {
                 pCurr = it;
-                bPos  = fD1 < fD2;
-                fMin  = std::min<float>(fD1, fD2);
+                bPos = fD1 < fD2;
+                fMin = std::min<float>(fD1, fD2);
                 if (fMin < fMinEps) // abort because next line already found
                     break;
             }
@@ -129,20 +121,19 @@ bool MeshProjection::connectLines(std::list< std::pair<Base::Vector3f, Base::Vec
             }
         }
         else {
-            return false;  // abort because no line was found
+            return false; // abort because no line was found
         }
 
-        cutLines.erase(pCurr); 
+        cutLines.erase(pCurr);
     }
 
     return true;
 }
 
-bool MeshProjection::projectLineOnMesh(const MeshFacetGrid& grid,
-                                       const Base::Vector3f& v1, FacetIndex f1,
-                                       const Base::Vector3f& v2, FacetIndex f2,
-                                       const Base::Vector3f& vd,
-                                       std::vector<Base::Vector3f>& polyline)
+bool MeshProjection::projectLineOnMesh(const MeshFacetGrid &grid, const Base::Vector3f &v1,
+                                       FacetIndex f1, const Base::Vector3f &v2, FacetIndex f2,
+                                       const Base::Vector3f &vd,
+                                       std::vector<Base::Vector3f> &polyline)
 {
     Base::Vector3f dir(v2 - v1);
     Base::Vector3f base(v1), normal(vd % dir);
@@ -163,15 +154,14 @@ bool MeshProjection::projectLineOnMesh(const MeshFacetGrid& grid,
     MeshGridIterator gridIter(grid);
     for (gridIter.Init(); gridIter.More(); gridIter.Next()) {
         // bbox cuts plane
-        if (bboxInsideRectangle(gridIter.GetBoundBox(), v1, v2, vd))
-            gridIter.GetElements(facets);
+        if (bboxInsideRectangle(gridIter.GetBoundBox(), v1, v2, vd)) gridIter.GetElements(facets);
     }
 
     std::sort(facets.begin(), facets.end());
     facets.erase(std::unique(facets.begin(), facets.end()), facets.end());
 
     // cut all facets with plane
-    std::list< std::pair<Base::Vector3f, Base::Vector3f> > cutLine;
+    std::list<std::pair<Base::Vector3f, Base::Vector3f>> cutLine;
     for (std::vector<FacetIndex>::iterator it = facets.begin(); it != facets.end(); ++it) {
         Base::Vector3f e1, e2;
         MeshGeomFacet tria = kernel.GetFacet(*it);
@@ -179,8 +169,7 @@ bool MeshProjection::projectLineOnMesh(const MeshFacetGrid& grid,
             if (tria.IntersectWithPlane(base, normal, e1, e2)) {
                 if ((*it != f1) && (*it != f2)) {
                     // inside cut line
-                    if (!isPointInsideDistance(v1, v2, e1) ||
-                        !isPointInsideDistance(v1, v2, e2)) {
+                    if (!isPointInsideDistance(v1, v2, e1) || !isPointInsideDistance(v1, v2, e2)) {
                         continue;
                     }
 
@@ -188,8 +177,7 @@ bool MeshProjection::projectLineOnMesh(const MeshFacetGrid& grid,
                 }
                 else {
                     if (*it == f1) { // start facet
-                        if (((e2 - v1) * dir) > 0.0f)
-                            cutLine.emplace_back(v1, e2);
+                        if (((e2 - v1) * dir) > 0.0f) cutLine.emplace_back(v1, e2);
                         else
                             cutLine.emplace_back(v1, e1);
 
@@ -197,8 +185,7 @@ bool MeshProjection::projectLineOnMesh(const MeshFacetGrid& grid,
                     }
 
                     if (*it == f2) { // end facet
-                        if (((e2 - v2) * -dir) > 0.0f)
-                            cutLine.emplace_back(v2, e2);
+                        if (((e2 - v2) * -dir) > 0.0f) cutLine.emplace_back(v2, e2);
                         else
                             cutLine.emplace_back(v2, e1);
 

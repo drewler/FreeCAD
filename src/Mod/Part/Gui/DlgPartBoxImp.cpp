@@ -37,10 +37,9 @@ using namespace PartGui;
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  true to construct a modal dialog.
  */
-DlgPartBoxImp::DlgPartBoxImp(QWidget* parent, Qt::WindowFlags fl)
+DlgPartBoxImp::DlgPartBoxImp(QWidget *parent, Qt::WindowFlags fl)
     : Gui::LocationDialogUiImp(new Ui_DlgPartBox, parent, fl)
-{
-}
+{}
 
 /*  
  *  Destroys the object and frees any allocated resources

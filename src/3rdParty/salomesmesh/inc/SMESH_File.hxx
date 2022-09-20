@@ -41,84 +41,80 @@
 class SMESHUtils_EXPORT SMESH_File
 {
 public:
+    SMESH_File(const std::string &name, bool openForReading = true);
 
-  SMESH_File(const std::string& name, bool openForReading=true);
+    ~SMESH_File();
 
-  ~SMESH_File();
+    std::string getName() const { return _name; }
 
-  std::string getName() const { return _name; }
+    const std::string &error() const { return _error; }
 
-  const std::string& error() const { return _error; }
+    void close();
 
-  void close();
+    bool remove();
 
-  bool remove();
+    long size();
 
-  long size();
+    bool exists();
 
-  bool exists();
+    bool isDirectory();
 
-  bool isDirectory();
+    // ------------------------
+    // Access to file contents
+    // ------------------------
 
-  // ------------------------
-  // Access to file contents
-  // ------------------------
+    bool open(); // for reading
 
-  bool open(); // for reading
+    operator const char *() const { return _pos; }
 
-  operator const char*() const { return _pos; }
+    bool operator++() { return ++_pos < _end; }
 
-  bool operator++() { return ++_pos < _end; }
+    void operator+=(int posDelta) { _pos += posDelta; }
 
-  void operator +=(int posDelta) { _pos+=posDelta; }
+    bool eof() const { return _pos >= _end; }
 
-  bool eof() const { return _pos >= _end; }
+    const char *end() const { return _end; }
 
-  const char* end() const { return _end; }
+    const char *getPos() const { return _pos; }
 
-  const char* getPos() const { return _pos; }
+    void setPos(const char *pos);
 
-  void setPos(const char* pos);
+    std::string getLine();
 
-  std::string getLine();
+    void rewind();
 
-  void rewind();
+    bool getInts(std::vector<int> &ids);
 
-  bool getInts(std::vector<int>& ids);
+    // ------------------------
+    // Writing a binary file
+    // ------------------------
 
-  // ------------------------
-  // Writing a binary file
-  // ------------------------
+    bool openForWriting(); // binary writing only
 
-  bool openForWriting(); // binary writing only
+    template<typename T> bool write(const T *values, size_t nbTValues)
+    {
+        return writeRaw((const void *)values, nbTValues * sizeof(T));
+    }
 
-  template <typename T>
-    bool write( const T* values, size_t nbTValues )
-  {
-    return writeRaw((const void*) values, nbTValues * sizeof(T));
-  }
+    template<typename T> bool write(const T &value)
+    {
+        return writeRaw((const void *)&value, sizeof(T));
+    }
 
-  template <typename T>
-    bool write( const T& value )
-  {
-    return writeRaw((const void*) & value, sizeof(T));
-  }
-
-  bool writeRaw(const void* data, size_t size);
+    bool writeRaw(const void *data, size_t size);
 
 private:
-
-  std::string _name; //!< file name
-  int         _size; //!< file size
-  std::string _error;
+    std::string _name; //!< file name
+    int _size;         //!< file size
+    std::string _error;
 #ifdef WIN32
-  HANDLE      _file, _mapObj;
+    HANDLE _file, _mapObj;
 #else
-  int         _file;
+    int _file;
 #endif
-  void*       _map;
-  const char* _pos; //!< current position
-  const char* _end; //!< position after file end
+    void *_map;
+    const char *_pos; //!< current position
+    const char *_end; //!< position after file end
 };
 
 #endif

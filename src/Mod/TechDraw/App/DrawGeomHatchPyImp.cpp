@@ -35,17 +35,6 @@ std::string DrawGeomHatchPy::representation() const
 }
 
 
+PyObject *DrawGeomHatchPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-
-
-
-
-PyObject *DrawGeomHatchPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
-
-int DrawGeomHatchPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int DrawGeomHatchPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

@@ -41,33 +41,32 @@
 namespace Wm4
 {
 
-template <class TKEY, class TVALUE>
-class THashTable
+template<class TKEY, class TVALUE> class THashTable
 {
 public:
     // construction and destruction
-    THashTable (int iTableSize);
-    ~THashTable ();
+    THashTable(int iTableSize);
+    ~THashTable();
 
     // element access
-    int GetQuantity () const;
+    int GetQuantity() const;
 
     // insert a key-value pair into the hash table
-    bool Insert (const TKEY& rtKey, const TVALUE& rtValue);
+    bool Insert(const TKEY &rtKey, const TVALUE &rtValue);
 
     // search for a key and returns it value (null, if key does not exist)
-    TVALUE* Find (const TKEY& rtKey) const;
+    TVALUE *Find(const TKEY &rtKey) const;
 
     // remove key-value pairs from the hash table
-    bool Remove (const TKEY& rtKey);
-    void RemoveAll ();
+    bool Remove(const TKEY &rtKey);
+    void RemoveAll();
 
     // linear traversal of table
-    TVALUE* GetFirst (TKEY* ptKey) const;
-    TVALUE* GetNext (TKEY* ptKey) const;
+    TVALUE *GetFirst(TKEY *ptKey) const;
+    TVALUE *GetNext(TKEY *ptKey) const;
 
     // user-specified key-to-index construction
-    int (*UserHashFunction)(const TKEY&);
+    int (*UserHashFunction)(const TKEY &);
 
 private:
     class HashItem
@@ -75,24 +74,24 @@ private:
     public:
         TKEY m_tKey;
         TVALUE m_tValue;
-        HashItem* m_pkNext;
+        HashItem *m_pkNext;
     };
 
     // Default key-to-index construction (override by user-specified when
     // requested).
-    int HashFunction (const TKEY& rtKey) const;
+    int HashFunction(const TKEY &rtKey) const;
 
     // hash table
     int m_iTableSize;
     int m_iQuantity;
-    HashItem** m_apkTable;
+    HashItem **m_apkTable;
 
     // iterator for traversal
     mutable int m_iIndex;
-    mutable HashItem* m_pkItem;
+    mutable HashItem *m_pkItem;
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4THashTable.inl"
 

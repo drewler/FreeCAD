@@ -35,81 +35,76 @@
 #include "SMDS_MeshElement.hxx"
 
 #include <Quantity_Color.hxx>
-  
+
 class SMESHDS_Mesh;
 
 class SMESHDS_EXPORT SMESHDS_GroupBase
 {
- public:
+public:
+    SMESHDS_GroupBase(const int theID, const SMESHDS_Mesh *theMesh,
+                      const SMDSAbs_ElementType theType);
 
-  SMESHDS_GroupBase (const int                 theID,
-                     const SMESHDS_Mesh*       theMesh,
-                     const SMDSAbs_ElementType theType);
+    int GetID() const { return myID; }
 
-  int GetID() const { return myID; }
+    const SMESHDS_Mesh *GetMesh() const { return myMesh; }
 
-  const SMESHDS_Mesh* GetMesh() const { return myMesh; }
+    virtual void SetType(SMDSAbs_ElementType theType);
 
-  virtual void SetType(SMDSAbs_ElementType theType);
+    SMDSAbs_ElementType GetType() const { return myType; }
 
-  SMDSAbs_ElementType GetType() const { return myType; }
+    void SetStoreName(const char *theName) { myStoreName = theName; }
 
-  void SetStoreName (const char* theName) { myStoreName = theName; }
+    const char *GetStoreName() const { return myStoreName.c_str(); }
 
-  const char* GetStoreName () const { return myStoreName.c_str(); }
+    virtual int Extent() const;
 
-  virtual int Extent() const;
+    virtual bool IsEmpty();
 
-  virtual bool IsEmpty();
+    virtual bool Contains(const int theID);
 
-  virtual bool Contains (const int theID);
+    virtual bool Contains(const SMDS_MeshElement *elem);
 
-  virtual bool Contains (const SMDS_MeshElement* elem);
+    virtual SMDS_ElemIteratorPtr GetElements() const = 0;
 
-  virtual SMDS_ElemIteratorPtr GetElements() const = 0;
+    virtual int GetID(const int theIndex);
+    // use it for iterations 1..Extent()
 
-  virtual int GetID (const int theIndex);
-  // use it for iterations 1..Extent()
+    virtual VTK_MTIME_TYPE GetTic() const = 0;
 
-  virtual VTK_MTIME_TYPE GetTic() const = 0;
+    virtual ~SMESHDS_GroupBase() {}
 
-  virtual ~SMESHDS_GroupBase() {}
+    void SetColor(const Quantity_Color &theColor) { myColor = theColor; }
 
-  void SetColor (const Quantity_Color& theColor)
-  { myColor = theColor;}
-  
-  Quantity_Color GetColor() const
-  { return myColor;}
+    Quantity_Color GetColor() const { return myColor; }
 
-  void SetColorGroup (int theColorGroup);
+    void SetColorGroup(int theColorGroup);
 
-  int GetColorGroup() const;
-  
-  static void SetDefaultColor (const Quantity_Color& theColor)
-  { myDefaultColor = theColor;}
+    int GetColorGroup() const;
 
- protected:
-  const SMDS_MeshElement* findInMesh (const int theID) const;
-  void resetIterator();
+    static void SetDefaultColor(const Quantity_Color &theColor) { myDefaultColor = theColor; }
 
- private:
-  SMESHDS_GroupBase (const SMESHDS_GroupBase& theOther);
-  // prohibited copy constructor
-  SMESHDS_GroupBase& operator = (const SMESHDS_GroupBase& theOther);
-  // prohibited assign operator
+protected:
+    const SMDS_MeshElement *findInMesh(const int theID) const;
+    void resetIterator();
 
-  int                  myID;
-  const SMESHDS_Mesh*  myMesh;
-  SMDSAbs_ElementType  myType;
-  std::string          myStoreName;
-  Quantity_Color       myColor;
+private:
+    SMESHDS_GroupBase(const SMESHDS_GroupBase &theOther);
+    // prohibited copy constructor
+    SMESHDS_GroupBase &operator=(const SMESHDS_GroupBase &theOther);
+    // prohibited assign operator
 
-  // for GetID()
-  int                  myCurIndex;
-  int                  myCurID;
-  SMDS_ElemIteratorPtr myIterator;
+    int myID;
+    const SMESHDS_Mesh *myMesh;
+    SMDSAbs_ElementType myType;
+    std::string myStoreName;
+    Quantity_Color myColor;
 
-  static Quantity_Color myDefaultColor;
+    // for GetID()
+    int myCurIndex;
+    int myCurID;
+    SMDS_ElemIteratorPtr myIterator;
+
+    static Quantity_Color myDefaultColor;
 };
 
 #endif

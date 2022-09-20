@@ -36,14 +36,17 @@
 class QAbstractButton;
 class QScrollArea;
 
-namespace Gui {
+namespace Gui
+{
 class View3DInventor;
 }
-namespace Mesh {
-  class Feature;
+namespace Mesh
+{
+class Feature;
 }
 
-namespace MeshGui {
+namespace MeshGui
+{
 class ViewProviderMeshDefects;
 
 /**
@@ -51,7 +54,7 @@ class ViewProviderMeshDefects;
  * module when the application is about to be closed.
  * @author Werner Mayer
  */
-class CleanupHandler : public QObject
+class CleanupHandler: public QObject
 {
     Q_OBJECT
 
@@ -65,25 +68,25 @@ public Q_SLOTS:
 /**
  * \author Werner Mayer
  */
-class DlgEvaluateMeshImp : public QDialog, public App::DocumentObserver
-{ 
+class DlgEvaluateMeshImp: public QDialog, public App::DocumentObserver
+{
     Q_OBJECT
 
 public:
-    explicit DlgEvaluateMeshImp(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgEvaluateMeshImp(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgEvaluateMeshImp() override;
 
-    void setMesh(Mesh::Feature*);
+    void setMesh(Mesh::Feature *);
 
 private:
     /** Checks if the given document is about to be closed */
-    void slotDeletedDocument(const App::Document& Doc) override;
+    void slotDeletedDocument(const App::Document &Doc) override;
     /** Checks if a new object was added. */
-    void slotCreatedObject(const App::DocumentObject& Obj) override;
+    void slotCreatedObject(const App::DocumentObject &Obj) override;
     /** Checks if the given object is about to be removed. */
-    void slotDeletedObject(const App::DocumentObject& Obj) override;
+    void slotDeletedObject(const App::DocumentObject &Obj) override;
     /** The property of an observed object has changed */
-    void slotChangedObject(const App::DocumentObject& Obj, const App::Property& Prop) override;
+    void slotChangedObject(const App::DocumentObject &Obj, const App::Property &Prop) override;
 
 protected Q_SLOTS:
     void on_checkOrientationButton_clicked();
@@ -129,39 +132,39 @@ protected:
     void refreshList();
     void showInformation();
     void cleanInformation();
-    void addViewProvider(const char* vp, const std::vector<Mesh::ElementIndex>& indices);
-    void removeViewProvider(const char* vp);
+    void addViewProvider(const char *vp, const std::vector<Mesh::ElementIndex> &indices);
+    void removeViewProvider(const char *vp);
     void removeViewProviders();
     void changeEvent(QEvent *e) override;
 
 private:
     class Private;
-    Private* d;
+    Private *d;
 };
 
 /**
  * The DockEvaluateMeshImp class creates a single instance and embeds it into a dock window.
  * \author Werner Mayer
  */
-class DockEvaluateMeshImp : public DlgEvaluateMeshImp
-{ 
+class DockEvaluateMeshImp: public DlgEvaluateMeshImp
+{
     Q_OBJECT
 
 protected:
-    explicit DockEvaluateMeshImp( QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags() );
+    explicit DockEvaluateMeshImp(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DockEvaluateMeshImp() override;
-    void closeEvent(QCloseEvent* e) override;
+    void closeEvent(QCloseEvent *e) override;
 
 public:
-    static DockEvaluateMeshImp* instance();
+    static DockEvaluateMeshImp *instance();
     static void destruct();
     static bool hasInstance();
-  
-    QSize sizeHint () const override;
+
+    QSize sizeHint() const override;
 
 private:
-    QScrollArea* scrollArea;
-    static DockEvaluateMeshImp* _instance;
+    QScrollArea *scrollArea;
+    static DockEvaluateMeshImp *_instance;
 };
 
 } // namespace MeshGui

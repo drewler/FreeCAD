@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <stack>
+#include <stack>
 #endif
 
 #include <App/Document.h>
@@ -39,47 +39,41 @@
 using namespace Gui;
 namespace bp = boost::placeholders;
 
-namespace Gui {
+namespace Gui
+{
 
-class XMLMergeReader : public Base::XMLReader
+class XMLMergeReader: public Base::XMLReader
 {
 public:
-    XMLMergeReader(std::map<std::string, std::string>& name, const char* FileName, std::istream& str)
-      : Base::XMLReader(FileName, str), nameMap(name)
+    XMLMergeReader(std::map<std::string, std::string> &name, const char *FileName,
+                   std::istream &str)
+        : Base::XMLReader(FileName, str), nameMap(name)
     {}
 
-    void addName(const char* s1, const char* s2) override
-    {
-        nameMap[s1] = s2;
-    }
-    const char* getName(const char* name) const override
+    void addName(const char *s1, const char *s2) override { nameMap[s1] = s2; }
+    const char *getName(const char *name) const override
     {
         std::map<std::string, std::string>::const_iterator it = nameMap.find(name);
-        if (it != nameMap.end())
-            return it->second.c_str();
+        if (it != nameMap.end()) return it->second.c_str();
         else
             return name;
     }
-    bool doNameMapping() const override
-    {
-        return true;
-    }
+    bool doNameMapping() const override { return true; }
+
 protected:
-
-
 private:
-    std::map<std::string, std::string>& nameMap;
+    std::map<std::string, std::string> &nameMap;
     using PropertyTag = std::pair<std::string, std::string>;
     std::stack<PropertyTag> propertyStack;
 };
-}
+} // namespace Gui
 
-MergeDocuments::MergeDocuments(App::Document* doc) : stream(nullptr), appdoc(doc)
+MergeDocuments::MergeDocuments(App::Document *doc) : stream(nullptr), appdoc(doc)
 {
-    connectExport = doc->signalExportObjects.connect
-        (boost::bind(&MergeDocuments::exportObject, this, bp::_1, bp::_2));
-    connectImport = doc->signalImportObjects.connect
-        (boost::bind(&MergeDocuments::importObject, this, bp::_1, bp::_2));
+    connectExport = doc->signalExportObjects.connect(
+        boost::bind(&MergeDocuments::exportObject, this, bp::_1, bp::_2));
+    connectImport = doc->signalImportObjects.connect(
+        boost::bind(&MergeDocuments::importObject, this, bp::_1, bp::_2));
     document = Gui::Application::Instance->getDocument(doc);
 }
 
@@ -89,18 +83,14 @@ MergeDocuments::~MergeDocuments()
     connectImport.disconnect();
 }
 
-unsigned int MergeDocuments::getMemSize () const
-{
-    return 0;
-}
+unsigned int MergeDocuments::getMemSize() const { return 0; }
 
-std::vector<App::DocumentObject*>
-MergeDocuments::importObjects(std::istream& input)
+std::vector<App::DocumentObject *> MergeDocuments::importObjects(std::istream &input)
 {
     this->nameMap.clear();
     this->stream = new zipios::ZipInputStream(input);
-    XMLMergeReader reader(this->nameMap,"<memory>", *stream);
-    std::vector<App::DocumentObject*> objs = appdoc->importObjects(reader);
+    XMLMergeReader reader(this->nameMap, "<memory>", *stream);
+    std::vector<App::DocumentObject *> objs = appdoc->importObjects(reader);
 
     delete this->stream;
     this->stream = nullptr;
@@ -108,11 +98,12 @@ MergeDocuments::importObjects(std::istream& input)
     return objs;
 }
 
-void MergeDocuments::importObject(const std::vector<App::DocumentObject*>& o, Base::XMLReader & r)
+void MergeDocuments::importObject(const std::vector<App::DocumentObject *> &o, Base::XMLReader &r)
 {
     objects = o;
-    for (std::vector<App::DocumentObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
-        Gui::ViewProvider* vp = document->getViewProvider(*it);
+    for (std::vector<App::DocumentObject *>::iterator it = objects.begin(); it != objects.end();
+         ++it) {
+        Gui::ViewProvider *vp = document->getViewProvider(*it);
         if (vp) vp->hide();
     }
     Restore(r);
@@ -120,28 +111,19 @@ void MergeDocuments::importObject(const std::vector<App::DocumentObject*>& o, Ba
     r.readFiles(*this->stream);
 }
 
-void MergeDocuments::exportObject(const std::vector<App::DocumentObject*>& o, Base::Writer & w)
+void MergeDocuments::exportObject(const std::vector<App::DocumentObject *> &o, Base::Writer &w)
 {
     objects = o;
     Save(w);
 }
 
-void MergeDocuments::Save (Base::Writer & w) const
-{
-    w.addFile("GuiDocument.xml", this);
-}
+void MergeDocuments::Save(Base::Writer &w) const { w.addFile("GuiDocument.xml", this); }
 
-void MergeDocuments::Restore(Base::XMLReader &r)
-{
-    r.addFile("GuiDocument.xml", this);
-}
+void MergeDocuments::Restore(Base::XMLReader &r) { r.addFile("GuiDocument.xml", this); }
 
-void MergeDocuments::SaveDocFile (Base::Writer & w) const
-{
-    document->exportObjects(objects, w);
-}
+void MergeDocuments::SaveDocFile(Base::Writer &w) const { document->exportObjects(objects, w); }
 
-void MergeDocuments::RestoreDocFile(Base::Reader & r)
+void MergeDocuments::RestoreDocFile(Base::Reader &r)
 {
     document->importObjects(objects, r, nameMap);
 }

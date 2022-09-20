@@ -30,34 +30,32 @@
 #include <Base/ConsoleObserver.h>
 #include <Base/Interpreter.h>
 
-class ILoggerBlockerTest : public Base::ILogger
+class ILoggerBlockerTest: public Base::ILogger
 {
 public:
-    ~ILoggerBlockerTest() override {Base::Console().DetachObserver(this);}
+    ~ILoggerBlockerTest() override { Base::Console().DetachObserver(this); }
 
-    const char *Name() override {return "ILoggerBlockerTest";}
+    const char *Name() override { return "ILoggerBlockerTest"; }
 
-    void flush() {buffer.str("");buffer.clear();}
+    void flush()
+    {
+        buffer.str("");
+        buffer.clear();
+    }
 
-    void SendLog(const std::string& msg, Base::LogStyle level) override{
-        (void) msg;
-        switch(level){
-            case Base::LogStyle::Warning:
-                buffer << "WRN";
-                break;
-            case Base::LogStyle::Message:
-                buffer << "MSG";
-                break;
-            case Base::LogStyle::Error:
-                buffer << "ERR";
-                break;
-            case Base::LogStyle::Log:
-                buffer << "LOG";
-                break;
+    void SendLog(const std::string &msg, Base::LogStyle level) override
+    {
+        (void)msg;
+        switch (level) {
+            case Base::LogStyle::Warning: buffer << "WRN"; break;
+            case Base::LogStyle::Message: buffer << "MSG"; break;
+            case Base::LogStyle::Error: buffer << "ERR"; break;
+            case Base::LogStyle::Log: buffer << "LOG"; break;
         }
     }
 
-    void runSingleTest(const char* comment, std::string expectedResult) {
+    void runSingleTest(const char *comment, std::string expectedResult)
+    {
         Base::Console().Log(comment);
         flush();
         Base::Console().Log("LOG");
@@ -65,7 +63,8 @@ public:
         Base::Console().Warning("WRN");
         Base::Console().Error("ERR");
         if (buffer.str() != expectedResult)
-            throw Py::RuntimeError("ILoggerTest: " + buffer.str() + " different from " + expectedResult);
+            throw Py::RuntimeError("ILoggerTest: " + buffer.str() + " different from "
+                                   + expectedResult);
     }
 
     void runTest()
@@ -77,12 +76,16 @@ public:
         }
         runSingleTest("Print all", "LOGMSGWRNERR");
         {
-            Base::ILoggerBlocker blocker("ILoggerBlockerTest", Base::ConsoleSingleton::MsgType_Err | Base::ConsoleSingleton::MsgType_Wrn);
+            Base::ILoggerBlocker blocker("ILoggerBlockerTest",
+                                         Base::ConsoleSingleton::MsgType_Err
+                                             | Base::ConsoleSingleton::MsgType_Wrn);
             runSingleTest("Error & Warning blocked", "LOGMSG");
         }
         runSingleTest("Print all", "LOGMSGWRNERR");
         {
-            Base::ILoggerBlocker blocker("ILoggerBlockerTest", Base::ConsoleSingleton::MsgType_Log | Base::ConsoleSingleton::MsgType_Txt);
+            Base::ILoggerBlocker blocker("ILoggerBlockerTest",
+                                         Base::ConsoleSingleton::MsgType_Log
+                                             | Base::ConsoleSingleton::MsgType_Txt);
             runSingleTest("Log & Message blocked", "WRNERR");
         }
         runSingleTest("Print all", "LOGMSGWRNERR");
@@ -90,15 +93,20 @@ public:
             Base::ILoggerBlocker blocker("ILoggerBlockerTest", Base::ConsoleSingleton::MsgType_Err);
             runSingleTest("Nested : Error blocked", "LOGMSGWRN");
             {
-                Base::ILoggerBlocker blocker2("ILoggerBlockerTest", Base::ConsoleSingleton::MsgType_Err | Base::ConsoleSingleton::MsgType_Wrn);
-                runSingleTest("Nested : Warning blocked + Error (from nesting) + Error (redundancy)", "LOGMSG");
+                Base::ILoggerBlocker blocker2("ILoggerBlockerTest",
+                                              Base::ConsoleSingleton::MsgType_Err
+                                                  | Base::ConsoleSingleton::MsgType_Wrn);
+                runSingleTest(
+                    "Nested : Warning blocked + Error (from nesting) + Error (redundancy)",
+                    "LOGMSG");
             }
             runSingleTest("Nested : Error still blocked", "LOGMSGWRN");
         }
         runSingleTest("Print all", "LOGMSGWRNERR");
         {
             Base::ILoggerBlocker blocker("ILoggerBlockerTest");
-            Base::Console().SetEnabledMsgType("ILoggerBlockerTest", Base::ConsoleSingleton::MsgType_Log, true);
+            Base::Console().SetEnabledMsgType("ILoggerBlockerTest",
+                                              Base::ConsoleSingleton::MsgType_Log, true);
             runSingleTest("Log is enabled but a warning is triggered in debug mode", "LOG");
         }
         runSingleTest("Print all", "LOGMSGWRNERR");
@@ -109,58 +117,55 @@ private:
 };
 
 
-namespace TestGui {
-class Module : public Py::ExtensionModule<Module>
+namespace TestGui
+{
+class Module: public Py::ExtensionModule<Module>
 {
 
 public:
     Module() : Py::ExtensionModule<Module>("QtUnitGui")
     {
         TestGui::UnitTestDialogPy::init_type();
-        add_varargs_method("UnitTest",&Module::new_UnitTest,"UnitTest");
-        add_varargs_method("setTest",&Module::setTest,"setTest");
-        add_varargs_method("addTest",&Module::addTest,"addTest");
-        add_varargs_method("testILoggerBlocker",&Module::testILoggerBlocker,"testILoggerBlocker");
+        add_varargs_method("UnitTest", &Module::new_UnitTest, "UnitTest");
+        add_varargs_method("setTest", &Module::setTest, "setTest");
+        add_varargs_method("addTest", &Module::addTest, "addTest");
+        add_varargs_method("testILoggerBlocker", &Module::testILoggerBlocker, "testILoggerBlocker");
         initialize("This module is the QtUnitGui module"); // register with Python
     }
 
     ~Module() override {}
 
 private:
-    Py::Object new_UnitTest(const Py::Tuple& args)
+    Py::Object new_UnitTest(const Py::Tuple &args)
     {
-        if (!PyArg_ParseTuple(args.ptr(), ""))
-            throw Py::Exception();
+        if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
         return Py::asObject(new TestGui::UnitTestDialogPy());
     }
-    Py::Object setTest(const Py::Tuple& args)
+    Py::Object setTest(const Py::Tuple &args)
     {
-        char *pstr=nullptr;
-        if (!PyArg_ParseTuple(args.ptr(), "|s", &pstr))
-            throw Py::Exception();
+        char *pstr = nullptr;
+        if (!PyArg_ParseTuple(args.ptr(), "|s", &pstr)) throw Py::Exception();
 
-        TestGui::UnitTestDialog* dlg = TestGui::UnitTestDialog::instance();
-        if (pstr)
-            dlg->setUnitTest(QString::fromLatin1(pstr));
+        TestGui::UnitTestDialog *dlg = TestGui::UnitTestDialog::instance();
+        if (pstr) dlg->setUnitTest(QString::fromLatin1(pstr));
         dlg->show();
         dlg->raise();
         return Py::None();
     }
-    Py::Object addTest(const Py::Tuple& args)
+    Py::Object addTest(const Py::Tuple &args)
     {
-        char *pstr=nullptr;
-        if (!PyArg_ParseTuple(args.ptr(), "|s", &pstr))
-            throw Py::Exception();
+        char *pstr = nullptr;
+        if (!PyArg_ParseTuple(args.ptr(), "|s", &pstr)) throw Py::Exception();
 
-        TestGui::UnitTestDialog* dlg = TestGui::UnitTestDialog::instance();
-        if (pstr)
-            dlg->addUnitTest(QString::fromLatin1(pstr));
+        TestGui::UnitTestDialog *dlg = TestGui::UnitTestDialog::instance();
+        if (pstr) dlg->addUnitTest(QString::fromLatin1(pstr));
         dlg->show();
         dlg->raise();
         return Py::None();
     }
-    Py::Object testILoggerBlocker(const Py::Tuple& args) {
-        (void) args;
+    Py::Object testILoggerBlocker(const Py::Tuple &args)
+    {
+        (void)args;
         ILoggerBlockerTest iltest;
         Base::Console().AttachObserver(static_cast<Base::ILogger *>(&iltest));
         Base::Console().SetConnectionMode(Base::ConsoleSingleton::Direct);
@@ -169,12 +174,9 @@ private:
     }
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
-}
+} // namespace TestGui
 
 void loadTestResource()
 {
@@ -188,7 +190,7 @@ PyMOD_INIT_FUNC(QtUnitGui)
 {
     // the following constructor call registers our extension module
     // with the Python runtime system
-    PyObject* mod = TestGui::initModule();
+    PyObject *mod = TestGui::initModule();
 
     Base::Console().Log("Loading GUI of Test module... done\n");
 

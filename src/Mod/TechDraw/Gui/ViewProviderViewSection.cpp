@@ -25,9 +25,9 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# ifdef FC_OS_WIN32
-#  include <windows.h>
-# endif
+#ifdef FC_OS_WIN32
+#include <windows.h>
+#endif
 #endif
 
 #include <App/Application.h>
@@ -56,35 +56,34 @@ ViewProviderViewSection::ViewProviderViewSection()
     static const char *hgroup = "Surface Hatch";
     sPixmap = "TechDraw_TreeSection";
     //ShowCutSurface is obsolete - use CutSurfaceDisplay
-    ADD_PROPERTY_TYPE(ShowCutSurface ,(true), sgroup, App::Prop_Hidden, "Show/hide the cut surface");
-    ADD_PROPERTY_TYPE(CutSurfaceColor, (0.0, 0.0, 0.0), sgroup, App::Prop_None, "The color to shade the cut surface");
+    ADD_PROPERTY_TYPE(ShowCutSurface, (true), sgroup, App::Prop_Hidden,
+                      "Show/hide the cut surface");
+    ADD_PROPERTY_TYPE(CutSurfaceColor, (0.0, 0.0, 0.0), sgroup, App::Prop_None,
+                      "The color to shade the cut surface");
     //HatchCutSurface is obsolete - use CutSurfaceDisplay
-    ADD_PROPERTY_TYPE(HatchCutSurface ,(false), hgroup, App::Prop_Hidden, "Hatch the cut surface");
+    ADD_PROPERTY_TYPE(HatchCutSurface, (false), hgroup, App::Prop_Hidden, "Hatch the cut surface");
 
-    ADD_PROPERTY_TYPE(HatchColor, (TechDraw::DrawHatch::prefSvgHatchColor()),
-                        hgroup, App::Prop_None, "The color of the Svg hatch pattern");
-    ADD_PROPERTY_TYPE(GeomHatchColor, (TechDraw::DrawGeomHatch::prefGeomHatchColor()),
-                        hgroup, App::Prop_None, "The color of the Geometric hatch pattern");
+    ADD_PROPERTY_TYPE(HatchColor, (TechDraw::DrawHatch::prefSvgHatchColor()), hgroup,
+                      App::Prop_None, "The color of the Svg hatch pattern");
+    ADD_PROPERTY_TYPE(GeomHatchColor, (TechDraw::DrawGeomHatch::prefGeomHatchColor()), hgroup,
+                      App::Prop_None, "The color of the Geometric hatch pattern");
 
-    ADD_PROPERTY_TYPE(WeightPattern, (0.1), hgroup, App::Prop_None, "GeomHatch pattern line thickness");
+    ADD_PROPERTY_TYPE(WeightPattern, (0.1), hgroup, App::Prop_None,
+                      "GeomHatch pattern line thickness");
 
     getParameters();
-
 }
 
-ViewProviderViewSection::~ViewProviderViewSection()
-{
-}
+ViewProviderViewSection::~ViewProviderViewSection() {}
 
 //for VP properties
-void ViewProviderViewSection::onChanged(const App::Property* prop)
+void ViewProviderViewSection::onChanged(const App::Property *prop)
 {
-    if (prop == &WeightPattern   ||
-//        prop == &HatchCutSurface ||
-        prop == &HatchColor      ||
-        prop == &GeomHatchColor      ||
-//        prop == &ShowCutSurface  ||
-        prop == &CutSurfaceColor ) {
+    if (prop == &WeightPattern ||
+        //        prop == &HatchCutSurface ||
+        prop == &HatchColor || prop == &GeomHatchColor ||
+        //        prop == &ShowCutSurface  ||
+        prop == &CutSurfaceColor) {
         updateGraphic();
     }
 
@@ -92,12 +91,11 @@ void ViewProviderViewSection::onChanged(const App::Property* prop)
 }
 
 //for Feature properties
-void ViewProviderViewSection::updateData(const App::Property* prop)
+void ViewProviderViewSection::updateData(const App::Property *prop)
 {
-    if (prop == &(getViewObject()->FileHatchPattern)   ||
-        prop == &(getViewObject()->CutSurfaceDisplay)    ||
-        prop == &(getViewObject()->NameGeomPattern)    ||
-        prop == &(getViewObject()->HatchScale)   ) {
+    if (prop == &(getViewObject()->FileHatchPattern)
+        || prop == &(getViewObject()->CutSurfaceDisplay)
+        || prop == &(getViewObject()->NameGeomPattern) || prop == &(getViewObject()->HatchScale)) {
         updateGraphic();
     }
 
@@ -107,18 +105,14 @@ void ViewProviderViewSection::updateData(const App::Property* prop)
 void ViewProviderViewSection::updateGraphic()
 {
     // redraw QGIVP
-    QGIView* qgiv = getQView();
-    if (qgiv) {
-        qgiv->updateView(true);
-    }
+    QGIView *qgiv = getQView();
+    if (qgiv) { qgiv->updateView(true); }
 }
 
 bool ViewProviderViewSection::setEdit(int ModNum)
 {
-    if (ModNum != ViewProvider::Default ) {
-        return ViewProviderDrawingView::setEdit(ModNum);
-    }
-    if (Gui::Control().activeDialog())  {         //TaskPanel already open!
+    if (ModNum != ViewProvider::Default) { return ViewProviderDrawingView::setEdit(ModNum); }
+    if (Gui::Control().activeDialog()) { //TaskPanel already open!
         return false;
     }
     // clear the selection (convenience)
@@ -136,16 +130,22 @@ bool ViewProviderViewSection::doubleClicked()
 
 void ViewProviderViewSection::getParameters()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/Colors");
-    App::Color cutColor = App::Color((uint32_t) hGrp->GetUnsigned("CutSurfaceColor", 0xD3D3D3FF));
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Colors");
+    App::Color cutColor = App::Color((uint32_t)hGrp->GetUnsigned("CutSurfaceColor", 0xD3D3D3FF));
     CutSurfaceColor.setValue(cutColor);
 
-//    App::Color hatchColor = App::Color((uint32_t) hGrp->GetUnsigned("SectionHatchColor", 0x00000000));
-//    HatchColor.setValue(hatchColor);
+    //    App::Color hatchColor = App::Color((uint32_t) hGrp->GetUnsigned("SectionHatchColor", 0x00000000));
+    //    HatchColor.setValue(hatchColor);
 
-    hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/PAT");
+    hGrp = App::GetApplication()
+               .GetUserParameter()
+               .GetGroup("BaseApp")
+               ->GetGroup("Preferences")
+               ->GetGroup("Mod/TechDraw/PAT");
     double lineWeight = hGrp->GetFloat("GeomWeight", 0.1);
     WeightPattern.setValue(lineWeight);
 }
@@ -158,7 +158,7 @@ bool ViewProviderViewSection::canDelete(App::DocumentObject *obj) const
     return true;
 }
 
-TechDraw::DrawViewSection* ViewProviderViewSection::getViewObject() const
+TechDraw::DrawViewSection *ViewProviderViewSection::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawViewSection*>(pcObject);
+    return dynamic_cast<TechDraw::DrawViewSection *>(pcObject);
 }

@@ -42,9 +42,8 @@
 using namespace TechDrawGui;
 using namespace TechDraw;
 
-DlgPrefsTechDrawGeneralImp::DlgPrefsTechDrawGeneralImp( QWidget* parent )
-  : PreferencePage( parent )
-  , ui(new Ui_DlgPrefsTechDrawGeneralImp)
+DlgPrefsTechDrawGeneralImp::DlgPrefsTechDrawGeneralImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgPrefsTechDrawGeneralImp)
 {
     ui->setupUi(this);
     ui->plsb_LabelSize->setUnit(Base::Unit::Length);

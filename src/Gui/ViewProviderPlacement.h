@@ -40,7 +40,7 @@ class SoMaterial;
 namespace Gui
 {
 
-class GuiExport ViewProviderPlacement : public ViewProviderGeometryObject
+class GuiExport ViewProviderPlacement: public ViewProviderGeometryObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderPlacement);
 
@@ -50,12 +50,12 @@ public:
     ~ViewProviderPlacement() override;
 
     void attach(App::DocumentObject *) override;
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
     std::vector<std::string> getDisplayModes() const override;
-    void setDisplayMode(const char* ModeName) override;
+    void setDisplayMode(const char *ModeName) override;
 
     /// indicates if the ViewProvider use the new Selection model
-    bool useNewSelectionModel() const override {return true;}
+    bool useNewSelectionModel() const override { return true; }
     /// indicates if the ViewProvider can be selected
     bool isSelectable() const override;
 
@@ -63,8 +63,7 @@ public:
     bool getDetailPath(const char *, SoFullPath *, bool, SoDetail *&) const override;
 
 protected:
-    void onChanged(const App::Property* prop) override;
-
+    void onChanged(const App::Property *prop) override;
 };
 
 using ViewProviderPlacementPython = ViewProviderPythonFeatureT<ViewProviderPlacement>;

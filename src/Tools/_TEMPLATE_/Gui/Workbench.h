@@ -26,9 +26,10 @@
 
 #include <Gui/Workbench.h>
 
-namespace _TEMPLATE_Gui {
+namespace _TEMPLATE_Gui
+{
 
-class Workbench : public Gui::StdWorkbench
+class Workbench: public Gui::StdWorkbench
 {
     TYPESYSTEM_HEADER();
 
@@ -37,11 +38,11 @@ public:
     virtual ~Workbench();
 
 protected:
-    Gui::MenuItem* setupMenuBar() const;
-    Gui::ToolBarItem* setupToolBars() const;
+    Gui::MenuItem *setupMenuBar() const;
+    Gui::ToolBarItem *setupToolBars() const;
 };
 
 } // namespace _TEMPLATE_Gui
 
 
-#endif // _TEMPLATE__WORKBENCH_H 
+#endif // _TEMPLATE__WORKBENCH_H

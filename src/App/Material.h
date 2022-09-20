@@ -25,7 +25,7 @@
 #define APP_MATERIAL_H
 
 #ifdef __GNUC__
-# include <cstdint>
+#include <cstdint>
 #endif
 
 #include <sstream>
@@ -44,38 +44,40 @@ public:
      * Defines the color as (R,G,B,A) whereas all values are in the range [0,1].
      * \a A defines the transparency.
      */
-    explicit Color(float R=0.0,float G=0.0, float B=0.0, float A=0.0)
-      :r(R),g(G),b(B),a(A){}
+    explicit Color(float R = 0.0, float G = 0.0, float B = 0.0, float A = 0.0)
+        : r(R), g(G), b(B), a(A)
+    {}
     /**
      * Does basically the same as the constructor above unless that (R,G,B,A) is
      * encoded as an unsigned int.
      */
-    explicit Color(uint32_t rgba)
-    { setPackedValue( rgba ); }
+    explicit Color(uint32_t rgba) { setPackedValue(rgba); }
     /** Copy constructor. */
-    Color(const Color& c)
-      :r(c.r),g(c.g),b(c.b),a(c.a){}
+    Color(const Color &c) : r(c.r), g(c.g), b(c.b), a(c.a) {}
     /** Returns true if both colors are equal. Therefore all components must be equal. */
-    bool operator==(const Color& c) const
+    bool operator==(const Color &c) const
     {
         return getPackedValue() == c.getPackedValue();
         //return (c.r==r && c.g==g && c.b==b && c.a==a);
     }
-    bool operator!=(const Color& c) const
-    {
-        return !operator==(c);
-    }
+    bool operator!=(const Color &c) const { return !operator==(c); }
     /**
      * Defines the color as (R,G,B,A) whereas all values are in the range [0,1].
      * \a A defines the transparency, 0 means complete opaque and 1 invisible.
      */
-    void set(float R,float G, float B, float A=0.0)
+    void set(float R, float G, float B, float A = 0.0)
     {
-        r=R;g=G;b=B;a=A;
+        r = R;
+        g = G;
+        b = B;
+        a = A;
     }
-    Color& operator=(const Color& c)
+    Color &operator=(const Color &c)
     {
-        r=c.r;g=c.g;b=c.b;a=c.a;
+        r = c.r;
+        g = c.g;
+        b = c.b;
+        a = c.a;
         return *this;
     }
     /**
@@ -85,12 +87,10 @@ public:
      *
      * \sa getPackedValue().
      */
-    Color& setPackedValue(uint32_t rgba)
+    Color &setPackedValue(uint32_t rgba)
     {
-        this->set((rgba >> 24)/255.0f,
-                 ((rgba >> 16)&0xff)/255.0f,
-                 ((rgba >> 8)&0xff)/255.0f,
-                 (rgba&0xff)/255.0f);
+        this->set((rgba >> 24) / 255.0f, ((rgba >> 16) & 0xff) / 255.0f,
+                  ((rgba >> 8) & 0xff) / 255.0f, (rgba & 0xff) / 255.0f);
         return *this;
     }
     /**
@@ -100,34 +100,32 @@ public:
      */
     uint32_t getPackedValue() const
     {
-        return (static_cast<uint32_t>(r*255.0f + 0.5f) << 24 |
-                static_cast<uint32_t>(g*255.0f + 0.5f) << 16 |
-                static_cast<uint32_t>(b*255.0f + 0.5f) << 8  |
-                static_cast<uint32_t>(a*255.0f + 0.5f));
+        return (static_cast<uint32_t>(r * 255.0f + 0.5f) << 24
+                | static_cast<uint32_t>(g * 255.0f + 0.5f) << 16
+                | static_cast<uint32_t>(b * 255.0f + 0.5f) << 8
+                | static_cast<uint32_t>(a * 255.0f + 0.5f));
     }
     /**
      * creates FC Color from template type, e.g. Qt QColor
      */
-    template <typename T>
-    void setValue(const T& q)
-    { set(q.redF(),q.greenF(),q.blueF()); }
+    template<typename T> void setValue(const T &q) { set(q.redF(), q.greenF(), q.blueF()); }
     /**
      * returns a template type e.g. Qt color equivalent to FC color
      *
      */
-    template <typename T>
-    inline T asValue() const {
-        return(T(int(r*255.0f),int(g*255.0f),int(b*255.0f)));
+    template<typename T> inline T asValue() const
+    {
+        return (T(int(r * 255.0f), int(g * 255.0f), int(b * 255.0f)));
     }
     /**
      * returns color as hex color "#RRGGBB"
      *
      */
-    std::string asHexString() const {
+    std::string asHexString() const
+    {
         std::stringstream ss;
-        ss << "#" << std::hex << std::uppercase << std::setfill('0') << std::setw(2) << int(r*255.0f)
-                                                                     << std::setw(2) << int(g*255.0f)
-                                                                     << std::setw(2) << int(b*255.0f);
+        ss << "#" << std::hex << std::uppercase << std::setfill('0') << std::setw(2)
+           << int(r * 255.0f) << std::setw(2) << int(g * 255.0f) << std::setw(2) << int(b * 255.0f);
         return ss.str();
     }
 
@@ -135,9 +133,9 @@ public:
      * gets color from hex color "#RRGGBB"
      *
      */
-    bool fromHexString(const std::string& hex) {
-        if (hex.size() < 7 || hex[0] != '#')
-            return false;
+    bool fromHexString(const std::string &hex)
+    {
+        if (hex.size() < 7 || hex[0] != '#') return false;
         // #RRGGBB
         if (hex.size() == 7) {
             std::stringstream ss(hex);
@@ -179,7 +177,7 @@ public:
     }
 
     /// color values, public accessible
-    float r,g,b,a;
+    float r, g, b, a;
 };
 
 /** Material class
@@ -187,7 +185,8 @@ public:
 class AppExport Material
 {
 public:
-    enum MaterialType {
+    enum MaterialType
+    {
         BRASS,
         BRONZE,
         COPPER,
@@ -222,7 +221,7 @@ public:
     /** Defines the colors and shininess for the material \a MatName. If \a MatName isn't defined then USER_DEFINED is
      * set and the user must define the colors itself.
      */
-    explicit Material(const char* MatName);
+    explicit Material(const char *MatName);
     /** Does basically the same as the constructor above unless that it accepts a MaterialType as argument. */
     explicit Material(const MaterialType MatType);
     //@}
@@ -256,7 +255,7 @@ public:
      * The Color and the other properties of the material are defined in the range [0-1].
      * If \a MatName is an unknown material name then the type USER_DEFINED is set and the material doesn't get changed.
      */
-    void set(const char* MatName);
+    void set(const char *MatName);
     /**
      * This method is provided for convenience which does basically the same as the method above unless that it accepts a MaterialType
      * as argument.
@@ -265,8 +264,7 @@ public:
     /**
      * Returns the currently set material type.
      */
-    MaterialType getType() const
-    { return _matType; }
+    MaterialType getType() const { return _matType; }
 
     /** @name Properties */
     //@{
@@ -278,17 +276,13 @@ public:
     float transparency;
     //@}
 
-    bool operator==(const Material& m) const
+    bool operator==(const Material &m) const
     {
-        return _matType==m._matType && shininess==m.shininess &&
-            transparency==m.transparency && ambientColor==m.ambientColor &&
-            diffuseColor==m.diffuseColor && specularColor==m.specularColor &&
-            emissiveColor==m.emissiveColor;
+        return _matType == m._matType && shininess == m.shininess && transparency == m.transparency
+            && ambientColor == m.ambientColor && diffuseColor == m.diffuseColor
+            && specularColor == m.specularColor && emissiveColor == m.emissiveColor;
     }
-    bool operator!=(const Material& m) const
-    {
-        return !operator==(m);
-    }
+    bool operator!=(const Material &m) const { return !operator==(m); }
 
 private:
     MaterialType _matType;

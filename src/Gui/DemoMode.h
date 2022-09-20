@@ -30,20 +30,22 @@ class QTimer;
 class SoCamera;
 class SbRotation;
 
-namespace Gui {
+namespace Gui
+{
 class View3DInventor;
-namespace Dialog {
+namespace Dialog
+{
 
 /**
  * @author Werner Mayer
  */
 class Ui_DemoMode;
-class GuiExport DemoMode : public QDialog
+class GuiExport DemoMode: public QDialog
 {
     Q_OBJECT
 
 public:
-    DemoMode(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    DemoMode(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DemoMode();
 
     void accept();
@@ -61,10 +63,10 @@ protected Q_SLOTS:
 private:
     void reset();
     float getSpeed(int) const;
-    void reorientCamera(SoCamera * cam, const SbRotation & rot);
-    SbVec3f getDirection(Gui::View3DInventor*) const;
-    Gui::View3DInventor* activeView() const;
-    void startAnimation(Gui::View3DInventor*);
+    void reorientCamera(SoCamera *cam, const SbRotation &rot);
+    SbVec3f getDirection(Gui::View3DInventor *) const;
+    Gui::View3DInventor *activeView() const;
+    void startAnimation(Gui::View3DInventor *);
     void changeEvent(QEvent *e);
     bool eventFilter(QObject *, QEvent *);
     void showEvent(QShowEvent *);
@@ -76,9 +78,9 @@ private:
     bool wasHidden;
     QPoint pnt;
     QPoint oldPos;
-    Ui_DemoMode* ui;
-    QTimer* timer;
-    QTimer* showHideTimer;
+    Ui_DemoMode *ui;
+    QTimer *timer;
+    QTimer *showHideTimer;
 };
 
 } // namespace Dialog

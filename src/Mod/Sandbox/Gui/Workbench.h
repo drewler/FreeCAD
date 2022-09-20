@@ -29,9 +29,10 @@
 #include <QPointer>
 #include <QImage>
 
-namespace SandboxGui {
+namespace SandboxGui
+{
 
-class Workbench : public Gui::StdWorkbench
+class Workbench: public Gui::StdWorkbench
 {
     TYPESYSTEM_HEADER();
 
@@ -40,13 +41,14 @@ public:
     virtual ~Workbench();
 
 protected:
-    Gui::MenuItem* setupMenuBar() const;
-    Gui::ToolBarItem* setupToolBars() const;
-    Gui::ToolBarItem* setupCommandBars() const;
-    Gui::DockWindowItems* setupDockWindows() const;
+    Gui::MenuItem *setupMenuBar() const;
+    Gui::ToolBarItem *setupToolBars() const;
+    Gui::ToolBarItem *setupCommandBars() const;
+    Gui::DockWindowItems *setupDockWindows() const;
 };
 
-class SoWidgetShape : public SoShape {
+class SoWidgetShape: public SoShape
+{
     using inherited = SoShape;
 
     SO_NODE_HEADER(SoWidgetShape);
@@ -54,7 +56,7 @@ class SoWidgetShape : public SoShape {
 public:
     static void initClass();
     SoWidgetShape();
-    void setWidget(QWidget* w);
+    void setWidget(QWidget *w);
 
 protected:
     //virtual void doAction(SoAction * action);
@@ -63,10 +65,10 @@ protected:
     //virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);
     //virtual void rayPick (SoRayPickAction *action);
     virtual void generatePrimitives(SoAction *action);
-    void getQuad(SoState * state, SbVec3f & v0, SbVec3f & v1, SbVec3f & v2, SbVec3f & v3);
+    void getQuad(SoState *state, SbVec3f &v0, SbVec3f &v1, SbVec3f &v2, SbVec3f &v3);
 
 private:
-    virtual ~SoWidgetShape(){};
+    virtual ~SoWidgetShape() {};
     QPointer<QWidget> w;
     QImage image;
 };
@@ -74,4 +76,4 @@ private:
 } // namespace SandboxGui
 
 
-#endif // Sandbox_WORKBENCH_H 
+#endif // Sandbox_WORKBENCH_H

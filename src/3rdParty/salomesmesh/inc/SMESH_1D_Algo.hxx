@@ -32,12 +32,11 @@
 
 #include "SMESH_Algo.hxx"
 
-class SMESH_EXPORT SMESH_1D_Algo:
-  public SMESH_Algo
+class SMESH_EXPORT SMESH_1D_Algo: public SMESH_Algo
 {
 public:
-  SMESH_1D_Algo(int hypId, int studyId,  SMESH_Gen* gen);
-  virtual ~SMESH_1D_Algo();
+    SMESH_1D_Algo(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~SMESH_1D_Algo();
 };
 
 #endif

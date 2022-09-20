@@ -22,14 +22,14 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QAction>
-# include <QContextMenuEvent>
-# include <QGraphicsScene>
-# include <QGraphicsSceneMouseEvent>
-# include <QMenu>
-# include <QMessageBox>
-# include <QMouseEvent>
-# include <QPainter>
+#include <QAction>
+#include <QContextMenuEvent>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QMenu>
+#include <QMessageBox>
+#include <QMouseEvent>
+#include <QPainter>
 #endif
 
 #include <App/Document.h>

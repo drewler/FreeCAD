@@ -30,7 +30,8 @@
 class QPlainTextEdit;
 class QPushButton;
 
-namespace Gui {
+namespace Gui
+{
 
 /**
  * This class implements an interactive Python interpreter.
@@ -42,21 +43,21 @@ public:
     InteractiveInterpreter();
     ~InteractiveInterpreter();
 
-    bool push(const char*);
-    int compileCommand(const char*) const;
-    bool hasPendingInput( ) const;
-    void setBuffer(const QStringList&);
+    bool push(const char *);
+    int compileCommand(const char *) const;
+    bool hasPendingInput() const;
+    void setBuffer(const QStringList &);
     QStringList getBuffer() const;
     void clearBuffer();
 
 private:
-    bool runSource(const char*) const;
-    PyObject* compile(const char*) const;
-    void runCode(PyCodeObject*) const;
+    bool runSource(const char *) const;
+    PyObject *compile(const char *) const;
+    void runCode(PyCodeObject *) const;
     void setPrompt();
 
 private:
-    struct InteractiveInterpreterP* d;
+    struct InteractiveInterpreterP *d;
 };
 
 /**
@@ -74,18 +75,18 @@ public:
     bool next();
     bool prev(const QString &prefix = QString());
     bool isEmpty() const;
-    const QString& value() const;
+    const QString &value() const;
     void append(const QString &inputLine);
-    const QStringList& values() const;
+    const QStringList &values() const;
     void restart();
-    void markScratch( );
-    void doScratch( );
+    void markScratch();
+    void doScratch();
 
 private:
-    QStringList                _history;
+    QStringList _history;
     QStringList::ConstIterator _it;
-    int                        _scratchBegin;
-    QString                    _prefix;
+    int _scratchBegin;
+    QString _prefix;
 };
 
 /**
@@ -93,24 +94,25 @@ private:
  * @author Werner Mayer
  */
 class PythonConsoleHighlighter;
-class GuiExport PythonConsole : public TextEdit, public WindowParameter
+class GuiExport PythonConsole: public TextEdit, public WindowParameter
 {
     Q_OBJECT
 
 public:
-    enum Prompt {
-        Complete   = 0,
+    enum Prompt
+    {
+        Complete = 0,
         Incomplete = 1,
-        Flush      = 2,
-        Special    = 3
+        Flush = 2,
+        Special = 3
     };
 
     explicit PythonConsole(QWidget *parent = nullptr);
     ~PythonConsole() override;
 
-    void OnChange( Base::Subject<const char*> &rCaller,const char* rcReason ) override;
-    void printStatement( const QString& cmd );
-    QString readline( );
+    void OnChange(Base::Subject<const char *> &rCaller, const char *rcReason) override;
+    void printStatement(const QString &cmd);
+    QString readline();
 
 public Q_SLOTS:
     void onSaveHistoryAs();
@@ -121,66 +123,66 @@ public Q_SLOTS:
     void onFlush();
 
 private Q_SLOTS:
-    void visibilityChanged (bool visible);
+    void visibilityChanged(bool visible);
 
 protected:
-    void keyPressEvent  ( QKeyEvent         * e ) override;
-    void showEvent      ( QShowEvent        * e ) override;
-    void dropEvent      ( QDropEvent        * e ) override;
-    void dragEnterEvent ( QDragEnterEvent   * e ) override;
-    void dragMoveEvent  ( QDragMoveEvent    * e ) override;
-    void changeEvent    ( QEvent            * e ) override;
-    void mouseReleaseEvent( QMouseEvent     * e ) override;
+    void keyPressEvent(QKeyEvent *e) override;
+    void showEvent(QShowEvent *e) override;
+    void dropEvent(QDropEvent *e) override;
+    void dragEnterEvent(QDragEnterEvent *e) override;
+    void dragMoveEvent(QDragMoveEvent *e) override;
+    void changeEvent(QEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
 
-    void overrideCursor(const QString& txt);
+    void overrideCursor(const QString &txt);
 
     /** Pops up the context menu with some extensions */
-    void contextMenuEvent ( QContextMenuEvent* e ) override;
-    bool canInsertFromMimeData ( const QMimeData * source ) const override;
-    QMimeData * createMimeDataFromSelection () const override;
-    void insertFromMimeData ( const QMimeData * source ) override;
-    QTextCursor inputBegin( ) const;
+    void contextMenuEvent(QContextMenuEvent *e) override;
+    bool canInsertFromMimeData(const QMimeData *source) const override;
+    QMimeData *createMimeDataFromSelection() const override;
+    void insertFromMimeData(const QMimeData *source) override;
+    QTextCursor inputBegin() const;
 
 private:
-    void runSource(const QString&);
-    bool isComment(const QString&) const;
+    void runSource(const QString &);
+    bool isComment(const QString &) const;
     void printPrompt(Prompt);
-    void insertPythonOutput(const QString&);
-    void insertPythonError (const QString&);
-    void runSourceFromMimeData(const QString&);
-    void appendOutput(const QString&, int);
+    void insertPythonOutput(const QString &);
+    void insertPythonError(const QString &);
+    void runSourceFromMimeData(const QString &);
+    void appendOutput(const QString &, int);
     void loadHistory() const;
     void saveHistory() const;
 
 Q_SIGNALS:
-    void pendingSource( );
+    void pendingSource();
 
 private:
-    struct PythonConsoleP* d;
+    struct PythonConsoleP *d;
 
     friend class PythonStdout;
     friend class PythonStderr;
 
 private:
-    PythonConsoleHighlighter* pythonSyntax;
-    QString                 *_sourceDrain;
-    QString                  _historyFile;
+    PythonConsoleHighlighter *pythonSyntax;
+    QString *_sourceDrain;
+    QString _historyFile;
 };
 
 /**
  * Syntax highlighter for Python console.
  * @author Werner Mayer
  */
-class GuiExport PythonConsoleHighlighter : public PythonSyntaxHighlighter
+class GuiExport PythonConsoleHighlighter: public PythonSyntaxHighlighter
 {
 public:
-    explicit PythonConsoleHighlighter(QObject* parent);
+    explicit PythonConsoleHighlighter(QObject *parent);
     ~PythonConsoleHighlighter() override;
 
-    void highlightBlock (const QString & text) override;
+    void highlightBlock(const QString &text) override;
 
 protected:
-    void colorChanged(const QString& type, const QColor& col) override;
+    void colorChanged(const QString &type, const QColor &col) override;
 };
 
 } // namespace Gui

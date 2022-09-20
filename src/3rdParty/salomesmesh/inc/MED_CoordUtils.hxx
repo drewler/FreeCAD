@@ -28,29 +28,26 @@
 
 namespace MED
 {
-  typedef TFloat (*TGetCoord)(const TCCoordSlice& theCoordSlice);
+typedef TFloat (*TGetCoord)(const TCCoordSlice &theCoordSlice);
 
 
-  //---------------------------------------------------------------
-  class MEDWRAPPER_EXPORT TCoordHelper
-  {
-    TGetCoord* myGetCoord;
-    
-  public:
-    TCoordHelper(TGetCoord* theGetCoord);
+//---------------------------------------------------------------
+class MEDWRAPPER_EXPORT TCoordHelper
+{
+    TGetCoord *myGetCoord;
 
-    TFloat 
-    GetCoord(TCCoordSlice& theCoordSlice, 
-             TInt theCoordId);
-  };
-  typedef SharedPtr<TCoordHelper> PCoordHelper;
+public:
+    TCoordHelper(TGetCoord *theGetCoord);
+
+    TFloat GetCoord(TCCoordSlice &theCoordSlice, TInt theCoordId);
+};
+typedef SharedPtr<TCoordHelper> PCoordHelper;
 
 
-  //---------------------------------------------------------------
-  MEDWRAPPER_EXPORT 
-  PCoordHelper
-  GetCoordHelper(PNodeInfo theNodeInfo);
+//---------------------------------------------------------------
+MEDWRAPPER_EXPORT
+PCoordHelper GetCoordHelper(PNodeInfo theNodeInfo);
 
-}
+} // namespace MED
 
 #endif

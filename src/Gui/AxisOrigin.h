@@ -25,10 +25,12 @@
 
 #include "ViewProvider.h"
 
-namespace Gui {
+namespace Gui
+{
 
 /// A class to create a Coin3D node representation of an coordinate system
-class GuiExport AxisOrigin : public Base::BaseClass {
+class GuiExport AxisOrigin: public Base::BaseClass
+{
     TYPESYSTEM_HEADER();
 
 public:
@@ -56,7 +58,7 @@ public:
     void setPlane(float size, float dist);
 
     /// Get the origin plane size and distance from the axis
-    std::pair<float,float> getPlane() const {return std::make_pair(pSize,dist);}
+    std::pair<float, float> getPlane() const { return std::make_pair(pSize, dist); }
 
     /// Set the auto scale factor, 0 to disable it
     void setScale(float scale);
@@ -74,10 +76,10 @@ public:
      * this function to choose which components are hidden, by not
      * include the key in the input labels.
      */
-    void setLabels(const std::map<std::string,std::string> &labels);
+    void setLabels(const std::map<std::string, std::string> &labels);
 
     /// Obtain the axis component names
-    const std::map<std::string,std::string> &getLabels() const { return labels; }
+    const std::map<std::string, std::string> &getLabels() const { return labels; }
 
     /// Obtain the constructed Coin3D representation
     SoGroup *getNode();
@@ -101,7 +103,7 @@ private:
     float pointSize;
     std::map<std::string, std::string> labels;
     CoinPtr<SoGroup> node;
-    std::map<std::string, CoinPtr<SoNode> > nodeMap;
+    std::map<std::string, CoinPtr<SoNode>> nodeMap;
 };
 
 } // namespace Gui

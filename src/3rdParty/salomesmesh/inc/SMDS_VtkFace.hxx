@@ -29,35 +29,36 @@
 class SMDS_EXPORT SMDS_VtkFace: public SMDS_MeshFace
 {
 public:
-  SMDS_VtkFace();
-  SMDS_VtkFace(const std::vector<vtkIdType>& nodeIds, SMDS_Mesh* mesh);
-  ~SMDS_VtkFace();
-  void init(const std::vector<vtkIdType>& nodeIds, SMDS_Mesh* mesh);
-  void initPoly(const std::vector<vtkIdType>& nodeIds, SMDS_Mesh* mesh);
-  void initQuadPoly(const std::vector<vtkIdType>& nodeIds, SMDS_Mesh* mesh);
+    SMDS_VtkFace();
+    SMDS_VtkFace(const std::vector<vtkIdType> &nodeIds, SMDS_Mesh *mesh);
+    ~SMDS_VtkFace();
+    void init(const std::vector<vtkIdType> &nodeIds, SMDS_Mesh *mesh);
+    void initPoly(const std::vector<vtkIdType> &nodeIds, SMDS_Mesh *mesh);
+    void initQuadPoly(const std::vector<vtkIdType> &nodeIds, SMDS_Mesh *mesh);
 
-  bool ChangeNodes(const SMDS_MeshNode* nodes[], const int nbNodes);
-  void ChangeApex(SMDS_MeshNode* node); // to use only for tmp triangles
+    bool ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes);
+    void ChangeApex(SMDS_MeshNode *node); // to use only for tmp triangles
 
-  virtual void Print(std::ostream & OS) const;
-  virtual int NbEdges() const;
-  virtual int NbFaces() const;
-  virtual int NbNodes() const;
+    virtual void Print(std::ostream &OS) const;
+    virtual int NbEdges() const;
+    virtual int NbFaces() const;
+    virtual int NbNodes() const;
 
-  virtual vtkIdType            GetVtkType() const;
-  virtual SMDSAbs_EntityType   GetEntityType() const;
-  virtual SMDSAbs_GeometryType GetGeomType() const;
-  virtual const SMDS_MeshNode* GetNode(const int ind) const;
-  virtual int GetNodeIndex( const SMDS_MeshNode* node ) const;
+    virtual vtkIdType GetVtkType() const;
+    virtual SMDSAbs_EntityType GetEntityType() const;
+    virtual SMDSAbs_GeometryType GetGeomType() const;
+    virtual const SMDS_MeshNode *GetNode(const int ind) const;
+    virtual int GetNodeIndex(const SMDS_MeshNode *node) const;
 
-  virtual bool IsQuadratic() const;
-  virtual bool IsPoly() const;
-  virtual bool IsMediumNode(const SMDS_MeshNode* node) const;
-  virtual int  NbCornerNodes() const;
+    virtual bool IsQuadratic() const;
+    virtual bool IsPoly() const;
+    virtual bool IsMediumNode(const SMDS_MeshNode *node) const;
+    virtual int NbCornerNodes() const;
 
-  virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
-  virtual SMDS_NodeIteratorPtr nodesIteratorToUNV() const;
-  virtual SMDS_NodeIteratorPtr interlacedNodesIterator() const;
+    virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
+    virtual SMDS_NodeIteratorPtr nodesIteratorToUNV() const;
+    virtual SMDS_NodeIteratorPtr interlacedNodesIterator() const;
+
 protected:
 };
 

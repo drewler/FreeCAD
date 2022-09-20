@@ -23,8 +23,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class Box3
+template<class Real> class Box3
 {
 public:
     // A box has center C, axis directions U[0], U[1], and U[2] (all
@@ -33,18 +32,16 @@ public:
     // on the box whenever |y[i]| <= e[i] for all i.
 
     // construction
-    Box3 ();  // uninitialized
-    Box3 (const Vector3<Real>& rkCenter, const Vector3<Real>* akAxis,
-        const Real* afExtent);
-    Box3 (const Vector3<Real>& rkCenter, const Vector3<Real>& rkAxis0,
-        const Vector3<Real>& rkAxis1, const Vector3<Real>& rkAxis2,
-        Real fExtent0, Real fExtent1, Real fExtent2);
+    Box3(); // uninitialized
+    Box3(const Vector3<Real> &rkCenter, const Vector3<Real> *akAxis, const Real *afExtent);
+    Box3(const Vector3<Real> &rkCenter, const Vector3<Real> &rkAxis0, const Vector3<Real> &rkAxis1,
+         const Vector3<Real> &rkAxis2, Real fExtent0, Real fExtent1, Real fExtent2);
 
-    void ComputeVertices (Vector3<Real> akVertex[8]) const;
+    void ComputeVertices(Vector3<Real> akVertex[8]) const;
 
     Vector3<Real> Center;
-    Vector3<Real> Axis[3];  // must be an orthonormal set of vectors
-    Real Extent[3];         // must be nonnegative
+    Vector3<Real> Axis[3]; // must be an orthonormal set of vectors
+    Real Extent[3];        // must be nonnegative
 };
 
 } //namespace Wm4
@@ -55,6 +52,6 @@ namespace Wm4
 {
 typedef Box3<float> Box3f;
 typedef Box3<double> Box3d;
-}
+} // namespace Wm4
 
 #endif

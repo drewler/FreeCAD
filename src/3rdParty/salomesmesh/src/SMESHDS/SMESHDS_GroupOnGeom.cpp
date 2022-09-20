@@ -36,20 +36,19 @@ using namespace std;
  */
 //=============================================================================
 
-SMESHDS_GroupOnGeom::SMESHDS_GroupOnGeom (const int                 theID,
-                                          const SMESHDS_Mesh*       theMesh,
-                                          const SMDSAbs_ElementType theType,
-                                          const TopoDS_Shape&       theShape)
-     : SMESHDS_GroupBase(theID,theMesh,theType)
+SMESHDS_GroupOnGeom::SMESHDS_GroupOnGeom(const int theID, const SMESHDS_Mesh *theMesh,
+                                         const SMDSAbs_ElementType theType,
+                                         const TopoDS_Shape &theShape)
+    : SMESHDS_GroupBase(theID, theMesh, theType)
 {
-  SetShape( theShape );
+    SetShape(theShape);
 }
 
-void SMESHDS_GroupOnGeom::SetShape( const TopoDS_Shape& theShape)
+void SMESHDS_GroupOnGeom::SetShape(const TopoDS_Shape &theShape)
 {
-  SMESHDS_Mesh* aMesh = const_cast<SMESHDS_Mesh*>( GetMesh() );
-  mySubMesh = aMesh->MeshElements( aMesh->AddCompoundSubmesh( theShape ));
-  myShape   = theShape;
+    SMESHDS_Mesh *aMesh = const_cast<SMESHDS_Mesh *>(GetMesh());
+    mySubMesh = aMesh->MeshElements(aMesh->AddCompoundSubmesh(theShape));
+    myShape = theShape;
 }
 
 // =====================
@@ -58,74 +57,70 @@ void SMESHDS_GroupOnGeom::SetShape( const TopoDS_Shape& theShape)
 
 class MyIterator: public SMDS_ElemIterator
 {
-  SMDSAbs_ElementType     myType;
-  SMDS_ElemIteratorPtr    myElemIt;
-  SMDS_NodeIteratorPtr    myNodeIt;
-  const SMDS_MeshElement* myElem;
- public:
-  MyIterator(SMDSAbs_ElementType type, const SMESHDS_SubMesh* subMesh)
-    : myType(type), myElem(0)
-  {
-    if ( subMesh ) {
-      if ( myType == SMDSAbs_Node )
-        myNodeIt = subMesh->GetNodes();
-      else {
-        myElemIt = subMesh->GetElements();
-        next();
-      }
+    SMDSAbs_ElementType myType;
+    SMDS_ElemIteratorPtr myElemIt;
+    SMDS_NodeIteratorPtr myNodeIt;
+    const SMDS_MeshElement *myElem;
+
+public:
+    MyIterator(SMDSAbs_ElementType type, const SMESHDS_SubMesh *subMesh) : myType(type), myElem(0)
+    {
+        if (subMesh) {
+            if (myType == SMDSAbs_Node) myNodeIt = subMesh->GetNodes();
+            else {
+                myElemIt = subMesh->GetElements();
+                next();
+            }
+        }
     }
-  }
-  bool more()
-  {
-    if ( myType == SMDSAbs_Node && myNodeIt )
-      return myNodeIt->more();
-    return ( myElem != 0 );
-  }
-  const SMDS_MeshElement* next()
-  {
-    if ( myType == SMDSAbs_Node && myNodeIt )
-      return myNodeIt->next();
-    const SMDS_MeshElement* res = myElem;
-    myElem = 0;
-    while ( myElemIt && myElemIt->more() ) {
-      myElem = myElemIt->next();
-      if ( myElem && myElem->GetType() == myType )
-        break;
-      else
+    bool more()
+    {
+        if (myType == SMDSAbs_Node && myNodeIt) return myNodeIt->more();
+        return (myElem != 0);
+    }
+    const SMDS_MeshElement *next()
+    {
+        if (myType == SMDSAbs_Node && myNodeIt) return myNodeIt->next();
+        const SMDS_MeshElement *res = myElem;
         myElem = 0;
+        while (myElemIt && myElemIt->more()) {
+            myElem = myElemIt->next();
+            if (myElem && myElem->GetType() == myType) break;
+            else
+                myElem = 0;
+        }
+        return res;
     }
-    return res;
-  }
 };
 
 //=======================================================================
 //function : GetElements
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 SMDS_ElemIteratorPtr SMESHDS_GroupOnGeom::GetElements() const
 {
-  return SMDS_ElemIteratorPtr( new MyIterator ( GetType(), mySubMesh ));
+    return SMDS_ElemIteratorPtr(new MyIterator(GetType(), mySubMesh));
 }
 
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMESHDS_GroupOnGeom::Contains (const int theID)
+bool SMESHDS_GroupOnGeom::Contains(const int theID)
 {
-  return mySubMesh->Contains( findInMesh( theID ));
+    return mySubMesh->Contains(findInMesh(theID));
 }
 
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMESHDS_GroupOnGeom::Contains (const SMDS_MeshElement* elem)
+bool SMESHDS_GroupOnGeom::Contains(const SMDS_MeshElement *elem)
 {
-  return mySubMesh->Contains( elem );
+    return mySubMesh->Contains(elem);
 }
 
 //================================================================================
@@ -134,8 +129,4 @@ bool SMESHDS_GroupOnGeom::Contains (const SMDS_MeshElement* elem)
  */
 //================================================================================
 
-VTK_MTIME_TYPE SMESHDS_GroupOnGeom::GetTic() const
-{
-  return GetMesh()->GetMTime();
-}
-
+VTK_MTIME_TYPE SMESHDS_GroupOnGeom::GetTic() const { return GetMesh()->GetMTime(); }

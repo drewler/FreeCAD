@@ -37,7 +37,6 @@
 #include "Core/Iterator.h"
 
 
-
 using namespace Mesh;
 
 PROPERTY_SOURCE(Mesh::Curvature, App::DocumentObject)
@@ -45,35 +44,34 @@ PROPERTY_SOURCE(Mesh::Curvature, App::DocumentObject)
 
 Curvature::Curvature()
 {
-    ADD_PROPERTY(Source,(nullptr));
+    ADD_PROPERTY(Source, (nullptr));
     ADD_PROPERTY(CurvInfo, (CurvatureInfo()));
 }
 
 short Curvature::mustExecute() const
 {
-    if (Source.isTouched())
-        return 1;
-    if (Source.getValue() && Source.getValue()->isTouched())
-        return 1;
+    if (Source.isTouched()) return 1;
+    if (Source.getValue() && Source.getValue()->isTouched()) return 1;
     return 0;
 }
 
 App::DocumentObjectExecReturn *Curvature::execute()
 {
-    Mesh::Feature *pcFeat  = dynamic_cast<Mesh::Feature*>(Source.getValue());
-    if(!pcFeat || pcFeat->isError()) {
+    Mesh::Feature *pcFeat = dynamic_cast<Mesh::Feature *>(Source.getValue());
+    if (!pcFeat || pcFeat->isError()) {
         return new App::DocumentObjectExecReturn("No mesh object attached.");
     }
- 
+
     // get all points
-    const MeshCore::MeshKernel& rMesh = pcFeat->Mesh.getValue().getKernel();
+    const MeshCore::MeshKernel &rMesh = pcFeat->Mesh.getValue().getKernel();
     MeshCore::MeshCurvature meshCurv(rMesh);
     meshCurv.ComputePerVertex();
-    const std::vector<MeshCore::CurvatureInfo>& curv = meshCurv.GetCurvature();
+    const std::vector<MeshCore::CurvatureInfo> &curv = meshCurv.GetCurvature();
 
     std::vector<CurvatureInfo> values;
     values.reserve(curv.size());
-    for (std::vector<MeshCore::CurvatureInfo>::const_iterator it = curv.begin(); it != curv.end(); ++it) {
+    for (std::vector<MeshCore::CurvatureInfo>::const_iterator it = curv.begin(); it != curv.end();
+         ++it) {
         CurvatureInfo ci;
         ci.cMaxCurvDir = it->cMaxCurvDir;
         ci.cMinCurvDir = it->cMinCurvDir;

@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <fcntl.h>
+#include <fcntl.h>
 #endif
 
 #include <Base/Console.h>
@@ -36,15 +36,11 @@ using namespace Part;
 PROPERTY_SOURCE(Part::ImportBrep, Part::Feature)
 
 
-ImportBrep::ImportBrep()
-{
-    ADD_PROPERTY(FileName,(""));
-}
+ImportBrep::ImportBrep() { ADD_PROPERTY(FileName, ("")); }
 
 short ImportBrep::mustExecute() const
 {
-    if (FileName.isTouched())
-        return 1;
+    if (FileName.isTouched()) return 1;
     return 0;
 }
 
@@ -52,7 +48,7 @@ App::DocumentObjectExecReturn *ImportBrep::execute()
 {
     Base::FileInfo fi(FileName.getValue());
     if (!fi.isReadable()) {
-        Base::Console().Log("ImportBrep::execute() not able to open %s!\n",FileName.getValue());
+        Base::Console().Log("ImportBrep::execute() not able to open %s!\n", FileName.getValue());
         std::string error = std::string("Cannot open file ") + FileName.getValue();
         return new App::DocumentObjectExecReturn(error);
     }
@@ -63,4 +59,3 @@ App::DocumentObjectExecReturn *ImportBrep::execute()
 
     return App::DocumentObject::StdReturn;
 }
-

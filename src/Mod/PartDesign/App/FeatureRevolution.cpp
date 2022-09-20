@@ -23,12 +23,12 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepAlgoAPI_Fuse.hxx>
-# include <BRepPrimAPI_MakeRevol.hxx>
-# include <gp_Lin.hxx>
-# include <Precision.hxx>
-# include <TopExp_Explorer.hxx>
-# include <TopoDS.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
+#include <BRepPrimAPI_MakeRevol.hxx>
+#include <gp_Lin.hxx>
+#include <Precision.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
 #endif
 
 #include <Base/Axis.h>
@@ -40,31 +40,33 @@
 
 using namespace PartDesign;
 
-namespace PartDesign {
+namespace PartDesign
+{
 
 
 PROPERTY_SOURCE(PartDesign::Revolution, PartDesign::ProfileBased)
 
-const App::PropertyAngle::Constraints Revolution::floatAngle = { Base::toDegrees<double>(Precision::Angular()), 360.0, 1.0 };
+const App::PropertyAngle::Constraints Revolution::floatAngle = {
+    Base::toDegrees<double>(Precision::Angular()), 360.0, 1.0};
 
 Revolution::Revolution()
 {
     addSubType = FeatureAddSub::Additive;
-    
-    ADD_PROPERTY_TYPE(Base,(Base::Vector3d(0.0,0.0,0.0)),"Revolution", App::Prop_ReadOnly, "Base");
-    ADD_PROPERTY_TYPE(Axis,(Base::Vector3d(0.0,1.0,0.0)),"Revolution", App::Prop_ReadOnly, "Axis");
-    ADD_PROPERTY_TYPE(Angle,(360.0),"Revolution", App::Prop_None, "Angle");
+
+    ADD_PROPERTY_TYPE(Base, (Base::Vector3d(0.0, 0.0, 0.0)), "Revolution", App::Prop_ReadOnly,
+                      "Base");
+    ADD_PROPERTY_TYPE(Axis, (Base::Vector3d(0.0, 1.0, 0.0)), "Revolution", App::Prop_ReadOnly,
+                      "Axis");
+    ADD_PROPERTY_TYPE(Angle, (360.0), "Revolution", App::Prop_None, "Angle");
     Angle.setConstraints(&floatAngle);
-    ADD_PROPERTY_TYPE(ReferenceAxis,(nullptr),"Revolution",(App::Prop_None),"Reference axis of revolution");
+    ADD_PROPERTY_TYPE(ReferenceAxis, (nullptr), "Revolution", (App::Prop_None),
+                      "Reference axis of revolution");
 }
 
 short Revolution::mustExecute() const
 {
-    if (Placement.isTouched() ||
-        ReferenceAxis.isTouched() ||
-        Axis.isTouched() ||
-        Base.isTouched() ||
-        Angle.isTouched())
+    if (Placement.isTouched() || ReferenceAxis.isTouched() || Axis.isTouched() || Base.isTouched()
+        || Angle.isTouched())
         return 1;
     return ProfileBased::mustExecute();
 }
@@ -73,21 +75,20 @@ App::DocumentObjectExecReturn *Revolution::execute()
 {
     // Validate parameters
     double angle = Angle.getValue();
-    if (angle > 360.0)
-        return new App::DocumentObjectExecReturn("Angle of revolution too large");
+    if (angle > 360.0) return new App::DocumentObjectExecReturn("Angle of revolution too large");
 
     angle = Base::toRadians<double>(angle);
     if (angle < Precision::Angular())
         return new App::DocumentObjectExecReturn("Angle of revolution too small");
 
     // Reverse angle if selected
-    if (Reversed.getValue() && !Midplane.getValue())
-        angle *= (-1.0);
+    if (Reversed.getValue() && !Midplane.getValue()) angle *= (-1.0);
 
     TopoDS_Shape sketchshape;
     try {
         sketchshape = getVerifiedFace();
-    } catch (const Base::Exception& e) {
+    }
+    catch (const Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 
@@ -95,7 +96,8 @@ App::DocumentObjectExecReturn *Revolution::execute()
     TopoDS_Shape base;
     try {
         base = getBaseShape();
-    } catch (const Base::Exception&) {
+    }
+    catch (const Base::Exception &) {
         // fall back to support (for legacy features)
         base = TopoDS_Shape();
     }
@@ -103,15 +105,16 @@ App::DocumentObjectExecReturn *Revolution::execute()
     // update Axis from ReferenceAxis
     try {
         updateAxis();
-    } catch (const Base::Exception& e) {
+    }
+    catch (const Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 
     // get revolve axis
     Base::Vector3d b = Base.getValue();
-    gp_Pnt pnt(b.x,b.y,b.z);
+    gp_Pnt pnt(b.x, b.y, b.z);
     Base::Vector3d v = Axis.getValue();
-    gp_Dir dir(v.x,v.y,v.z);
+    gp_Dir dir(v.x, v.y, v.z);
 
     try {
         if (sketchshape.IsNull())
@@ -120,7 +123,8 @@ App::DocumentObjectExecReturn *Revolution::execute()
         // Rotate the face by half the angle to get Revolution symmetric to sketch plane
         if (Midplane.getValue()) {
             gp_Trsf mov;
-            mov.SetRotation(gp_Ax1(pnt, dir), Base::toRadians<double>(Angle.getValue()) * (-1.0) / 2.0);
+            mov.SetRotation(gp_Ax1(pnt, dir),
+                            Base::toRadians<double>(Angle.getValue()) * (-1.0) / 2.0);
             TopLoc_Location loc(mov);
             sketchshape.Move(loc);
         }
@@ -135,10 +139,10 @@ App::DocumentObjectExecReturn *Revolution::execute()
         // Check distance between sketchshape and axis - to avoid failures and crashes
         TopExp_Explorer xp;
         xp.Init(sketchshape, TopAbs_FACE);
-        for (;xp.More(); xp.Next()) {
+        for (; xp.More(); xp.Next()) {
             if (checkLineCrossesFace(gp_Lin(pnt, dir), TopoDS::Face(xp.Current())))
                 return new App::DocumentObjectExecReturn("Revolve axis intersects the sketch");
-        }        
+        }
 
         // revolve the face to a solid
         BRepPrimAPI_MakeRevol RevolMaker(sketchshape, gp_Ax1(pnt, dir), angle);
@@ -147,7 +151,7 @@ App::DocumentObjectExecReturn *Revolution::execute()
             TopoDS_Shape result = RevolMaker.Shape();
             result = refineShapeIfActive(result);
             // set the additive shape property for later usage in e.g. pattern
-            this->AddSubShape.setValue(result);            
+            this->AddSubShape.setValue(result);
 
             if (!base.IsNull()) {
                 // Let's call algorithm computing a fuse operation:
@@ -166,15 +170,16 @@ App::DocumentObjectExecReturn *Revolution::execute()
 
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
 
         if (std::string(e.GetMessageString()) == "TopoDS::Face")
-            return new App::DocumentObjectExecReturn("Could not create face from sketch.\n"
+            return new App::DocumentObjectExecReturn(
+                "Could not create face from sketch.\n"
                 "Intersecting sketch entities in a sketch are not allowed.");
         else
             return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
-    catch (Base::Exception& e) {
+    catch (Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 }
@@ -183,7 +188,8 @@ bool Revolution::suggestReversed()
 {
     try {
         updateAxis();
-    } catch (const Base::Exception&) {
+    }
+    catch (const Base::Exception &) {
         return false;
     }
 
@@ -198,8 +204,8 @@ void Revolution::updateAxis()
     Base::Vector3d dir;
     getAxis(pcReferenceAxis, subReferenceAxis, base, dir, ForbiddenAxis::NotParallelWithNormal);
 
-    Base.setValue(base.x,base.y,base.z);
-    Axis.setValue(dir.x,dir.y,dir.z);
+    Base.setValue(base.x, base.y, base.z);
+    Axis.setValue(dir.x, dir.y, dir.z);
 }
 
-}
+} // namespace PartDesign

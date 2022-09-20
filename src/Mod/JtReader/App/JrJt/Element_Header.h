@@ -33,43 +33,28 @@
 #include "I32.h"
 
 
-
 using namespace std;
 
 
-struct Element_Header
-{
-	Element_Header(){};
+struct Element_Header {
+    Element_Header() {};
 
-	Element_Header(Context& cont, bool zLib=false)
-	{
-		read(cont, zLib);
-	};
+    Element_Header(Context &cont, bool zLib = false) { read(cont, zLib); };
 
-	inline void read(Context& cont ,bool zLib=false)
-	{
-		// only zip less implemented so far...
-		assert(zLib == false);
+    inline void read(Context &cont, bool zLib = false)
+    {
+        // only zip less implemented so far...
+        assert(zLib == false);
 
-		Element_Length.read(cont);
-		Object_Type_ID.read(cont);
-		Object_Base_Type.read(cont);
-	};
+        Element_Length.read(cont);
+        Object_Type_ID.read(cont);
+        Object_Base_Type.read(cont);
+    };
 
-	I32  Element_Length;
-	GUID Object_Type_ID;
-	UChar Object_Base_Type;
-
-
+    I32 Element_Length;
+    GUID Object_Type_ID;
+    UChar Object_Base_Type;
 };
 
 
-
 #endif
-
-
-
-
-
-
-

@@ -39,15 +39,11 @@ using namespace MeshCore;
 PROPERTY_SOURCE(Mesh::Import, Mesh::Feature)
 
 
-Mesh::Import::Import()
-{
-    ADD_PROPERTY(FileName,(""));
-}
+Mesh::Import::Import() { ADD_PROPERTY(FileName, ("")); }
 
 short Mesh::Import::mustExecute() const
 {
-    if (FileName.isTouched())
-        return 1;
+    if (FileName.isTouched()) return 1;
     return 0;
 }
 
@@ -59,4 +55,3 @@ App::DocumentObjectExecReturn *Mesh::Import::execute()
 
     return App::DocumentObject::StdReturn;
 }
-

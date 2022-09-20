@@ -27,9 +27,10 @@
 #include "ViewProviderDressUp.h"
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderThickness : public ViewProviderDressUp
+class PartDesignGuiExport ViewProviderThickness: public ViewProviderDressUp
 {
     Q_DECLARE_TR_FUNCTIONS(PartDesignGui::ViewProviderThickness)
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderThickness);
@@ -37,11 +38,13 @@ class PartDesignGuiExport ViewProviderThickness : public ViewProviderDressUp
 public:
     /// constructor
     ViewProviderThickness()
-        { sPixmap = "PartDesign_Thickness.svg";
-          menuName = tr("Thickness parameters"); }
+    {
+        sPixmap = "PartDesign_Thickness.svg";
+        menuName = tr("Thickness parameters");
+    }
 
     /// return "Thickness"
-    const std::string & featureName() const override;
+    const std::string &featureName() const override;
 
 protected:
     /// Returns a newly create dialog for the part to be placed in the task view

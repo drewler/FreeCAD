@@ -64,7 +64,7 @@
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 
-#endif  // #ifndef _PreComp_
+#endif // #ifndef _PreComp_
 
 #include <algorithm>
 #include <chrono>
@@ -90,63 +90,48 @@ struct EdgePoints {
     TopoDS_Edge edge;
 };
 
-GeometryObject::GeometryObject(const string& parent, TechDraw::DrawView* parentObj) :
-    m_parentName(parent),
-    m_parent(parentObj),
-    m_isoCount(0),
-    m_isPersp(false),
-    m_focus(100.0),
-    m_usePolygonHLR(false)
+GeometryObject::GeometryObject(const string &parent, TechDraw::DrawView *parentObj)
+    : m_parentName(parent), m_parent(parentObj), m_isoCount(0), m_isPersp(false), m_focus(100.0),
+      m_usePolygonHLR(false)
 
-{
-}
+{}
 
-GeometryObject::~GeometryObject()
-{
-    clear();
-}
+GeometryObject::~GeometryObject() { clear(); }
 
-const BaseGeomPtrVector GeometryObject::getVisibleFaceEdges(const bool smooth, const bool seam) const
+const BaseGeomPtrVector GeometryObject::getVisibleFaceEdges(const bool smooth,
+                                                            const bool seam) const
 {
     BaseGeomPtrVector result;
     bool smoothOK = smooth;
     bool seamOK = seam;
 
-    for (auto& e:edgeGeom) {
+    for (auto &e : edgeGeom) {
         if (e->hlrVisible) {
             switch (e->classOfEdge) {
                 case ecHARD:
-                case ecOUTLINE:
-                    result.push_back(e);
-                    break;
+                case ecOUTLINE: result.push_back(e); break;
                 case ecSMOOTH:
-                    if (smoothOK) {
-                        result.push_back(e);
-                    }
+                    if (smoothOK) { result.push_back(e); }
                     break;
                 case ecSEAM:
-                    if (seamOK) {
-                        result.push_back(e);
-                    }
+                    if (seamOK) { result.push_back(e); }
                     break;
-                default:
-                ;
+                default:;
             }
         }
     }
     //debug
     //make compound of edges and save as brep file
-//    BRep_Builder builder;
-//    TopoDS_Compound comp;
-//    builder.MakeCompound(comp);
-//    for (auto& r: result) {
-//        builder.Add(comp, r->occEdge);
-//    }
-//    BRepTools::Write(comp, "GOVizFaceEdges.brep");            //debug
+    //    BRep_Builder builder;
+    //    TopoDS_Compound comp;
+    //    builder.MakeCompound(comp);
+    //    for (auto& r: result) {
+    //        builder.Add(comp, r->occEdge);
+    //    }
+    //    BRepTools::Write(comp, "GOVizFaceEdges.brep");            //debug
 
     return result;
 }
-
 
 
 void GeometryObject::clear()
@@ -158,32 +143,32 @@ void GeometryObject::clear()
     edgeGeom.clear();
 }
 
-void GeometryObject::projectShape(const TopoDS_Shape& inShape,
-                                  const gp_Ax2& viewAxis)
+void GeometryObject::projectShape(const TopoDS_Shape &inShape, const gp_Ax2 &viewAxis)
 {
     clear();
 
     Handle(HLRBRep_Algo) brep_hlr;
     try {
         brep_hlr = new HLRBRep_Algo();
-//        brep_hlr->Debug(true);
+        //        brep_hlr->Debug(true);
         brep_hlr->Add(inShape, m_isoCount);
         if (m_isPersp) {
             double fLength = std::max(Precision::Confusion(), m_focus);
-            HLRAlgo_Projector projector( viewAxis, fLength );
+            HLRAlgo_Projector projector(viewAxis, fLength);
             brep_hlr->Projector(projector);
-        } else {
-            HLRAlgo_Projector projector( viewAxis );
+        }
+        else {
+            HLRAlgo_Projector projector(viewAxis);
             brep_hlr->Projector(projector);
         }
         brep_hlr->Update();
         brep_hlr->Hide();
     }
-    catch (const Standard_Failure& e) {
+    catch (const Standard_Failure &e) {
         Base::Console().Error("GO::projectShape - OCC error - %s - while projecting shape\n",
                               e.GetMessageString());
         throw Base::RuntimeError("GeometryObject::projectShape - OCC error");
-        }
+    }
     catch (...) {
         throw Base::RuntimeError("GeometryObject::projectShape - unknown error");
     }
@@ -192,50 +177,50 @@ void GeometryObject::projectShape(const TopoDS_Shape& inShape,
         HLRBRep_HLRToShape hlrToShape(brep_hlr);
 
         if (!hlrToShape.VCompound().IsNull()) {
-            visHard    = hlrToShape.VCompound();
+            visHard = hlrToShape.VCompound();
             BRepLib::BuildCurves3d(visHard);
             visHard = invertGeometry(visHard);
         }
 
         if (!hlrToShape.Rg1LineVCompound().IsNull()) {
-            visSmooth  = hlrToShape.Rg1LineVCompound();
+            visSmooth = hlrToShape.Rg1LineVCompound();
             BRepLib::BuildCurves3d(visSmooth);
             visSmooth = invertGeometry(visSmooth);
         }
 
         if (!hlrToShape.RgNLineVCompound().IsNull()) {
-            visSeam    = hlrToShape.RgNLineVCompound();
+            visSeam = hlrToShape.RgNLineVCompound();
             BRepLib::BuildCurves3d(visSeam);
             visSeam = invertGeometry(visSeam);
         }
 
         if (!hlrToShape.OutLineVCompound().IsNull()) {
-//            BRepTools::Write(hlrToShape.OutLineVCompound(), "GOOutLineVCompound.brep");            //debug
-            visOutline    = hlrToShape.OutLineVCompound();
+            //            BRepTools::Write(hlrToShape.OutLineVCompound(), "GOOutLineVCompound.brep");            //debug
+            visOutline = hlrToShape.OutLineVCompound();
             BRepLib::BuildCurves3d(visOutline);
             visOutline = invertGeometry(visOutline);
         }
 
         if (!hlrToShape.IsoLineVCompound().IsNull()) {
-            visIso     = hlrToShape.IsoLineVCompound();
+            visIso = hlrToShape.IsoLineVCompound();
             BRepLib::BuildCurves3d(visIso);
             visIso = invertGeometry(visIso);
         }
 
         if (!hlrToShape.HCompound().IsNull()) {
-            hidHard    = hlrToShape.HCompound();
+            hidHard = hlrToShape.HCompound();
             BRepLib::BuildCurves3d(hidHard);
             hidHard = invertGeometry(hidHard);
         }
 
         if (!hlrToShape.Rg1LineHCompound().IsNull()) {
-            hidSmooth  = hlrToShape.Rg1LineHCompound();
+            hidSmooth = hlrToShape.Rg1LineHCompound();
             BRepLib::BuildCurves3d(hidSmooth);
             hidSmooth = invertGeometry(hidSmooth);
         }
 
         if (!hlrToShape.RgNLineHCompound().IsNull()) {
-            hidSeam    = hlrToShape.RgNLineHCompound();
+            hidSeam = hlrToShape.RgNLineHCompound();
             BRepLib::BuildCurves3d(hidSeam);
             hidSeam = invertGeometry(hidSeam);
         }
@@ -247,16 +232,18 @@ void GeometryObject::projectShape(const TopoDS_Shape& inShape,
         }
 
         if (!hlrToShape.IsoLineHCompound().IsNull()) {
-            hidIso     = hlrToShape.IsoLineHCompound();
+            hidIso = hlrToShape.IsoLineHCompound();
             BRepLib::BuildCurves3d(hidIso);
             hidIso = invertGeometry(hidIso);
         }
     }
-    catch (const Standard_Failure&) {
-        throw Base::RuntimeError("GeometryObject::projectShape - OCC error occurred while extracting edges");
+    catch (const Standard_Failure &) {
+        throw Base::RuntimeError(
+            "GeometryObject::projectShape - OCC error occurred while extracting edges");
     }
     catch (...) {
-        throw Base::RuntimeError("GeometryObject::projectShape - unknown error occurred while extracting edges");
+        throw Base::RuntimeError(
+            "GeometryObject::projectShape - unknown error occurred while extracting edges");
     }
 
     makeTDGeometry();
@@ -265,47 +252,29 @@ void GeometryObject::projectShape(const TopoDS_Shape& inShape,
 //convert the hlr output into TD Geometry
 void GeometryObject::makeTDGeometry()
 {
-    extractGeometry(TechDraw::ecHARD,                   //always show the hard&outline visible lines
-                        true);
-    extractGeometry(TechDraw::ecOUTLINE,
-                        true);
+    extractGeometry(TechDraw::ecHARD, //always show the hard&outline visible lines
+                    true);
+    extractGeometry(TechDraw::ecOUTLINE, true);
 
-    const DrawViewPart* dvp = static_cast<const DrawViewPart*>(m_parent);
+    const DrawViewPart *dvp = static_cast<const DrawViewPart *>(m_parent);
     if (!dvp) {
-        return;       //some routines do not have a dvp (ex shape outline)
+        return; //some routines do not have a dvp (ex shape outline)
     }
 
-    if (dvp->SmoothVisible.getValue()) {
-        extractGeometry(TechDraw::ecSMOOTH,
-                            true);
-    }
-    if (dvp->SeamVisible.getValue()) {
-        extractGeometry(TechDraw::ecSEAM,
-                            true);
-    }
+    if (dvp->SmoothVisible.getValue()) { extractGeometry(TechDraw::ecSMOOTH, true); }
+    if (dvp->SeamVisible.getValue()) { extractGeometry(TechDraw::ecSEAM, true); }
     if ((dvp->IsoVisible.getValue()) && (dvp->IsoCount.getValue() > 0)) {
-        extractGeometry(TechDraw::ecUVISO,
-                            true);
+        extractGeometry(TechDraw::ecUVISO, true);
     }
     if (dvp->HardHidden.getValue()) {
-        extractGeometry(TechDraw::ecHARD,
-                            false);
-        extractGeometry(TechDraw::ecOUTLINE,
-                            false);
+        extractGeometry(TechDraw::ecHARD, false);
+        extractGeometry(TechDraw::ecOUTLINE, false);
     }
-    if (dvp->SmoothHidden.getValue()) {
-        extractGeometry(TechDraw::ecSMOOTH,
-                            false);
-    }
-    if (dvp->SeamHidden.getValue()) {
-        extractGeometry(TechDraw::ecSEAM,
-                            false);
-    }
+    if (dvp->SmoothHidden.getValue()) { extractGeometry(TechDraw::ecSMOOTH, false); }
+    if (dvp->SeamHidden.getValue()) { extractGeometry(TechDraw::ecSEAM, false); }
     if (dvp->IsoHidden.getValue() && (dvp->IsoCount.getValue() > 0)) {
-        extractGeometry(TechDraw::ecUVISO,
-                            false);
+        extractGeometry(TechDraw::ecUVISO, false);
     }
-
 }
 
 //mirror a shape thru XZ plane for Qt's inverted Y coordinate
@@ -320,8 +289,7 @@ TopoDS_Shape GeometryObject::invertGeometry(const TopoDS_Shape s)
     gp_Trsf mirrorY;
     gp_Pnt org(0.0, 0.0, 0.0);
     gp_Dir Y(0.0, 1.0, 0.0);
-    gp_Ax2 mirrorPlane(org,
-                       Y);
+    gp_Ax2 mirrorPlane(org, Y);
     mirrorY.SetMirror(mirrorPlane);
     BRepBuilderAPI_Transform mkTrf(s, mirrorY, true);
     result = mkTrf.Shape();
@@ -329,8 +297,7 @@ TopoDS_Shape GeometryObject::invertGeometry(const TopoDS_Shape s)
 }
 
 //!set up a hidden line remover and project a shape with it
-void GeometryObject::projectShapeWithPolygonAlgo(const TopoDS_Shape& input,
-                                                 const gp_Ax2 &viewAxis)
+void GeometryObject::projectShapeWithPolygonAlgo(const TopoDS_Shape &input, const gp_Ax2 &viewAxis)
 {
     // Clear previous Geometry
     clear();
@@ -340,11 +307,11 @@ void GeometryObject::projectShapeWithPolygonAlgo(const TopoDS_Shape& input,
     //to be reverted.
     TopoDS_Shape inCopy;
     if (!m_isPersp) {
-        gp_Pnt gCenter = findCentroid(input,
-                                      viewAxis);
+        gp_Pnt gCenter = findCentroid(input, viewAxis);
         Base::Vector3d motion(-gCenter.X(), -gCenter.Y(), -gCenter.Z());
         inCopy = moveShape(input, motion);
-    } else {
+    }
+    else {
         BRepBuilderAPI_Copy BuilderCopy(input);
         inCopy = BuilderCopy.Shape();
     }
@@ -354,7 +321,7 @@ void GeometryObject::projectShapeWithPolygonAlgo(const TopoDS_Shape& input,
     try {
         TopExp_Explorer faces(inCopy, TopAbs_FACE);
         for (int i = 1; faces.More(); faces.Next(), i++) {
-            const TopoDS_Face& f = TopoDS::Face(faces.Current());
+            const TopoDS_Face &f = TopoDS::Face(faces.Current());
             if (!f.IsNull()) {
                 BRepMesh_IncrementalMesh(f, 0.10); //Poly Algo requires a mesh!
             }
@@ -373,9 +340,10 @@ void GeometryObject::projectShapeWithPolygonAlgo(const TopoDS_Shape& input,
         }
         brep_hlrPoly->Update();
     }
-    catch (const Standard_Failure& e) {
-        Base::Console().Error("GO::projectShapeWithPolygonAlgo - OCC error - %s - while projecting shape\n",
-                              e.GetMessageString());
+    catch (const Standard_Failure &e) {
+        Base::Console().Error(
+            "GO::projectShapeWithPolygonAlgo - OCC error - %s - while projecting shape\n",
+            e.GetMessageString());
         throw Base::RuntimeError("GeometryObject::projectShapeWithPolygonAlgo - OCC error");
     }
     catch (...) {
@@ -386,33 +354,33 @@ void GeometryObject::projectShapeWithPolygonAlgo(const TopoDS_Shape& input,
         HLRBRep_PolyHLRToShape polyhlrToShape;
         polyhlrToShape.Update(brep_hlrPoly);
 
-        visHard    = polyhlrToShape.VCompound();
+        visHard = polyhlrToShape.VCompound();
         BRepLib::BuildCurves3d(visHard);
         visHard = invertGeometry(visHard);
-//        BRepTools::Write(visHard, "GOvisHardi.brep");            //debug
+        //        BRepTools::Write(visHard, "GOvisHardi.brep");            //debug
 
-        visSmooth  = polyhlrToShape.Rg1LineVCompound();
+        visSmooth = polyhlrToShape.Rg1LineVCompound();
         BRepLib::BuildCurves3d(visSmooth);
         visSmooth = invertGeometry(visSmooth);
 
-        visSeam    = polyhlrToShape.RgNLineVCompound();
+        visSeam = polyhlrToShape.RgNLineVCompound();
         BRepLib::BuildCurves3d(visSeam);
         visSeam = invertGeometry(visSeam);
 
-        visOutline    = polyhlrToShape.OutLineVCompound();
+        visOutline = polyhlrToShape.OutLineVCompound();
         BRepLib::BuildCurves3d(visOutline);
         visOutline = invertGeometry(visOutline);
 
-        hidHard    = polyhlrToShape.HCompound();
+        hidHard = polyhlrToShape.HCompound();
         BRepLib::BuildCurves3d(hidHard);
         hidHard = invertGeometry(hidHard);
-//        BRepTools::Write(hidHard, "GOhidHardi.brep");            //debug
+        //        BRepTools::Write(hidHard, "GOhidHardi.brep");            //debug
 
-        hidSmooth  = polyhlrToShape.Rg1LineHCompound();
+        hidSmooth = polyhlrToShape.Rg1LineHCompound();
         BRepLib::BuildCurves3d(hidSmooth);
         hidSmooth = invertGeometry(hidSmooth);
 
-        hidSeam    = polyhlrToShape.RgNLineHCompound();
+        hidSeam = polyhlrToShape.RgNLineHCompound();
         BRepLib::BuildCurves3d(hidSeam);
         hidSeam = invertGeometry(hidSeam);
 
@@ -420,29 +388,29 @@ void GeometryObject::projectShapeWithPolygonAlgo(const TopoDS_Shape& input,
         BRepLib::BuildCurves3d(hidOutline);
         hidOutline = invertGeometry(hidOutline);
     }
-    catch (const Standard_Failure& e) {
-        Base::Console().Error("GO::projectShapeWithPolygonAlgo - OCC error - %s - while extracting edges\n",
-                              e.GetMessageString());
-        throw Base::RuntimeError("GeometryObject::projectShapeWithPolygonAlgo - OCC error occurred while extracting edges");
+    catch (const Standard_Failure &e) {
+        Base::Console().Error(
+            "GO::projectShapeWithPolygonAlgo - OCC error - %s - while extracting edges\n",
+            e.GetMessageString());
+        throw Base::RuntimeError("GeometryObject::projectShapeWithPolygonAlgo - OCC error occurred "
+                                 "while extracting edges");
     }
     catch (...) {
-        throw Base::RuntimeError("GeometryObject::projectShapeWithPolygonAlgo - unknown error occurred while extracting edges");
+        throw Base::RuntimeError("GeometryObject::projectShapeWithPolygonAlgo - unknown error "
+                                 "occurred while extracting edges");
     }
 
     makeTDGeometry();
 }
 
-TopoDS_Shape GeometryObject::projectFace(const TopoDS_Shape &face,
-                                         const gp_Ax2 &CS)
+TopoDS_Shape GeometryObject::projectFace(const TopoDS_Shape &face, const gp_Ax2 &CS)
 {
-//    Base::Console().Message("GO::projectFace()\n");
-    if(face.IsNull()) {
-        throw Base::ValueError("GO::projectFace - input Face is NULL");
-    }
+    //    Base::Console().Message("GO::projectFace()\n");
+    if (face.IsNull()) { throw Base::ValueError("GO::projectFace - input Face is NULL"); }
 
     HLRBRep_Algo *brep_hlr = new HLRBRep_Algo();
     brep_hlr->Add(face);
-    HLRAlgo_Projector projector( CS );
+    HLRAlgo_Projector projector(CS);
     brep_hlr->Projector(projector);
     brep_hlr->Update();
     brep_hlr->Hide();
@@ -458,48 +426,33 @@ TopoDS_Shape GeometryObject::projectFace(const TopoDS_Shape &face,
 //!add edges meeting filter criteria for category, visibility
 void GeometryObject::extractGeometry(edgeClass category, bool hlrVisible)
 {
-//    Base::Console().Message("GO::extractGeometry(%d, %d)\n", category, hlrVisible);
+    //    Base::Console().Message("GO::extractGeometry(%d, %d)\n", category, hlrVisible);
     TopoDS_Shape filtEdges;
     if (hlrVisible) {
         switch (category) {
-            case ecHARD:
-                filtEdges = visHard;
-                break;
-            case ecOUTLINE:
-                filtEdges = visOutline;
-                break;
-            case ecSMOOTH:
-                filtEdges = visSmooth;
-                break;
-            case ecSEAM:
-                filtEdges = visSeam;
-                break;
-            case ecUVISO:
-                filtEdges = visIso;
-                break;
+            case ecHARD: filtEdges = visHard; break;
+            case ecOUTLINE: filtEdges = visOutline; break;
+            case ecSMOOTH: filtEdges = visSmooth; break;
+            case ecSEAM: filtEdges = visSeam; break;
+            case ecUVISO: filtEdges = visIso; break;
             default:
-                Base::Console().Warning("GeometryObject::ExtractGeometry - unsupported hlrVisible edgeClass: %d\n", category);
+                Base::Console().Warning(
+                    "GeometryObject::ExtractGeometry - unsupported hlrVisible edgeClass: %d\n",
+                    category);
                 return;
         }
-    } else {
+    }
+    else {
         switch (category) {
-            case ecHARD:
-                filtEdges = hidHard;
-                break;
-            case ecOUTLINE:
-                filtEdges = hidOutline;
-                break;
-            case ecSMOOTH:
-                filtEdges = hidSmooth;
-                break;
-            case ecSEAM:
-                filtEdges = hidSeam;
-                break;
-            case ecUVISO:
-                filtEdges = hidIso;
-                break;
+            case ecHARD: filtEdges = hidHard; break;
+            case ecOUTLINE: filtEdges = hidOutline; break;
+            case ecSMOOTH: filtEdges = hidSmooth; break;
+            case ecSEAM: filtEdges = hidSeam; break;
+            case ecUVISO: filtEdges = hidIso; break;
             default:
-                Base::Console().Warning("GeometryObject::ExtractGeometry - unsupported hidden edgeClass: %d\n", category);
+                Base::Console().Warning(
+                    "GeometryObject::ExtractGeometry - unsupported hidden edgeClass: %d\n",
+                    category);
                 return;
         }
     }
@@ -508,10 +461,11 @@ void GeometryObject::extractGeometry(edgeClass category, bool hlrVisible)
 }
 
 //! update edgeGeom and vertexGeom from Compound of edges
-void GeometryObject::addGeomFromCompound(TopoDS_Shape edgeCompound, edgeClass category, bool hlrVisible)
+void GeometryObject::addGeomFromCompound(TopoDS_Shape edgeCompound, edgeClass category,
+                                         bool hlrVisible)
 {
-//    Base::Console().Message("GO::addGeomFromCompound(%d, %d)\n", category, hlrVisible);
-    if(edgeCompound.IsNull()) {
+    //    Base::Console().Message("GO::addGeomFromCompound(%d, %d)\n", category, hlrVisible);
+    if (edgeCompound.IsNull()) {
         Base::Console().Log("TechDraw::GeometryObject::addGeomFromCompound edgeCompound is NULL\n");
         return; // There is no OpenCascade Geometry to be calculated
     }
@@ -519,8 +473,8 @@ void GeometryObject::addGeomFromCompound(TopoDS_Shape edgeCompound, edgeClass ca
     BaseGeomPtr base;
     TopExp_Explorer edges(edgeCompound, TopAbs_EDGE);
     int i = 1;
-    for ( ; edges.More(); edges.Next(), i++) {
-        const TopoDS_Edge& edge = TopoDS::Edge(edges.Current());
+    for (; edges.More(); edges.Next(), i++) {
+        const TopoDS_Edge &edge = TopoDS::Edge(edges.Current());
         if (edge.IsNull()) {
             Base::Console().Log("GO::addGeomFromCompound - edge: %d is NULL\n", i);
             continue;
@@ -529,20 +483,21 @@ void GeometryObject::addGeomFromCompound(TopoDS_Shape edgeCompound, edgeClass ca
             Base::Console().Log("GO::addGeomFromCompound - edge: %d is zeroEdge\n", i);
             continue;
         }
-        if (DrawUtil::isCrazy(edge))  {
+        if (DrawUtil::isCrazy(edge)) {
             Base::Console().Log("GO::addGeomFromCompound - edge: %d is crazy\n", i);
             continue;
         }
 
         base = BaseGeom::baseFactory(edge);
         if (!base) {
-            Base::Console().Log("Error - GO::addGeomFromCompound - baseFactory failed for edge: %d\n", i);
+            Base::Console().Log(
+                "Error - GO::addGeomFromCompound - baseFactory failed for edge: %d\n", i);
             continue;
-//            throw Base::ValueError("GeometryObject::addGeomFromCompound - baseFactory failed");
+            //            throw Base::ValueError("GeometryObject::addGeomFromCompound - baseFactory failed");
         }
 
-        base->source(0);             //object geometry
-        base->sourceIndex(i-1);
+        base->source(0); //object geometry
+        base->sourceIndex(i - 1);
         base->classOfEdge = category;
         base->hlrVisible = hlrVisible;
         edgeGeom.push_back(base);
@@ -564,67 +519,57 @@ void GeometryObject::addGeomFromCompound(TopoDS_Shape edgeCompound, edgeClass ca
 
             std::vector<VertexPtr>::iterator itVertex = vertexGeom.begin();
             for (; itVertex != vertexGeom.end(); itVertex++) {
-                if ((*itVertex)->isEqual(*v1, Precision::Confusion())) {
-                    v1Add = false;
+                if ((*itVertex)->isEqual(*v1, Precision::Confusion())) { v1Add = false; }
+                if ((*itVertex)->isEqual(*v2, Precision::Confusion())) { v2Add = false; }
+                if (circle) {
+                    if ((*itVertex)->isEqual(*c1, Precision::Confusion())) { c1Add = false; }
                 }
-                if ((*itVertex)->isEqual(*v2, Precision::Confusion())) {
-                    v2Add = false;
-                }
-                if (circle ) {
-                    if ((*itVertex)->isEqual(*c1, Precision::Confusion())) {
-                        c1Add = false;
-                    }
-                }
-
             }
             if (v1Add) {
                 vertexGeom.push_back(v1);
                 v1->hlrVisible = true;
-            } else {
-            //    delete v1;
+            }
+            else {
+                //    delete v1;
             }
             if (v2Add) {
                 vertexGeom.push_back(v2);
                 v2->hlrVisible = true;
-            } else {
-            //    delete v2;
+            }
+            else {
+                //    delete v2;
             }
 
             if (circle) {
                 if (c1Add) {
                     vertexGeom.push_back(c1);
                     c1->hlrVisible = true;
-                } else {
-                //    delete c1;
+                }
+                else {
+                    //    delete c1;
                 }
             }
         }
-    }  //end TopExp
+    } //end TopExp
 }
 
-void GeometryObject::addVertex(TechDraw::VertexPtr v)
-{
-    vertexGeom.push_back(v);
-}
+void GeometryObject::addVertex(TechDraw::VertexPtr v) { vertexGeom.push_back(v); }
 
-void GeometryObject::addEdge(TechDraw::BaseGeomPtr bg)
-{
-    edgeGeom.push_back(bg);
-}
+void GeometryObject::addEdge(TechDraw::BaseGeomPtr bg) { edgeGeom.push_back(bg); }
 
 //********** Cosmetic Vertex ***************************************************
 
 //adds a new GeomVert surrogate for CV
 //returns GeomVert selection index  ("Vertex3")
 // insertGeomForCV(cv)
-int GeometryObject::addCosmeticVertex(CosmeticVertex* cv)
+int GeometryObject::addCosmeticVertex(CosmeticVertex *cv)
 {
-//    Base::Console().Message("GO::addCosmeticVertex(%X)\n", cv);
+    //    Base::Console().Message("GO::addCosmeticVertex(%X)\n", cv);
     double scale = m_parent->getScale();
     Base::Vector3d pos = cv->scaled(scale);
     TechDraw::VertexPtr v(std::make_shared<TechDraw::Vertex>(pos.x, pos.y));
     v->cosmetic = true;
-    v->cosmeticLink = -1;  //obs??
+    v->cosmeticLink = -1; //obs??
     v->cosmeticTag = cv->getTagAsString();
     v->hlrVisible = true;
     int idx = vertexGeom.size();
@@ -639,7 +584,7 @@ int GeometryObject::addCosmeticVertex(Base::Vector3d pos)
     Base::Console().Message("GO::addCosmeticVertex() 1 - deprec?\n");
     TechDraw::VertexPtr v(std::make_shared<TechDraw::Vertex>(pos.x, pos.y));
     v->cosmetic = true;
-    v->cosmeticTag = "tbi";        //not connected to CV
+    v->cosmeticTag = "tbi"; //not connected to CV
     v->hlrVisible = true;
     int idx = vertexGeom.size();
     vertexGeom.push_back(v);
@@ -648,10 +593,10 @@ int GeometryObject::addCosmeticVertex(Base::Vector3d pos)
 
 int GeometryObject::addCosmeticVertex(Base::Vector3d pos, std::string tagString)
 {
-//    Base::Console().Message("GO::addCosmeticVertex() 2\n");
+    //    Base::Console().Message("GO::addCosmeticVertex() 2\n");
     TechDraw::VertexPtr v(std::make_shared<TechDraw::Vertex>(pos.x, pos.y));
     v->cosmetic = true;
-    v->cosmeticTag = tagString;     //connected to CV
+    v->cosmeticTag = tagString; //connected to CV
     v->hlrVisible = true;
     int idx = vertexGeom.size();
     vertexGeom.push_back(v);
@@ -663,9 +608,9 @@ int GeometryObject::addCosmeticVertex(Base::Vector3d pos, std::string tagString)
 //adds a new GeomEdge surrogate for CE
 //returns GeomEdge selection index  ("Edge3")
 // insertGeomForCE(ce)
-int GeometryObject::addCosmeticEdge(CosmeticEdge* ce)
+int GeometryObject::addCosmeticEdge(CosmeticEdge *ce)
 {
-//    Base::Console().Message("GO::addCosmeticEdge(%X) 0\n", ce);
+    //    Base::Console().Message("GO::addCosmeticEdge(%X) 0\n", ce);
     double scale = m_parent->getScale();
     TechDraw::BaseGeomPtr e = ce->scaledGeometry(scale);
     e->cosmetic = true;
@@ -678,16 +623,15 @@ int GeometryObject::addCosmeticEdge(CosmeticEdge* ce)
 
 //adds a new GeomEdge to list for ce[link]
 //this should be made obsolete and the variant with tag used instead
-int GeometryObject::addCosmeticEdge(Base::Vector3d start,
-                                    Base::Vector3d end)
+int GeometryObject::addCosmeticEdge(Base::Vector3d start, Base::Vector3d end)
 {
-//    Base::Console().Message("GO::addCosmeticEdge() 1 - deprec?\n");
+    //    Base::Console().Message("GO::addCosmeticEdge() 1 - deprec?\n");
     gp_Pnt gp1(start.x, start.y, start.z);
     gp_Pnt gp2(end.x, end.y, end.z);
     TopoDS_Edge occEdge = BRepBuilderAPI_MakeEdge(gp1, gp2);
     TechDraw::BaseGeomPtr e = BaseGeom::baseFactory(occEdge);
     e->cosmetic = true;
-//    e->cosmeticLink = link;
+    //    e->cosmeticLink = link;
     e->setCosmeticTag("tbi");
     e->hlrVisible = true;
     int idx = edgeGeom.size();
@@ -695,31 +639,28 @@ int GeometryObject::addCosmeticEdge(Base::Vector3d start,
     return idx;
 }
 
-int GeometryObject::addCosmeticEdge(Base::Vector3d start,
-                                    Base::Vector3d end,
-                                    std::string tagString)
+int GeometryObject::addCosmeticEdge(Base::Vector3d start, Base::Vector3d end, std::string tagString)
 {
-//    Base::Console().Message("GO::addCosmeticEdge() 2\n");
+    //    Base::Console().Message("GO::addCosmeticEdge() 2\n");
     gp_Pnt gp1(start.x, start.y, start.z);
     gp_Pnt gp2(end.x, end.y, end.z);
     TopoDS_Edge occEdge = BRepBuilderAPI_MakeEdge(gp1, gp2);
     TechDraw::BaseGeomPtr base = BaseGeom::baseFactory(occEdge);
     base->cosmetic = true;
     base->setCosmeticTag(tagString);
-    base->source(1);           //1-CosmeticEdge, 2-CenterLine
+    base->source(1); //1-CosmeticEdge, 2-CenterLine
     base->hlrVisible = true;
     int idx = edgeGeom.size();
     edgeGeom.push_back(base);
     return idx;
 }
 
-int GeometryObject::addCosmeticEdge(TechDraw::BaseGeomPtr base,
-                                    std::string tagString)
+int GeometryObject::addCosmeticEdge(TechDraw::BaseGeomPtr base, std::string tagString)
 {
-//    Base::Console().Message("GO::addCosmeticEdge(%X, %s) 3\n", base, tagString.c_str());
+    //    Base::Console().Message("GO::addCosmeticEdge(%X, %s) 3\n", base, tagString.c_str());
     base->cosmetic = true;
     base->hlrVisible = true;
-    base->source(1);           //1-CosmeticEdge, 2-CenterLine
+    base->source(1); //1-CosmeticEdge, 2-CenterLine
     base->setCosmeticTag(tagString);
     base->sourceIndex(-1);
     int idx = edgeGeom.size();
@@ -727,15 +668,14 @@ int GeometryObject::addCosmeticEdge(TechDraw::BaseGeomPtr base,
     return idx;
 }
 
-int GeometryObject::addCenterLine(TechDraw::BaseGeomPtr base,
-                                  std::string tag)
+int GeometryObject::addCenterLine(TechDraw::BaseGeomPtr base, std::string tag)
 //                                    int s, int si)
 {
-//    Base::Console().Message("GO::addCenterLine()\n");
+    //    Base::Console().Message("GO::addCenterLine()\n");
     base->cosmetic = true;
     base->setCosmeticTag(tag);
     base->source(2);
-//    base->sourceIndex(si);     //index into source;
+    //    base->sourceIndex(si);     //index into source;
     int idx = edgeGeom.size();
     edgeGeom.push_back(base);
     return idx;
@@ -743,63 +683,45 @@ int GeometryObject::addCenterLine(TechDraw::BaseGeomPtr base,
 
 
 //! empty Face geometry
-void GeometryObject::clearFaceGeom()
-{
-    faceGeom.clear();
-}
+void GeometryObject::clearFaceGeom() { faceGeom.clear(); }
 
 //! add a Face to Face Geometry
-void GeometryObject::addFaceGeom(FacePtr f)
-{
-    faceGeom.push_back(f);
-}
+void GeometryObject::addFaceGeom(FacePtr f) { faceGeom.push_back(f); }
 
-TechDraw::DrawViewDetail* GeometryObject::isParentDetail()
+TechDraw::DrawViewDetail *GeometryObject::isParentDetail()
 {
-    TechDraw::DrawViewDetail* result = nullptr;
+    TechDraw::DrawViewDetail *result = nullptr;
     if (m_parent) {
-        TechDraw::DrawViewDetail* detail = dynamic_cast<TechDraw::DrawViewDetail*>(m_parent);
-        if (detail) {
-            result = detail;
-        }
+        TechDraw::DrawViewDetail *detail = dynamic_cast<TechDraw::DrawViewDetail *>(m_parent);
+        if (detail) { result = detail; }
     }
     return result;
 }
 
 
-bool GeometryObject::isWithinArc(double theta, double first,
-                                 double last, bool cw) const
+bool GeometryObject::isWithinArc(double theta, double first, double last, bool cw) const
 {
-    if (fabs(last - first) >= 2 * M_PI) {
-        return true;
-    }
+    if (fabs(last - first) >= 2 * M_PI) { return true; }
 
     // Put params within [0, 2*pi) - not totally sure this is necessary
     theta = fmod(theta, 2 * M_PI);
-    if (theta < 0) {
-        theta += 2 * M_PI;
-    }
+    if (theta < 0) { theta += 2 * M_PI; }
 
     first = fmod(first, 2 * M_PI);
-    if (first < 0) {
-        first += 2 * M_PI;
-    }
+    if (first < 0) { first += 2 * M_PI; }
 
     last = fmod(last, 2 * M_PI);
-    if (last < 0) {
-        last += 2 * M_PI;
-    }
+    if (last < 0) { last += 2 * M_PI; }
 
     if (cw) {
-        if (first > last) {
-            return theta <= first && theta >= last;
-        } else {
+        if (first > last) { return theta <= first && theta >= last; }
+        else {
             return theta <= first || theta >= last;
         }
-    } else {
-        if (first > last) {
-            return theta >= first || theta <= last;
-        } else {
+    }
+    else {
+        if (first > last) { return theta >= first || theta <= last; }
+        else {
             return theta >= first && theta <= last;
         }
     }
@@ -808,20 +730,18 @@ bool GeometryObject::isWithinArc(double theta, double first,
 //note bbx is scaled
 Base::BoundBox3d GeometryObject::calcBoundingBox() const
 {
-//    Base::Console().Message("GO::calcBoundingBox() - edges: %d\n", edgeGeom.size());
+    //    Base::Console().Message("GO::calcBoundingBox() - edges: %d\n", edgeGeom.size());
     Bnd_Box testBox;
     testBox.SetGap(0.0);
     if (!edgeGeom.empty()) {
-        for (BaseGeomPtrVector::const_iterator it( edgeGeom.begin() );
-                it != edgeGeom.end(); ++it) {
-             BRepBndLib::AddOptimal((*it)->occEdge, testBox);
+        for (BaseGeomPtrVector::const_iterator it(edgeGeom.begin()); it != edgeGeom.end(); ++it) {
+            BRepBndLib::AddOptimal((*it)->occEdge, testBox);
         }
     }
 
     double xMin = 0, xMax = 0, yMin = 0, yMax = 0, zMin = 0, zMax = 0;
-    if (testBox.IsVoid()) {
-        Base::Console().Log("INFO - GO::calcBoundingBox - testBox is void\n");
-    } else {
+    if (testBox.IsVoid()) { Base::Console().Log("INFO - GO::calcBoundingBox - testBox is void\n"); }
+    else {
         testBox.Get(xMin, yMin, zMin, xMax, yMax, zMax);
     }
     Base::BoundBox3d bbox(xMin, yMin, zMin, xMax, yMax, zMax);
@@ -830,14 +750,13 @@ Base::BoundBox3d GeometryObject::calcBoundingBox() const
 
 void GeometryObject::pruneVertexGeom(Base::Vector3d center, double radius)
 {
-    const std::vector<VertexPtr>&  oldVerts = getVertexGeometry();
+    const std::vector<VertexPtr> &oldVerts = getVertexGeometry();
     std::vector<VertexPtr> newVerts;
-    for (auto& v: oldVerts) {
+    for (auto &v : oldVerts) {
         Base::Vector3d v3 = v->point();
         double length = (v3 - center).Length();
-        if (length < Precision::Confusion()) {
-            continue;
-        } else if (length < radius) {
+        if (length < Precision::Confusion()) { continue; }
+        else if (length < radius) {
             newVerts.push_back(v);
         }
     }
@@ -864,12 +783,11 @@ bool GeometryObject::findVertex(Base::Vector3d v)
 //! used for individual views, but not secondary views in projection groups
 //! flip determines Y mirror or not.
 // getViewAxis 1
-gp_Ax2 TechDraw::getViewAxis(const Base::Vector3d origin,
-                                     const Base::Vector3d& direction,
-                                     const bool flip)
+gp_Ax2 TechDraw::getViewAxis(const Base::Vector3d origin, const Base::Vector3d &direction,
+                             const bool flip)
 {
-//    Base::Console().Message("GO::getViewAxis() - 1 - use only with getLegacyX\n");
-    (void) flip;
+    //    Base::Console().Message("GO::getViewAxis() - 1 - use only with getLegacyX\n");
+    (void)flip;
     gp_Ax2 viewAxis;
     gp_Pnt inputCenter(origin.x, origin.y, origin.z);
     Base::Vector3d stdZ(0.0, 0.0, 1.0);
@@ -877,101 +795,91 @@ gp_Ax2 TechDraw::getViewAxis(const Base::Vector3d origin,
     Base::Vector3d cross = direction;
     if (TechDraw::DrawUtil::checkParallel(direction, stdZ)) {
         cross = Base::Vector3d(1.0, 0.0, 0.0);
-    } else {
+    }
+    else {
         cross.Normalize();
         cross = cross.Cross(stdZ);
     }
 
     if (cross.IsEqual(stdOrg, FLT_EPSILON)) {
-        viewAxis = gp_Ax2(inputCenter,
-                          gp_Dir(direction.x, direction.y, direction.z));
+        viewAxis = gp_Ax2(inputCenter, gp_Dir(direction.x, direction.y, direction.z));
         return viewAxis;
     }
 
-    viewAxis = gp_Ax2(inputCenter,
-                      gp_Dir(direction.x, direction.y, direction.z),
+    viewAxis = gp_Ax2(inputCenter, gp_Dir(direction.x, direction.y, direction.z),
                       gp_Dir(cross.x, cross.y, cross.z));
     return viewAxis;
 }
 
 //! gets a coordinate system specified by Z and X directions
 //getViewAxis 2
-gp_Ax2 TechDraw::getViewAxis(const Base::Vector3d origin,
-                                     const Base::Vector3d& direction,
-                                     const Base::Vector3d& xAxis,
-                                     const bool flip)
+gp_Ax2 TechDraw::getViewAxis(const Base::Vector3d origin, const Base::Vector3d &direction,
+                             const Base::Vector3d &xAxis, const bool flip)
 {
-//    Base::Console().Message("GO::getViewAxis() - 2\n");
-    (void) flip;
+    //    Base::Console().Message("GO::getViewAxis() - 2\n");
+    (void)flip;
     gp_Pnt inputCenter(origin.x, origin.y, origin.z);
     gp_Ax2 viewAxis;
-    viewAxis = gp_Ax2(inputCenter,
-                      gp_Dir(direction.x, direction.y, direction.z),
+    viewAxis = gp_Ax2(inputCenter, gp_Dir(direction.x, direction.y, direction.z),
                       gp_Dir(xAxis.x, xAxis.y, xAxis.z));
     return viewAxis;
 }
 
 // was getViewAxis 1
 // getViewAxis as used before XDirection property adopted
-gp_Ax2 TechDraw::legacyViewAxis1(const Base::Vector3d origin,
-                                     const Base::Vector3d& direction,
-                                     const bool flip)
+gp_Ax2 TechDraw::legacyViewAxis1(const Base::Vector3d origin, const Base::Vector3d &direction,
+                                 const bool flip)
 {
-//    Base::Console().Message("GO::legacyViewAxis1()\n");
+    //    Base::Console().Message("GO::legacyViewAxis1()\n");
     gp_Ax2 viewAxis;
     gp_Pnt inputCenter(origin.x, origin.y, origin.z);
     Base::Vector3d stdZ(0.0, 0.0, 1.0);
     Base::Vector3d stdOrg(0.0, 0.0, 0.0);
     Base::Vector3d flipDirection(direction.x, -direction.y, direction.z);
-    if (!flip) {
-        flipDirection = Base::Vector3d(direction.x, direction.y, direction.z);
-    }
+    if (!flip) { flipDirection = Base::Vector3d(direction.x, direction.y, direction.z); }
     Base::Vector3d cross = flipDirection;
-//    //special case
+    //    //special case
     if (TechDraw::DrawUtil::checkParallel(flipDirection, stdZ)) {
         cross = Base::Vector3d(1.0, 0.0, 0.0);
-    } else {
+    }
+    else {
         cross.Normalize();
         cross = cross.Cross(stdZ);
     }
 
     if (cross.IsEqual(stdOrg, FLT_EPSILON)) {
-        viewAxis = gp_Ax2(inputCenter,
-                          gp_Dir(flipDirection.x, flipDirection.y, flipDirection.z));
+        viewAxis = gp_Ax2(inputCenter, gp_Dir(flipDirection.x, flipDirection.y, flipDirection.z));
         return viewAxis;
     }
 
-    viewAxis = gp_Ax2(inputCenter,
-                      gp_Dir(flipDirection.x, flipDirection.y, flipDirection.z),
+    viewAxis = gp_Ax2(inputCenter, gp_Dir(flipDirection.x, flipDirection.y, flipDirection.z),
                       gp_Dir(cross.x, cross.y, cross.z));
 
     //this bit is to handle the old mirror Y logic, but it messes up
     //some old files.
     gp_Trsf mirrorXForm;
     gp_Ax2 mirrorCS(inputCenter, gp_Dir(0, -1, 0));
-    mirrorXForm.SetMirror( mirrorCS );
+    mirrorXForm.SetMirror(mirrorCS);
     viewAxis = viewAxis.Transformed(mirrorXForm);
 
     return viewAxis;
 }
 
 //! Returns the centroid of shape, as viewed according to direction
-gp_Pnt TechDraw::findCentroid(const TopoDS_Shape &shape,
-                                    const Base::Vector3d &direction)
+gp_Pnt TechDraw::findCentroid(const TopoDS_Shape &shape, const Base::Vector3d &direction)
 {
-//    Base::Console().Message("GO::findCentroid() - 1\n");
+    //    Base::Console().Message("GO::findCentroid() - 1\n");
     Base::Vector3d origin(0.0, 0.0, 0.0);
     gp_Ax2 viewAxis = getViewAxis(origin, direction);
     return findCentroid(shape, viewAxis);
 }
 
 //! Returns the centroid of shape, as viewed according to direction
-gp_Pnt TechDraw::findCentroid(const TopoDS_Shape &shape,
-                                      const gp_Ax2 &viewAxis)
+gp_Pnt TechDraw::findCentroid(const TopoDS_Shape &shape, const gp_Ax2 &viewAxis)
 {
-//    Base::Console().Message("GO::findCentroid() - 2\n");
-//    Base::Vector3d origin(0.0, 0.0, 0.0);
-//    gp_Ax2 viewAxis = getViewAxis(origin, direction);
+    //    Base::Console().Message("GO::findCentroid() - 2\n");
+    //    Base::Vector3d origin(0.0, 0.0, 0.0);
+    //    gp_Ax2 viewAxis = getViewAxis(origin, direction);
 
     gp_Trsf tempTransform;
     tempTransform.SetTransformation(viewAxis);
@@ -984,9 +892,7 @@ gp_Pnt TechDraw::findCentroid(const TopoDS_Shape &shape,
     Standard_Real xMin, yMin, zMin, xMax, yMax, zMax;
     tBounds.Get(xMin, yMin, zMin, xMax, yMax, zMax);
 
-    Standard_Real x = (xMin + xMax) / 2.0,
-                  y = (yMin + yMax) / 2.0,
-                  z = (zMin + zMax) / 2.0;
+    Standard_Real x = (xMin + xMax) / 2.0, y = (yMin + yMax) / 2.0, z = (zMin + zMax) / 2.0;
 
     // Get centroid back into object space
     tempTransform.Inverted().Transforms(x, y, z);
@@ -994,19 +900,17 @@ gp_Pnt TechDraw::findCentroid(const TopoDS_Shape &shape,
     return gp_Pnt(x, y, z);
 }
 
-Base::Vector3d TechDraw::findCentroidVec(const TopoDS_Shape &shape,
-                                              const Base::Vector3d &direction)
+Base::Vector3d TechDraw::findCentroidVec(const TopoDS_Shape &shape, const Base::Vector3d &direction)
 {
-//    Base::Console().Message("GO::findCentroidVec() - 1\n");
+    //    Base::Console().Message("GO::findCentroidVec() - 1\n");
     gp_Pnt p = TechDraw::findCentroid(shape, direction);
     Base::Vector3d result(p.X(), p.Y(), p.Z());
     return result;
 }
 
-Base::Vector3d TechDraw::findCentroidVec(const TopoDS_Shape &shape,
-                                         const gp_Ax2 &cs)
+Base::Vector3d TechDraw::findCentroidVec(const TopoDS_Shape &shape, const gp_Ax2 &cs)
 {
-//    Base::Console().Message("GO::findCentroidVec() - 2\n");
+    //    Base::Console().Message("GO::findCentroidVec() - 2\n");
     gp_Pnt p = TechDraw::findCentroid(shape, cs);
     Base::Vector3d result(p.X(), p.Y(), p.Z());
     return result;
@@ -1014,34 +918,29 @@ Base::Vector3d TechDraw::findCentroidVec(const TopoDS_Shape &shape,
 
 
 //!scales & mirrors a shape about a center
-TopoDS_Shape TechDraw::mirrorShapeVec(const TopoDS_Shape &input,
-                             const Base::Vector3d& inputCenter,
-                             double scale)
+TopoDS_Shape TechDraw::mirrorShapeVec(const TopoDS_Shape &input, const Base::Vector3d &inputCenter,
+                                      double scale)
 {
     gp_Pnt gInput(inputCenter.x, inputCenter.y, inputCenter.z);
     return TechDraw::mirrorShape(input, gInput, scale);
 }
 
-TopoDS_Shape TechDraw::mirrorShape(const TopoDS_Shape &input,
-                             const gp_Pnt& inputCenter,
-                             double scale)
+TopoDS_Shape TechDraw::mirrorShape(const TopoDS_Shape &input, const gp_Pnt &inputCenter,
+                                   double scale)
 {
     TopoDS_Shape transShape;
-    if (input.IsNull()) {
-        return transShape;
-    }
+    if (input.IsNull()) { return transShape; }
     try {
         // Make tempTransform scale the object around it's centre point and
         // mirror about the Y axis
         gp_Trsf tempTransform;
         //BRepBuilderAPI_Transform will loop forever if asked to use 0.0 as scale
-        if (!(scale > 0.0)) {
-            tempTransform.SetScale(inputCenter, 1.0);
-        } else {
+        if (!(scale > 0.0)) { tempTransform.SetScale(inputCenter, 1.0); }
+        else {
             tempTransform.SetScale(inputCenter, scale);
         }
         gp_Trsf mirrorTransform;
-        mirrorTransform.SetMirror( gp_Ax2(inputCenter, gp_Dir(0, -1, 0)) );
+        mirrorTransform.SetMirror(gp_Ax2(inputCenter, gp_Dir(0, -1, 0)));
         tempTransform.Multiply(mirrorTransform);
 
         // Apply that transform to the shape.  This should preserve the centre.
@@ -1056,17 +955,13 @@ TopoDS_Shape TechDraw::mirrorShape(const TopoDS_Shape &input,
 }
 
 //!rotates a shape about a viewAxis
-TopoDS_Shape TechDraw::rotateShape(const TopoDS_Shape &input,
-                             gp_Ax2& viewAxis,
-                             double rotAngle)
+TopoDS_Shape TechDraw::rotateShape(const TopoDS_Shape &input, gp_Ax2 &viewAxis, double rotAngle)
 {
     TopoDS_Shape transShape;
-    if (input.IsNull()) {
-        return transShape;
-    }
+    if (input.IsNull()) { return transShape; }
 
     gp_Ax1 rotAxis = viewAxis.Axis();
-    double rotation = rotAngle * M_PI/180.0;
+    double rotation = rotAngle * M_PI / 180.0;
 
     try {
         gp_Trsf tempTransform;
@@ -1082,13 +977,12 @@ TopoDS_Shape TechDraw::rotateShape(const TopoDS_Shape &input,
 }
 
 //!scales a shape about origin
-TopoDS_Shape TechDraw::scaleShape(const TopoDS_Shape &input,
-                                          double scale)
+TopoDS_Shape TechDraw::scaleShape(const TopoDS_Shape &input, double scale)
 {
     TopoDS_Shape transShape;
     try {
         gp_Trsf scaleTransform;
-        scaleTransform.SetScale(gp_Pnt(0, 0,0), scale);
+        scaleTransform.SetScale(gp_Pnt(0, 0, 0), scale);
 
         BRepBuilderAPI_Transform mkTrf(input, scaleTransform);
         transShape = mkTrf.Shape();
@@ -1101,8 +995,7 @@ TopoDS_Shape TechDraw::scaleShape(const TopoDS_Shape &input,
 }
 
 //!moves a shape
-TopoDS_Shape TechDraw::moveShape(const TopoDS_Shape &input,
-                                 const Base::Vector3d& motion)
+TopoDS_Shape TechDraw::moveShape(const TopoDS_Shape &input, const Base::Vector3d &motion)
 {
     TopoDS_Shape transShape;
     try {

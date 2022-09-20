@@ -26,10 +26,11 @@
 #include <Base/Placement.h>
 #include <QDialog>
 
-namespace ImageGui {
+namespace ImageGui
+{
 
 class Ui_ImageOrientationDialog;
-class ImageOrientationDialog : public QDialog
+class ImageOrientationDialog: public QDialog
 {
     Q_OBJECT
 
@@ -38,7 +39,7 @@ public:
     ~ImageOrientationDialog() override;
 
     Base::Placement Pos;
-    int             DirType;
+    int DirType;
 
     void accept() override;
 
@@ -46,9 +47,9 @@ protected Q_SLOTS:
     void onPreview();
 
 private:
-    Ui_ImageOrientationDialog* ui;
+    Ui_ImageOrientationDialog *ui;
 };
 
-}
+} // namespace ImageGui
 
 #endif // IMAGEGUI_IMAGEORIENTATIONDIALOG_H

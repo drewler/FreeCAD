@@ -45,34 +45,22 @@
 using namespace Mesh;
 
 TYPESYSTEM_SOURCE(Mesh::PropertyNormalList, App::PropertyLists)
-TYPESYSTEM_SOURCE(Mesh::PropertyCurvatureList , App::PropertyLists)
-TYPESYSTEM_SOURCE(Mesh::PropertyMeshKernel , App::PropertyComplexGeoData)
+TYPESYSTEM_SOURCE(Mesh::PropertyCurvatureList, App::PropertyLists)
+TYPESYSTEM_SOURCE(Mesh::PropertyMeshKernel, App::PropertyComplexGeoData)
 
-PropertyNormalList::PropertyNormalList()
-{
+PropertyNormalList::PropertyNormalList() {}
 
-}
+PropertyNormalList::~PropertyNormalList() {}
 
-PropertyNormalList::~PropertyNormalList()
-{
+void PropertyNormalList::setSize(int newSize) { _lValueList.resize(newSize); }
 
-}
+int PropertyNormalList::getSize() const { return static_cast<int>(_lValueList.size()); }
 
-void PropertyNormalList::setSize(int newSize)
-{
-    _lValueList.resize(newSize);
-}
-
-int PropertyNormalList::getSize() const
-{
-    return static_cast<int>(_lValueList.size());
-}
-
-void PropertyNormalList::setValue(const Base::Vector3f& lValue)
+void PropertyNormalList::setValue(const Base::Vector3f &lValue)
 {
     aboutToSetValue();
     _lValueList.resize(1);
-    _lValueList[0]=lValue;
+    _lValueList[0] = lValue;
     hasSetValue();
 }
 
@@ -80,11 +68,11 @@ void PropertyNormalList::setValue(float x, float y, float z)
 {
     aboutToSetValue();
     _lValueList.resize(1);
-    _lValueList[0].Set(x,y,z);
+    _lValueList[0].Set(x, y, z);
     hasSetValue();
 }
 
-void PropertyNormalList::setValues(const std::vector<Base::Vector3f>& values)
+void PropertyNormalList::setValues(const std::vector<Base::Vector3f> &values)
 {
     aboutToSetValue();
     _lValueList = values;
@@ -93,10 +81,9 @@ void PropertyNormalList::setValues(const std::vector<Base::Vector3f>& values)
 
 PyObject *PropertyNormalList::getPyObject()
 {
-    PyObject* list = PyList_New(getSize());
+    PyObject *list = PyList_New(getSize());
 
-    for (int i = 0;i<getSize(); i++)
-        PyList_SetItem(list, i, new Base::VectorPy(_lValueList[i]));
+    for (int i = 0; i < getSize(); i++) PyList_SetItem(list, i, new Base::VectorPy(_lValueList[i]));
 
     return list;
 }
@@ -108,23 +95,23 @@ void PropertyNormalList::setPyObject(PyObject *value)
         std::vector<Base::Vector3f> values;
         values.resize(nSize);
 
-        for (Py_ssize_t i=0; i<nSize;++i) {
-            PyObject* item = PyList_GetItem(value, i);
+        for (Py_ssize_t i = 0; i < nSize; ++i) {
+            PyObject *item = PyList_GetItem(value, i);
             App::PropertyVector val;
-            val.setPyObject( item );
+            val.setPyObject(item);
             values[i] = Base::convertTo<Base::Vector3f>(val.getValue());
         }
 
         setValues(values);
     }
     else if (PyObject_TypeCheck(value, &(Base::VectorPy::Type))) {
-        Base::VectorPy  *pcObject = static_cast<Base::VectorPy*>(value);
-        Base::Vector3d* val = pcObject->getVectorPtr();
+        Base::VectorPy *pcObject = static_cast<Base::VectorPy *>(value);
+        Base::Vector3d *val = pcObject->getVectorPtr();
         setValue(Base::convertTo<Base::Vector3f>(*val));
     }
     else if (PyTuple_Check(value) && PyTuple_Size(value) == 3) {
         App::PropertyVector val;
-        val.setPyObject( value );
+        val.setPyObject(value);
         setValue(Base::convertTo<Base::Vector3f>(val.getValue()));
     }
     else {
@@ -134,30 +121,32 @@ void PropertyNormalList::setPyObject(PyObject *value)
     }
 }
 
-void PropertyNormalList::Save (Base::Writer &writer) const
+void PropertyNormalList::Save(Base::Writer &writer) const
 {
     if (!writer.isForceXML()) {
-        writer.Stream() << writer.ind() << "<VectorList file=\"" << writer.addFile(getName(), this) << "\"/>" << std::endl;
+        writer.Stream() << writer.ind() << "<VectorList file=\"" << writer.addFile(getName(), this)
+                        << "\"/>" << std::endl;
     }
 }
 
 void PropertyNormalList::Restore(Base::XMLReader &reader)
 {
     reader.readElement("VectorList");
-    std::string file (reader.getAttribute("file") );
+    std::string file(reader.getAttribute("file"));
 
     if (!file.empty()) {
         // initiate a file read
-        reader.addFile(file.c_str(),this);
+        reader.addFile(file.c_str(), this);
     }
 }
 
-void PropertyNormalList::SaveDocFile (Base::Writer &writer) const
+void PropertyNormalList::SaveDocFile(Base::Writer &writer) const
 {
     Base::OutputStream str(writer.Stream());
     uint32_t uCt = (uint32_t)getSize();
     str << uCt;
-    for (std::vector<Base::Vector3f>::const_iterator it = _lValueList.begin(); it != _lValueList.end(); ++it) {
+    for (std::vector<Base::Vector3f>::const_iterator it = _lValueList.begin();
+         it != _lValueList.end(); ++it) {
         str << it->x << it->y << it->z;
     }
 }
@@ -165,7 +154,7 @@ void PropertyNormalList::SaveDocFile (Base::Writer &writer) const
 void PropertyNormalList::RestoreDocFile(Base::Reader &reader)
 {
     Base::InputStream str(reader);
-    uint32_t uCt=0;
+    uint32_t uCt = 0;
     str >> uCt;
     std::vector<Base::Vector3f> values(uCt);
     for (std::vector<Base::Vector3f>::iterator it = values.begin(); it != values.end(); ++it) {
@@ -176,7 +165,7 @@ void PropertyNormalList::RestoreDocFile(Base::Reader &reader)
 
 App::Property *PropertyNormalList::Copy() const
 {
-    PropertyNormalList *p= new PropertyNormalList();
+    PropertyNormalList *p = new PropertyNormalList();
     p->_lValueList = _lValueList;
     return p;
 }
@@ -184,11 +173,11 @@ App::Property *PropertyNormalList::Copy() const
 void PropertyNormalList::Paste(const App::Property &from)
 {
     aboutToSetValue();
-    _lValueList = dynamic_cast<const PropertyNormalList&>(from)._lValueList;
+    _lValueList = dynamic_cast<const PropertyNormalList &>(from)._lValueList;
     hasSetValue();
 }
 
-unsigned int PropertyNormalList::getMemSize () const
+unsigned int PropertyNormalList::getMemSize() const
 {
     return static_cast<unsigned int>(_lValueList.size() * sizeof(Base::Vector3f));
 }
@@ -210,90 +199,80 @@ void PropertyNormalList::transformGeometry(const Base::Matrix4D &mat)
     Base::Matrix4D rot;
     rot.setToUnity();
     for (unsigned short i = 0; i < 3; i++) {
-        for (unsigned short j = 0; j < 3; j++) {
-            rot[i][j] = mat[i][j] / s[i];
-        }
+        for (unsigned short j = 0; j < 3; j++) { rot[i][j] = mat[i][j] / s[i]; }
     }
 
     aboutToSetValue();
 
     // Rotate the normal vectors
-    for (int ii=0; ii<getSize(); ii++) {
-        set1Value(ii, rot * operator[](ii));
-    }
+    for (int ii = 0; ii < getSize(); ii++) { set1Value(ii, rot * operator[](ii)); }
 
     hasSetValue();
 }
 
 // ----------------------------------------------------------------------------
 
-PropertyCurvatureList::PropertyCurvatureList()
-{
+PropertyCurvatureList::PropertyCurvatureList() {}
 
-}
+PropertyCurvatureList::~PropertyCurvatureList() {}
 
-PropertyCurvatureList::~PropertyCurvatureList()
-{
-
-}
-
-void PropertyCurvatureList::setValue(const CurvatureInfo& lValue)
+void PropertyCurvatureList::setValue(const CurvatureInfo &lValue)
 {
     aboutToSetValue();
     _lValueList.resize(1);
-    _lValueList[0]=lValue;
+    _lValueList[0] = lValue;
     hasSetValue();
 }
 
-void PropertyCurvatureList::setValues(const std::vector<CurvatureInfo>& lValues)
+void PropertyCurvatureList::setValues(const std::vector<CurvatureInfo> &lValues)
 {
     aboutToSetValue();
-    _lValueList=lValues;
+    _lValueList = lValues;
     hasSetValue();
 }
 
-std::vector<float> PropertyCurvatureList::getCurvature( int mode ) const
+std::vector<float> PropertyCurvatureList::getCurvature(int mode) const
 {
-    const std::vector<Mesh::CurvatureInfo>& fCurvInfo = getValues();
+    const std::vector<Mesh::CurvatureInfo> &fCurvInfo = getValues();
     std::vector<float> fValues;
     fValues.reserve(fCurvInfo.size());
 
     // Mean curvature
     if (mode == MeanCurvature) {
-        for ( std::vector<Mesh::CurvatureInfo>::const_iterator it=fCurvInfo.begin();it!=fCurvInfo.end(); ++it )
-        {
-            fValues.push_back( 0.5f*(it->fMaxCurvature+it->fMinCurvature) );
+        for (std::vector<Mesh::CurvatureInfo>::const_iterator it = fCurvInfo.begin();
+             it != fCurvInfo.end(); ++it) {
+            fValues.push_back(0.5f * (it->fMaxCurvature + it->fMinCurvature));
         }
     }
     // Gaussian curvature
     else if (mode == GaussCurvature) {
-        for ( std::vector<Mesh::CurvatureInfo>::const_iterator it=fCurvInfo.begin();it!=fCurvInfo.end(); ++it )
-        {
-            fValues.push_back( it->fMaxCurvature * it->fMinCurvature );
+        for (std::vector<Mesh::CurvatureInfo>::const_iterator it = fCurvInfo.begin();
+             it != fCurvInfo.end(); ++it) {
+            fValues.push_back(it->fMaxCurvature * it->fMinCurvature);
         }
     }
     // Maximum curvature
     else if (mode == MaxCurvature) {
-        for ( std::vector<Mesh::CurvatureInfo>::const_iterator it=fCurvInfo.begin();it!=fCurvInfo.end(); ++it )
-        {
-          fValues.push_back( it->fMaxCurvature );
+        for (std::vector<Mesh::CurvatureInfo>::const_iterator it = fCurvInfo.begin();
+             it != fCurvInfo.end(); ++it) {
+            fValues.push_back(it->fMaxCurvature);
         }
     }
     // Minimum curvature
     else if (mode == MinCurvature) {
-        for ( std::vector<Mesh::CurvatureInfo>::const_iterator it=fCurvInfo.begin();it!=fCurvInfo.end(); ++it )
-        {
-          fValues.push_back( it->fMinCurvature );
+        for (std::vector<Mesh::CurvatureInfo>::const_iterator it = fCurvInfo.begin();
+             it != fCurvInfo.end(); ++it) {
+            fValues.push_back(it->fMinCurvature);
         }
     }
     // Absolute curvature
     else if (mode == AbsCurvature) {
-        for ( std::vector<Mesh::CurvatureInfo>::const_iterator it=fCurvInfo.begin();it!=fCurvInfo.end(); ++it )
-        {
-            if ( fabs(it->fMaxCurvature) > fabs(it->fMinCurvature) )
-                fValues.push_back( it->fMaxCurvature );
+        for (std::vector<Mesh::CurvatureInfo>::const_iterator it = fCurvInfo.begin();
+             it != fCurvInfo.end(); ++it) {
+            if (fabs(it->fMaxCurvature) > fabs(it->fMinCurvature))
+                fValues.push_back(it->fMaxCurvature);
             else
-                fValues.push_back( it->fMinCurvature );
+                fValues.push_back(it->fMinCurvature);
         }
     }
 
@@ -304,7 +283,7 @@ void PropertyCurvatureList::transformGeometry(const Base::Matrix4D &mat)
 {
     // The principal direction is only a vector with unit length, so we only need to rotate it
     // (no translations or scaling)
-    
+
     // Extract scale factors (assumes an orthogonal rotation matrix)
     // Use the fact that the length of the row vectors of R are all equal to 1
     // And that scaling is applied after rotating
@@ -312,21 +291,18 @@ void PropertyCurvatureList::transformGeometry(const Base::Matrix4D &mat)
     s[0] = sqrt(mat[0][0] * mat[0][0] + mat[0][1] * mat[0][1] + mat[0][2] * mat[0][2]);
     s[1] = sqrt(mat[1][0] * mat[1][0] + mat[1][1] * mat[1][1] + mat[1][2] * mat[1][2]);
     s[2] = sqrt(mat[2][0] * mat[2][0] + mat[2][1] * mat[2][1] + mat[2][2] * mat[2][2]);
-    
+
     // Set up the rotation matrix: zero the translations and make the scale factors = 1
     Base::Matrix4D rot;
     rot.setToUnity();
     for (unsigned short i = 0; i < 3; i++) {
-        for (unsigned short j = 0; j < 3; j++) {
-            rot[i][j] = mat[i][j] / s[i];
-        }
+        for (unsigned short j = 0; j < 3; j++) { rot[i][j] = mat[i][j] / s[i]; }
     }
 
     aboutToSetValue();
 
     // Rotate the principal directions
-    for (int ii=0; ii<getSize(); ii++)
-    {
+    for (int ii = 0; ii < getSize(); ii++) {
         CurvatureInfo ci = operator[](ii);
         ci.cMaxCurvDir = rot * ci.cMaxCurvDir;
         ci.cMinCurvDir = rot * ci.cMinCurvDir;
@@ -336,31 +312,32 @@ void PropertyCurvatureList::transformGeometry(const Base::Matrix4D &mat)
     hasSetValue();
 }
 
-void PropertyCurvatureList::Save (Base::Writer &writer) const
+void PropertyCurvatureList::Save(Base::Writer &writer) const
 {
     if (!writer.isForceXML()) {
-        writer.Stream() << writer.ind() << "<CurvatureList file=\"" << 
-        writer.addFile(getName(), this) << "\"/>" << std::endl;
+        writer.Stream() << writer.ind() << "<CurvatureList file=\""
+                        << writer.addFile(getName(), this) << "\"/>" << std::endl;
     }
 }
 
 void PropertyCurvatureList::Restore(Base::XMLReader &reader)
 {
     reader.readElement("CurvatureList");
-    std::string file (reader.getAttribute("file") );
-    
+    std::string file(reader.getAttribute("file"));
+
     if (!file.empty()) {
         // initiate a file read
-        reader.addFile(file.c_str(),this);
+        reader.addFile(file.c_str(), this);
     }
 }
 
-void PropertyCurvatureList::SaveDocFile (Base::Writer &writer) const
+void PropertyCurvatureList::SaveDocFile(Base::Writer &writer) const
 {
     Base::OutputStream str(writer.Stream());
     uint32_t uCt = (uint32_t)getSize();
     str << uCt;
-    for (std::vector<CurvatureInfo>::const_iterator it = _lValueList.begin(); it != _lValueList.end(); ++it) {
+    for (std::vector<CurvatureInfo>::const_iterator it = _lValueList.begin();
+         it != _lValueList.end(); ++it) {
         str << it->fMaxCurvature << it->fMinCurvature;
         str << it->cMaxCurvDir.x << it->cMaxCurvDir.y << it->cMaxCurvDir.z;
         str << it->cMinCurvDir.x << it->cMinCurvDir.y << it->cMinCurvDir.z;
@@ -370,7 +347,7 @@ void PropertyCurvatureList::SaveDocFile (Base::Writer &writer) const
 void PropertyCurvatureList::RestoreDocFile(Base::Reader &reader)
 {
     Base::InputStream str(reader);
-    uint32_t uCt=0;
+    uint32_t uCt = 0;
     str >> uCt;
     std::vector<CurvatureInfo> values(uCt);
     for (std::vector<CurvatureInfo>::iterator it = values.begin(); it != values.end(); ++it) {
@@ -382,10 +359,11 @@ void PropertyCurvatureList::RestoreDocFile(Base::Reader &reader)
     setValues(values);
 }
 
-PyObject* PropertyCurvatureList::getPyObject()
+PyObject *PropertyCurvatureList::getPyObject()
 {
     Py::List list;
-    for (std::vector<CurvatureInfo>::const_iterator it = _lValueList.begin(); it != _lValueList.end(); ++it) {
+    for (std::vector<CurvatureInfo>::const_iterator it = _lValueList.begin();
+         it != _lValueList.end(); ++it) {
         Py::Tuple tuple(4);
         tuple.setItem(0, Py::Float(it->fMaxCurvature));
         tuple.setItem(1, Py::Float(it->fMinCurvature));
@@ -405,14 +383,14 @@ PyObject* PropertyCurvatureList::getPyObject()
     return Py::new_reference_to(list);
 }
 
-void PropertyCurvatureList::setPyObject(PyObject* /*value*/)
+void PropertyCurvatureList::setPyObject(PyObject * /*value*/)
 {
     throw Base::AttributeError(std::string("This attribute is read-only"));
 }
 
 App::Property *PropertyCurvatureList::Copy() const
 {
-    PropertyCurvatureList *p= new PropertyCurvatureList();
+    PropertyCurvatureList *p = new PropertyCurvatureList();
     p->_lValueList = _lValueList;
     return p;
 }
@@ -420,32 +398,31 @@ App::Property *PropertyCurvatureList::Copy() const
 void PropertyCurvatureList::Paste(const App::Property &from)
 {
     aboutToSetValue();
-    _lValueList = dynamic_cast<const PropertyCurvatureList&>(from)._lValueList;
+    _lValueList = dynamic_cast<const PropertyCurvatureList &>(from)._lValueList;
     hasSetValue();
 }
 
 // ----------------------------------------------------------------------------
 
-PropertyMeshKernel::PropertyMeshKernel()
-  : _meshObject(new MeshObject()), meshPyObject(nullptr)
+PropertyMeshKernel::PropertyMeshKernel() : _meshObject(new MeshObject()), meshPyObject(nullptr)
 {
     // Note: Normally this property is a member of a document object, i.e. the setValue()
     // method gets called in the constructor of a sublcass of DocumentObject, e.g. Mesh::Feature.
-    // This means that the created MeshObject here will be replaced and deleted immediately. 
+    // This means that the created MeshObject here will be replaced and deleted immediately.
     // However, we anyway create this object in case we use this class in another context.
 }
 
 PropertyMeshKernel::~PropertyMeshKernel()
 {
     if (meshPyObject) {
-        // Note: Do not call setInvalid() of the Python binding 
+        // Note: Do not call setInvalid() of the Python binding
         // because the mesh should still be accessible afterwards.
         meshPyObject->parentProperty = nullptr;
         Py_DECREF(meshPyObject);
     }
 }
 
-void PropertyMeshKernel::setValuePtr(MeshObject* mesh)
+void PropertyMeshKernel::setValuePtr(MeshObject *mesh)
 {
     // use the tmp. object to guarantee that the referenced mesh is not destroyed
     // before calling hasSetValue()
@@ -455,72 +432,60 @@ void PropertyMeshKernel::setValuePtr(MeshObject* mesh)
     hasSetValue();
 }
 
-void PropertyMeshKernel::setValue(const MeshObject& mesh)
+void PropertyMeshKernel::setValue(const MeshObject &mesh)
 {
     aboutToSetValue();
     *_meshObject = mesh;
     hasSetValue();
 }
 
-void PropertyMeshKernel::setValue(const MeshCore::MeshKernel& mesh)
+void PropertyMeshKernel::setValue(const MeshCore::MeshKernel &mesh)
 {
     aboutToSetValue();
     _meshObject->setKernel(mesh);
     hasSetValue();
 }
 
-void PropertyMeshKernel::swapMesh(MeshObject& mesh)
+void PropertyMeshKernel::swapMesh(MeshObject &mesh)
 {
     aboutToSetValue();
     _meshObject->swap(mesh);
     hasSetValue();
 }
 
-void PropertyMeshKernel::swapMesh(MeshCore::MeshKernel& mesh)
+void PropertyMeshKernel::swapMesh(MeshCore::MeshKernel &mesh)
 {
     aboutToSetValue();
     _meshObject->swap(mesh);
     hasSetValue();
 }
 
-const MeshObject& PropertyMeshKernel::getValue()const 
+const MeshObject &PropertyMeshKernel::getValue() const { return *_meshObject; }
+
+const MeshObject *PropertyMeshKernel::getValuePtr() const { return (MeshObject *)_meshObject; }
+
+const Data::ComplexGeoData *PropertyMeshKernel::getComplexData() const
 {
-    return *_meshObject;
+    return (MeshObject *)_meshObject;
 }
 
-const MeshObject* PropertyMeshKernel::getValuePtr()const 
-{
-    return (MeshObject*)_meshObject;
-}
+Base::BoundBox3d PropertyMeshKernel::getBoundingBox() const { return _meshObject->getBoundBox(); }
 
-const Data::ComplexGeoData* PropertyMeshKernel::getComplexData() const
-{
-    return (MeshObject*)_meshObject;
-}
-
-Base::BoundBox3d PropertyMeshKernel::getBoundingBox() const
-{
-    return _meshObject->getBoundBox();
-}
-
-unsigned int PropertyMeshKernel::getMemSize () const
+unsigned int PropertyMeshKernel::getMemSize() const
 {
     unsigned int size = 0;
     size += _meshObject->getMemSize();
-    
+
     return size;
 }
 
-MeshObject* PropertyMeshKernel::startEditing()
+MeshObject *PropertyMeshKernel::startEditing()
 {
     aboutToSetValue();
-    return (MeshObject*)_meshObject;
+    return (MeshObject *)_meshObject;
 }
 
-void PropertyMeshKernel::finishEditing()
-{
-    hasSetValue();
-}
+void PropertyMeshKernel::finishEditing() { hasSetValue(); }
 
 void PropertyMeshKernel::transformGeometry(const Base::Matrix4D &rclMat)
 {
@@ -529,29 +494,29 @@ void PropertyMeshKernel::transformGeometry(const Base::Matrix4D &rclMat)
     hasSetValue();
 }
 
-void PropertyMeshKernel::setPointIndices(const std::vector<std::pair<PointIndex, Base::Vector3f> >& inds)
+void PropertyMeshKernel::setPointIndices(
+    const std::vector<std::pair<PointIndex, Base::Vector3f>> &inds)
 {
     aboutToSetValue();
-    MeshCore::MeshKernel& kernel = _meshObject->getKernel();
-    for (std::vector<std::pair<PointIndex, Base::Vector3f> >::const_iterator it = inds.begin(); it != inds.end(); ++it)
+    MeshCore::MeshKernel &kernel = _meshObject->getKernel();
+    for (std::vector<std::pair<PointIndex, Base::Vector3f>>::const_iterator it = inds.begin();
+         it != inds.end(); ++it)
         kernel.SetPoint(it->first, it->second);
     hasSetValue();
 }
 
-void PropertyMeshKernel::setTransform(const Base::Matrix4D& rclTrf)
+void PropertyMeshKernel::setTransform(const Base::Matrix4D &rclTrf)
 {
     _meshObject->setTransform(rclTrf);
 }
 
-Base::Matrix4D PropertyMeshKernel::getTransform() const
-{
-    return _meshObject->getTransform();
-}
+Base::Matrix4D PropertyMeshKernel::getTransform() const { return _meshObject->getTransform(); }
 
 PyObject *PropertyMeshKernel::getPyObject()
 {
     if (!meshPyObject) {
-        meshPyObject = new MeshPy(&*_meshObject); // Lgtm[cpp/resource-not-released-in-destructor] ** Not destroyed in this class because it is reference-counted and destroyed elsewhere
+        meshPyObject = new MeshPy(
+            &*_meshObject); // Lgtm[cpp/resource-not-released-in-destructor] ** Not destroyed in this class because it is reference-counted and destroyed elsewhere
         meshPyObject->setConst(); // set immutable
         meshPyObject->parentProperty = this;
     }
@@ -563,7 +528,7 @@ PyObject *PropertyMeshKernel::getPyObject()
 void PropertyMeshKernel::setPyObject(PyObject *value)
 {
     if (PyObject_TypeCheck(value, &(MeshPy::Type))) {
-        MeshPy* mesh = static_cast<MeshPy*>(value);
+        MeshPy *mesh = static_cast<MeshPy *>(value);
         // Do not allow to reassign the same instance
         if (&(*this->_meshObject) != mesh->getMeshObjectPtr()) {
             // Note: Copy the content, do NOT reference the same mesh object
@@ -573,7 +538,7 @@ void PropertyMeshKernel::setPyObject(PyObject *value)
     else if (PyList_Check(value)) {
         // new instance of MeshObject
         Py::List triangles(value);
-        MeshObject* mesh = MeshObject::createMeshFromList(triangles);
+        MeshObject *mesh = MeshObject::createMeshFromList(triangles);
         setValuePtr(mesh);
     }
     else {
@@ -583,7 +548,7 @@ void PropertyMeshKernel::setPyObject(PyObject *value)
     }
 }
 
-void PropertyMeshKernel::Save (Base::Writer &writer) const
+void PropertyMeshKernel::Save(Base::Writer &writer) const
 {
     if (writer.isForceXML()) {
         writer.Stream() << writer.ind() << "<Mesh>" << std::endl;
@@ -591,16 +556,16 @@ void PropertyMeshKernel::Save (Base::Writer &writer) const
         saver.SaveXML(writer);
     }
     else {
-        writer.Stream() << writer.ind() << "<Mesh file=\"" << 
-        writer.addFile("MeshKernel.bms", this) << "\"/>" << std::endl;
+        writer.Stream() << writer.ind() << "<Mesh file=\"" << writer.addFile("MeshKernel.bms", this)
+                        << "\"/>" << std::endl;
     }
 }
 
 void PropertyMeshKernel::Restore(Base::XMLReader &reader)
 {
     reader.readElement("Mesh");
-    std::string file (reader.getAttribute("file") );
-    
+    std::string file(reader.getAttribute("file"));
+
     if (file.empty()) {
         // read XML
         MeshCore::MeshKernel kernel;
@@ -615,14 +580,14 @@ void PropertyMeshKernel::Restore(Base::XMLReader &reader)
         aboutToSetValue();
         _meshObject->getKernel().Adopt(points, facets);
         hasSetValue();
-    } 
+    }
     else {
         // initiate a file read
-        reader.addFile(file.c_str(),this);
+        reader.addFile(file.c_str(), this);
     }
 }
 
-void PropertyMeshKernel::SaveDocFile (Base::Writer &writer) const
+void PropertyMeshKernel::SaveDocFile(Base::Writer &writer) const
 {
     _meshObject->save(writer.Stream());
 }
@@ -646,7 +611,7 @@ void PropertyMeshKernel::Paste(const App::Property &from)
 {
     // Note: Copy the content, do NOT reference the same mesh object
     aboutToSetValue();
-    const PropertyMeshKernel& prop = dynamic_cast<const PropertyMeshKernel&>(from);
+    const PropertyMeshKernel &prop = dynamic_cast<const PropertyMeshKernel &>(from);
     *(this->_meshObject) = *(prop._meshObject);
     hasSetValue();
 }

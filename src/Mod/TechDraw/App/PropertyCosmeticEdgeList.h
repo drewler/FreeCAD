@@ -29,7 +29,8 @@
 #include <App/Property.h>
 
 
-namespace Base {
+namespace Base
+{
 class Writer;
 }
 
@@ -59,18 +60,14 @@ public:
 
     /** Sets the property
      */
-/*    void setValue(const CosmeticEdge*);*/
-    void setValue(CosmeticEdge*);
-    void setValues(const std::vector<CosmeticEdge*>&);
+    /*    void setValue(const CosmeticEdge*);*/
+    void setValue(CosmeticEdge *);
+    void setValues(const std::vector<CosmeticEdge *> &);
 
     /// index operator
-    const CosmeticEdge *operator[] (const int idx) const {
-        return _lValueList[idx];
-    }
+    const CosmeticEdge *operator[](const int idx) const { return _lValueList[idx]; }
 
-    const std::vector<CosmeticEdge*> &getValues(void) const {
-        return _lValueList;
-    }
+    const std::vector<CosmeticEdge *> &getValues(void) const { return _lValueList; }
 
     virtual PyObject *getPyObject(void);
     virtual void setPyObject(PyObject *);
@@ -84,7 +81,7 @@ public:
     virtual unsigned int getMemSize(void) const;
 
 private:
-    std::vector<CosmeticEdge*> _lValueList;
+    std::vector<CosmeticEdge *> _lValueList;
 };
 
 } // namespace TechDraw

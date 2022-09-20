@@ -38,29 +38,37 @@
 
 
 class SoEvent;
-template <class Key, class T> class QMap;
+template<class Key, class T> class QMap;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
 class Keyboard;
 
-class KeyboardP {
+class KeyboardP
+{
 public:
-  KeyboardP(Keyboard * publ);
-  ~KeyboardP();
+    KeyboardP(Keyboard *publ);
+    ~KeyboardP();
 
-  const SoEvent * keyEvent(QKeyEvent * event);
-  void initKeyMap();
-  static bool debugKeyEvents();
+    const SoEvent *keyEvent(QKeyEvent *event);
+    void initKeyMap();
+    static bool debugKeyEvents();
 
-  typedef QMap<Qt::Key, SoKeyboardEvent::Key> KeyMap;
-  static KeyMap * keyboardmap;
-  static KeyMap * keypadmap;
+    typedef QMap<Qt::Key, SoKeyboardEvent::Key> KeyMap;
+    static KeyMap *keyboardmap;
+    static KeyMap *keypadmap;
 
-  SoKeyboardEvent * keyboard;
-  Keyboard * publ;
+    SoKeyboardEvent *keyboard;
+    Keyboard *publ;
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_KEYBOARDHANDLERP_H

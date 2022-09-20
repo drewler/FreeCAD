@@ -44,8 +44,7 @@
 
 using namespace TechDrawGui;
 
-QGIMatting::QGIMatting() :
-    m_radius(5.0)
+QGIMatting::QGIMatting() : m_radius(5.0)
 
 {
     setCacheMode(QGraphicsItem::NoCache);
@@ -70,11 +69,12 @@ void QGIMatting::draw()
     prepareGeometryChange();
     QPainterPath ppCut;
     if (getHoleStyle() == 0) {
-        QRectF roundCutout (-m_radius, -m_radius, 2.0 * m_radius, 2.0 * m_radius);
+        QRectF roundCutout(-m_radius, -m_radius, 2.0 * m_radius, 2.0 * m_radius);
         ppCut.addEllipse(roundCutout);
-    } else {
+    }
+    else {
         double squareSize = m_radius;
-        QRectF squareCutout (-squareSize, -squareSize, 2.0 * squareSize, 2.0 * squareSize);
+        QRectF squareCutout(-squareSize, -squareSize, 2.0 * squareSize, 2.0 * squareSize);
         ppCut.addRect(squareCutout);
     }
     m_pen.setWidthF(Rez::guiX(TechDraw::LineGroup::getDefaultWidth("Graphic")));
@@ -83,24 +83,22 @@ void QGIMatting::draw()
     m_border->setZValue(ZVALUE::MATTING);
 }
 
-int QGIMatting::getHoleStyle()
-{
-    return TechDraw::Preferences::mattingStyle();
-}
+int QGIMatting::getHoleStyle() { return TechDraw::Preferences::mattingStyle(); }
 
 //need this because QQGIG only updates BR when items added/deleted.
 QRectF QGIMatting::boundingRect() const
 {
-    QRectF result ;
-    result = childrenBoundingRect().adjusted(-1, -1, 1,1);
+    QRectF result;
+    result = childrenBoundingRect().adjusted(-1, -1, 1, 1);
     return result;
 }
 
-void QGIMatting::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGIMatting::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
     //painter->drawRect(boundingRect().adjusted(-2.0, -2.0, 2.0, 2.0));
 
-    QGraphicsItemGroup::paint (painter, &myOption, widget);
+    QGraphicsItemGroup::paint(painter, &myOption, widget);
 }

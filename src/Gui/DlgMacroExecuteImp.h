@@ -30,8 +30,10 @@
 
 class QTreeWidgetItem;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgMacroExecute;
 
 /**
@@ -39,18 +41,18 @@ class Ui_DlgMacroExecute;
  * recorded macro.
  * \author Jürgen Riegel
  */
-class DlgMacroExecuteImp : public QDialog, public Gui::WindowParameter
+class DlgMacroExecuteImp: public QDialog, public Gui::WindowParameter
 {
     Q_OBJECT
 
 public:
-    explicit DlgMacroExecuteImp(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgMacroExecuteImp(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgMacroExecuteImp() override;
 
     void accept() override;
 
 public Q_SLOTS:
-    void on_fileChooser_fileNameChanged(const QString&);
+    void on_fileChooser_fileNameChanged(const QString &);
     void on_createButton_clicked();
     void on_deleteButton_clicked();
     void on_editButton_clicked();
@@ -60,8 +62,8 @@ public Q_SLOTS:
     void on_addonsButton_clicked();
 
 protected Q_SLOTS:
-    void on_userMacroListBox_currentItemChanged(QTreeWidgetItem*);
-    void on_systemMacroListBox_currentItemChanged(QTreeWidgetItem*);
+    void on_userMacroListBox_currentItemChanged(QTreeWidgetItem *);
+    void on_systemMacroListBox_currentItemChanged(QTreeWidgetItem *);
     void on_tabMacroWidget_currentChanged(int index);
 
 protected:

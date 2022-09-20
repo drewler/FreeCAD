@@ -26,8 +26,10 @@
 
 #include <QDialog>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgActivateWindow;
 /**
  * The DlgActivateWindowImp class provides a dialog to activate the MDI window
@@ -35,19 +37,20 @@ class Ui_DlgActivateWindow;
  * an application you cannot put all of them into the "Windows" popup menu.
  * \author Werner Mayer
  */
-class DlgActivateWindowImp : public QDialog
+class DlgActivateWindowImp: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DlgActivateWindowImp(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgActivateWindowImp(QWidget *parent = nullptr,
+                                  Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgActivateWindowImp() override;
 
 protected:
     void accept() override;
 
 private:
-    Ui_DlgActivateWindow* ui;
+    Ui_DlgActivateWindow *ui;
 };
 
 } // namespace Dialog

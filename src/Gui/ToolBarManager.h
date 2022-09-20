@@ -30,35 +30,36 @@
 class QAction;
 class QToolBar;
 
-namespace Gui {
+namespace Gui
+{
 
 class GuiExport ToolBarItem
 {
 public:
     ToolBarItem();
-    ToolBarItem(ToolBarItem* item);
+    ToolBarItem(ToolBarItem *item);
     ~ToolBarItem();
 
-    void setCommand(const std::string&);
+    void setCommand(const std::string &);
     std::string command() const;
 
     bool hasItems() const;
-    ToolBarItem* findItem(const std::string&);
-    ToolBarItem* copy() const;
+    ToolBarItem *findItem(const std::string &);
+    ToolBarItem *copy() const;
     uint count() const;
 
-    void appendItem(ToolBarItem* item);
-    bool insertItem(ToolBarItem*, ToolBarItem* item);
-    void removeItem(ToolBarItem* item);
+    void appendItem(ToolBarItem *item);
+    bool insertItem(ToolBarItem *, ToolBarItem *item);
+    void removeItem(ToolBarItem *item);
     void clear();
 
-    ToolBarItem& operator << (ToolBarItem* item);
-    ToolBarItem& operator << (const std::string& command);
-    QList<ToolBarItem*> getItems() const;
+    ToolBarItem &operator<<(ToolBarItem *item);
+    ToolBarItem &operator<<(const std::string &command);
+    QList<ToolBarItem *> getItems() const;
 
 private:
     std::string _name;
-    QList<ToolBarItem*> _items;
+    QList<ToolBarItem *> _items;
 };
 
 /**
@@ -72,10 +73,10 @@ class GuiExport ToolBarManager
 {
 public:
     /// The one and only instance.
-    static ToolBarManager* getInstance();
+    static ToolBarManager *getInstance();
     static void destruct();
     /** Sets up the toolbars of a given workbench. */
-    void setup(ToolBarItem*);
+    void setup(ToolBarItem *);
     void saveState() const;
     void restoreState() const;
     void retranslate() const;
@@ -83,17 +84,17 @@ public:
     void setMovable(bool movable) const;
 
 protected:
-    void setup(ToolBarItem*, QToolBar*) const;
+    void setup(ToolBarItem *, QToolBar *) const;
     /** Returns a list of all currently existing toolbars. */
-    QList<QToolBar*> toolBars() const;
-    QToolBar* findToolBar(const QList<QToolBar*>&, const QString&) const;
-    QAction* findAction(const QList<QAction*>&, const QString&) const;
+    QList<QToolBar *> toolBars() const;
+    QToolBar *findToolBar(const QList<QToolBar *> &, const QString &) const;
+    QAction *findAction(const QList<QAction *> &, const QString &) const;
     ToolBarManager();
     ~ToolBarManager();
 
 private:
     QStringList toolbarNames;
-    static ToolBarManager* _instance;
+    static ToolBarManager *_instance;
 };
 
 } // namespace Gui

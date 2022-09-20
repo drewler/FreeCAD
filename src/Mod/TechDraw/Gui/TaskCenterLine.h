@@ -48,7 +48,7 @@ class CosmeticEdge;
 class Face;
 class LineFormat;
 class CenterLine;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -60,18 +60,14 @@ class MDIViewPage;
 class ViewProviderViewPart;
 class Ui_TaskCenterLine;
 
-class TaskCenterLine : public QWidget
+class TaskCenterLine: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskCenterLine(TechDraw::DrawViewPart* partFeat,
-                   TechDraw::DrawPage* page,
-                   std::vector<std::string> subNames,
-                   bool editMode);
-    TaskCenterLine(TechDraw::DrawViewPart* partFeat,
-                   TechDraw::DrawPage* page,
-                   std::string edgeName,
+    TaskCenterLine(TechDraw::DrawViewPart *partFeat, TechDraw::DrawPage *page,
+                   std::vector<std::string> subNames, bool editMode);
+    TaskCenterLine(TechDraw::DrawViewPart *partFeat, TechDraw::DrawPage *page, std::string edgeName,
                    bool editMode);
     ~TaskCenterLine() override;
 
@@ -80,8 +76,7 @@ public:
     virtual void setCreateMode(bool mode) { m_createMode = mode; }
     virtual bool getCreateMode() const { return m_createMode; }
     void updateTask();
-    void saveButtons(QPushButton* btnOK,
-                     QPushButton* btnCancel);
+    void saveButtons(QPushButton *btnOK, QPushButton *btnCancel);
     void enableTaskButtons(bool isEnabled);
 
 protected:
@@ -100,17 +95,17 @@ protected:
 private:
     std::unique_ptr<Ui_TaskCenterLine> ui;
 
-    TechDraw::DrawViewPart* m_partFeat;
-    TechDraw::DrawPage* m_basePage;
+    TechDraw::DrawViewPart *m_partFeat;
+    TechDraw::DrawPage *m_basePage;
     bool m_createMode;
 
-    QPushButton* m_btnOK;
-    QPushButton* m_btnCancel;
+    QPushButton *m_btnOK;
+    QPushButton *m_btnCancel;
 
     std::vector<std::string> m_subNames;
     std::string m_edgeName;
     int m_geomIndex;
-    TechDraw::CenterLine* m_cl;
+    TechDraw::CenterLine *m_cl;
     TechDraw::CenterLine orig_cl;
     int m_type;
     int m_mode;
@@ -125,22 +120,17 @@ private Q_SLOTS:
     void onColorChanged();
     void onWeightChanged();
     void onStyleChanged();
-
 };
 
-class TaskDlgCenterLine : public Gui::TaskView::TaskDialog
+class TaskDlgCenterLine: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    TaskDlgCenterLine(TechDraw::DrawViewPart* partFeat,
-                      TechDraw::DrawPage* page,
-                      std::vector<std::string> subNames,
-                      bool editMode);
-    TaskDlgCenterLine(TechDraw::DrawViewPart* partFeat,
-                      TechDraw::DrawPage* page,
-                      std::string edgeName,
-                      bool editMode);
+    TaskDlgCenterLine(TechDraw::DrawViewPart *partFeat, TechDraw::DrawPage *page,
+                      std::vector<std::string> subNames, bool editMode);
+    TaskDlgCenterLine(TechDraw::DrawViewPart *partFeat, TechDraw::DrawPage *page,
+                      std::string edgeName, bool editMode);
     ~TaskDlgCenterLine() override;
 
 public:
@@ -153,19 +143,16 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    void helpRequested() override { return;}
-    bool isAllowedAlterDocument() const override
-                        { return false; }
+    void helpRequested() override { return; }
+    bool isAllowedAlterDocument() const override { return false; }
     void update();
 
-    void modifyStandardButtons(QDialogButtonBox* box) override;
+    void modifyStandardButtons(QDialogButtonBox *box) override;
 
 protected:
-
 private:
-    TaskCenterLine* widget;
-    Gui::TaskView::TaskBox* taskbox;
-
+    TaskCenterLine *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

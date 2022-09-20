@@ -28,14 +28,15 @@
 
 #include "QGVNavStyle.h"
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 class QGVPage;
 
-class TechDrawGuiExport QGVNavStyleGesture : public QGVNavStyle
+class TechDrawGuiExport QGVNavStyleGesture: public QGVNavStyle
 {
 public:
-    explicit QGVNavStyleGesture(QGVPage* qgvp);
+    explicit QGVNavStyleGesture(QGVPage *qgvp);
     ~QGVNavStyleGesture() override;
 
     void handleMousePressEvent(QMouseEvent *event) override;
@@ -46,8 +47,7 @@ public:
 
 protected:
 private:
-
 };
 
-}
+} // namespace TechDrawGui
 #endif // TECHDRAW_GESTURENAVSTYLE_H

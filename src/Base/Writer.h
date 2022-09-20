@@ -41,7 +41,6 @@
 #include "FileInfo.h"
 
 
-
 namespace Base
 {
 
@@ -69,35 +68,35 @@ public:
     int getFileVersion() const;
 
     /// insert a file as CDATA section in the XML file
-    void insertAsciiFile(const char* FileName);
+    void insertAsciiFile(const char *FileName);
     /// insert a binary file BASE64 coded as CDATA section in the XML file
-    void insertBinFile(const char* FileName);
+    void insertBinFile(const char *FileName);
 
     /** @name additional file writing */
     //@{
     /// add a write request of a persistent object
-    std::string addFile(const char* Name, const Base::Persistence *Object);
+    std::string addFile(const char *Name, const Base::Persistence *Object);
     /// process the requested file storing
-    virtual void writeFiles()=0;
+    virtual void writeFiles() = 0;
     /// get all registered file names
-    const std::vector<std::string>& getFilenames() const;
+    const std::vector<std::string> &getFilenames() const;
     /// Set mode
-    void setMode(const std::string& mode);
+    void setMode(const std::string &mode);
     /// Set modes
-    void setModes(const std::set<std::string>& modes);
+    void setModes(const std::set<std::string> &modes);
     /// Get mode
-    bool getMode(const std::string& mode) const;
+    bool getMode(const std::string &mode) const;
     /// Get modes
     std::set<std::string> getModes() const;
     /// Clear mode
-    void clearMode(const std::string& mode);
+    void clearMode(const std::string &mode);
     /// Clear modes
     void clearModes();
     //@}
 
     /** @name Error handling */
     //@{
-    void addError(const std::string&);
+    void addError(const std::string &);
     bool hasErrors() const;
     void clearErrors();
     std::vector<std::string> getErrors() const;
@@ -106,14 +105,14 @@ public:
     /** @name pretty formatting for XML */
     //@{
     /// get the current indentation
-    const char* ind() const {return indBuf;}
+    const char *ind() const { return indBuf; }
     /// increase indentation by one tab
     void incInd();
     /// decrease indentation by one tab
     void decInd();
     //@}
 
-    virtual std::ostream &Stream()=0;
+    virtual std::ostream &Stream() = 0;
 
     /// name for underlying file saves
     std::string ObjectName;
@@ -136,8 +135,8 @@ protected:
     int fileVersion;
 
 private:
-    Writer(const Writer&);
-    Writer& operator=(const Writer&);
+    Writer(const Writer &);
+    Writer &operator=(const Writer &);
 };
 
 
@@ -147,20 +146,20 @@ private:
  * \see Base::Persistence
  * \author Juergen Riegel
  */
-class BaseExport ZipWriter : public Writer
+class BaseExport ZipWriter: public Writer
 {
 public:
-    ZipWriter(const char* FileName);
-    ZipWriter(std::ostream&);
+    ZipWriter(const char *FileName);
+    ZipWriter(std::ostream &);
     ~ZipWriter() override;
 
     void writeFiles() override;
 
-    std::ostream &Stream() override{return ZipStream;}
+    std::ostream &Stream() override { return ZipStream; }
 
-    void setComment(const char* str){ZipStream.setComment(str);}
-    void setLevel(int level){ZipStream.setLevel( level );}
-    void putNextEntry(const char* str){ZipStream.putNextEntry(str);}
+    void setComment(const char *str) { ZipStream.setComment(str); }
+    void setLevel(int level) { ZipStream.setLevel(level); }
+    void putNextEntry(const char *str) { ZipStream.putNextEntry(str); }
 
 private:
     zipios::ZipOutputStream ZipStream;
@@ -172,13 +171,13 @@ private:
  * \see Base::Persistence
  * \author Juergen Riegel
  */
-class BaseExport StringWriter : public Writer
+class BaseExport StringWriter: public Writer
 {
 
 public:
-    std::ostream &Stream() override{return StrStream;}
-    std::string getString() const {return StrStream.str();}
-    void writeFiles() override{}
+    std::ostream &Stream() override { return StrStream; }
+    std::string getString() const { return StrStream.str(); }
+    void writeFiles() override {}
 
 private:
     std::stringstream StrStream;
@@ -189,23 +188,23 @@ private:
   \see Base::Persistence
   \author Werner Mayer
  */
-class BaseExport FileWriter : public Writer
+class BaseExport FileWriter: public Writer
 {
 public:
-    FileWriter(const char* DirName);
+    FileWriter(const char *DirName);
     ~FileWriter() override;
 
-    void putNextEntry(const char* file);
+    void putNextEntry(const char *file);
     void writeFiles() override;
 
-    std::ostream &Stream() override{return FileStream;}
-    void close() {FileStream.close();}
+    std::ostream &Stream() override { return FileStream; }
+    void close() { FileStream.close(); }
     /*!
      This method can be re-implemented in sub-classes to avoid
      to write out certain objects. The default implementation
      always returns true.
      */
-    virtual bool shouldWrite(const std::string& name, const Base::Persistence *Object) const;
+    virtual bool shouldWrite(const std::string &name, const Base::Persistence *Object) const;
 
 protected:
     std::string DirName;
@@ -213,7 +212,7 @@ protected:
 };
 
 
-}  //namespace Base
+} //namespace Base
 
 
 #endif // BASE_WRITER_H

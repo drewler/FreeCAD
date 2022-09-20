@@ -32,20 +32,16 @@
 
 using namespace TechDrawGui;
 
-namespace TechDrawGui {
-
-QGVNavStyleTouchpad::QGVNavStyleTouchpad(QGVPage *qgvp) :
-    QGVNavStyle(qgvp)
+namespace TechDrawGui
 {
-}
 
-QGVNavStyleTouchpad::~QGVNavStyleTouchpad()
-{
-}
+QGVNavStyleTouchpad::QGVNavStyleTouchpad(QGVPage *qgvp) : QGVNavStyle(qgvp) {}
+
+QGVNavStyleTouchpad::~QGVNavStyleTouchpad() {}
 
 void QGVNavStyleTouchpad::handleKeyPressEvent(QKeyEvent *event)
 {
-//    Q_UNUSED(event)
+    //    Q_UNUSED(event)
     if (event->key() == Qt::Key_PageUp) {
         zoom(1.0 + zoomStep);
         event->accept();
@@ -61,14 +57,10 @@ void QGVNavStyleTouchpad::handleKeyPressEvent(QKeyEvent *event)
 
 void QGVNavStyleTouchpad::handleKeyReleaseEvent(QKeyEvent *event)
 {
-//    Q_UNUSED(event)
+    //    Q_UNUSED(event)
     if (event->key() == Qt::Key_Shift) {
-        if (panningActive) {
-            stopPan();
-        }
-        if (zoomingActive) {
-            stopZoom();
-        }
+        if (panningActive) { stopPan(); }
+        if (zoomingActive) { stopZoom(); }
         event->accept();
     }
 
@@ -76,31 +68,26 @@ void QGVNavStyleTouchpad::handleKeyReleaseEvent(QKeyEvent *event)
         stopZoom();
         event->accept();
     }
-
 }
 
 void QGVNavStyleTouchpad::handleMouseMoveEvent(QMouseEvent *event)
 {
-    if (getViewer()->isBalloonPlacing()) {
-        getViewer()->setBalloonCursorPos(event->pos());
-    }
+    if (getViewer()->isBalloonPlacing()) { getViewer()->setBalloonCursorPos(event->pos()); }
 
     if (QApplication::keyboardModifiers() == Qt::ShiftModifier) {
         //if shift is down then we are panning
-        if (panningActive) {
-            pan(event->pos());
-        } else {
+        if (panningActive) { pan(event->pos()); }
+        else {
             startPan(event->pos());
         }
         event->accept();
     }
 
-    if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-        QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier) ) {
+    if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
+        && QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) {
         //if control and shift are down, then we are zooming
-        if (zoomingActive) {
-            zoom(mouseZoomFactor(event->pos()));
-        } else {
+        if (zoomingActive) { zoom(mouseZoomFactor(event->pos())); }
+        else {
             startZoom(event->pos());
         }
         event->accept();
@@ -116,4 +103,4 @@ void QGVNavStyleTouchpad::setAnchor()
     }
 }
 
-}  //namespace TechDrawGui
+} //namespace TechDrawGui

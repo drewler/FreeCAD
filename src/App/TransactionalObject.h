@@ -34,7 +34,7 @@ class TransactionObject;
 
 /** Base class of transactional objects
  */
-class AppExport TransactionalObject : public App::ExtensionContainer
+class AppExport TransactionalObject: public App::ExtensionContainer
 {
     PROPERTY_HEADER_WITH_OVERRIDE(App::TransactionalObject);
 
@@ -43,7 +43,8 @@ public:
     TransactionalObject();
     ~TransactionalObject() override;
     virtual bool isAttachedToDocument() const;
-    virtual const char* detachFromDocument();
+    virtual const char *detachFromDocument();
+
 protected:
     void onBeforeChangeProperty(Document *doc, const Property *prop);
 };

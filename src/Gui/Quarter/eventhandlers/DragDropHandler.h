@@ -39,24 +39,32 @@
 class QEvent;
 class SoEvent;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
 class QuarterWidget;
 
-class QUARTER_DLL_API DragDropHandler : public QObject {
-  Q_OBJECT
+class QUARTER_DLL_API DragDropHandler: public QObject
+{
+    Q_OBJECT
 public:
-  DragDropHandler(QuarterWidget * parent);
-  virtual ~DragDropHandler();
+    DragDropHandler(QuarterWidget *parent);
+    virtual ~DragDropHandler();
 
 protected:
-  virtual bool eventFilter(QObject *, QEvent * event);
+    virtual bool eventFilter(QObject *, QEvent *event);
 
 private:
-  friend class DragDropHandlerP;
-  class DragDropHandlerP * pimpl;
+    friend class DragDropHandlerP;
+    class DragDropHandlerP *pimpl;
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_DRAGDROPHANDLER_H

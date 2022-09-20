@@ -27,26 +27,17 @@
 
 #include "ArrowPropEnum.h"
 
-namespace TechDraw {
+namespace TechDraw
+{
 
-const int   ArrowPropEnum::ArrowCount = 8;
-const char* ArrowPropEnum::ArrowTypeEnums[]= { "Filled Arrow",
-                               "Open Arrow",
-                               "Tick",
-                               "Dot",
-                               "Open Circle",
-                               "Fork",
-                               "Filled Triangle",
-                               "None",
-                               nullptr};
+const int ArrowPropEnum::ArrowCount = 8;
+const char *ArrowPropEnum::ArrowTypeEnums[] = {
+    "Filled Arrow", "Open Arrow",      "Tick", "Dot",  "Open Circle",
+    "Fork",         "Filled Triangle", "None", nullptr};
 
-const std::vector<std::string> ArrowPropEnum::ArrowTypeIcons = { ":icons/arrowfilled.svg",
-                                            ":icons/arrowopen.svg",
-                                            ":icons/arrowtick.svg",
-                                            ":icons/arrowdot.svg",
-                                            ":icons/arrowopendot.svg",
-                                            ":icons/arrowfork.svg",
-                                            ":icons/arrowpyramid.svg",
-                                            ":icons/arrownone.svg"};
+const std::vector<std::string> ArrowPropEnum::ArrowTypeIcons = {
+    ":icons/arrowfilled.svg",  ":icons/arrowopen.svg",    ":icons/arrowtick.svg",
+    ":icons/arrowdot.svg",     ":icons/arrowopendot.svg", ":icons/arrowfork.svg",
+    ":icons/arrowpyramid.svg", ":icons/arrownone.svg"};
 
-}
+} // namespace TechDraw

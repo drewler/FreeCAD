@@ -23,22 +23,22 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# ifdef FC_OS_WIN32
-# include <windows.h>
-# endif
-# ifdef FC_OS_MACOSX
-# include <OpenGL/gl.h>
-# else
-# include <GL/gl.h>
-# endif
-# include <cfloat>
-# include <QFontMetrics>
-# include <QPainter>
-# include <QPen>
-# include <Inventor/actions/SoGLRenderAction.h>
-# include <Inventor/bundles/SoMaterialBundle.h>
-# include <Inventor/elements/SoLazyElement.h>
-# include <Inventor/misc/SoState.h>
+#ifdef FC_OS_WIN32
+#include <windows.h>
+#endif
+#ifdef FC_OS_MACOSX
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+#include <cfloat>
+#include <QFontMetrics>
+#include <QPainter>
+#include <QPen>
+#include <Inventor/actions/SoGLRenderAction.h>
+#include <Inventor/bundles/SoMaterialBundle.h>
+#include <Inventor/elements/SoLazyElement.h>
+#include <Inventor/misc/SoState.h>
 #endif
 
 #include <Inventor/C/basic.h>
@@ -96,15 +96,12 @@ App.ActiveDocument.addObject("App::InventorObject","iv").Buffer=s
 
 SO_NODE_SOURCE(SoTextLabel)
 
-void SoTextLabel::initClass()
-{
-    SO_NODE_INIT_CLASS(SoTextLabel, SoText2, "Text2");
-}
+void SoTextLabel::initClass() { SO_NODE_INIT_CLASS(SoTextLabel, SoText2, "Text2"); }
 
 SoTextLabel::SoTextLabel()
 {
     SO_NODE_CONSTRUCTOR(SoTextLabel);
-    SO_NODE_ADD_FIELD(backgroundColor, (SbVec3f(1.0f,1.0f,1.0f)));
+    SO_NODE_ADD_FIELD(backgroundColor, (SbVec3f(1.0f, 1.0f, 1.0f)));
     SO_NODE_ADD_FIELD(background, (true));
     SO_NODE_ADD_FIELD(frameSize, (10.0f));
 }
@@ -114,8 +111,7 @@ SoTextLabel::SoTextLabel()
  */
 void SoTextLabel::GLRender(SoGLRenderAction *action)
 {
-    if (!this->shouldGLRender(action))
-        return;
+    if (!this->shouldGLRender(action)) return;
 
     // only draw text without background
     if (!this->background.getValue()) {
@@ -123,7 +119,7 @@ void SoTextLabel::GLRender(SoGLRenderAction *action)
         return;
     }
 
-    SoState * state = action->getState();
+    SoState *state = action->getState();
 
     state->push();
     SoLazyElement::setLightModel(state, SoLazyElement::BASE_COLOR);
@@ -135,10 +131,10 @@ void SoTextLabel::GLRender(SoGLRenderAction *action)
     if (!SoCullElement::cullTest(state, box, true)) {
         SoMaterialBundle mb(action);
         mb.sendFirst();
-        const SbMatrix & mat = SoModelMatrixElement::get(state);
-        const SbMatrix & projmatrix = (mat * SoViewingMatrixElement::get(state) *
-                                       SoProjectionMatrixElement::get(state));
-        const SbViewportRegion & vp = SoViewportRegionElement::get(state);
+        const SbMatrix &mat = SoModelMatrixElement::get(state);
+        const SbMatrix &projmatrix =
+            (mat * SoViewingMatrixElement::get(state) * SoProjectionMatrixElement::get(state));
+        const SbViewportRegion &vp = SoViewportRegionElement::get(state);
         SbVec2s vpsize = vp.getViewportSizePixels();
 
         // font stuff
@@ -159,46 +155,39 @@ void SoTextLabel::GLRender(SoGLRenderAction *action)
         // returns the sizes in form of the bounding box. These values can be
         // reverse-engineered to get width and height.
         state->push();
-        SoModelMatrixElement::set(state,this,SbMatrix::identity());
-        SoViewingMatrixElement::set(state,this,SbMatrix::identity());
-        SoProjectionMatrixElement::set(state,this,SbMatrix::identity());
+        SoModelMatrixElement::set(state, this, SbMatrix::identity());
+        SoViewingMatrixElement::set(state, this, SbMatrix::identity());
+        SoProjectionMatrixElement::set(state, this, SbMatrix::identity());
         SbViewVolume vv;
-        vv.ortho(-1,1,-1,1,-1,1);
-        SoViewVolumeElement::set(state,this,vv);
+        vv.ortho(-1, 1, -1, 1, -1, 1);
+        SoViewVolumeElement::set(state, this, vv);
 
         SbBox3f box;
         SbVec3f center;
         this->computeBBox(action, box, center);
         state->pop();
 
-        float xmin,ymin,zmin,xmax,ymax,zmax;
-        box.getBounds(xmin,ymin,zmin,xmax,ymax,zmax);
-        SbVec3f v0(xmin,ymax,zmax);
-        SbVec3f v1(xmax,ymax,zmax);
-        SbVec3f v2(xmax,ymin,zmax);
-        SbVec3f v3(xmin,ymin,zmax);
-        vv.projectToScreen(v0,v0);
-        vv.projectToScreen(v1,v1);
-        vv.projectToScreen(v2,v2);
-        vv.projectToScreen(v3,v3);
+        float xmin, ymin, zmin, xmax, ymax, zmax;
+        box.getBounds(xmin, ymin, zmin, xmax, ymax, zmax);
+        SbVec3f v0(xmin, ymax, zmax);
+        SbVec3f v1(xmax, ymax, zmax);
+        SbVec3f v2(xmax, ymin, zmax);
+        SbVec3f v3(xmin, ymin, zmax);
+        vv.projectToScreen(v0, v0);
+        vv.projectToScreen(v1, v1);
+        vv.projectToScreen(v2, v2);
+        vv.projectToScreen(v3, v3);
 
-        float width,height;
-        width  = (v1[0]-v0[0])*vpsize[0];
-        height = (v1[1]-v3[1])*vpsize[1];
+        float width, height;
+        width = (v1[0] - v0[0]) * vpsize[0];
+        height = (v1[1] - v3[1]) * vpsize[1];
         switch (this->justification.getValue()) {
-        case SoText2::RIGHT:
-            nilpoint[0] -= width;
-            break;
-        case SoText2::CENTER:
-            nilpoint[0] -= 0.5f*width;
-            break;
-        default:
-            break;
+            case SoText2::RIGHT: nilpoint[0] -= width; break;
+            case SoText2::CENTER: nilpoint[0] -= 0.5f * width; break;
+            default: break;
         }
 
-        if (lines > 1) {
-            nilpoint[1] -= (float(lines-1)/(float)lines*height);
-        }
+        if (lines > 1) { nilpoint[1] -= (float(lines - 1) / (float)lines * height); }
 
         SbVec3f toppoint = nilpoint;
         toppoint[0] += width;
@@ -212,7 +201,7 @@ void SoTextLabel::GLRender(SoGLRenderAction *action)
         glPushMatrix();
         glLoadIdentity();
         glOrtho(0, vpsize[0], 0, vpsize[1], -1.0f, 1.0f);
-        glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
         state->push();
 
@@ -234,10 +223,10 @@ void SoTextLabel::GLRender(SoGLRenderAction *action)
         // draw background
         glColor3f(color[0], color[1], color[2]);
         glBegin(GL_QUADS);
-        glVertex3f(nilpoint[0]-fs,nilpoint[1]-fs,0.0f);
-        glVertex3f(toppoint[0]+fs,nilpoint[1]-fs,0.0f);
-        glVertex3f(toppoint[0]+fs,toppoint[1]+fs,0.0f);
-        glVertex3f(nilpoint[0]-fs,toppoint[1]+fs,0.0f);
+        glVertex3f(nilpoint[0] - fs, nilpoint[1] - fs, 0.0f);
+        glVertex3f(toppoint[0] + fs, nilpoint[1] - fs, 0.0f);
+        glVertex3f(toppoint[0] + fs, toppoint[1] + fs, 0.0f);
+        glVertex3f(nilpoint[0] - fs, toppoint[1] + fs, 0.0f);
         glEnd();
 
         // pop old state
@@ -245,7 +234,7 @@ void SoTextLabel::GLRender(SoGLRenderAction *action)
         glPopAttrib();
         state->pop();
 
-        glPixelStorei(GL_UNPACK_ALIGNMENT,4);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
         // Pop old GL matrix state.
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();
@@ -262,17 +251,11 @@ void SoTextLabel::GLRender(SoGLRenderAction *action)
 
 SO_NODE_SOURCE(SoColorBarLabel)
 
-void SoColorBarLabel::initClass()
-{
-    SO_NODE_INIT_CLASS(SoColorBarLabel, SoText2, "Text2");
-}
+void SoColorBarLabel::initClass() { SO_NODE_INIT_CLASS(SoColorBarLabel, SoText2, "Text2"); }
 
-SoColorBarLabel::SoColorBarLabel()
-{
-    SO_NODE_CONSTRUCTOR(SoColorBarLabel);
-}
+SoColorBarLabel::SoColorBarLabel() { SO_NODE_CONSTRUCTOR(SoColorBarLabel); }
 
-void SoColorBarLabel::computeBBox(SoAction * action, SbBox3f & box, SbVec3f & center)
+void SoColorBarLabel::computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center)
 {
     inherited::computeBBox(action, box, center);
     if (!box.hasVolume()) {
@@ -289,16 +272,13 @@ void SoColorBarLabel::computeBBox(SoAction * action, SbBox3f & box, SbVec3f & ce
 
 SO_NODE_SOURCE(SoStringLabel)
 
-void SoStringLabel::initClass()
-{
-    SO_NODE_INIT_CLASS(SoStringLabel, SoNode, "Node");
-}
+void SoStringLabel::initClass() { SO_NODE_INIT_CLASS(SoStringLabel, SoNode, "Node"); }
 
 SoStringLabel::SoStringLabel()
 {
     SO_NODE_CONSTRUCTOR(SoStringLabel);
     SO_NODE_ADD_FIELD(string, (""));
-    SO_NODE_ADD_FIELD(textColor, (SbVec3f(1.0f,1.0f,1.0f)));
+    SO_NODE_ADD_FIELD(textColor, (SbVec3f(1.0f, 1.0f, 1.0f)));
     SO_NODE_ADD_FIELD(name, ("Helvetica"));
     SO_NODE_ADD_FIELD(size, (12));
 }
@@ -308,8 +288,8 @@ SoStringLabel::SoStringLabel()
  */
 void SoStringLabel::GLRender(SoGLRenderAction *action)
 {
-    QtGLWidget* window;
-    SoState * state = action->getState();
+    QtGLWidget *window;
+    SoState *state = action->getState();
     state->push();
     SoLazyElement::setLightModel(state, SoLazyElement::BASE_COLOR);
     SoGLWidgetElement::get(state, window);
@@ -322,7 +302,7 @@ void SoStringLabel::GLRender(SoGLRenderAction *action)
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    glOrtho(-1,1,-1,1,-1,1);
+    glOrtho(-1, 1, -1, 1, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -337,18 +317,18 @@ void SoStringLabel::GLRender(SoGLRenderAction *action)
     font.setFamily(QLatin1String(this->name.getValue()));
     font.setPixelSize(this->size.getValue());
 
-    glBlendFunc(GL_ONE,GL_SRC_ALPHA);
+    glBlendFunc(GL_ONE, GL_SRC_ALPHA);
 
     // text color
     SbColor color = this->textColor.getValue();
-    glColor4f(color[0], color[1], color[2],1);
-    const SbMatrix & mat = SoModelMatrixElement::get(state);
-    const SbMatrix & projmatrix = (mat * SoViewingMatrixElement::get(state) *
-                                   SoProjectionMatrixElement::get(state));
+    glColor4f(color[0], color[1], color[2], 1);
+    const SbMatrix &mat = SoModelMatrixElement::get(state);
+    const SbMatrix &projmatrix =
+        (mat * SoViewingMatrixElement::get(state) * SoProjectionMatrixElement::get(state));
     SbVec3f nil(0.0f, 0.0f, 0.0f);
     projmatrix.multVecMatrix(nil, nil);
     QStringList list;
-    for (int i=0; i<this->string.getNum(); i++)
+    for (int i = 0; i < this->string.getNum(); i++)
         list << QLatin1String(this->string[i].getString());
 
     // Leave 2D screen mode
@@ -365,34 +345,26 @@ void SoStringLabel::GLRender(SoGLRenderAction *action)
 
 SO_NODE_SOURCE(SoFrameLabel)
 
-void SoFrameLabel::initClass()
-{
-    SO_NODE_INIT_CLASS(SoFrameLabel, SoImage, "Image");
-}
+void SoFrameLabel::initClass() { SO_NODE_INIT_CLASS(SoFrameLabel, SoImage, "Image"); }
 
 SoFrameLabel::SoFrameLabel()
 {
     SO_NODE_CONSTRUCTOR(SoFrameLabel);
     SO_NODE_ADD_FIELD(string, (""));
-    SO_NODE_ADD_FIELD(textColor, (SbVec3f(1.0f,1.0f,1.0f)));
-    SO_NODE_ADD_FIELD(backgroundColor, (SbVec3f(0.0f,0.333f,1.0f)));
+    SO_NODE_ADD_FIELD(textColor, (SbVec3f(1.0f, 1.0f, 1.0f)));
+    SO_NODE_ADD_FIELD(backgroundColor, (SbVec3f(0.0f, 0.333f, 1.0f)));
     SO_NODE_ADD_FIELD(justification, (LEFT));
     SO_NODE_ADD_FIELD(name, ("Helvetica"));
     SO_NODE_ADD_FIELD(size, (12));
     SO_NODE_ADD_FIELD(frame, (true));
-  //SO_NODE_ADD_FIELD(image, (SbVec2s(0,0), 0, NULL));
+    //SO_NODE_ADD_FIELD(image, (SbVec2s(0,0), 0, NULL));
 }
 
-void SoFrameLabel::notify(SoNotList * list)
+void SoFrameLabel::notify(SoNotList *list)
 {
     SoField *f = list->getLastField();
-    if (f == &this->string ||
-        f == &this->textColor ||
-        f == &this->backgroundColor ||
-        f == &this->justification ||
-        f == &this->name ||
-        f == &this->size ||
-        f == &this->frame) {
+    if (f == &this->string || f == &this->textColor || f == &this->backgroundColor
+        || f == &this->justification || f == &this->name || f == &this->size || f == &this->frame) {
         drawImage();
     }
     inherited::notify(list);
@@ -400,7 +372,7 @@ void SoFrameLabel::notify(SoNotList * list)
 
 void SoFrameLabel::drawImage()
 {
-    const SbString* s = string.getValues(0);
+    const SbString *s = string.getValues(0);
     int num = string.getNum();
     if (num == 0) {
         this->image = SoSFImage();
@@ -411,46 +383,44 @@ void SoFrameLabel::drawImage()
     QFontMetrics fm(font);
     int w = 0;
     int h = fm.height() * num;
-    const SbColor& b = backgroundColor.getValue();
+    const SbColor &b = backgroundColor.getValue();
     QColor brush;
-    brush.setRgbF(b[0],b[1],b[2]);
-    const SbColor& t = textColor.getValue();
+    brush.setRgbF(b[0], b[1], b[2]);
+    const SbColor &t = textColor.getValue();
     QColor front;
-    front.setRgbF(t[0],t[1],t[2]);
+    front.setRgbF(t[0], t[1], t[2]);
 
     QStringList lines;
-    for (int i=0; i<num; i++) {
+    for (int i = 0; i < num; i++) {
         QString line = QString::fromUtf8(s[i].getString());
         w = std::max<int>(w, QtTools::horizontalAdvance(fm, line));
         lines << line;
     }
 
-    QImage image(w+10,h+10,QImage::Format_ARGB32_Premultiplied);
+    QImage image(w + 10, h + 10, QImage::Format_ARGB32_Premultiplied);
     image.fill(0x00000000);
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
 
     SbBool drawFrame = frame.getValue();
     if (drawFrame) {
-        painter.setPen(QPen(QColor(0,0,127), 2, Qt::SolidLine, Qt::RoundCap,
-                            Qt::RoundJoin));
+        painter.setPen(QPen(QColor(0, 0, 127), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         painter.setBrush(QBrush(brush, Qt::SolidPattern));
-        QRectF rectangle(0.0, 0.0, w+10, h+10);
+        QRectF rectangle(0.0, 0.0, w + 10, h + 10);
         painter.drawRoundedRect(rectangle, 5, 5);
     }
 
     painter.setPen(front);
 
     Qt::Alignment align = Qt::AlignVCenter;
-    if (justification.getValue() == 0)
-        align = Qt::AlignVCenter | Qt::AlignLeft;
+    if (justification.getValue() == 0) align = Qt::AlignVCenter | Qt::AlignLeft;
     else if (justification.getValue() == 1)
         align = Qt::AlignVCenter | Qt::AlignRight;
     else
         align = Qt::AlignVCenter | Qt::AlignHCenter;
     QString text = lines.join(QLatin1String("\n"));
     painter.setFont(font);
-    painter.drawText(5,5,w,h,align,text);
+    painter.drawText(5, 5, w, h, align, text);
     painter.end();
 
     SoSFImage sfimage;
@@ -461,20 +431,15 @@ void SoFrameLabel::drawImage()
 /**
  * Renders the open edges only.
  */
-void SoFrameLabel::GLRender(SoGLRenderAction *action)
-{
-    inherited::GLRender(action);
-}
+void SoFrameLabel::GLRender(SoGLRenderAction *action) { inherited::GLRender(action); }
 
 // ------------------------------------------------------
 
 SO_NODE_SOURCE(TranslateManip)
 
-void
-TranslateManip::initClass()
+void TranslateManip::initClass()
 {
-    SO_NODE_INIT_CLASS(TranslateManip, SoTransformManip,
-                       "TransformManip");
+    SO_NODE_INIT_CLASS(TranslateManip, SoTransformManip, "TransformManip");
 }
 
 TranslateManip::TranslateManip()
@@ -485,6 +450,4 @@ TranslateManip::TranslateManip()
     setDragger(myDrag);
 }
 
-TranslateManip::~TranslateManip()
-{
-}
+TranslateManip::~TranslateManip() {}

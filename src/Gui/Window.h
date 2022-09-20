@@ -26,28 +26,29 @@
 
 #include <Base/Parameter.h>
 
-namespace Gui {
+namespace Gui
+{
 
 /** Adapter class to the parameter of FreeCAD for all windows
  * Retrieve the parameter group of the specific window by the windowname.
  * @author Jürgen Riegel
  */
-class GuiExport WindowParameter : public ParameterGrp::ObserverType
+class GuiExport WindowParameter: public ParameterGrp::ObserverType
 {
 public:
-  WindowParameter(const char *name);
-  ~WindowParameter() override;
+    WindowParameter(const char *name);
+    ~WindowParameter() override;
 
-  bool setGroupName( const char* name );
-  void OnChange(Base::Subject<const char*> &rCaller, const char * sReason) override;
+    bool setGroupName(const char *name);
+    void OnChange(Base::Subject<const char *> &rCaller, const char *sReason) override;
 
-  /// get the parameters
-  static ParameterGrp::handle getDefaultParameter();
-  /// return the parameter group of this window
-  ParameterGrp::handle getWindowParameter();
+    /// get the parameters
+    static ParameterGrp::handle getDefaultParameter();
+    /// return the parameter group of this window
+    ParameterGrp::handle getWindowParameter();
 
 private:
-  ParameterGrp::handle _handle;
+    ParameterGrp::handle _handle;
 };
 
 } // namespace Gui

@@ -26,21 +26,24 @@
 
 #include "ViewProviderTransformed.h"
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderMultiTransform : public ViewProviderTransformed
+class PartDesignGuiExport ViewProviderMultiTransform: public ViewProviderTransformed
 {
     Q_DECLARE_TR_FUNCTIONS(PartDesignGui::ViewProviderMultiTransform)
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderMultiTransform);
+
 public:
-    ViewProviderMultiTransform() {
+    ViewProviderMultiTransform()
+    {
         featureName = std::string("MultiTransform");
         menuName = tr("MultiTransform parameters");
         sPixmap = "PartDesign_MultiTransform.svg";
     }
 
-    std::vector<App::DocumentObject*> claimChildren() const override;
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    std::vector<App::DocumentObject *> claimChildren() const override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
     bool onDelete(const std::vector<std::string> &) override;
 

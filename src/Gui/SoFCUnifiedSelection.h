@@ -42,7 +42,8 @@ class SoPickedPoint;
 class SoDetail;
 
 
-namespace Gui {
+namespace Gui
+{
 
 class Document;
 class ViewProviderDocumentObject;
@@ -54,7 +55,8 @@ class ViewProviderDocumentObject;
  *  be unified here.
  *  \author Jürgen Riegel
  */
-class GuiExport SoFCUnifiedSelection : public SoSeparator {
+class GuiExport SoFCUnifiedSelection: public SoSeparator
+{
     using inherited = SoSeparator;
 
     SO_NODE_HEADER(Gui::SoFCUnifiedSelection);
@@ -65,12 +67,15 @@ public:
     SoFCUnifiedSelection();
     void applySettings();
 
-    enum HighlightModes {
-        AUTO, ON, OFF
+    enum HighlightModes
+    {
+        AUTO,
+        ON,
+        OFF
     };
 
-    const char* getFileFormatName() const override;
-    void write(SoWriteAction * action) override;
+    const char *getFileFormatName() const override;
+    void write(SoWriteAction *action) override;
 
     SoSFColor colorHighlight;
     SoSFColor colorSelection;
@@ -82,8 +87,8 @@ public:
     void doAction(SoAction *action) override;
     //virtual void GLRender(SoGLRenderAction * action);
 
-    void handleEvent(SoHandleEventAction * action) override;
-    void GLRenderBelowPath(SoGLRenderAction * action) override;
+    void handleEvent(SoHandleEventAction *action) override;
+    void GLRenderBelowPath(SoGLRenderAction *action) override;
     //virtual void GLRenderInPath(SoGLRenderAction * action);
     //static  void turnOffCurrentHighlight(SoGLRenderAction * action);
 
@@ -101,27 +106,26 @@ private:
     //void setOverride(SoGLRenderAction * action);
     //SbBool isHighlighted(SoAction *action);
     //SbBool preRender(SoGLRenderAction *act, GLint &oldDepthFunc);
-    static int getPriority(const SoPickedPoint* p);
+    static int getPriority(const SoPickedPoint *p);
 
     struct PickedInfo {
         const SoPickedPoint *pp;
         ViewProviderDocumentObject *vpd;
         std::string element;
-        PickedInfo():pp(nullptr),vpd(nullptr)
-        {}
+        PickedInfo() : pp(nullptr), vpd(nullptr) {}
     };
 
     bool setHighlight(const PickedInfo &);
-    bool setHighlight(SoFullPath *path, const SoDetail *det,
-            ViewProviderDocumentObject *vpd, const char *element, float x, float y, float z);
-    bool setSelection(const std::vector<PickedInfo> &, bool ctrlDown=false);
+    bool setHighlight(SoFullPath *path, const SoDetail *det, ViewProviderDocumentObject *vpd,
+                      const char *element, float x, float y, float z);
+    bool setSelection(const std::vector<PickedInfo> &, bool ctrlDown = false);
 
-    std::vector<PickedInfo> getPickedList(SoHandleEventAction* action, bool singlePick) const;
+    std::vector<PickedInfo> getPickedList(SoHandleEventAction *action, bool singlePick) const;
 
-    Gui::Document       *pcDocument;
+    Gui::Document *pcDocument;
 
-    static SoFullPath * currenthighlight;
-    SoFullPath * detailPath;
+    static SoFullPath *currenthighlight;
+    SoFullPath *detailPath;
 
     SbBool setPreSelection;
 
@@ -130,25 +134,27 @@ private:
     SoColorPacker colorpacker;
 };
 
-class GuiExport SoFCPathAnnotation : public SoSeparator {
+class GuiExport SoFCPathAnnotation: public SoSeparator
+{
     using inherited = SoSeparator;
 
     SO_NODE_HEADER(Gui::SoFCPathAnnotation);
+
 public:
     static void initClass();
     static void finish();
     SoFCPathAnnotation();
 
     void setPath(SoPath *);
-    SoPath *getPath() {return path;}
+    SoPath *getPath() { return path; }
     void setDetail(SoDetail *d);
-    SoDetail *getDetail() {return det;}
+    SoDetail *getDetail() { return det; }
 
-    void GLRenderBelowPath(SoGLRenderAction * action) override;
-    void GLRender(SoGLRenderAction * action) override;
-    void GLRenderInPath(SoGLRenderAction * action) override;
+    void GLRenderBelowPath(SoGLRenderAction *action) override;
+    void GLRender(SoGLRenderAction *action) override;
+    void GLRenderInPath(SoGLRenderAction *action) override;
 
-    void getBoundingBox(SoGetBoundingBoxAction * action) override;
+    void getBoundingBox(SoGetBoundingBoxAction *action) override;
 
 protected:
     ~SoFCPathAnnotation() override;
@@ -159,7 +165,8 @@ protected:
     SoDetail *det;
 };
 
-class GuiExport SoFCSeparator : public SoSeparator {
+class GuiExport SoFCSeparator: public SoSeparator
+{
     using inherited = SoSeparator;
 
     SO_NODE_HEADER(Gui::SoFCSeparator);
@@ -167,23 +174,20 @@ class GuiExport SoFCSeparator : public SoSeparator {
 public:
     static void initClass();
     static void finish();
-    explicit SoFCSeparator(bool trackCacheMode=true);
+    explicit SoFCSeparator(bool trackCacheMode = true);
 
-    void GLRenderBelowPath(SoGLRenderAction * action) override;
+    void GLRenderBelowPath(SoGLRenderAction *action) override;
 
-    static void setCacheMode(CacheEnabled mode) {
-        CacheMode = mode;
-    }
-    static CacheEnabled getCacheMode() {
-        return CacheMode;
-    }
+    static void setCacheMode(CacheEnabled mode) { CacheMode = mode; }
+    static CacheEnabled getCacheMode() { return CacheMode; }
 
 private:
     bool trackCacheMode;
     static CacheEnabled CacheMode;
 };
 
-class GuiExport SoFCSelectionRoot : public SoFCSeparator {
+class GuiExport SoFCSelectionRoot: public SoFCSeparator
+{
     using inherited = SoFCSeparator;
 
     SO_NODE_HEADER(Gui::SoFCSelectionRoot);
@@ -191,24 +195,26 @@ class GuiExport SoFCSelectionRoot : public SoFCSeparator {
 public:
     static void initClass();
     static void finish();
-    explicit SoFCSelectionRoot(bool trackCacheMode=false);
+    explicit SoFCSelectionRoot(bool trackCacheMode = false);
 
-    void GLRenderBelowPath(SoGLRenderAction * action) override;
-    void GLRenderInPath(SoGLRenderAction * action) override;
+    void GLRenderBelowPath(SoGLRenderAction *action) override;
+    void GLRenderInPath(SoGLRenderAction *action) override;
 
     void doAction(SoAction *action) override;
-    void pick(SoPickAction * action) override;
-    void rayPick(SoRayPickAction * action) override;
-    void handleEvent(SoHandleEventAction * action) override;
-    void search(SoSearchAction * action) override;
-    void getPrimitiveCount(SoGetPrimitiveCountAction * action) override;
-    void getBoundingBox(SoGetBoundingBoxAction * action) override;
-    void getMatrix(SoGetMatrixAction * action) override;
+    void pick(SoPickAction *action) override;
+    void rayPick(SoRayPickAction *action) override;
+    void handleEvent(SoHandleEventAction *action) override;
+    void search(SoSearchAction *action) override;
+    void getPrimitiveCount(SoGetPrimitiveCountAction *action) override;
+    void getBoundingBox(SoGetBoundingBoxAction *action) override;
+    void getMatrix(SoGetMatrixAction *action) override;
     void callback(SoCallbackAction *action) override;
 
     template<class T>
-    static std::shared_ptr<T> getRenderContext(SoNode *node, std::shared_ptr<T> def = std::shared_ptr<T>()) {
-        return std::dynamic_pointer_cast<T>(getNodeContext(SelStack,node,def));
+    static std::shared_ptr<T> getRenderContext(SoNode *node,
+                                               std::shared_ptr<T> def = std::shared_ptr<T>())
+    {
+        return std::dynamic_pointer_cast<T>(getNodeContext(SelStack, node, def));
     }
 
     /** Returns selection context for rendering.
@@ -239,10 +245,11 @@ public:
      * when the storage SoFCSSelectionRoot node is freed.
      */
     template<class T>
-    static std::shared_ptr<T> getRenderContext(SoNode *node, std::shared_ptr<T> def, std::shared_ptr<T> &ctx2)
+    static std::shared_ptr<T> getRenderContext(SoNode *node, std::shared_ptr<T> def,
+                                               std::shared_ptr<T> &ctx2)
     {
-        ctx2 = std::dynamic_pointer_cast<T>(getNodeContext2(SelStack,node,T::merge));
-        return std::dynamic_pointer_cast<T>(getNodeContext(SelStack,node,def));
+        ctx2 = std::dynamic_pointer_cast<T>(getNodeContext2(SelStack, node, T::merge));
+        return std::dynamic_pointer_cast<T>(getNodeContext(SelStack, node, def));
     }
 
     /** Get the selection context for an action.
@@ -260,38 +267,37 @@ public:
      * will be created if none is found.
      */
     template<class T>
-    static std::shared_ptr<T> getActionContext(
-            SoAction *action, SoNode *node, std::shared_ptr<T> def=std::shared_ptr<T>(), bool create=true)
+    static std::shared_ptr<T> getActionContext(SoAction *action, SoNode *node,
+                                               std::shared_ptr<T> def = std::shared_ptr<T>(),
+                                               bool create = true)
     {
-        auto res = findActionContext(action,node,create,false);
-        if(!res.second) {
-            if(res.first)
-                return std::shared_ptr<T>();
+        auto res = findActionContext(action, node, create, false);
+        if (!res.second) {
+            if (res.first) return std::shared_ptr<T>();
             // default context is only applicable for non-secondary context query
             return def;
         }
         // make a new context if there is none
         auto &ctx = *res.second;
-        if(ctx) {
+        if (ctx) {
             auto ret = std::dynamic_pointer_cast<T>(ctx);
-            if(!ret)
-                ctx.reset();
+            if (!ret) ctx.reset();
         }
-        if(!ctx && create)
-            ctx = std::make_shared<T>();
+        if (!ctx && create) ctx = std::make_shared<T>();
         return std::static_pointer_cast<T>(ctx);
     }
 
-    static bool removeActionContext(SoAction *action, SoNode *node) {
-        return findActionContext(action,node,false,true).second!=0;
+    static bool removeActionContext(SoAction *action, SoNode *node)
+    {
+        return findActionContext(action, node, false, true).second != 0;
     }
 
     template<class T>
-    static std::shared_ptr<T> getSecondaryActionContext(SoAction *action, SoNode *node) {
+    static std::shared_ptr<T> getSecondaryActionContext(SoAction *action, SoNode *node)
+    {
         auto it = ActionStacks.find(action);
-        if(it == ActionStacks.end())
-            return std::shared_ptr<T>();
-        return std::dynamic_pointer_cast<T>(getNodeContext2(it->second,node,T::merge));
+        if (it == ActionStacks.end()) return std::shared_ptr<T>();
+        return std::dynamic_pointer_cast<T>(getNodeContext2(it->second, node, T::merge));
     }
 
     static void checkSelection(bool &sel, SbColor &selColor, bool &hl, SbColor &hlColor);
@@ -304,22 +310,22 @@ public:
 
     static bool checkColorOverride(SoState *state);
 
-    bool hasColorOverride() const {
-        return overrideColor;
-    }
+    bool hasColorOverride() const { return overrideColor; }
 
-    void setColorOverride(App::Color c) {
+    void setColorOverride(App::Color c)
+    {
         overrideColor = true;
-        colorOverride = SbColor(c.r,c.g,c.b);
+        colorOverride = SbColor(c.r, c.g, c.b);
         transOverride = c.a;
     }
 
-    void removeColorOverride() {
-        overrideColor = false;
-    }
+    void removeColorOverride() { overrideColor = false; }
 
-    enum SelectStyles {
-        Full, Box, PassThrough
+    enum SelectStyles
+    {
+        Full,
+        Box,
+        PassThrough
     };
     SoSFEnum selectionStyle;
 
@@ -331,28 +337,29 @@ protected:
     void renderPrivate(SoGLRenderAction *, bool inPath);
     bool _renderPrivate(SoGLRenderAction *, bool inPath);
 
-    class Stack : public std::vector<SoFCSelectionRoot*> {
+    class Stack: public std::vector<SoFCSelectionRoot *>
+    {
     public:
-        std::unordered_set<SoFCSelectionRoot*> nodeSet;
+        std::unordered_set<SoFCSelectionRoot *> nodeSet;
         size_t offset = 0;
     };
 
-    static SoFCSelectionContextBasePtr getNodeContext(
-            Stack &stack, SoNode *node, SoFCSelectionContextBasePtr def);
-    static SoFCSelectionContextBasePtr getNodeContext2(
-            Stack &stack, SoNode *node, SoFCSelectionContextBase::MergeFunc *merge);
-    static std::pair<bool,SoFCSelectionContextBasePtr*> findActionContext(
-            SoAction *action, SoNode *node, bool create, bool erase);
+    static SoFCSelectionContextBasePtr getNodeContext(Stack &stack, SoNode *node,
+                                                      SoFCSelectionContextBasePtr def);
+    static SoFCSelectionContextBasePtr getNodeContext2(Stack &stack, SoNode *node,
+                                                       SoFCSelectionContextBase::MergeFunc *merge);
+    static std::pair<bool, SoFCSelectionContextBasePtr *>
+    findActionContext(SoAction *action, SoNode *node, bool create, bool erase);
 
     static Stack SelStack;
-    static std::unordered_map<SoAction*,Stack> ActionStacks;
+    static std::unordered_map<SoAction *, Stack> ActionStacks;
     struct StackComp {
         bool operator()(const Stack &a, const Stack &b) const;
     };
 
-    using ContextMap = std::map<Stack,SoFCSelectionContextBasePtr,StackComp>;
+    using ContextMap = std::map<Stack, SoFCSelectionContextBasePtr, StackComp>;
     ContextMap contextMap;
-    ContextMap contextMap2;//holding secondary context
+    ContextMap contextMap2; //holding secondary context
 
     struct SelContext: SoFCSelectionContextBase {
     public:
@@ -379,20 +386,20 @@ protected:
 /**
  * @author Werner Mayer
  */
-class GuiExport SoHighlightElementAction : public SoAction
+class GuiExport SoHighlightElementAction: public SoAction
 {
     SO_ACTION_HEADER(SoHighlightElementAction);
 
 public:
-    SoHighlightElementAction ();
+    SoHighlightElementAction();
     ~SoHighlightElementAction() override;
 
     void setHighlighted(SbBool);
     SbBool isHighlighted() const;
-    void setColor(const SbColor&);
-    const SbColor& getColor() const;
-    void setElement(const SoDetail*);
-    const SoDetail* getElement() const;
+    void setColor(const SbColor &);
+    const SbColor &getColor() const;
+    void setElement(const SoDetail *);
+    const SoDetail *getElement() const;
 
     static void initClass();
 
@@ -400,51 +407,50 @@ protected:
     void beginTraversal(SoNode *node) override;
 
 private:
-    static void callDoAction(SoAction *action,SoNode *node);
+    static void callDoAction(SoAction *action, SoNode *node);
 
 private:
     SbBool _highlight;
     SbColor _color;
-    const SoDetail* _det;
+    const SoDetail *_det;
 };
 
 /**
  * @author Werner Mayer
  */
-class GuiExport SoSelectionElementAction : public SoAction
+class GuiExport SoSelectionElementAction: public SoAction
 {
     SO_ACTION_HEADER(SoSelectionElementAction);
 
 public:
-    enum Type {None, Append, Remove, All, Color, Hide, Show};
+    enum Type
+    {
+        None,
+        Append,
+        Remove,
+        All,
+        Color,
+        Hide,
+        Show
+    };
 
-    explicit SoSelectionElementAction (Type=None, bool secondary = false);
+    explicit SoSelectionElementAction(Type = None, bool secondary = false);
     ~SoSelectionElementAction() override;
 
     Type getType() const;
-    void setType(Type type) {
-        _type = type;
-    }
+    void setType(Type type) { _type = type; }
 
-    void setColor(const SbColor&);
-    const SbColor& getColor() const;
-    void setElement(const SoDetail*);
-    const SoDetail* getElement() const;
+    void setColor(const SbColor &);
+    const SbColor &getColor() const;
+    void setElement(const SoDetail *);
+    const SoDetail *getElement() const;
 
-    bool isSecondary() const {return _secondary;}
-    void setSecondary(bool enable) {
-        _secondary = enable;
-    }
+    bool isSecondary() const { return _secondary; }
+    void setSecondary(bool enable) { _secondary = enable; }
 
-    const std::map<std::string,App::Color> &getColors() const {
-        return _colors;
-    }
-    void setColors(const std::map<std::string,App::Color> &colors) {
-        _colors = colors;
-    }
-    void swapColors(std::map<std::string,App::Color> &colors) {
-        _colors.swap(colors);
-    }
+    const std::map<std::string, App::Color> &getColors() const { return _colors; }
+    void setColors(const std::map<std::string, App::Color> &colors) { _colors = colors; }
+    void swapColors(std::map<std::string, App::Color> &colors) { _colors.swap(colors); }
 
     static void initClass();
 
@@ -452,20 +458,20 @@ protected:
     void beginTraversal(SoNode *node) override;
 
 private:
-    static void callDoAction(SoAction *action,SoNode *node);
+    static void callDoAction(SoAction *action, SoNode *node);
 
 private:
     Type _type;
     SbColor _color;
-    const SoDetail* _det;
-    std::map<std::string,App::Color> _colors;
+    const SoDetail *_det;
+    std::map<std::string, App::Color> _colors;
     bool _secondary;
 };
 
 /**
  * @author Werner Mayer
  */
-class GuiExport SoVRMLAction : public SoAction
+class GuiExport SoVRMLAction: public SoAction
 {
     SO_ACTION_HEADER(SoVRMLAction);
 
@@ -480,8 +486,7 @@ public:
 private:
     SbBool overrideMode;
     std::list<int> bindList;
-    static void callDoAction(SoAction *action,SoNode *node);
-
+    static void callDoAction(SoAction *action, SoNode *node);
 };
 
 

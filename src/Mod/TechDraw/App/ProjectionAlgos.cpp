@@ -26,11 +26,11 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
-# include <BRepAdaptor_Curve.hxx>
-# include <Geom_Circle.hxx>
-# include <gp_Circ.hxx>
-# include <gp_Elips.hxx>
+#include <sstream>
+#include <BRepAdaptor_Curve.hxx>
+#include <Geom_Circle.hxx>
+#include <gp_Circ.hxx>
+#include <gp_Elips.hxx>
 #endif
 
 #include <Bnd_Box.hxx>
@@ -86,61 +86,54 @@ using namespace std;
 //===========================================================================
 
 
-
 ProjectionAlgos::ProjectionAlgos(const TopoDS_Shape &Input, const Base::Vector3d &Dir)
-  : Input(Input), Direction(Dir)
+    : Input(Input), Direction(Dir)
 {
     execute();
 }
 
-ProjectionAlgos::~ProjectionAlgos()
-{
-}
+ProjectionAlgos::~ProjectionAlgos() {}
 
 //added by tanderson. aka blobfish.
 //projection algorithms build a 2d curve(pcurve) but no 3d curve.
 //this causes problems with meshing algorithms after save and load.
-static const TopoDS_Shape& build3dCurves(const TopoDS_Shape &shape)
+static const TopoDS_Shape &build3dCurves(const TopoDS_Shape &shape)
 {
-  TopExp_Explorer it;
-  for (it.Init(shape, TopAbs_EDGE); it.More(); it.Next())
-    BRepLib::BuildCurve3d(TopoDS::Edge(it.Current()));
-  return shape;
+    TopExp_Explorer it;
+    for (it.Init(shape, TopAbs_EDGE); it.More(); it.Next())
+        BRepLib::BuildCurve3d(TopoDS::Edge(it.Current()));
+    return shape;
 }
 
 void ProjectionAlgos::execute()
 {
-    Handle( HLRBRep_Algo ) brep_hlr = new HLRBRep_Algo;
+    Handle(HLRBRep_Algo) brep_hlr = new HLRBRep_Algo;
     brep_hlr->Add(Input);
 
-    gp_Ax2 transform(gp_Pnt(0, 0,0), gp_Dir(Direction.x, Direction.y, Direction.z));
-    HLRAlgo_Projector projector( transform );
+    gp_Ax2 transform(gp_Pnt(0, 0, 0), gp_Dir(Direction.x, Direction.y, Direction.z));
+    HLRAlgo_Projector projector(transform);
     brep_hlr->Projector(projector);
     brep_hlr->Update();
     brep_hlr->Hide();
 
     // extracting the result sets:
-    HLRBRep_HLRToShape shapes( brep_hlr );
+    HLRBRep_HLRToShape shapes(brep_hlr);
 
-    V  = build3dCurves(shapes.VCompound       ());// hard edge visibly
-    V1 = build3dCurves(shapes.Rg1LineVCompound());// Smoth edges visibly
-    VN = build3dCurves(shapes.RgNLineVCompound());// contour edges visibly
-    VO = build3dCurves(shapes.OutLineVCompound());// contours apparents visibly
-    VI = build3dCurves(shapes.IsoLineVCompound());// isoparamtriques   visibly
-    H  = build3dCurves(shapes.HCompound       ());// hard edge       invisibly
-    H1 = build3dCurves(shapes.Rg1LineHCompound());// Smoth edges  invisibly
-    HN = build3dCurves(shapes.RgNLineHCompound());// contour edges invisibly
-    HO = build3dCurves(shapes.OutLineHCompound());// contours apparents invisibly
-    HI = build3dCurves(shapes.IsoLineHCompound());// isoparamtriques   invisibly
+    V = build3dCurves(shapes.VCompound());         // hard edge visibly
+    V1 = build3dCurves(shapes.Rg1LineVCompound()); // Smoth edges visibly
+    VN = build3dCurves(shapes.RgNLineVCompound()); // contour edges visibly
+    VO = build3dCurves(shapes.OutLineVCompound()); // contours apparents visibly
+    VI = build3dCurves(shapes.IsoLineVCompound()); // isoparamtriques   visibly
+    H = build3dCurves(shapes.HCompound());         // hard edge       invisibly
+    H1 = build3dCurves(shapes.Rg1LineHCompound()); // Smoth edges  invisibly
+    HN = build3dCurves(shapes.RgNLineHCompound()); // contour edges invisibly
+    HO = build3dCurves(shapes.OutLineHCompound()); // contours apparents invisibly
+    HI = build3dCurves(shapes.IsoLineHCompound()); // isoparamtriques   invisibly
 }
 
-string ProjectionAlgos::getSVG(ExtractionType type,
-                               double tolerance,
-                               XmlAttributes V_style,
-                               XmlAttributes V0_style,
-                               XmlAttributes V1_style,
-                               XmlAttributes H_style,
-                               XmlAttributes H0_style,
+string ProjectionAlgos::getSVG(ExtractionType type, double tolerance, XmlAttributes V_style,
+                               XmlAttributes V0_style, XmlAttributes V1_style,
+                               XmlAttributes H_style, XmlAttributes H0_style,
                                XmlAttributes H1_style)
 {
     stringstream result;
@@ -155,13 +148,10 @@ string ProjectionAlgos::getSVG(ExtractionType type,
         H_style.insert({"fill", "none"});
         H_style.insert({"transform", "scale(1, -1)"});
         BRepMesh_IncrementalMesh(H, tolerance);
-        result  << "<g";
-        for (const auto& attribute : H_style)
-            result << "   " << attribute.first << "=\""
-                   << attribute.second << "\"\n";
-        result << "  >" << endl
-               << output.exportEdges(H)
-               << "</g>" << endl;
+        result << "<g";
+        for (const auto &attribute : H_style)
+            result << "   " << attribute.first << "=\"" << attribute.second << "\"\n";
+        result << "  >" << endl << output.exportEdges(H) << "</g>" << endl;
     }
     if (!HO.IsNull() && (type & WithHidden)) {
         H0_style.insert({"stroke", "rgb(0, 0, 0)"});
@@ -172,13 +162,10 @@ string ProjectionAlgos::getSVG(ExtractionType type,
         H0_style.insert({"fill", "none"});
         H0_style.insert({"transform", "scale(1, -1)"});
         BRepMesh_IncrementalMesh(HO, tolerance);
-        result  << "<g";
-        for (const auto& attribute : H0_style)
-            result << "   " << attribute.first << "=\""
-                   << attribute.second << "\"\n";
-        result << "  >" << endl
-               << output.exportEdges(HO)
-               << "</g>" << endl;
+        result << "<g";
+        for (const auto &attribute : H0_style)
+            result << "   " << attribute.first << "=\"" << attribute.second << "\"\n";
+        result << "  >" << endl << output.exportEdges(HO) << "</g>" << endl;
     }
     if (!VO.IsNull()) {
         V0_style.insert({"stroke", "rgb(0, 0, 0)"});
@@ -188,13 +175,10 @@ string ProjectionAlgos::getSVG(ExtractionType type,
         V0_style.insert({"fill", "none"});
         V0_style.insert({"transform", "scale(1, -1)"});
         BRepMesh_IncrementalMesh(VO, tolerance);
-        result  << "<g";
-        for (const auto& attribute : V0_style)
-            result << "   " << attribute.first << "=\""
-                   << attribute.second << "\"\n";
-        result << "  >" << endl
-               << output.exportEdges(VO)
-               << "</g>" << endl;
+        result << "<g";
+        for (const auto &attribute : V0_style)
+            result << "   " << attribute.first << "=\"" << attribute.second << "\"\n";
+        result << "  >" << endl << output.exportEdges(VO) << "</g>" << endl;
     }
     if (!V.IsNull()) {
         V_style.insert({"stroke", "rgb(0, 0, 0)"});
@@ -204,13 +188,10 @@ string ProjectionAlgos::getSVG(ExtractionType type,
         V_style.insert({"fill", "none"});
         V_style.insert({"transform", "scale(1, -1)"});
         BRepMesh_IncrementalMesh(V, tolerance);
-        result  << "<g";
-        for (const auto& attribute : V_style)
-            result << "   " << attribute.first << "=\""
-                   << attribute.second << "\"\n";
-        result << "  >" << endl
-               << output.exportEdges(V)
-               << "</g>" << endl;
+        result << "<g";
+        for (const auto &attribute : V_style)
+            result << "   " << attribute.first << "=\"" << attribute.second << "\"\n";
+        result << "  >" << endl << output.exportEdges(V) << "</g>" << endl;
     }
     if (!V1.IsNull() && (type & WithSmooth)) {
         V1_style.insert({"stroke", "rgb(0, 0, 0)"});
@@ -220,13 +201,10 @@ string ProjectionAlgos::getSVG(ExtractionType type,
         V1_style.insert({"fill", "none"});
         V1_style.insert({"transform", "scale(1, -1)"});
         BRepMesh_IncrementalMesh(V1, tolerance);
-        result  << "<g";
-        for (const auto& attribute : V1_style)
-            result << "   " << attribute.first << "=\""
-                   << attribute.second << "\"\n";
-        result << "  >" << endl
-               << output.exportEdges(V1)
-               << "</g>" << endl;
+        result << "<g";
+        for (const auto &attribute : V1_style)
+            result << "   " << attribute.first << "=\"" << attribute.second << "\"\n";
+        result << "  >" << endl << output.exportEdges(V1) << "</g>" << endl;
     }
     if (!H1.IsNull() && (type & WithSmooth) && (type & WithHidden)) {
         H1_style.insert({"stroke", "rgb(0, 0, 0)"});
@@ -237,13 +215,10 @@ string ProjectionAlgos::getSVG(ExtractionType type,
         H1_style.insert({"fill", "none"});
         H1_style.insert({"transform", "scale(1, -1)"});
         BRepMesh_IncrementalMesh(H1, tolerance);
-        result  << "<g";
-        for (const auto& attribute : H1_style)
-            result << "   " << attribute.first << "=\""
-                   << attribute.second << "\"\n";
-        result << "  >" << endl
-               << output.exportEdges(H1)
-               << "</g>" << endl;
+        result << "<g";
+        for (const auto &attribute : H1_style)
+            result << "   " << attribute.first << "=\"" << attribute.second << "\"\n";
+        result << "  >" << endl << output.exportEdges(H1) << "</g>" << endl;
     }
     return result.str();
 }
@@ -258,32 +233,32 @@ string ProjectionAlgos::getDXF(ExtractionType type, double /*scale*/, double tol
     if (!H.IsNull() && (type & WithHidden)) {
         //float width = 0.15f/scale;
         BRepMesh_IncrementalMesh(H, tolerance);
-        result  << output.exportEdges(H);
+        result << output.exportEdges(H);
     }
     if (!HO.IsNull() && (type & WithHidden)) {
         //float width = 0.15f/scale;
         BRepMesh_IncrementalMesh(HO, tolerance);
-        result  << output.exportEdges(HO);
+        result << output.exportEdges(HO);
     }
     if (!VO.IsNull()) {
         //float width = 0.35f/scale;
         BRepMesh_IncrementalMesh(VO, tolerance);
-        result  << output.exportEdges(VO);
+        result << output.exportEdges(VO);
     }
     if (!V.IsNull()) {
         //float width = 0.35f/scale;
         BRepMesh_IncrementalMesh(V, tolerance);
-        result  << output.exportEdges(V);
+        result << output.exportEdges(V);
     }
     if (!V1.IsNull() && (type & WithSmooth)) {
         //float width = 0.35f/scale;
         BRepMesh_IncrementalMesh(V1, tolerance);
-        result  << output.exportEdges(V1);
+        result << output.exportEdges(V1);
     }
     if (!H1.IsNull() && (type & WithSmooth) && (type & WithHidden)) {
         //float width = 0.15f/scale;
         BRepMesh_IncrementalMesh(H1, tolerance);
-        result  << output.exportEdges(H1);
+        result << output.exportEdges(H1);
     }
 
     return result.str();

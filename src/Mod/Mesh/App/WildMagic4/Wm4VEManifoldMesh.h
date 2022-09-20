@@ -28,19 +28,19 @@ class WM4_FOUNDATION_ITEM VEManifoldMesh
 public:
     // vertex data types
     class Vertex;
-    typedef Vertex* VPtr;
-    typedef const Vertex* VCPtr;
+    typedef Vertex *VPtr;
+    typedef const Vertex *VCPtr;
     typedef VPtr (*VCreator)(int);
-    typedef std::map<int,Vertex*> VMap;
+    typedef std::map<int, Vertex *> VMap;
     typedef VMap::iterator VMapIterator;
     typedef VMap::const_iterator VMapCIterator;
 
     // edge data types
     class Edge;
-    typedef Edge* EPtr;
-    typedef const Edge* ECPtr;
-    typedef EPtr (*ECreator)(int,int);
-    typedef std::map<std::pair<int,int>,Edge*> EMap;
+    typedef Edge *EPtr;
+    typedef const Edge *ECPtr;
+    typedef EPtr (*ECreator)(int, int);
+    typedef std::map<std::pair<int, int>, Edge *> EMap;
     typedef EMap::iterator EMapIterator;
     typedef EMap::const_iterator EMapCIterator;
 
@@ -48,8 +48,8 @@ public:
     class WM4_FOUNDATION_ITEM Vertex
     {
     public:
-        Vertex (int iV);
-        virtual ~Vertex ();
+        Vertex(int iV);
+        virtual ~Vertex();
 
         int V;
         EPtr E[2];
@@ -59,8 +59,8 @@ public:
     class WM4_FOUNDATION_ITEM Edge
     {
     public:
-        Edge (int iV0, int iV1);
-        virtual ~Edge ();
+        Edge(int iV0, int iV1);
+        virtual ~Edge();
 
         // vertices, listed as a directed edge <V[0],V[1]>
         int V[2];
@@ -73,35 +73,35 @@ public:
 
 
     // construction and destruction
-    VEManifoldMesh (VCreator oVCreator = nullptr, ECreator oECreator = nullptr);
-    virtual ~VEManifoldMesh ();
+    VEManifoldMesh(VCreator oVCreator = nullptr, ECreator oECreator = nullptr);
+    virtual ~VEManifoldMesh();
 
     // member access
-    const VMap& GetVertices () const;
-    const EMap& GetEdges () const;
+    const VMap &GetVertices() const;
+    const EMap &GetEdges() const;
 
     // mesh manipulation
-    EPtr InsertEdge (int iV0, int iV1);
-    bool RemoveEdge (int iV0, int iV1);
+    EPtr InsertEdge(int iV0, int iV1);
+    bool RemoveEdge(int iV0, int iV1);
 
     // manifold mesh is closed if each vertex is shared twice
-    bool IsClosed () const;
+    bool IsClosed() const;
 
-    void Print (const char* acFilename);
+    void Print(const char *acFilename);
 
 protected:
     // vertices
-    static VPtr CreateVertex (int iV0);
+    static VPtr CreateVertex(int iV0);
     VCreator m_oVCreator;
     VMap m_kVMap;
 
     // edges
-    static EPtr CreateEdge (int iV0, int iV1);
+    static EPtr CreateEdge(int iV0, int iV1);
     ECreator m_oECreator;
     EMap m_kEMap;
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4VEManifoldMesh.inl"
 

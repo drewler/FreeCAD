@@ -10,21 +10,18 @@
 using namespace Import;
 
 // returns a string which represents the object e.g. when printed in python
-std::string StepShapePy::representation(void) const
-{
-    return std::string("<StepShape object>");
-}
+std::string StepShapePy::representation(void) const { return std::string("<StepShape object>"); }
 
-PyObject *StepShapePy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *StepShapePy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
-    // create a new instance of StepShapePy and the Twin object 
+    // create a new instance of StepShapePy and the Twin object
     return new StepShapePy(new StepShape);
 }
 
 // constructor method
-int StepShapePy::PyInit(PyObject* args, PyObject* /*kwd*/)
+int StepShapePy::PyInit(PyObject *args, PyObject * /*kwd*/)
 {
-    char* fileName;
+    char *fileName;
     if (PyArg_ParseTuple(args, "s", &fileName)) {
         getStepShapePtr()->read(fileName);
         return 0;
@@ -35,24 +32,13 @@ int StepShapePy::PyInit(PyObject* args, PyObject* /*kwd*/)
 }
 
 
-PyObject* StepShapePy::read(PyObject * /*args*/)
+PyObject *StepShapePy::read(PyObject * /*args*/)
 {
     PyErr_SetString(PyExc_NotImplementedError, "Not yet implemented");
     return nullptr;
 }
 
 
+PyObject *StepShapePy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-
-
-PyObject *StepShapePy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
-
-int StepShapePy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0; 
-}
-
-
+int StepShapePy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

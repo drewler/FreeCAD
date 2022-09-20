@@ -28,8 +28,9 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderLinearPattern,PartDesignGui::ViewProviderTransformed)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderLinearPattern, PartDesignGui::ViewProviderTransformed)
 
-TaskDlgFeatureParameters *ViewProviderLinearPattern::getEditDialog() {
-    return new TaskDlgLinearPatternParameters (this);
+TaskDlgFeatureParameters *ViewProviderLinearPattern::getEditDialog()
+{
+    return new TaskDlgLinearPatternParameters(this);
 }

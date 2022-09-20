@@ -29,7 +29,8 @@
 // forward declarations
 using PyObject = struct _object;
 
-namespace Py {
+namespace Py
+{
 class Object;
 
 /**
@@ -59,8 +60,8 @@ public:
     SmartPtr(const SmartPtr &ob);
 
     // Assignment acquires new ownership of pointer
-    SmartPtr &operator=( const SmartPtr &rhs );
-    SmartPtr &operator=( const Object &rhs );
+    SmartPtr &operator=(const SmartPtr &rhs);
+    SmartPtr &operator=(const Object &rhs);
 
     SmartPtr &operator=(PyObject *rhsp);
 
@@ -82,8 +83,8 @@ public:
     bool isNull() const;
 };
 
-BaseExport PyObject* new_reference_to(const SmartPtr&);
+BaseExport PyObject *new_reference_to(const SmartPtr &);
 
-}
+} // namespace Py
 
 #endif // PY_SMARTPTRPY_H

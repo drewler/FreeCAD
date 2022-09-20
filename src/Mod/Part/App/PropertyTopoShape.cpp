@@ -23,16 +23,16 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
-# include <Bnd_Box.hxx>
-# include <BRepBndLib.hxx>
-# include <BRepBuilderAPI_Copy.hxx>
-# include <BRepTools.hxx>
-# include <BRepTools_ShapeSet.hxx>
-# include <OSD_OpenFile.hxx>
-# include <Standard_Failure.hxx>
-# include <Standard_Version.hxx>
-# include <TopoDS.hxx>
+#include <sstream>
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
+#include <BRepTools.hxx>
+#include <BRepTools_ShapeSet.hxx>
+#include <OSD_OpenFile.hxx>
+#include <Standard_Failure.hxx>
+#include <Standard_Version.hxx>
+#include <TopoDS.hxx>
 #endif // _PreComp_
 
 #include <App/Application.h>
@@ -51,50 +51,36 @@
 
 using namespace Part;
 
-TYPESYSTEM_SOURCE(Part::PropertyPartShape , App::PropertyComplexGeoData)
+TYPESYSTEM_SOURCE(Part::PropertyPartShape, App::PropertyComplexGeoData)
 
-PropertyPartShape::PropertyPartShape()
-{
-}
+PropertyPartShape::PropertyPartShape() {}
 
-PropertyPartShape::~PropertyPartShape()
-{
-}
+PropertyPartShape::~PropertyPartShape() {}
 
-void PropertyPartShape::setValue(const TopoShape& sh)
+void PropertyPartShape::setValue(const TopoShape &sh)
 {
     aboutToSetValue();
     _Shape = sh;
     hasSetValue();
 }
 
-void PropertyPartShape::setValue(const TopoDS_Shape& sh)
+void PropertyPartShape::setValue(const TopoDS_Shape &sh)
 {
     aboutToSetValue();
     _Shape.setShape(sh);
     hasSetValue();
 }
 
-const TopoDS_Shape& PropertyPartShape::getValue(void)const
-{
-    return _Shape.getShape();
-}
+const TopoDS_Shape &PropertyPartShape::getValue(void) const { return _Shape.getShape(); }
 
-const TopoShape& PropertyPartShape::getShape() const
-{
-    return this->_Shape;
-}
+const TopoShape &PropertyPartShape::getShape() const { return this->_Shape; }
 
-const Data::ComplexGeoData* PropertyPartShape::getComplexData() const
-{
-    return &(this->_Shape);
-}
+const Data::ComplexGeoData *PropertyPartShape::getComplexData() const { return &(this->_Shape); }
 
 Base::BoundBox3d PropertyPartShape::getBoundingBox() const
 {
     Base::BoundBox3d box;
-    if (_Shape.getShape().IsNull())
-        return box;
+    if (_Shape.getShape().IsNull()) return box;
     try {
         // If the shape is empty an exception may be thrown
         Bnd_Box bounds;
@@ -110,21 +96,15 @@ Base::BoundBox3d PropertyPartShape::getBoundingBox() const
         box.MinZ = zMin;
         box.MaxZ = zMax;
     }
-    catch (Standard_Failure&) {
+    catch (Standard_Failure &) {
     }
 
     return box;
 }
 
-void PropertyPartShape::setTransform(const Base::Matrix4D &rclTrf)
-{
-    _Shape.setTransform(rclTrf);
-}
+void PropertyPartShape::setTransform(const Base::Matrix4D &rclTrf) { _Shape.setTransform(rclTrf); }
 
-Base::Matrix4D PropertyPartShape::getTransform() const
-{
-    return _Shape.getTransform();
-}
+Base::Matrix4D PropertyPartShape::getTransform() const { return _Shape.getTransform(); }
 
 void PropertyPartShape::transformGeometry(const Base::Matrix4D &rclTrf)
 {
@@ -135,16 +115,15 @@ void PropertyPartShape::transformGeometry(const Base::Matrix4D &rclTrf)
 
 PyObject *PropertyPartShape::getPyObject(void)
 {
-    Base::PyObjectBase* prop = static_cast<Base::PyObjectBase*>(_Shape.getPyObject());
-    if (prop)
-        prop->setConst();
+    Base::PyObjectBase *prop = static_cast<Base::PyObjectBase *>(_Shape.getPyObject());
+    if (prop) prop->setConst();
     return prop;
 }
 
 void PropertyPartShape::setPyObject(PyObject *value)
 {
     if (PyObject_TypeCheck(value, &(TopoShapePy::Type))) {
-        TopoShapePy *pcObject = static_cast<TopoShapePy*>(value);
+        TopoShapePy *pcObject = static_cast<TopoShapePy *>(value);
         setValue(*pcObject->getTopoShapePtr());
     }
     else {
@@ -169,42 +148,47 @@ App::Property *PropertyPartShape::Copy(void) const
 void PropertyPartShape::Paste(const App::Property &from)
 {
     aboutToSetValue();
-    _Shape = dynamic_cast<const PropertyPartShape&>(from)._Shape;
+    _Shape = dynamic_cast<const PropertyPartShape &>(from)._Shape;
     hasSetValue();
 }
 
-unsigned int PropertyPartShape::getMemSize (void) const
-{
-    return _Shape.getMemSize();
-}
+unsigned int PropertyPartShape::getMemSize(void) const { return _Shape.getMemSize(); }
 
 void PropertyPartShape::getPaths(std::vector<App::ObjectIdentifier> &paths) const
 {
-    paths.push_back(App::ObjectIdentifier(getContainer()) << App::ObjectIdentifier::Component::SimpleComponent(getName())
-                    << App::ObjectIdentifier::Component::SimpleComponent(App::ObjectIdentifier::String("ShapeType")));
-    paths.push_back(App::ObjectIdentifier(getContainer()) << App::ObjectIdentifier::Component::SimpleComponent(getName())
-                    << App::ObjectIdentifier::Component::SimpleComponent(App::ObjectIdentifier::String("Orientation")));
-    paths.push_back(App::ObjectIdentifier(getContainer()) << App::ObjectIdentifier::Component::SimpleComponent(getName())
-                    << App::ObjectIdentifier::Component::SimpleComponent(App::ObjectIdentifier::String("Length")));
-    paths.push_back(App::ObjectIdentifier(getContainer()) << App::ObjectIdentifier::Component::SimpleComponent(getName())
-                    << App::ObjectIdentifier::Component::SimpleComponent(App::ObjectIdentifier::String("Area")));
-    paths.push_back(App::ObjectIdentifier(getContainer()) << App::ObjectIdentifier::Component::SimpleComponent(getName())
-                    << App::ObjectIdentifier::Component::SimpleComponent(App::ObjectIdentifier::String("Volume")));
+    paths.push_back(App::ObjectIdentifier(getContainer())
+                    << App::ObjectIdentifier::Component::SimpleComponent(getName())
+                    << App::ObjectIdentifier::Component::SimpleComponent(
+                           App::ObjectIdentifier::String("ShapeType")));
+    paths.push_back(App::ObjectIdentifier(getContainer())
+                    << App::ObjectIdentifier::Component::SimpleComponent(getName())
+                    << App::ObjectIdentifier::Component::SimpleComponent(
+                           App::ObjectIdentifier::String("Orientation")));
+    paths.push_back(App::ObjectIdentifier(getContainer())
+                    << App::ObjectIdentifier::Component::SimpleComponent(getName())
+                    << App::ObjectIdentifier::Component::SimpleComponent(
+                           App::ObjectIdentifier::String("Length")));
+    paths.push_back(App::ObjectIdentifier(getContainer())
+                    << App::ObjectIdentifier::Component::SimpleComponent(getName())
+                    << App::ObjectIdentifier::Component::SimpleComponent(
+                           App::ObjectIdentifier::String("Area")));
+    paths.push_back(App::ObjectIdentifier(getContainer())
+                    << App::ObjectIdentifier::Component::SimpleComponent(getName())
+                    << App::ObjectIdentifier::Component::SimpleComponent(
+                           App::ObjectIdentifier::String("Volume")));
 }
 
-void PropertyPartShape::Save (Base::Writer &writer) const
+void PropertyPartShape::Save(Base::Writer &writer) const
 {
-    if(!writer.isForceXML()) {
+    if (!writer.isForceXML()) {
         //See SaveDocFile(), RestoreDocFile()
         if (writer.getMode("BinaryBrep")) {
             writer.Stream() << writer.ind() << "<Part file=\""
-                            << writer.addFile("PartShape.bin", this)
-                            << "\"/>" << std::endl;
+                            << writer.addFile("PartShape.bin", this) << "\"/>" << std::endl;
         }
         else {
             writer.Stream() << writer.ind() << "<Part file=\""
-                            << writer.addFile("PartShape.brp", this)
-                            << "\"/>" << std::endl;
+                            << writer.addFile("PartShape.brp", this) << "\"/>" << std::endl;
         }
     }
 }
@@ -212,11 +196,11 @@ void PropertyPartShape::Save (Base::Writer &writer) const
 void PropertyPartShape::Restore(Base::XMLReader &reader)
 {
     reader.readElement("Part");
-    std::string file (reader.getAttribute("file") );
+    std::string file(reader.getAttribute("file"));
 
     if (!file.empty()) {
         // initiate a file read
-        reader.addFile(file.c_str(),this);
+        reader.addFile(file.c_str(), this);
     }
 }
 
@@ -224,43 +208,41 @@ void PropertyPartShape::Restore(Base::XMLReader &reader)
 // to disable saving of triangulation
 //
 
-static Standard_Boolean  BRepTools_Write(const TopoDS_Shape& Sh, const Standard_CString File)
+static Standard_Boolean BRepTools_Write(const TopoDS_Shape &Sh, const Standard_CString File)
 {
-  std::ofstream os;
-  OSD_OpenStream(os, File, std::ios::out);
+    std::ofstream os;
+    OSD_OpenStream(os, File, std::ios::out);
 
-  if (!os.rdbuf()->is_open())
-      return Standard_False;
+    if (!os.rdbuf()->is_open()) return Standard_False;
 
-  Standard_Boolean isGood = (os.good() && !os.eof());
-  if(!isGood)
+    Standard_Boolean isGood = (os.good() && !os.eof());
+    if (!isGood) return isGood;
+
+    // See TopTools_FormatVersion of OCCT 7.6
+    enum
+    {
+        VERSION_1 = 1,
+        VERSION_2 = 2,
+        VERSION_3 = 3
+    };
+
+    BRepTools_ShapeSet SS(Standard_False);
+    SS.SetFormatNb(VERSION_1);
+    // SS.SetProgress(PR);
+    SS.Add(Sh);
+
+    os << "DBRep_DrawableShape\n"; // for easy Draw read
+    SS.Write(os);
+    isGood = os.good();
+    if (isGood) SS.Write(Sh, os);
+    os.flush();
+    isGood = os.good();
+
+    errno = 0;
+    os.close();
+    isGood = os.good() && isGood && !errno;
+
     return isGood;
-
-  // See TopTools_FormatVersion of OCCT 7.6
-  enum {
-      VERSION_1 = 1,
-      VERSION_2 = 2,
-      VERSION_3 = 3
-  };
-
-  BRepTools_ShapeSet SS(Standard_False);
-  SS.SetFormatNb(VERSION_1);
-  // SS.SetProgress(PR);
-  SS.Add(Sh);
-
-  os << "DBRep_DrawableShape\n";  // for easy Draw read
-  SS.Write(os);
-  isGood = os.good();
-  if(isGood )
-    SS.Write(Sh,os);
-  os.flush();
-  isGood = os.good();
-
-  errno = 0;
-  os.close();
-  isGood = os.good() && isGood && !errno;
-
-  return isGood;
 }
 
 void PropertyPartShape::saveToFile(Base::Writer &writer) const
@@ -271,16 +253,16 @@ void PropertyPartShape::saveToFile(Base::Writer &writer) const
     static Base::FileInfo fi(App::Application::getTempFileName());
 
     TopoDS_Shape myShape = _Shape.getShape();
-    if (!BRepTools_Write(myShape,(Standard_CString)fi.filePath().c_str())) {
+    if (!BRepTools_Write(myShape, (Standard_CString)fi.filePath().c_str())) {
         // Note: Do NOT throw an exception here because if the tmp. file could
         // not be created we should not abort.
         // We only print an error message but continue writing the next files to the
         // stream...
-        App::PropertyContainer* father = this->getContainer();
+        App::PropertyContainer *father = this->getContainer();
         if (father && father->isDerivedFrom(App::DocumentObject::getClassTypeId())) {
-            App::DocumentObject* obj = static_cast<App::DocumentObject*>(father);
+            App::DocumentObject *obj = static_cast<App::DocumentObject *>(father);
             Base::Console().Error("Shape of '%s' cannot be written to BRep file '%s'\n",
-                obj->Label.getValue(),fi.filePath().c_str());
+                                  obj->Label.getValue(), fi.filePath().c_str());
         }
         else {
             Base::Console().Error("Cannot save BRep file '%s'\n", fi.filePath().c_str());
@@ -293,7 +275,7 @@ void PropertyPartShape::saveToFile(Base::Writer &writer) const
 
     Base::ifstream file(fi, std::ios::in | std::ios::binary);
     if (file) {
-        std::streambuf* buf = file.rdbuf();
+        std::streambuf *buf = file.rdbuf();
         writer.Stream() << buf;
     }
 
@@ -312,7 +294,7 @@ void PropertyPartShape::loadFromFile(Base::Reader &reader)
     Base::ofstream file(fi, std::ios::out | std::ios::binary);
     unsigned long ulSize = 0;
     if (reader) {
-        std::streambuf* buf = file.rdbuf();
+        std::streambuf *buf = file.rdbuf();
         reader >> buf;
         file.flush();
         ulSize = buf->pubseekoff(0, std::ios::cur, std::ios::in);
@@ -328,14 +310,15 @@ void PropertyPartShape::loadFromFile(Base::Reader &reader)
             // not be read it's NOT an indication for an invalid input stream 'reader'.
             // We only print an error message but continue reading the next files from the
             // stream...
-            App::PropertyContainer* father = this->getContainer();
+            App::PropertyContainer *father = this->getContainer();
             if (father && father->isDerivedFrom(App::DocumentObject::getClassTypeId())) {
-                App::DocumentObject* obj = static_cast<App::DocumentObject*>(father);
+                App::DocumentObject *obj = static_cast<App::DocumentObject *>(father);
                 Base::Console().Error("BRep file '%s' with shape of '%s' seems to be empty\n",
-                    fi.filePath().c_str(),obj->Label.getValue());
+                                      fi.filePath().c_str(), obj->Label.getValue());
             }
             else {
-                Base::Console().Warning("Loaded BRep file '%s' seems to be empty\n", fi.filePath().c_str());
+                Base::Console().Warning("Loaded BRep file '%s' seems to be empty\n",
+                                        fi.filePath().c_str());
             }
         }
     }
@@ -354,18 +337,17 @@ void PropertyPartShape::loadFromStream(Base::Reader &reader)
         BRepTools::Read(shape, reader, builder);
         setValue(shape);
     }
-    catch (const std::exception&) {
+    catch (const std::exception &) {
         if (!reader.eof())
             Base::Console().Warning("Failed to load BRep file %s\n", reader.getFileName().c_str());
     }
 }
 
-void PropertyPartShape::SaveDocFile (Base::Writer &writer) const
+void PropertyPartShape::SaveDocFile(Base::Writer &writer) const
 {
     // If the shape is empty we simply store nothing. The file size will be 0 which
     // can be checked when reading in the data.
-    if (_Shape.getShape().IsNull())
-        return;
+    if (_Shape.getShape().IsNull()) return;
     TopoDS_Shape myShape = _Shape.getShape();
     if (writer.getMode("BinaryBrep")) {
         TopoShape shape;
@@ -373,11 +355,11 @@ void PropertyPartShape::SaveDocFile (Base::Writer &writer) const
         shape.exportBinary(writer.Stream());
     }
     else {
-        bool direct = App::GetApplication().GetParameterGroupByPath
-            ("User parameter:BaseApp/Preferences/Mod/Part/General")->GetBool("DirectAccess", true);
-        if (!direct) {
-            saveToFile(writer);
-        }
+        bool direct =
+            App::GetApplication()
+                .GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Part/General")
+                ->GetBool("DirectAccess", true);
+        if (!direct) { saveToFile(writer); }
         else {
             TopoShape shape;
             shape.setShape(myShape);
@@ -395,11 +377,11 @@ void PropertyPartShape::RestoreDocFile(Base::Reader &reader)
         setValue(shape);
     }
     else {
-        bool direct = App::GetApplication().GetParameterGroupByPath
-            ("User parameter:BaseApp/Preferences/Mod/Part/General")->GetBool("DirectAccess", true);
-        if (!direct) {
-            loadFromFile(reader);
-        }
+        bool direct =
+            App::GetApplication()
+                .GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Part/General")
+                ->GetBool("DirectAccess", true);
+        if (!direct) { loadFromFile(reader); }
         else {
             auto iostate = reader.exceptions();
             loadFromStream(reader);
@@ -410,17 +392,13 @@ void PropertyPartShape::RestoreDocFile(Base::Reader &reader)
 
 // -------------------------------------------------------------------------
 
-TYPESYSTEM_SOURCE(Part::PropertyShapeHistory , App::PropertyLists)
+TYPESYSTEM_SOURCE(Part::PropertyShapeHistory, App::PropertyLists)
 
-PropertyShapeHistory::PropertyShapeHistory()
-{
-}
+PropertyShapeHistory::PropertyShapeHistory() {}
 
-PropertyShapeHistory::~PropertyShapeHistory()
-{
-}
+PropertyShapeHistory::~PropertyShapeHistory() {}
 
-void PropertyShapeHistory::setValue(const ShapeHistory& sh)
+void PropertyShapeHistory::setValue(const ShapeHistory &sh)
 {
     aboutToSetValue();
     _lValueList.resize(1);
@@ -428,41 +406,28 @@ void PropertyShapeHistory::setValue(const ShapeHistory& sh)
     hasSetValue();
 }
 
-void PropertyShapeHistory::setValues(const std::vector<ShapeHistory>& values)
+void PropertyShapeHistory::setValues(const std::vector<ShapeHistory> &values)
 {
     aboutToSetValue();
     _lValueList = values;
     hasSetValue();
 }
 
-PyObject *PropertyShapeHistory::getPyObject(void)
-{
-    return Py::new_reference_to(Py::None());
-}
+PyObject *PropertyShapeHistory::getPyObject(void) { return Py::new_reference_to(Py::None()); }
 
-void PropertyShapeHistory::setPyObject(PyObject *)
-{
-}
+void PropertyShapeHistory::setPyObject(PyObject *) {}
 
-void PropertyShapeHistory::Save (Base::Writer &) const
-{
-}
+void PropertyShapeHistory::Save(Base::Writer &) const {}
 
-void PropertyShapeHistory::Restore(Base::XMLReader &)
-{
-}
+void PropertyShapeHistory::Restore(Base::XMLReader &) {}
 
-void PropertyShapeHistory::SaveDocFile (Base::Writer &) const
-{
-}
+void PropertyShapeHistory::SaveDocFile(Base::Writer &) const {}
 
-void PropertyShapeHistory::RestoreDocFile(Base::Reader &)
-{
-}
+void PropertyShapeHistory::RestoreDocFile(Base::Reader &) {}
 
 App::Property *PropertyShapeHistory::Copy(void) const
 {
-    PropertyShapeHistory *p= new PropertyShapeHistory();
+    PropertyShapeHistory *p = new PropertyShapeHistory();
     p->_lValueList = _lValueList;
     return p;
 }
@@ -470,21 +435,17 @@ App::Property *PropertyShapeHistory::Copy(void) const
 void PropertyShapeHistory::Paste(const Property &from)
 {
     aboutToSetValue();
-    _lValueList = dynamic_cast<const PropertyShapeHistory&>(from)._lValueList;
+    _lValueList = dynamic_cast<const PropertyShapeHistory &>(from)._lValueList;
     hasSetValue();
 }
 
 // -------------------------------------------------------------------------
 
-TYPESYSTEM_SOURCE(Part::PropertyFilletEdges , App::PropertyLists)
+TYPESYSTEM_SOURCE(Part::PropertyFilletEdges, App::PropertyLists)
 
-PropertyFilletEdges::PropertyFilletEdges()
-{
-}
+PropertyFilletEdges::PropertyFilletEdges() {}
 
-PropertyFilletEdges::~PropertyFilletEdges()
-{
-}
+PropertyFilletEdges::~PropertyFilletEdges() {}
 
 void PropertyFilletEdges::setValue(int id, double r1, double r2)
 {
@@ -496,7 +457,7 @@ void PropertyFilletEdges::setValue(int id, double r1, double r2)
     hasSetValue();
 }
 
-void PropertyFilletEdges::setValues(const std::vector<FilletElement>& values)
+void PropertyFilletEdges::setValues(const std::vector<FilletElement> &values)
 {
     aboutToSetValue();
     _lValueList = values;
@@ -536,30 +497,32 @@ void PropertyFilletEdges::setPyObject(PyObject *value)
     setValues(values);
 }
 
-void PropertyFilletEdges::Save (Base::Writer &writer) const
+void PropertyFilletEdges::Save(Base::Writer &writer) const
 {
     if (!writer.isForceXML()) {
-        writer.Stream() << writer.ind() << "<FilletEdges file=\"" << writer.addFile(getName(), this) << "\"/>" << std::endl;
+        writer.Stream() << writer.ind() << "<FilletEdges file=\"" << writer.addFile(getName(), this)
+                        << "\"/>" << std::endl;
     }
 }
 
 void PropertyFilletEdges::Restore(Base::XMLReader &reader)
 {
     reader.readElement("FilletEdges");
-    std::string file (reader.getAttribute("file") );
+    std::string file(reader.getAttribute("file"));
 
     if (!file.empty()) {
         // initiate a file read
-        reader.addFile(file.c_str(),this);
+        reader.addFile(file.c_str(), this);
     }
 }
 
-void PropertyFilletEdges::SaveDocFile (Base::Writer &writer) const
+void PropertyFilletEdges::SaveDocFile(Base::Writer &writer) const
 {
     Base::OutputStream str(writer.Stream());
     uint32_t uCt = (uint32_t)getSize();
     str << uCt;
-    for (std::vector<FilletElement>::const_iterator it = _lValueList.begin(); it != _lValueList.end(); ++it) {
+    for (std::vector<FilletElement>::const_iterator it = _lValueList.begin();
+         it != _lValueList.end(); ++it) {
         str << it->edgeid << it->radius1 << it->radius2;
     }
 }
@@ -567,7 +530,7 @@ void PropertyFilletEdges::SaveDocFile (Base::Writer &writer) const
 void PropertyFilletEdges::RestoreDocFile(Base::Reader &reader)
 {
     Base::InputStream str(reader);
-    uint32_t uCt=0;
+    uint32_t uCt = 0;
     str >> uCt;
     std::vector<FilletElement> values(uCt);
     for (std::vector<FilletElement>::iterator it = values.begin(); it != values.end(); ++it) {
@@ -578,7 +541,7 @@ void PropertyFilletEdges::RestoreDocFile(Base::Reader &reader)
 
 App::Property *PropertyFilletEdges::Copy(void) const
 {
-    PropertyFilletEdges *p= new PropertyFilletEdges();
+    PropertyFilletEdges *p = new PropertyFilletEdges();
     p->_lValueList = _lValueList;
     return p;
 }
@@ -586,6 +549,6 @@ App::Property *PropertyFilletEdges::Copy(void) const
 void PropertyFilletEdges::Paste(const Property &from)
 {
     aboutToSetValue();
-    _lValueList = dynamic_cast<const PropertyFilletEdges&>(from)._lValueList;
+    _lValueList = dynamic_cast<const PropertyFilletEdges &>(from)._lValueList;
     hasSetValue();
 }

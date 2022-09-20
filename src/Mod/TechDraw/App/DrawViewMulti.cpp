@@ -24,13 +24,13 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 
 #include <Bnd_Box.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
-# include <BRep_Builder.hxx>
+#include <BRep_Builder.hxx>
 #include <gp_Ax2.hxx>
 #include <gp_Pnt.hxx>
 #include <TopoDS_Shape.hxx>
@@ -46,8 +46,8 @@
 
 #include <chrono>
 
-# include <QFile>
-# include <QFileInfo>
+#include <QFile>
+#include <QFileInfo>
 
 #include <App/Application.h>
 #include <App/Material.h>
@@ -79,7 +79,7 @@ DrawViewMulti::DrawViewMulti()
     static const char *group = "Projection";
 
     //properties that affect Geometry
-    ADD_PROPERTY_TYPE(Sources ,(nullptr), group, App::Prop_None, "3D Shapes to view");
+    ADD_PROPERTY_TYPE(Sources, (nullptr), group, App::Prop_None, "3D Shapes to view");
     Sources.setScope(App::LinkScope::Global);
     //Source is replaced by Sources in Multi
     Source.setStatus(App::Property::ReadOnly, true);
@@ -88,28 +88,22 @@ DrawViewMulti::DrawViewMulti()
     geometryObject = nullptr;
 }
 
-DrawViewMulti::~DrawViewMulti()
-{
-}
+DrawViewMulti::~DrawViewMulti() {}
 
 short DrawViewMulti::mustExecute() const
 {
-    if (!isRestoring() && Sources.isTouched()) {
-        return true;
-    }
+    if (!isRestoring() && Sources.isTouched()) { return true; }
 
     return TechDraw::DrawViewPart::mustExecute();
 }
 
-void DrawViewMulti::onChanged(const App::Property* prop)
+void DrawViewMulti::onChanged(const App::Property *prop)
 {
     if (!isRestoring()) {
         //Base::Console().Message("TRACE - DVM::onChanged(%s) - %s\n", prop->getName(), Label.getValue());
         if (prop == &Sources) {
-            const std::vector<App::DocumentObject*>& links = Sources.getValues();
-            if (!links.empty()) {
-                Source.setValue(links.front());
-            }
+            const std::vector<App::DocumentObject *> &links = Sources.getValues();
+            if (!links.empty()) { Source.setValue(links.front()); }
         }
     }
 
@@ -118,12 +112,10 @@ void DrawViewMulti::onChanged(const App::Property* prop)
 
 App::DocumentObjectExecReturn *DrawViewMulti::execute()
 {
-    if (!keepUpdated()) {
-        return App::DocumentObject::StdReturn;
-    }
+    if (!keepUpdated()) { return App::DocumentObject::StdReturn; }
 
-    const std::vector<App::DocumentObject*>& links = Sources.getValues();
-    if (links.empty())  {
+    const std::vector<App::DocumentObject *> &links = Sources.getValues();
+    if (links.empty()) {
         Base::Console().Log("INFO - DVM::execute - No Sources - creation?\n");
         return DrawView::execute();
     }
@@ -136,17 +128,14 @@ App::DocumentObjectExecReturn *DrawViewMulti::execute()
 
     gp_Pnt inputCenter;
     try {
-        inputCenter = TechDraw::findCentroid(comp,
-                                                     Direction.getValue());
+        inputCenter = TechDraw::findCentroid(comp, Direction.getValue());
         shapeCentroid = Base::Vector3d(inputCenter.X(), inputCenter.Y(), inputCenter.Z());
-        TopoDS_Shape mirroredShape = TechDraw::mirrorShape(comp,
-                                                    inputCenter,
-                                                    getScale());
-        gp_Ax2 viewAxis = getViewAxis(Base::Vector3d(inputCenter.X(), inputCenter.Y(), inputCenter.Z()), Direction.getValue());
+        TopoDS_Shape mirroredShape = TechDraw::mirrorShape(comp, inputCenter, getScale());
+        gp_Ax2 viewAxis =
+            getViewAxis(Base::Vector3d(inputCenter.X(), inputCenter.Y(), inputCenter.Z()),
+                        Direction.getValue());
         if (!DrawUtil::fpCompare(Rotation.getValue(), 0.0)) {
-            mirroredShape = TechDraw::rotateShape(mirroredShape,
-                                                          viewAxis,
-                                                          Rotation.getValue());
+            mirroredShape = TechDraw::rotateShape(mirroredShape, viewAxis, Rotation.getValue());
         }
         geometryObject = buildGeometryObject(mirroredShape, viewAxis);
 
@@ -154,8 +143,9 @@ App::DocumentObjectExecReturn *DrawViewMulti::execute()
         extractFaces();
 #endif //#if MOD_TECHDRAW_HANDLE_FACES
     }
-    catch (Standard_Failure& e1) {
-        Base::Console().Log("LOG - DVM::execute - projection failed for %s - %s **\n", getNameInDocument(), e1.GetMessageString());
+    catch (Standard_Failure &e1) {
+        Base::Console().Log("LOG - DVM::execute - projection failed for %s - %s **\n",
+                            getNameInDocument(), e1.GetMessageString());
         return new App::DocumentObjectExecReturn(e1.GetMessageString());
     }
 
@@ -165,14 +155,16 @@ App::DocumentObjectExecReturn *DrawViewMulti::execute()
 
 // Python Drawing feature ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(TechDraw::DrawViewMultiPython, TechDraw::DrawViewMulti)
-template<> const char* TechDraw::DrawViewMultiPython::getViewProviderName() const {
+template<> const char *TechDraw::DrawViewMultiPython::getViewProviderName() const
+{
     return "TechDrawGui::ViewProviderViewProviderViewPart";
 }
 /// @endcond
 
 // explicit template instantiation
 template class TechDrawExport FeaturePythonT<TechDraw::DrawViewMulti>;
-}
+} // namespace App

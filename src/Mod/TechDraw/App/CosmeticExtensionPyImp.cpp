@@ -41,14 +41,9 @@ std::string CosmeticExtensionPy::representation() const
     return std::string("<TechDraw::CosmeticObject>");
 }
 
-PyObject *CosmeticExtensionPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *CosmeticExtensionPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int CosmeticExtensionPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
+int CosmeticExtensionPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
 {
     return 0;
 }
-
-

@@ -45,26 +45,26 @@ class SMESH_Gen;
 // =========================================================
 // =========================================================
 
-class STDMESHERS_EXPORT StdMeshers_NumberOfLayers:  public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_NumberOfLayers: public SMESH_Hypothesis
 {
 public:
-  // Constructor
-  StdMeshers_NumberOfLayers( int hypId, int studyId, SMESH_Gen * gen );
-  // Destructor
-  virtual ~StdMeshers_NumberOfLayers();
+    // Constructor
+    StdMeshers_NumberOfLayers(int hypId, int studyId, SMESH_Gen *gen);
+    // Destructor
+    virtual ~StdMeshers_NumberOfLayers();
 
-  // Sets <number of segments> parameter value
-  void SetNumberOfLayers(int numberOfLayers);
+    // Sets <number of segments> parameter value
+    void SetNumberOfLayers(int numberOfLayers);
 
-  // Returns <number of layers> parameter value
-  int GetNumberOfLayers() const;
+    // Returns <number of layers> parameter value
+    int GetNumberOfLayers() const;
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  friend std::ostream & operator <<(std::ostream & save, StdMeshers_NumberOfLayers & hyp);
-  friend std::istream & operator >>(std::istream & load, StdMeshers_NumberOfLayers & hyp);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    friend std::ostream &operator<<(std::ostream &save, StdMeshers_NumberOfLayers &hyp);
+    friend std::istream &operator>>(std::istream &load, StdMeshers_NumberOfLayers &hyp);
 
-  /*!
+    /*!
    * \brief Initialize parameters by the mesh built on the geometry
     * \param theMesh - the built mesh
     * \param theShape - the geometry of interest
@@ -72,17 +72,16 @@ public:
     *
     * Implementation does noting
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
 protected:
-  int _nbLayers;
+    int _nbLayers;
 };
 
 #endif
-

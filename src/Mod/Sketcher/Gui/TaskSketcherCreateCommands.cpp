@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QEvent>
+#include <QEvent>
 #endif
 
 #include "TaskSketcherCreateCommands.h"
@@ -38,7 +38,7 @@
 using namespace Gui::TaskView;
 
 TaskSketcherCreateCommands::TaskSketcherCreateCommands(QWidget *parent)
-    : TaskBox(Gui::BitmapFactory().pixmap("document-new"),tr("Appearance"),true, parent)
+    : TaskBox(Gui::BitmapFactory().pixmap("document-new"), tr("Appearance"), true, parent)
 {
     // we need a separate container widget to add all controls to
     //proxy = new QWidget(this);
@@ -74,18 +74,15 @@ void TaskSketcherCreateCommands::changeEvent(QEvent *e)
 
 /// @cond DOXERR
 void TaskSketcherCreateCommands::OnChange(Gui::SelectionSingleton::SubjectType &rCaller,
-                              Gui::SelectionSingleton::MessageType Reason)
+                                          Gui::SelectionSingleton::MessageType Reason)
 {
     Q_UNUSED(rCaller);
-    if (Reason.Type == SelectionChanges::AddSelection ||
-        Reason.Type == SelectionChanges::RmvSelection ||
-        Reason.Type == SelectionChanges::SetSelection ||
-        Reason.Type == SelectionChanges::ClrSelection) {
-    }
+    if (Reason.Type == SelectionChanges::AddSelection
+        || Reason.Type == SelectionChanges::RmvSelection
+        || Reason.Type == SelectionChanges::SetSelection
+        || Reason.Type == SelectionChanges::ClrSelection) {}
 }
 /// @endcond DOXERR
-
-
 
 
 #include "moc_TaskSketcherCreateCommands.cpp"

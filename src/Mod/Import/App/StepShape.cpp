@@ -23,34 +23,30 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #endif
 
 #include "StepShape.h"
 
-# include <STEPControl_Reader.hxx>
-# include <StepData_StepModel.hxx>
-# include <StepData_StepModel.hxx>
-# include <Interface_Static.hxx>
-# include <Message_Messenger.hxx>
-# include <Message_PrinterOStream.hxx>
-# include <Standard_Version.hxx>
+#include <STEPControl_Reader.hxx>
+#include <StepData_StepModel.hxx>
+#include <StepData_StepModel.hxx>
+#include <Interface_Static.hxx>
+#include <Message_Messenger.hxx>
+#include <Message_PrinterOStream.hxx>
+#include <Standard_Version.hxx>
 
-# include <Base/FileInfo.h>
-# include <Base/Exception.h>
+#include <Base/FileInfo.h>
+#include <Base/Exception.h>
 
 using namespace Import;
 
-StepShape::StepShape()
-{
-}
+StepShape::StepShape() {}
 
 
-StepShape::~StepShape()
-{
-}
+StepShape::~StepShape() {}
 
-int StepShape::read(const char* fileName)
+int StepShape::read(const char *fileName)
 {
     STEPControl_Reader aReader;
 
@@ -95,15 +91,15 @@ int StepShape::read(const char* fileName)
     model->DumpHeader(std::cout);
 #endif
 
-    for (int nent=1;nent<=model->NbEntities();nent++) {
-      Handle(Standard_Transient) entity=model->Entity(nent);
-      std::cout << "label entity " << nent << ":" ;
+    for (int nent = 1; nent <= model->NbEntities(); nent++) {
+        Handle(Standard_Transient) entity = model->Entity(nent);
+        std::cout << "label entity " << nent << ":";
 #if OCC_VERSION_HEX < 0x070401
-      model->PrintLabel(entity, msg);
+        model->PrintLabel(entity, msg);
 #else
-      model->PrintLabel(entity, std::cout);
+        model->PrintLabel(entity, std::cout);
 #endif
-      std::cout << ";"<< entity->DynamicType()->Name() << std::endl;
+        std::cout << ";" << entity->DynamicType()->Name() << std::endl;
     }
 
     return 0;

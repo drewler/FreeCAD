@@ -29,8 +29,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QHeaderView>
-# include <QPushButton>
+#include <QHeaderView>
+#include <QPushButton>
 #endif
 
 #include <App/Application.h>
@@ -40,17 +40,22 @@
 #include "MainWindow.h"
 
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 QByteArray toParamEntry(QString name)
 {
     name.replace(QString::fromLatin1(" "), QString::fromLatin1("_"));
     return name.toLatin1();
 }
 
-void DlgCheckableMessageBox::showMessage(const QString& header, const QString& message, bool check, const QString& checkText)
+void DlgCheckableMessageBox::showMessage(const QString &header, const QString &message, bool check,
+                                         const QString &checkText)
 {
-    bool checked = App::GetApplication().GetParameterGroupByPath(QByteArray("User parameter:BaseApp/CheckMessages"))->GetBool(toParamEntry(header));
+    bool checked = App::GetApplication()
+                       .GetParameterGroupByPath(QByteArray("User parameter:BaseApp/CheckMessages"))
+                       ->GetBool(toParamEntry(header));
 
     if (!checked) {
         auto mb = new DlgCheckableMessageBox(Gui::getMainWindow());
@@ -65,12 +70,15 @@ void DlgCheckableMessageBox::showMessage(const QString& header, const QString& m
         mb->show();
     }
 }
-void DlgCheckableMessageBox::showMessage(const QString& header, const QString& message, const QString& prefPath, const QString& paramEntry,
-                                         bool entryDefault, bool check, const QString& checkText)
+void DlgCheckableMessageBox::showMessage(const QString &header, const QString &message,
+                                         const QString &prefPath, const QString &paramEntry,
+                                         bool entryDefault, bool check, const QString &checkText)
 {
-    bool checked = App::GetApplication().GetParameterGroupByPath(prefPath.toLatin1())->GetBool(paramEntry.toLatin1(), entryDefault);
+    bool checked = App::GetApplication()
+                       .GetParameterGroupByPath(prefPath.toLatin1())
+                       ->GetBool(paramEntry.toLatin1(), entryDefault);
 
-    if(checked == entryDefault) {
+    if (checked == entryDefault) {
         auto mb = new Gui::Dialog::DlgCheckableMessageBox(Gui::getMainWindow());
         mb->setWindowTitle(header);
         mb->setIconPixmap(QMessageBox::standardIcon(QMessageBox::Warning));
@@ -92,10 +100,9 @@ struct DlgCheckableMessageBoxPrivate {
     QAbstractButton *clickedButton;
 };
 
-DlgCheckableMessageBox::DlgCheckableMessageBox(QWidget *parent) :
-    QDialog(parent),
-    m_d(new DlgCheckableMessageBoxPrivate),
-    prefPath(QLatin1String("User parameter:BaseApp/CheckMessages"))
+DlgCheckableMessageBox::DlgCheckableMessageBox(QWidget *parent)
+    : QDialog(parent), m_d(new DlgCheckableMessageBoxPrivate),
+      prefPath(QLatin1String("User parameter:BaseApp/CheckMessages"))
 {
     setModal(true);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -103,60 +110,42 @@ DlgCheckableMessageBox::DlgCheckableMessageBox(QWidget *parent) :
     m_d->ui.pixmapLabel->setVisible(false);
     connect(m_d->ui.buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(m_d->ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-    connect(m_d->ui.buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(slotClicked(QAbstractButton*)));
+    connect(m_d->ui.buttonBox, SIGNAL(clicked(QAbstractButton *)), this,
+            SLOT(slotClicked(QAbstractButton *)));
 }
 
-DlgCheckableMessageBox::~DlgCheckableMessageBox()
-{
-    delete m_d;
-}
+DlgCheckableMessageBox::~DlgCheckableMessageBox() { delete m_d; }
 
-void DlgCheckableMessageBox::setPrefEntry(const QString& entry)
+void DlgCheckableMessageBox::setPrefEntry(const QString &entry)
 {
     paramEntry = toParamEntry(entry);
-    bool checked = App::GetApplication().GetParameterGroupByPath(prefPath.toLatin1())->GetBool(paramEntry);
+    bool checked =
+        App::GetApplication().GetParameterGroupByPath(prefPath.toLatin1())->GetBool(paramEntry);
     setChecked(checked);
 }
 
-void DlgCheckableMessageBox::setPrefPath(const QString& path)
-{
-    prefPath = path;
-}
+void DlgCheckableMessageBox::setPrefPath(const QString &path) { prefPath = path; }
 
-void DlgCheckableMessageBox::slotClicked(QAbstractButton *b)
-{
-    m_d->clickedButton = b;
-}
+void DlgCheckableMessageBox::slotClicked(QAbstractButton *b) { m_d->clickedButton = b; }
 
-QAbstractButton *DlgCheckableMessageBox::clickedButton() const
-{
-    return m_d->clickedButton;
-}
+QAbstractButton *DlgCheckableMessageBox::clickedButton() const { return m_d->clickedButton; }
 
 QDialogButtonBox::StandardButton DlgCheckableMessageBox::clickedStandardButton() const
 {
-    if (m_d->clickedButton)
-        return m_d->ui.buttonBox->standardButton(m_d->clickedButton);
+    if (m_d->clickedButton) return m_d->ui.buttonBox->standardButton(m_d->clickedButton);
     return QDialogButtonBox::NoButton;
 }
 
-QString DlgCheckableMessageBox::text() const
-{
-    return m_d->ui.messageLabel->text();
-}
+QString DlgCheckableMessageBox::text() const { return m_d->ui.messageLabel->text(); }
 
-void DlgCheckableMessageBox::setText(const QString &t)
-{
-    m_d->ui.messageLabel->setText(t);
-}
+void DlgCheckableMessageBox::setText(const QString &t) { m_d->ui.messageLabel->setText(t); }
 
 QPixmap DlgCheckableMessageBox::iconPixmap() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5,15,0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     return m_d->ui.pixmapLabel->pixmap(Qt::ReturnByValue);
 #else
-    if (const QPixmap *p = m_d->ui.pixmapLabel->pixmap())
-        return QPixmap(*p);
+    if (const QPixmap *p = m_d->ui.pixmapLabel->pixmap()) return QPixmap(*p);
     return QPixmap();
 #endif
 }
@@ -167,25 +156,13 @@ void DlgCheckableMessageBox::setIconPixmap(const QPixmap &p)
     m_d->ui.pixmapLabel->setVisible(!p.isNull());
 }
 
-bool DlgCheckableMessageBox::isChecked() const
-{
-    return m_d->ui.checkBox->isChecked();
-}
+bool DlgCheckableMessageBox::isChecked() const { return m_d->ui.checkBox->isChecked(); }
 
-void DlgCheckableMessageBox::setChecked(bool s)
-{
-    m_d->ui.checkBox->setChecked(s);
-}
+void DlgCheckableMessageBox::setChecked(bool s) { m_d->ui.checkBox->setChecked(s); }
 
-QString DlgCheckableMessageBox::checkBoxText() const
-{
-    return m_d->ui.checkBox->text();
-}
+QString DlgCheckableMessageBox::checkBoxText() const { return m_d->ui.checkBox->text(); }
 
-void DlgCheckableMessageBox::setCheckBoxText(const QString &t)
-{
-    m_d->ui.checkBox->setText(t);
-}
+void DlgCheckableMessageBox::setCheckBoxText(const QString &t) { m_d->ui.checkBox->setText(t); }
 
 QDialogButtonBox::StandardButtons DlgCheckableMessageBox::standardButtons() const
 {
@@ -201,8 +178,7 @@ QDialogButtonBox::StandardButton DlgCheckableMessageBox::defaultButton() const
 {
     Q_FOREACH (QAbstractButton *b, m_d->ui.buttonBox->buttons())
         if (auto pb = qobject_cast<QPushButton *>(b))
-            if (pb->isDefault())
-               return m_d->ui.buttonBox->standardButton(pb);
+            if (pb->isDefault()) return m_d->ui.buttonBox->standardButton(pb);
     return QDialogButtonBox::NoButton;
 }
 
@@ -216,26 +192,27 @@ void DlgCheckableMessageBox::setDefaultButton(QDialogButtonBox::StandardButton s
 
 void DlgCheckableMessageBox::accept()
 {
-    if(!paramEntry.isEmpty())
-        App::GetApplication().GetParameterGroupByPath(prefPath.toLatin1())->SetBool(paramEntry,isChecked());
+    if (!paramEntry.isEmpty())
+        App::GetApplication()
+            .GetParameterGroupByPath(prefPath.toLatin1())
+            ->SetBool(paramEntry, isChecked());
     QDialog::accept();
 }
 
 void DlgCheckableMessageBox::reject()
 {
-    if(!paramEntry.isEmpty())
-        App::GetApplication().GetParameterGroupByPath(prefPath.toLatin1())->SetBool(paramEntry,isChecked());
+    if (!paramEntry.isEmpty())
+        App::GetApplication()
+            .GetParameterGroupByPath(prefPath.toLatin1())
+            ->SetBool(paramEntry, isChecked());
     QDialog::reject();
 }
 
 QDialogButtonBox::StandardButton
-        DlgCheckableMessageBox::question(QWidget *parent,
-                                      const QString &title,
-                                      const QString &question,
-                                      const QString &checkBoxText,
-                                      bool *checkBoxSetting,
-                                      QDialogButtonBox::StandardButtons buttons,
-                                      QDialogButtonBox::StandardButton defaultButton)
+DlgCheckableMessageBox::question(QWidget *parent, const QString &title, const QString &question,
+                                 const QString &checkBoxText, bool *checkBoxSetting,
+                                 QDialogButtonBox::StandardButtons buttons,
+                                 QDialogButtonBox::StandardButton defaultButton)
 {
     DlgCheckableMessageBox mb(parent);
     mb.setWindowTitle(title);
@@ -250,7 +227,8 @@ QDialogButtonBox::StandardButton
     return mb.clickedStandardButton();
 }
 
-QMessageBox::StandardButton DlgCheckableMessageBox::dialogButtonBoxToMessageBoxButton(QDialogButtonBox::StandardButton db)
+QMessageBox::StandardButton
+DlgCheckableMessageBox::dialogButtonBoxToMessageBoxButton(QDialogButtonBox::StandardButton db)
 {
     return static_cast<QMessageBox::StandardButton>(int(db));
 }

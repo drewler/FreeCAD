@@ -21,8 +21,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM ConvexHull1 : public ConvexHull<Real>
+template<class Real> class WM4_FOUNDATION_ITEM ConvexHull1: public ConvexHull<Real>
 {
 public:
     // The input to the constructor is the array of vertices you want to sort.
@@ -30,17 +29,17 @@ public:
     // bOwner to 'true'.  Otherwise, you own the array and must delete it
     // yourself.  TO DO:  The computation type is currently ignored by this
     // class.  Add support for the various types later.
-    ConvexHull1 (int iVertexQuantity, Real* afVertex, Real fEpsilon,
-        bool bOwner, Query::Type eQueryType);
-    virtual ~ConvexHull1 ();
+    ConvexHull1(int iVertexQuantity, Real *afVertex, Real fEpsilon, bool bOwner,
+                Query::Type eQueryType);
+    virtual ~ConvexHull1();
 
     // The input vertex array.
-    const Real* GetVertices () const;
+    const Real *GetVertices() const;
 
     // Support for streaming to/from disk.
-    ConvexHull1 (const char* acFilename);
-    bool Load (const char* acFilename);
-    bool Save (const char* acFilename) const;
+    ConvexHull1(const char *acFilename);
+    bool Load(const char *acFilename);
+    bool Save(const char *acFilename) const;
 
 private:
     using ConvexHull<Real>::m_iVertexQuantity;
@@ -50,7 +49,7 @@ private:
     using ConvexHull<Real>::m_fEpsilon;
     using ConvexHull<Real>::m_bOwner;
 
-    Real* m_afVertex;
+    Real *m_afVertex;
 
     class WM4_FOUNDATION_ITEM SortedVertex
     {
@@ -58,16 +57,13 @@ private:
         Real Value;
         int Index;
 
-        bool operator< (const SortedVertex& rkProj) const
-        {
-            return Value < rkProj.Value;
-        }
+        bool operator<(const SortedVertex &rkProj) const { return Value < rkProj.Value; }
     };
 };
 
 typedef ConvexHull1<float> ConvexHull1f;
 typedef ConvexHull1<double> ConvexHull1d;
 
-}
+} // namespace Wm4
 
 #endif

@@ -45,37 +45,45 @@ class SoEvent;
 class QKeyEvent;
 class QFocusEvent;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
 class QuarterWidget;
 
-class QUARTER_DLL_API InteractionMode : public QObject {
-  Q_OBJECT
+class QUARTER_DLL_API InteractionMode: public QObject
+{
+    Q_OBJECT
 public:
-  InteractionMode(QuarterWidget * quarterwidget);
-  virtual ~InteractionMode();
+    InteractionMode(QuarterWidget *quarterwidget);
+    virtual ~InteractionMode();
 
-  void setEnabled(bool yes);
-  bool enabled() const;
+    void setEnabled(bool yes);
+    bool enabled() const;
 
-  void setOn(bool on);
-  bool on() const;
+    void setOn(bool on);
+    bool on() const;
 
 protected:
-  virtual bool eventFilter(QObject *, QEvent * event);
+    virtual bool eventFilter(QObject *, QEvent *event);
 
 private:
-  bool keyPressEvent(QKeyEvent * event);
-  bool keyReleaseEvent(QKeyEvent * event);
-  bool focusOutEvent(QFocusEvent * event);
+    bool keyPressEvent(QKeyEvent *event);
+    bool keyReleaseEvent(QKeyEvent *event);
+    bool focusOutEvent(QFocusEvent *event);
 
-  QCursor prevcursor;
-  QuarterWidget * quarterwidget;
-  bool altkeydown;
-  SoEventManager::NavigationState prevnavstate;
-  bool isenabled;
+    QCursor prevcursor;
+    QuarterWidget *quarterwidget;
+    bool altkeydown;
+    SoEventManager::NavigationState prevnavstate;
+    bool isenabled;
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_INTERACTIONMODE_H

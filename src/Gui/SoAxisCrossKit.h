@@ -36,8 +36,10 @@ class SoState;
 class SbColor;
 class SbVec2s;
 
-namespace Gui {
-class GuiExport SoShapeScale : public SoBaseKit {
+namespace Gui
+{
+class GuiExport SoShapeScale: public SoBaseKit
+{
     using inherited = SoBaseKit;
 
     SO_KIT_HEADER(SoShapeScale);
@@ -54,11 +56,12 @@ public:
     SoSFFloat scaleFactor;
 
 protected:
-    virtual void GLRender(SoGLRenderAction * action);
+    virtual void GLRender(SoGLRenderAction *action);
     virtual ~SoShapeScale();
 };
 
-class GuiExport SoAxisCrossKit : public SoBaseKit {
+class GuiExport SoAxisCrossKit: public SoBaseKit
+{
     using inherited = SoBaseKit;
 
     SO_KIT_HEADER(SoAxisCrossKit);
@@ -76,8 +79,8 @@ public:
     // Overrides default method. All the parts are shapeKits,
     // so this node will not affect the state.
     virtual SbBool affectsState() const;
-    virtual void addWriteReference(SoOutput * out, SbBool isfromfield = false);
-    virtual void getBoundingBox(SoGetBoundingBoxAction * action);
+    virtual void addWriteReference(SoOutput *out, SbBool isfromfield = false);
+    virtual void getBoundingBox(SoGetBoundingBoxAction *action);
 
     static void initClass();
 
@@ -87,7 +90,8 @@ private:
     virtual ~SoAxisCrossKit();
 };
 
-class GuiExport SoRegPoint : public SoShape {
+class GuiExport SoRegPoint: public SoShape
+{
     using inherited = SoShape;
 
     SO_NODE_HEADER(SoRegPoint);
@@ -96,7 +100,7 @@ public:
     static void initClass();
     SoRegPoint();
 
-    void notify(SoNotList * node);
+    void notify(SoNotList *node);
 
     SoSFVec3f base;
     SoSFVec3f normal;
@@ -111,7 +115,7 @@ protected:
     virtual void generatePrimitives(SoAction *action);
 
 private:
-    SoSeparator* root;
+    SoSeparator *root;
 };
 
 } // namespace Gui

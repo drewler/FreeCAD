@@ -45,7 +45,8 @@ namespace Attacher
 class AttachEngine;
 
 //Attention! The numbers associated to the modes are permanent, because they are what get written into files.
-enum eMapMode {
+enum eMapMode
+{
     mmDeactivated,
     mmTranslate,
     mmObjectXY,
@@ -106,8 +107,8 @@ enum eMapMode {
     mmOYZ,
     mmOYX,
 
-    mmDummy_NumberOfModes//a value useful to check the validity of mode value
-};//see also eMapModeStrings[] definition in .cpp
+    mmDummy_NumberOfModes //a value useful to check the validity of mode value
+};                        //see also eMapModeStrings[] definition in .cpp
 
 
 /**
@@ -115,53 +116,58 @@ enum eMapMode {
  * also AttachEngine::eRefTypeStrings, AttachEngine::getShapeType(),
  * AttachEngine::downgradeType(), AttacherTexts.cpp/getShTypeText()
  */
-enum eRefType {
+enum eRefType
+{
     //topo             //ranks: (number of times the type is downgradable)
-    rtAnything,        //0
-    rtVertex,          //1
-    rtEdge,            //1
-    rtFace,            //1
+    rtAnything, //0
+    rtVertex,   //1
+    rtEdge,     //1
+    rtFace,     //1
     //edges:
-    rtLine,            //2
-    rtCurve,           //2
-    rtCircle,          //3
-    rtConic,           //3
-    rtEllipse,         //4
-    rtParabola,        //4
-    rtHyperbola,       //4
+    rtLine,      //2
+    rtCurve,     //2
+    rtCircle,    //3
+    rtConic,     //3
+    rtEllipse,   //4
+    rtParabola,  //4
+    rtHyperbola, //4
     //faces:
-    rtFlatFace,        //2
-    rtSphericalFace,   //2//flatface, shericalface are also surfaces of revolution, but the axis isn't defined.
+    rtFlatFace, //2
+    rtSphericalFace, //2//flatface, shericalface are also surfaces of revolution, but the axis isn't defined.
     rtSurfaceRev,      //2
     rtCylindricalFace, //3
     rtToroidalFace,    //3
     rtConicalFace,     //3
     //shapes:
-    rtPart,            //1
-    rtSolid,           //2
-    rtWire,            //2
-    rtDummy_numberOfShapeTypes,//a value useful to check the validity of value
-    rtFlagHasPlacement = 0x0100 //indicates that the linked shape is a whole FreeCAD object that has placement available.
+    rtPart,                     //1
+    rtSolid,                    //2
+    rtWire,                     //2
+    rtDummy_numberOfShapeTypes, //a value useful to check the validity of value
+    rtFlagHasPlacement =
+        0x0100 //indicates that the linked shape is a whole FreeCAD object that has placement available.
 };
 
 
-using refTypeString = std::vector<eRefType>; //a sequence of ref types, according to Support contents for example
-using refTypeStringList = std::vector<refTypeString>; //a set of type strings, defines which selection sets are supported by a certain mode
+using refTypeString =
+    std::vector<eRefType>; //a sequence of ref types, according to Support contents for example
+using refTypeStringList = std::vector<
+    refTypeString>; //a set of type strings, defines which selection sets are supported by a certain mode
 
 
 /**
  * @brief The SuggestResult struct is a container for output information of AttachEngine mode suggesting routine.
  */
-struct SuggestResult{
+struct SuggestResult {
     /**
      * @brief message contains overall verdict of suggestor on current reference set
      */
-    enum eSuggestResult{
-        srOK, //references are valid for at least one mode
+    enum eSuggestResult
+    {
+        srOK,         //references are valid for at least one mode
         srLinkBroken, //failed to resolve out some of current references. Exception info is stored in SuggestResult::error.
         srUnexpectedError,
-        srNoModesFit,//none of the available mapping modes accepts the set of topological type
-        srIncompatibleGeometry,//there is a mode that could fit, but geometry is wrong (e.g. a line is required, but a curve was passed).
+        srNoModesFit, //none of the available mapping modes accepts the set of topological type
+        srIncompatibleGeometry, //there is a mode that could fit, but geometry is wrong (e.g. a line is required, but a curve was passed).
     };
     eSuggestResult message;
 
@@ -210,20 +216,20 @@ struct SuggestResult{
  * hints and so on. It can be used separately, without deriving from
  * AttachableObject.
  */
-class PartExport AttachEngine : public Base::BaseClass
+class PartExport AttachEngine: public Base::BaseClass
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
+
 public: //methods
     AttachEngine();
-    virtual void setUp(const App::PropertyLinkSubList &references,
-                      eMapMode mapMode = mmDeactivated,
-                      bool mapReverse = false,
-                      double attachParameter = 0.0,
-                      double surfU = 0.0, double surfV = 0.0,
-                      const Base::Placement &attachmentOffset = Base::Placement());
+    virtual void setUp(const App::PropertyLinkSubList &references, eMapMode mapMode = mmDeactivated,
+                       bool mapReverse = false, double attachParameter = 0.0, double surfU = 0.0,
+                       double surfV = 0.0,
+                       const Base::Placement &attachmentOffset = Base::Placement());
     virtual void setUp(const AttachEngine &another);
-    virtual AttachEngine* copy() const = 0;
-    virtual Base::Placement calculateAttachedPlacement(const Base::Placement& origPlacement) const = 0;
+    virtual AttachEngine *copy() const = 0;
+    virtual Base::Placement
+    calculateAttachedPlacement(const Base::Placement &origPlacement) const = 0;
 
     /**
      * @brief placementFactory calculates placement from Z axis direction,
@@ -260,15 +266,11 @@ public: //methods
      *
      * @return the resulting placement. ReverseXY property of Attacher will be automatically applied.
      */
-     Base::Placement placementFactory(const gp_Dir &ZAxis,
-                                      gp_Vec XAxis,
-                                      gp_Pnt Origin,
-                                      gp_Pnt refOrg = gp_Pnt(),
-                                      bool useRefOrg_Line = false,
-                                      bool useRefOrg_Plane = false,
-                                      bool makeYVertical = false,
-                                      bool makeLegacyFlatFaceOrientation = false,
-                                      Base::Placement* placeOfRef = nullptr) const;
+    Base::Placement placementFactory(const gp_Dir &ZAxis, gp_Vec XAxis, gp_Pnt Origin,
+                                     gp_Pnt refOrg = gp_Pnt(), bool useRefOrg_Line = false,
+                                     bool useRefOrg_Plane = false, bool makeYVertical = false,
+                                     bool makeLegacyFlatFaceOrientation = false,
+                                     Base::Placement *placeOfRef = nullptr) const;
 
     /**
      * @brief suggestMapModes is the procedure that knows everything about
@@ -286,9 +288,9 @@ public: //methods
      */
     void EnableAllSupportedModes();
 
-    ~AttachEngine() override{};
+    ~AttachEngine() override {};
 
-public://helper functions that may be useful outside of the class
+public: //helper functions that may be useful outside of the class
     /**
      * @brief getShapeType by shape. Will never set rtFlagHasPlacement.
      * @param sh
@@ -302,8 +304,7 @@ public://helper functions that may be useful outside of the class
      * @param subshape (input). Can be empty string (then, whole object will be used for shape type testing)
      * @return
      */
-    static eRefType getShapeType(const App::DocumentObject* obj,
-                                 const std::string &subshape);
+    static eRefType getShapeType(const App::DocumentObject *obj, const std::string &subshape);
 
     /**
      * @brief downgradeType converts a more-specific type into a less-specific
@@ -347,18 +348,18 @@ public://helper functions that may be useful outside of the class
 
     static eRefType getRefTypeByName(const std::string &typeName);
 
-    static GProp_GProps getInertialPropsOfShape(const std::vector<const TopoDS_Shape*> &shapes);
+    static GProp_GProps getInertialPropsOfShape(const std::vector<const TopoDS_Shape *> &shapes);
 
     /**
      * @brief verifyReferencesAreSafe: checks if pointers in references still
      * point to objects contained in open documents. This guarantees the links
      * are valid. Throws Base::Exception if invalid links are found.
      */
-    static void verifyReferencesAreSafe(const App::PropertyLinkSubList& references);
+    static void verifyReferencesAreSafe(const App::PropertyLinkSubList &references);
 
 public: //enums
-    static const char* eMapModeStrings[];
-    static const char* eRefTypeStrings[];
+    static const char *eMapModeStrings[];
+    static const char *eRefTypeStrings[];
 
 
 public: //members
@@ -377,28 +378,33 @@ public: //members
      */
     std::vector<bool> modeEnabled;
 
-    std::vector<refTypeStringList> modeRefTypes; //a complete data structure, containing info on which modes support what selection
+    std::vector<refTypeStringList>
+        modeRefTypes; //a complete data structure, containing info on which modes support what selection
 
 protected:
-    refTypeString cat(eRefType rt1){
+    refTypeString cat(eRefType rt1)
+    {
         refTypeString ret;
         ret.push_back(rt1);
         return ret;
     }
-    refTypeString cat(eRefType rt1, eRefType rt2){
+    refTypeString cat(eRefType rt1, eRefType rt2)
+    {
         refTypeString ret;
         ret.push_back(rt1);
         ret.push_back(rt2);
         return ret;
     }
-    refTypeString cat(eRefType rt1, eRefType rt2, eRefType rt3){
+    refTypeString cat(eRefType rt1, eRefType rt2, eRefType rt3)
+    {
         refTypeString ret;
         ret.push_back(rt1);
         ret.push_back(rt2);
         ret.push_back(rt3);
         return ret;
     }
-    refTypeString cat(eRefType rt1, eRefType rt2, eRefType rt3, eRefType rt4){
+    refTypeString cat(eRefType rt1, eRefType rt2, eRefType rt3, eRefType rt4)
+    {
         refTypeString ret;
         ret.push_back(rt1);
         ret.push_back(rt2);
@@ -406,66 +412,71 @@ protected:
         ret.push_back(rt4);
         return ret;
     }
-    static void readLinks(const App::PropertyLinkSubList &references, std::vector<App::GeoFeature *> &geofs,
-                          std::vector<const TopoDS_Shape*>& shapes, std::vector<TopoDS_Shape> &storage,
-                          std::vector<eRefType> &types);
+    static void readLinks(const App::PropertyLinkSubList &references,
+                          std::vector<App::GeoFeature *> &geofs,
+                          std::vector<const TopoDS_Shape *> &shapes,
+                          std::vector<TopoDS_Shape> &storage, std::vector<eRefType> &types);
 
     static void throwWrongMode(eMapMode mmode);
-
 };
 
 
-class PartExport AttachEngine3D : public AttachEngine
+class PartExport AttachEngine3D: public AttachEngine
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
+
 public:
     AttachEngine3D();
-    AttachEngine3D* copy() const override;
-    Base::Placement calculateAttachedPlacement(const Base::Placement& origPlacement) const override;
+    AttachEngine3D *copy() const override;
+    Base::Placement calculateAttachedPlacement(const Base::Placement &origPlacement) const override;
+
 private:
     double calculateFoldAngle(gp_Vec axA, gp_Vec axB, gp_Vec edA, gp_Vec edB) const;
 };
 
 //attacher specialized for datum planes
-class PartExport AttachEnginePlane : public AttachEngine
+class PartExport AttachEnginePlane: public AttachEngine
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
+
 public:
     AttachEnginePlane();
-    AttachEnginePlane* copy() const override;
-    Base::Placement calculateAttachedPlacement(const Base::Placement& origPlacement) const override;
+    AttachEnginePlane *copy() const override;
+    Base::Placement calculateAttachedPlacement(const Base::Placement &origPlacement) const override;
 };
 
 //attacher specialized for datum lines
-class PartExport AttachEngineLine : public AttachEngine
+class PartExport AttachEngineLine: public AttachEngine
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
+
 public:
     AttachEngineLine();
-    AttachEngineLine* copy() const override;
-    Base::Placement calculateAttachedPlacement(const Base::Placement& origPlacement) const override;
+    AttachEngineLine *copy() const override;
+    Base::Placement calculateAttachedPlacement(const Base::Placement &origPlacement) const override;
 };
 
 //attacher specialized for datum points
-class PartExport AttachEnginePoint : public AttachEngine
+class PartExport AttachEnginePoint: public AttachEngine
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
+
 public:
     AttachEnginePoint();
-    AttachEnginePoint* copy() const override;
-    Base::Placement calculateAttachedPlacement(const Base::Placement& origPlacement) const override;
+    AttachEnginePoint *copy() const override;
+    Base::Placement calculateAttachedPlacement(const Base::Placement &origPlacement) const override;
 
 private:
-    gp_Pnt getProximityPoint(eMapMode mode, const TopoDS_Shape& s1, const TopoDS_Shape& s2) const;
+    gp_Pnt getProximityPoint(eMapMode mode, const TopoDS_Shape &s1, const TopoDS_Shape &s2) const;
 };
 
 //====================================================================
 
-class ExceptionCancel : public Base::Exception
+class ExceptionCancel: public Base::Exception
 {
 public:
-    ExceptionCancel(){}
-    explicit ExceptionCancel(char* msg){this->setMessage(msg);}
+    ExceptionCancel() {}
+    explicit ExceptionCancel(char *msg) { this->setMessage(msg); }
     ~ExceptionCancel() throw() override {}
 };
 

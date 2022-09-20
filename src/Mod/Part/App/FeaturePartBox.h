@@ -31,14 +31,14 @@
 namespace Part
 {
 
-class PartExport Box :public Part::Primitive
+class PartExport Box: public Part::Primitive
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::Box);
 
 public:
     Box();
 
-    App::PropertyLength Length,Height,Width;
+    App::PropertyLength Length, Height, Width;
 
 
     /** @name methods override feature */
@@ -47,13 +47,12 @@ public:
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderBox";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderBox"; }
+
 protected:
     void Restore(Base::XMLReader &reader) override;
     /// get called by the container when a property has changed
-    void onChanged (const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     //@}
 };
 

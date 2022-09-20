@@ -39,23 +39,31 @@
 #include <X11/Xlib.h>
 #endif
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
-class NativeEvent : public QEvent {
+class NativeEvent: public QEvent
+{
 public:
 #ifdef HAVE_SPACENAV_LIB
-  NativeEvent(XEvent * nativeevent);
-  XEvent * getEvent() const;
-#else // !HAVE_SPACENAV_LIB
-  NativeEvent();
+    NativeEvent(XEvent *nativeevent);
+    XEvent *getEvent() const;
+#else  // !HAVE_SPACENAV_LIB
+    NativeEvent();
 #endif // !HAVE_SPACENAV_LIB
 
-  virtual ~NativeEvent();
+    virtual ~NativeEvent();
 
 private:
-  void * rawevent;
+    void *rawevent;
 };
 
-}}}
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // !QUARTER_NATIVEEVENT_H

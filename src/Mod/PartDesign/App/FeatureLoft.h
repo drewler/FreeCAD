@@ -29,7 +29,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Loft : public ProfileBased
+class PartDesignExport Loft: public ProfileBased
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Loft);
 
@@ -45,30 +45,33 @@ public:
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
-        return "PartDesignGui::ViewProviderLoft";
-    }
+    const char *getViewProviderName() const override { return "PartDesignGui::ViewProviderLoft"; }
     //@}
 
 protected:
     // handle changed property
-    void handleChangedPropertyType(Base::XMLReader& reader, const char* TypeName, App::Property* prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
 private:
     //static const char* TypeEnums[];
     //static const char* SideEnums[];
 };
 
-class PartDesignExport AdditiveLoft : public Loft {
+class PartDesignExport AdditiveLoft: public Loft
+{
 
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::AdditiveLoft);
+
 public:
     AdditiveLoft();
 };
 
-class PartDesignExport SubtractiveLoft : public Loft {
+class PartDesignExport SubtractiveLoft: public Loft
+{
 
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::SubtractiveLoft);
+
 public:
     SubtractiveLoft();
 };

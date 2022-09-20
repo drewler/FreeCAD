@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Python.h>
+#include <Python.h>
 #endif
 
 #include <Base/Console.h>
@@ -34,8 +34,9 @@
 #include <CXX/Objects.hxx>
 
 
-namespace _TEMPLATE_ {
-class Module : public Py::ExtensionModule<Module>
+namespace _TEMPLATE_
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("_TEMPLATE_")
@@ -48,10 +49,7 @@ public:
 private:
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 
 } // namespace _TEMPLATE_
@@ -63,7 +61,7 @@ PyMOD_INIT_FUNC(_TEMPLATE_)
     // ADD YOUR CODE HERE
     //
     //
-    PyObject* mod = _TEMPLATE_::initModule();
+    PyObject *mod = _TEMPLATE_::initModule();
     Base::Console().Log("Loading _TEMPLATE_ module... done\n");
     PyMOD_Return(mod);
 }

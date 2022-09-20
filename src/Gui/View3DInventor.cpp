@@ -23,32 +23,32 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <string>
-# include <QAction>
-# include <QApplication>
-# include <QKeyEvent>
-# include <QEvent>
-# include <QDropEvent>
-# include <QDragEnterEvent>
-# include <QLayout>
-# include <QMdiSubWindow>
-# include <QMessageBox>
-# include <QMimeData>
-# include <QPainter>
-# include <QPrinter>
-# include <QPrintDialog>
-# include <QPrintPreviewDialog>
-# include <QStackedWidget>
-# include <QTimer>
-# include <QUrl>
-# include <QWindow>
-# include <Inventor/actions/SoGetPrimitiveCountAction.h>
-# include <Inventor/fields/SoSFColor.h>
-# include <Inventor/fields/SoSFString.h>
-# include <Inventor/nodes/SoDirectionalLight.h>
-# include <Inventor/nodes/SoOrthographicCamera.h>
-# include <Inventor/nodes/SoPerspectiveCamera.h>
-# include <Inventor/nodes/SoSeparator.h>
+#include <string>
+#include <QAction>
+#include <QApplication>
+#include <QKeyEvent>
+#include <QEvent>
+#include <QDropEvent>
+#include <QDragEnterEvent>
+#include <QLayout>
+#include <QMdiSubWindow>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QPainter>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QPrintPreviewDialog>
+#include <QStackedWidget>
+#include <QTimer>
+#include <QUrl>
+#include <QWindow>
+#include <Inventor/actions/SoGetPrimitiveCountAction.h>
+#include <Inventor/fields/SoSFColor.h>
+#include <Inventor/fields/SoSFString.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoOrthographicCamera.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoSeparator.h>
 #endif
 
 #include <App/Document.h>
@@ -73,19 +73,19 @@
 
 using namespace Gui;
 
-void GLOverlayWidget::paintEvent(QPaintEvent*)
+void GLOverlayWidget::paintEvent(QPaintEvent *)
 {
     QPainter paint(this);
-    paint.drawImage(0,0,image);
+    paint.drawImage(0, 0, image);
     paint.end();
 }
 
 /* TRANSLATOR Gui::View3DInventor */
 
-TYPESYSTEM_SOURCE_ABSTRACT(Gui::View3DInventor,Gui::MDIView)
+TYPESYSTEM_SOURCE_ABSTRACT(Gui::View3DInventor, Gui::MDIView)
 
-View3DInventor::View3DInventor(Gui::Document* pcDocument, QWidget* parent,
-                               const QtGLWidget* sharewidget, Qt::WindowFlags wflags)
+View3DInventor::View3DInventor(Gui::Document *pcDocument, QWidget *parent,
+                               const QtGLWidget *sharewidget, Qt::WindowFlags wflags)
     : MDIView(pcDocument, parent, wflags), _viewerPy(nullptr)
 {
     stack = new QStackedWidget(this);
@@ -98,8 +98,8 @@ View3DInventor::View3DInventor(Gui::Document* pcDocument, QWidget* parent,
     hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
     hGrp->Attach(this);
 
-    hGrpNavi =
-        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/NaviCube");
+    hGrpNavi = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/NaviCube");
     hGrpNavi->Attach(this);
 
     //anti-aliasing settings
@@ -116,13 +116,11 @@ View3DInventor::View3DInventor(Gui::Document* pcDocument, QWidget* parent,
         smoothing = true;
     }
 
-    if (glformat)
-        _viewer = new View3DInventorViewer(f, this, sharewidget);
+    if (glformat) _viewer = new View3DInventorViewer(f, this, sharewidget);
     else
         _viewer = new View3DInventorViewer(this, sharewidget);
 
-    if (smoothing)
-        _viewer->getSoRenderManager()->getGLRenderAction()->setSmoothing(true);
+    if (smoothing) _viewer->getSoRenderManager()->getGLRenderAction()->setSmoothing(true);
 
     // create the inventor widget and set the defaults
     _viewer->setDocument(this->_pcDocument);
@@ -136,39 +134,39 @@ View3DInventor::View3DInventor(Gui::Document* pcDocument, QWidget* parent,
     setCentralWidget(stack);
 
     // apply the user settings
-    OnChange(*hGrp,"EyeDistance");
-    OnChange(*hGrp,"CornerCoordSystem");
-    OnChange(*hGrp,"CornerCoordSystemSize");
-    OnChange(*hGrp,"ShowAxisCross");
-    OnChange(*hGrp,"UseAutoRotation");
-    OnChange(*hGrp,"Gradient");
-    OnChange(*hGrp,"BackgroundColor");
-    OnChange(*hGrp,"BackgroundColor2");
-    OnChange(*hGrp,"BackgroundColor3");
-    OnChange(*hGrp,"BackgroundColor4");
-    OnChange(*hGrp,"UseBackgroundColorMid");
-    OnChange(*hGrp,"ShowFPS");
-    OnChange(*hGrp,"ShowNaviCube");
+    OnChange(*hGrp, "EyeDistance");
+    OnChange(*hGrp, "CornerCoordSystem");
+    OnChange(*hGrp, "CornerCoordSystemSize");
+    OnChange(*hGrp, "ShowAxisCross");
+    OnChange(*hGrp, "UseAutoRotation");
+    OnChange(*hGrp, "Gradient");
+    OnChange(*hGrp, "BackgroundColor");
+    OnChange(*hGrp, "BackgroundColor2");
+    OnChange(*hGrp, "BackgroundColor3");
+    OnChange(*hGrp, "BackgroundColor4");
+    OnChange(*hGrp, "UseBackgroundColorMid");
+    OnChange(*hGrp, "ShowFPS");
+    OnChange(*hGrp, "ShowNaviCube");
     OnChange(*hGrpNavi, "CornerNaviCube");
-    OnChange(*hGrp,"UseVBO");
-    OnChange(*hGrp,"RenderCache");
-    OnChange(*hGrp,"Orthographic");
-    OnChange(*hGrp,"HeadlightColor");
-    OnChange(*hGrp,"HeadlightDirection");
-    OnChange(*hGrp,"HeadlightIntensity");
-    OnChange(*hGrp,"EnableBacklight");
-    OnChange(*hGrp,"BacklightColor");
-    OnChange(*hGrp,"BacklightDirection");
-    OnChange(*hGrp,"BacklightIntensity");
-    OnChange(*hGrp,"NavigationStyle");
-    OnChange(*hGrp,"OrbitStyle");
-    OnChange(*hGrp,"Sensitivity");
-    OnChange(*hGrp,"ResetCursorPosition");
-    OnChange(*hGrp,"DimensionsVisible");
-    OnChange(*hGrp,"Dimensions3dVisible");
-    OnChange(*hGrp,"DimensionsDeltaVisible");
-    OnChange(*hGrp,"PickRadius");
-    OnChange(*hGrp,"TransparentObjectRenderType");
+    OnChange(*hGrp, "UseVBO");
+    OnChange(*hGrp, "RenderCache");
+    OnChange(*hGrp, "Orthographic");
+    OnChange(*hGrp, "HeadlightColor");
+    OnChange(*hGrp, "HeadlightDirection");
+    OnChange(*hGrp, "HeadlightIntensity");
+    OnChange(*hGrp, "EnableBacklight");
+    OnChange(*hGrp, "BacklightColor");
+    OnChange(*hGrp, "BacklightDirection");
+    OnChange(*hGrp, "BacklightIntensity");
+    OnChange(*hGrp, "NavigationStyle");
+    OnChange(*hGrp, "OrbitStyle");
+    OnChange(*hGrp, "Sensitivity");
+    OnChange(*hGrp, "ResetCursorPosition");
+    OnChange(*hGrp, "DimensionsVisible");
+    OnChange(*hGrp, "Dimensions3dVisible");
+    OnChange(*hGrp, "DimensionsDeltaVisible");
+    OnChange(*hGrp, "PickRadius");
+    OnChange(*hGrp, "TransparentObjectRenderType");
 
     stopSpinTimer = new QTimer(this);
     connect(stopSpinTimer, SIGNAL(timeout()), this, SLOT(stopAnimating()));
@@ -176,10 +174,9 @@ View3DInventor::View3DInventor(Gui::Document* pcDocument, QWidget* parent,
 
 View3DInventor::~View3DInventor()
 {
-    if(_pcDocument) {
-        SoCamera * Cam = _viewer->getSoRenderManager()->getCamera();
-        if (Cam)
-            _pcDocument->saveCameraSettings(SoFCDB::writeNodesToString(Cam).c_str());
+    if (_pcDocument) {
+        SoCamera *Cam = _viewer->getSoRenderManager()->getCamera();
+        if (Cam) _pcDocument->saveCameraSettings(SoFCDB::writeNodesToString(Cam).c_str());
     }
     hGrp->Detach(this);
     hGrpNavi->Detach(this);
@@ -188,9 +185,9 @@ View3DInventor::~View3DInventor()
     //by a widget in SoQtViewer isn't reset. This widget becomes a dangling pointer and makes
     //the application crash. (Probably it's better to destroy this viewer by calling close().)
     //See also Gui::Document::~Document().
-    QWidget* foc = qApp->focusWidget();
+    QWidget *foc = qApp->focusWidget();
     if (foc) {
-        QWidget* par = foc->parentWidget();
+        QWidget *par = foc->parentWidget();
         while (par) {
             if (par == this) {
                 foc->setFocusProxy(nullptr);
@@ -219,24 +216,24 @@ void View3DInventor::deleteSelf()
 
 PyObject *View3DInventor::getPyObject()
 {
-    if (!_viewerPy)
-        _viewerPy = new View3DInventorPy(this);
+    if (!_viewerPy) _viewerPy = new View3DInventorPy(this);
 
     Py_INCREF(_viewerPy);
     return _viewerPy;
 }
 
-void View3DInventor::OnChange(ParameterGrp::SubjectType &rCaller,ParameterGrp::MessageType Reason)
+void View3DInventor::OnChange(ParameterGrp::SubjectType &rCaller, ParameterGrp::MessageType Reason)
 {
-    const ParameterGrp& rGrp = static_cast<ParameterGrp&>(rCaller);
-    if (strcmp(Reason,"HeadlightColor") == 0) {
-        unsigned long headlight = rGrp.GetUnsigned("HeadlightColor",ULONG_MAX); // default color (white)
+    const ParameterGrp &rGrp = static_cast<ParameterGrp &>(rCaller);
+    if (strcmp(Reason, "HeadlightColor") == 0) {
+        unsigned long headlight =
+            rGrp.GetUnsigned("HeadlightColor", ULONG_MAX); // default color (white)
         float transparency;
         SbColor headlightColor;
         headlightColor.setPackedValue((uint32_t)headlight, transparency);
         _viewer->getHeadlight()->color.setValue(headlightColor);
     }
-    else if (strcmp(Reason,"HeadlightDirection") == 0) {
+    else if (strcmp(Reason, "HeadlightDirection") == 0) {
         std::string pos = rGrp.GetASCII("HeadlightDirection");
         QString flt = QString::fromLatin1("([-+]?[0-9]+\\.?[0-9]+)");
         QRegExp rx(QString::fromLatin1("^\\(%1,%1,%1\\)$").arg(flt));
@@ -244,24 +241,25 @@ void View3DInventor::OnChange(ParameterGrp::SubjectType &rCaller,ParameterGrp::M
             float x = rx.cap(1).toFloat();
             float y = rx.cap(2).toFloat();
             float z = rx.cap(3).toFloat();
-            _viewer->getHeadlight()->direction.setValue(x,y,z);
+            _viewer->getHeadlight()->direction.setValue(x, y, z);
         }
     }
-    else if (strcmp(Reason,"HeadlightIntensity") == 0) {
+    else if (strcmp(Reason, "HeadlightIntensity") == 0) {
         long value = rGrp.GetInt("HeadlightIntensity", 100);
-        _viewer->getHeadlight()->intensity.setValue((float)value/100.0f);
+        _viewer->getHeadlight()->intensity.setValue((float)value / 100.0f);
     }
-    else if (strcmp(Reason,"EnableBacklight") == 0) {
+    else if (strcmp(Reason, "EnableBacklight") == 0) {
         _viewer->setBacklight(rGrp.GetBool("EnableBacklight", false));
     }
-    else if (strcmp(Reason,"BacklightColor") == 0) {
-        unsigned long backlight = rGrp.GetUnsigned("BacklightColor",ULONG_MAX); // default color (white)
+    else if (strcmp(Reason, "BacklightColor") == 0) {
+        unsigned long backlight =
+            rGrp.GetUnsigned("BacklightColor", ULONG_MAX); // default color (white)
         float transparency;
         SbColor backlightColor;
         backlightColor.setPackedValue((uint32_t)backlight, transparency);
         _viewer->getBacklight()->color.setValue(backlightColor);
     }
-    else if (strcmp(Reason,"BacklightDirection") == 0) {
+    else if (strcmp(Reason, "BacklightDirection") == 0) {
         std::string pos = rGrp.GetASCII("BacklightDirection");
         QString flt = QString::fromLatin1("([-+]?[0-9]+\\.?[0-9]+)");
         QRegExp rx(QString::fromLatin1("^\\(%1,%1,%1\\)$").arg(flt));
@@ -269,121 +267,127 @@ void View3DInventor::OnChange(ParameterGrp::SubjectType &rCaller,ParameterGrp::M
             float x = rx.cap(1).toFloat();
             float y = rx.cap(2).toFloat();
             float z = rx.cap(3).toFloat();
-            _viewer->getBacklight()->direction.setValue(x,y,z);
+            _viewer->getBacklight()->direction.setValue(x, y, z);
         }
     }
-    else if (strcmp(Reason,"BacklightIntensity") == 0) {
+    else if (strcmp(Reason, "BacklightIntensity") == 0) {
         long value = rGrp.GetInt("BacklightIntensity", 100);
-        _viewer->getBacklight()->intensity.setValue((float)value/100.0f);
+        _viewer->getBacklight()->intensity.setValue((float)value / 100.0f);
     }
-    else if (strcmp(Reason,"EnablePreselection") == 0) {
-        const ParameterGrp& rclGrp = ((ParameterGrp&)rCaller);
+    else if (strcmp(Reason, "EnablePreselection") == 0) {
+        const ParameterGrp &rclGrp = ((ParameterGrp &)rCaller);
         SoFCEnableHighlightAction cAct(rclGrp.GetBool("EnablePreselection", true));
         cAct.apply(_viewer->getSceneGraph());
     }
-    else if (strcmp(Reason,"EnableSelection") == 0) {
-        const ParameterGrp& rclGrp = ((ParameterGrp&)rCaller);
+    else if (strcmp(Reason, "EnableSelection") == 0) {
+        const ParameterGrp &rclGrp = ((ParameterGrp &)rCaller);
         SoFCEnableSelectionAction cAct(rclGrp.GetBool("EnableSelection", true));
         cAct.apply(_viewer->getSceneGraph());
     }
-    else if (strcmp(Reason,"HighlightColor") == 0) {
+    else if (strcmp(Reason, "HighlightColor") == 0) {
         float transparency;
         SbColor highlightColor(0.8f, 0.1f, 0.1f);
         auto highlight = (unsigned long)(highlightColor.getPackedValue());
         highlight = rGrp.GetUnsigned("HighlightColor", highlight);
         highlightColor.setPackedValue((uint32_t)highlight, transparency);
-        SoSFColor col; col.setValue(highlightColor);
+        SoSFColor col;
+        col.setValue(highlightColor);
         SoFCHighlightColorAction cAct(col);
         cAct.apply(_viewer->getSceneGraph());
     }
-    else if (strcmp(Reason,"SelectionColor") == 0) {
+    else if (strcmp(Reason, "SelectionColor") == 0) {
         float transparency;
         SbColor selectionColor(0.1f, 0.8f, 0.1f);
         auto selection = (unsigned long)(selectionColor.getPackedValue());
         selection = rGrp.GetUnsigned("SelectionColor", selection);
         selectionColor.setPackedValue((uint32_t)selection, transparency);
-        SoSFColor col; col.setValue(selectionColor);
+        SoSFColor col;
+        col.setValue(selectionColor);
         SoFCSelectionColorAction cAct(col);
         cAct.apply(_viewer->getSceneGraph());
     }
-    else if (strcmp(Reason,"NavigationStyle") == 0) {
+    else if (strcmp(Reason, "NavigationStyle") == 0) {
         // check whether the simple or the full mouse model is used
-        std::string model = rGrp.GetASCII("NavigationStyle",CADNavigationStyle::getClassTypeId().getName());
+        std::string model =
+            rGrp.GetASCII("NavigationStyle", CADNavigationStyle::getClassTypeId().getName());
         Base::Type type = Base::Type::fromName(model.c_str());
         _viewer->setNavigationType(type);
     }
-    else if (strcmp(Reason,"OrbitStyle") == 0) {
-        int style = rGrp.GetInt("OrbitStyle",1);
+    else if (strcmp(Reason, "OrbitStyle") == 0) {
+        int style = rGrp.GetInt("OrbitStyle", 1);
         _viewer->navigationStyle()->setOrbitStyle(NavigationStyle::OrbitStyle(style));
     }
-    else if (strcmp(Reason,"Sensitivity") == 0) {
-        float val = rGrp.GetFloat("Sensitivity",2.0f);
+    else if (strcmp(Reason, "Sensitivity") == 0) {
+        float val = rGrp.GetFloat("Sensitivity", 2.0f);
         _viewer->navigationStyle()->setSensitivity(val);
     }
-    else if (strcmp(Reason,"ResetCursorPosition") == 0) {
-        bool on = rGrp.GetBool("ResetCursorPosition",false);
+    else if (strcmp(Reason, "ResetCursorPosition") == 0) {
+        bool on = rGrp.GetBool("ResetCursorPosition", false);
         _viewer->navigationStyle()->setResetCursorPosition(on);
     }
-    else if (strcmp(Reason,"InvertZoom") == 0) {
+    else if (strcmp(Reason, "InvertZoom") == 0) {
         bool on = rGrp.GetBool("InvertZoom", true);
         _viewer->navigationStyle()->setZoomInverted(on);
     }
-    else if (strcmp(Reason,"ZoomAtCursor") == 0) {
+    else if (strcmp(Reason, "ZoomAtCursor") == 0) {
         bool on = rGrp.GetBool("ZoomAtCursor", true);
         _viewer->navigationStyle()->setZoomAtCursor(on);
     }
-    else if (strcmp(Reason,"ZoomStep") == 0) {
+    else if (strcmp(Reason, "ZoomStep") == 0) {
         float val = rGrp.GetFloat("ZoomStep", 0.0f);
         _viewer->navigationStyle()->setZoomStep(val);
     }
-    else if (strcmp(Reason,"RotationMode") == 0) {
+    else if (strcmp(Reason, "RotationMode") == 0) {
         long mode = rGrp.GetInt("RotationMode", 1);
         if (mode == 0) {
-            _viewer->navigationStyle()->setRotationCenterMode(NavigationStyle::RotationCenterMode::WindowCenter);
+            _viewer->navigationStyle()->setRotationCenterMode(
+                NavigationStyle::RotationCenterMode::WindowCenter);
         }
         else if (mode == 1) {
-            _viewer->navigationStyle()->setRotationCenterMode(NavigationStyle::RotationCenterMode::ScenePointAtCursor |
-                                                              NavigationStyle::RotationCenterMode::FocalPointAtCursor);
+            _viewer->navigationStyle()->setRotationCenterMode(
+                NavigationStyle::RotationCenterMode::ScenePointAtCursor
+                | NavigationStyle::RotationCenterMode::FocalPointAtCursor);
         }
         else if (mode == 2) {
-            _viewer->navigationStyle()->setRotationCenterMode(NavigationStyle::RotationCenterMode::ScenePointAtCursor |
-                                                              NavigationStyle::RotationCenterMode::BoundingBoxCenter);
+            _viewer->navigationStyle()->setRotationCenterMode(
+                NavigationStyle::RotationCenterMode::ScenePointAtCursor
+                | NavigationStyle::RotationCenterMode::BoundingBoxCenter);
         }
     }
-    else if (strcmp(Reason,"EyeDistance") == 0) {
-        _viewer->getSoRenderManager()->setStereoOffset(rGrp.GetFloat("EyeDistance",5.0));
+    else if (strcmp(Reason, "EyeDistance") == 0) {
+        _viewer->getSoRenderManager()->setStereoOffset(rGrp.GetFloat("EyeDistance", 5.0));
     }
-    else if (strcmp(Reason,"CornerCoordSystem") == 0) {
-        _viewer->setFeedbackVisibility(rGrp.GetBool("CornerCoordSystem",true));
+    else if (strcmp(Reason, "CornerCoordSystem") == 0) {
+        _viewer->setFeedbackVisibility(rGrp.GetBool("CornerCoordSystem", true));
     }
-    else if (strcmp(Reason,"CornerCoordSystemSize") == 0) {
-        _viewer->setFeedbackSize(rGrp.GetInt("CornerCoordSystemSize",10));
+    else if (strcmp(Reason, "CornerCoordSystemSize") == 0) {
+        _viewer->setFeedbackSize(rGrp.GetInt("CornerCoordSystemSize", 10));
     }
-    else if (strcmp(Reason,"ShowAxisCross") == 0) {
-        _viewer->setAxisCross(rGrp.GetBool("ShowAxisCross",false));
+    else if (strcmp(Reason, "ShowAxisCross") == 0) {
+        _viewer->setAxisCross(rGrp.GetBool("ShowAxisCross", false));
     }
-    else if (strcmp(Reason,"UseAutoRotation") == 0) {
-        _viewer->setAnimationEnabled(rGrp.GetBool("UseAutoRotation",false));
+    else if (strcmp(Reason, "UseAutoRotation") == 0) {
+        _viewer->setAnimationEnabled(rGrp.GetBool("UseAutoRotation", false));
     }
-    else if (strcmp(Reason,"Gradient") == 0) {
-        _viewer->setGradientBackground((rGrp.GetBool("Gradient",true)));
+    else if (strcmp(Reason, "Gradient") == 0) {
+        _viewer->setGradientBackground((rGrp.GetBool("Gradient", true)));
     }
-    else if (strcmp(Reason,"ShowFPS") == 0) {
-        _viewer->setEnabledFPSCounter(rGrp.GetBool("ShowFPS",false));
+    else if (strcmp(Reason, "ShowFPS") == 0) {
+        _viewer->setEnabledFPSCounter(rGrp.GetBool("ShowFPS", false));
     }
-    else if (strcmp(Reason,"ShowNaviCube") == 0) {
-        _viewer->setEnabledNaviCube(rGrp.GetBool("ShowNaviCube",true));
+    else if (strcmp(Reason, "ShowNaviCube") == 0) {
+        _viewer->setEnabledNaviCube(rGrp.GetBool("ShowNaviCube", true));
     }
     else if (strcmp(Reason, "CornerNaviCube") == 0) {
         _viewer->setNaviCubeCorner(rGrp.GetInt("CornerNaviCube", 1));
     }
-    else if (strcmp(Reason,"UseVBO") == 0) {
-        _viewer->setEnabledVBO(rGrp.GetBool("UseVBO",false));
+    else if (strcmp(Reason, "UseVBO") == 0) {
+        _viewer->setEnabledVBO(rGrp.GetBool("UseVBO", false));
     }
-    else if (strcmp(Reason,"RenderCache") == 0) {
-        _viewer->setRenderCache(rGrp.GetInt("RenderCache",0));
+    else if (strcmp(Reason, "RenderCache") == 0) {
+        _viewer->setRenderCache(rGrp.GetInt("RenderCache", 0));
     }
-    else if (strcmp(Reason,"Orthographic") == 0) {
+    else if (strcmp(Reason, "Orthographic") == 0) {
         // check whether a perspective or orthogrphic camera should be set
         if (rGrp.GetBool("Orthographic", true))
             _viewer->setCameraType(SoOrthographicCamera::getClassTypeId());
@@ -391,20 +395,17 @@ void View3DInventor::OnChange(ParameterGrp::SubjectType &rCaller,ParameterGrp::M
             _viewer->setCameraType(SoPerspectiveCamera::getClassTypeId());
     }
     else if (strcmp(Reason, "DimensionsVisible") == 0) {
-        if (rGrp.GetBool("DimensionsVisible", true))
-            _viewer->turnAllDimensionsOn();
+        if (rGrp.GetBool("DimensionsVisible", true)) _viewer->turnAllDimensionsOn();
         else
             _viewer->turnAllDimensionsOff();
     }
     else if (strcmp(Reason, "Dimensions3dVisible") == 0) {
-        if (rGrp.GetBool("Dimensions3dVisible", true))
-            _viewer->turn3dDimensionsOn();
+        if (rGrp.GetBool("Dimensions3dVisible", true)) _viewer->turn3dDimensionsOn();
         else
             _viewer->turn3dDimensionsOff();
     }
     else if (strcmp(Reason, "DimensionsDeltaVisible") == 0) {
-        if (rGrp.GetBool("DimensionsDeltaVisible", true))
-            _viewer->turnDeltaDimensionsOn();
+        if (rGrp.GetBool("DimensionsDeltaVisible", true)) _viewer->turnDeltaDimensionsOn();
         else
             _viewer->turnDeltaDimensionsOff();
     }
@@ -414,29 +415,44 @@ void View3DInventor::OnChange(ParameterGrp::SubjectType &rCaller,ParameterGrp::M
     else if (strcmp(Reason, "TransparentObjectRenderType") == 0) {
         long renderType = rGrp.GetInt("TransparentObjectRenderType", 0);
         if (renderType == 0) {
-            _viewer->getSoRenderManager()->getGLRenderAction()
-                   ->setTransparentDelayedObjectRenderType(SoGLRenderAction::ONE_PASS);
+            _viewer->getSoRenderManager()
+                ->getGLRenderAction()
+                ->setTransparentDelayedObjectRenderType(SoGLRenderAction::ONE_PASS);
         }
         else if (renderType == 1) {
-            _viewer->getSoRenderManager()->getGLRenderAction()
-                   ->setTransparentDelayedObjectRenderType(SoGLRenderAction::NONSOLID_SEPARATE_BACKFACE_PASS);
+            _viewer->getSoRenderManager()
+                ->getGLRenderAction()
+                ->setTransparentDelayedObjectRenderType(
+                    SoGLRenderAction::NONSOLID_SEPARATE_BACKFACE_PASS);
         }
     }
     else {
         unsigned long col1 = rGrp.GetUnsigned("BackgroundColor", 3940932863UL);
-        unsigned long col2 = rGrp.GetUnsigned("BackgroundColor2", 2526456575UL); // default color (blue/grey)
-        unsigned long col3 = rGrp.GetUnsigned("BackgroundColor3", 3570714879UL); // default color (light yellow/bluey)
-        unsigned long col4 = rGrp.GetUnsigned("BackgroundColor4", 1869583359UL); // default color (blue/grey)
-        float r1,g1,b1,r2,g2,b2,r3,g3,b3,r4,g4,b4;
-        r1 = ((col1 >> 24) & 0xff) / 255.0; g1 = ((col1 >> 16) & 0xff) / 255.0; b1 = ((col1 >> 8) & 0xff) / 255.0;
-        r2 = ((col2 >> 24) & 0xff) / 255.0; g2 = ((col2 >> 16) & 0xff) / 255.0; b2 = ((col2 >> 8) & 0xff) / 255.0;
-        r3 = ((col3 >> 24) & 0xff) / 255.0; g3 = ((col3 >> 16) & 0xff) / 255.0; b3 = ((col3 >> 8) & 0xff) / 255.0;
-        r4 = ((col4 >> 24) & 0xff) / 255.0; g4 = ((col4 >> 16) & 0xff) / 255.0; b4 = ((col4 >> 8) & 0xff) / 255.0;
+        unsigned long col2 =
+            rGrp.GetUnsigned("BackgroundColor2", 2526456575UL); // default color (blue/grey)
+        unsigned long col3 = rGrp.GetUnsigned("BackgroundColor3",
+                                              3570714879UL); // default color (light yellow/bluey)
+        unsigned long col4 =
+            rGrp.GetUnsigned("BackgroundColor4", 1869583359UL); // default color (blue/grey)
+        float r1, g1, b1, r2, g2, b2, r3, g3, b3, r4, g4, b4;
+        r1 = ((col1 >> 24) & 0xff) / 255.0;
+        g1 = ((col1 >> 16) & 0xff) / 255.0;
+        b1 = ((col1 >> 8) & 0xff) / 255.0;
+        r2 = ((col2 >> 24) & 0xff) / 255.0;
+        g2 = ((col2 >> 16) & 0xff) / 255.0;
+        b2 = ((col2 >> 8) & 0xff) / 255.0;
+        r3 = ((col3 >> 24) & 0xff) / 255.0;
+        g3 = ((col3 >> 16) & 0xff) / 255.0;
+        b3 = ((col3 >> 8) & 0xff) / 255.0;
+        r4 = ((col4 >> 24) & 0xff) / 255.0;
+        g4 = ((col4 >> 16) & 0xff) / 255.0;
+        b4 = ((col4 >> 8) & 0xff) / 255.0;
         _viewer->setBackgroundColor(QColor::fromRgbF(r1, g1, b1));
-        if (!rGrp.GetBool("UseBackgroundColorMid",false))
+        if (!rGrp.GetBool("UseBackgroundColorMid", false))
             _viewer->setGradientBackgroundColor(SbColor(r2, g2, b2), SbColor(r3, g3, b3));
         else
-            _viewer->setGradientBackgroundColor(SbColor(r2, g2, b2), SbColor(r3, g3, b3), SbColor(r4, g4, b4));
+            _viewer->setGradientBackgroundColor(SbColor(r2, g2, b2), SbColor(r3, g3, b3),
+                                                SbColor(r4, g4, b4));
     }
 }
 
@@ -457,15 +473,9 @@ void View3DInventor::onUpdate()
     _viewer->redraw();
 }
 
-void View3DInventor::viewAll()
-{
-    _viewer->viewAll();
-}
+void View3DInventor::viewAll() { _viewer->viewAll(); }
 
-const char *View3DInventor::getName() const
-{
-    return "View3DInventor";
-}
+const char *View3DInventor::getName() const { return "View3DInventor"; }
 
 void View3DInventor::print()
 {
@@ -483,8 +493,8 @@ void View3DInventor::print()
 
 void View3DInventor::printPdf()
 {
-    QString filename = FileDialog::getSaveFileName(this, tr("Export PDF"), QString(),
-        QString::fromLatin1("%1 (*.pdf)").arg(tr("PDF file")));
+    QString filename = FileDialog::getSaveFileName(
+        this, tr("Export PDF"), QString(), QString::fromLatin1("%1 (*.pdf)").arg(tr("PDF file")));
     if (!filename.isEmpty()) {
         Gui::WaitCursor wc;
         QPrinter printer(QPrinter::ScreenResolution);
@@ -502,19 +512,19 @@ void View3DInventor::printPreview()
     restorePrinterSettings(&printer);
 
     QPrintPreviewDialog dlg(&printer, this);
-    connect(&dlg, SIGNAL(paintRequested (QPrinter *)),
-            this, SLOT(print(QPrinter *)));
+    connect(&dlg, SIGNAL(paintRequested(QPrinter *)), this, SLOT(print(QPrinter *)));
     dlg.exec();
     savePrinterSettings(&printer);
 }
 
-void View3DInventor::print(QPrinter* printer)
+void View3DInventor::print(QPrinter *printer)
 {
     QPainter p(printer);
     p.setRenderHints(QPainter::Antialiasing);
     if (!p.isActive() && !printer->outputFileName().isEmpty()) {
         qApp->setOverrideCursor(Qt::ArrowCursor);
-        QMessageBox::critical(this, tr("Opening file failed"),
+        QMessageBox::critical(
+            this, tr("Opening file failed"),
             tr("Can't open file '%1' for writing.").arg(printer->outputFileName()));
         qApp->restoreOverrideCursor();
         return;
@@ -522,140 +532,139 @@ void View3DInventor::print(QPrinter* printer)
 
     QRect rect = printer->pageLayout().paintRectPixels(printer->resolution());
     QImage img;
-    _viewer->imageFromFramebuffer(rect.width(), rect.height(), 8, QColor(255,255,255), img);
-    p.drawImage(0,0,img);
+    _viewer->imageFromFramebuffer(rect.width(), rect.height(), 8, QColor(255, 255, 255), img);
+    p.drawImage(0, 0, img);
     p.end();
 }
 
-bool View3DInventor::containsViewProvider(const ViewProvider* vp) const
+bool View3DInventor::containsViewProvider(const ViewProvider *vp) const
 {
     return _viewer->containsViewProvider(vp);
 }
 
 // **********************************************************************************
 
-bool View3DInventor::onMsg(const char* pMsg, const char** ppReturn)
+bool View3DInventor::onMsg(const char *pMsg, const char **ppReturn)
 {
-    if (strcmp("ViewFit",pMsg) == 0) {
+    if (strcmp("ViewFit", pMsg) == 0) {
         _viewer->viewAll();
         return true;
     }
-    else if(strcmp("ViewSelection",pMsg) == 0) {
+    else if (strcmp("ViewSelection", pMsg) == 0) {
         _viewer->viewSelection();
         return true;
     }
-    else if(strcmp("SetStereoRedGreen",pMsg) == 0 ) {
+    else if (strcmp("SetStereoRedGreen", pMsg) == 0) {
         _viewer->setStereoMode(Quarter::SoQTQuarterAdaptor::ANAGLYPH);
         return true;
     }
-    else if(strcmp("SetStereoQuadBuff",pMsg) == 0 ) {
-        _viewer->setStereoMode(Quarter::SoQTQuarterAdaptor::QUAD_BUFFER );
+    else if (strcmp("SetStereoQuadBuff", pMsg) == 0) {
+        _viewer->setStereoMode(Quarter::SoQTQuarterAdaptor::QUAD_BUFFER);
         return true;
     }
-    else if(strcmp("SetStereoInterleavedRows",pMsg) == 0 ) {
-        _viewer->setStereoMode(Quarter::SoQTQuarterAdaptor::INTERLEAVED_ROWS );
+    else if (strcmp("SetStereoInterleavedRows", pMsg) == 0) {
+        _viewer->setStereoMode(Quarter::SoQTQuarterAdaptor::INTERLEAVED_ROWS);
         return true;
     }
-    else if(strcmp("SetStereoInterleavedColumns",pMsg) == 0 ) {
-        _viewer->setStereoMode(Quarter::SoQTQuarterAdaptor::INTERLEAVED_COLUMNS  );
+    else if (strcmp("SetStereoInterleavedColumns", pMsg) == 0) {
+        _viewer->setStereoMode(Quarter::SoQTQuarterAdaptor::INTERLEAVED_COLUMNS);
         return true;
     }
-    else if(strcmp("SetStereoOff",pMsg) == 0 ) {
-        _viewer->setStereoMode(Quarter::SoQTQuarterAdaptor::MONO );
+    else if (strcmp("SetStereoOff", pMsg) == 0) {
+        _viewer->setStereoMode(Quarter::SoQTQuarterAdaptor::MONO);
         return true;
     }
-    else if(strcmp("Example1",pMsg) == 0 ) {
+    else if (strcmp("Example1", pMsg) == 0) {
         auto root = new SoSeparator;
         Texture3D(root);
         _viewer->setSceneGraph(root);
         return true;
     }
-    else if(strcmp("Example2",pMsg) == 0 ) {
+    else if (strcmp("Example2", pMsg) == 0) {
         auto root = new SoSeparator;
         LightManip(root);
         _viewer->setSceneGraph(root);
         return true;
     }
-    else if(strcmp("Example3",pMsg) == 0 ) {
+    else if (strcmp("Example3", pMsg) == 0) {
         auto root = new SoSeparator;
         AnimationTexture(root);
         _viewer->setSceneGraph(root);
         return true;
     }
-    else if(strcmp("GetCamera",pMsg) == 0 ) {
-        SoCamera * Cam = _viewer->getSoRenderManager()->getCamera();
-        if (!Cam)
-            return false;
+    else if (strcmp("GetCamera", pMsg) == 0) {
+        SoCamera *Cam = _viewer->getSoRenderManager()->getCamera();
+        if (!Cam) return false;
         *ppReturn = SoFCDB::writeNodesToString(Cam).c_str();
         return true;
     }
-    else if(strncmp("SetCamera",pMsg,9) == 0 ) {
-        return setCamera(pMsg+10);
+    else if (strncmp("SetCamera", pMsg, 9) == 0) {
+        return setCamera(pMsg + 10);
     }
-    else if(strncmp("Dump",pMsg,4) == 0 ) {
-        dump(pMsg+5);
+    else if (strncmp("Dump", pMsg, 4) == 0) {
+        dump(pMsg + 5);
         return true;
     }
-    else if(strcmp("ViewBottom",pMsg) == 0 ) {
+    else if (strcmp("ViewBottom", pMsg) == 0) {
         _viewer->setCameraOrientation(Camera::rotation(Camera::Bottom));
         _viewer->viewAll();
         return true;
     }
-    else if(strcmp("ViewFront",pMsg) == 0 ) {
+    else if (strcmp("ViewFront", pMsg) == 0) {
         _viewer->setCameraOrientation(Camera::rotation(Camera::Front));
         _viewer->viewAll();
         return true;
     }
-    else if(strcmp("ViewLeft",pMsg) == 0 ) {
+    else if (strcmp("ViewLeft", pMsg) == 0) {
         _viewer->setCameraOrientation(Camera::rotation(Camera::Left));
         _viewer->viewAll();
         return true;
     }
-    else if(strcmp("ViewRear",pMsg) == 0 ) {
+    else if (strcmp("ViewRear", pMsg) == 0) {
         _viewer->setCameraOrientation(Camera::rotation(Camera::Rear));
         _viewer->viewAll();
         return true;
     }
-    else if(strcmp("ViewRight",pMsg) == 0 ) {
+    else if (strcmp("ViewRight", pMsg) == 0) {
         _viewer->setCameraOrientation(Camera::rotation(Camera::Right));
         _viewer->viewAll();
         return true;
     }
-    else if(strcmp("ViewTop",pMsg) == 0 ) {
+    else if (strcmp("ViewTop", pMsg) == 0) {
         _viewer->setCameraOrientation(Camera::rotation(Camera::Top));
         _viewer->viewAll();
         return true;
     }
-    else if(strcmp("ViewAxo",pMsg) == 0 ) {
+    else if (strcmp("ViewAxo", pMsg) == 0) {
         _viewer->setCameraOrientation(Camera::rotation(Camera::Isometric));
         _viewer->viewAll();
         return true;
     }
-    else if(strcmp("OrthographicCamera",pMsg) == 0 ) {
+    else if (strcmp("OrthographicCamera", pMsg) == 0) {
         _viewer->setCameraType(SoOrthographicCamera::getClassTypeId());
         return true;
     }
-    else if(strcmp("PerspectiveCamera",pMsg) == 0 ) {
+    else if (strcmp("PerspectiveCamera", pMsg) == 0) {
         _viewer->setCameraType(SoPerspectiveCamera::getClassTypeId());
         return true;
     }
-    else  if(strcmp("Undo",pMsg) == 0 ) {
+    else if (strcmp("Undo", pMsg) == 0) {
         getGuiDocument()->undo(1);
         return true;
     }
-    else  if(strcmp("Redo",pMsg) == 0 ) {
+    else if (strcmp("Redo", pMsg) == 0) {
         getGuiDocument()->redo(1);
         return true;
     }
-    else if (strcmp("Save",pMsg) == 0) {
+    else if (strcmp("Save", pMsg) == 0) {
         getGuiDocument()->save();
         return true;
     }
-    else if (strcmp("SaveAs",pMsg) == 0) {
+    else if (strcmp("SaveAs", pMsg) == 0) {
         getGuiDocument()->saveAs();
         return true;
     }
-    else if (strcmp("SaveCopy",pMsg) == 0) {
+    else if (strcmp("SaveCopy", pMsg) == 0) {
         getGuiDocument()->saveCopy();
         return true;
     }
@@ -663,83 +672,80 @@ bool View3DInventor::onMsg(const char* pMsg, const char** ppReturn)
         return false;
 }
 
-bool View3DInventor::onHasMsg(const char* pMsg) const
+bool View3DInventor::onHasMsg(const char *pMsg) const
 {
-    if  (strcmp("Save",pMsg) == 0)
+    if (strcmp("Save", pMsg) == 0) return true;
+    else if (strcmp("SaveAs", pMsg) == 0)
         return true;
-    else if (strcmp("SaveAs",pMsg) == 0)
+    else if (strcmp("SaveCopy", pMsg) == 0)
         return true;
-    else if (strcmp("SaveCopy",pMsg) == 0)
-        return true;
-    else if (strcmp("Undo",pMsg) == 0) {
-        App::Document* doc = getAppDocument();
+    else if (strcmp("Undo", pMsg) == 0) {
+        App::Document *doc = getAppDocument();
         return doc && doc->getAvailableUndos() > 0;
     }
-    else if (strcmp("Redo",pMsg) == 0) {
-        App::Document* doc = getAppDocument();
+    else if (strcmp("Redo", pMsg) == 0) {
+        App::Document *doc = getAppDocument();
         return doc && doc->getAvailableRedos() > 0;
     }
-    else if (strcmp("Print",pMsg) == 0)
+    else if (strcmp("Print", pMsg) == 0)
         return true;
-    else if (strcmp("PrintPreview",pMsg) == 0)
+    else if (strcmp("PrintPreview", pMsg) == 0)
         return true;
-    else if (strcmp("PrintPdf",pMsg) == 0)
+    else if (strcmp("PrintPdf", pMsg) == 0)
         return true;
-    else if(strcmp("SetStereoRedGreen",pMsg) == 0)
+    else if (strcmp("SetStereoRedGreen", pMsg) == 0)
         return true;
-    else if(strcmp("SetStereoQuadBuff",pMsg) == 0)
+    else if (strcmp("SetStereoQuadBuff", pMsg) == 0)
         return true;
-    else if(strcmp("SetStereoInterleavedRows",pMsg) == 0)
+    else if (strcmp("SetStereoInterleavedRows", pMsg) == 0)
         return true;
-    else if(strcmp("SetStereoInterleavedColumns",pMsg) == 0)
+    else if (strcmp("SetStereoInterleavedColumns", pMsg) == 0)
         return true;
-    else if(strcmp("SetStereoOff",pMsg) == 0)
+    else if (strcmp("SetStereoOff", pMsg) == 0)
         return true;
-    else if(strcmp("Example1",pMsg) == 0)
+    else if (strcmp("Example1", pMsg) == 0)
         return true;
-    else if(strcmp("Example2",pMsg) == 0)
+    else if (strcmp("Example2", pMsg) == 0)
         return true;
-    else if(strcmp("Example3",pMsg) == 0)
+    else if (strcmp("Example3", pMsg) == 0)
         return true;
-    else if(strcmp("ViewFit",pMsg) == 0)
+    else if (strcmp("ViewFit", pMsg) == 0)
         return true;
-    else if(strcmp("ViewSelection",pMsg) == 0)
+    else if (strcmp("ViewSelection", pMsg) == 0)
         return true;
-    else if(strcmp("ViewBottom",pMsg) == 0)
+    else if (strcmp("ViewBottom", pMsg) == 0)
         return true;
-    else if(strcmp("ViewFront",pMsg) == 0)
+    else if (strcmp("ViewFront", pMsg) == 0)
         return true;
-    else if(strcmp("ViewLeft",pMsg) == 0)
+    else if (strcmp("ViewLeft", pMsg) == 0)
         return true;
-    else if(strcmp("ViewRear",pMsg) == 0)
+    else if (strcmp("ViewRear", pMsg) == 0)
         return true;
-    else if(strcmp("ViewRight",pMsg) == 0)
+    else if (strcmp("ViewRight", pMsg) == 0)
         return true;
-    else if(strcmp("ViewTop",pMsg) == 0)
+    else if (strcmp("ViewTop", pMsg) == 0)
         return true;
-    else if(strcmp("ViewAxo",pMsg) == 0)
+    else if (strcmp("ViewAxo", pMsg) == 0)
         return true;
-    else if(strcmp("GetCamera",pMsg) == 0)
+    else if (strcmp("GetCamera", pMsg) == 0)
         return true;
-    else if(strncmp("SetCamera",pMsg,9) == 0)
+    else if (strncmp("SetCamera", pMsg, 9) == 0)
         return true;
-    else if(strncmp("Dump",pMsg,4) == 0)
+    else if (strncmp("Dump", pMsg, 4) == 0)
         return true;
     return false;
 }
 
-bool View3DInventor::setCamera(const char* pCamera)
+bool View3DInventor::setCamera(const char *pCamera)
 {
-    SoCamera * CamViewer = _viewer->getSoRenderManager()->getCamera();
-    if (!CamViewer) {
-        throw Base::RuntimeError("No camera set so far...");
-    }
+    SoCamera *CamViewer = _viewer->getSoRenderManager()->getCamera();
+    if (!CamViewer) { throw Base::RuntimeError("No camera set so far..."); }
 
     SoInput in;
-    in.setBuffer((void*)pCamera,std::strlen(pCamera));
+    in.setBuffer((void *)pCamera, std::strlen(pCamera));
 
-    SoNode * Cam;
-    SoDB::read(&in,Cam);
+    SoNode *Cam;
+    SoDB::read(&in, Cam);
 
     if (!Cam || !Cam->isOfType(SoCamera::getClassTypeId())) {
         throw Base::RuntimeError("Camera settings failed to read");
@@ -754,22 +760,24 @@ bool View3DInventor::setCamera(const char* pCamera)
         CamViewer = _viewer->getSoRenderManager()->getCamera();
     }
 
-    SoPerspectiveCamera  * CamViewerP = nullptr;
-    SoOrthographicCamera * CamViewerO = nullptr;
+    SoPerspectiveCamera *CamViewerP = nullptr;
+    SoOrthographicCamera *CamViewerO = nullptr;
 
     if (CamViewer->getTypeId() == SoPerspectiveCamera::getClassTypeId()) {
-        CamViewerP = static_cast<SoPerspectiveCamera *>(CamViewer);  // safe downward cast, knows the type
+        CamViewerP =
+            static_cast<SoPerspectiveCamera *>(CamViewer); // safe downward cast, knows the type
     }
     else if (CamViewer->getTypeId() == SoOrthographicCamera::getClassTypeId()) {
-        CamViewerO = static_cast<SoOrthographicCamera *>(CamViewer);  // safe downward cast, knows the type
+        CamViewerO =
+            static_cast<SoOrthographicCamera *>(CamViewer); // safe downward cast, knows the type
     }
 
     if (Cam->getTypeId() == SoPerspectiveCamera::getClassTypeId()) {
-        if (CamViewerP){
-            CamViewerP->position      = static_cast<SoPerspectiveCamera *>(Cam)->position;
-            CamViewerP->orientation   = static_cast<SoPerspectiveCamera *>(Cam)->orientation;
-            CamViewerP->nearDistance  = static_cast<SoPerspectiveCamera *>(Cam)->nearDistance;
-            CamViewerP->farDistance   = static_cast<SoPerspectiveCamera *>(Cam)->farDistance;
+        if (CamViewerP) {
+            CamViewerP->position = static_cast<SoPerspectiveCamera *>(Cam)->position;
+            CamViewerP->orientation = static_cast<SoPerspectiveCamera *>(Cam)->orientation;
+            CamViewerP->nearDistance = static_cast<SoPerspectiveCamera *>(Cam)->nearDistance;
+            CamViewerP->farDistance = static_cast<SoPerspectiveCamera *>(Cam)->farDistance;
             CamViewerP->focalDistance = static_cast<SoPerspectiveCamera *>(Cam)->focalDistance;
         }
         else {
@@ -777,15 +785,15 @@ bool View3DInventor::setCamera(const char* pCamera)
         }
     }
     else if (Cam->getTypeId() == SoOrthographicCamera::getClassTypeId()) {
-        if (CamViewerO){
-            CamViewerO->viewportMapping  = static_cast<SoOrthographicCamera *>(Cam)->viewportMapping;
-            CamViewerO->position         = static_cast<SoOrthographicCamera *>(Cam)->position;
-            CamViewerO->orientation      = static_cast<SoOrthographicCamera *>(Cam)->orientation;
-            CamViewerO->nearDistance     = static_cast<SoOrthographicCamera *>(Cam)->nearDistance;
-            CamViewerO->farDistance      = static_cast<SoOrthographicCamera *>(Cam)->farDistance;
-            CamViewerO->focalDistance    = static_cast<SoOrthographicCamera *>(Cam)->focalDistance;
-            CamViewerO->aspectRatio      = static_cast<SoOrthographicCamera *>(Cam)->aspectRatio ;
-            CamViewerO->height           = static_cast<SoOrthographicCamera *>(Cam)->height;
+        if (CamViewerO) {
+            CamViewerO->viewportMapping = static_cast<SoOrthographicCamera *>(Cam)->viewportMapping;
+            CamViewerO->position = static_cast<SoOrthographicCamera *>(Cam)->position;
+            CamViewerO->orientation = static_cast<SoOrthographicCamera *>(Cam)->orientation;
+            CamViewerO->nearDistance = static_cast<SoOrthographicCamera *>(Cam)->nearDistance;
+            CamViewerO->farDistance = static_cast<SoOrthographicCamera *>(Cam)->farDistance;
+            CamViewerO->focalDistance = static_cast<SoOrthographicCamera *>(Cam)->focalDistance;
+            CamViewerO->aspectRatio = static_cast<SoOrthographicCamera *>(Cam)->aspectRatio;
+            CamViewerO->height = static_cast<SoOrthographicCamera *>(Cam)->height;
         }
         else {
             throw Base::TypeError("Camera type mismatch");
@@ -795,17 +803,11 @@ bool View3DInventor::setCamera(const char* pCamera)
     return true;
 }
 
-void View3DInventor::toggleClippingPlane()
-{
-    _viewer->toggleClippingPlane();
-}
+void View3DInventor::toggleClippingPlane() { _viewer->toggleClippingPlane(); }
 
-bool View3DInventor::hasClippingPlane() const
-{
-    return _viewer->hasClippingPlane();
-}
+bool View3DInventor::hasClippingPlane() const { return _viewer->hasClippingPlane(); }
 
-void View3DInventor::setOverlayWidget(QWidget* widget)
+void View3DInventor::setOverlayWidget(QWidget *widget)
 {
     removeOverlayWidget();
     stack->addWidget(widget);
@@ -815,11 +817,11 @@ void View3DInventor::setOverlayWidget(QWidget* widget)
 void View3DInventor::removeOverlayWidget()
 {
     stack->setCurrentIndex(0);
-    QWidget* overlay = stack->widget(1);
+    QWidget *overlay = stack->widget(1);
     if (overlay) stack->removeWidget(overlay);
 }
 
-void View3DInventor::setOverrideCursor(const QCursor& aCursor)
+void View3DInventor::setOverrideCursor(const QCursor &aCursor)
 {
     _viewer->getWidget()->setCursor(aCursor);
 }
@@ -830,31 +832,30 @@ void View3DInventor::restoreOverrideCursor()
 }
 
 // defined in SoFCDB.cpp
-extern SoNode* replaceSwitchesInSceneGraph(SoNode*);
+extern SoNode *replaceSwitchesInSceneGraph(SoNode *);
 
-void View3DInventor::dump(const char* filename, bool onlyVisible)
+void View3DInventor::dump(const char *filename, bool onlyVisible)
 {
     SoGetPrimitiveCountAction action;
     action.setCanApproximate(true);
     action.apply(_viewer->getSceneGraph());
 
-    SoNode* node = _viewer->getSceneGraph();
+    SoNode *node = _viewer->getSceneGraph();
     if (onlyVisible) {
         node = replaceSwitchesInSceneGraph(node);
         node->ref();
     }
 
-    if ( action.getTriangleCount() > 100000 || action.getPointCount() > 30000 || action.getLineCount() > 10000 )
+    if (action.getTriangleCount() > 100000 || action.getPointCount() > 30000
+        || action.getLineCount() > 10000)
         _viewer->dumpToFile(node, filename, true);
     else
         _viewer->dumpToFile(node, filename, false);
 
-    if (onlyVisible) {
-        node->unref();
-    }
+    if (onlyVisible) { node->unref(); }
 }
 
-void View3DInventor::windowStateChanged(MDIView* view)
+void View3DInventor::windowStateChanged(MDIView *view)
 {
     bool canStartTimer = false;
     if (this != view) {
@@ -863,7 +864,8 @@ void View3DInventor::windowStateChanged(MDIView* view)
         // Note: If view is top-level or fullscreen it doesn't necessarily hide the other view
         // e.g. if it is on a second monitor.
         canStartTimer = (!this->isTopLevel() && !view->isTopLevel() && view->isMaximized());
-    } else if (isMinimized()) {
+    }
+    else if (isMinimized()) {
         // I am the active view but minimized
         canStartTimer = true;
     }
@@ -875,37 +877,32 @@ void View3DInventor::windowStateChanged(MDIView* view)
             stopSpinTimer->setSingleShot(true);
             stopSpinTimer->start(msecs);
         }
-    } else if (stopSpinTimer->isActive()) {
+    }
+    else if (stopSpinTimer->isActive()) {
         // If this view may be visible again we can stop the timer
         stopSpinTimer->stop();
     }
 }
 
-void View3DInventor::stopAnimating()
-{
-    _viewer->stopAnimating();
-}
+void View3DInventor::stopAnimating() { _viewer->stopAnimating(); }
 
 /**
  * Drops the event \a e and writes the right Python command.
  */
-void View3DInventor::dropEvent (QDropEvent * e)
+void View3DInventor::dropEvent(QDropEvent *e)
 {
-    const QMimeData* data = e->mimeData();
-    if (data->hasUrls()) {
-        getMainWindow()->loadUrls(getAppDocument(), data->urls());
-    }
+    const QMimeData *data = e->mimeData();
+    if (data->hasUrls()) { getMainWindow()->loadUrls(getAppDocument(), data->urls()); }
     else {
         MDIView::dropEvent(e);
     }
 }
 
-void View3DInventor::dragEnterEvent (QDragEnterEvent * e)
+void View3DInventor::dragEnterEvent(QDragEnterEvent *e)
 {
     // Here we must allow uri drags and check them in dropEvent
-    const QMimeData* data = e->mimeData();
-    if (data->hasUrls())
-        e->accept();
+    const QMimeData *data = e->mimeData();
+    if (data->hasUrls()) e->accept();
     else
         e->ignore();
 }
@@ -913,8 +910,7 @@ void View3DInventor::dragEnterEvent (QDragEnterEvent * e)
 void View3DInventor::setCurrentViewMode(ViewMode newmode)
 {
     ViewMode oldmode = MDIView::currentViewMode();
-    if (oldmode == newmode)
-        return;
+    if (oldmode == newmode) return;
 
     if (newmode == Child) {
         // Fix in two steps:
@@ -923,9 +919,8 @@ void View3DInventor::setCurrentViewMode(ViewMode newmode)
         // mdi view inside the QMdiSubWindow.
         // In the second step below the layout must be invalidated after it's again a child widget to make sure
         // the mdi view fits into the QMdiSubWindow.
-        QWindow* winHandle = this->windowHandle();
-        if (winHandle)
-            winHandle->destroy();
+        QWindow *winHandle = this->windowHandle();
+        if (winHandle) winHandle->destroy();
     }
 
     MDIView::setCurrentViewMode(newmode);
@@ -951,7 +946,7 @@ void View3DInventor::setCurrentViewMode(ViewMode newmode)
     if (oldmode == Child) {
         // To make a global shortcut working from this window we need to add
         // all existing actions from the mainwindow and its sub-widgets
-        QList<QAction*> acts = getMainWindow()->findChildren<QAction*>();
+        QList<QAction *> acts = getMainWindow()->findChildren<QAction *>();
         this->addActions(acts);
         _viewer->getGLWidget()->setFocusProxy(this);
         // To be notfified for new actions
@@ -960,18 +955,17 @@ void View3DInventor::setCurrentViewMode(ViewMode newmode)
     else if (newmode == Child) {
         _viewer->getGLWidget()->setFocusProxy(nullptr);
         qApp->removeEventFilter(this);
-        QList<QAction*> acts = this->actions();
-        for (QList<QAction*>::Iterator it = acts.begin(); it != acts.end(); ++it)
+        QList<QAction *> acts = this->actions();
+        for (QList<QAction *>::Iterator it = acts.begin(); it != acts.end(); ++it)
             this->removeAction(*it);
 
         // Step two
-        auto mdi = qobject_cast<QMdiSubWindow*>(parentWidget());
-        if (mdi && mdi->layout())
-            mdi->layout()->invalidate();
+        auto mdi = qobject_cast<QMdiSubWindow *>(parentWidget());
+        if (mdi && mdi->layout()) mdi->layout()->invalidate();
     }
 }
 
-bool View3DInventor::eventFilter(QObject* watched, QEvent* e)
+bool View3DInventor::eventFilter(QObject *watched, QEvent *e)
 {
     // As long as this widget is a top-level window (either in 'TopLevel' or 'FullScreen' mode) we
     // need to be notified when an action is added to a widget. This action must also be added to
@@ -979,20 +973,19 @@ bool View3DInventor::eventFilter(QObject* watched, QEvent* e)
     // Note: We don't need to care about removing an action if its parent widget gets destroyed.
     // This does the action itself for us.
     if (watched != this && e->type() == QEvent::ActionAdded) {
-        auto a = static_cast<QActionEvent*>(e);
-        QAction* action = a->action();
+        auto a = static_cast<QActionEvent *>(e);
+        QAction *action = a->action();
 
         if (!action->isSeparator()) {
-            QList<QAction*> actions = this->actions();
-            if (!actions.contains(action))
-                this->addAction(action);
+            QList<QAction *> actions = this->actions();
+            if (!actions.contains(action)) this->addAction(action);
         }
     }
 
     return false;
 }
 
-void View3DInventor::keyPressEvent (QKeyEvent* e)
+void View3DInventor::keyPressEvent(QKeyEvent *e)
 {
     // See StdViewDockUndockFullscreen::activated()
     // With Qt5 one cannot directly use 'setCurrentViewMode'
@@ -1003,27 +996,18 @@ void View3DInventor::keyPressEvent (QKeyEvent* e)
     QMainWindow::keyPressEvent(e);
 }
 
-void View3DInventor::keyReleaseEvent (QKeyEvent* e)
-{
-    QMainWindow::keyReleaseEvent(e);
-}
+void View3DInventor::keyReleaseEvent(QKeyEvent *e) { QMainWindow::keyReleaseEvent(e); }
 
-void View3DInventor::focusInEvent (QFocusEvent *)
-{
-    _viewer->getGLWidget()->setFocus();
-}
+void View3DInventor::focusInEvent(QFocusEvent *) { _viewer->getGLWidget()->setFocus(); }
 
-void View3DInventor::contextMenuEvent (QContextMenuEvent*e)
-{
-    MDIView::contextMenuEvent(e);
-}
+void View3DInventor::contextMenuEvent(QContextMenuEvent *e) { MDIView::contextMenuEvent(e); }
 
-void View3DInventor::customEvent(QEvent * e)
+void View3DInventor::customEvent(QEvent *e)
 {
     if (e->type() == QEvent::User) {
-        auto se = static_cast<NavigationStyleEvent*>(e);
-        ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-            ("User parameter:BaseApp/Preferences/View");
+        auto se = static_cast<NavigationStyleEvent *>(e);
+        ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/Preferences/View");
         if (hGrp->GetBool("SameStyleForAllViews", true))
             hGrp->SetASCII("NavigationStyle", se->style().getName());
         else

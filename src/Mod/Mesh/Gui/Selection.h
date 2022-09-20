@@ -32,19 +32,20 @@
 #include <Gui/TaskView/TaskView.h>
 #include "MeshSelection.h"
 
-namespace MeshGui {
+namespace MeshGui
+{
 
 class Ui_Selection;
-class Selection : public QWidget
+class Selection: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Selection(QWidget* parent = nullptr);
+    explicit Selection(QWidget *parent = nullptr);
     ~Selection() override;
-    void setObjects(const std::vector<Gui::SelectionObject>&);
-    std::vector<App::DocumentObject*> getObjects() const;
-    bool eventFilter(QObject*, QEvent*) override;
+    void setObjects(const std::vector<Gui::SelectionObject> &);
+    std::vector<App::DocumentObject *> getObjects() const;
+    bool eventFilter(QObject *, QEvent *) override;
 
 private Q_SLOTS:
     void on_addSelection_clicked();
@@ -54,9 +55,9 @@ private Q_SLOTS:
 
 private:
     MeshSelection meshSel;
-    Ui_Selection* ui;
+    Ui_Selection *ui;
 };
 
-}
+} // namespace MeshGui
 
 #endif // MESHGUI_SELECTION_H

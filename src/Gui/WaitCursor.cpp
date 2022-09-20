@@ -24,57 +24,54 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QApplication>
-# include <QMessageBox>
-# include <QProgressDialog>
-# include <QWindow>
-# ifdef FC_OS_WIN32
-#   include <windows.h>
-# endif
+#include <QApplication>
+#include <QMessageBox>
+#include <QProgressDialog>
+#include <QWindow>
+#ifdef FC_OS_WIN32
+#include <windows.h>
+#endif
 #endif
 
 #include "WaitCursor.h"
 
 using namespace Gui;
 
-namespace Gui {
-class WaitCursorP : public QObject
+namespace Gui
+{
+class WaitCursorP: public QObject
 {
 public:
-    static WaitCursorP* getInstance();
+    static WaitCursorP *getInstance();
     void setBusy(bool);
     WaitCursor::FilterEventsFlags ignoreEvents() const;
     void setIgnoreEvents(WaitCursor::FilterEventsFlags flags);
 
 protected:
-    bool eventFilter(QObject*, QEvent*) override;
-    bool isModalDialog(QObject* o) const;
+    bool eventFilter(QObject *, QEvent *) override;
+    bool isModalDialog(QObject *o) const;
 
 private:
     WaitCursorP(); // Disable constructor
-    static WaitCursorP* _instance;
+    static WaitCursorP *_instance;
     bool isOn;
     WaitCursor::FilterEventsFlags flags;
 };
 } // namespace Gui
 
-WaitCursorP* WaitCursorP::_instance = nullptr;
+WaitCursorP *WaitCursorP::_instance = nullptr;
 
-WaitCursorP::WaitCursorP() : QObject(nullptr), isOn(false), flags(WaitCursor::AllEvents)
-{
-}
+WaitCursorP::WaitCursorP() : QObject(nullptr), isOn(false), flags(WaitCursor::AllEvents) {}
 
-WaitCursorP* WaitCursorP::getInstance()
+WaitCursorP *WaitCursorP::getInstance()
 {
-    if (!_instance)
-        _instance = new WaitCursorP();
+    if (!_instance) _instance = new WaitCursorP();
     return _instance;
 }
 
 void WaitCursorP::setBusy(bool on)
 {
-    if (on == this->isOn)
-        return;
+    if (on == this->isOn) return;
 
     if (on) {
         qApp->installEventFilter(this);
@@ -88,55 +85,40 @@ void WaitCursorP::setBusy(bool on)
     this->isOn = on;
 }
 
-WaitCursor::FilterEventsFlags WaitCursorP::ignoreEvents() const
-{
-    return this->flags;
-}
+WaitCursor::FilterEventsFlags WaitCursorP::ignoreEvents() const { return this->flags; }
 
-void WaitCursorP::setIgnoreEvents(WaitCursor::FilterEventsFlags flags)
-{
-    this->flags = flags;
-}
+void WaitCursorP::setIgnoreEvents(WaitCursor::FilterEventsFlags flags) { this->flags = flags; }
 
-bool WaitCursorP::isModalDialog(QObject* o) const
+bool WaitCursorP::isModalDialog(QObject *o) const
 {
-    QWidget* parent = qobject_cast<QWidget*>(o);
+    QWidget *parent = qobject_cast<QWidget *>(o);
     if (!parent) {
-        QWindow* window = qobject_cast<QWindow*>(o);
-        if (window)
-            parent = QWidget::find(window->winId());
+        QWindow *window = qobject_cast<QWindow *>(o);
+        if (window) parent = QWidget::find(window->winId());
     }
     while (parent) {
-        auto dlg = qobject_cast<QMessageBox*>(parent);
-        if (dlg && dlg->isModal())
-            return true;
-        auto pd = qobject_cast<QProgressDialog*>(parent);
-        if (pd)
-            return true;
+        auto dlg = qobject_cast<QMessageBox *>(parent);
+        if (dlg && dlg->isModal()) return true;
+        auto pd = qobject_cast<QProgressDialog *>(parent);
+        if (pd) return true;
         parent = parent->parentWidget();
     }
 
     return false;
 }
 
-bool WaitCursorP::eventFilter(QObject* o, QEvent* e)
+bool WaitCursorP::eventFilter(QObject *o, QEvent *e)
 {
     // Note: This might cause problems when we want to open a modal dialog at the lifetime
     // of a WaitCursor instance because the incoming events are still filtered.
-    if (e->type() == QEvent::KeyPress ||
-        e->type() == QEvent::KeyRelease) {
-        if (isModalDialog(o))
-            return false;
-        if (this->flags & WaitCursor::KeyEvents)
-            return true;
+    if (e->type() == QEvent::KeyPress || e->type() == QEvent::KeyRelease) {
+        if (isModalDialog(o)) return false;
+        if (this->flags & WaitCursor::KeyEvents) return true;
     }
-    if (e->type() == QEvent::MouseButtonPress ||
-        e->type() == QEvent::MouseButtonRelease ||
-        e->type() == QEvent::MouseButtonDblClick) {
-        if (isModalDialog(o))
-            return false;
-        if (this->flags & WaitCursor::MouseEvents)
-            return true;
+    if (e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonRelease
+        || e->type() == QEvent::MouseButtonDblClick) {
+        if (isModalDialog(o)) return false;
+        if (this->flags & WaitCursor::MouseEvents) return true;
     }
     return false;
 }
@@ -151,34 +133,26 @@ int WaitCursor::instances = 0;
  */
 WaitCursor::WaitCursor()
 {
-    if (instances++ == 0)
-        setWaitCursor();
+    if (instances++ == 0) setWaitCursor();
     filter = WaitCursorP::getInstance()->ignoreEvents();
 }
 
 /** Restores the last cursor again. */
 WaitCursor::~WaitCursor()
 {
-    if (--instances == 0)
-        restoreCursor();
+    if (--instances == 0) restoreCursor();
     WaitCursorP::getInstance()->setIgnoreEvents(filter);
 }
 
 /**
  * Sets the wait cursor if needed.
  */
-void WaitCursor::setWaitCursor()
-{
-    WaitCursorP::getInstance()->setBusy(true);
-}
+void WaitCursor::setWaitCursor() { WaitCursorP::getInstance()->setBusy(true); }
 
 /**
  * Restores the last cursor if needed.
  */
-void WaitCursor::restoreCursor()
-{
-    WaitCursorP::getInstance()->setBusy(false);
-}
+void WaitCursor::restoreCursor() { WaitCursorP::getInstance()->setBusy(false); }
 
 WaitCursor::FilterEventsFlags WaitCursor::ignoreEvents() const
 {

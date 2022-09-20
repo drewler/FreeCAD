@@ -47,20 +47,20 @@
 
 class Bnd_Box;
 
-inline Standard_Boolean IsEqual (const TopoDS_Shape& S1, const TopoDS_Shape& S2)
+inline Standard_Boolean IsEqual(const TopoDS_Shape &S1, const TopoDS_Shape &S2)
 {
-  return S1.IsSame(S2);
+    return S1.IsSame(S2);
 }
 
 namespace GEOMUtils
 {
 
-  typedef std::vector<std::string> NodeLinks;
-  typedef std::map<std::string, NodeLinks> LevelInfo;
-  typedef std::vector<LevelInfo> LevelsList;
-  typedef std::map<std::string,std::pair<LevelsList,LevelsList> > TreeModel;
+typedef std::vector<std::string> NodeLinks;
+typedef std::map<std::string, NodeLinks> LevelInfo;
+typedef std::vector<LevelInfo> LevelsList;
+typedef std::map<std::string, std::pair<LevelsList, LevelsList>> TreeModel;
 
-  /*!
+/*!
    * \brief Compute numerical functor for the shape.
    *
    * Resulting value can be used to sort out shapes according to some parameter.
@@ -79,19 +79,19 @@ namespace GEOMUtils
    * are used (to support backward compatibility in some methods). By default, this parameter is
    * set to \c false.
    */
-  Standard_EXPORT std::pair<double, double> ShapeToDouble (const TopoDS_Shape& theShape,
-                                                           bool isOldSorting = false);
+Standard_EXPORT std::pair<double, double> ShapeToDouble(const TopoDS_Shape &theShape,
+                                                        bool isOldSorting = false);
 
-  /*!
+/*!
    * \brief Get Local Coordinate System, corresponding to the given shape.
    *
    * Origin of the LCS is situated at the shape's center of mass.
    * Axes of the LCS are obtained from shape's location or,
    * if the shape is a planar face, from position of its plane.
    */
-  Standard_EXPORT gp_Ax3 GetPosition (const TopoDS_Shape& theShape);
+Standard_EXPORT gp_Ax3 GetPosition(const TopoDS_Shape &theShape);
 
-  /*!
+/*!
    * \brief Get vector, defined by the given edge.
    * \param theShape The edge.
    * \param doConsiderOrientation If True, take into account the edge orientation.
@@ -99,35 +99,34 @@ namespace GEOMUtils
    *       the same edge can have different orientation depending on the way it was
    *       extracted from a shape.
    */
-  Standard_EXPORT gp_Vec GetVector (const TopoDS_Shape& theShape,
-				    Standard_Boolean doConsiderOrientation);
+Standard_EXPORT gp_Vec GetVector(const TopoDS_Shape &theShape,
+                                 Standard_Boolean doConsiderOrientation);
 
-  /*!
+/*!
    * \brief Sort shapes in the list by their coordinates.
    * \param SL The list of shapes to sort.
    */
-  struct CompareShapes
-  {
+struct CompareShapes {
     typedef TopoDS_Shape first_argument_type;
     typedef TopoDS_Shape second_argument_type;
     typedef bool result_type;
-    CompareShapes (bool isOldSorting)
-      : myIsOldSorting(isOldSorting) {}
+    CompareShapes(bool isOldSorting) : myIsOldSorting(isOldSorting) {}
 
-    bool operator() (const TopoDS_Shape& lhs, const TopoDS_Shape& rhs);
+    bool operator()(const TopoDS_Shape &lhs, const TopoDS_Shape &rhs);
 
-    typedef NCollection_DataMap<TopoDS_Shape, std::pair<double, double> > GEOMUtils_DataMapOfShapeDouble;
+    typedef NCollection_DataMap<TopoDS_Shape, std::pair<double, double>>
+        GEOMUtils_DataMapOfShapeDouble;
     GEOMUtils_DataMapOfShapeDouble myMap;
     bool myIsOldSorting;
-  };
+};
 
-  /*!
+/*!
    * \brief Sort shapes by their centers of mass, using formula X*999 + Y*99 + Z*0.9
    */
-  Standard_EXPORT void SortShapes (TopTools_ListOfShape& SL,
-				   const Standard_Boolean isOldSorting = Standard_True);
+Standard_EXPORT void SortShapes(TopTools_ListOfShape &SL,
+                                const Standard_Boolean isOldSorting = Standard_True);
 
-  /*!
+/*!
    * \brief Convert TopoDS_COMPSOLID to TopoDS_COMPOUND.
    *
    * If the argument shape is not of type TopoDS_COMPSOLID, this method returns it as is.
@@ -135,9 +134,9 @@ namespace GEOMUtils
    * \param theCompsolid The compsolid to be converted.
    * \retval TopoDS_Shape Returns the resulting compound.
    */
-  Standard_EXPORT TopoDS_Shape CompsolidToCompound (const TopoDS_Shape& theCompsolid);
+Standard_EXPORT TopoDS_Shape CompsolidToCompound(const TopoDS_Shape &theCompsolid);
 
-  /*!
+/*!
    * \brief Recursively extract all shapes from compounds and compsolids of the given shape into theList.
    *
    * If theShape is not compound or compsolid, theList will contain only theShape itself.
@@ -145,43 +144,42 @@ namespace GEOMUtils
    * \param theShape The shape to be exploded.
    * \param theList Output parameter.
    */
-  Standard_EXPORT void AddSimpleShapes (const TopoDS_Shape& theShape,
-					TopTools_ListOfShape& theList);
+Standard_EXPORT void AddSimpleShapes(const TopoDS_Shape &theShape, TopTools_ListOfShape &theList);
 
-  /*!
+/*!
    * \brief Build a triangulation on \a theShape if it is absent.
    * \param theShape The shape to check/build triangulation on.
    * \retval bool Returns false if the shape has no faces, i.e. impossible to build triangulation.
    */
-  Standard_EXPORT bool CheckTriangulation (const TopoDS_Shape& theShape);
-  
-  /*!
+Standard_EXPORT bool CheckTriangulation(const TopoDS_Shape &theShape);
+
+/*!
    * \brief Return type of shape for explode. In case of compound it will be a type of its first sub shape.
    * \param theShape The shape to get type of.
    * \retval TopAbs_ShapeEnum Return type of shape for explode.
    */
-  Standard_EXPORT TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape);
+Standard_EXPORT TopAbs_ShapeEnum GetTypeOfSimplePart(const TopoDS_Shape &theShape);
 
-  /*!
+/*!
    * \brief Find an edge of theShape, closest to thePoint.
    *
    * \param theShape The shape to explore.
    * \param thePoint The point near the required edge.
    * \retval TopoDS_Shape Returns the found edge or an empty shape if multiple edges found.
    */
-  Standard_EXPORT TopoDS_Shape GetEdgeNearPoint (const TopoDS_Shape&  theShape,
-						 const TopoDS_Vertex& thePoint);
+Standard_EXPORT TopoDS_Shape GetEdgeNearPoint(const TopoDS_Shape &theShape,
+                                              const TopoDS_Vertex &thePoint);
 
-  /*!
+/*!
    * \brief Compute precise bounding box of the shape based on the rough bounding box.
    *
    * \param theShape the shape.
    * \param theBox rough bounding box on input; precise bounding box on output.
    * \retval Standard_True in case of success; Standard_False otherwise.
    */
-  Standard_EXPORT Standard_Boolean PreciseBoundingBox(const TopoDS_Shape &theShape, Bnd_Box &theBox);
+Standard_EXPORT Standard_Boolean PreciseBoundingBox(const TopoDS_Shape &theShape, Bnd_Box &theBox);
 
-  /*!
+/*!
    * \brief Computes minumal distance between two shapes for singular cases
    *        (workaround for bugs 19899, 19908 and 19910 from Mantis).
    *
@@ -191,11 +189,11 @@ namespace GEOMUtils
    * \param Ptmp2 the output result point on the second shape
    * \retval negative value if it is not a singular case; actual distance for singular case.
    */
-  Standard_EXPORT Standard_Real GetMinDistanceSingular(const TopoDS_Shape& aSh1,
-						       const TopoDS_Shape& aSh2,
-						       gp_Pnt& Ptmp1, gp_Pnt& Ptmp2);
-  
-  /*!
+Standard_EXPORT Standard_Real GetMinDistanceSingular(const TopoDS_Shape &aSh1,
+                                                     const TopoDS_Shape &aSh2, gp_Pnt &Ptmp1,
+                                                     gp_Pnt &Ptmp2);
+
+/*!
    * \brief Computes minumal distance between two shapes.
    *
    * \param theShape1 the first shape
@@ -204,11 +202,11 @@ namespace GEOMUtils
    * \param thePnt2 the output result point on the second shape
    * \retval negative value in case of failure; otherwise the real distance.
    */
-  Standard_EXPORT Standard_Real GetMinDistance(const TopoDS_Shape& theShape1,
-					       const TopoDS_Shape& theShape2,
-					       gp_Pnt& thePnt1, gp_Pnt& thePnt2);
-  
-  /*!
+Standard_EXPORT Standard_Real GetMinDistance(const TopoDS_Shape &theShape1,
+                                             const TopoDS_Shape &theShape2, gp_Pnt &thePnt1,
+                                             gp_Pnt &thePnt2);
+
+/*!
    * \brief Returns the point clicked in 3D view.
    *
    * \param x The X coordinate in the view.
@@ -216,27 +214,25 @@ namespace GEOMUtils
    * \param theView View where the given point takes place.
    * \retval gp_Pnt Returns the point clicked in 3D view
    */
-  Standard_EXPORT gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) theView );
+Standard_EXPORT gp_Pnt ConvertClickToPoint(int x, int y, Handle(V3d_View) theView);
 
-  /*!
+/*!
    * \brief Convert dependency tree data to the string representation
    *
    * \param tree dependency tree data
    * \param dependencyStr output string
    */
-  Standard_EXPORT void ConvertTreeToString( const TreeModel& tree,
-					    std::string& dependencyStr );
+Standard_EXPORT void ConvertTreeToString(const TreeModel &tree, std::string &dependencyStr);
 
-  /*!
+/*!
    * \brief Restore dependency tree data from the string representation
    *
    * \param dependencyStr string representation of tree data
    * \param tree output dependency tree data
    */
-  Standard_EXPORT void ConvertStringToTree( const std::string& dependencyStr,
-					    TreeModel& tree );
+Standard_EXPORT void ConvertStringToTree(const std::string &dependencyStr, TreeModel &tree);
 
-  /*!
+/*!
    * \brief Check shape
    *
    * \param shape input shape object
@@ -244,9 +240,9 @@ namespace GEOMUtils
    *        in addition to the topology
    * \return \c true if shape is valid or \c false otherwise
    */
-  Standard_EXPORT bool CheckShape( TopoDS_Shape& shape, bool checkGeometry = false );
-  
-  /*!
+Standard_EXPORT bool CheckShape(TopoDS_Shape &shape, bool checkGeometry = false);
+
+/*!
    * \brief Limit shape tolerance to the given value
    *
    * \param shape shape being fixed
@@ -261,27 +257,25 @@ namespace GEOMUtils
    * \note By default, result only checked for topology validity; check of geometry can be done by
    *       passing \c true to \a checkGeometry parameter
    */
-  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
-                                          TopAbs_ShapeEnum type,
-                                          Standard_Real tolerance = Precision::Confusion(),
-                                          bool checkGeometry = false );
+Standard_EXPORT bool FixShapeTolerance(TopoDS_Shape &shape, TopAbs_ShapeEnum type,
+                                       Standard_Real tolerance = Precision::Confusion(),
+                                       bool checkGeometry = false);
 
-  /*!
+/*!
    * \brief Limit shape tolerance to the given value
    * This is overloaded function, it behaves exactly as previous one
    */
-  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
-                                          Standard_Real tolerance = Precision::Confusion(),
-                                          bool checkGeometry = false );
+Standard_EXPORT bool FixShapeTolerance(TopoDS_Shape &shape,
+                                       Standard_Real tolerance = Precision::Confusion(),
+                                       bool checkGeometry = false);
 
-  /*!
+/*!
    * \brief Limit shape tolerance to the given value
    * This is overloaded function, it behaves exactly as previous one
    */
-  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
-                                          bool checkGeometry );
+Standard_EXPORT bool FixShapeTolerance(TopoDS_Shape &shape, bool checkGeometry);
 
-  /*!
+/*!
    * \brief Fix curves of the given shape
    * 
    * The function checks each curve of the input shape in the following way:
@@ -293,18 +287,17 @@ namespace GEOMUtils
    * \param shape shape being fixed
    * \return \c true if resulting shape is valid
    */
-  Standard_EXPORT bool FixShapeCurves( TopoDS_Shape& shape );
+Standard_EXPORT bool FixShapeCurves(TopoDS_Shape &shape);
 
-  /*!
+/*!
    * \brief Write shape to the BREP file
    *
    * \param source shape
    * \return \c true if file was written or \c false otherwise
    */
-  Standard_EXPORT bool Write( const TopoDS_Shape& shape,
-                              const char* fileName );
-  
-  /*!
+Standard_EXPORT bool Write(const TopoDS_Shape &shape, const char *fileName);
+
+/*!
    * \brief Extract single SOLID from COMPSOLID or COMPOUND.
    *
    * If the argument shape is a COMPOUND or COMPSOLID and there's
@@ -314,25 +307,24 @@ namespace GEOMUtils
    * \param shape compound or compsolid being processed.
    * \retval TopoDS_Shape resulting shape
    */
-  Standard_EXPORT TopoDS_Shape ReduceCompound( const TopoDS_Shape& shape );
+Standard_EXPORT TopoDS_Shape ReduceCompound(const TopoDS_Shape &shape);
 
-  /*!
+/*!
    * \brief Generate triangulation for the shape.
    *
    * \param shape shape being meshed
    * \param deflection deflection coefficient to be used
    * \param forced if \c true, causes generation of mesh regardless it is already present in the shape
    */
-  Standard_EXPORT void MeshShape( const TopoDS_Shape shape,
-                                  double deflection, bool forced = true );
+Standard_EXPORT void MeshShape(const TopoDS_Shape shape, double deflection, bool forced = true);
 
-  /*!
+/*!
    * \brief Get default deflection coefficient used for triangulation
    * \return default deflection value
    */
-  Standard_EXPORT double DefaultDeflection();
+Standard_EXPORT double DefaultDeflection();
 
-  /**
+/**
    * \brief Check if the shape is not a closed wire or edge.
    *
    * This function is used for pipe creation algorithm to test if
@@ -342,8 +334,8 @@ namespace GEOMUtils
    * \param theShape the shape to be tested.
    * \return true if theShape is not a closed wire or edge.
    */
-  Standard_EXPORT bool IsOpenPath(const TopoDS_Shape &theShape);
+Standard_EXPORT bool IsOpenPath(const TopoDS_Shape &theShape);
 
-};
+}; // namespace GEOMUtils
 
 #endif

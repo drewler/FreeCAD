@@ -31,23 +31,9 @@
 using namespace TechDraw;
 
 // returns a string which represents the object e.g. when printed in python
-std::string DrawHatchPy::representation() const
-{
-    return std::string("<DrawHatch object>");
-}
+std::string DrawHatchPy::representation() const { return std::string("<DrawHatch object>"); }
 
 
+PyObject *DrawHatchPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-
-
-
-
-PyObject *DrawHatchPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
-
-int DrawHatchPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int DrawHatchPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

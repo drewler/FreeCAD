@@ -29,20 +29,24 @@
 
 class SoSeparator;
 
-namespace Part { struct ShapeHistory; }
+namespace Part
+{
+struct ShapeHistory;
+}
 
-namespace PartGui {
+namespace PartGui
+{
 
-class ViewProviderShapeBuilder : public Gui::ViewProviderBuilder
+class ViewProviderShapeBuilder: public Gui::ViewProviderBuilder
 {
 public:
-    ViewProviderShapeBuilder(){}
-    ~ViewProviderShapeBuilder() override{}
-    void buildNodes(const App::Property*, std::vector<SoNode*>&) const override;
-    void createShape(const App::Property*, SoSeparator*) const;
+    ViewProviderShapeBuilder() {}
+    ~ViewProviderShapeBuilder() override {}
+    void buildNodes(const App::Property *, std::vector<SoNode *> &) const override;
+    void createShape(const App::Property *, SoSeparator *) const;
 };
 
-class PartGuiExport ViewProviderPart : public ViewProviderPartExt
+class PartGuiExport ViewProviderPart: public ViewProviderPartExt
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderPart);
 
@@ -54,15 +58,12 @@ public:
     bool doubleClicked(void) override;
 
 protected:
-    void applyColor(const Part::ShapeHistory& hist,
-                    const std::vector<App::Color>& colBase,
-                    std::vector<App::Color>& colBool);
-    void applyTransparency(const float& transparency,
-                    std::vector<App::Color>& colors);
+    void applyColor(const Part::ShapeHistory &hist, const std::vector<App::Color> &colBase,
+                    std::vector<App::Color> &colBool);
+    void applyTransparency(const float &transparency, std::vector<App::Color> &colors);
 };
 
 } // namespace PartGui
 
 
 #endif // PARTGUI_VIEWPROVIDERPART_H
-

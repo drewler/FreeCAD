@@ -22,8 +22,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QDir>
-# include <QMessageBox>
+#include <QDir>
+#include <QMessageBox>
 #endif
 
 #include <App/Application.h>
@@ -43,24 +43,19 @@ using namespace Gui::Dialog;
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  true to construct a modal dialog.
  */
-DlgOnlineHelpImp::DlgOnlineHelpImp( QWidget* parent )
-  : PreferencePage(parent)
-  , ui(new Ui_DlgOnlineHelp)
+DlgOnlineHelpImp::DlgOnlineHelpImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgOnlineHelp)
 {
     ui->setupUi(this);
 
     ui->prefStartPage->setFilter(QString::fromLatin1("%1 (*.html *.htm)").arg(tr("HTML files")));
-    if (ui->prefStartPage->fileName().isEmpty()) {
-        ui->prefStartPage->setFileName(getStartpage());
-    }
+    if (ui->prefStartPage->fileName().isEmpty()) { ui->prefStartPage->setFileName(getStartpage()); }
 }
 
 /**
  *  Destroys the object and frees any allocated resources
  */
-DlgOnlineHelpImp::~DlgOnlineHelpImp()
-{
-}
+DlgOnlineHelpImp::~DlgOnlineHelpImp() {}
 
 /**
  * Returns the start page for the HelpView. If none is defined the default 
@@ -74,35 +69,29 @@ QString DlgOnlineHelpImp::getStartpage()
     return docdir.absoluteFilePath(QString::fromUtf8("Start_Page.html"));
 }
 
-void DlgOnlineHelpImp::saveSettings()
-{
-    ui->prefStartPage->onSave();
-}
+void DlgOnlineHelpImp::saveSettings() { ui->prefStartPage->onSave(); }
 
-void DlgOnlineHelpImp::loadSettings()
-{
-    ui->prefStartPage->onRestore();
-}
+void DlgOnlineHelpImp::loadSettings() { ui->prefStartPage->onRestore(); }
 
 /**
  * Sets the strings of the subwidgets using the current language.
  */
 void DlgOnlineHelpImp::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }
 }
 
-void DlgOnlineHelpImp::on_lineEditDownload_fileNameSelected( const QString& url )
+void DlgOnlineHelpImp::on_lineEditDownload_fileNameSelected(const QString &url)
 {
     QDir dir(url);
     if (dir.exists() && dir.count() == 0) {
-        QMessageBox::critical(this, tr("Access denied"), tr("Access denied to '%1'\n\n"
-            "Specify another directory, please.").arg(url));
+        QMessageBox::critical(this, tr("Access denied"),
+                              tr("Access denied to '%1'\n\n"
+                                 "Specify another directory, please.")
+                                  .arg(url));
     }
 }
 

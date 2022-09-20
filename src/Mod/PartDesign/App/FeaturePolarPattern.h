@@ -32,7 +32,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport PolarPattern : public PartDesign::Transformed
+class PartDesignExport PolarPattern: public PartDesign::Transformed
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::PolarPattern);
 
@@ -40,16 +40,17 @@ public:
     PolarPattern();
 
     App::PropertyLinkSub Axis;
-    App::PropertyBool    Reversed;
-    App::PropertyAngle   Angle;
+    App::PropertyBool Reversed;
+    App::PropertyAngle Angle;
     App::PropertyIntegerConstraint Occurrences;
 
-   /** @name methods override feature */
+    /** @name methods override feature */
     //@{
     short mustExecute() const override;
 
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "PartDesignGui::ViewProviderPolarPattern";
     }
     //@}
@@ -64,10 +65,11 @@ public:
       * the given edge, which must be linear.
       * If Reversed is true, the direction of rotation will be opposite.
       */
-    const std::list<gp_Trsf> getTransformations(const std::vector<App::DocumentObject*>) override;
+    const std::list<gp_Trsf> getTransformations(const std::vector<App::DocumentObject *>) override;
 
 protected:
-    void handleChangedPropertyType(Base::XMLReader& reader, const char* TypeName, App::Property* prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
     static const App::PropertyIntegerConstraint::Constraints intOccurrences;
     static const App::PropertyAngle::Constraints floatAngle;
 };

@@ -23,7 +23,7 @@
 
 #pragma once
 
-class CClassFactory : public IClassFactory
+class CClassFactory: public IClassFactory
 {
 private:
     LONG m_cRef;
@@ -34,11 +34,11 @@ public:
     CClassFactory();
 
     //  IUnknown methods
-    STDMETHOD(QueryInterface)(REFIID, void**);
+    STDMETHOD(QueryInterface)(REFIID, void **);
     STDMETHOD_(ULONG, AddRef)();
     STDMETHOD_(ULONG, Release)();
 
     //  IClassFactory methods
-    STDMETHOD(CreateInstance)(IUnknown*, REFIID, void**);
+    STDMETHOD(CreateInstance)(IUnknown *, REFIID, void **);
     STDMETHOD(LockServer)(BOOL);
 };

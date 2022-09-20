@@ -35,7 +35,7 @@ namespace TechDraw
 
 class DrawPage;
 
-class TechDrawExport DrawTemplate : public App::DocumentObject
+class TechDrawExport DrawTemplate: public App::DocumentObject
 {
     PROPERTY_HEADER(TechDraw::DrawTemplate);
 
@@ -52,13 +52,12 @@ public:
     App::PropertyMap EditableTexts;
 
 public:
-
     /// Returns template width in mm
     virtual double getWidth() const;
     /// Returns template height in mm
     virtual double getHeight() const;
 
-    virtual DrawPage* getParentPage() const;
+    virtual DrawPage *getParentPage() const;
 
     /** @name methods override Feature */
     //@{
@@ -70,7 +69,8 @@ public:
     virtual short mustExecute() const;
 
     /// returns the type name of the ViewProvider
-    virtual const char* getViewProviderName(void) const {
+    virtual const char *getViewProviderName(void) const
+    {
         return "TechDrawGui::ViewProviderTemplate";
     }
 
@@ -79,17 +79,15 @@ public:
     virtual unsigned int getMemSize(void) const;
 
 protected:
-    void onChanged(const App::Property* prop);
+    void onChanged(const App::Property *prop);
 
 private:
-    static const char* OrientationEnums[];
-
+    static const char *OrientationEnums[];
 };
 
 using DrawTemplatePython = App::FeaturePythonT<DrawTemplate>;
 
 } //namespace TechDraw
-
 
 
 #endif //TECHDRAW_DrawTemplate_h_

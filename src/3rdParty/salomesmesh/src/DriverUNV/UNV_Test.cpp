@@ -35,37 +35,39 @@ static int MYDEBUG = 0;
 #endif
 
 
-void ReadMed(const char* theFileName){
-  std::ifstream in_stream(theFileName);
+void ReadMed(const char *theFileName)
+{
+    std::ifstream in_stream(theFileName);
 
-  UNV2411::TDataSet aDataSet2411;
-  UNV2411::Read(in_stream,aDataSet2411);
+    UNV2411::TDataSet aDataSet2411;
+    UNV2411::Read(in_stream, aDataSet2411);
 
-  in_stream.seekg(0);
-  UNV2412::TDataSet aDataSet2412;
-  UNV2412::Read(in_stream,aDataSet2412);
+    in_stream.seekg(0);
+    UNV2412::TDataSet aDataSet2412;
+    UNV2412::Read(in_stream, aDataSet2412);
 
-  string aFileName(theFileName);
-  aFileName += "-";
-  std::ofstream out_stream(aFileName.c_str());
+    string aFileName(theFileName);
+    aFileName += "-";
+    std::ofstream out_stream(aFileName.c_str());
 
-  UNV2411::Write(out_stream,aDataSet2411);
-  UNV2412::Write(out_stream,aDataSet2412);
+    UNV2411::Write(out_stream, aDataSet2411);
+    UNV2412::Write(out_stream, aDataSet2412);
 }
 
 
-int main(int argc, char** argv){ 
-  DriverUNV_R_SMDS_Mesh aR;
-  DriverUNV_W_SMDS_Mesh aW;
-  try{
-    if(argc > 1){
-      ReadMed(argv[1]);
+int main(int argc, char **argv)
+{
+    DriverUNV_R_SMDS_Mesh aR;
+    DriverUNV_W_SMDS_Mesh aW;
+    try {
+        if (argc > 1) { ReadMed(argv[1]); }
+        return 0;
     }
-    return 0;
-  }catch(std::exception& exc){
-    MESSAGE("Follow exception was accured :\n"<<exc.what());
-  }catch(...){
-    MESSAGE("Unknown exception was accured !!!");
-  } 
-  return 1;
+    catch (std::exception &exc) {
+        MESSAGE("Follow exception was accured :\n" << exc.what());
+    }
+    catch (...) {
+        MESSAGE("Unknown exception was accured !!!");
+    }
+    return 1;
 }

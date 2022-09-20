@@ -34,14 +34,13 @@
 #include <NCollection_Sequence.hxx>
 #endif
 
-typedef const SMDS_MeshNode* SMDS_MeshNodePtr;
+typedef const SMDS_MeshNode *SMDS_MeshNodePtr;
 
 #if OCC_VERSION_HEX >= 0x060703
 typedef NCollection_Sequence<SMDS_MeshNodePtr> SMESH_SequenceOfNode;
 #else
-DEFINE_BASECOLLECTION (SMESH_BaseCollectionNodePtr, SMDS_MeshNodePtr)
-DEFINE_SEQUENCE(SMESH_SequenceOfNode,
-                SMESH_BaseCollectionNodePtr, SMDS_MeshNodePtr)
+DEFINE_BASECOLLECTION(SMESH_BaseCollectionNodePtr, SMDS_MeshNodePtr)
+DEFINE_SEQUENCE(SMESH_SequenceOfNode, SMESH_BaseCollectionNodePtr, SMDS_MeshNodePtr)
 #endif
 
 #endif

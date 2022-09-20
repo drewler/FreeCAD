@@ -23,17 +23,17 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
-# include <Inventor/nodes/SoCoordinate3.h>
-# include <Inventor/nodes/SoFaceSet.h>
-# include <Inventor/nodes/SoMaterial.h>
-# include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/nodes/SoTexture2.h>
-# include <Inventor/nodes/SoTextureCoordinate2.h>
-# include <QFile>
-# include <QFileInfo>
-# include <QImage>
-# include <QString>
+#include <sstream>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoFaceSet.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoTexture2.h>
+#include <Inventor/nodes/SoTextureCoordinate2.h>
+#include <QFile>
+#include <QFileInfo>
+#include <QImage>
+#include <QString>
 #endif
 
 #include <App/Document.h>
@@ -73,14 +73,14 @@ void ViewProviderImagePlane::attach(App::DocumentObject *pcObj)
     // NOTE: SoFCSelection node has beem removed because it led to
     // problems using the image as a construction plane with the
     // draft commands
-    SoSeparator* planesep = new SoSeparator;
+    SoSeparator *planesep = new SoSeparator;
     planesep->addChild(pcCoords);
 
     SoTextureCoordinate2 *textCoord = new SoTextureCoordinate2;
-    textCoord->point.set1Value(0,0,0);
-    textCoord->point.set1Value(1,1,0);
-    textCoord->point.set1Value(2,1,1);
-    textCoord->point.set1Value(3,0,1);
+    textCoord->point.set1Value(0, 0, 0);
+    textCoord->point.set1Value(1, 1, 0);
+    textCoord->point.set1Value(2, 1, 1);
+    textCoord->point.set1Value(3, 0, 1);
     planesep->addChild(textCoord);
 
     // texture
@@ -90,21 +90,20 @@ void ViewProviderImagePlane::attach(App::DocumentObject *pcObj)
     planesep->addChild(pcShapeMaterial);
 
     // plane
-    pcCoords->point.set1Value(0,0,0,0);
-    pcCoords->point.set1Value(1,1,0,0);
-    pcCoords->point.set1Value(2,1,1,0);
-    pcCoords->point.set1Value(3,0,1,0);
+    pcCoords->point.set1Value(0, 0, 0, 0);
+    pcCoords->point.set1Value(1, 1, 0, 0);
+    pcCoords->point.set1Value(2, 1, 1, 0);
+    pcCoords->point.set1Value(3, 0, 1, 0);
     SoFaceSet *faceset = new SoFaceSet;
-    faceset->numVertices.set1Value(0,4);
+    faceset->numVertices.set1Value(0, 4);
     planesep->addChild(faceset);
 
     addDisplayMaskMode(planesep, "ImagePlane");
 }
 
-void ViewProviderImagePlane::setDisplayMode(const char* ModeName)
+void ViewProviderImagePlane::setDisplayMode(const char *ModeName)
 {
-    if (strcmp("ImagePlane",ModeName) == 0)
-        setDisplayMaskMode("ImagePlane");
+    if (strcmp("ImagePlane", ModeName) == 0) setDisplayMaskMode("ImagePlane");
     ViewProviderGeometryObject::setDisplayMode(ModeName);
 }
 
@@ -115,11 +114,11 @@ std::vector<std::string> ViewProviderImagePlane::getDisplayModes() const
     return StrList;
 }
 
-bool ViewProviderImagePlane::loadSvg(const char* filename, float x, float y, QImage& img)
+bool ViewProviderImagePlane::loadSvg(const char *filename, float x, float y, QImage &img)
 {
     QFileInfo fi(QString::fromUtf8(filename));
     if (fi.suffix().toLower() == QLatin1String("svg")) {
-        QPixmap px = BitmapFactory().pixmapFromSvg(filename, QSize((int)x,(int)y));
+        QPixmap px = BitmapFactory().pixmapFromSvg(filename, QSize((int)x, (int)y));
         img = px.toImage();
         return true;
     }
@@ -127,25 +126,25 @@ bool ViewProviderImagePlane::loadSvg(const char* filename, float x, float y, QIm
     return false;
 }
 
-void ViewProviderImagePlane::updateData(const App::Property* prop)
+void ViewProviderImagePlane::updateData(const App::Property *prop)
 {
-    Image::ImagePlane* pcPlaneObj = static_cast<Image::ImagePlane*>(pcObject);
+    Image::ImagePlane *pcPlaneObj = static_cast<Image::ImagePlane *>(pcObject);
     if (prop == &pcPlaneObj->XSize || prop == &pcPlaneObj->YSize) {
         float x = pcPlaneObj->XSize.getValue();
         float y = pcPlaneObj->YSize.getValue();
 
         //pcCoords->point.setNum(4);
-        pcCoords->point.set1Value(0,-(x/2),-(y/2),0.0);
-        pcCoords->point.set1Value(1,+(x/2),-(y/2),0.0);
-        pcCoords->point.set1Value(2,+(x/2),+(y/2),0.0);
-        pcCoords->point.set1Value(3,-(x/2),+(y/2),0.0);
+        pcCoords->point.set1Value(0, -(x / 2), -(y / 2), 0.0);
+        pcCoords->point.set1Value(1, +(x / 2), -(y / 2), 0.0);
+        pcCoords->point.set1Value(2, +(x / 2), +(y / 2), 0.0);
+        pcCoords->point.set1Value(3, -(x / 2), +(y / 2), 0.0);
 
         QImage impQ;
         loadSvg(pcPlaneObj->ImageFile.getValue(), x, y, impQ);
         if (!impQ.isNull()) {
             SoSFImage img;
             // convert to Coin bitmap
-            BitmapFactory().convert(impQ,img);
+            BitmapFactory().convert(impQ, img);
             texture->image = img;
         }
     }
@@ -153,12 +152,12 @@ void ViewProviderImagePlane::updateData(const App::Property* prop)
         float x = pcPlaneObj->XSize.getValue();
         float y = pcPlaneObj->YSize.getValue();
         QImage impQ;
-        if (!loadSvg(pcPlaneObj->ImageFile.getValue(),x,y, impQ))
+        if (!loadSvg(pcPlaneObj->ImageFile.getValue(), x, y, impQ))
             impQ.load(QString::fromUtf8(pcPlaneObj->ImageFile.getValue()));
         if (!impQ.isNull()) {
             SoSFImage img;
             // convert to Coin bitmap
-            BitmapFactory().convert(impQ,img);
+            BitmapFactory().convert(impQ, img);
             texture->image = img;
         }
     }

@@ -21,139 +21,93 @@
 //
 #include "MED_CoordUtils.hxx"
 #include "MED_Utilities.hxx"
- 
+
 namespace MED
 {
 
-  enum ECoordName{eX, eY, eZ, eNone};
+enum ECoordName
+{
+    eX,
+    eY,
+    eZ,
+    eNone
+};
 
-  template<ECoordName TCoordId>
-  TFloat 
-  GetCoord(const TCCoordSlice& theCoordSlice)
-  {
+template<ECoordName TCoordId> TFloat GetCoord(const TCCoordSlice &theCoordSlice)
+{
     return theCoordSlice[TCoordId];
-  }
+}
 
-  template<>
-  TFloat 
-  GetCoord<eNone>(const TCCoordSlice& theCoordSlice)
-  {
-    return 0.0;
-  }
-  
-  TGetCoord
-  aXYZGetCoord[3] = {
-    &GetCoord<eX>, 
-    &GetCoord<eY>, 
-    &GetCoord<eZ>
-  };
-  
-  TGetCoord
-  aXYGetCoord[3] = {
-    &GetCoord<eX>, 
-    &GetCoord<eY>, 
-    &GetCoord<eNone>
-  };
-  
-  TGetCoord
-  aYZGetCoord[3] = {
-    &GetCoord<eNone>,
-    &GetCoord<eX>, 
-    &GetCoord<eY>
-  };
-  
-  TGetCoord 
-  aXZGetCoord[3] = {
-    &GetCoord<eX>, 
-    &GetCoord<eNone>,
-    &GetCoord<eY>
-  };
-  
-  
-  TGetCoord 
-  aXGetCoord[3] = {
-    &GetCoord<eX>, 
-    &GetCoord<eNone>,
-    &GetCoord<eNone>
-  };
-  
-  TGetCoord
-  aYGetCoord[3] = {
-    &GetCoord<eNone>,
-    &GetCoord<eX>, 
-    &GetCoord<eNone>
-  };
+template<> TFloat GetCoord<eNone>(const TCCoordSlice &theCoordSlice) { return 0.0; }
 
-  TGetCoord
-  aZGetCoord[3] = {
-    &GetCoord<eNone>,
-    &GetCoord<eNone>,
-    &GetCoord<eX>
-  };
+TGetCoord aXYZGetCoord[3] = {&GetCoord<eX>, &GetCoord<eY>, &GetCoord<eZ>};
 
-  
-  //---------------------------------------------------------------
-  TCoordHelper
-  ::TCoordHelper(TGetCoord* theGetCoord):
-    myGetCoord(theGetCoord)
-  {}
+TGetCoord aXYGetCoord[3] = {&GetCoord<eX>, &GetCoord<eY>, &GetCoord<eNone>};
 
-  TFloat 
-  TCoordHelper
-  ::GetCoord(TCCoordSlice& theCoordSlice, 
-             TInt theCoordId)
-  {
+TGetCoord aYZGetCoord[3] = {&GetCoord<eNone>, &GetCoord<eX>, &GetCoord<eY>};
+
+TGetCoord aXZGetCoord[3] = {&GetCoord<eX>, &GetCoord<eNone>, &GetCoord<eY>};
+
+
+TGetCoord aXGetCoord[3] = {&GetCoord<eX>, &GetCoord<eNone>, &GetCoord<eNone>};
+
+TGetCoord aYGetCoord[3] = {&GetCoord<eNone>, &GetCoord<eX>, &GetCoord<eNone>};
+
+TGetCoord aZGetCoord[3] = {&GetCoord<eNone>, &GetCoord<eNone>, &GetCoord<eX>};
+
+
+//---------------------------------------------------------------
+TCoordHelper ::TCoordHelper(TGetCoord *theGetCoord) : myGetCoord(theGetCoord) {}
+
+TFloat TCoordHelper ::GetCoord(TCCoordSlice &theCoordSlice, TInt theCoordId)
+{
     return (*myGetCoord[theCoordId])(theCoordSlice);
-  }
+}
 
 
-  //---------------------------------------------------------------
-  PCoordHelper
-  GetCoordHelper(PNodeInfo theNodeInfo)
-  {
+//---------------------------------------------------------------
+PCoordHelper GetCoordHelper(PNodeInfo theNodeInfo)
+{
     PCoordHelper aCoordHelper;
     {
-      PMeshInfo aMeshInfo = theNodeInfo->GetMeshInfo();
-      TInt aMeshDimension = aMeshInfo->GetDim();
-      bool anIsDimPresent[3] = {false, false, false};
-      for(int iDim = 0; iDim < aMeshDimension; iDim++){
-        // PAL16857(SMESH not conform to the MED convention) ->
-        // 1D - always along X
-        // 2D - always in XOY plane
-        anIsDimPresent[iDim] = iDim < aMeshDimension;
-//      std::string aName = theNodeInfo->GetCoordName(iDim);
-//         if ( aName.size() > 1 ) // PAL12148, aName has size 8 or 16
-//           aName = aName.substr(0,1);
-//      if(aName == "x" || aName == "X")
-//        anIsDimPresent[eX] = true;
-//      else if(aName == "y" || aName == "Y")
-//        anIsDimPresent[eY] = true;
-//      else if(aName == "z" || aName == "Z")
-//        anIsDimPresent[eZ] = true;
-      }
+        PMeshInfo aMeshInfo = theNodeInfo->GetMeshInfo();
+        TInt aMeshDimension = aMeshInfo->GetDim();
+        bool anIsDimPresent[3] = {false, false, false};
+        for (int iDim = 0; iDim < aMeshDimension; iDim++) {
+            // PAL16857(SMESH not conform to the MED convention) ->
+            // 1D - always along X
+            // 2D - always in XOY plane
+            anIsDimPresent[iDim] = iDim < aMeshDimension;
+            //      std::string aName = theNodeInfo->GetCoordName(iDim);
+            //         if ( aName.size() > 1 ) // PAL12148, aName has size 8 or 16
+            //           aName = aName.substr(0,1);
+            //      if(aName == "x" || aName == "X")
+            //        anIsDimPresent[eX] = true;
+            //      else if(aName == "y" || aName == "Y")
+            //        anIsDimPresent[eY] = true;
+            //      else if(aName == "z" || aName == "Z")
+            //        anIsDimPresent[eZ] = true;
+        }
 
-      switch(aMeshDimension){
-      case 3:
-        aCoordHelper.reset(new TCoordHelper(aXYZGetCoord));
-        break;
-      case 2:
-        if(anIsDimPresent[eY] && anIsDimPresent[eZ])
-          aCoordHelper.reset(new TCoordHelper(aYZGetCoord));
-        else if(anIsDimPresent[eX] && anIsDimPresent[eZ])
-          aCoordHelper.reset(new TCoordHelper(aXZGetCoord));
-        else
-          aCoordHelper.reset(new TCoordHelper(aXYGetCoord));
-        break;
-      case 1:
-        if(anIsDimPresent[eY])
-          aCoordHelper.reset(new TCoordHelper(aYGetCoord));
-        else if(anIsDimPresent[eZ])
-          aCoordHelper.reset(new TCoordHelper(aZGetCoord));
-        else
-          aCoordHelper.reset(new TCoordHelper(aXGetCoord));
-        break;
-      }
+        switch (aMeshDimension) {
+            case 3: aCoordHelper.reset(new TCoordHelper(aXYZGetCoord)); break;
+            case 2:
+                if (anIsDimPresent[eY] && anIsDimPresent[eZ])
+                    aCoordHelper.reset(new TCoordHelper(aYZGetCoord));
+                else if (anIsDimPresent[eX] && anIsDimPresent[eZ])
+                    aCoordHelper.reset(new TCoordHelper(aXZGetCoord));
+                else
+                    aCoordHelper.reset(new TCoordHelper(aXYGetCoord));
+                break;
+            case 1:
+                if (anIsDimPresent[eY]) aCoordHelper.reset(new TCoordHelper(aYGetCoord));
+                else if (anIsDimPresent[eZ])
+                    aCoordHelper.reset(new TCoordHelper(aZGetCoord));
+                else
+                    aCoordHelper.reset(new TCoordHelper(aXGetCoord));
+                break;
+        }
     }
     return aCoordHelper;
-  }
 }
+} // namespace MED

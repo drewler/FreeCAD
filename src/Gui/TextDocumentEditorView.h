@@ -30,33 +30,34 @@
 #include <Gui/MDIView.h>
 
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport TextDocumentEditorView : public MDIView {
+class GuiExport TextDocumentEditorView: public MDIView
+{
     Q_OBJECT
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-    TextDocumentEditorView(
-            App::TextDocument* textDocument,
-            QPlainTextEdit* editor, QWidget* parent);
+    TextDocumentEditorView(App::TextDocument *textDocument, QPlainTextEdit *editor,
+                           QWidget *parent);
     ~TextDocumentEditorView() override;
     const char *getName() const override { return "TextDocumentEditorView"; }
-    bool onMsg(const char* msg, const char**) override;
-    bool onHasMsg(const char* msg) const override;
+    bool onMsg(const char *msg, const char **) override;
+    bool onHasMsg(const char *msg) const override;
     bool canClose() override;
 
     bool event(QEvent *event) override;
 
-    QPlainTextEdit* getEditor() const { return editor; }
-    App::TextDocument* getTextObject() const { return textDocument; }
+    QPlainTextEdit *getEditor() const { return editor; }
+    App::TextDocument *getTextObject() const { return textDocument; }
     QStringList undoActions() const override;
     QStringList redoActions() const override;
 
 protected:
-    void showEvent(QShowEvent*) override;
-    void hideEvent(QHideEvent*) override;
-    void closeEvent(QCloseEvent*) override;
+    void showEvent(QShowEvent *) override;
+    void hideEvent(QHideEvent *) override;
+    void closeEvent(QCloseEvent *) override;
 
 private:
     void setupEditor();
@@ -76,6 +77,6 @@ private:
     bool aboutToClose = false;
 };
 
-}
+} // namespace Gui
 
 #endif

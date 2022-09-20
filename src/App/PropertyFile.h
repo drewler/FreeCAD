@@ -29,7 +29,8 @@
 #include "PropertyStandard.h"
 
 
-namespace Base {
+namespace Base
+{
 class Writer;
 }
 
@@ -39,7 +40,7 @@ namespace App
 /** File properties
   * This property holds a file name
   */
-class AppExport PropertyFile : public PropertyString
+class AppExport PropertyFile: public PropertyString
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -47,8 +48,7 @@ public:
     PropertyFile();
     ~PropertyFile() override;
 
-    const char* getEditorName() const override
-    { return "Gui::PropertyEditor::PropertyFileItem"; }
+    const char *getEditorName() const override { return "Gui::PropertyEditor::PropertyFileItem"; }
 
     virtual void setFilter(const std::string filter);
     virtual std::string getFilter() const;
@@ -71,7 +71,7 @@ private:
   * will just rename and use the same file. You can use getExchangeTempFile() to 
   * get a file name in the transient dir to write a new file version.
  */
-class AppExport PropertyFileIncluded : public Property
+class AppExport PropertyFileIncluded: public Property
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -79,27 +79,29 @@ public:
     PropertyFileIncluded();
     ~PropertyFileIncluded() override;
 
-    void setValue(const char* sFile, const char* sName=nullptr);
-    const char* getValue() const;
+    void setValue(const char *sFile, const char *sName = nullptr);
+    const char *getValue() const;
 
-    const char* getEditorName() const override
-    { return "Gui::PropertyEditor::PropertyTransientFileItem"; }
+    const char *getEditorName() const override
+    {
+        return "Gui::PropertyEditor::PropertyTransientFileItem";
+    }
     PyObject *getPyObject() override;
     void setPyObject(PyObject *) override;
-    
-    void Save (Base::Writer &writer) const override;
+
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
-    void SaveDocFile (Base::Writer &writer) const override;
+    void SaveDocFile(Base::Writer &writer) const override;
     void RestoreDocFile(Base::Reader &reader) override;
 
     Property *Copy() const override;
     void Paste(const Property &from) override;
-    unsigned int getMemSize () const override;
+    unsigned int getMemSize() const override;
 
-    bool isSame(const Property &other) const override {
-        if (&other == this)
-            return true;
+    bool isSame(const Property &other) const override
+    {
+        if (&other == this) return true;
         return getTypeId() == other.getTypeId()
             && _BaseFileName == static_cast<decltype(this)>(&other)->_BaseFileName
             && _OriginalName == static_cast<decltype(this)>(&other)->_OriginalName
@@ -114,12 +116,12 @@ public:
     std::string getExchangeTempFile() const;
     std::string getOriginalFileName() const;
 
-    bool isEmpty() const {return _cValue.empty();}
+    bool isEmpty() const { return _cValue.empty(); }
 
 protected:
     // get the transient path if the property is in a DocumentObject
     std::string getDocTransientPath() const;
-    std::string getUniqueFileName(const std::string&, const std::string&) const;
+    std::string getUniqueFileName(const std::string &, const std::string &) const;
     void aboutToSetValue() override;
 
 protected:

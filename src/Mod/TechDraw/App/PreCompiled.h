@@ -28,23 +28,23 @@
 
 // Exporting of App classes
 #ifdef FC_OS_WIN32
-# define TechDrawExport  __declspec(dllexport)
-# define DrawingExport   __declspec(dllexport)
-# define PartExport      __declspec(dllimport)
-# define MeasureExport   __declspec(dllimport)
-# define MeshExport      __declspec(dllimport)
-# define ImportExport    __declspec(dllimport)
+#define TechDrawExport __declspec(dllexport)
+#define DrawingExport __declspec(dllexport)
+#define PartExport __declspec(dllimport)
+#define MeasureExport __declspec(dllimport)
+#define MeshExport __declspec(dllimport)
+#define ImportExport __declspec(dllimport)
 #else // for Linux
-# define TechDrawExport
-# define DrawingExport
-# define MeasureExport
-# define PartExport
-# define MeshExport
-# define ImportExport
+#define TechDrawExport
+#define DrawingExport
+#define MeasureExport
+#define PartExport
+#define MeshExport
+#define ImportExport
 #endif
 
 #ifdef _MSC_VER
-# pragma warning( disable : 4275 )
+#pragma warning(disable : 4275)
 #endif
 
 #ifdef _PreComp_

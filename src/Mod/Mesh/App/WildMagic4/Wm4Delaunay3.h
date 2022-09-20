@@ -26,8 +26,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM Delaunay3 : public Delaunay<Real>
+template<class Real> class WM4_FOUNDATION_ITEM Delaunay3: public Delaunay<Real>
 {
 public:
     // The input to the constructor is the array of vertices whose Delaunay
@@ -43,28 +42,28 @@ public:
     // exact arithmetic, but is the slowest choice.  The choice Query::QT_REAL
     // uses floating-point arithmetic, but is not robust in all cases.
 
-    Delaunay3 (int iVertexQuantity, Vector3<Real>* akVertex, Real fEpsilon,
-        bool bOwner, Query::Type eQueryType);
-    virtual ~Delaunay3 ();
+    Delaunay3(int iVertexQuantity, Vector3<Real> *akVertex, Real fEpsilon, bool bOwner,
+              Query::Type eQueryType);
+    virtual ~Delaunay3();
 
     // The input vertex array.
-    const Vector3<Real>* GetVertices () const;
+    const Vector3<Real> *GetVertices() const;
 
     // The number of unique vertices processed.
-    int GetUniqueVertexQuantity () const;
+    int GetUniqueVertexQuantity() const;
 
     // If GetDimension() returns 1, then the points lie on a line.  You must
     // create a Delaunay1 object using the function provided.
-    const Vector3<Real>& GetLineOrigin () const;
-    const Vector3<Real>& GetLineDirection () const;
-    Delaunay1<Real>* GetDelaunay1 () const;
+    const Vector3<Real> &GetLineOrigin() const;
+    const Vector3<Real> &GetLineDirection() const;
+    Delaunay1<Real> *GetDelaunay1() const;
 
     // If GetDimension() returns 2, then the points lie on a plane.  The plane
     // has two direction vectors (inputs 0 or 1).  You must create a Delaunay2
     // object using the function provided.
-    const Vector3<Real>& GetPlaneOrigin () const;
-    const Vector3<Real>& GetPlaneDirection (int i) const;
-    Delaunay2<Real>* GetDelaunay2 () const;
+    const Vector3<Real> &GetPlaneOrigin() const;
+    const Vector3<Real> &GetPlaneDirection(int i) const;
+    Delaunay2<Real> *GetDelaunay2() const;
 
     // Locate those tetrahedra faces that do not share other tetrahedra.
     // The returned quantity is the number of triangles in the hull.  The
@@ -72,21 +71,21 @@ public:
     // triangle.  The triangles are counterclockwise ordered when viewed
     // from outside the hull.  The return value is 'true' iff the dimension
     // is 3.
-    bool GetHull (int& riTQuantity, int*& raiIndex) const;
+    bool GetHull(int &riTQuantity, int *&raiIndex) const;
 
     // Support for searching the tetrahedralization for a tetrahedron that
     // contains a point.  If there is a containing tetrahedron, the returned
     // value is a tetrahedron index i with 0 <= i < riTQuantity.  If there is
     // not a containing tetrahedron, -1 is returned.
-    int GetContainingTetrahedron (const Vector3<Real>& rkP) const;
+    int GetContainingTetrahedron(const Vector3<Real> &rkP) const;
 
     // If GetContainingTetrahedron returns a nonnegative value, the path of
     // tetrahedra searched for the containing tetrahedra is stored in an
     // array.  The last index of the array is returned by GetPathLast; it is
     // one less than the number of array elements.  The array itself is
     // returned by GetPath.
-    int GetPathLast () const;
-    const int* GetPath () const;
+    int GetPathLast() const;
+    const int *GetPath() const;
 
     // If GetContainingTetrahedron returns -1, the path of tetrahedra
     // searched may be obtained by GetPathLast and GetPath.  The input point
@@ -96,36 +95,35 @@ public:
     // as viewed by an outside observer.  The final output is the index of the
     // vertex v3 opposite the face.  The return value of the function is the
     // index of the quadruple of vertex indices; the value is 0, 1, 2, or 3.
-    int GetLastFace (int& riV0, int& riV1, int& riV2, int& riV3) const;
+    int GetLastFace(int &riV0, int &riV1, int &riV2, int &riV3) const;
 
     // Get the vertices for tetrahedron i.  The function returns 'true' if i
     // is a valid tetrahedron index, in which case the vertices are valid.
     // Otherwise, the function returns 'false' and the vertices are invalid.
-    bool GetVertexSet (int i, Vector3<Real> akV[4]) const;
+    bool GetVertexSet(int i, Vector3<Real> akV[4]) const;
 
     // Get the vertex indices for tetrahedron i.  The function returns 'true'
     // if i is a valid tetrahedron index, in which case the vertices are
     // valid.  Otherwise, the function returns 'false' and the vertices are
     // invalid.
-    bool GetIndexSet (int i, int aiIndex[4]) const;
+    bool GetIndexSet(int i, int aiIndex[4]) const;
 
     // Get the indices for tetrahedra adjacent to tetrahedron i.  The function
     // returns 'true' if i is a valid tetrahedron index, in which case the
     // adjacencies are valid.  Otherwise, the function returns 'false' and
     // the adjacencies are invalid.
-    bool GetAdjacentSet (int i, int aiAdjacent[4]) const;
+    bool GetAdjacentSet(int i, int aiAdjacent[4]) const;
 
     // Compute the barycentric coordinates of P with respect to tetrahedron i.
     // The function returns 'true' if i is a valid tetrahedron index, in which
     // case the coordinates are valid.  Otherwise, the function returns
     // 'false' and the coordinate array is invalid.
-    bool GetBarycentricSet (int i, const Vector3<Real>& rkP, Real afBary[4])
-        const;
+    bool GetBarycentricSet(int i, const Vector3<Real> &rkP, Real afBary[4]) const;
 
     // Support for streaming to/from disk.
-    Delaunay3 (const char* acFilename);
-    bool Load (const char* acFilename);
-    bool Save (const char* acFilename) const;
+    Delaunay3(const char *acFilename);
+    bool Load(const char *acFilename);
+    bool Save(const char *acFilename) const;
 
 private:
     using Delaunay<Real>::m_eQueryType;
@@ -137,15 +135,14 @@ private:
     using Delaunay<Real>::m_fEpsilon;
     using Delaunay<Real>::m_bOwner;
 
-    void Update (int i);
-    DelTetrahedron<Real>* GetContainingTetrahedron (int i) const;
-    void RemoveTetrahedra ();
-    bool IsSupervertex (int i) const;
-    bool SharesFace (int i, DelTetrahedron<Real>* pkFace,
-        DelTetrahedron<Real>* pkAdj);
+    void Update(int i);
+    DelTetrahedron<Real> *GetContainingTetrahedron(int i) const;
+    void RemoveTetrahedra();
+    bool IsSupervertex(int i) const;
+    bool SharesFace(int i, DelTetrahedron<Real> *pkFace, DelTetrahedron<Real> *pkAdj);
 
     // The input vertices.
-    Vector3<Real>* m_akVertex;
+    Vector3<Real> *m_akVertex;
 
     // The number of unique vertices processed.
     int m_iUniqueVertexQuantity;
@@ -153,8 +150,8 @@ private:
     // The scaled input vertices with additional storage for the four
     // supertetrahedron vertices.  This array and supporting data structures
     // are for robust calculations.
-    Vector3<Real>* m_akSVertex;
-    Query3<Real>* m_pkQuery;
+    Vector3<Real> *m_akSVertex;
+    Query3<Real> *m_pkQuery;
     Vector3<Real> m_kMin;
     Real m_fScale;
 
@@ -162,7 +159,7 @@ private:
     int m_aiSV[4];
 
     // The current tetrahedralization.
-    std::set<DelTetrahedron<Real>*> m_kTetrahedron;
+    std::set<DelTetrahedron<Real> *> m_kTetrahedron;
 
     // The line of containment if the dimension is 1.
     Vector3<Real> m_kLineOrigin, m_kLineDirection;
@@ -173,7 +170,7 @@ private:
     // Store the path of tetrahedra visited in a GetContainingTetrahedron
     // function call.
     mutable int m_iPathLast;
-    mutable int* m_aiPath;
+    mutable int *m_aiPath;
 
     // If a query point is not in the convex hull of the input points, the
     // point is outside a face of the last tetrahedron in the search path.
@@ -185,6 +182,6 @@ private:
 typedef Delaunay3<float> Delaunay3f;
 typedef Delaunay3<double> Delaunay3d;
 
-}
+} // namespace Wm4
 
 #endif

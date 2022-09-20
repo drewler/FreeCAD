@@ -9,62 +9,62 @@
 #include "ziphead.h"
 #include "zipinputstreambuf.h"
 
-namespace zipios {
+namespace zipios
+{
 
-using std::ifstream ;
+using std::ifstream;
 
 /** \anchor ZipInputStream_anchor
     ZipInputStream is an istream that gets it's input from a zip file. The
     interface approximates the interface of the Java
     ZipInputStream. */
-class BaseExport ZipInputStream : public istream {
+class BaseExport ZipInputStream: public istream
+{
 public:
-
-  /** ZipInputStream constructor.
+    /** ZipInputStream constructor.
       @param is istream from which the compressed zip archive can be read.
       @param pos position to reposition the istream to before reading.  */
-  explicit ZipInputStream( std::istream &is, std::streampos pos = 0 ) ;
+    explicit ZipInputStream(std::istream &is, std::streampos pos = 0);
 
-  /** ZipInputStream constructor.
+    /** ZipInputStream constructor.
       @param filename filename of a valid zip file.
       @param pos position to reposition the istream to before reading.
    */
-  explicit ZipInputStream( const std::string &filename, std::streampos pos = 0 ) ;
-  
-  int available() ;
-  /** Closes the current entry, and positions the stream read pointer at 
+    explicit ZipInputStream(const std::string &filename, std::streampos pos = 0);
+
+    int available();
+    /** Closes the current entry, and positions the stream read pointer at 
       the beginning of the next entry (if there is one). */
-  void closeEntry() ;
+    void closeEntry();
 
-  /** Closes the istream. */
-  void close() ;
+    /** Closes the istream. */
+    void close();
 
-//    ZipLocalEntry *createZipCDirEntry( const string &name ) ;
+    //    ZipLocalEntry *createZipCDirEntry( const string &name ) ;
 
-  /** \anchor ZipInputStream_getnextentry_anchor
+    /** \anchor ZipInputStream_getnextentry_anchor
       Opens the next entry in the zip archive and returns a const pointer to a 
       FileEntry object for the entry.
       @return a const FileEntry * containing information about the (now) current 
       entry.
   */
-  ConstEntryPointer getNextEntry() ;
+    ConstEntryPointer getNextEntry();
 
-  /** Destructor. */
-  virtual ~ZipInputStream() ;
+    /** Destructor. */
+    virtual ~ZipInputStream();
 
 private:
-  ifstream *ifs ;
-  ZipInputStreambuf *izf ;
+    ifstream *ifs;
+    ZipInputStreambuf *izf;
 
-  /** Copy-constructor is private to prevent copying. */
-  ZipInputStream( const ZipInputStream &src ) ;
+    /** Copy-constructor is private to prevent copying. */
+    ZipInputStream(const ZipInputStream &src);
 
-  /** Copy-assignment operator is private to prevent copying.  */
-  const ZipInputStream &operator= ( const ZipInputStream &src ) ;
-
+    /** Copy-assignment operator is private to prevent copying.  */
+    const ZipInputStream &operator=(const ZipInputStream &src);
 };
- 
-} // namespace.
+
+} // namespace zipios
 
 #endif
 

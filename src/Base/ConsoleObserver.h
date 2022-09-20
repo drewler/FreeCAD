@@ -28,7 +28,8 @@
 #include <Base/Stream.h>
 
 
-namespace Base {
+namespace Base
+{
 
 //=========================================================================
 // some special observers
@@ -36,14 +37,14 @@ namespace Base {
 /** The LoggingConsoleObserver class
  *  This class is used by the main modules to write Console messages and logs to a file
  */
-class BaseExport ConsoleObserverFile : public ILogger
+class BaseExport ConsoleObserverFile: public ILogger
 {
 public:
     ConsoleObserverFile(const char *sFileName);
     ~ConsoleObserverFile() override;
 
-    void SendLog(const std::string& message, LogStyle level) override;
-    const char* Name() override {return "File";}
+    void SendLog(const std::string &message, LogStyle level) override;
+    const char *Name() override { return "File"; }
 
 protected:
     Base::ofstream cFileStream;
@@ -57,15 +58,17 @@ class BaseExport ConsoleObserverStd: public ILogger
 public:
     ConsoleObserverStd();
     ~ConsoleObserverStd() override;
-    void SendLog(const std::string& message, LogStyle level) override;
-    const char* Name() override {return "Console";}
+    void SendLog(const std::string &message, LogStyle level) override;
+    const char *Name() override { return "Console"; }
+
 protected:
     bool useColorStderr;
+
 private:
     void Warning(const char *sWarn);
     void Message(const char *sMsg);
-    void Error  (const char *sErr);
-    void Log    (const char *sErr);
+    void Error(const char *sErr);
+    void Log(const char *sErr);
 };
 
 /** The ILoggerBlocker class
@@ -76,22 +79,26 @@ class BaseExport ILoggerBlocker
 {
 public:
     // Constructor that will block message types passed as parameter. By default, all types are blocked.
-    inline explicit ILoggerBlocker(const char* co, ConsoleMsgFlags msgTypes =
-        ConsoleSingleton::MsgType_Txt | ConsoleSingleton::MsgType_Log | ConsoleSingleton::MsgType_Wrn | ConsoleSingleton::MsgType_Err);
+    inline explicit ILoggerBlocker(const char *co,
+                                   ConsoleMsgFlags msgTypes = ConsoleSingleton::MsgType_Txt
+                                       | ConsoleSingleton::MsgType_Log
+                                       | ConsoleSingleton::MsgType_Wrn
+                                       | ConsoleSingleton::MsgType_Err);
     // Disable copy & move constructors
-    ILoggerBlocker(ILoggerBlocker const&) = delete;
+    ILoggerBlocker(ILoggerBlocker const &) = delete;
     ILoggerBlocker(ILoggerBlocker const &&) = delete;
     // Disable assignment & move-assignment operator
-    ILoggerBlocker& operator=(ILoggerBlocker const&) = delete;
-    ILoggerBlocker& operator=(ILoggerBlocker const&&) = delete;
+    ILoggerBlocker &operator=(ILoggerBlocker const &) = delete;
+    ILoggerBlocker &operator=(ILoggerBlocker const &&) = delete;
     // Destructor that will restore message type settings.
     inline ~ILoggerBlocker();
+
 private:
     ConsoleMsgFlags msgTypesBlocked = 0; // Stores message types blocked by the blocker
-    const char* conObs; //  Stores console observer name that blocker acts on
+    const char *conObs;                  //  Stores console observer name that blocker acts on
 };
 
-ILoggerBlocker::ILoggerBlocker(const char* co, ConsoleMsgFlags msgTypes) : conObs(co)
+ILoggerBlocker::ILoggerBlocker(const char *co, ConsoleMsgFlags msgTypes) : conObs(co)
 {
     msgTypesBlocked = Console().SetEnabledMsgType(conObs, msgTypes, false);
 }
@@ -107,7 +114,7 @@ ILoggerBlocker::~ILoggerBlocker()
 #endif
 }
 
-class BaseExport RedirectStdOutput : public std::streambuf
+class BaseExport RedirectStdOutput: public std::streambuf
 {
 public:
     RedirectStdOutput();
@@ -120,7 +127,7 @@ private:
     std::string buffer;
 };
 
-class BaseExport RedirectStdError : public std::streambuf
+class BaseExport RedirectStdError: public std::streambuf
 {
 public:
     RedirectStdError();
@@ -133,7 +140,7 @@ private:
     std::string buffer;
 };
 
-class BaseExport RedirectStdLog : public std::streambuf
+class BaseExport RedirectStdLog: public std::streambuf
 {
 public:
     RedirectStdLog();

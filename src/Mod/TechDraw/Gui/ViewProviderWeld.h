@@ -32,9 +32,10 @@
 #include <Mod/TechDraw/App/DrawWeldSymbol.h>
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderWeld : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderWeld: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderWeld);
 
@@ -44,25 +45,24 @@ public:
     /// destructor
     ~ViewProviderWeld() override;
 
-    App::PropertyString      Font;
-    App::PropertyLength      FontSize;
-    App::PropertyLength      TileFontSize;
+    App::PropertyString Font;
+    App::PropertyLength FontSize;
+    App::PropertyLength TileFontSize;
 
-    bool useNewSelectionModel() const override {return false;}
-    void onChanged(const App::Property* p) override;
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    bool useNewSelectionModel() const override { return false; }
+    void onChanged(const App::Property *p) override;
+    std::vector<App::DocumentObject *> claimChildren() const override;
     bool setEdit(int ModNum) override;
     bool doubleClicked() override;
 
-    TechDraw::DrawWeldSymbol* getViewObject() const override;
-    virtual TechDraw::DrawWeldSymbol* getFeature() const;
+    TechDraw::DrawWeldSymbol *getViewObject() const override;
+    virtual TechDraw::DrawWeldSymbol *getFeature() const;
 
     std::string prefFontName();
     double prefFontSize();
     double prefTileTextAdjust();
     bool onDelete(const std::vector<std::string> &) override;
-    bool canDelete(App::DocumentObject* obj) const override;
-
+    bool canDelete(App::DocumentObject *obj) const override;
 };
 
 } // namespace TechDrawGui

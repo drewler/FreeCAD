@@ -29,14 +29,14 @@
 namespace Part
 {
 
-class PartExport Face : public Part::Feature
+class PartExport Face: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::Face);
 
 public:
     Face();
 
-    App::PropertyLinkList   Sources;
+    App::PropertyLinkList Sources;
     App::PropertyString FaceMakerClass;
 
     /** @name methods override feature */
@@ -45,9 +45,7 @@ public:
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderFace";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderFace"; }
     void setupObject() override;
     //@}
 };

@@ -32,14 +32,9 @@ PROPERTY_SOURCE(TechDrawGui::ViewProviderTile, Gui::ViewProviderDocumentObject)
 //**************************************************************************
 // Construction/Destruction
 
-ViewProviderTile::ViewProviderTile()
-{
-    sPixmap = "actions/TechDraw_Tile";
-}
+ViewProviderTile::ViewProviderTile() { sPixmap = "actions/TechDraw_Tile"; }
 
-ViewProviderTile::~ViewProviderTile()
-{
-}
+ViewProviderTile::~ViewProviderTile() {}
 
 //TechDraw::DrawTile* ViewProviderTile::getViewObject() const
 //{
@@ -56,7 +51,7 @@ bool ViewProviderTile::canDelete(App::DocumentObject *obj) const
     return true;
 }
 
-TechDraw::DrawTile* ViewProviderTile::getFeature() const
+TechDraw::DrawTile *ViewProviderTile::getFeature() const
 {
-    return dynamic_cast<TechDraw::DrawTile*>(pcObject);
+    return dynamic_cast<TechDraw::DrawTile *>(pcObject);
 }

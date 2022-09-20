@@ -34,102 +34,106 @@ class SoPickedPoint;
 class SoEventCallback;
 class QSignalMapper;
 
-namespace App { class Document; }
-namespace Gui { class Document; }
-namespace Part {
+namespace App
+{
+class Document;
+}
+namespace Gui
+{
+class Document;
+}
+namespace Part
+{
 class Feature;
 class Primitive;
-}
-namespace PartGui {
+} // namespace Part
+namespace PartGui
+{
 
 class Picker
 {
 public:
-    Picker() : exitCode(-1)
-    {
-    }
-    virtual ~Picker()
-    {
-    }
+    Picker() : exitCode(-1) {}
+    virtual ~Picker() {}
 
-    virtual bool pickedPoint(const SoPickedPoint * point) = 0;
-    virtual QString command(App::Document*) const = 0;
-    void createPrimitive(QWidget* widget, const QString&, Gui::Document*);
-    QString toPlacement(const gp_Ax2&) const;
+    virtual bool pickedPoint(const SoPickedPoint *point) = 0;
+    virtual QString command(App::Document *) const = 0;
+    void createPrimitive(QWidget *widget, const QString &, Gui::Document *);
+    QString toPlacement(const gp_Ax2 &) const;
 
     int exitCode;
     QEventLoop loop;
 };
 
 class Ui_DlgPrimitives;
-class DlgPrimitives : public QWidget
+class DlgPrimitives: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit DlgPrimitives(QWidget* parent = nullptr, Part::Primitive* feature = nullptr);
+    explicit DlgPrimitives(QWidget *parent = nullptr, Part::Primitive *feature = nullptr);
     ~DlgPrimitives() override;
-    void createPrimitive(const QString&);
-    void accept(const QString&);
+    void createPrimitive(const QString &);
+    void accept(const QString &);
     void reject();
 
 private Q_SLOTS:
     void on_buttonCircleFromThreePoints_clicked();
-    void onChangePlane(QWidget*);
-    void onChangeBox(QWidget*);
-    void onChangeCylinder(QWidget*);
-    void onChangeCone(QWidget*);
-    void onChangeSphere(QWidget*);
-    void onChangeEllipsoid(QWidget*);
-    void onChangeTorus(QWidget*);
-    void onChangePrism(QWidget*);
-    void onChangeWedge(QWidget*);
-    void onChangeHelix(QWidget*);
-    void onChangeSpiral(QWidget*);
-    void onChangeCircle(QWidget*);
-    void onChangeEllipse(QWidget*);
-    void onChangeVertex(QWidget*);
-    void onChangeLine(QWidget*);
-    void onChangeRegularPolygon(QWidget*);
+    void onChangePlane(QWidget *);
+    void onChangeBox(QWidget *);
+    void onChangeCylinder(QWidget *);
+    void onChangeCone(QWidget *);
+    void onChangeSphere(QWidget *);
+    void onChangeEllipsoid(QWidget *);
+    void onChangeTorus(QWidget *);
+    void onChangePrism(QWidget *);
+    void onChangeWedge(QWidget *);
+    void onChangeHelix(QWidget *);
+    void onChangeSpiral(QWidget *);
+    void onChangeCircle(QWidget *);
+    void onChangeEllipse(QWidget *);
+    void onChangeVertex(QWidget *);
+    void onChangeLine(QWidget *);
+    void onChangeRegularPolygon(QWidget *);
 
 private:
-    QString createPlane(const QString& objectName, const QString& placement) const;
-    QString createBox(const QString& objectName, const QString& placement) const;
-    QString createCylinder(const QString& objectName, const QString& placement) const;
-    QString createCone(const QString& objectName, const QString& placement) const;
-    QString createSphere(const QString& objectName, const QString& placement) const;
-    QString createEllipsoid(const QString& objectName, const QString& placement) const;
-    QString createTorus(const QString& objectName, const QString& placement) const;
-    QString createPrism(const QString& objectName, const QString& placement) const;
-    QString createWedge(const QString& objectName, const QString& placement) const;
-    QString createHelix(const QString& objectName, const QString& placement) const;
-    QString createSpiral(const QString& objectName, const QString& placement) const;
-    QString createCircle(const QString& objectName, const QString& placement) const;
-    QString createEllipse(const QString& objectName, const QString& placement) const;
-    QString createVertex(const QString& objectName, const QString& placement) const;
-    QString createLine(const QString& objectName, const QString& placement) const;
-    QString createRegularPolygon(const QString& objectName, const QString& placement) const;
+    QString createPlane(const QString &objectName, const QString &placement) const;
+    QString createBox(const QString &objectName, const QString &placement) const;
+    QString createCylinder(const QString &objectName, const QString &placement) const;
+    QString createCone(const QString &objectName, const QString &placement) const;
+    QString createSphere(const QString &objectName, const QString &placement) const;
+    QString createEllipsoid(const QString &objectName, const QString &placement) const;
+    QString createTorus(const QString &objectName, const QString &placement) const;
+    QString createPrism(const QString &objectName, const QString &placement) const;
+    QString createWedge(const QString &objectName, const QString &placement) const;
+    QString createHelix(const QString &objectName, const QString &placement) const;
+    QString createSpiral(const QString &objectName, const QString &placement) const;
+    QString createCircle(const QString &objectName, const QString &placement) const;
+    QString createEllipse(const QString &objectName, const QString &placement) const;
+    QString createVertex(const QString &objectName, const QString &placement) const;
+    QString createLine(const QString &objectName, const QString &placement) const;
+    QString createRegularPolygon(const QString &objectName, const QString &placement) const;
 
-    QString changePlane(const QString& objectName, const QString& placement) const;
-    QString changeBox(const QString& objectName, const QString& placement) const;
-    QString changeCylinder(const QString& objectName, const QString& placement) const;
-    QString changeCone(const QString& objectName, const QString& placement) const;
-    QString changeSphere(const QString& objectName, const QString& placement) const;
-    QString changeEllipsoid(const QString& objectName, const QString& placement) const;
-    QString changeTorus(const QString& objectName, const QString& placement) const;
-    QString changePrism(const QString& objectName, const QString& placement) const;
-    QString changeWedge(const QString& objectName, const QString& placement) const;
-    QString changeHelix(const QString& objectName, const QString& placement) const;
-    QString changeSpiral(const QString& objectName, const QString& placement) const;
-    QString changeCircle(const QString& objectName, const QString& placement) const;
-    QString changeEllipse(const QString& objectName, const QString& placement) const;
-    QString changeVertex(const QString& objectName, const QString& placement) const;
-    QString changeLine(const QString& objectName, const QString& placement) const;
-    QString changeRegularPolygon(const QString& objectName, const QString& placement) const;
+    QString changePlane(const QString &objectName, const QString &placement) const;
+    QString changeBox(const QString &objectName, const QString &placement) const;
+    QString changeCylinder(const QString &objectName, const QString &placement) const;
+    QString changeCone(const QString &objectName, const QString &placement) const;
+    QString changeSphere(const QString &objectName, const QString &placement) const;
+    QString changeEllipsoid(const QString &objectName, const QString &placement) const;
+    QString changeTorus(const QString &objectName, const QString &placement) const;
+    QString changePrism(const QString &objectName, const QString &placement) const;
+    QString changeWedge(const QString &objectName, const QString &placement) const;
+    QString changeHelix(const QString &objectName, const QString &placement) const;
+    QString changeSpiral(const QString &objectName, const QString &placement) const;
+    QString changeCircle(const QString &objectName, const QString &placement) const;
+    QString changeEllipse(const QString &objectName, const QString &placement) const;
+    QString changeVertex(const QString &objectName, const QString &placement) const;
+    QString changeLine(const QString &objectName, const QString &placement) const;
+    QString changeRegularPolygon(const QString &objectName, const QString &placement) const;
 
-    static void pickCallback(void * ud, SoEventCallback * n);
-    void executeCallback(Picker*);
-    void connectSignalMapper(QWidget *sender, const char *signal, QSignalMapper* mapper);
+    static void pickCallback(void *ud, SoEventCallback *n);
+    void executeCallback(Picker *);
+    void connectSignalMapper(QWidget *sender, const char *signal, QSignalMapper *mapper);
 
 private:
     std::unique_ptr<Ui_DlgPrimitives> ui;
@@ -137,12 +141,12 @@ private:
 };
 
 class Ui_Location;
-class Location : public QWidget
+class Location: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Location(QWidget* parent = nullptr, Part::Feature* feature = nullptr);
+    explicit Location(QWidget *parent = nullptr, Part::Feature *feature = nullptr);
     ~Location() override;
     QString toPlacement() const;
 
@@ -151,14 +155,14 @@ private Q_SLOTS:
     void on_viewPositionButton_clicked();
 
 private:
-    static void pickCallback(void * ud, SoEventCallback * n);
+    static void pickCallback(void *ud, SoEventCallback *n);
     int mode;
     QPointer<QWidget> activeView;
     std::unique_ptr<Ui_Location> ui;
     App::DocumentObjectWeakPtrT featurePtr;
 };
 
-class TaskPrimitives : public Gui::TaskView::TaskDialog
+class TaskPrimitives: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -170,29 +174,29 @@ public:
     bool accept() override;
     bool reject() override;
     QDialogButtonBox::StandardButtons getStandardButtons() const override;
-    void modifyStandardButtons(QDialogButtonBox*) override;
+    void modifyStandardButtons(QDialogButtonBox *) override;
 
 private:
-    DlgPrimitives* widget;
-    Location* location;
+    DlgPrimitives *widget;
+    Location *location;
 };
 
-class TaskPrimitivesEdit : public Gui::TaskView::TaskDialog
+class TaskPrimitivesEdit: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskPrimitivesEdit(Part::Primitive* feature);
+    explicit TaskPrimitivesEdit(Part::Primitive *feature);
     ~TaskPrimitivesEdit() override;
-    
+
 public:
     bool accept() override;
     bool reject() override;
     QDialogButtonBox::StandardButtons getStandardButtons() const override;
 
 private:
-    DlgPrimitives* widget;
-    Location* location; 
+    DlgPrimitives *widget;
+    Location *location;
 };
 
 } // namespace PartGui

@@ -28,15 +28,15 @@
 #include <Gui/TaskView/TaskDialog.h>
 #include <Gui/Selection.h>
 
-namespace PartGui { 
+namespace PartGui
+{
 
-class ShapeBuilderWidget : public QWidget,
-                           public Gui::SelectionObserver
+class ShapeBuilderWidget: public QWidget, public Gui::SelectionObserver
 {
     Q_OBJECT
 
 public:
-    explicit ShapeBuilderWidget(QWidget* parent = nullptr);
+    explicit ShapeBuilderWidget(QWidget *parent = nullptr);
     ~ShapeBuilderWidget() override;
 
     bool accept();
@@ -48,7 +48,7 @@ private Q_SLOTS:
     void switchMode(int);
 
 private:
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
 
 private:
     void createEdgeFromVertex();
@@ -61,10 +61,10 @@ private:
 
 private:
     class Private;
-    Private* d;
+    Private *d;
 };
 
-class TaskShapeBuilder : public Gui::TaskView::TaskDialog
+class TaskShapeBuilder: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -79,11 +79,13 @@ public:
     void clicked(int) override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Close; }
+    {
+        return QDialogButtonBox::Close;
+    }
 
 private:
-    ShapeBuilderWidget* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    ShapeBuilderWidget *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace PartGui

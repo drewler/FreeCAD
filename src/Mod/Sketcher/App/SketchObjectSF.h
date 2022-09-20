@@ -21,7 +21,6 @@
  ***************************************************************************/
 
 
-
 #ifndef SKETCH_SKETCHOBJECTSF_H
 #define SKETCH_SKETCHOBJECTSF_H
 
@@ -35,7 +34,7 @@ namespace Sketcher
 {
 
 
-class SketchObjectSF :public Part::Part2DObject
+class SketchObjectSF: public Part::Part2DObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Sketcher::SketchObjectSF);
 
@@ -56,13 +55,11 @@ public:
     //}
     //@}
 
-    bool save(const char* FileName);
-    bool load(const char* FileName);
-
-
+    bool save(const char *FileName);
+    bool load(const char *FileName);
 };
 
-} //namespace Part
+} // namespace Sketcher
 
 
 #endif // SKETCH_SKETCHOBJECTSF_H

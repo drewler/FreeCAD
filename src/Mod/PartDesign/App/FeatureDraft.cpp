@@ -24,22 +24,22 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepOffsetAPI_DraftAngle.hxx>
-# include <BRepBuilderAPI_MakeEdge.hxx>
-# include <TopTools_IndexedMapOfShape.hxx>
-# include <TopExp.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Face.hxx>
-# include <BRepAdaptor_Curve.hxx>
-# include <BRepAdaptor_Surface.hxx>
-# include <Geom_Curve.hxx>
-# include <Geom_Line.hxx>
-# include <Geom_Plane.hxx>
-# include <GeomAPI_IntSS.hxx>
-# include <gp_Circ.hxx>
-# include <gp_Dir.hxx>
-# include <gp_Lin.hxx>
-# include <gp_Pln.hxx>
+#include <BRepOffsetAPI_DraftAngle.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Face.hxx>
+#include <BRepAdaptor_Curve.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <Geom_Curve.hxx>
+#include <Geom_Line.hxx>
+#include <Geom_Plane.hxx>
+#include <GeomAPI_IntSS.hxx>
+#include <gp_Circ.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Lin.hxx>
+#include <gp_Pln.hxx>
 #endif
 
 #include <App/OriginFeature.h>
@@ -58,20 +58,22 @@ using namespace PartDesign;
 
 PROPERTY_SOURCE(PartDesign::Draft, PartDesign::DressUp)
 
-const App::PropertyAngle::Constraints Draft::floatAngle = { 0.0, 90.0 - Base::toDegrees<double>(Precision::Angular()), 0.1 };
+const App::PropertyAngle::Constraints Draft::floatAngle = {
+    0.0, 90.0 - Base::toDegrees<double>(Precision::Angular()), 0.1};
 
 Draft::Draft()
 {
-    ADD_PROPERTY(Angle,(1.5));
+    ADD_PROPERTY(Angle, (1.5));
     Angle.setConstraints(&floatAngle);
-    ADD_PROPERTY_TYPE(NeutralPlane,(nullptr),"Draft",(App::PropertyType)(App::Prop_None),"NeutralPlane");
-    ADD_PROPERTY_TYPE(PullDirection,(nullptr),"Draft",(App::PropertyType)(App::Prop_None),"PullDirection");
-    ADD_PROPERTY(Reversed,(0));
+    ADD_PROPERTY_TYPE(NeutralPlane, (nullptr), "Draft", (App::PropertyType)(App::Prop_None),
+                      "NeutralPlane");
+    ADD_PROPERTY_TYPE(PullDirection, (nullptr), "Draft", (App::PropertyType)(App::Prop_None),
+                      "PullDirection");
+    ADD_PROPERTY(Reversed, (0));
 }
 
-void Draft::handleChangedPropertyType(Base::XMLReader &reader,
-                                      const char * TypeName,
-                                      App::Property * prop)
+void Draft::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                      App::Property *prop)
 {
     Base::Type inputType = Base::Type::fromName(TypeName);
     if (prop == &Angle && inputType == App::PropertyFloatConstraint::getClassTypeId()) {
@@ -86,11 +88,8 @@ void Draft::handleChangedPropertyType(Base::XMLReader &reader,
 
 short Draft::mustExecute() const
 {
-    if (Placement.isTouched() ||
-        Angle.isTouched() ||
-        NeutralPlane.isTouched() ||
-        PullDirection.isTouched() ||
-        Reversed.isTouched())
+    if (Placement.isTouched() || Angle.isTouched() || NeutralPlane.isTouched()
+        || PullDirection.isTouched() || Reversed.isTouched())
         return 1;
     return DressUp::mustExecute();
 }
@@ -102,33 +101,34 @@ App::DocumentObjectExecReturn *Draft::execute()
     Part::TopoShape TopShape;
     try {
         TopShape = getBaseShape();
-    } catch (Base::Exception& e) {
+    }
+    catch (Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 
     // Faces where draft should be applied
     // Note: Cannot be const reference currently because of BRepOffsetAPI_DraftAngle::Remove() bug, see below
     std::vector<std::string> SubVals = Base.getSubValuesStartsWith("Face");
-    if (SubVals.empty())
-        return new App::DocumentObjectExecReturn("No faces specified");
+    if (SubVals.empty()) return new App::DocumentObjectExecReturn("No faces specified");
 
     // Draft angle
     double angle = Base::toRadians(Angle.getValue());
 
     // Pull direction
     gp_Dir pullDirection;
-    App::DocumentObject* refDirection = PullDirection.getValue();    
+    App::DocumentObject *refDirection = PullDirection.getValue();
     if (refDirection) {
         if (refDirection->getTypeId().isDerivedFrom(PartDesign::Line::getClassTypeId())) {
-                    PartDesign::Line* line = static_cast<PartDesign::Line*>(refDirection);
-                    Base::Vector3d d = line->getDirection();
-                    pullDirection = gp_Dir(d.x, d.y, d.z);
-        } else if (refDirection->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId())) {
+            PartDesign::Line *line = static_cast<PartDesign::Line *>(refDirection);
+            Base::Vector3d d = line->getDirection();
+            pullDirection = gp_Dir(d.x, d.y, d.z);
+        }
+        else if (refDirection->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId())) {
             std::vector<std::string> subStrings = PullDirection.getSubValues();
             if (subStrings.empty() || subStrings[0].empty())
                 throw Base::ValueError("No pull direction reference specified");
 
-            Part::Feature* refFeature = static_cast<Part::Feature*>(refDirection);
+            Part::Feature *refFeature = static_cast<Part::Feature *>(refDirection);
             Part::TopoShape refShape = refFeature->Shape.getShape();
             TopoDS_Shape ref = refShape.getSubShape(subStrings[0].c_str());
 
@@ -141,11 +141,14 @@ App::DocumentObjectExecReturn *Draft::execute()
                     throw Base::TypeError("Pull direction reference edge must be linear");
 
                 pullDirection = adapt.Line().Direction();
-            } else {
+            }
+            else {
                 throw Base::TypeError("Pull direction reference must be an edge or a datum line");
             }
-        } else {
-            throw Base::TypeError("Pull direction reference must be an edge of a feature or a datum line");
+        }
+        else {
+            throw Base::TypeError(
+                "Pull direction reference must be an edge of a feature or a datum line");
         }
 
         TopLoc_Location invObjLoc = this->getLocation().Inverted();
@@ -154,7 +157,7 @@ App::DocumentObjectExecReturn *Draft::execute()
 
     // Neutral plane
     gp_Pln neutralPlane;
-    App::DocumentObject* refPlane = NeutralPlane.getValue();
+    App::DocumentObject *refPlane = NeutralPlane.getValue();
     if (!refPlane) {
         // Try to guess a neutral plane from the first selected face
         // Get edges of first selected face
@@ -177,20 +180,20 @@ App::DocumentObjectExecReturn *Draft::execute()
                     found = true;
                     break;
                 }
-            } else {
+            }
+            else {
                 // Edge is linear
                 // Find midpoint of edge and create auxiliary plane through midpoint normal to edge
                 gp_Pnt pm = c.Value((c.FirstParameter() + c.LastParameter()) / 2.0);
-                Handle(Geom_Plane) aux = new Geom_Plane(pm, gp_Dir(p2.X() - p1.X(), p2.Y() - p1.Y(), p2.Z() - p1.Z()));
+                Handle(Geom_Plane) aux =
+                    new Geom_Plane(pm, gp_Dir(p2.X() - p1.X(), p2.Y() - p1.Y(), p2.Z() - p1.Z()));
                 // Intersect plane with face. Is there no easier way?
                 BRepAdaptor_Surface adapt(TopoDS::Face(face), Standard_False);
                 Handle(Geom_Surface) sf = adapt.Surface().Surface();
                 GeomAPI_IntSS intersector(aux, sf, Precision::Confusion());
-                if (!intersector.IsDone() || intersector.NbLines() < 1)
-                    continue;
+                if (!intersector.IsDone() || intersector.NbLines() < 1) continue;
                 Handle(Geom_Curve) icurve = intersector.Line(1);
-                if (!icurve->IsKind(STANDARD_TYPE(Geom_Line)))
-                    continue;
+                if (!icurve->IsKind(STANDARD_TYPE(Geom_Line))) continue;
                 // TODO: How to extract the line from icurve without creating an edge first?
                 TopoDS_Edge edge = BRepBuilderAPI_MakeEdge(icurve);
                 BRepAdaptor_Curve c(edge);
@@ -200,22 +203,24 @@ App::DocumentObjectExecReturn *Draft::execute()
             }
         }
 
-        if (!found)
-            throw Base::RuntimeError("No neutral plane specified and none can be guessed");
-    } else {
+        if (!found) throw Base::RuntimeError("No neutral plane specified and none can be guessed");
+    }
+    else {
         if (refPlane->getTypeId().isDerivedFrom(PartDesign::Plane::getClassTypeId())) {
-            PartDesign::Plane* plane = static_cast<PartDesign::Plane*>(refPlane);
+            PartDesign::Plane *plane = static_cast<PartDesign::Plane *>(refPlane);
             Base::Vector3d b = plane->getBasePoint();
             Base::Vector3d n = plane->getNormal();
             neutralPlane = gp_Pln(gp_Pnt(b.x, b.y, b.z), gp_Dir(n.x, n.y, n.z));
-        } else if (refPlane->getTypeId().isDerivedFrom(App::Plane::getClassTypeId())) {
+        }
+        else if (refPlane->getTypeId().isDerivedFrom(App::Plane::getClassTypeId())) {
             neutralPlane = Feature::makePlnFromPlane(refPlane);
-        } else if (refPlane->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId())) {
+        }
+        else if (refPlane->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId())) {
             std::vector<std::string> subStrings = NeutralPlane.getSubValues();
             if (subStrings.empty() || subStrings[0].empty())
                 throw Base::ValueError("No neutral plane reference specified");
 
-            Part::Feature* refFeature = static_cast<Part::Feature*>(refPlane);
+            Part::Feature *refFeature = static_cast<Part::Feature *>(refPlane);
             Part::TopoShape refShape = refFeature->Shape.getShape();
             TopoDS_Shape ref = refShape.getSubShape(subStrings[0].c_str());
 
@@ -228,7 +233,8 @@ App::DocumentObjectExecReturn *Draft::execute()
                     throw Base::TypeError("Neutral plane reference face must be planar");
 
                 neutralPlane = adapt.Plane();
-            } else if (ref.ShapeType() == TopAbs_EDGE) {
+            }
+            else if (ref.ShapeType() == TopAbs_EDGE) {
                 if (refDirection) {
                     // Create neutral plane through edge normal to pull direction
                     TopoDS_Edge refEdge = TopoDS::Edge(ref);
@@ -239,16 +245,22 @@ App::DocumentObjectExecReturn *Draft::execute()
                         throw Base::TypeError("Neutral plane reference edge must be linear");
                     double a = c.Line().Angle(gp_Lin(c.Value(c.FirstParameter()), pullDirection));
                     if (std::fabs(a - M_PI_2) > Precision::Confusion())
-                        throw Base::ValueError("Neutral plane reference edge must be normal to pull direction");
+                        throw Base::ValueError(
+                            "Neutral plane reference edge must be normal to pull direction");
                     neutralPlane = gp_Pln(c.Value(c.FirstParameter()), pullDirection);
-                } else {
-                    throw Base::TypeError("Neutral plane reference can only be an edge if pull direction is defined");
                 }
-            } else {
+                else {
+                    throw Base::TypeError(
+                        "Neutral plane reference can only be an edge if pull direction is defined");
+                }
+            }
+            else {
                 throw Base::TypeError("Neutral plane reference must be a face");
             }
-        } else {
-            throw Base::TypeError("Neutral plane reference must be face of a feature or a datum plane");
+        }
+        else {
+            throw Base::TypeError(
+                "Neutral plane reference must be face of a feature or a datum plane");
         }
 
         TopLoc_Location invObjLoc = this->getLocation().Inverted();
@@ -262,8 +274,7 @@ App::DocumentObjectExecReturn *Draft::execute()
 
     // Reversed pull direction
     bool reversed = Reversed.getValue();
-    if (reversed)
-        angle *= -1.0;
+    if (reversed) angle *= -1.0;
 
     this->positionByBaseFeature();
     // create an untransformed copy of the base shape
@@ -285,7 +296,8 @@ App::DocumentObjectExecReturn *Draft::execute()
             success = true;
             mkDraft.Init(baseShape.getShape());
 
-            for (std::vector<std::string>::iterator it=SubVals.begin(); it != SubVals.end(); ++it) {
+            for (std::vector<std::string>::iterator it = SubVals.begin(); it != SubVals.end();
+                 ++it) {
                 TopoDS_Face face = TopoDS::Face(baseShape.getSubShape(it->c_str()));
                 // TODO: What is the flag for?
                 mkDraft.Add(face, pullDirection, angle, neutralPlane);
@@ -301,26 +313,24 @@ App::DocumentObjectExecReturn *Draft::execute()
                     break;
                 }
             }
-        }
-        while (!success);
+        } while (!success);
 
         mkDraft.Build();
-        if (!mkDraft.IsDone())
-            return new App::DocumentObjectExecReturn("Failed to create draft");
+        if (!mkDraft.IsDone()) return new App::DocumentObjectExecReturn("Failed to create draft");
 
         TopoDS_Shape shape = mkDraft.Shape();
-        if (shape.IsNull())
-            return new App::DocumentObjectExecReturn("Resulting shape is null");
+        if (shape.IsNull()) return new App::DocumentObjectExecReturn("Resulting shape is null");
 
         int solidCount = countSolids(shape);
         if (solidCount > 1) {
-            return new App::DocumentObjectExecReturn("Fuse: Result has multiple solids. This is not supported at this time.");
+            return new App::DocumentObjectExecReturn(
+                "Fuse: Result has multiple solids. This is not supported at this time.");
         }
 
         this->Shape.setValue(getSolid(shape));
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
 
         return new App::DocumentObjectExecReturn(e.GetMessageString());
     }

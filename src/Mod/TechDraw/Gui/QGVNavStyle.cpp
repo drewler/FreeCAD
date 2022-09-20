@@ -42,17 +42,12 @@
 
 using namespace TechDrawGui;
 
-namespace TechDrawGui {
-
-QGVNavStyle::QGVNavStyle(QGVPage *qgvp) :
-    m_viewer(qgvp)
+namespace TechDrawGui
 {
-    initialize();
-}
 
-QGVNavStyle::~QGVNavStyle()
-{
-}
+QGVNavStyle::QGVNavStyle(QGVPage *qgvp) : m_viewer(qgvp) { initialize(); }
+
+QGVNavStyle::~QGVNavStyle() {}
 
 void QGVNavStyle::initialize()
 {
@@ -62,15 +57,21 @@ void QGVNavStyle::initialize()
     this->ctrldown = false;
     this->shiftdown = false;
     this->altdown = false;
-    this->invertZoom = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View")->GetBool("InvertZoom", true);
-    this->zoomAtCursor = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View")->GetBool("ZoomAtCursor", true);
-    this->zoomStep = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View")->GetFloat("ZoomStep", 0.2f);
+    this->invertZoom = App::GetApplication()
+                           .GetParameterGroupByPath("User parameter:BaseApp/Preferences/View")
+                           ->GetBool("InvertZoom", true);
+    this->zoomAtCursor = App::GetApplication()
+                             .GetParameterGroupByPath("User parameter:BaseApp/Preferences/View")
+                             ->GetBool("ZoomAtCursor", true);
+    this->zoomStep = App::GetApplication()
+                         .GetParameterGroupByPath("User parameter:BaseApp/Preferences/View")
+                         ->GetFloat("ZoomStep", 0.2f);
 
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/General");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/General");
     m_reversePan = hGrp->GetInt("KbPan", 1);
     m_reverseScroll = hGrp->GetInt("KbScroll", 1);
 
@@ -90,7 +91,8 @@ void QGVNavStyle::setAnchor()
         if (zoomAtCursor) {
             m_viewer->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
             m_viewer->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-        } else {
+        }
+        else {
             m_viewer->setResizeAnchor(QGraphicsView::AnchorViewCenter);
             m_viewer->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
         }
@@ -100,9 +102,7 @@ void QGVNavStyle::setAnchor()
 void QGVNavStyle::handleEnterEvent(QEvent *event)
 {
     Q_UNUSED(event);
-    if (getViewer()->isBalloonPlacing()) {
-        getViewer()->getBalloonCursor()->hide();
-    }
+    if (getViewer()->isBalloonPlacing()) { getViewer()->getBalloonCursor()->hide(); }
 }
 
 void QGVNavStyle::handleFocusOutEvent(QFocusEvent *event)
@@ -113,8 +113,8 @@ void QGVNavStyle::handleFocusOutEvent(QFocusEvent *event)
 
 void QGVNavStyle::handleKeyPressEvent(QKeyEvent *event)
 {
-    if(event->modifiers().testFlag(Qt::ControlModifier)) {
-        switch(event->key()) {
+    if (event->modifiers().testFlag(Qt::ControlModifier)) {
+        switch (event->key()) {
             case Qt::Key_Plus: {
                 zoom(1.0 + zoomStep);
                 event->accept();
@@ -131,8 +131,8 @@ void QGVNavStyle::handleKeyPressEvent(QKeyEvent *event)
         }
     }
 
-    if(event->modifiers().testFlag( Qt::NoModifier)) {
-        switch(event->key()) {
+    if (event->modifiers().testFlag(Qt::NoModifier)) {
+        switch (event->key()) {
             case Qt::Key_Left: {
                 getViewer()->kbPanScroll(1, 0);
                 event->accept();
@@ -173,9 +173,9 @@ void QGVNavStyle::handleKeyPressEvent(QKeyEvent *event)
 
 void QGVNavStyle::handleKeyReleaseEvent(QKeyEvent *event)
 {
-//    Q_UNUSED(event);
-    if(event->modifiers().testFlag( Qt::NoModifier)) {
-        switch(event->key()) {
+    //    Q_UNUSED(event);
+    if (event->modifiers().testFlag(Qt::NoModifier)) {
+        switch (event->key()) {
             case Qt::Key_Shift: {
                 this->shiftdown = false;
                 Base::Console().Message("QGVNS::handleKeyPressEvent - shift released\n");
@@ -194,30 +194,30 @@ void QGVNavStyle::handleLeaveEvent(QEvent *event)
     Q_UNUSED(event);
     if (getViewer()->isBalloonPlacing()) {
         int left_x;
-        if (getViewer()->getBalloonCursorPos().x() < 32)
-            left_x = 0;
-        else if (getViewer()->getBalloonCursorPos().x() > (getViewer()->contentsRect().right() - 32))
+        if (getViewer()->getBalloonCursorPos().x() < 32) left_x = 0;
+        else if (getViewer()->getBalloonCursorPos().x()
+                 > (getViewer()->contentsRect().right() - 32))
             left_x = getViewer()->contentsRect().right() - 32;
         else
             left_x = getViewer()->getBalloonCursorPos().x();
 
         int left_y;
-        if (getViewer()->getBalloonCursorPos().y() < 32)
-            left_y = 0;
-        else if (getViewer()->getBalloonCursorPos().y() > (getViewer()->contentsRect().bottom() - 32))
+        if (getViewer()->getBalloonCursorPos().y() < 32) left_y = 0;
+        else if (getViewer()->getBalloonCursorPos().y()
+                 > (getViewer()->contentsRect().bottom() - 32))
             left_y = getViewer()->contentsRect().bottom() - 32;
         else
             left_y = getViewer()->getBalloonCursorPos().y();
 
         /* When cursor leave the page, display getViewer()->balloonCursor where it left */
-        getViewer()->getBalloonCursor()->setGeometry(left_x ,left_y, 32, 32);
+        getViewer()->getBalloonCursor()->setGeometry(left_x, left_y, 32, 32);
         getViewer()->getBalloonCursor()->show();
     }
 }
 
 void QGVNavStyle::handleMousePressEvent(QMouseEvent *event)
 {
-//    Base::Console().Message("QGVNS::handleMousePressEvent()\n");
+    //    Base::Console().Message("QGVNS::handleMousePressEvent()\n");
     if (!panningActive && (event->button() == Qt::MiddleButton)) {
         startPan(event->pos());
         event->accept();
@@ -226,10 +226,8 @@ void QGVNavStyle::handleMousePressEvent(QMouseEvent *event)
 
 void QGVNavStyle::handleMouseMoveEvent(QMouseEvent *event)
 {
-//    Base::Console().Message("QGVNS::handleMouseMoveEvent()\n");
-    if (getViewer()->isBalloonPlacing()) {
-        getViewer()->setBalloonCursorPos(event->pos());
-    }
+    //    Base::Console().Message("QGVNS::handleMouseMoveEvent()\n");
+    if (getViewer()->isBalloonPlacing()) { getViewer()->setBalloonCursorPos(event->pos()); }
 
     if (panningActive) {
         pan(event->pos());
@@ -241,10 +239,8 @@ void QGVNavStyle::handleMouseMoveEvent(QMouseEvent *event)
 //button that caused the event (typically RMB)
 void QGVNavStyle::handleMouseReleaseEvent(QMouseEvent *event)
 {
-//    Base::Console().Message("QGVNS::handleMouseReleaseEvent()\n");
-    if (getViewer()->isBalloonPlacing()) {
-        placeBalloon(event->pos());
-    }
+    //    Base::Console().Message("QGVNS::handleMouseReleaseEvent()\n");
+    if (getViewer()->isBalloonPlacing()) { placeBalloon(event->pos()); }
 
     if (panningActive && (event->button() == Qt::MiddleButton)) {
         stopPan();
@@ -255,41 +251,34 @@ void QGVNavStyle::handleMouseReleaseEvent(QMouseEvent *event)
 bool QGVNavStyle::allowContextMenu(QContextMenuEvent *event)
 {
     Q_UNUSED(event)
-//    Base::Console().Message("QGVNS::allowContextMenu()\n");
-//    if (event->reason() == QContextMenuEvent::Mouse) {
-//        //must check for a button combination involving context menu button
-//    }
+    //    Base::Console().Message("QGVNS::allowContextMenu()\n");
+    //    if (event->reason() == QContextMenuEvent::Mouse) {
+    //        //must check for a button combination involving context menu button
+    //    }
     return true;
 }
 
-void QGVNavStyle::pseudoContextEvent()
-{
-    getViewer()->pseudoContextEvent();
-}
+void QGVNavStyle::pseudoContextEvent() { getViewer()->pseudoContextEvent(); }
 
 void QGVNavStyle::handleWheelEvent(QWheelEvent *event)
 {
-//gets called once for every click of the wheel. the sign of event->angleDelta().y()
-//gives the direction of wheel rotation. positive indicates rotation forwards away
-//from the user; negative backwards toward the user. the magnitude of
-//event->angleDelta().y() is 120 for most mice which represents 120/8 = 15 degrees of
-//rotation. Some high resolution mice/trackpads report smaller values - ie a click is less than
-//15 degrees of wheel rotation.
-//https://doc.qt.io/qt-5/qwheelevent.html#angleDelta
+    //gets called once for every click of the wheel. the sign of event->angleDelta().y()
+    //gives the direction of wheel rotation. positive indicates rotation forwards away
+    //from the user; negative backwards toward the user. the magnitude of
+    //event->angleDelta().y() is 120 for most mice which represents 120/8 = 15 degrees of
+    //rotation. Some high resolution mice/trackpads report smaller values - ie a click is less than
+    //15 degrees of wheel rotation.
+    //https://doc.qt.io/qt-5/qwheelevent.html#angleDelta
 
     //to avoid overly sensitive behaviour in high resolution mice/touchpads,
     //save up wheel clicks until the wheel has rotated at least 15 degrees.
     int wheelDeltaThreshold = 120;
     m_wheelDeltaCounter += std::abs(event->angleDelta().y());
-    if (m_wheelDeltaCounter < wheelDeltaThreshold) {
-        return;
-    }
+    if (m_wheelDeltaCounter < wheelDeltaThreshold) { return; }
     m_wheelDeltaCounter = 0;
     //starting with -ve direction keeps us in sync with the behaviour of the 3d window
-    int rotationDirection = - event->angleDelta().y() / std::abs(event->angleDelta().y());
-    if (invertZoom) {
-        rotationDirection = -rotationDirection;
-    }
+    int rotationDirection = -event->angleDelta().y() / std::abs(event->angleDelta().y());
+    if (invertZoom) { rotationDirection = -rotationDirection; }
     double zoomFactor = 1 + rotationDirection * zoomStep;
     zoom(zoomFactor);
 }
@@ -297,14 +286,13 @@ void QGVNavStyle::handleWheelEvent(QWheelEvent *event)
 void QGVNavStyle::zoom(double factor)
 {
     setAnchor();
-    getViewer()->scale(factor,
-                       factor);
+    getViewer()->scale(factor, factor);
     m_zoomPending = false;
 }
 
 void QGVNavStyle::startZoom(QPoint p)
 {
-//    Base::Console().Message("QGVNS::startZoom(%s)\n", TechDraw::DrawUtil::formatVector(p).c_str());
+    //    Base::Console().Message("QGVNS::startZoom(%s)\n", TechDraw::DrawUtil::formatVector(p).c_str());
     zoomOrigin = p;
     zoomingActive = true;
     m_zoomPending = false;
@@ -313,7 +301,7 @@ void QGVNavStyle::startZoom(QPoint p)
 
 void QGVNavStyle::stopZoom()
 {
-//    Base::Console().Message("QGVNS::stopZoom()\n");
+    //    Base::Console().Message("QGVNS::stopZoom()\n");
     zoomingActive = false;
     m_zoomPending = false;
     getViewer()->resetCursor();
@@ -321,17 +309,13 @@ void QGVNavStyle::stopZoom()
 
 double QGVNavStyle::mouseZoomFactor(QPoint p)
 {
-//    Base::Console().Message("QGVNS::mouseZoomFactor(%s)\n", TechDraw::DrawUtil::formatVector(p).c_str());
+    //    Base::Console().Message("QGVNS::mouseZoomFactor(%s)\n", TechDraw::DrawUtil::formatVector(p).c_str());
     QPoint movement = p - zoomOrigin;
     double sensitivity = 0.1;
     double direction = 1.0;
     double invert = 1.0;
-    if (movement.y() < 0.0) {
-        direction = -direction;
-    }
-    if (invertZoom) {
-        invert = -invert;
-    }
+    if (movement.y() < 0.0) { direction = -direction; }
+    if (invertZoom) { invert = -invert; }
     double factor = 1.0 + (direction * invert * zoomStep * sensitivity);
     zoomOrigin = p;
     return factor;
@@ -351,15 +335,15 @@ void QGVNavStyle::pan(QPoint p)
     QScrollBar *verticalScrollbar = getViewer()->verticalScrollBar();
     QPoint direction = p - panOrigin;
 
-    horizontalScrollbar->setValue(horizontalScrollbar->value() - m_reversePan*direction.x());
-    verticalScrollbar->setValue(verticalScrollbar->value() - m_reverseScroll*direction.y());
+    horizontalScrollbar->setValue(horizontalScrollbar->value() - m_reversePan * direction.x());
+    verticalScrollbar->setValue(verticalScrollbar->value() - m_reverseScroll * direction.y());
 
     panOrigin = p;
 }
 
 void QGVNavStyle::stopPan()
 {
-//    Base::Console().Message("QGVNS::stopPan()\n");
+    //    Base::Console().Message("QGVNS::stopPan()\n");
     panningActive = false;
     m_panPending = false;
     getViewer()->resetCursor();
@@ -381,72 +365,52 @@ void QGVNavStyle::placeBalloon(QPoint p)
 {
     getViewer()->getBalloonCursor()->hide();
     getViewer()->getScene()->createBalloon(getViewer()->mapToScene(p),
-                               getViewer()->getDrawPage()->balloonParent);
+                                           getViewer()->getDrawPage()->balloonParent);
     getViewer()->setBalloonPlacing(false);
 }
 
 //****************************************
-KeyCombination::KeyCombination()
-{
-}
+KeyCombination::KeyCombination() {}
 
-KeyCombination::~KeyCombination()
-{
-}
+KeyCombination::~KeyCombination() {}
 
 void KeyCombination::addKey(int inKey)
 {
     bool found = false;
     //check for inKey already in keys
     if (!keys.empty()) {
-        for (auto& k: keys) {
-            if (k == inKey) {
-                found = true;
-            }
+        for (auto &k : keys) {
+            if (k == inKey) { found = true; }
         }
     }
-    if (!found) {
-        keys.push_back(inKey);
-    }
+    if (!found) { keys.push_back(inKey); }
 }
 
 void KeyCombination::removeKey(int inKey)
 {
     std::vector<int> newKeys;
-    for (auto& k: keys) {
-        if (k != inKey) {
-            newKeys.push_back(k);
-        }
+    for (auto &k : keys) {
+        if (k != inKey) { newKeys.push_back(k); }
     }
     keys = newKeys;
 }
 
-void KeyCombination::clear()
-{
-    keys.clear();
-}
+void KeyCombination::clear() { keys.clear(); }
 
-bool KeyCombination::empty()
-{
-    return keys.empty();
-}
+bool KeyCombination::empty() { return keys.empty(); }
 
 //does inCombo match the keys we have in current combination
 bool KeyCombination::haveCombination(int inCombo)
 {
     bool matched = false;
-    int combo = 0;      //no key
+    int combo = 0; //no key
     if (keys.size() < 2) {
         //not enough keys for a combination
         return false;
     }
-    for (auto& k: keys) {
-        combo = combo | k;
-    }
-    if (combo == inCombo) {
-        matched = true;
-    }
+    for (auto &k : keys) { combo = combo | k; }
+    if (combo == inCombo) { matched = true; }
     return matched;
 }
 
-}  //namespace TechDrawGui
+} //namespace TechDrawGui

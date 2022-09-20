@@ -21,7 +21,6 @@
  ***************************************************************************/
 
 
-
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
@@ -67,17 +66,15 @@ PROPERTY_SOURCE(Points::Structured, Points::Feature)
 
 Structured::Structured()
 {
-//    App::PropertyType type = static_cast<App::PropertyType>(App::Prop_None);
+    //    App::PropertyType type = static_cast<App::PropertyType>(App::Prop_None);
     App::PropertyType type = static_cast<App::PropertyType>(App::Prop_ReadOnly);
-    ADD_PROPERTY_TYPE(Width,(1),"Structured points", type, "Width of the image");
-    ADD_PROPERTY_TYPE(Height,(1),"Structured points", type, "Height of the image");
+    ADD_PROPERTY_TYPE(Width, (1), "Structured points", type, "Width of the image");
+    ADD_PROPERTY_TYPE(Height, (1), "Structured points", type, "Height of the image");
     //Width.setStatus(App::Property::ReadOnly, true);
     //Height.setStatus(App::Property::ReadOnly, true);
 }
 
-Structured::~Structured()
-{
-}
+Structured::~Structured() {}
 
 App::DocumentObjectExecReturn *Structured::execute()
 {
@@ -90,11 +87,12 @@ App::DocumentObjectExecReturn *Structured::execute()
 
 // ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(Points::StructuredCustom, Points::Structured)
 /// @endcond
 
 // explicit template instantiation
 template class PointsExport FeatureCustomT<Points::Structured>;
-}
+} // namespace App

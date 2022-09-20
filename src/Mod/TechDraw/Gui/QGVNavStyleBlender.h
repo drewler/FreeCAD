@@ -28,14 +28,15 @@
 
 #include "QGVNavStyle.h"
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 class QGVPage;
 
-class TechDrawGuiExport QGVNavStyleBlender : public QGVNavStyle
+class TechDrawGuiExport QGVNavStyleBlender: public QGVNavStyle
 {
 public:
-    explicit QGVNavStyleBlender(QGVPage* qgvp);
+    explicit QGVNavStyleBlender(QGVPage *qgvp);
     ~QGVNavStyleBlender() override;
 
     void handleKeyReleaseEvent(QKeyEvent *event) override;
@@ -48,8 +49,7 @@ public:
 
 protected:
 private:
-
 };
 
-}
+} // namespace TechDrawGui
 #endif // TECHDRAW_BLENDERNAVSTYLE_H

@@ -31,9 +31,10 @@
 class Ui_DlgLocationPos;
 class ui_DlgLocationAngle;
 
-namespace Gui {
+namespace Gui
+{
 
-class TaskBoxPosition : public Gui::TaskView::TaskBox
+class TaskBoxPosition: public Gui::TaskView::TaskBox
 {
     Q_OBJECT
 
@@ -45,13 +46,12 @@ public:
 private Q_SLOTS:
 
 protected:
-
 private:
-    QWidget* proxy;
-    Ui_Position* ui;
+    QWidget *proxy;
+    Ui_Position *ui;
 };
 
-class TaskBoxAngle : public Gui::TaskView::TaskBox
+class TaskBoxAngle: public Gui::TaskView::TaskBox
 {
     Q_OBJECT
 
@@ -63,15 +63,14 @@ public:
 private Q_SLOTS:
 
 protected:
-
 private:
-    QWidget* proxy;
-    Ui_Angle* ui;
+    QWidget *proxy;
+    Ui_Angle *ui;
 };
 
 
 ///
-class GuiExport TaskDlgRelocation : public Gui::TaskView::TaskDialog
+class GuiExport TaskDlgRelocation: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -93,12 +92,12 @@ public:
 
     /// returns for Close and Help button
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-	{ return QDialogButtonBox::Ok|QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 protected:
-
 };
-
 
 
 } //namespace Gui

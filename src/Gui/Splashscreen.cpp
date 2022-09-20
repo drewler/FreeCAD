@@ -22,18 +22,18 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <cstdlib>
-# include <QApplication>
-# include <QClipboard>
-# include <QLocale>
-# include <QMutex>
-# include <QProcessEnvironment>
-# include <QScreen>
-# include <QSysInfo>
-# include <QTextBrowser>
-# include <QTextStream>
-# include <QWaitCondition>
-# include <Inventor/C/basic.h>
+#include <cstdlib>
+#include <QApplication>
+#include <QClipboard>
+#include <QLocale>
+#include <QMutex>
+#include <QProcessEnvironment>
+#include <QScreen>
+#include <QSysInfo>
+#include <QTextBrowser>
+#include <QTextStream>
+#include <QWaitCondition>
+#include <Inventor/C/basic.h>
 #endif
 
 #include <App/Application.h>
@@ -54,33 +54,32 @@ using namespace Gui;
 using namespace Gui::Dialog;
 namespace fs = boost::filesystem;
 
-namespace Gui {
+namespace Gui
+{
 /** Displays all messages at startup inside the splash screen.
  * \author Werner Mayer
  */
-class SplashObserver : public Base::ILogger
+class SplashObserver: public Base::ILogger
 {
 public:
-    SplashObserver(QSplashScreen* splasher=nullptr)
-      : splash(splasher), alignment(Qt::AlignBottom|Qt::AlignLeft), textColor(Qt::black)
+    SplashObserver(QSplashScreen *splasher = nullptr)
+        : splash(splasher), alignment(Qt::AlignBottom | Qt::AlignLeft), textColor(Qt::black)
     {
         Base::Console().AttachObserver(this);
 
         // allow to customize text position and color
-        const std::map<std::string,std::string>& cfg = App::GetApplication().Config();
+        const std::map<std::string, std::string> &cfg = App::GetApplication().Config();
         auto al = cfg.find("SplashAlignment");
         if (al != cfg.end()) {
             QString alt = QString::fromLatin1(al->second.c_str());
-            int align=0;
-            if (alt.startsWith(QLatin1String("VCenter")))
-                align = Qt::AlignVCenter;
+            int align = 0;
+            if (alt.startsWith(QLatin1String("VCenter"))) align = Qt::AlignVCenter;
             else if (alt.startsWith(QLatin1String("Top")))
                 align = Qt::AlignTop;
             else
                 align = Qt::AlignBottom;
 
-            if (alt.endsWith(QLatin1String("HCenter")))
-                align += Qt::AlignHCenter;
+            if (alt.endsWith(QLatin1String("HCenter"))) align += Qt::AlignHCenter;
             else if (alt.endsWith(QLatin1String("Right")))
                 align += Qt::AlignRight;
             else
@@ -92,46 +91,35 @@ public:
         // choose text color
         auto tc = cfg.find("SplashTextColor");
         if (tc != cfg.end()) {
-            QColor col; col.setNamedColor(QString::fromLatin1(tc->second.c_str()));
-            if (col.isValid())
-                textColor = col;
+            QColor col;
+            col.setNamedColor(QString::fromLatin1(tc->second.c_str()));
+            if (col.isValid()) textColor = col;
         }
     }
-    ~SplashObserver() override
-    {
-        Base::Console().DetachObserver(this);
-    }
-    const char* Name() override
-    {
-        return "SplashObserver";
-    }
-    void SendLog(const std::string& msg, Base::LogStyle level) override
+    ~SplashObserver() override { Base::Console().DetachObserver(this); }
+    const char *Name() override { return "SplashObserver"; }
+    void SendLog(const std::string &msg, Base::LogStyle level) override
     {
 #ifdef FC_DEBUG
         Log(msg.c_str());
         Q_UNUSED(level)
 #else
-        if (level == Base::LogStyle::Log) {
-            Log(msg.c_str());
-        }
+        if (level == Base::LogStyle::Log) { Log(msg.c_str()); }
 #endif
     }
-    void Log (const char * s)
+    void Log(const char *s)
     {
         QString msg(QString::fromUtf8(s));
         QRegExp rx;
         // ignore 'Init:' and 'Mod:' prefixes
         rx.setPattern(QLatin1String("^\\s*(Init:|Mod:)\\s*"));
         int pos = rx.indexIn(msg);
-        if (pos != -1) {
-            msg = msg.mid(rx.matchedLength());
-        }
+        if (pos != -1) { msg = msg.mid(rx.matchedLength()); }
         else {
             // ignore activation of commands
             rx.setPattern(QLatin1String("^\\s*(\\+App::|Create|CmdC:|CmdG:|Act:)\\s*"));
             pos = rx.indexIn(msg);
-            if (pos == 0)
-                return;
+            if (pos == 0) return;
         }
 
         splash->showMessage(msg.replace(QLatin1String("\n"), QString()), alignment, textColor);
@@ -141,7 +129,7 @@ public:
     }
 
 private:
-    QSplashScreen* splash;
+    QSplashScreen *splash;
     int alignment;
     QColor textColor;
 };
@@ -152,35 +140,26 @@ private:
 /**
  * Constructs a splash screen that will display the pixmap.
  */
-SplashScreen::SplashScreen(  const QPixmap & pixmap , Qt::WindowFlags f )
-    : QSplashScreen(pixmap, f)
+SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags f) : QSplashScreen(pixmap, f)
 {
     // write the messages to splasher
     messages = new SplashObserver(this);
 }
 
 /** Destruction. */
-SplashScreen::~SplashScreen()
-{
-    delete messages;
-}
+SplashScreen::~SplashScreen() { delete messages; }
 
 /**
  * Draws the contents of the splash screen using painter \a painter. The default
  * implementation draws the message passed by message().
  */
-void SplashScreen::drawContents ( QPainter * painter )
-{
-    QSplashScreen::drawContents(painter);
-}
+void SplashScreen::drawContents(QPainter *painter) { QSplashScreen::drawContents(painter); }
 
 // ------------------------------------------------------------------------------
 
-AboutDialogFactory* AboutDialogFactory::factory = nullptr;
+AboutDialogFactory *AboutDialogFactory::factory = nullptr;
 
-AboutDialogFactory::~AboutDialogFactory()
-{
-}
+AboutDialogFactory::~AboutDialogFactory() {}
 
 QDialog *AboutDialogFactory::create(QWidget *parent) const
 {
@@ -194,15 +173,13 @@ QDialog *AboutDialogFactory::create(QWidget *parent) const
 const AboutDialogFactory *AboutDialogFactory::defaultFactory()
 {
     static const AboutDialogFactory this_factory;
-    if (factory)
-        return factory;
+    if (factory) return factory;
     return &this_factory;
 }
 
 void AboutDialogFactory::setDefaultFactory(AboutDialogFactory *f)
 {
-    if (factory != f)
-        delete factory;
+    if (factory != f) delete factory;
     factory = f;
 }
 
@@ -216,8 +193,8 @@ void AboutDialogFactory::setDefaultFactory(AboutDialogFactory *f)
  *
  *  The dialog will be modal.
  */
-AboutDialog::AboutDialog(bool showLic, QWidget* parent)
-  : QDialog(parent), ui(new Ui_AboutApplication)
+AboutDialog::AboutDialog(bool showLic, QWidget *parent)
+    : QDialog(parent), ui(new Ui_AboutApplication)
 {
     Q_UNUSED(showLic);
 
@@ -234,16 +211,14 @@ AboutDialog::AboutDialog(bool showLic, QWidget* parent)
     QPixmap image = getMainWindow()->aboutImage();
 
     // Fallback to the splashscreen image
-    if (image.isNull()) {
-        image = getMainWindow()->splashImage();
-    }
+    if (image.isNull()) { image = getMainWindow()->splashImage(); }
 
     // Make sure the image is not too big
     int denom = 2;
-    if (image.height() > rect.height()/denom || image.width() > rect.width()/denom) {
+    if (image.height() > rect.height() / denom || image.width() > rect.width() / denom) {
         float scale = static_cast<float>(image.width()) / static_cast<float>(image.height());
-        int width = std::min(image.width(), rect.width()/denom);
-        int height = std::min(image.height(), rect.height()/denom);
+        int width = std::min(image.width(), rect.width() / denom);
+        int height = std::min(image.height(), rect.height() / denom);
         height = std::min(height, static_cast<int>(width / scale));
         width = static_cast<int>(scale * height);
 
@@ -269,12 +244,10 @@ AboutDialog::~AboutDialog()
     delete ui;
 }
 
-void AboutDialog::showOrHideImage(const QRect& rect)
+void AboutDialog::showOrHideImage(const QRect &rect)
 {
     adjustSize();
-    if (height() > rect.height()) {
-        ui->labelSplashPicture->hide();
-    }
+    if (height() > rect.height()) { ui->labelSplashPicture->hide(); }
 }
 
 void AboutDialog::setupLabels()
@@ -286,19 +259,20 @@ void AboutDialog::setupLabels()
 #endif
     //avoid overriding user set style sheet
     if (qApp->styleSheet().isEmpty()) {
-        setStyleSheet(QString::fromLatin1("Gui--Dialog--AboutDialog QLabel {font-size: %1pt;}").arg(fontSize));
+        setStyleSheet(QString::fromLatin1("Gui--Dialog--AboutDialog QLabel {font-size: %1pt;}")
+                          .arg(fontSize));
     }
 
     QString exeName = qApp->applicationName();
-    std::map<std::string, std::string>& config = App::Application::Config();
-    std::map<std::string,std::string>::iterator it;
-    QString banner  = QString::fromUtf8(config["CopyrightInfo"].c_str());
-    banner = banner.left( banner.indexOf(QLatin1Char('\n')) );
-    QString major  = QString::fromLatin1(config["BuildVersionMajor"].c_str());
-    QString minor  = QString::fromLatin1(config["BuildVersionMinor"].c_str());
-    QString build  = QString::fromLatin1(config["BuildRevision"].c_str());
-    QString disda  = QString::fromLatin1(config["BuildRevisionDate"].c_str());
-    QString mturl  = QString::fromLatin1(config["MaintainerUrl"].c_str());
+    std::map<std::string, std::string> &config = App::Application::Config();
+    std::map<std::string, std::string>::iterator it;
+    QString banner = QString::fromUtf8(config["CopyrightInfo"].c_str());
+    banner = banner.left(banner.indexOf(QLatin1Char('\n')));
+    QString major = QString::fromLatin1(config["BuildVersionMajor"].c_str());
+    QString minor = QString::fromLatin1(config["BuildVersionMinor"].c_str());
+    QString build = QString::fromLatin1(config["BuildRevision"].c_str());
+    QString disda = QString::fromLatin1(config["BuildRevisionDate"].c_str());
+    QString mturl = QString::fromLatin1(config["MaintainerUrl"].c_str());
 
     // we use replace() to keep label formatting, so a label with text "<b>Unknown</b>"
     // gets replaced to "<b>FreeCAD</b>", for example
@@ -310,7 +284,9 @@ void AboutDialog::setupLabels()
     ui->labelAuthor->setUrl(mturl);
 
     if (qApp->styleSheet().isEmpty()) {
-        ui->labelAuthor->setStyleSheet(QString::fromLatin1("Gui--UrlLabel {color: #0000FF;text-decoration: underline;font-weight: 600;font-family: MS Shell Dlg 2;}"));
+        ui->labelAuthor->setStyleSheet(
+            QString::fromLatin1("Gui--UrlLabel {color: #0000FF;text-decoration: "
+                                "underline;font-weight: 600;font-family: MS Shell Dlg 2;}"));
     }
 
     QString version = ui->labelBuildVersion->text();
@@ -331,7 +307,7 @@ void AboutDialog::setupLabels()
 
     QString platform = ui->labelBuildPlatform->text();
     platform.replace(QString::fromLatin1("Unknown"),
-        QString::fromLatin1("%1-bit").arg(QSysInfo::WordSize));
+                     QString::fromLatin1("%1-bit").arg(QSysInfo::WordSize));
     ui->labelBuildPlatform->setText(platform);
 
     // branch name
@@ -350,7 +326,9 @@ void AboutDialog::setupLabels()
     it = config.find("BuildRevisionHash");
     if (it != config.end()) {
         QString hash = ui->labelBuildHash->text();
-        hash.replace(QString::fromLatin1("Unknown"), QString::fromLatin1(it->second.c_str()).left(7)); // Use the 7-char abbreviated hash
+        hash.replace(
+            QString::fromLatin1("Unknown"),
+            QString::fromLatin1(it->second.c_str()).left(7)); // Use the 7-char abbreviated hash
         ui->labelBuildHash->setText(hash);
         if (auto url_itr = config.find("BuildRepositoryURL"); url_itr != config.end()) {
             auto url = QString::fromStdString(url_itr->second);
@@ -364,7 +342,8 @@ void AboutDialog::setupLabels()
             // This may only create valid URLs for Github, but some other hosts use the same format so give it a shot...
             auto https = url.replace(QString::fromUtf8("git://"), QString::fromUtf8("https://"));
             https.replace(QString::fromUtf8(".git"), QString::fromUtf8(""));
-            ui->labelBuildHash->setUrl(https + QString::fromUtf8("/commit/") + QString::fromStdString(it->second));
+            ui->labelBuildHash->setUrl(https + QString::fromUtf8("/commit/")
+                                       + QString::fromStdString(it->second));
         }
     }
     else {
@@ -373,7 +352,8 @@ void AboutDialog::setupLabels()
     }
 }
 
-class AboutDialog::LibraryInfo {
+class AboutDialog::LibraryInfo
+{
 public:
     QString name;
     QString version;
@@ -386,9 +366,7 @@ void AboutDialog::showCredits()
     auto creditsFileURL = QLatin1String(":/doc/CONTRIBUTORS");
     QFile creditsFile(creditsFileURL);
 
-    if (!creditsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return;
-    }
+    if (!creditsFile.open(QIODevice::ReadOnly | QIODevice::Text)) { return; }
 
     auto tab_credits = new QWidget();
     tab_credits->setObjectName(QString::fromLatin1("tab_credits"));
@@ -404,7 +382,7 @@ void AboutDialog::showCredits()
     creditsHTML += tr("Credits");
     creditsHTML += QString::fromLatin1("</h1><p>");
     creditsHTML += tr("FreeCAD would not be possible without the contributions of");
-    creditsHTML += QString::fromLatin1(":</p><h2>"); 
+    creditsHTML += QString::fromLatin1(":</p><h2>");
     //: Header for the list of individual people in the Credits list.
     creditsHTML += tr("Individuals");
     creditsHTML += QString::fromLatin1("</h2><ul>");
@@ -432,12 +410,13 @@ void AboutDialog::showCredits()
 void AboutDialog::showLicenseInformation()
 {
     QString licenseFileURL = QString::fromLatin1("%1/LICENSE.html")
-        .arg(QString::fromUtf8(App::Application::getHelpDir().c_str()));
+                                 .arg(QString::fromUtf8(App::Application::getHelpDir().c_str()));
     QFile licenseFile(licenseFileURL);
 
     if (licenseFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QString licenseHTML = QString::fromUtf8(licenseFile.readAll());
-        const auto placeholder = QString::fromUtf8("<!--PLACEHOLDER_FOR_ADDITIONAL_LICENSE_INFORMATION-->");
+        const auto placeholder =
+            QString::fromUtf8("<!--PLACEHOLDER_FOR_ADDITIONAL_LICENSE_INFORMATION-->");
         licenseHTML.replace(placeholder, getAdditionalLicenseInformation());
 
         ui->tabWidget->removeTab(1); // Hide the license placeholder widget
@@ -473,8 +452,7 @@ QString AboutDialog::getAdditionalLicenseInformation() const
         "<h2>3D Mouse Support</h2>"
         "<p>Development tools and related technology provided under license from 3Dconnexion.<br/>"
         "Copyright &#169; 1992&ndash;2012 3Dconnexion. All rights reserved.</p>"
-        "<hr/>"
-    );
+        "<hr/>");
 #endif
     return info;
 }
@@ -493,7 +471,7 @@ void AboutDialog::showLibraryInformation()
     QList<LibraryInfo> libInfo;
     LibraryInfo li;
     QString baseurl = QString::fromLatin1("file:///%1/ThirdPartyLibraries.html")
-            .arg(QString::fromUtf8(App::Application::getHelpDir().c_str()));
+                          .arg(QString::fromUtf8(App::Application::getHelpDir().c_str()));
 
     // Boost
     li.name = QLatin1String("Boost");
@@ -628,12 +606,14 @@ void AboutDialog::showLibraryInformation()
                      "proprietary rights belong to their respective owners:");
     QString html;
     QTextStream out(&html);
-    out << "<html><head/><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">"
+    out << "<html><head/><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; "
+           "font-weight:400; font-style:normal;\">"
         << "<p>" << msg << "<br/></p>\n<ul>\n";
     for (QList<LibraryInfo>::iterator it = libInfo.begin(); it != libInfo.end(); ++it) {
-        out << "<li><p>" << it->name << " " << it->version << "</p>"
-               "<p><a href=\"" << it->href << "\">" << it->url
-            << "</a><br/></p></li>\n";
+        out << "<li><p>" << it->name << " " << it->version
+            << "</p>"
+               "<p><a href=\""
+            << it->href << "\">" << it->url << "</a><br/></p></li>\n";
     }
     out << "</ul>\n</body>\n</html>";
     textField->setHtml(html);
@@ -645,8 +625,7 @@ void AboutDialog::showCollectionInformation()
 {
     QString doc = QString::fromUtf8(App::Application::getHelpDir().c_str());
     QString path = doc + QLatin1String("Collection.html");
-    if (!QFile::exists(path))
-        return;
+    if (!QFile::exists(path)) return;
 
     auto tab_collection = new QWidget();
     tab_collection->setObjectName(QString::fromLatin1("tab_collection"));
@@ -658,7 +637,7 @@ void AboutDialog::showCollectionInformation()
     textField->setSource(path);
 }
 
-void AboutDialog::linkActivated(const QUrl& link)
+void AboutDialog::linkActivated(const QUrl &link)
 {
     auto licenseView = new LicenseView();
     licenseView->setAttribute(Qt::WA_DeleteOnClose);
@@ -678,23 +657,26 @@ void AboutDialog::on_copyButton_clicked()
 {
     QString data;
     QTextStream str(&data);
-    std::map<std::string, std::string>& config = App::Application::Config();
-    std::map<std::string,std::string>::iterator it;
+    std::map<std::string, std::string> &config = App::Application::Config();
+    std::map<std::string, std::string>::iterator it;
     QString exe = QString::fromStdString(App::Application::getExecutableName());
 
-    QString major  = QString::fromLatin1(config["BuildVersionMajor"].c_str());
-    QString minor  = QString::fromLatin1(config["BuildVersionMinor"].c_str());
-    QString build  = QString::fromLatin1(config["BuildRevision"].c_str());
+    QString major = QString::fromLatin1(config["BuildVersionMajor"].c_str());
+    QString minor = QString::fromLatin1(config["BuildVersionMinor"].c_str());
+    QString build = QString::fromLatin1(config["BuildRevision"].c_str());
 
-    QString deskEnv = QProcessEnvironment::systemEnvironment().value(QStringLiteral("XDG_CURRENT_DESKTOP"), QString());
-    QString deskSess = QProcessEnvironment::systemEnvironment().value(QStringLiteral("DESKTOP_SESSION"), QString());
+    QString deskEnv = QProcessEnvironment::systemEnvironment().value(
+        QStringLiteral("XDG_CURRENT_DESKTOP"), QString());
+    QString deskSess = QProcessEnvironment::systemEnvironment().value(
+        QStringLiteral("DESKTOP_SESSION"), QString());
     QString deskInfo;
 
-    if ( !(deskEnv.isEmpty() && deskSess.isEmpty()) ) {
-        if ( deskEnv.isEmpty() || deskSess.isEmpty() )
+    if (!(deskEnv.isEmpty() && deskSess.isEmpty())) {
+        if (deskEnv.isEmpty() || deskSess.isEmpty())
             deskInfo = QLatin1String(" (") + deskEnv + deskSess + QLatin1String(")");
         else
-            deskInfo = QLatin1String(" (") + deskEnv + QLatin1String("/") + deskSess + QLatin1String(")");
+            deskInfo =
+                QLatin1String(" (") + deskEnv + QLatin1String("/") + deskSess + QLatin1String(")");
     }
 
     str << "[code]\n";
@@ -702,11 +684,9 @@ void AboutDialog::on_copyButton_clicked()
     str << "Word size of " << exe << ": " << QSysInfo::WordSize << "-bit\n";
     str << "Version: " << major << "." << minor << "." << build;
     char *appimage = getenv("APPIMAGE");
-    if (appimage)
-        str << " AppImage";
-    char* snap = getenv("SNAP_REVISION");
-    if (snap)
-        str << " Snap " << snap;
+    if (appimage) str << " AppImage";
+    char *snap = getenv("SNAP_REVISION");
+    if (snap) str << " Snap " << snap;
     str << '\n';
 
 #if defined(_DEBUG) || defined(DEBUG)
@@ -719,21 +699,16 @@ void AboutDialog::on_copyButton_clicked()
     str << "Build type: Unknown\n";
 #endif
     it = config.find("BuildRevisionBranch");
-    if (it != config.end())
-        str << "Branch: " << QString::fromUtf8(it->second.c_str()) << '\n';
+    if (it != config.end()) str << "Branch: " << QString::fromUtf8(it->second.c_str()) << '\n';
     it = config.find("BuildRevisionHash");
-    if (it != config.end())
-        str << "Hash: " << it->second.c_str() << '\n';
+    if (it != config.end()) str << "Hash: " << it->second.c_str() << '\n';
     // report also the version numbers of the most important libraries in FreeCAD
     str << "Python " << PY_VERSION << ", ";
     str << "Qt " << QT_VERSION_STR << ", ";
     str << "Coin " << COIN_VERSION << ", ";
     str << "Vtk " << FC_VTK_VERSION << ", ";
 #if defined(HAVE_OCC_VERSION)
-    str << "OCC "
-        << OCC_VERSION_MAJOR << "."
-        << OCC_VERSION_MINOR << "."
-        << OCC_VERSION_MAINTENANCE
+    str << "OCC " << OCC_VERSION_MAJOR << "." << OCC_VERSION_MINOR << "." << OCC_VERSION_MAINTENANCE
 #ifdef OCC_VERSION_DEVELOPMENT
         << "." OCC_VERSION_DEVELOPMENT
 #endif
@@ -741,13 +716,11 @@ void AboutDialog::on_copyButton_clicked()
 #endif
     QLocale loc;
     str << "Locale: " << loc.languageToString(loc.language()) << "/"
-        << loc.countryToString(loc.country())
-        << " (" << loc.name() << ")";
+        << loc.countryToString(loc.country()) << " (" << loc.name() << ")";
     if (loc != QLocale::system()) {
         loc = QLocale::system();
         str << " [ OS: " << loc.languageToString(loc.language()) << "/"
-            << loc.countryToString(loc.country())
-            << " (" << loc.name() << ") ]";
+            << loc.countryToString(loc.country()) << " (" << loc.name() << ") ]";
     }
     str << "\n";
 
@@ -755,7 +728,7 @@ void AboutDialog::on_copyButton_clicked()
     auto modDir = fs::path(App::Application::getUserAppDataDir()) / "Mod";
     bool firstMod = true;
     if (fs::exists(modDir) && fs::is_directory(modDir)) {
-        for (const auto& mod : fs::directory_iterator(modDir)) {
+        for (const auto &mod : fs::directory_iterator(modDir)) {
             auto dirName = mod.path().leaf().string();
             if (dirName[0] == '.') // Ignore dot directories
                 continue;
@@ -771,15 +744,14 @@ void AboutDialog::on_copyButton_clicked()
                     str << QLatin1String(" ") + QString::fromStdString(metadata.version().str());
             }
             auto disablingFile = mod.path() / "ADDON_DISABLED";
-            if (fs::exists(disablingFile))
-                str << " (Disabled)";
-            
+            if (fs::exists(disablingFile)) str << " (Disabled)";
+
             str << "\n";
         }
     }
 
     str << "[/code]\n";
-    QClipboard* cb = QApplication::clipboard();
+    QClipboard *cb = QApplication::clipboard();
     cb->setText(data);
 }
 
@@ -787,8 +759,7 @@ void AboutDialog::on_copyButton_clicked()
 
 /* TRANSLATOR Gui::LicenseView */
 
-LicenseView::LicenseView(QWidget* parent)
-    : MDIView(nullptr,parent,Qt::WindowFlags())
+LicenseView::LicenseView(QWidget *parent) : MDIView(nullptr, parent, Qt::WindowFlags())
 {
     browser = new QTextBrowser(this);
     browser->setOpenExternalLinks(true);
@@ -796,13 +767,8 @@ LicenseView::LicenseView(QWidget* parent)
     setCentralWidget(browser);
 }
 
-LicenseView::~LicenseView()
-{
-}
+LicenseView::~LicenseView() {}
 
-void LicenseView::setSource(const QUrl& url)
-{
-    browser->setSource(url);
-}
+void LicenseView::setSource(const QUrl &url) { browser->setSource(url); }
 
 #include "moc_Splashscreen.cpp"

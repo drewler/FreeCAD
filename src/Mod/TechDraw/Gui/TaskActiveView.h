@@ -37,7 +37,7 @@ namespace TechDraw
 class DrawPage;
 class DrawView;
 class DrawViewImage;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -46,12 +46,12 @@ class QGVPage;
 class QGIView;
 class MDIViewPage;
 
-class TechDrawGuiExport TaskActiveView : public QWidget
+class TechDrawGuiExport TaskActiveView: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskActiveView(TechDraw::DrawPage* pageFeat);
+    TaskActiveView(TechDraw::DrawPage *pageFeat);
     ~TaskActiveView();
 
 public Q_SLOTS:
@@ -60,8 +60,7 @@ public:
     virtual bool accept();
     virtual bool reject();
     void updateTask();
-    void saveButtons(QPushButton* btnOK,
-                     QPushButton* btnCancel);
+    void saveButtons(QPushButton *btnOK, QPushButton *btnCancel);
     void enableTaskButtons(bool b);
 
 protected:
@@ -70,26 +69,25 @@ protected:
     void blockButtons(bool b);
     void setUiPrimary(void);
 
-    TechDraw::DrawViewImage* createActiveView();
+    TechDraw::DrawViewImage *createActiveView();
 
 private:
     std::unique_ptr<Ui_TaskActiveView> ui;
 
-    TechDraw::DrawPage*       m_pageFeat;
-    TechDraw::DrawViewImage*  m_imageFeat;
+    TechDraw::DrawPage *m_pageFeat;
+    TechDraw::DrawViewImage *m_imageFeat;
 
-    QPushButton* m_btnOK;
-    QPushButton* m_btnCancel;
-
+    QPushButton *m_btnOK;
+    QPushButton *m_btnCancel;
 };
 
 
-class TaskDlgActiveView : public Gui::TaskView::TaskDialog
+class TaskDlgActiveView: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskDlgActiveView(TechDraw::DrawPage* pageFeat);
+    explicit TaskDlgActiveView(TechDraw::DrawPage *pageFeat);
     ~TaskDlgActiveView() override;
 
 public:
@@ -102,19 +100,16 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    void helpRequested() override { return;}
-    bool isAllowedAlterDocument() const override
-                        { return false; }
+    void helpRequested() override { return; }
+    bool isAllowedAlterDocument() const override { return false; }
     void update();
 
-    void modifyStandardButtons(QDialogButtonBox* box) override;
+    void modifyStandardButtons(QDialogButtonBox *box) override;
 
 protected:
-
 private:
-    TaskActiveView* widget;
-    Gui::TaskView::TaskBox* taskbox;
-
+    TaskActiveView *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

@@ -38,22 +38,13 @@ double Rez::m_rezFactor = Rez::getParameter();
 //***
 
 
-double Rez::getRezFactor()
-{
-    return Rez::m_rezFactor;
-}
+double Rez::getRezFactor() { return Rez::m_rezFactor; }
 
-void Rez::setRezFactor(double f)
-{
-    Rez::m_rezFactor = f;
-}
+void Rez::setRezFactor(double f) { Rez::m_rezFactor = f; }
 
 
 //turn App side value to Gui side value
-double Rez::guiX(double x)
-{
-   return getRezFactor() * x;
-}
+double Rez::guiX(double x) { return getRezFactor() * x; }
 
 Base::Vector3d Rez::guiX(Base::Vector3d v)
 {
@@ -67,16 +58,10 @@ Base::Vector2d Rez::guiX(Base::Vector3d v, bool planar)
     return Base::Vector2d(guiX(v.x), guiX(v.y));
 }
 
-QPointF Rez::guiX(QPointF p)
-{
-    return Rez::guiPt(p);
-}
+QPointF Rez::guiX(QPointF p) { return Rez::guiPt(p); }
 
 //turn Gui side value to App side value
-double Rez::appX(double x)
-{
-   return x / getRezFactor();
-}
+double Rez::appX(double x) { return x / getRezFactor(); }
 
 Base::Vector3d Rez::appX(Base::Vector3d v)
 {
@@ -84,11 +69,7 @@ Base::Vector3d Rez::appX(Base::Vector3d v)
     return result;
 }
 
-QPointF Rez::appX(QPointF p)
-{
-    return appPt(p);
-}
-
+QPointF Rez::appX(QPointF p) { return appPt(p); }
 
 
 //Misc conversions
@@ -107,10 +88,7 @@ QPointF Rez::appPt(QPointF p)
 
 QRectF Rez::guiRect(QRectF r)
 {
-    QRectF result(guiX(r.left()),
-                  guiX(r.top()),
-                  guiX(r.width()),
-                  guiX(r.height()));
+    QRectF result(guiX(r.left()), guiX(r.top()), guiX(r.width()), guiX(r.height()));
     return result;
 }
 
@@ -128,9 +106,11 @@ QSize Rez::appSize(QSize s)
 
 double Rez::getParameter()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/Rez");
-    double rezFactor  = hGrp->GetFloat("Resolution", 10.0);
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Rez");
+    double rezFactor = hGrp->GetFloat("Resolution", 10.0);
     return rezFactor;
 }
-

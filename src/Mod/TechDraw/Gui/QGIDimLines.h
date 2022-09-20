@@ -25,7 +25,7 @@
 
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
-# include "QGIPrimPath.h"
+#include "QGIPrimPath.h"
 
 QT_BEGIN_NAMESPACE
 class QPainter;
@@ -35,14 +35,17 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGIDimLines : public QGIPrimPath
+class TechDrawGuiExport QGIDimLines: public QGIPrimPath
 {
 public:
     explicit QGIDimLines();
     ~QGIDimLines() {}
 
-    enum {Type = QGraphicsItem::UserType + 175};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 175
+    };
+    int type() const override { return Type; }
     virtual QRectF boundingRect() const override;
     virtual QPainterPath shape() const override;
 
@@ -61,6 +64,6 @@ protected:
 private:
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMDIMLINES_H

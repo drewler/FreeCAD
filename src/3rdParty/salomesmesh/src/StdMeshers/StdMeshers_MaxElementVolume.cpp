@@ -47,12 +47,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_MaxElementVolume::StdMeshers_MaxElementVolume(int hypId, int studyId, SMESH_Gen* gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_MaxElementVolume::StdMeshers_MaxElementVolume(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _maxVolume = 1.;
-  _name = "MaxElementVolume";
-  _param_algo_dim = 3;
+    _maxVolume = 1.;
+    _name = "MaxElementVolume";
+    _param_algo_dim = 3;
 }
 
 //=============================================================================
@@ -63,7 +63,7 @@ StdMeshers_MaxElementVolume::StdMeshers_MaxElementVolume(int hypId, int studyId,
 
 StdMeshers_MaxElementVolume::~StdMeshers_MaxElementVolume()
 {
-  MESSAGE("StdMeshers_MaxElementVolume::~StdMeshers_MaxElementVolume");
+    MESSAGE("StdMeshers_MaxElementVolume::~StdMeshers_MaxElementVolume");
 }
 
 //=============================================================================
@@ -74,12 +74,10 @@ StdMeshers_MaxElementVolume::~StdMeshers_MaxElementVolume()
 
 void StdMeshers_MaxElementVolume::SetMaxVolume(double maxVolume)
 {
-  double oldVolume = _maxVolume;
-  if (maxVolume <= 0) 
-    throw SALOME_Exception(LOCALIZED("maxVolume must be positive"));
-  _maxVolume = maxVolume;
-  if (_maxVolume != oldVolume)
-    NotifySubMeshesHypothesisModification();
+    double oldVolume = _maxVolume;
+    if (maxVolume <= 0) throw SALOME_Exception(LOCALIZED("maxVolume must be positive"));
+    _maxVolume = maxVolume;
+    if (_maxVolume != oldVolume) NotifySubMeshesHypothesisModification();
 }
 
 //=============================================================================
@@ -88,9 +86,18 @@ void StdMeshers_MaxElementVolume::SetMaxVolume(double maxVolume)
  */
 //=============================================================================
 
-double StdMeshers_MaxElementVolume::GetMaxVolume() const
+double StdMeshers_MaxElementVolume::GetMaxVolume() const { return _maxVolume; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &StdMeshers_MaxElementVolume::SaveTo(ostream &save)
 {
-  return _maxVolume;
+    save << this->_maxVolume;
+    return save;
 }
 
 //=============================================================================
@@ -99,10 +106,15 @@ double StdMeshers_MaxElementVolume::GetMaxVolume() const
  */
 //=============================================================================
 
-ostream & StdMeshers_MaxElementVolume::SaveTo(ostream & save)
+istream &StdMeshers_MaxElementVolume::LoadFrom(istream &load)
 {
-  save << this->_maxVolume;
-  return save;
+    bool isOK = true;
+    double a;
+    isOK = (bool)(load >> a);
+    if (isOK) this->_maxVolume = a;
+    else
+        load.clear(ios::badbit | load.rdstate());
+    return load;
 }
 
 //=============================================================================
@@ -111,17 +123,7 @@ ostream & StdMeshers_MaxElementVolume::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_MaxElementVolume::LoadFrom(istream & load)
-{
-  bool isOK = true;
-  double a;
-  isOK = (bool)(load >> a);
-  if (isOK)
-    this->_maxVolume = a;
-  else 
-    load.clear(ios::badbit | load.rdstate());
-  return load;
-}
+ostream &operator<<(ostream &save, StdMeshers_MaxElementVolume &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -129,21 +131,7 @@ istream & StdMeshers_MaxElementVolume::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator << (ostream & save, StdMeshers_MaxElementVolume & hyp)
-{
-  return hyp.SaveTo( save );
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-istream & operator >> (istream & load, StdMeshers_MaxElementVolume & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+istream &operator>>(istream &load, StdMeshers_MaxElementVolume &hyp) { return hyp.LoadFrom(load); }
 
 
 //================================================================================
@@ -155,46 +143,39 @@ istream & operator >> (istream & load, StdMeshers_MaxElementVolume & hyp)
  */
 //================================================================================
 
-bool StdMeshers_MaxElementVolume::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                      const TopoDS_Shape& theShape)
+bool StdMeshers_MaxElementVolume::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                      const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _maxVolume = 0;
+    _maxVolume = 0;
 
-  SMESH::Controls::Volume volumeControl;
+    SMESH::Controls::Volume volumeControl;
 
-  TopTools_IndexedMapOfShape volMap;
-  TopExp::MapShapes( theShape, TopAbs_SOLID, volMap );
-  if ( volMap.IsEmpty() )
-    TopExp::MapShapes( theShape, TopAbs_SHELL, volMap );
-  if ( volMap.IsEmpty() )
-    return false;
+    TopTools_IndexedMapOfShape volMap;
+    TopExp::MapShapes(theShape, TopAbs_SOLID, volMap);
+    if (volMap.IsEmpty()) TopExp::MapShapes(theShape, TopAbs_SHELL, volMap);
+    if (volMap.IsEmpty()) return false;
 
-  SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* >( theMesh )->GetMeshDS();
+    SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
 
-  for ( int iV = 1; iV <= volMap.Extent(); ++iV )
-  {
-    const TopoDS_Shape& S = volMap( iV );
-    SMESHDS_SubMesh * subMesh = aMeshDS->MeshElements( S );
-    if ( !subMesh && S.ShapeType() == TopAbs_SOLID ) {
-      TopExp_Explorer shellExp( S, TopAbs_SHELL );
-      if ( shellExp.More() )
-        subMesh = aMeshDS->MeshElements( shellExp.Current() );
+    for (int iV = 1; iV <= volMap.Extent(); ++iV) {
+        const TopoDS_Shape &S = volMap(iV);
+        SMESHDS_SubMesh *subMesh = aMeshDS->MeshElements(S);
+        if (!subMesh && S.ShapeType() == TopAbs_SOLID) {
+            TopExp_Explorer shellExp(S, TopAbs_SHELL);
+            if (shellExp.More()) subMesh = aMeshDS->MeshElements(shellExp.Current());
+        }
+        if (!subMesh) return false;
+        SMDS_ElemIteratorPtr vIt = subMesh->GetElements();
+        while (vIt->more()) {
+            const SMDS_MeshElement *elem = vIt->next();
+            if (elem->GetType() == SMDSAbs_Volume) {
+                _maxVolume = max(_maxVolume, volumeControl.GetValue(elem->GetID()));
+            }
+        }
     }
-    if ( !subMesh) 
-      return false;
-    SMDS_ElemIteratorPtr vIt = subMesh->GetElements();
-    while ( vIt->more() )
-    {
-      const SMDS_MeshElement* elem = vIt->next();
-      if ( elem->GetType() == SMDSAbs_Volume ) {
-        _maxVolume = max( _maxVolume, volumeControl.GetValue( elem->GetID() ));
-      }
-    }
-  }
-  return _maxVolume > 0;
+    return _maxVolume > 0;
 }
 //================================================================================
 /*!
@@ -203,9 +184,8 @@ bool StdMeshers_MaxElementVolume::SetParametersByMesh(const SMESH_Mesh*   theMes
  */
 //================================================================================
 
-bool StdMeshers_MaxElementVolume::SetParametersByDefaults(const TDefaults&  dflts,
-                                                          const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_MaxElementVolume::SetParametersByDefaults(const TDefaults &dflts,
+                                                          const SMESH_Mesh * /*theMesh*/)
 {
-  return ( _maxVolume = dflts._elemLength*dflts._elemLength*dflts._elemLength );
+    return (_maxVolume = dflts._elemLength * dflts._elemLength * dflts._elemLength);
 }
-

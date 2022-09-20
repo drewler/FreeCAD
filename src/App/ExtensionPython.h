@@ -28,95 +28,95 @@
 #include "Extension.h"
 #include "PropertyPythonObject.h"
 
-namespace App {
+namespace App
+{
 
 /**
  * Generic Python extension class which allows every extension derived
  * class to behave as a Python extension -- simply by subclassing.
  */
-template <class ExtensionT>
-class ExtensionPythonT : public ExtensionT
+template<class ExtensionT> class ExtensionPythonT: public ExtensionT
 {
     EXTENSION_PROPERTY_HEADER(App::ExtensionPythonT<ExtensionT>);
 
 public:
     using Inherited = ExtensionT;
 
-    ExtensionPythonT() {
+    ExtensionPythonT()
+    {
         ExtensionT::m_isPythonExtension = true;
         ExtensionT::initExtensionType(ExtensionPythonT::getExtensionClassTypeId());
     }
     virtual ~ExtensionPythonT() = default;
 
-    ExtensionPythonT(const ExtensionPythonT&) = delete;
-    ExtensionPythonT(ExtensionPythonT&&) = delete;
-    ExtensionPythonT& operator= (const ExtensionPythonT&) = delete;
-    ExtensionPythonT& operator= (ExtensionPythonT&&) = delete;
+    ExtensionPythonT(const ExtensionPythonT &) = delete;
+    ExtensionPythonT(ExtensionPythonT &&) = delete;
+    ExtensionPythonT &operator=(const ExtensionPythonT &) = delete;
+    ExtensionPythonT &operator=(ExtensionPythonT &&) = delete;
 };
 
 using ExtensionPython = ExtensionPythonT<App::Extension>;
 
 // Helper macros to define python extensions
-#define EXTENSION_PROXY_FIRST(function) \
-    Base::PyGILStateLocker lock;\
-    Py::Object result;\
-    try {\
-        Property* proxy = this->getExtendedContainer()->getPropertyByName("Proxy");\
-        if (proxy && proxy->getTypeId() == PropertyPythonObject::getClassTypeId()) {\
-            Py::Object feature = static_cast<PropertyPythonObject*>(proxy)->getValue();\
-            if (feature.hasAttr(std::string("function"))) {\
-                if (feature.hasAttr("__object__")) {\
+#define EXTENSION_PROXY_FIRST(function)                                                            \
+    Base::PyGILStateLocker lock;                                                                   \
+    Py::Object result;                                                                             \
+    try {                                                                                          \
+        Property *proxy = this->getExtendedContainer()->getPropertyByName("Proxy");                \
+        if (proxy && proxy->getTypeId() == PropertyPythonObject::getClassTypeId()) {               \
+            Py::Object feature = static_cast<PropertyPythonObject *>(proxy)->getValue();           \
+            if (feature.hasAttr(std::string("function"))) {                                        \
+                if (feature.hasAttr("__object__")) {                                               \
                     Py::Callable method(feature.getAttr(std::string("function")));
 
 
+#define EXTENSION_PROXY_SECOND(function)                                                           \
+    result = method.apply(args);                                                                   \
+    }                                                                                              \
+    else                                                                                           \
+    {                                                                                              \
+        Py::Callable method(feature.getAttr(std::string("function")));
 
-
-#define EXTENSION_PROXY_SECOND(function)\
-                    result = method.apply(args);\
-                }\
-                else {\
-                    Py::Callable method(feature.getAttr(std::string("function")));
-
-#define EXTENSION_PROXY_THIRD()\
-                    result = method.apply(args);\
-                }\
-            }\
-        }\
-    }\
-    catch (Py::Exception&) {\
-        Base::PyException e;\
-        e.ReportException();\
+#define EXTENSION_PROXY_THIRD()                                                                    \
+    result = method.apply(args);                                                                   \
+    }                                                                                              \
+    }                                                                                              \
+    }                                                                                              \
+    }                                                                                              \
+    catch (Py::Exception &)                                                                        \
+    {                                                                                              \
+        Base::PyException e;                                                                       \
+        e.ReportException();                                                                       \
     }
 
-#define EXTENSION_PROXY_NOARG(function)\
-    EXTENSION_PROXY_FIRST(function) \
-    Py::Tuple args;\
-    EXTENSION_PROXY_SECOND(function) \
-    Py::Tuple args(1);\
-    args.setItem(0, Py::Object(this->getExtensionPyObject(), true));\
+#define EXTENSION_PROXY_NOARG(function)                                                            \
+    EXTENSION_PROXY_FIRST(function)                                                                \
+    Py::Tuple args;                                                                                \
+    EXTENSION_PROXY_SECOND(function)                                                               \
+    Py::Tuple args(1);                                                                             \
+    args.setItem(0, Py::Object(this->getExtensionPyObject(), true));                               \
     EXTENSION_PROXY_THIRD()
 
-#define EXTENSION_PROXY_ONEARG(function, arg)\
-    EXTENSION_PROXY_FIRST(function) \
-    Py::Tuple args;\
-    args.setItem(0, arg); \
-    EXTENSION_PROXY_SECOND(function) \
-    Py::Tuple args(2);\
-    args.setItem(0, Py::Object(this->getExtensionPyObject(), true));\
-    args.setItem(1, arg); \
+#define EXTENSION_PROXY_ONEARG(function, arg)                                                      \
+    EXTENSION_PROXY_FIRST(function)                                                                \
+    Py::Tuple args;                                                                                \
+    args.setItem(0, arg);                                                                          \
+    EXTENSION_PROXY_SECOND(function)                                                               \
+    Py::Tuple args(2);                                                                             \
+    args.setItem(0, Py::Object(this->getExtensionPyObject(), true));                               \
+    args.setItem(1, arg);                                                                          \
     EXTENSION_PROXY_THIRD()
 
-#define EXTENSION_PYTHON_OVERRIDE_VOID_NOARGS(function)\
-    virtual void function() override {\
-        EXTENSION_PROXY_NOARGS(function)\
+#define EXTENSION_PYTHON_OVERRIDE_VOID_NOARGS(function)                                            \
+    virtual void function() override {EXTENSION_PROXY_NOARGS(function)};
+
+#define EXTENSION_PYTHON_OVERRIDE_OBJECT_NOARGS(function)                                          \
+    virtual PyObject *function() override                                                          \
+    {                                                                                              \
+        EXTENSION_PROXY_NOARGS(function)                                                           \
+        return res.ptr();                                                                          \
     };
 
-#define EXTENSION_PYTHON_OVERRIDE_OBJECT_NOARGS(function)\
-    virtual PyObject* function() override {\
-        EXTENSION_PROXY_NOARGS(function)\
-        return res.ptr();\
-    };
-
-} //App
+} // namespace App
 
 #endif // APP_EXTENSIONPYTHON_H

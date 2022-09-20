@@ -36,33 +36,29 @@ class StdMeshers_ProjectionSource3D;
 class STDMESHERS_EXPORT StdMeshers_Projection_3D: public SMESH_3D_Algo
 {
 public:
-  StdMeshers_Projection_3D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_Projection_3D();
+    StdMeshers_Projection_3D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_Projection_3D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh&                          aMesh,
-                               const TopoDS_Shape&                  aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
-  /*!
+    /*!
    * \brief Sets a default event listener to submesh of the source shape
    *  \param whenSetToSubMesh - submesh where algo is set
    *
    * Arranges that CLEAN event is translated from source submesh to
    * the whenSetToSubMesh submesh.
    */
-  virtual void SetEventListener(SMESH_subMesh* whenSetToSubMesh);
-  
-  static bool IsApplicable(const TopoDS_Shape & aShape, bool toCheckAll);
+    virtual void SetEventListener(SMESH_subMesh *whenSetToSubMesh);
 
- protected:
+    static bool IsApplicable(const TopoDS_Shape &aShape, bool toCheckAll);
 
-  const StdMeshers_ProjectionSource3D* _sourceHypo;
-
+protected:
+    const StdMeshers_ProjectionSource3D *_sourceHypo;
 };
 
 #endif

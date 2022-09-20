@@ -22,8 +22,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepBuilderAPI_Copy.hxx>
-# include <TopoDS.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
+#include <TopoDS.hxx>
 #endif
 
 #include "FeatureFace.h"
@@ -37,17 +37,17 @@ PROPERTY_SOURCE(Part::Face, Part::Feature)
 
 Face::Face()
 {
-    ADD_PROPERTY(Sources,(nullptr));
-    ADD_PROPERTY(FaceMakerClass,("Part::FaceMakerCheese"));//default value here is for legacy documents. Default for new objects is set in setupObject.
+    ADD_PROPERTY(Sources, (nullptr));
+    ADD_PROPERTY(
+        FaceMakerClass,
+        ("Part::FaceMakerCheese")); //default value here is for legacy documents. Default for new objects is set in setupObject.
     Sources.setSize(0);
 }
 
 short Face::mustExecute() const
 {
-    if (FaceMakerClass.isTouched())
-        return 1;
-    if (Sources.isTouched())
-        return 1;
+    if (FaceMakerClass.isTouched()) return 1;
+    if (Sources.isTouched()) return 1;
     return Part::Feature::mustExecute();
 }
 
@@ -59,15 +59,16 @@ void Face::setupObject()
 
 App::DocumentObjectExecReturn *Face::execute()
 {
-    std::vector<App::DocumentObject*> links = Sources.getValues();
-    if (links.empty())
-        return new App::DocumentObjectExecReturn("No shapes linked");
+    std::vector<App::DocumentObject *> links = Sources.getValues();
+    if (links.empty()) return new App::DocumentObjectExecReturn("No shapes linked");
 
-    std::unique_ptr<FaceMaker> facemaker = FaceMaker::ConstructFromType(this->FaceMakerClass.getValue());
+    std::unique_ptr<FaceMaker> facemaker =
+        FaceMaker::ConstructFromType(this->FaceMakerClass.getValue());
 
-    for (std::vector<App::DocumentObject*>::iterator it = links.begin(); it != links.end(); ++it) {
+    for (std::vector<App::DocumentObject *>::iterator it = links.begin(); it != links.end(); ++it) {
         if (!(*it))
-            return new App::DocumentObjectExecReturn("Linked object is not a Part object (has no Shape).");
+            return new App::DocumentObjectExecReturn(
+                "Linked object is not a Part object (has no Shape).");
         TopoDS_Shape shape = Feature::getShape(*it);
         if (shape.IsNull())
             return new App::DocumentObjectExecReturn("Linked shape object is empty");
@@ -82,7 +83,7 @@ App::DocumentObjectExecReturn *Face::execute()
                 return new App::DocumentObjectExecReturn("Linked shape object is empty");
         }*/
 
-        if(links.size() == 1 && shape.ShapeType() == TopAbs_COMPOUND)
+        if (links.size() == 1 && shape.ShapeType() == TopAbs_COMPOUND)
             facemaker->useCompound(TopoDS::Compound(shape));
         else
             facemaker->addShape(shape);
@@ -97,4 +98,3 @@ App::DocumentObjectExecReturn *Face::execute()
 
     return App::DocumentObject::StdReturn;
 }
-

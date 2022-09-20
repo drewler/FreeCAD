@@ -1,4 +1,4 @@
-//  SMESH  SMESH_MeshVSLink : Connection of SMESH with MeshVS from OCC 
+//  SMESH  SMESH_MeshVSLink : Connection of SMESH with MeshVS from OCC
 //
 //  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -76,17 +76,18 @@
 #if OCC_VERSION_HEX >= 0x070000
 DEFINE_STANDARD_HANDLE(SMESH_MeshVSLink, MeshVS_DataSource3D)
 #endif
-class SMESH_MeshVSLink : public MeshVS_DataSource3D {
+class SMESH_MeshVSLink: public MeshVS_DataSource3D
+{
 
-  public:
-	// Methods PUBLIC
-	//
+public:
+    // Methods PUBLIC
+    //
 
-	//! Constructor <br>
-	Standard_EXPORT SMESH_MeshVSLink(const SMESH_Mesh *aMesh);
+    //! Constructor <br>
+    Standard_EXPORT SMESH_MeshVSLink(const SMESH_Mesh *aMesh);
 
-	//Not implemented yet
-	/*
+    //Not implemented yet
+    /*
 
 	Standard_EXPORT   Standard_Boolean GetNodeNormal(const Standard_Integer ranknode,const Standard_Integer ElementId,Standard_Real& nx,Standard_Real& ny,Standard_Real& nz) const;
 	Standard_EXPORT   Standard_Boolean GetNormalsByElement(const Standard_Integer Id,const Standard_Boolean IsNodal,const Standard_Integer MaxNodes,Handle(TColStd_HArray1OfReal)& Normals) const;
@@ -101,62 +102,75 @@ class SMESH_MeshVSLink : public MeshVS_DataSource3D {
 	Standard_EXPORT   Standard_Boolean GetDetectedEntities(const Handle(MeshVS_Mesh)& Prs,Handle(TColStd_HPackedMapOfInteger)& Nodes,Handle(TColStd_HPackedMapOfInteger)& Elements) ;
 	*/
 
-	//! Returns geometry information about node ( if IsElement is False ) or element ( IsElement is True ) <br>
-	//! by coordinates. For element this method must return all its nodes coordinates in the strict order: X, Y, Z and <br>
-	//! with nodes order is the same as in wire bounding the face or link. NbNodes is number of nodes of element. <br>
-	//! It is recommended to return 1 for node. Type is an element type. <br>
-	Standard_EXPORT   Standard_Boolean GetGeom(const Standard_Integer ID,const Standard_Boolean IsElement,TColStd_Array1OfReal& Coords,Standard_Integer& NbNodes,MeshVS_EntityType& Type) const override;
+    //! Returns geometry information about node ( if IsElement is False ) or element ( IsElement is True ) <br>
+    //! by coordinates. For element this method must return all its nodes coordinates in the strict order: X, Y, Z and <br>
+    //! with nodes order is the same as in wire bounding the face or link. NbNodes is number of nodes of element. <br>
+    //! It is recommended to return 1 for node. Type is an element type. <br>
+    Standard_EXPORT Standard_Boolean GetGeom(const Standard_Integer ID,
+                                             const Standard_Boolean IsElement,
+                                             TColStd_Array1OfReal &Coords,
+                                             Standard_Integer &NbNodes,
+                                             MeshVS_EntityType &Type) const override;
 
-	Standard_EXPORT   Standard_Boolean Get3DGeom(const Standard_Integer ID,Standard_Integer& NbNodes,Handle(MeshVS_HArray1OfSequenceOfInteger)& Data) const override;
+    Standard_EXPORT Standard_Boolean Get3DGeom(const Standard_Integer ID, Standard_Integer &NbNodes,
+                                               Handle(MeshVS_HArray1OfSequenceOfInteger)
+                                                   & Data) const override;
 
-	//! This method is similar to GetGeom, but returns only element or node type. This method is provided for <br>
-	//! a fine performance. <br>
-	Standard_EXPORT   Standard_Boolean GetGeomType(const Standard_Integer ID,const Standard_Boolean IsElement,MeshVS_EntityType& Type) const override;
+    //! This method is similar to GetGeom, but returns only element or node type. This method is provided for <br>
+    //! a fine performance. <br>
+    Standard_EXPORT Standard_Boolean GetGeomType(const Standard_Integer ID,
+                                                 const Standard_Boolean IsElement,
+                                                 MeshVS_EntityType &Type) const override;
 
-	//! This method returns by number an address of any entity which represents element or node data structure. <br>
-	Standard_EXPORT   Standard_Address GetAddr(const Standard_Integer ID,const Standard_Boolean IsElement) const override;
+    //! This method returns by number an address of any entity which represents element or node data structure. <br>
+    Standard_EXPORT Standard_Address GetAddr(const Standard_Integer ID,
+                                             const Standard_Boolean IsElement) const override;
 
-	//! This method returns information about what node this element consist of. <br>
-	Standard_EXPORT /*virtual*/  Standard_Boolean GetNodesByElement(const Standard_Integer ID,TColStd_Array1OfInteger& NodeIDs,Standard_Integer& NbNodes) const override;
+    //! This method returns information about what node this element consist of. <br>
+    Standard_EXPORT /*virtual*/ Standard_Boolean
+    GetNodesByElement(const Standard_Integer ID, TColStd_Array1OfInteger &NodeIDs,
+                      Standard_Integer &NbNodes) const override;
 
-	//! This method returns map of all nodes the object consist of. <br>
-	Standard_EXPORT  const TColStd_PackedMapOfInteger& GetAllNodes() const override;
+    //! This method returns map of all nodes the object consist of. <br>
+    Standard_EXPORT const TColStd_PackedMapOfInteger &GetAllNodes() const override;
 
-	//! This method returns map of all elements the object consist of. <br>
-	Standard_EXPORT  const TColStd_PackedMapOfInteger& GetAllElements() const override;
+    //! This method returns map of all elements the object consist of. <br>
+    Standard_EXPORT const TColStd_PackedMapOfInteger &GetAllElements() const override;
 
-	//! This method calculates normal of face, which is using for correct reflection presentation. <br>
-	//! There is default method, for advance reflection this method can be redefined. <br>
-	Standard_EXPORT Standard_Boolean GetNormal(const Standard_Integer Id,const Standard_Integer Max,Standard_Real& nx,Standard_Real& ny,Standard_Real& nz) const override;
+    //! This method calculates normal of face, which is using for correct reflection presentation. <br>
+    //! There is default method, for advance reflection this method can be redefined. <br>
+    Standard_EXPORT Standard_Boolean GetNormal(const Standard_Integer Id,
+                                               const Standard_Integer Max, Standard_Real &nx,
+                                               Standard_Real &ny, Standard_Real &nz) const override;
 
-	//! This method returns map of all groups the object contains. <br>
-	Standard_EXPORT void GetAllGroups(TColStd_PackedMapOfInteger& Ids) const override;
+    //! This method returns map of all groups the object contains. <br>
+    Standard_EXPORT void GetAllGroups(TColStd_PackedMapOfInteger &Ids) const override;
 
-	// Type management
-	//
+    // Type management
+    //
 #if OCC_VERSION_HEX >= 0x070000
-    DEFINE_STANDARD_RTTIEXT(SMESH_MeshVSLink,MeshVS_DataSource3D)
+    DEFINE_STANDARD_RTTIEXT(SMESH_MeshVSLink, MeshVS_DataSource3D)
 #else
-    Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
+    Standard_EXPORT const Handle(Standard_Type) & DynamicType() const;
 #endif
 
-  protected:
-	// Methods PROTECTED
-	//
+protected:
+    // Methods PROTECTED
+    //
 
-	// Fields PROTECTED
-	//
+    // Fields PROTECTED
+    //
 
-  private:
-	// Methods PRIVATE
-	//
+private:
+    // Methods PRIVATE
+    //
 
-	// Fields PRIVATE
-	//
-	SMESH_Mesh *myMesh;
-	TColStd_PackedMapOfInteger myNodes;
-	TColStd_PackedMapOfInteger myElements;
-	TColStd_PackedMapOfInteger myGroups;
+    // Fields PRIVATE
+    //
+    SMESH_Mesh *myMesh;
+    TColStd_PackedMapOfInteger myNodes;
+    TColStd_PackedMapOfInteger myElements;
+    TColStd_PackedMapOfInteger myGroups;
 };
 #include <SMESH_MeshVSLink.ixx>
 // other Inline functions and methods (like "C++: function call" methods)

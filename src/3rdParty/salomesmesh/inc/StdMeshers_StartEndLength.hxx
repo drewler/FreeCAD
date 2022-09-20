@@ -34,48 +34,48 @@
 
 #include <vector>
 
-class STDMESHERS_EXPORT StdMeshers_StartEndLength:public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_StartEndLength: public SMESH_Hypothesis
 {
- public:
-  StdMeshers_StartEndLength(int hypId, int studyId, SMESH_Gen * gen);
-  virtual ~ StdMeshers_StartEndLength();
+public:
+    StdMeshers_StartEndLength(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_StartEndLength();
 
-  void SetLength(double length, bool isStartLength);
+    void SetLength(double length, bool isStartLength);
 
-  double GetLength(bool isStartLength) const;
+    double GetLength(bool isStartLength) const;
 
-  void SetReversedEdges( std::vector<int>& ids);
+    void SetReversedEdges(std::vector<int> &ids);
 
-  const std::vector<int>& GetReversedEdges() const { return _edgeIDs; }
+    const std::vector<int> &GetReversedEdges() const { return _edgeIDs; }
 
-  void SetObjectEntry( const char* entry ) { _objEntry = entry; }
+    void SetObjectEntry(const char *entry) { _objEntry = entry; }
 
-  const char* GetObjectEntry() { return _objEntry.c_str(); }
-  
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  friend std::ostream & operator <<(std::ostream & save, StdMeshers_StartEndLength & hyp);
-  friend std::istream & operator >>(std::istream & load, StdMeshers_StartEndLength & hyp);
+    const char *GetObjectEntry() { return _objEntry.c_str(); }
+
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    friend std::ostream &operator<<(std::ostream &save, StdMeshers_StartEndLength &hyp);
+    friend std::istream &operator>>(std::istream &load, StdMeshers_StartEndLength &hyp);
 
 
-  /*!
+    /*!
    * \brief Initialize start and end length by the mesh built on the geometry
     * \param theMesh - the built mesh
     * \param theShape - the geometry of interest
     * \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
 protected:
-  double _begLength, _endLength;
-  std::vector<int>   _edgeIDs;
-  std::string        _objEntry;
+    double _begLength, _endLength;
+    std::vector<int> _edgeIDs;
+    std::string _objEntry;
 };
 
 #endif

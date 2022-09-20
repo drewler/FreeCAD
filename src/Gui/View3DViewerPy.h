@@ -27,7 +27,8 @@
 #include <list>
 
 
-namespace Gui {
+namespace Gui
+{
 
 class View3DInventorViewer;
 
@@ -39,10 +40,10 @@ class View3DInventorViewer;
  * methods with additioanl functionality in comparison to the View3DInventorPy class. Everything that
  * can be done from there has no interface here.
  */
-class View3DInventorViewerPy : public Py::PythonExtension<View3DInventorViewerPy>
+class View3DInventorViewerPy: public Py::PythonExtension<View3DInventorViewerPy>
 {
 public:
-    static void init_type();    // announce properties and methods
+    static void init_type(); // announce properties and methods
 
     explicit View3DInventorViewerPy(View3DInventorViewer *vi);
     ~View3DInventorViewerPy() override;
@@ -52,39 +53,39 @@ public:
     int setattr(const char *, const Py::Object &) override;
 
     //exposed methods
-    Py::Object getSoEventManager(const Py::Tuple&);
-    Py::Object getSoRenderManager(const Py::Tuple&);
-    Py::Object getSceneGraph(const Py::Tuple&);
-    Py::Object setSceneGraph(const Py::Tuple&);
+    Py::Object getSoEventManager(const Py::Tuple &);
+    Py::Object getSoRenderManager(const Py::Tuple &);
+    Py::Object getSceneGraph(const Py::Tuple &);
+    Py::Object setSceneGraph(const Py::Tuple &);
 
-    Py::Object seekToPoint(const Py::Tuple&);
-    Py::Object setFocalDistance(const Py::Tuple& args);
-    Py::Object getFocalDistance(const Py::Tuple& args);
-    Py::Object getPointOnFocalPlane(const Py::Tuple& args);
-    Py::Object getPickRadius(const Py::Tuple& args);
-    Py::Object setPickRadius(const Py::Tuple& args);
+    Py::Object seekToPoint(const Py::Tuple &);
+    Py::Object setFocalDistance(const Py::Tuple &args);
+    Py::Object getFocalDistance(const Py::Tuple &args);
+    Py::Object getPointOnFocalPlane(const Py::Tuple &args);
+    Py::Object getPickRadius(const Py::Tuple &args);
+    Py::Object setPickRadius(const Py::Tuple &args);
 
     Py::Object setupEditingRoot(const Py::Tuple &args);
     Py::Object resetEditingRoot(const Py::Tuple &args);
 
-    Py::Object setBackgroundColor(const Py::Tuple& args);
-    Py::Object setRedirectToSceneGraph(const Py::Tuple& args);
-    Py::Object isRedirectedToSceneGraph(const Py::Tuple& args);
+    Py::Object setBackgroundColor(const Py::Tuple &args);
+    Py::Object setRedirectToSceneGraph(const Py::Tuple &args);
+    Py::Object isRedirectedToSceneGraph(const Py::Tuple &args);
 
     // NaviCube handling
-    Py::Object setEnabledNaviCube(const Py::Tuple& args);
-    Py::Object isEnabledNaviCube(const Py::Tuple& args);
-    Py::Object setNaviCubeCorner(const Py::Tuple& args);
+    Py::Object setEnabledNaviCube(const Py::Tuple &args);
+    Py::Object isEnabledNaviCube(const Py::Tuple &args);
+    Py::Object setNaviCubeCorner(const Py::Tuple &args);
 
 
 private:
-    using method_varargs_handler = PyObject* (*)(PyObject *_self, PyObject *_args);
+    using method_varargs_handler = PyObject *(*)(PyObject *_self, PyObject *_args);
     static method_varargs_handler pycxx_handler;
     static PyObject *method_varargs_ext_handler(PyObject *_self, PyObject *_args);
 
 private:
-    std::list<PyObject*> callbacks;
-    View3DInventorViewer* _viewer;
+    std::list<PyObject *> callbacks;
+    View3DInventorViewer *_viewer;
     friend class View3DInventorViewer;
 };
 

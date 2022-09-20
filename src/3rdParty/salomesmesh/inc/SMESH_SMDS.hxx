@@ -30,13 +30,13 @@
 #include <vtkType.h>
 
 #ifdef WIN32
- #if defined SMDS_EXPORTS
-  #define SMDS_EXPORT __declspec( dllexport )
- #else
-  #define SMDS_EXPORT __declspec( dllimport )
- #endif
+#if defined SMDS_EXPORTS
+#define SMDS_EXPORT __declspec(dllexport)
 #else
- #define SMDS_EXPORT
+#define SMDS_EXPORT __declspec(dllimport)
+#endif
+#else
+#define SMDS_EXPORT
 #endif
 
 #ifdef VTK_HAS_MTIME_TYPE

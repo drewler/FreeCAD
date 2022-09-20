@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifdef __GNUC__
-# include <unistd.h>
+#include <unistd.h>
 #endif
 
 #include <QString>
@@ -35,7 +35,8 @@
 using namespace Base;
 
 
-QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &factor, QString &unitString)
+QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &factor,
+                                             QString &unitString)
 {
     double UnitValue = std::abs(quant.getValue());
     Unit unit = quant.getUnit();
@@ -49,12 +50,12 @@ QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &fact
     // = 10e6 * kg*mm/s^3/K
 
     // now do special treatment on all cases seems necessary:
-    if (unit == Unit::Length) {  // Length handling ============================
-        if (UnitValue < 0.000000001) {// smaller than 0.001 nm -> scientific notation
+    if (unit == Unit::Length) {        // Length handling ============================
+        if (UnitValue < 0.000000001) { // smaller than 0.001 nm -> scientific notation
             unitString = QString::fromLatin1("mm");
             factor = 1.0;
         }
-        else if(UnitValue < 0.001) {
+        else if (UnitValue < 0.001) {
             unitString = QString::fromLatin1("nm");
             factor = 1e-6;
         }
@@ -98,7 +99,7 @@ QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &fact
         }
     }
     else if (unit == Unit::Volume) {
-        if (UnitValue < 1e3) {// smaller than 1 ul
+        if (UnitValue < 1e3) { // smaller than 1 ul
             unitString = QString::fromLatin1("mm^3");
             factor = 1.0;
         }
@@ -169,7 +170,7 @@ QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &fact
     }
     else if (unit == Unit::ThermalExpansionCoefficient) {
         if (UnitValue < 0.001) {
-            unitString = QString::fromUtf8("\xC2\xB5m/m/K");  // micro-meter/meter/K
+            unitString = QString::fromUtf8("\xC2\xB5m/m/K"); // micro-meter/meter/K
             factor = 1e-6;
         }
         else {
@@ -196,7 +197,7 @@ QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &fact
         factor = 1.0;
     }
     else if ((unit == Unit::Pressure) || (unit == Unit::Stress)) {
-        if (UnitValue < 10.0) {// Pa is the smallest
+        if (UnitValue < 10.0) { // Pa is the smallest
             unitString = QString::fromLatin1("Pa");
             factor = 0.001;
         }
@@ -218,7 +219,7 @@ QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &fact
         }
     }
     else if ((unit == Unit::Stiffness)) {
-        if (UnitValue < 1){// mN/m is the smallest
+        if (UnitValue < 1) { // mN/m is the smallest
             unitString = QString::fromLatin1("mN/m");
             factor = 1e-3;
         }
@@ -325,7 +326,7 @@ QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &fact
     }
     else if (unit == Unit::HeatFlux) {
         unitString = QString::fromLatin1("W/m^2");
-        factor = 1;  //  unit signiture (0,1,-3,0,0) is length independent
+        factor = 1; //  unit signiture (0,1,-3,0,0) is length independent
     }
     else if (unit == Unit::ElectricCharge) {
         unitString = QString::fromLatin1("C");
@@ -405,7 +406,8 @@ QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &fact
             factor = 1e-15;
         }
         else if (UnitValue < 1e-9) {
-            unitString = QString::fromUtf8("\xC2\xB5""F"); // \x reads everything to the end, therefore split
+            unitString = QString::fromUtf8("\xC2\xB5"
+                                           "F"); // \x reads everything to the end, therefore split
             factor = 1e-12;
         }
         else if (UnitValue < 1e-6) {

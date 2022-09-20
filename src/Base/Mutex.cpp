@@ -26,12 +26,8 @@
 #include "Mutex.h"
 
 
-#if QT_VERSION < QT_VERSION_CHECK(5,14,0)
-QRecursiveMutex::QRecursiveMutex() : QMutex(QMutex::Recursive)
-{
-}
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+QRecursiveMutex::QRecursiveMutex() : QMutex(QMutex::Recursive) {}
 
-QRecursiveMutex::~QRecursiveMutex()
-{
-}
+QRecursiveMutex::~QRecursiveMutex() {}
 #endif

@@ -41,15 +41,15 @@
 namespace Part
 {
 
-class PartExport AttachEngineException : public Base::Exception
+class PartExport AttachEngineException: public Base::Exception
 {
 public:
-   /// Construction
-   AttachEngineException();
-   explicit AttachEngineException(const char * sMessage);
-   explicit AttachEngineException(const std::string& sMessage);
-   /// Destruction
-   ~AttachEngineException() throw() override {}
+    /// Construction
+    AttachEngineException();
+    explicit AttachEngineException(const char *sMessage);
+    explicit AttachEngineException(const std::string &sMessage);
+    /// Destruction
+    ~AttachEngineException() throw() override {}
 };
 
 /**
@@ -57,9 +57,10 @@ public:
  * that should be attachable. It includes the required properties, and
  * shortcuts for accessing the attachment math class.
  */
-class PartExport AttachExtension : public App::DocumentObjectExtension
+class PartExport AttachExtension: public App::DocumentObjectExtension
 {
     EXTENSION_PROPERTY_HEADER_WITH_OVERRIDE(Part::AttachableObject);
+
 public:
     AttachExtension();
     ~AttachExtension() override;
@@ -70,7 +71,7 @@ public:
      * destroyed, or when a new attacher is set. The default attacher is AttachEngine3D.
      * @param attacher. AttachableObject takes ownership and will delete it eventually.
      */
-    virtual void setAttacher(Attacher::AttachEngine* attacher);
+    virtual void setAttacher(Attacher::AttachEngine *attacher);
 
     /**
      * @brief changeAttacherType
@@ -79,16 +80,20 @@ public:
      * @return true if attacher was changed. false if attacher is already of the
      * type requested. Throws if invalid type is supplied.
      */
-    bool changeAttacherType(const char* typeName);
+    bool changeAttacherType(const char *typeName);
 
-    Attacher::AttachEngine &attacher() const {if(!_attacher) throw AttachEngineException("AttachableObject: no attacher is set."); return *_attacher;}
+    Attacher::AttachEngine &attacher() const
+    {
+        if (!_attacher) throw AttachEngineException("AttachableObject: no attacher is set.");
+        return *_attacher;
+    }
 
 
-    App::PropertyString         AttacherType;
-    App::PropertyLinkSubList    Support;
-    App::PropertyEnumeration    MapMode; //see AttachEngine::eMapMode
-    App::PropertyBool           MapReversed; //inverts Z and X internal axes
-    App::PropertyPlacement      AttachmentOffset;
+    App::PropertyString AttacherType;
+    App::PropertyLinkSubList Support;
+    App::PropertyEnumeration MapMode; //see AttachEngine::eMapMode
+    App::PropertyBool MapReversed;    //inverts Z and X internal axes
+    App::PropertyPlacement AttachmentOffset;
 
     /**
       * @brief MapPathParameter is a parameter value for mmNormalToPath (the
@@ -108,24 +113,27 @@ public:
     bool isAttacherActive() const;
 
     virtual bool isTouched_Mapping()
-    {return true; /*support.isTouched isn't true when linked objects are changed... why?..*/}
+    {
+        return true; /*support.isTouched isn't true when linked objects are changed... why?..*/
+    }
 
     short int extensionMustExecute() override;
     App::DocumentObjectExecReturn *extensionExecute() override;
-    PyObject* getExtensionPyObject() override;
+    PyObject *getExtensionPyObject() override;
     void onExtendedDocumentRestored() override;
 
 protected:
-    void extensionOnChanged(const App::Property* /*prop*/) override;
-    virtual void extHandleChangedPropertyName(Base::XMLReader &reader, const char* TypeName, const char* PropName);
-    
-    App::PropertyPlacement& getPlacement() const;
+    void extensionOnChanged(const App::Property * /*prop*/) override;
+    virtual void extHandleChangedPropertyName(Base::XMLReader &reader, const char *TypeName,
+                                              const char *PropName);
+
+    App::PropertyPlacement &getPlacement() const;
 
 public:
     void updateAttacherVals();
 
 private:
-    Attacher::AttachEngine* _attacher;
+    Attacher::AttachEngine *_attacher;
     mutable int _active = -1;
 };
 

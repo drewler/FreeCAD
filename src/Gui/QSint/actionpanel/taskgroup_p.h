@@ -19,37 +19,34 @@ namespace QSint
 {
 
 
-class TaskGroup : public QFrame
+class TaskGroup: public QFrame
 {
-  typedef QFrame BaseClass;
+    typedef QFrame BaseClass;
 
 public:
-  TaskGroup(QWidget *parent, bool hasHeader = false);
+    TaskGroup(QWidget *parent, bool hasHeader = false);
 
-  void setScheme(ActionPanelScheme *scheme);
+    void setScheme(ActionPanelScheme *scheme);
 
-  inline QBoxLayout* groupLayout()
-  {
-    return (QBoxLayout*)layout();
-  }
+    inline QBoxLayout *groupLayout() { return (QBoxLayout *)layout(); }
 
-  bool addActionLabel(ActionLabel *label, bool addToLayout, bool addStretch);
+    bool addActionLabel(ActionLabel *label, bool addToLayout, bool addStretch);
 
-  bool addWidget(QWidget *widget, bool addToLayout, bool addStretch);
+    bool addWidget(QWidget *widget, bool addToLayout, bool addStretch);
 
-  QPixmap transparentRender();
+    QPixmap transparentRender();
 
 protected:
-  virtual void paintEvent ( QPaintEvent * event );
-  virtual void keyPressEvent ( QKeyEvent * event );
-  virtual void keyReleaseEvent ( QKeyEvent * event );
+    virtual void paintEvent(QPaintEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
 
-  ActionPanelScheme *myScheme;
+    ActionPanelScheme *myScheme;
 
-  bool myHasHeader;
+    bool myHasHeader;
 };
 
 
-}
+} // namespace QSint
 
 #endif // TASKGROUP_P_H

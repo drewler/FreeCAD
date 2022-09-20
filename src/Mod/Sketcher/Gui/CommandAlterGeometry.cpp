@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QMessageBox>
+#include <QMessageBox>
 #endif
 
 #include <Gui/Action.h>
@@ -49,18 +49,19 @@ using namespace Sketcher;
 
 bool isAlterGeoActive(Gui::Document *doc)
 {
-   if (doc) {
+    if (doc) {
         // checks if a Sketch Viewprovider is in Edit
-        if (doc->getInEdit() && doc->getInEdit()->isDerivedFrom
-            (SketcherGui::ViewProviderSketch::getClassTypeId())) {
-                return true;
+        if (doc->getInEdit()
+            && doc->getInEdit()->isDerivedFrom(SketcherGui::ViewProviderSketch::getClassTypeId())) {
+            return true;
         }
     }
 
     return false;
 }
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 extern GeometryCreationMode geometryCreationMode;
 
@@ -68,17 +69,17 @@ extern GeometryCreationMode geometryCreationMode;
 DEF_STD_CMD_A(CmdSketcherToggleConstruction)
 
 CmdSketcherToggleConstruction::CmdSketcherToggleConstruction()
-    :Command("Sketcher_ToggleConstruction")
+    : Command("Sketcher_ToggleConstruction")
 {
-    sAppModule      = "Sketcher";
-    sGroup          = "Sketcher";
-    sMenuText       = QT_TR_NOOP("Toggle construction geometry");
-    sToolTipText    = QT_TR_NOOP("Toggles the toolbar or selected geometry to/from construction mode");
-    sWhatsThis      = "Sketcher_ToggleConstruction";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Sketcher_ToggleConstruction";
-    sAccel          = "G, N";
-    eType           = ForEdit;
+    sAppModule = "Sketcher";
+    sGroup = "Sketcher";
+    sMenuText = QT_TR_NOOP("Toggle construction geometry");
+    sToolTipText = QT_TR_NOOP("Toggles the toolbar or selected geometry to/from construction mode");
+    sWhatsThis = "Sketcher_ToggleConstruction";
+    sStatusTip = sToolTipText;
+    sPixmap = "Sketcher_ToggleConstruction";
+    sAccel = "G, N";
+    eType = ForEdit;
 
     // list of toggle construction commands
     Gui::CommandManager &rcCmdMgr = Gui::Application::Instance->commandManager();
@@ -119,13 +120,11 @@ void CmdSketcherToggleConstruction::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     // Option A: nothing is selected change creation mode from/to construction
-    if(Gui::Selection().countObjectsOfType(Sketcher::SketchObject::getClassTypeId()) == 0){
+    if (Gui::Selection().countObjectsOfType(Sketcher::SketchObject::getClassTypeId()) == 0) {
 
         Gui::CommandManager &rcCmdMgr = Gui::Application::Instance->commandManager();
 
-        if (geometryCreationMode == Construction) {
-            geometryCreationMode = Normal;
-        }
+        if (geometryCreationMode == Construction) { geometryCreationMode = Normal; }
         else {
             geometryCreationMode = Construction;
         }
@@ -136,14 +135,16 @@ void CmdSketcherToggleConstruction::activated(int iMsg)
     {
         // get the selection
         std::vector<Gui::SelectionObject> selection;
-        selection = getSelection().getSelectionEx(nullptr, Sketcher::SketchObject::getClassTypeId());
+        selection =
+            getSelection().getSelectionEx(nullptr, Sketcher::SketchObject::getClassTypeId());
 
-        Sketcher::SketchObject* Obj = static_cast<Sketcher::SketchObject*>(selection[0].getObject());
+        Sketcher::SketchObject *Obj =
+            static_cast<Sketcher::SketchObject *>(selection[0].getObject());
 
         // only one sketch with its subelements are allowed to be selected
         if (selection.size() != 1) {
             QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
-                QObject::tr("Select edge(s) from the sketch."));
+                                 QObject::tr("Select edge(s) from the sketch."));
             return;
         }
 
@@ -151,7 +152,7 @@ void CmdSketcherToggleConstruction::activated(int iMsg)
         const std::vector<std::string> &SubNames = selection[0].getSubNames();
         if (SubNames.empty()) {
             QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Wrong selection"),
-                QObject::tr("Select edge(s) from the sketch."));
+                                 QObject::tr("Select edge(s) from the sketch."));
             return;
         }
 
@@ -159,28 +160,29 @@ void CmdSketcherToggleConstruction::activated(int iMsg)
         openCommand(QT_TRANSLATE_NOOP("Command", "Toggle draft from/to draft"));
 
         // go through the selected subelements
-        for (std::vector<std::string>::const_iterator it=SubNames.begin();it!=SubNames.end();++it){
+        for (std::vector<std::string>::const_iterator it = SubNames.begin(); it != SubNames.end();
+             ++it) {
             // only handle edges
-            if (it->size() > 4 && it->substr(0,4) == "Edge") {
-                int GeoId = std::atoi(it->substr(4,4000).c_str()) - 1;
+            if (it->size() > 4 && it->substr(0, 4) == "Edge") {
+                int GeoId = std::atoi(it->substr(4, 4000).c_str()) - 1;
                 // issue the actual commands to toggle
                 Gui::cmdAppObjectArgs(selection[0].getObject(), "toggleConstruction(%d) ", GeoId);
             }
-            if (it->size() > 6 && it->substr(0,6) == "Vertex") {
-                int vertexId = std::atoi(it->substr(6,4000).c_str()) - 1;
+            if (it->size() > 6 && it->substr(0, 6) == "Vertex") {
+                int vertexId = std::atoi(it->substr(6, 4000).c_str()) - 1;
 
                 int geoId;
                 PointPos pos;
-                Obj->getGeoVertexIndex(vertexId,geoId, pos);
+                Obj->getGeoVertexIndex(vertexId, geoId, pos);
 
                 auto geo = Obj->getGeometry(geoId);
 
-                if(geo && geo->getTypeId() == Part::GeomPoint::getClassTypeId()) {
+                if (geo && geo->getTypeId() == Part::GeomPoint::getClassTypeId()) {
                     // issue the actual commands to toggle
-                    Gui::cmdAppObjectArgs(selection[0].getObject(), "toggleConstruction(%d) ", geoId);
+                    Gui::cmdAppObjectArgs(selection[0].getObject(), "toggleConstruction(%d) ",
+                                          geoId);
                 }
             }
-
         }
         // finish the transaction and update
         commitCommand();
@@ -192,12 +194,9 @@ void CmdSketcherToggleConstruction::activated(int iMsg)
     }
 }
 
-bool CmdSketcherToggleConstruction::isActive()
-{
-    return isAlterGeoActive( getActiveGuiDocument() );
-}
+bool CmdSketcherToggleConstruction::isActive() { return isAlterGeoActive(getActiveGuiDocument()); }
 
-}
+} // namespace SketcherGui
 
 void CreateSketcherCommandsAlterGeo()
 {

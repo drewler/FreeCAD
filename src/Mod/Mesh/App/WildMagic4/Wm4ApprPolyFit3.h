@@ -49,10 +49,10 @@ namespace Wm4
 //   w = rng * sum_{i=0}^{d0} sum_{j=0}^{d1} c'[i][j] *
 //         ((x-xcen)/rng)^i * ((y-ycen)/rng)^j
 
-template <class Real> WM4_FOUNDATION_ITEM
-Real* PolyFit3 (int iSamples, const Real* afX, const Real* afY,
-    const Real* afW, int iXDegree, int iYDegree);
+template<class Real>
+WM4_FOUNDATION_ITEM Real *PolyFit3(int iSamples, const Real *afX, const Real *afY, const Real *afW,
+                                   int iXDegree, int iYDegree);
 
-}
+} // namespace Wm4
 
 #endif

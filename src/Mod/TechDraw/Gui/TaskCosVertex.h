@@ -36,7 +36,7 @@ class DrawPage;
 class DrawView;
 class DrawViewPart;
 class DrawCosVertex;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -51,25 +51,23 @@ class ViewProviderPage;
 class ViewProviderLeader;
 class Ui_TaskCosVertex;
 
-class TaskCosVertex : public QWidget
+class TaskCosVertex: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskCosVertex(TechDraw::DrawViewPart* baseFeat,
-                  TechDraw::DrawPage* page);
+    TaskCosVertex(TechDraw::DrawViewPart *baseFeat, TechDraw::DrawPage *page);
     ~TaskCosVertex() = default;
 
     virtual bool accept();
     virtual bool reject();
     void updateTask();
-    void saveButtons(QPushButton* btnOK,
-                     QPushButton* btnCancel);
+    void saveButtons(QPushButton *btnOK, QPushButton *btnCancel);
     void enableTaskButtons(bool button);
 
 public Q_SLOTS:
     void onTrackerClicked(bool clicked);
-    void onTrackerFinished(std::vector<QPointF> pts, TechDrawGui::QGIView* qgParent);
+    void onTrackerFinished(std::vector<QPointF> pts, TechDrawGui::QGIView *qgParent);
 
 protected:
     void changeEvent(QEvent *event) override;
@@ -83,40 +81,39 @@ protected:
     void updateUi();
     void setEditCursor(QCursor cursor);
 
-   QGIView* findParentQGIV();
+    QGIView *findParentQGIV();
 
 private:
     std::unique_ptr<Ui_TaskCosVertex> ui;
     bool blockUpdate;
 
-    QGTracker* m_tracker;
+    QGTracker *m_tracker;
 
-    TechDraw::DrawViewPart* m_baseFeat;
-    TechDraw::DrawPage* m_basePage;
-    QGIView* m_qgParent;
+    TechDraw::DrawViewPart *m_baseFeat;
+    TechDraw::DrawPage *m_basePage;
+    QGIView *m_qgParent;
     std::string m_qgParentName;
 
     QGTracker::TrackerMode m_trackerMode;
-    Qt::ContextMenuPolicy  m_saveContextPolicy;
+    Qt::ContextMenuPolicy m_saveContextPolicy;
     bool m_inProgressLock;
 
-    QPushButton* m_btnOK;
-    QPushButton* m_btnCancel;
+    QPushButton *m_btnOK;
+    QPushButton *m_btnCancel;
 
     int m_pbTrackerState;
     QPointF m_savePoint;
     bool pointFromTracker;
 
-    ViewProviderPage* m_vpp;
+    ViewProviderPage *m_vpp;
 };
 
-class TaskDlgCosVertex : public Gui::TaskView::TaskDialog
+class TaskDlgCosVertex: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    TaskDlgCosVertex(TechDraw::DrawViewPart* baseFeat,
-                      TechDraw::DrawPage* page);
+    TaskDlgCosVertex(TechDraw::DrawViewPart *baseFeat, TechDraw::DrawPage *page);
     ~TaskDlgCosVertex() override;
 
 public:
@@ -129,17 +126,15 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    bool isAllowedAlterDocument() const override
-                        { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
     void update();
 
-    void modifyStandardButtons(QDialogButtonBox* box) override;
+    void modifyStandardButtons(QDialogButtonBox *box) override;
 
 protected:
-
 private:
-    TaskCosVertex * widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskCosVertex *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

@@ -24,23 +24,23 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <algorithm>
-# include <Inventor/SoPickedPoint.h>
-# include <Inventor/details/SoFaceDetail.h>
-# include <Inventor/nodes/SoBaseColor.h>
-# include <Inventor/nodes/SoCoordinate3.h>
-# include <Inventor/nodes/SoDrawStyle.h>
-# include <Inventor/nodes/SoIndexedLineSet.h>
-# include <Inventor/nodes/SoMaterial.h>
-# include <Inventor/nodes/SoMaterialBinding.h>
-# include <Inventor/nodes/SoPolygonOffset.h>
-# include <Inventor/nodes/SoShapeHints.h>
-# include <Inventor/nodes/SoOrthographicCamera.h>
-# include <Inventor/nodes/SoTransform.h>
-# include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/events/SoMouseButtonEvent.h>
-# include <QAction>
-# include <QMenu>
+#include <algorithm>
+#include <Inventor/SoPickedPoint.h>
+#include <Inventor/details/SoFaceDetail.h>
+#include <Inventor/nodes/SoBaseColor.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoMaterialBinding.h>
+#include <Inventor/nodes/SoPolygonOffset.h>
+#include <Inventor/nodes/SoShapeHints.h>
+#include <Inventor/nodes/SoOrthographicCamera.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/events/SoMouseButtonEvent.h>
+#include <QAction>
+#include <QMenu>
 #endif
 
 /// Here the FreeCAD includes sorted by Base,App,Gui......
@@ -103,7 +103,7 @@ ViewProviderMeshFaceSet::ViewProviderMeshFaceSet()
 
     // setup engine to notify 'pcMeshFaces' node about material changes.
     // When the affected nodes are deleted the engine will be deleted, too.
-    SoFCMaterialEngine* engine = new SoFCMaterialEngine();
+    SoFCMaterialEngine *engine = new SoFCMaterialEngine();
     engine->diffuseColor.connectFrom(&pcShapeMaterial->diffuseColor);
     pcMeshFaces->updateGLArray.connectFrom(&engine->trigger);
 }
@@ -124,19 +124,22 @@ void ViewProviderMeshFaceSet::attach(App::DocumentObject *pcFeat)
     pcShapeGroup->addChild(pcMeshFaces);
 
     // read the threshold from the preferences
-    Base::Reference<ParameterGrp> hGrp = Gui::WindowParameter::getDefaultParameter()->GetGroup("Mod/Mesh");
+    Base::Reference<ParameterGrp> hGrp =
+        Gui::WindowParameter::getDefaultParameter()->GetGroup("Mod/Mesh");
     int size = hGrp->GetInt("RenderTriangleLimit", -1);
     if (size > 0) {
-        pcMeshShape->renderTriangleLimit = (unsigned int)(pow(10.0f,size));
-        static_cast<SoFCIndexedFaceSet*>(pcMeshFaces)->renderTriangleLimit = (unsigned int)(pow(10.0f,size));
+        pcMeshShape->renderTriangleLimit = (unsigned int)(pow(10.0f, size));
+        static_cast<SoFCIndexedFaceSet *>(pcMeshFaces)->renderTriangleLimit =
+            (unsigned int)(pow(10.0f, size));
     }
 }
 
-void ViewProviderMeshFaceSet::updateData(const App::Property* prop)
+void ViewProviderMeshFaceSet::updateData(const App::Property *prop)
 {
     ViewProviderMesh::updateData(prop);
     if (prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        const Mesh::MeshObject* mesh = static_cast<const Mesh::PropertyMeshKernel*>(prop)->getValuePtr();
+        const Mesh::MeshObject *mesh =
+            static_cast<const Mesh::PropertyMeshKernel *>(prop)->getValuePtr();
 
         bool direct = MeshRenderer::shouldRenderDirectly(mesh->countFacets() > this->triangleCount);
         if (direct) {
@@ -169,8 +172,7 @@ void ViewProviderMeshFaceSet::updateData(const App::Property* prop)
         showOpenEdges(OpenEdges.getValue());
         std::vector<Mesh::FacetIndex> selection;
         mesh->getFacetsFromSelection(selection);
-        if (selection.empty())
-            unhighlightSelection();
+        if (selection.empty()) unhighlightSelection();
         else
             highlightSelection();
     }
@@ -195,19 +197,21 @@ void ViewProviderMeshFaceSet::showOpenEdges(bool show)
         }
         else {
             pcOpenEdge->addChild(pcMeshCoord);
-            SoIndexedLineSet* lines = new SoIndexedLineSet;
+            SoIndexedLineSet *lines = new SoIndexedLineSet;
             pcOpenEdge->addChild(lines);
 
             // Build up the lines with indices to the list of vertices 'pcMeshCoord'
-            int index=0;
-            const MeshCore::MeshKernel& rMesh = static_cast<Mesh::Feature*>(pcObject)->Mesh.getValue().getKernel();
-            const MeshCore::MeshFacetArray& rFaces = rMesh.GetFacets();
-            for (MeshCore::MeshFacetArray::_TConstIterator it = rFaces.begin(); it != rFaces.end(); ++it) {
-                for (int i=0; i<3; i++) {
+            int index = 0;
+            const MeshCore::MeshKernel &rMesh =
+                static_cast<Mesh::Feature *>(pcObject)->Mesh.getValue().getKernel();
+            const MeshCore::MeshFacetArray &rFaces = rMesh.GetFacets();
+            for (MeshCore::MeshFacetArray::_TConstIterator it = rFaces.begin(); it != rFaces.end();
+                 ++it) {
+                for (int i = 0; i < 3; i++) {
                     if (it->_aulNeighbours[i] == MeshCore::FACET_INDEX_MAX) {
-                        lines->coordIndex.set1Value(index++,it->_aulPoints[i]);
-                        lines->coordIndex.set1Value(index++,it->_aulPoints[(i+1)%3]);
-                        lines->coordIndex.set1Value(index++,SO_END_LINE_INDEX);
+                        lines->coordIndex.set1Value(index++, it->_aulPoints[i]);
+                        lines->coordIndex.set1Value(index++, it->_aulPoints[(i + 1) % 3]);
+                        lines->coordIndex.set1Value(index++, SO_END_LINE_INDEX);
                     }
                 }
             }
@@ -218,16 +222,14 @@ void ViewProviderMeshFaceSet::showOpenEdges(bool show)
     }
 }
 
-SoShape* ViewProviderMeshFaceSet::getShapeNode() const
+SoShape *ViewProviderMeshFaceSet::getShapeNode() const
 {
-    if (directRendering)
-        return this->pcMeshShape;
+    if (directRendering) return this->pcMeshShape;
     return this->pcMeshFaces;
 }
 
-SoNode* ViewProviderMeshFaceSet::getCoordNode() const
+SoNode *ViewProviderMeshFaceSet::getCoordNode() const
 {
-    if (directRendering)
-        return this->pcMeshNode;
+    if (directRendering) return this->pcMeshNode;
     return this->pcMeshCoord;
 }

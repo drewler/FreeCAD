@@ -28,12 +28,9 @@
 #include "Utils_ExceptHandlers.hxx"
 #include "Utils_SALOME_Exception.hxx"
 
-void SalomeException ()
+void SalomeException() { throw SALOME_Exception("Salome Exception"); }
+
+void SALOME_SalomeException()
 {
-  throw SALOME_Exception("Salome Exception");
+    //  THROW_SALOME_CORBA_EXCEPTION("INTERNAL ERROR", SALOME::INTERNAL_ERROR);
 }
-
-void SALOME_SalomeException() {
-//  THROW_SALOME_CORBA_EXCEPTION("INTERNAL ERROR", SALOME::INTERNAL_ERROR);
-}
-

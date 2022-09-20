@@ -27,15 +27,18 @@
 #include <QDialog>
 #include <string>
 
-namespace Gui { namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 
 class Ui_DlgProjectUtility;
-class DlgProjectUtility : public QDialog
+class DlgProjectUtility: public QDialog
 {
     Q_OBJECT
 
 public:
-    DlgProjectUtility(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    DlgProjectUtility(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgProjectUtility() override;
 
 private Q_SLOTS:
@@ -44,7 +47,7 @@ private Q_SLOTS:
 
 protected:
     static std::string doctools;
-    Ui_DlgProjectUtility* ui;
+    Ui_DlgProjectUtility *ui;
 };
 
 } // namespace Dialog
@@ -52,4 +55,3 @@ protected:
 
 
 #endif // GUI_DIALOG_DLGPROJECTUTILITY_H
-

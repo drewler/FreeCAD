@@ -29,14 +29,15 @@
 #include <Gui/TaskView/TaskView.h>
 #include <memory>
 
-namespace MeshGui {
+namespace MeshGui
+{
 class Ui_DlgDecimating;
-class DlgDecimating : public QWidget
+class DlgDecimating: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit DlgDecimating(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgDecimating(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgDecimating() override;
     void setNumberOfTriangles(int);
     double tolerance() const;
@@ -55,7 +56,7 @@ private:
 /**
  * Embed the panel into a task dialog.
  */
-class TaskDecimating : public Gui::TaskView::TaskDialog
+class TaskDecimating: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -67,14 +68,15 @@ public:
     bool accept() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Cancel; }
-    bool isAllowedAlterDocument() const override
-    { return true; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
+    bool isAllowedAlterDocument() const override { return true; }
 
 private:
-    DlgDecimating* widget;
+    DlgDecimating *widget;
 };
 
-}
+} // namespace MeshGui
 
 #endif // MESHGUI_DLGDECIMATING_H

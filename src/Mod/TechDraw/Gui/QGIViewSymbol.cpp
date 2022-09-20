@@ -84,28 +84,19 @@ void QGIViewSymbol::setViewSymbolFeature(TechDraw::DrawViewSymbol *obj)
 
 void QGIViewSymbol::updateView(bool update)
 {
-    auto viewSymbol( dynamic_cast<TechDraw::DrawViewSymbol *>(getViewObject()) );
-    if (!viewSymbol)
-        return;
+    auto viewSymbol(dynamic_cast<TechDraw::DrawViewSymbol *>(getViewObject()));
+    if (!viewSymbol) return;
 
-    if (update ||
-        viewSymbol->isTouched() ||
-        viewSymbol->Symbol.isTouched()) {
-        draw();
-    }
+    if (update || viewSymbol->isTouched() || viewSymbol->Symbol.isTouched()) { draw(); }
 
-    if (viewSymbol->Scale.isTouched()) {
-        draw();
-    }
+    if (viewSymbol->Scale.isTouched()) { draw(); }
 
     QGIView::updateView(update);
 }
 
 void QGIViewSymbol::draw()
 {
-    if (!isVisible()) {
-        return;
-    }
+    if (!isVisible()) { return; }
 
     drawSvg();
     QGIView::draw();
@@ -113,20 +104,20 @@ void QGIViewSymbol::draw()
 
 void QGIViewSymbol::drawSvg()
 {
-    auto viewSymbol( dynamic_cast<TechDraw::DrawViewSymbol *>(getViewObject()) );
-    if (!viewSymbol)
-        return;
+    auto viewSymbol(dynamic_cast<TechDraw::DrawViewSymbol *>(getViewObject()));
+    if (!viewSymbol) return;
 
     double rezfactor = Rez::getRezFactor();
     double scaling = viewSymbol->getScale();
-    double pxMm = 3.78;                 //96px/25.4mm ( CSS/SVG defined value of 96 pixels per inch)
-//    double pxMm = 3.54;                 //90px/25.4mm ( inkscape value version <= 0.91)
-                                        //some software uses different px/in, so symbol will need Scale adjusted.
+    double pxMm = 3.78; //96px/25.4mm ( CSS/SVG defined value of 96 pixels per inch)
+    //    double pxMm = 3.54;                 //90px/25.4mm ( inkscape value version <= 0.91)
+    //some software uses different px/in, so symbol will need Scale adjusted.
     //Arch/Draft views are in px and need to be scaled @ rezfactor px/mm to ensure proper representation
-    if (viewSymbol->isDerivedFrom(TechDraw::DrawViewArch::getClassTypeId()) ||
-        viewSymbol->isDerivedFrom(TechDraw::DrawViewDraft::getClassTypeId()) ) {
+    if (viewSymbol->isDerivedFrom(TechDraw::DrawViewArch::getClassTypeId())
+        || viewSymbol->isDerivedFrom(TechDraw::DrawViewDraft::getClassTypeId())) {
         scaling = scaling * rezfactor;
-    } else {
+    }
+    else {
         scaling = scaling * rezfactor / pxMm;
     }
     m_svgItem->setScale(scaling);
@@ -138,13 +129,12 @@ void QGIViewSymbol::drawSvg()
 
 void QGIViewSymbol::symbolToSvg(QByteArray qba)
 {
-    if (qba.isEmpty()) {
-        return;
-    }
+    if (qba.isEmpty()) { return; }
 
     prepareGeometryChange();
     if (!m_svgItem->load(&qba)) {
-        Base::Console().Error("Error - Could not load Symbol into SVG renderer for %s\n", getViewName());
+        Base::Console().Error("Error - Could not load Symbol into SVG renderer for %s\n",
+                              getViewName());
     }
     m_svgItem->centerAt(0., 0.);
 }
@@ -156,4 +146,3 @@ void QGIViewSymbol::rotateView()
     double rot = getViewObject()->Rotation.getValue();
     m_displayArea->setRotation(-rot);
 }
-

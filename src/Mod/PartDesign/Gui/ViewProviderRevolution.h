@@ -27,9 +27,10 @@
 #include "ViewProviderSketchBased.h"
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderRevolution : public ViewProviderSketchBased
+class PartDesignGuiExport ViewProviderRevolution: public ViewProviderSketchBased
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderRevolution);
 
@@ -39,13 +40,11 @@ public:
     /// destructor
     ~ViewProviderRevolution() override;
 
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
 protected:
     /// Returns a newly created TaskDlgRevolutionParameters
     TaskDlgFeatureParameters *getEditDialog() override;
-
-
 };
 
 

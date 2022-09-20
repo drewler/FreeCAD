@@ -11,57 +11,59 @@
 #include "filepath.h"
 #include "zipios_defs.h"
 
-namespace zipios {
+namespace zipios
+{
 
 /** BasicEntry is a FileEntry that is suitable as a base class for
     basic entries, that e.g. do not support any form of compression */
-class BaseExport BasicEntry : public FileEntry {
+class BaseExport BasicEntry: public FileEntry
+{
 public:
-  /** Constructor.
+    /** Constructor.
       @param filename the filename of the entry.
       @param comment a comment for the entry.
       @param basepath
    */
-  explicit BasicEntry( const string &filename, const string &comment,
-		       const FilePath &basepath = FilePath() ) ;
-  virtual string getComment() const ;
-  virtual uint32 getCompressedSize() const ;
-  virtual uint32 getCrc() const ;
-  virtual vector< unsigned char > getExtra() const ;
-  virtual StorageMethod getMethod() const ;
-  virtual string getName() const ;
-  virtual string getFileName() const ;
-  virtual uint32 getSize() const ;
-  virtual int getTime() const ;
-  virtual bool isValid() const ;
-  
-  //     virtual int hashCode() const ;
-  virtual bool isDirectory() const ;
-  
-  virtual void setComment( const string &comment ) ;
-  virtual void setCompressedSize( uint32 size ) ;
-  virtual void setCrc( uint32 crc ) ;
-  virtual void setExtra( const vector< unsigned char > &extra ) ;
-  virtual void setMethod( StorageMethod method ) ;
-  virtual void setName( const string &name ) ;
-  virtual void setSize( uint32 size ) ;
-  virtual void setTime( int time ) ;
-  
-  virtual string toString() const ;
-  
-  virtual FileEntry *clone() const ;
+    explicit BasicEntry(const string &filename, const string &comment,
+                        const FilePath &basepath = FilePath());
+    virtual string getComment() const;
+    virtual uint32 getCompressedSize() const;
+    virtual uint32 getCrc() const;
+    virtual vector<unsigned char> getExtra() const;
+    virtual StorageMethod getMethod() const;
+    virtual string getName() const;
+    virtual string getFileName() const;
+    virtual uint32 getSize() const;
+    virtual int getTime() const;
+    virtual bool isValid() const;
 
-  virtual ~BasicEntry() ;
+    //     virtual int hashCode() const ;
+    virtual bool isDirectory() const;
+
+    virtual void setComment(const string &comment);
+    virtual void setCompressedSize(uint32 size);
+    virtual void setCrc(uint32 crc);
+    virtual void setExtra(const vector<unsigned char> &extra);
+    virtual void setMethod(StorageMethod method);
+    virtual void setName(const string &name);
+    virtual void setSize(uint32 size);
+    virtual void setTime(int time);
+
+    virtual string toString() const;
+
+    virtual FileEntry *clone() const;
+
+    virtual ~BasicEntry();
+
 protected:
-  string _filename ;
-  string _comment ;
-  int _size ;
-  bool _valid ;
-  FilePath _basepath ;
-
+    string _filename;
+    string _comment;
+    int _size;
+    bool _valid;
+    FilePath _basepath;
 };
 
-}
+} // namespace zipios
 #endif
 
 /** \file

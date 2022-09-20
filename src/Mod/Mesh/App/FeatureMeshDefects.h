@@ -35,240 +35,240 @@ namespace Mesh
  * The FixDefects class fixes defects in the attached mesh kernel.
  * @author Werner Mayer
  */
-class MeshExport FixDefects : public Mesh::Feature
+class MeshExport FixDefects: public Mesh::Feature
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDefects);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDefects);
 
 public:
-  /// Constructor
-  FixDefects();
-  ~FixDefects() override;
+    /// Constructor
+    FixDefects();
+    ~FixDefects() override;
 
-  /** @name Properties */
-  //@{
-  App::PropertyLink   Source;
-  App::PropertyFloat  Epsilon;
-  //@}
+    /** @name Properties */
+    //@{
+    App::PropertyLink Source;
+    App::PropertyFloat Epsilon;
+    //@}
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  short mustExecute() const override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    short mustExecute() const override;
+    //@}
 
-  /// returns the type name of the ViewProvider
-//  virtual const char* getViewProviderName(void) const {return "MeshGui::ViewProviderDefects";}
+    /// returns the type name of the ViewProvider
+    //  virtual const char* getViewProviderName(void) const {return "MeshGui::ViewProviderDefects";}
 };
 
 /**
  * The HarmonizeNormals class harmonizes the normals of the faces.
  * @author Werner Mayer
  */
-class MeshExport HarmonizeNormals : public Mesh::FixDefects
+class MeshExport HarmonizeNormals: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::HarmonizeNormals);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::HarmonizeNormals);
 
 public:
-  /// Constructor
-  HarmonizeNormals();
-  ~HarmonizeNormals() override;
+    /// Constructor
+    HarmonizeNormals();
+    ~HarmonizeNormals() override;
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 /**
  * The FlipNormals class flips the normals of all faces.
  * @author Werner Mayer
  */
-class MeshExport FlipNormals : public Mesh::FixDefects
+class MeshExport FlipNormals: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FlipNormals);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FlipNormals);
 
 public:
-  /// Constructor
-  FlipNormals();
-  ~FlipNormals() override;
+    /// Constructor
+    FlipNormals();
+    ~FlipNormals() override;
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 /**
  * The FixNonManifolds class tries to fix edges with more than two faces attached.
  * @author Werner Mayer
  */
-class MeshExport FixNonManifolds : public Mesh::FixDefects
+class MeshExport FixNonManifolds: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixNonManifolds);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixNonManifolds);
 
 public:
-  /// Constructor
-  FixNonManifolds();
-  ~FixNonManifolds() override;
+    /// Constructor
+    FixNonManifolds();
+    ~FixNonManifolds() override;
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 /**
  * The FixDuplicatedFaces class removes duplicated faces from the mesh.
  * @author Werner Mayer
  */
-class MeshExport FixDuplicatedFaces : public Mesh::FixDefects
+class MeshExport FixDuplicatedFaces: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDuplicatedFaces);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDuplicatedFaces);
 
 public:
-  /// Constructor
-  FixDuplicatedFaces();
-  ~FixDuplicatedFaces() override;
+    /// Constructor
+    FixDuplicatedFaces();
+    ~FixDuplicatedFaces() override;
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 /**
  * The FixDuplicatedPoints class removes duplicated points from the mesh.
  * @author Werner Mayer
  */
-class MeshExport FixDuplicatedPoints : public Mesh::FixDefects
+class MeshExport FixDuplicatedPoints: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDuplicatedPoints);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDuplicatedPoints);
 
 public:
-  /// Constructor
-  FixDuplicatedPoints();
-  ~FixDuplicatedPoints() override;
+    /// Constructor
+    FixDuplicatedPoints();
+    ~FixDuplicatedPoints() override;
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 /**
  * The FixDegenerations class removes degenerated faces from the mesh.
  * @author Werner Mayer
  */
-class MeshExport FixDegenerations : public Mesh::FixDefects
+class MeshExport FixDegenerations: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDegenerations);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDegenerations);
 
 public:
-  /// Constructor
-  FixDegenerations();
-  ~FixDegenerations() override;
+    /// Constructor
+    FixDegenerations();
+    ~FixDegenerations() override;
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 /**
  * The FixDeformations class tries to repair deformed faces by swapping edge operations.
  * @author Werner Mayer
  */
-class MeshExport FixDeformations : public Mesh::FixDefects
+class MeshExport FixDeformations: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDeformations);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixDeformations);
 
 public:
-  /// Constructor
-  FixDeformations();
-  ~FixDeformations() override;
+    /// Constructor
+    FixDeformations();
+    ~FixDeformations() override;
 
-  /** @name Properties */
-  //@{
-  App::PropertyFloat MaxAngle; /**< Maximum allowed angle */
-  //@}
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name Properties */
+    //@{
+    App::PropertyFloat MaxAngle; /**< Maximum allowed angle */
+    //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 /**
  * The FixIndices class tries to validate invalid indices of the internal mesh data structure.
  * @author Werner Mayer
  */
-class MeshExport FixIndices : public Mesh::FixDefects
+class MeshExport FixIndices: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixIndices);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FixIndices);
 
 public:
-  /// Constructor
-  FixIndices();
-  ~FixIndices() override;
+    /// Constructor
+    FixIndices();
+    ~FixIndices() override;
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 /**
  * The FillHoles class tries to fill up holes in the internal mesh data structure.
  * @author Werner Mayer
  */
-class MeshExport FillHoles : public Mesh::FixDefects
+class MeshExport FillHoles: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FillHoles);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::FillHoles);
 
 public:
-  /// Constructor
-  FillHoles();
-  ~FillHoles() override;
-  App::PropertyInteger FillupHolesOfLength;
-  App::PropertyFloat MaxArea;
+    /// Constructor
+    FillHoles();
+    ~FillHoles() override;
+    App::PropertyInteger FillupHolesOfLength;
+    App::PropertyFloat MaxArea;
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 /**
  * The RemoveComponents class removes topologic independent components up to a certain size from the mesh data structure.
  * @author Werner Mayer
  */
-class MeshExport RemoveComponents : public Mesh::FixDefects
+class MeshExport RemoveComponents: public Mesh::FixDefects
 {
-  PROPERTY_HEADER_WITH_OVERRIDE(Mesh::RemoveComponents);
+    PROPERTY_HEADER_WITH_OVERRIDE(Mesh::RemoveComponents);
 
 public:
-  /// Constructor
-  RemoveComponents();
-  ~RemoveComponents() override;
-  App::PropertyInteger RemoveCompOfSize;
+    /// Constructor
+    RemoveComponents();
+    ~RemoveComponents() override;
+    App::PropertyInteger RemoveCompOfSize;
 
-  /** @name methods override Feature */
-  //@{
-  /// recalculate the Feature
-  App::DocumentObjectExecReturn *execute() override;
-  //@}
+    /** @name methods override Feature */
+    //@{
+    /// recalculate the Feature
+    App::DocumentObjectExecReturn *execute() override;
+    //@}
 };
 
 } //namespace Mesh
 
 
-#endif // MESH_FEATURE_MESH_DEFECTS_H 
+#endif // MESH_FEATURE_MESH_DEFECTS_H

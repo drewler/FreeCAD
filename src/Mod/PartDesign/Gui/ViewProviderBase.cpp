@@ -32,26 +32,20 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderBase,PartDesignGui::ViewProvider)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderBase, PartDesignGui::ViewProvider)
 
-ViewProviderBase::ViewProviderBase()
-{
-    sPixmap = "PartDesign_BaseFeature.svg";
-}
+ViewProviderBase::ViewProviderBase() { sPixmap = "PartDesign_BaseFeature.svg"; }
 
-ViewProviderBase::~ViewProviderBase()
-{
-
-}
+ViewProviderBase::~ViewProviderBase() {}
 
 bool ViewProviderBase::doubleClicked()
 {
     // If the Placement is mutable then open the transform panel.
     // If the Placement can't be modified then just do nothing on double-click.
-    PartDesign::FeatureBase* base = static_cast<PartDesign::FeatureBase*>(getObject());
-    if (!base->Placement.testStatus(App::Property::Immutable) &&
-        !base->Placement.testStatus(App::Property::ReadOnly) &&
-        !base->Placement.testStatus(App::Property::Hidden)) {
+    PartDesign::FeatureBase *base = static_cast<PartDesign::FeatureBase *>(getObject());
+    if (!base->Placement.testStatus(App::Property::Immutable)
+        && !base->Placement.testStatus(App::Property::ReadOnly)
+        && !base->Placement.testStatus(App::Property::Hidden)) {
 
         try {
             std::string Msg("Edit ");
@@ -59,7 +53,7 @@ bool ViewProviderBase::doubleClicked()
             Gui::Command::openCommand(Msg.c_str());
             FCMD_SET_EDIT(base);
         }
-        catch (const Base::Exception&) {
+        catch (const Base::Exception &) {
             Gui::Command::abortCommand();
         }
         return true;
@@ -68,23 +62,23 @@ bool ViewProviderBase::doubleClicked()
     return false;
 }
 
-void ViewProviderBase::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderBase::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     // If the Placement is mutable then show the context-menu of the base class.
-    PartDesign::FeatureBase* base = static_cast<PartDesign::FeatureBase*>(getObject());
-    if (!base->Placement.testStatus(App::Property::Immutable) &&
-        !base->Placement.testStatus(App::Property::ReadOnly) &&
-        !base->Placement.testStatus(App::Property::Hidden)) {
+    PartDesign::FeatureBase *base = static_cast<PartDesign::FeatureBase *>(getObject());
+    if (!base->Placement.testStatus(App::Property::Immutable)
+        && !base->Placement.testStatus(App::Property::ReadOnly)
+        && !base->Placement.testStatus(App::Property::Hidden)) {
         PartDesignGui::ViewProvider::setupContextMenu(menu, receiver, member);
     }
 }
 
 bool ViewProviderBase::setEdit(int ModNum)
 {
-    PartDesign::FeatureBase* base = static_cast<PartDesign::FeatureBase*>(getObject());
-    if (!base->Placement.testStatus(App::Property::Immutable) &&
-        !base->Placement.testStatus(App::Property::ReadOnly) &&
-        !base->Placement.testStatus(App::Property::Hidden)) {
+    PartDesign::FeatureBase *base = static_cast<PartDesign::FeatureBase *>(getObject());
+    if (!base->Placement.testStatus(App::Property::Immutable)
+        && !base->Placement.testStatus(App::Property::ReadOnly)
+        && !base->Placement.testStatus(App::Property::Hidden)) {
         return PartGui::ViewProviderPart::setEdit(ModNum); // clazy:exclude=skipped-base-method
     }
 

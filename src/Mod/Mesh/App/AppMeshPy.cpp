@@ -22,9 +22,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <algorithm>
-# include <memory>
-# include <map>
+#include <algorithm>
+#include <memory>
+#include <map>
 #endif
 
 #include <CXX/Extensions.hxx>
@@ -59,73 +59,56 @@
 using namespace Mesh;
 using namespace MeshCore;
 
-namespace Mesh {
-class Module : public Py::ExtensionModule<Module>
+namespace Mesh
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("Mesh")
     {
-        add_varargs_method("read",&Module::read,
-            "Read a mesh from a file and returns a Mesh object."
-        );
-        add_varargs_method("open",&Module::open,
-            "open(string)\n"
-            "Create a new document and a Mesh feature to load the file into\n"
-            "the document."
-        );
-        add_varargs_method("insert",&Module::importer,
-            "insert(string|mesh,[string])\n"
-            "Load or insert a mesh into the given or active document."
-        );
-        add_keyword_method("export",&Module::exporter,
-            "export(objects, filename, [tolerance=0.1, exportAmfCompressed=True])\n"
-            "Export a list of objects into a single file identified by filename.\n"
-            "tolerance is in mm and specifies the maximum acceptable deviation\n"
-            "between the specified objects and the exported mesh.\n"
-            "exportAmfCompressed specifies whether exported AMF files should be\n"
-            "compressed.\n"
-        );
-        add_varargs_method("show",&Module::show,
-            "show(shape,[string]) -- Add the mesh to the active document or create one if no document exists."
-        );
-        add_varargs_method("createBox",&Module::createBox,
-            "Create a solid mesh box"
-        );
-        add_varargs_method("createPlane",&Module::createPlane,
-            "Create a mesh XY plane normal +Z"
-        );
-        add_varargs_method("createSphere",&Module::createSphere,
-            "Create a tessellated sphere"
-        );
-        add_varargs_method("createEllipsoid",&Module::createEllipsoid,
-            "Create a tessellated ellipsoid"
-        );
-        add_varargs_method("createCylinder",&Module::createCylinder,
-            "Create a tessellated cylinder"
-        );
-        add_varargs_method("createCone",&Module::createCone,
-            "Create a tessellated cone"
-        );
-        add_varargs_method("createTorus",&Module::createTorus,
-            "Create a tessellated torus"
-        );
-        add_varargs_method("calculateEigenTransform",&Module::calculateEigenTransform,
-            "calculateEigenTransform(seq(Base.Vector))\n"
-            "Calculates the eigen Transformation from a list of points.\n"
-            "calculate the point's local coordinate system with the center\n"
-            "of gravity as origin. The local coordinate system is computed\n"
-            "this way that u has minimum and w has maximum expansion.\n"
-            "The local coordinate system is right-handed.\n"
-        );
-        add_varargs_method("polynomialFit",&Module::polynomialFit,
-            "polynomialFit(seq(Base.Vector)) -- Calculates a polynomial fit."
-        );
-        add_varargs_method("minimumVolumeOrientedBox",&Module::minimumVolumeOrientedBox,
+        add_varargs_method("read", &Module::read,
+                           "Read a mesh from a file and returns a Mesh object.");
+        add_varargs_method("open", &Module::open,
+                           "open(string)\n"
+                           "Create a new document and a Mesh feature to load the file into\n"
+                           "the document.");
+        add_varargs_method("insert", &Module::importer,
+                           "insert(string|mesh,[string])\n"
+                           "Load or insert a mesh into the given or active document.");
+        add_keyword_method("export", &Module::exporter,
+                           "export(objects, filename, [tolerance=0.1, exportAmfCompressed=True])\n"
+                           "Export a list of objects into a single file identified by filename.\n"
+                           "tolerance is in mm and specifies the maximum acceptable deviation\n"
+                           "between the specified objects and the exported mesh.\n"
+                           "exportAmfCompressed specifies whether exported AMF files should be\n"
+                           "compressed.\n");
+        add_varargs_method("show", &Module::show,
+                           "show(shape,[string]) -- Add the mesh to the active document or create "
+                           "one if no document exists.");
+        add_varargs_method("createBox", &Module::createBox, "Create a solid mesh box");
+        add_varargs_method("createPlane", &Module::createPlane, "Create a mesh XY plane normal +Z");
+        add_varargs_method("createSphere", &Module::createSphere, "Create a tessellated sphere");
+        add_varargs_method("createEllipsoid", &Module::createEllipsoid,
+                           "Create a tessellated ellipsoid");
+        add_varargs_method("createCylinder", &Module::createCylinder,
+                           "Create a tessellated cylinder");
+        add_varargs_method("createCone", &Module::createCone, "Create a tessellated cone");
+        add_varargs_method("createTorus", &Module::createTorus, "Create a tessellated torus");
+        add_varargs_method("calculateEigenTransform", &Module::calculateEigenTransform,
+                           "calculateEigenTransform(seq(Base.Vector))\n"
+                           "Calculates the eigen Transformation from a list of points.\n"
+                           "calculate the point's local coordinate system with the center\n"
+                           "of gravity as origin. The local coordinate system is computed\n"
+                           "this way that u has minimum and w has maximum expansion.\n"
+                           "The local coordinate system is right-handed.\n");
+        add_varargs_method("polynomialFit", &Module::polynomialFit,
+                           "polynomialFit(seq(Base.Vector)) -- Calculates a polynomial fit.");
+        add_varargs_method(
+            "minimumVolumeOrientedBox", &Module::minimumVolumeOrientedBox,
             "minimumVolumeOrientedBox(seq(Base.Vector)) -- Calculates the minimum\n"
             "volume oriented box containing all points. The return value is a\n"
             "tuple of seven items:\n"
-            "    center, u, v, w directions and the lengths of the three vectors.\n"
-        );
+            "    center, u, v, w directions and the lengths of the three vectors.\n");
         initialize("The functions in this module allow working with mesh objects.\n"
                    "A set of functions are provided for reading in registered mesh\n"
                    "file formats to either a new or existing document.\n"
@@ -153,11 +136,10 @@ private:
             throw Py::RuntimeError(e.what());
         }
     }
-    Py::Object read(const Py::Tuple& args)
+    Py::Object read(const Py::Tuple &args)
     {
-        char* Name;
-        if (!PyArg_ParseTuple(args.ptr(), "et","utf-8",&Name))
-            throw Py::Exception();
+        char *Name;
+        if (!PyArg_ParseTuple(args.ptr(), "et", "utf-8", &Name)) throw Py::Exception();
         std::string EncodedName = std::string(Name);
         PyMem_Free(Name);
 
@@ -165,11 +147,10 @@ private:
         mesh->load(EncodedName.c_str());
         return Py::asObject(new MeshPy(mesh.release()));
     }
-    Py::Object open(const Py::Tuple& args)
+    Py::Object open(const Py::Tuple &args)
     {
-        char* Name;
-        if (!PyArg_ParseTuple(args.ptr(), "et","utf-8",&Name))
-            throw Py::Exception();
+        char *Name;
+        if (!PyArg_ParseTuple(args.ptr(), "et", "utf-8", &Name)) throw Py::Exception();
 
         std::string EncodedName = std::string(Name);
         PyMem_Free(Name);
@@ -182,27 +163,22 @@ private:
 
         return Py::None();
     }
-    Py::Object importer(const Py::Tuple& args)
+    Py::Object importer(const Py::Tuple &args)
     {
-        char* Name;
-        char* DocName=nullptr;
-        if (!PyArg_ParseTuple(args.ptr(), "et|s","utf-8",&Name,&DocName))
-            throw Py::Exception();
+        char *Name;
+        char *DocName = nullptr;
+        if (!PyArg_ParseTuple(args.ptr(), "et|s", "utf-8", &Name, &DocName)) throw Py::Exception();
 
         std::string EncodedName = std::string(Name);
         PyMem_Free(Name);
 
         App::Document *pcDoc = nullptr;
-        if (DocName) {
-            pcDoc = App::GetApplication().getDocument(DocName);
-        }
+        if (DocName) { pcDoc = App::GetApplication().getDocument(DocName); }
         else {
             pcDoc = App::GetApplication().getActiveDocument();
         }
 
-        if (!pcDoc) {
-            pcDoc = App::GetApplication().newDocument(DocName);
-        }
+        if (!pcDoc) { pcDoc = App::GetApplication().newDocument(DocName); }
 
         Mesh::Importer import(pcDoc);
         import.load(EncodedName);
@@ -217,18 +193,17 @@ private:
 
         // If tolerance is specified via python interface, use that.
         // If not, use the preference, if that exists, else default to 0.1mm.
-        auto hGrp( App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Mesh") );
-        auto fTolerance( hGrp->GetFloat("MaxDeviationExport", 0.1f) );
+        auto hGrp(App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/Preferences/Mod/Mesh"));
+        auto fTolerance(hGrp->GetFloat("MaxDeviationExport", 0.1f));
 
-        int exportAmfCompressed( hGrp->GetBool("ExportAmfCompressed", true) );
+        int exportAmfCompressed(hGrp->GetBool("ExportAmfCompressed", true));
 
-        static char *kwList[] = {"objectList", "filename", "tolerance",
-                                 "exportAmfCompressed", nullptr};
+        static char *kwList[] = {"objectList", "filename", "tolerance", "exportAmfCompressed",
+                                 nullptr};
 
-        if (!PyArg_ParseTupleAndKeywords( args.ptr(), keywds.ptr(),
-                                          "Oet|dp",
-                                          kwList, &objects, "utf-8", &fileNamePy,
-                                          &fTolerance, &exportAmfCompressed )) {
+        if (!PyArg_ParseTupleAndKeywords(args.ptr(), keywds.ptr(), "Oet|dp", kwList, &objects,
+                                         "utf-8", &fileNamePy, &fTolerance, &exportAmfCompressed)) {
             throw Py::Exception();
         }
 
@@ -238,16 +213,14 @@ private:
         // Construct list of objects to export before making the Exporter, so
         // we don't get empty exports if the list can't be constructed.
         Py::Sequence list(objects);
-        if (list.length() == 0) {
-            return Py::None();
-        }
+        if (list.length() == 0) { return Py::None(); }
 
         // collect all object types that can be exported as mesh
-        std::vector<App::DocumentObject*> objectList;
-        for (const auto& it : list) {
+        std::vector<App::DocumentObject *> objectList;
+        for (const auto &it : list) {
             PyObject *item = it.ptr();
             if (PyObject_TypeCheck(item, &(App::DocumentObjectPy::Type))) {
-                auto obj( static_cast<App::DocumentObjectPy *>(item)->getDocumentObjectPtr() );
+                auto obj(static_cast<App::DocumentObjectPy *>(item)->getDocumentObjectPtr());
                 objectList.push_back(obj);
             }
         }
@@ -256,23 +229,23 @@ private:
             throw Py::TypeError("None of the objects can be exported to a mesh file");
         }
 
-        auto exportFormat( MeshOutput::GetFormat(outputFileName.c_str()) );
+        auto exportFormat(MeshOutput::GetFormat(outputFileName.c_str()));
 
         std::unique_ptr<Exporter> exporter;
         if (exportFormat == MeshIO::AMF) {
             std::map<std::string, std::string> meta;
-            meta["cad"] = App::Application::Config()["ExeName"] + " " +
-                          App::Application::Config()["ExeVersion"];
+            meta["cad"] = App::Application::Config()["ExeName"] + " "
+                + App::Application::Config()["ExeVersion"];
             meta[App::Application::Config()["ExeName"] + "-buildRevisionHash"] =
-                          App::Application::Config()["BuildRevisionHash"];
+                App::Application::Config()["BuildRevisionHash"];
 
-            exporter.reset( new ExporterAMF(outputFileName, meta, exportAmfCompressed) );
+            exporter.reset(new ExporterAMF(outputFileName, meta, exportAmfCompressed));
         }
         else if (exportFormat == MeshIO::ThreeMF) {
-            exporter.reset( new Exporter3MF(outputFileName) );
+            exporter.reset(new Exporter3MF(outputFileName));
         }
         else if (exportFormat != MeshIO::Undefined) {
-            exporter.reset( new MergeExporter(outputFileName, exportFormat) );
+            exporter.reset(new MergeExporter(outputFileName, exportFormat));
         }
         else {
             std::string exStr("Can't determine mesh format from file name: '");
@@ -280,16 +253,14 @@ private:
             throw Py::ValueError(exStr.c_str());
         }
 
-        for (auto it : objectList) {
-            exporter->addObject(it, fTolerance);
-        }
+        for (auto it : objectList) { exporter->addObject(it, fTolerance); }
 
-        exporter.reset();   // deletes Exporter, mesh file is written by destructor
+        exporter.reset(); // deletes Exporter, mesh file is written by destructor
 
         return Py::None();
     }
 
-    Py::Object show(const Py::Tuple& args)
+    Py::Object show(const Py::Tuple &args)
     {
         PyObject *pcObj;
         char *name = "Mesh";
@@ -297,11 +268,11 @@ private:
             throw Py::Exception();
 
         App::Document *pcDoc = App::GetApplication().getActiveDocument();
-        if (!pcDoc)
-            pcDoc = App::GetApplication().newDocument();
-        MeshPy* pMesh = static_cast<MeshPy*>(pcObj);
-        Mesh::Feature *pcFeature = static_cast<Mesh::Feature*>(pcDoc->addObject("Mesh::Feature", name));
-        Mesh::MeshObject* mo = pMesh->getMeshObjectPtr();
+        if (!pcDoc) pcDoc = App::GetApplication().newDocument();
+        MeshPy *pMesh = static_cast<MeshPy *>(pcObj);
+        Mesh::Feature *pcFeature =
+            static_cast<Mesh::Feature *>(pcDoc->addObject("Mesh::Feature", name));
+        Mesh::MeshObject *mo = pMesh->getMeshObjectPtr();
         if (!mo) {
             throw Py::Exception(PyExc_ReferenceError, "object doesn't reference a valid mesh");
         }
@@ -310,103 +281,92 @@ private:
 
         return Py::None();
     }
-    Py::Object createBox(const Py::Tuple& args)
+    Py::Object createBox(const Py::Tuple &args)
     {
-        MeshObject* mesh = nullptr;
+        MeshObject *mesh = nullptr;
 
         do {
             float length = 10.0f;
             float width = 10.0f;
             float height = 10.0f;
             float edgelen = -1.0f;
-            if (PyArg_ParseTuple(args.ptr(), "|ffff",&length,&width,&height,&edgelen)) {
-                if (edgelen < 0.0f)
-                    mesh = MeshObject::createCube(length, width, height);
+            if (PyArg_ParseTuple(args.ptr(), "|ffff", &length, &width, &height, &edgelen)) {
+                if (edgelen < 0.0f) mesh = MeshObject::createCube(length, width, height);
                 else
                     mesh = MeshObject::createCube(length, width, height, edgelen);
                 break;
             }
 
             PyErr_Clear();
-            PyObject* box;
-            if (PyArg_ParseTuple(args.ptr(), "O!",&Base::BoundBoxPy::Type, &box)) {
+            PyObject *box;
+            if (PyArg_ParseTuple(args.ptr(), "O!", &Base::BoundBoxPy::Type, &box)) {
                 Py::BoundingBox bbox(box, false);
                 mesh = MeshObject::createCube(bbox.getValue());
                 break;
             }
 
             throw Py::TypeError("Must be real numbers or BoundBox");
-        }
-        while (false);
-        if (!mesh) {
-            throw Py::RuntimeError("Creation of box failed");
-        }
+        } while (false);
+        if (!mesh) { throw Py::RuntimeError("Creation of box failed"); }
         return Py::asObject(new MeshPy(mesh));
     }
-    Py::Object createPlane(const Py::Tuple& args)
+    Py::Object createPlane(const Py::Tuple &args)
     {
-        float x=1,y=0,z=0;
-        if (!PyArg_ParseTuple(args.ptr(), "|fff",&x,&y,&z))
-            throw Py::Exception();
+        float x = 1, y = 0, z = 0;
+        if (!PyArg_ParseTuple(args.ptr(), "|fff", &x, &y, &z)) throw Py::Exception();
 
-        if (y==0) 
-            y=x;
+        if (y == 0) y = x;
 
-        float hx = x/2.0f;
-        float hy = y/2.0f;
+        float hx = x / 2.0f;
+        float hy = y / 2.0f;
 
         std::vector<MeshCore::MeshGeomFacet> TriaList;
-        TriaList.emplace_back(Base::Vector3f(-hx, -hy, 0.0),Base::Vector3f(hx, hy, 0.0),Base::Vector3f(-hx, hy, 0.0));
-        TriaList.emplace_back(Base::Vector3f(-hx, -hy, 0.0),Base::Vector3f(hx, -hy, 0.0),Base::Vector3f(hx, hy, 0.0));
+        TriaList.emplace_back(Base::Vector3f(-hx, -hy, 0.0), Base::Vector3f(hx, hy, 0.0),
+                              Base::Vector3f(-hx, hy, 0.0));
+        TriaList.emplace_back(Base::Vector3f(-hx, -hy, 0.0), Base::Vector3f(hx, -hy, 0.0),
+                              Base::Vector3f(hx, hy, 0.0));
 
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         mesh->addFacets(TriaList);
         return Py::asObject(new MeshPy(mesh.release()));
     }
-    Py::Object createSphere(const Py::Tuple& args)
+    Py::Object createSphere(const Py::Tuple &args)
     {
         float radius = 5.0f;
         int sampling = 50;
-        if (!PyArg_ParseTuple(args.ptr(), "|fi",&radius,&sampling))
-            throw Py::Exception();
+        if (!PyArg_ParseTuple(args.ptr(), "|fi", &radius, &sampling)) throw Py::Exception();
 
-        MeshObject* mesh = MeshObject::createSphere(radius, sampling);
-        if (!mesh) {
-            throw Py::RuntimeError("Creation of sphere failed");
-        }
+        MeshObject *mesh = MeshObject::createSphere(radius, sampling);
+        if (!mesh) { throw Py::RuntimeError("Creation of sphere failed"); }
         return Py::asObject(new MeshPy(mesh));
     }
-    Py::Object createEllipsoid(const Py::Tuple& args)
+    Py::Object createEllipsoid(const Py::Tuple &args)
     {
         float radius1 = 2.0f;
         float radius2 = 4.0f;
         int sampling = 50;
-        if (!PyArg_ParseTuple(args.ptr(), "|ffi",&radius1,&radius2,&sampling))
+        if (!PyArg_ParseTuple(args.ptr(), "|ffi", &radius1, &radius2, &sampling))
             throw Py::Exception();
 
-        MeshObject* mesh = MeshObject::createEllipsoid(radius1, radius2, sampling);
-        if (!mesh) {
-            throw Py::RuntimeError("Creation of ellipsoid failed");
-        }
+        MeshObject *mesh = MeshObject::createEllipsoid(radius1, radius2, sampling);
+        if (!mesh) { throw Py::RuntimeError("Creation of ellipsoid failed"); }
         return Py::asObject(new MeshPy(mesh));
     }
-    Py::Object createCylinder(const Py::Tuple& args)
+    Py::Object createCylinder(const Py::Tuple &args)
     {
         float radius = 2.0f;
         float length = 10.0f;
         int closed = 1;
         float edgelen = 1.0f;
         int sampling = 50;
-        if (!PyArg_ParseTuple(args.ptr(), "|ffifi",&radius,&length,&closed,&edgelen,&sampling))
+        if (!PyArg_ParseTuple(args.ptr(), "|ffifi", &radius, &length, &closed, &edgelen, &sampling))
             throw Py::Exception();
 
-        MeshObject* mesh = MeshObject::createCylinder(radius, length, closed, edgelen, sampling);
-        if (!mesh) {
-            throw Py::RuntimeError("Creation of cylinder failed");
-        }
+        MeshObject *mesh = MeshObject::createCylinder(radius, length, closed, edgelen, sampling);
+        if (!mesh) { throw Py::RuntimeError("Creation of cylinder failed"); }
         return Py::asObject(new MeshPy(mesh));
     }
-    Py::Object createCone(const Py::Tuple& args)
+    Py::Object createCone(const Py::Tuple &args)
     {
         float radius1 = 2.0f;
         float radius2 = 4.0f;
@@ -414,35 +374,31 @@ private:
         int closed = 1;
         float edgelen = 1.0f;
         int sampling = 50;
-        if (!PyArg_ParseTuple(args.ptr(), "|fffifi",&radius1,&radius2,&len,&closed,&edgelen,&sampling))
+        if (!PyArg_ParseTuple(args.ptr(), "|fffifi", &radius1, &radius2, &len, &closed, &edgelen,
+                              &sampling))
             throw Py::Exception();
 
-        MeshObject* mesh = MeshObject::createCone(radius1, radius2, len, closed, edgelen, sampling);
-        if (!mesh) {
-            throw Py::RuntimeError("Creation of cone failed");
-        }
+        MeshObject *mesh = MeshObject::createCone(radius1, radius2, len, closed, edgelen, sampling);
+        if (!mesh) { throw Py::RuntimeError("Creation of cone failed"); }
         return Py::asObject(new MeshPy(mesh));
     }
-    Py::Object createTorus(const Py::Tuple& args)
+    Py::Object createTorus(const Py::Tuple &args)
     {
         float radius1 = 10.0f;
         float radius2 = 2.0f;
         int sampling = 50;
-        if (!PyArg_ParseTuple(args.ptr(), "|ffi",&radius1,&radius2,&sampling))
+        if (!PyArg_ParseTuple(args.ptr(), "|ffi", &radius1, &radius2, &sampling))
             throw Py::Exception();
 
-        MeshObject* mesh = MeshObject::createTorus(radius1, radius2, sampling);
-        if (!mesh) {
-            throw Py::RuntimeError("Creation of torus failed");
-        }
+        MeshObject *mesh = MeshObject::createTorus(radius1, radius2, sampling);
+        if (!mesh) { throw Py::RuntimeError("Creation of torus failed"); }
         return Py::asObject(new MeshPy(mesh));
     }
-    Py::Object calculateEigenTransform(const Py::Tuple& args)
+    Py::Object calculateEigenTransform(const Py::Tuple &args)
     {
         PyObject *input;
 
-        if (!PyArg_ParseTuple(args.ptr(), "O",&input))
-            throw Py::Exception();
+        if (!PyArg_ParseTuple(args.ptr(), "O", &input)) throw Py::Exception();
 
         if (!PySequence_Check(input)) {
             throw Py::TypeError("Input has to be a sequence of Base.Vector()");
@@ -457,34 +413,35 @@ private:
 
         Py::Sequence list(input);
         for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {
-            PyObject* value = (*it).ptr();
+            PyObject *value = (*it).ptr();
             if (PyObject_TypeCheck(value, &(Base::VectorPy::Type))) {
-                Base::VectorPy  *pcObject = static_cast<Base::VectorPy*>(value);
-                Base::Vector3d* val = pcObject->getVectorPtr();
+                Base::VectorPy *pcObject = static_cast<Base::VectorPy *>(value);
+                Base::Vector3d *val = pcObject->getVectorPtr();
 
 
-                current_node.Set(float(val->x),float(val->y),float(val->z));
+                current_node.Set(float(val->x), float(val->y), float(val->z));
                 vertices.push_back(current_node);
             }
         }
 
         MeshCore::MeshFacet aFacet;
-        aFacet._aulPoints[0] = 0;aFacet._aulPoints[1] = 1;aFacet._aulPoints[2] = 2;
+        aFacet._aulPoints[0] = 0;
+        aFacet._aulPoints[1] = 1;
+        aFacet._aulPoints[2] = 2;
         faces.push_back(aFacet);
         //Fill the Kernel with the temp mesh structure and delete the current containers
-        aMesh.Adopt(vertices,faces);
+        aMesh.Adopt(vertices, faces);
         MeshCore::MeshEigensystem pca(aMesh);
         pca.Evaluate();
         Base::Matrix4D Trafo = pca.Transform();
 
         return Py::asObject(new Base::PlacementPy(new Base::Placement(Trafo)));
     }
-    Py::Object polynomialFit(const Py::Tuple& args)
+    Py::Object polynomialFit(const Py::Tuple &args)
     {
         PyObject *input;
 
-        if (!PyArg_ParseTuple(args.ptr(), "O",&input))
-            throw Py::Exception();
+        if (!PyArg_ParseTuple(args.ptr(), "O", &input)) throw Py::Exception();
 
         if (!PySequence_Check(input)) {
             throw Py::TypeError("Input has to be a sequence of Base.Vector()");
@@ -495,11 +452,11 @@ private:
         Base::Vector3f point;
         Py::Sequence list(input);
         for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {
-            PyObject* value = (*it).ptr();
+            PyObject *value = (*it).ptr();
             if (PyObject_TypeCheck(value, &(Base::VectorPy::Type))) {
-                Base::VectorPy  *pcObject = static_cast<Base::VectorPy*>(value);
-                Base::Vector3d* val = pcObject->getVectorPtr();
-                point.Set(float(val->x),float(val->y),float(val->z));
+                Base::VectorPy *pcObject = static_cast<Base::VectorPy *>(value);
+                Base::Vector3d *val = pcObject->getVectorPtr();
+                point.Set(float(val->x), float(val->y), float(val->z));
                 polyFit.AddPoint(point);
             }
         }
@@ -510,8 +467,8 @@ private:
         dict.setItem(Py::String("Sigma"), Py::Float(fit));
 
         // coefficients
-        double a,b,c,d,e,f;
-        polyFit.GetCoefficients(a,b,c,d,e,f);
+        double a, b, c, d, e, f;
+        polyFit.GetCoefficients(a, b, c, d, e, f);
         Py::Tuple p(6);
         p.setItem(0, Py::Float(a));
         p.setItem(1, Py::Float(b));
@@ -527,17 +484,17 @@ private:
         for (std::vector<Base::Vector3f>::iterator it = local.begin(); it != local.end(); ++it) {
             double z = polyFit.Value(it->x, it->y);
             double d = it->z - z;
-            r.setItem(it-local.begin(), Py::Float(d));
+            r.setItem(it - local.begin(), Py::Float(d));
         }
         dict.setItem(Py::String("Residuals"), r);
 
         return dict;
     }
-    Py::Object minimumVolumeOrientedBox(const Py::Tuple& args) {
+    Py::Object minimumVolumeOrientedBox(const Py::Tuple &args)
+    {
         PyObject *input;
 
-        if (!PyArg_ParseTuple(args.ptr(), "O",&input))
-            throw Py::Exception();
+        if (!PyArg_ParseTuple(args.ptr(), "O", &input)) throw Py::Exception();
 
         if (!PySequence_Check(input)) {
             throw Py::TypeError("Input has to be a sequence of Base.Vector()");
@@ -547,10 +504,10 @@ private:
         std::vector<Wm4::Vector3d> points;
         points.reserve(list.size());
         for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {
-            PyObject* value = (*it).ptr();
+            PyObject *value = (*it).ptr();
             if (PyObject_TypeCheck(value, &(Base::VectorPy::Type))) {
-                Base::VectorPy  *pcObject = static_cast<Base::VectorPy*>(value);
-                Base::Vector3d* val = pcObject->getVectorPtr();
+                Base::VectorPy *pcObject = static_cast<Base::VectorPy *>(value);
+                Base::Vector3d *val = pcObject->getVectorPtr();
                 Wm4::Vector3d pt;
                 pt[0] = val->x;
                 pt[1] = val->y;
@@ -559,8 +516,7 @@ private:
             }
         }
 
-        if (points.size() < 4)
-            throw Py::RuntimeError("Too few points");
+        if (points.size() < 4) throw Py::RuntimeError("Too few points");
 
         Wm4::Box3d mobox = Wm4::ContMinBox(points.size(), &(points[0]), 0.001, Wm4::Query::QT_REAL);
         Py::Tuple result(7);
@@ -594,9 +550,6 @@ private:
     }
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace Mesh

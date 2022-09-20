@@ -31,24 +31,22 @@
 namespace PartDesign
 {
 
-class PartDesignExport Scaled : public PartDesign::Transformed
+class PartDesignExport Scaled: public PartDesign::Transformed
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Scaled);
 
 public:
     Scaled();
 
-    App::PropertyFloat   Factor;
+    App::PropertyFloat Factor;
     App::PropertyInteger Occurrences;
 
-   /** @name methods override feature */
+    /** @name methods override feature */
     //@{
     short mustExecute() const override;
 
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
-        return "PartDesignGui::ViewProviderScaled";
-    }
+    const char *getViewProviderName() const override { return "PartDesignGui::ViewProviderScaled"; }
     //@}
 
     /** Create transformations
@@ -60,7 +58,8 @@ public:
       */
     // Note: We can't just use the Originals property because this will fail if the Scaled feature
     // is being used inside a MultiTransform feature
-    const std::list<gp_Trsf> getTransformations(const std::vector<App::DocumentObject*> originals) override;
+    const std::list<gp_Trsf>
+    getTransformations(const std::vector<App::DocumentObject *> originals) override;
 };
 
 } //namespace PartDesign

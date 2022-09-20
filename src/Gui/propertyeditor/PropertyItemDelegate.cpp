@@ -24,9 +24,9 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QApplication>
-# include <QModelIndex>
-# include <QPainter>
+#include <QApplication>
+#include <QModelIndex>
+#include <QPainter>
 #endif
 
 #include <Base/Tools.h>
@@ -43,36 +43,33 @@ FC_LOG_LEVEL_INIT("PropertyView", true, true)
 using namespace Gui::PropertyEditor;
 
 
-PropertyItemDelegate::PropertyItemDelegate(QObject* parent)
-    : QItemDelegate(parent), expressionEditor(nullptr)
-    , pressed(false), changed(false)
-{
-}
+PropertyItemDelegate::PropertyItemDelegate(QObject *parent)
+    : QItemDelegate(parent), expressionEditor(nullptr), pressed(false), changed(false)
+{}
 
-PropertyItemDelegate::~PropertyItemDelegate()
-{
-}
+PropertyItemDelegate::~PropertyItemDelegate() {}
 
-QSize PropertyItemDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
+QSize PropertyItemDelegate::sizeHint(const QStyleOptionViewItem &option,
+                                     const QModelIndex &index) const
 {
     QSize size = QItemDelegate::sizeHint(option, index);
     size += QSize(0, 5);
     return size;
 }
 
-void PropertyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt, const QModelIndex &index) const
+void PropertyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt,
+                                 const QModelIndex &index) const
 {
     QStyleOptionViewItem option = opt;
 
-    auto property = static_cast<PropertyItem*>(index.internalPointer());
+    auto property = static_cast<PropertyItem *>(index.internalPointer());
 
     if (property && property->isSeparator()) {
         QColor color = option.palette.color(QPalette::BrightText);
-        QObject* par = parent();
+        QObject *par = parent();
         if (par) {
             QVariant value = par->property("groupTextColor");
-            if (value.canConvert<QColor>())
-                color = value.value<QColor>();
+            if (value.canConvert<QColor>()) color = value.value<QColor>();
         }
         option.palette.setColor(QPalette::Text, color);
         option.font.setBold(true);
@@ -90,11 +87,10 @@ void PropertyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
     if (property && property->isSeparator()) {
         QBrush brush = option.palette.dark();
-        QObject* par = parent();
+        QObject *par = parent();
         if (par) {
             QVariant value = par->property("groupBackground");
-            if (value.canConvert<QBrush>())
-                brush = value.value<QBrush>();
+            if (value.canConvert<QBrush>()) brush = value.value<QBrush>();
         }
         painter->fillRect(option.rect, brush);
     }
@@ -103,22 +99,23 @@ void PropertyItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
     QItemDelegate::paint(painter, option, index);
 
-    QColor color = static_cast<QRgb>(QApplication::style()->styleHint(QStyle::SH_Table_GridLineColor, &opt, qobject_cast<QWidget*>(parent())));
+    QColor color = static_cast<QRgb>(QApplication::style()->styleHint(
+        QStyle::SH_Table_GridLineColor, &opt, qobject_cast<QWidget *>(parent())));
     painter->setPen(QPen(color));
     if (index.column() == 1 || !(property && property->isSeparator())) {
-        int right = (option.direction == Qt::LeftToRight) ? option.rect.right() : option.rect.left();
+        int right =
+            (option.direction == Qt::LeftToRight) ? option.rect.right() : option.rect.left();
         painter->drawLine(right, option.rect.y(), right, option.rect.bottom());
     }
-    painter->drawLine(option.rect.x(), option.rect.bottom(),
-            option.rect.right(), option.rect.bottom());
+    painter->drawLine(option.rect.x(), option.rect.bottom(), option.rect.right(),
+                      option.rect.bottom());
     painter->setPen(savedPen);
 }
 
-bool PropertyItemDelegate::editorEvent (QEvent * event, QAbstractItemModel* model,
-                                        const QStyleOptionViewItem& option, const QModelIndex& index)
+bool PropertyItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+                                       const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-    if (event && event->type() == QEvent::MouseButtonPress)
-        this->pressed = true;
+    if (event && event->type() == QEvent::MouseButtonPress) this->pressed = true;
     else
         this->pressed = false;
     return QItemDelegate::editorEvent(event, model, option, index);
@@ -127,10 +124,10 @@ bool PropertyItemDelegate::editorEvent (QEvent * event, QAbstractItemModel* mode
 bool PropertyItemDelegate::eventFilter(QObject *o, QEvent *ev)
 {
     if (ev->type() == QEvent::FocusOut) {
-        auto parentEditor = qobject_cast<PropertyEditor*>(this->parent());
-        auto widget = qobject_cast<QWidget*>(o);
+        auto parentEditor = qobject_cast<PropertyEditor *>(this->parent());
+        auto widget = qobject_cast<QWidget *>(o);
         if (widget && parentEditor && parentEditor->activeEditor
-                   && widget != parentEditor->activeEditor) {
+            && widget != parentEditor->activeEditor) {
             // All the attempts to ignore the focus-out event has been approved to not work
             // reliably because there are still cases that cannot be handled.
             // So, the best for now is to always ignore this event.
@@ -142,30 +139,28 @@ bool PropertyItemDelegate::eventFilter(QObject *o, QEvent *ev)
     return QItemDelegate::eventFilter(o, ev);
 }
 
-QWidget * PropertyItemDelegate::createEditor (QWidget * parent, const QStyleOptionViewItem & /*option*/, 
-                                              const QModelIndex & index ) const
+QWidget *PropertyItemDelegate::createEditor(QWidget *parent,
+                                            const QStyleOptionViewItem & /*option*/,
+                                            const QModelIndex &index) const
 {
-    if (!index.isValid())
-        return nullptr;
+    if (!index.isValid()) return nullptr;
 
-    auto childItem = static_cast<PropertyItem*>(index.internalPointer());
-    if (!childItem)
-        return nullptr;
+    auto childItem = static_cast<PropertyItem *>(index.internalPointer());
+    if (!childItem) return nullptr;
 
-    auto parentEditor = qobject_cast<PropertyEditor*>(this->parent());
-    if(parentEditor)
-        parentEditor->closeEditor();
+    auto parentEditor = qobject_cast<PropertyEditor *>(this->parent());
+    if (parentEditor) parentEditor->closeEditor();
 
-    if (childItem->isSeparator())
-        return nullptr;
+    if (childItem->isSeparator()) return nullptr;
 
     FC_LOG("create editor " << index.row() << "," << index.column());
 
-    QWidget* editor;
+    QWidget *editor;
     expressionEditor = nullptr;
     userEditor = nullptr;
     if (parentEditor && parentEditor->isBinding()) {
-        expressionEditor = editor = childItem->createExpressionEditor(parent, this, SLOT(valueChanged()));
+        expressionEditor = editor =
+            childItem->createExpressionEditor(parent, this, SLOT(valueChanged()));
     }
     else {
         const auto &props = childItem->getPropertyData();
@@ -180,9 +175,7 @@ QWidget * PropertyItemDelegate::createEditor (QWidget * parent, const QStyleOpti
         // Make sure the editor background is painted so the cell content doesn't show through
         editor->setAutoFillBackground(true);
     }
-    if (editor && childItem->isReadOnly()) {
-        editor->setDisabled(true);
-    }
+    if (editor && childItem->isReadOnly()) { editor->setDisabled(true); }
     else if (editor /*&& this->pressed*/) {
         // We changed the way editor is activated in PropertyEditor (in response
         // of signal activated and clicked), so now we should grab focus
@@ -193,12 +186,10 @@ QWidget * PropertyItemDelegate::createEditor (QWidget * parent, const QStyleOpti
     this->pressed = false;
 
     if (editor) {
-        const auto widgets = editor->findChildren<QWidget*>();
+        const auto widgets = editor->findChildren<QWidget *>();
         for (auto w : widgets) {
-            if (qobject_cast<QAbstractButton*>(w)
-                    || qobject_cast<QLabel*>(w))
-            {
-                w->installEventFilter(const_cast<PropertyItemDelegate*>(this));
+            if (qobject_cast<QAbstractButton *>(w) || qobject_cast<QLabel *>(w)) {
+                w->installEventFilter(const_cast<PropertyItemDelegate *>(this));
             }
         }
         parentEditor->activeEditor = editor;
@@ -210,7 +201,7 @@ QWidget * PropertyItemDelegate::createEditor (QWidget * parent, const QStyleOpti
 
 void PropertyItemDelegate::valueChanged()
 {
-    QWidget* editor = qobject_cast<QWidget*>(sender());
+    QWidget *editor = qobject_cast<QWidget *>(sender());
     if (editor) {
         Base::FlagToggler<> flag(changed);
         Q_EMIT commitData(editor);
@@ -219,13 +210,11 @@ void PropertyItemDelegate::valueChanged()
 
 void PropertyItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    if (!index.isValid())
-        return;
+    if (!index.isValid()) return;
     QVariant data = index.data(Qt::EditRole);
-    auto childItem = static_cast<PropertyItem*>(index.internalPointer());
+    auto childItem = static_cast<PropertyItem *>(index.internalPointer());
     editor->blockSignals(true);
-    if (expressionEditor == editor)
-        childItem->setExpressionEditorData(editor, data);
+    if (expressionEditor == editor) childItem->setExpressionEditorData(editor, data);
     else if (userEditor == editor)
         userEditor->setValue(PropertyItemAttorney::toString(childItem, data));
     else
@@ -234,14 +223,13 @@ void PropertyItemDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
     return;
 }
 
-void PropertyItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+void PropertyItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                        const QModelIndex &index) const
 {
-    if (!index.isValid() || !changed || userEditor)
-        return;
-    auto childItem = static_cast<PropertyItem*>(index.internalPointer());
+    if (!index.isValid() || !changed || userEditor) return;
+    auto childItem = static_cast<PropertyItem *>(index.internalPointer());
     QVariant data;
-    if(expressionEditor == editor)
-        data = childItem->expressionEditorData(editor);
+    if (expressionEditor == editor) data = childItem->expressionEditorData(editor);
     else
         data = childItem->editorData(editor);
     model->setData(index, data, Qt::EditRole);

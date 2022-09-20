@@ -30,18 +30,18 @@
 
 //=======================================================================
 //function : StdMeshers_SegmentAroundVertex_0D
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-StdMeshers_SegmentAroundVertex_0D::StdMeshers_SegmentAroundVertex_0D
-                                   (int hypId, int studyId, SMESH_Gen* gen)
-  :SMESH_0D_Algo(hypId, studyId, gen)
+StdMeshers_SegmentAroundVertex_0D::StdMeshers_SegmentAroundVertex_0D(int hypId, int studyId,
+                                                                     SMESH_Gen *gen)
+    : SMESH_0D_Algo(hypId, studyId, gen)
 {
-  _name = "SegmentAroundVertex_0D";
-  // it is assigned to vertices but influence a state of EDGE submeshes 
-  _shapeType = (1 << TopAbs_VERTEX);    // 1 bit per shape type
+    _name = "SegmentAroundVertex_0D";
+    // it is assigned to vertices but influence a state of EDGE submeshes
+    _shapeType = (1 << TopAbs_VERTEX); // 1 bit per shape type
 
-  _compatibleHypothesis.push_back("SegmentLengthAroundVertex");
+    _compatibleHypothesis.push_back("SegmentLengthAroundVertex");
 }
 
 //================================================================================
@@ -50,61 +50,53 @@ StdMeshers_SegmentAroundVertex_0D::StdMeshers_SegmentAroundVertex_0D
  */
 //================================================================================
 
-StdMeshers_SegmentAroundVertex_0D::~StdMeshers_SegmentAroundVertex_0D()
-{}
+StdMeshers_SegmentAroundVertex_0D::~StdMeshers_SegmentAroundVertex_0D() {}
 
 //=======================================================================
 //function : CheckHypothesis
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_SegmentAroundVertex_0D::CheckHypothesis(SMESH_Mesh&                          aMesh,
-                                                        const TopoDS_Shape&                  aShape,
-                                                        SMESH_Hypothesis::Hypothesis_Status& aStatus)
+bool StdMeshers_SegmentAroundVertex_0D::CheckHypothesis(
+    SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, SMESH_Hypothesis::Hypothesis_Status &aStatus)
 {
-  list <const SMESHDS_Hypothesis * >::const_iterator itl;
+    list<const SMESHDS_Hypothesis *>::const_iterator itl;
 
-  const list <const SMESHDS_Hypothesis * >&hyps = GetUsedHypothesis(aMesh, aShape);
-  if ( hyps.size() == 0 )
-  {
-    aStatus = SMESH_Hypothesis::HYP_MISSING;
-    return false;  // can't work with no hypothesis
-  }
+    const list<const SMESHDS_Hypothesis *> &hyps = GetUsedHypothesis(aMesh, aShape);
+    if (hyps.size() == 0) {
+        aStatus = SMESH_Hypothesis::HYP_MISSING;
+        return false; // can't work with no hypothesis
+    }
 
-  if ( hyps.size() > 1 )
-  {
-    aStatus = SMESH_Hypothesis::HYP_ALREADY_EXIST;
-  }
-  else
-  {
-    aStatus = SMESH_Hypothesis::HYP_OK;
-  }
-  return ( aStatus == HYP_OK );
+    if (hyps.size() > 1) { aStatus = SMESH_Hypothesis::HYP_ALREADY_EXIST; }
+    else {
+        aStatus = SMESH_Hypothesis::HYP_OK;
+    }
+    return (aStatus == HYP_OK);
 }
 
 //=======================================================================
 //function : Compute
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_SegmentAroundVertex_0D::Compute(SMESH_Mesh&, const TopoDS_Shape&)
+bool StdMeshers_SegmentAroundVertex_0D::Compute(SMESH_Mesh &, const TopoDS_Shape &)
 {
-  // This algorithm exists in order just to enable assignation of
-  // StdMeshers_SegmentLengthAroundVertex hypothesis
-  return true;
+    // This algorithm exists in order just to enable assignation of
+    // StdMeshers_SegmentLengthAroundVertex hypothesis
+    return true;
 }
 
 
 //=======================================================================
 //function : Evaluate
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool StdMeshers_SegmentAroundVertex_0D::Evaluate(SMESH_Mesh&,
-                                                 const TopoDS_Shape&,
-                                                 MapShapeNbElems&)
+bool StdMeshers_SegmentAroundVertex_0D::Evaluate(SMESH_Mesh &, const TopoDS_Shape &,
+                                                 MapShapeNbElems &)
 {
-  // This algorithm exists in order just to enable assignation of
-  // StdMeshers_SegmentLengthAroundVertex hypothesis
-  return false;
+    // This algorithm exists in order just to enable assignation of
+    // StdMeshers_SegmentLengthAroundVertex hypothesis
+    return false;
 }

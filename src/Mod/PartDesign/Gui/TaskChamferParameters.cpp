@@ -24,10 +24,10 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QAction>
-# include <QFontMetrics>
-# include <QListWidget>
-# include <QMessageBox>
+#include <QAction>
+#include <QFontMetrics>
+#include <QListWidget>
+#include <QMessageBox>
 #endif
 
 #include <Base/Interpreter.h>
@@ -48,15 +48,14 @@ using namespace Gui;
 /* TRANSLATOR PartDesignGui::TaskChamferParameters */
 
 TaskChamferParameters::TaskChamferParameters(ViewProviderDressUp *DressUpView, QWidget *parent)
-    : TaskDressUpParameters(DressUpView, true, true, parent)
-    , ui(new Ui_TaskChamferParameters)
+    : TaskDressUpParameters(DressUpView, true, true, parent), ui(new Ui_TaskChamferParameters)
 {
     // we need a separate container widget to add all controls to
     proxy = new QWidget(this);
     ui->setupUi(proxy);
     this->groupLayout()->addWidget(proxy);
 
-    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
+    PartDesign::Chamfer *pcChamfer = static_cast<PartDesign::Chamfer *>(DressUpView->getObject());
 
     setUpUI(pcChamfer);
 
@@ -68,29 +67,21 @@ TaskChamferParameters::TaskChamferParameters(ViewProviderDressUp *DressUpView, Q
     QMetaObject::invokeMethod(ui->chamferSize, "setFocus", Qt::QueuedConnection);
 
     std::vector<std::string> strings = pcChamfer->Base.getSubValues();
-    for (std::vector<std::string>::const_iterator i = strings.begin(); i != strings.end(); i++)
-    {
+    for (std::vector<std::string>::const_iterator i = strings.begin(); i != strings.end(); i++) {
         ui->listWidgetReferences->addItem(QString::fromStdString(*i));
     }
 
     QMetaObject::connectSlotsByName(this);
 
-    connect(ui->chamferType, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(onTypeChanged(int)));
-    connect(ui->chamferSize, SIGNAL(valueChanged(double)),
-        this, SLOT(onSizeChanged(double)));
-    connect(ui->chamferSize2, SIGNAL(valueChanged(double)),
-        this, SLOT(onSize2Changed(double)));
-    connect(ui->chamferAngle, SIGNAL(valueChanged(double)),
-        this, SLOT(onAngleChanged(double)));
-    connect(ui->flipDirection, SIGNAL(toggled(bool)),
-        this, SLOT(onFlipDirection(bool)));
-    connect(ui->buttonRefAdd, SIGNAL(toggled(bool)),
-        this, SLOT(onButtonRefAdd(bool)));
-    connect(ui->buttonRefRemove, SIGNAL(toggled(bool)),
-        this, SLOT(onButtonRefRemove(bool)));
-    connect(ui->checkBoxUseAllEdges, SIGNAL(toggled(bool)),
-            this, SLOT(onCheckBoxUseAllEdgesToggled(bool)));
+    connect(ui->chamferType, SIGNAL(currentIndexChanged(int)), this, SLOT(onTypeChanged(int)));
+    connect(ui->chamferSize, SIGNAL(valueChanged(double)), this, SLOT(onSizeChanged(double)));
+    connect(ui->chamferSize2, SIGNAL(valueChanged(double)), this, SLOT(onSize2Changed(double)));
+    connect(ui->chamferAngle, SIGNAL(valueChanged(double)), this, SLOT(onAngleChanged(double)));
+    connect(ui->flipDirection, SIGNAL(toggled(bool)), this, SLOT(onFlipDirection(bool)));
+    connect(ui->buttonRefAdd, SIGNAL(toggled(bool)), this, SLOT(onButtonRefAdd(bool)));
+    connect(ui->buttonRefRemove, SIGNAL(toggled(bool)), this, SLOT(onButtonRefRemove(bool)));
+    connect(ui->checkBoxUseAllEdges, SIGNAL(toggled(bool)), this,
+            SLOT(onCheckBoxUseAllEdgesToggled(bool)));
 
     // Create context menu
     createDeleteAction(ui->listWidgetReferences, ui->buttonRefRemove);
@@ -99,18 +90,19 @@ TaskChamferParameters::TaskChamferParameters(ViewProviderDressUp *DressUpView, Q
     createAddAllEdgesAction(ui->listWidgetReferences);
     connect(addAllEdgesAction, &QAction::triggered, this, &TaskChamferParameters::onAddAllEdges);
 
-    connect(ui->listWidgetReferences, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
-        this, SLOT(setSelection(QListWidgetItem*)));
-    connect(ui->listWidgetReferences, SIGNAL(itemClicked(QListWidgetItem*)),
-        this, SLOT(setSelection(QListWidgetItem*)));
-    connect(ui->listWidgetReferences, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-        this, SLOT(doubleClicked(QListWidgetItem*)));
+    connect(ui->listWidgetReferences,
+            SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this,
+            SLOT(setSelection(QListWidgetItem *)));
+    connect(ui->listWidgetReferences, SIGNAL(itemClicked(QListWidgetItem *)), this,
+            SLOT(setSelection(QListWidgetItem *)));
+    connect(ui->listWidgetReferences, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this,
+            SLOT(doubleClicked(QListWidgetItem *)));
 
     // the dialog can be called on a broken chamfer, then hide the chamfer
     hideOnError();
 }
 
-void TaskChamferParameters::setUpUI(PartDesign::Chamfer* pcChamfer)
+void TaskChamferParameters::setUpUI(PartDesign::Chamfer *pcChamfer)
 {
     const int index = pcChamfer->ChamferType.getValue();
     ui->chamferType->setCurrentIndex(index);
@@ -147,16 +139,14 @@ void TaskChamferParameters::setUpUI(PartDesign::Chamfer* pcChamfer)
     ui->sizeLabel->setMinimumWidth(minWidth);
     ui->size2Label->setMinimumWidth(minWidth);
     ui->angleLabel->setMinimumWidth(minWidth);
-
 }
 
-void TaskChamferParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
+void TaskChamferParameters::onSelectionChanged(const Gui::SelectionChanges &msg)
 {
     // executed when the user selected something in the CAD object
     // adds/deletes the selection accordingly
 
-    if (selectionMode == none)
-        return;
+    if (selectionMode == none) return;
 
     if (msg.Type == Gui::SelectionChanges::AddSelection) {
         if (referenceSelected(msg)) {
@@ -167,7 +157,8 @@ void TaskChamferParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
                     deleteAction->setEnabled(true);
                     deleteAction->setStatusTip(QString());
                     ui->buttonRefRemove->setEnabled(true);
-                    ui->buttonRefRemove->setToolTip(tr("Click button to enter selection mode,\nclick again to end selection"));
+                    ui->buttonRefRemove->setToolTip(
+                        tr("Click button to enter selection mode,\nclick again to end selection"));
                 }
             }
             else {
@@ -193,7 +184,7 @@ void TaskChamferParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
 
 void TaskChamferParameters::onCheckBoxUseAllEdgesToggled(bool checked)
 {
-    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
+    PartDesign::Chamfer *pcChamfer = static_cast<PartDesign::Chamfer *>(DressUpView->getObject());
     ui->buttonRefRemove->setEnabled(!checked);
     ui->buttonRefAdd->setEnabled(!checked);
     ui->listWidgetReferences->setEnabled(!checked);
@@ -218,7 +209,7 @@ void TaskChamferParameters::onRefDeleted()
     DressUpView->highlightReferences(false);
 
     // get the list of items to be deleted
-    QList<QListWidgetItem*> selectedList = ui->listWidgetReferences->selectedItems();
+    QList<QListWidgetItem *> selectedList = ui->listWidgetReferences->selectedItems();
 
     // if all items are selected, we must stop because one must be kept to avoid that the feature gets broken
     if (selectedList.count() == ui->listWidgetReferences->model()->rowCount()) {
@@ -227,8 +218,8 @@ void TaskChamferParameters::onRefDeleted()
     }
 
     // get the chamfer object
-    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
-    App::DocumentObject* base = pcChamfer->Base.getValue();
+    PartDesign::Chamfer *pcChamfer = static_cast<PartDesign::Chamfer *>(DressUpView->getObject());
+    App::DocumentObject *base = pcChamfer->Base.getValue();
     // get all chamfer references
     std::vector<std::string> refs = pcChamfer->Base.getSubValues();
     setupTransaction();
@@ -268,7 +259,7 @@ void TaskChamferParameters::onAddAllEdges()
 
 void TaskChamferParameters::onTypeChanged(int index)
 {
-    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
+    PartDesign::Chamfer *pcChamfer = static_cast<PartDesign::Chamfer *>(DressUpView->getObject());
     pcChamfer->ChamferType.setValue(index);
     ui->stackedWidget->setCurrentIndex(index);
     ui->flipDirection->setEnabled(index != 0); // Enable if type is not "Equal distance"
@@ -279,7 +270,7 @@ void TaskChamferParameters::onTypeChanged(int index)
 
 void TaskChamferParameters::onSizeChanged(double len)
 {
-    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
+    PartDesign::Chamfer *pcChamfer = static_cast<PartDesign::Chamfer *>(DressUpView->getObject());
     setupTransaction();
     pcChamfer->Size.setValue(len);
     pcChamfer->getDocument()->recomputeFeature(pcChamfer);
@@ -289,7 +280,7 @@ void TaskChamferParameters::onSizeChanged(double len)
 
 void TaskChamferParameters::onSize2Changed(double len)
 {
-    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
+    PartDesign::Chamfer *pcChamfer = static_cast<PartDesign::Chamfer *>(DressUpView->getObject());
     setupTransaction();
     pcChamfer->Size2.setValue(len);
     pcChamfer->getDocument()->recomputeFeature(pcChamfer);
@@ -299,7 +290,7 @@ void TaskChamferParameters::onSize2Changed(double len)
 
 void TaskChamferParameters::onAngleChanged(double angle)
 {
-    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
+    PartDesign::Chamfer *pcChamfer = static_cast<PartDesign::Chamfer *>(DressUpView->getObject());
     setupTransaction();
     pcChamfer->Angle.setValue(angle);
     pcChamfer->getDocument()->recomputeFeature(pcChamfer);
@@ -309,7 +300,7 @@ void TaskChamferParameters::onAngleChanged(double angle)
 
 void TaskChamferParameters::onFlipDirection(bool flip)
 {
-    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
+    PartDesign::Chamfer *pcChamfer = static_cast<PartDesign::Chamfer *>(DressUpView->getObject());
     setupTransaction();
     pcChamfer->FlipDirection.setValue(flip);
     pcChamfer->getDocument()->recomputeFeature(pcChamfer);
@@ -317,30 +308,15 @@ void TaskChamferParameters::onFlipDirection(bool flip)
     hideOnError();
 }
 
-int TaskChamferParameters::getType() const
-{
-    return ui->chamferType->currentIndex();
-}
+int TaskChamferParameters::getType() const { return ui->chamferType->currentIndex(); }
 
-double TaskChamferParameters::getSize() const
-{
-    return ui->chamferSize->value().getValue();
-}
+double TaskChamferParameters::getSize() const { return ui->chamferSize->value().getValue(); }
 
-double TaskChamferParameters::getSize2() const
-{
-    return ui->chamferSize2->value().getValue();
-}
+double TaskChamferParameters::getSize2() const { return ui->chamferSize2->value().getValue(); }
 
-double TaskChamferParameters::getAngle() const
-{
-    return ui->chamferAngle->value().getValue();
-}
+double TaskChamferParameters::getAngle() const { return ui->chamferAngle->value().getValue(); }
 
-bool TaskChamferParameters::getFlipDirection() const
-{
-    return ui->flipDirection->isChecked();
-}
+bool TaskChamferParameters::getFlipDirection() const { return ui->flipDirection->isChecked(); }
 
 TaskChamferParameters::~TaskChamferParameters()
 {
@@ -348,23 +324,18 @@ TaskChamferParameters::~TaskChamferParameters()
         Gui::Selection().clearSelection();
         Gui::Selection().rmvSelectionGate();
     }
-    catch (const Py::Exception&) {
+    catch (const Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
 }
 
-bool TaskChamferParameters::event(QEvent *e)
-{
-    return TaskDressUpParameters::KeyEvent(e);
-}
+bool TaskChamferParameters::event(QEvent *e) { return TaskDressUpParameters::KeyEvent(e); }
 
 void TaskChamferParameters::changeEvent(QEvent *e)
 {
     TaskBox::changeEvent(e);
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(proxy);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(proxy); }
 }
 
 void TaskChamferParameters::apply()
@@ -373,11 +344,11 @@ void TaskChamferParameters::apply()
 
     //Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Chamfer changed"));
 
-    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
+    PartDesign::Chamfer *pcChamfer = static_cast<PartDesign::Chamfer *>(DressUpView->getObject());
 
     const int chamfertype = pcChamfer->ChamferType.getValue();
 
-    switch(chamfertype) {
+    switch (chamfertype) {
 
         case 0: // "Equal distance"
             ui->chamferSize->apply();
@@ -401,15 +372,12 @@ void TaskChamferParameters::apply()
 TaskDlgChamferParameters::TaskDlgChamferParameters(ViewProviderChamfer *DressUpView)
     : TaskDlgDressUpParameters(DressUpView)
 {
-    parameter  = new TaskChamferParameters(DressUpView);
+    parameter = new TaskChamferParameters(DressUpView);
 
     Content.push_back(parameter);
 }
 
-TaskDlgChamferParameters::~TaskDlgChamferParameters()
-{
-
-}
+TaskDlgChamferParameters::~TaskDlgChamferParameters() {}
 
 //==== calls from the TaskView ===============================================================
 
@@ -425,8 +393,7 @@ TaskDlgChamferParameters::~TaskDlgChamferParameters()
 bool TaskDlgChamferParameters::accept()
 {
     auto obj = vp->getObject();
-    if (!obj->isError())
-        parameter->showObject();
+    if (!obj->isError()) parameter->showObject();
 
     parameter->apply();
 

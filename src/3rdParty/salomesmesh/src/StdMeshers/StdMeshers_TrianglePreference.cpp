@@ -19,7 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  SMESH StdMeshers_TrianglePreference 
+//  SMESH StdMeshers_TrianglePreference
 //  File   : StdMeshers_TrianglePreference.cxx
 //  Module : SMESH
 //  $Header: /home/server/cvs/SMESH/SMESH_SRC/src/StdMeshers/Attic/StdMeshers_TrianglePreference.cxx,v 1.1.4.2 2008/11/27 13:03:49 abd Exp $
@@ -35,13 +35,11 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_TrianglePreference::StdMeshers_TrianglePreference(int         hypId,
-                                                                 int         studyId,
-                                                                 SMESH_Gen * gen)
-     :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_TrianglePreference::StdMeshers_TrianglePreference(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "TrianglePreference";
-  _param_algo_dim = -2; // auxiliary used by StdMeshers_Quadrangle_2D
+    _name = "TrianglePreference";
+    _param_algo_dim = -2; // auxiliary used by StdMeshers_Quadrangle_2D
 }
 
 //=============================================================================
@@ -50,9 +48,7 @@ StdMeshers_TrianglePreference::StdMeshers_TrianglePreference(int         hypId,
  */
 //=============================================================================
 
-StdMeshers_TrianglePreference::~StdMeshers_TrianglePreference()
-{
-}
+StdMeshers_TrianglePreference::~StdMeshers_TrianglePreference() {}
 
 //=============================================================================
 /*!
@@ -60,10 +56,7 @@ StdMeshers_TrianglePreference::~StdMeshers_TrianglePreference()
  */
 //=============================================================================
 
-ostream & StdMeshers_TrianglePreference::SaveTo(ostream & save)
-{
-  return save;
-}
+ostream &StdMeshers_TrianglePreference::SaveTo(ostream &save) { return save; }
 
 //=============================================================================
 /*!
@@ -71,10 +64,7 @@ ostream & StdMeshers_TrianglePreference::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_TrianglePreference::LoadFrom(istream & load)
-{
-  return load;
-}
+istream &StdMeshers_TrianglePreference::LoadFrom(istream &load) { return load; }
 
 //=============================================================================
 /*!
@@ -82,10 +72,7 @@ istream & StdMeshers_TrianglePreference::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_TrianglePreference & hyp)
-{
-  return hyp.SaveTo( save );
-}
+ostream &operator<<(ostream &save, StdMeshers_TrianglePreference &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -93,9 +80,9 @@ ostream & operator <<(ostream & save, StdMeshers_TrianglePreference & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_TrianglePreference & hyp)
+istream &operator>>(istream &load, StdMeshers_TrianglePreference &hyp)
 {
-  return hyp.LoadFrom( load );
+    return hyp.LoadFrom(load);
 }
 //================================================================================
 /*!
@@ -108,10 +95,10 @@ istream & operator >>(istream & load, StdMeshers_TrianglePreference & hyp)
  */
 //================================================================================
 
-bool StdMeshers_TrianglePreference::SetParametersByMesh(const SMESH_Mesh* /*theMesh*/,
-                                                          const TopoDS_Shape& /*theShape*/)
+bool StdMeshers_TrianglePreference::SetParametersByMesh(const SMESH_Mesh * /*theMesh*/,
+                                                        const TopoDS_Shape & /*theShape*/)
 {
-  return false;
+    return false;
 }
 
 //================================================================================
@@ -121,8 +108,8 @@ bool StdMeshers_TrianglePreference::SetParametersByMesh(const SMESH_Mesh* /*theM
  */
 //================================================================================
 
-bool StdMeshers_TrianglePreference::SetParametersByDefaults(const TDefaults&  /*dflts*/,
-                                                            const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_TrianglePreference::SetParametersByDefaults(const TDefaults & /*dflts*/,
+                                                            const SMESH_Mesh * /*theMesh*/)
 {
-  return false;
+    return false;
 }

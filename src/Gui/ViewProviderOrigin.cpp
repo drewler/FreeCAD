@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Inventor/nodes/SoGroup.h>
+#include <Inventor/nodes/SoGroup.h>
 #endif
 
 #include <App/Document.h>
@@ -50,8 +50,8 @@ PROPERTY_SOURCE(Gui::ViewProviderOrigin, Gui::ViewProviderDocumentObject)
  */
 ViewProviderOrigin::ViewProviderOrigin()
 {
-    ADD_PROPERTY_TYPE ( Size, (Base::Vector3d(10,10,10)), 0, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "The displayed size of the origin"));
+    ADD_PROPERTY_TYPE(Size, (Base::Vector3d(10, 10, 10)), 0, App::Prop_None,
+                      QT_TRANSLATE_NOOP("App::Property", "The displayed size of the origin"));
     Size.setStatus(App::Property::ReadOnly, true);
 
     sPixmap = "Std_CoordinateSystem";
@@ -61,156 +61,155 @@ ViewProviderOrigin::ViewProviderOrigin()
     pcGroupChildren->ref();
 }
 
-ViewProviderOrigin::~ViewProviderOrigin() {
+ViewProviderOrigin::~ViewProviderOrigin()
+{
     pcGroupChildren->unref();
     pcGroupChildren = nullptr;
 }
 
-std::vector<App::DocumentObject*> ViewProviderOrigin::claimChildren() const {
-    return static_cast<App::Origin*>( getObject() )->OriginFeatures.getValues ();
+std::vector<App::DocumentObject *> ViewProviderOrigin::claimChildren() const
+{
+    return static_cast<App::Origin *>(getObject())->OriginFeatures.getValues();
 }
 
-std::vector<App::DocumentObject*> ViewProviderOrigin::claimChildren3D() const {
-    return claimChildren ();
+std::vector<App::DocumentObject *> ViewProviderOrigin::claimChildren3D() const
+{
+    return claimChildren();
 }
 
-void ViewProviderOrigin::attach(App::DocumentObject* pcObject)
+void ViewProviderOrigin::attach(App::DocumentObject *pcObject)
 {
     Gui::ViewProviderDocumentObject::attach(pcObject);
     addDisplayMaskMode(pcGroupChildren, "Base");
 }
 
-std::vector<std::string> ViewProviderOrigin::getDisplayModes() const
-{
-    return { "Base" };
-}
+std::vector<std::string> ViewProviderOrigin::getDisplayModes() const { return {"Base"}; }
 
-void ViewProviderOrigin::setDisplayMode(const char* ModeName)
+void ViewProviderOrigin::setDisplayMode(const char *ModeName)
 {
-    if (strcmp(ModeName, "Base") == 0)
-        setDisplayMaskMode("Base");
+    if (strcmp(ModeName, "Base") == 0) setDisplayMaskMode("Base");
     ViewProviderDocumentObject::setDisplayMode(ModeName);
 }
 
-void ViewProviderOrigin::setTemporaryVisibility(bool axis, bool plane) {
-    auto origin = static_cast<App::Origin*>( getObject() );
+void ViewProviderOrigin::setTemporaryVisibility(bool axis, bool plane)
+{
+    auto origin = static_cast<App::Origin *>(getObject());
 
     bool saveState = tempVisMap.empty();
 
     try {
         // Remember & Set axis visibility
-        for(App::DocumentObject* obj : origin->axes()) {
+        for (App::DocumentObject *obj : origin->axes()) {
             if (obj) {
-                Gui::ViewProvider* vp = Gui::Application::Instance->getViewProvider(obj);
-                if(vp) {
-                    if (saveState) {
-                        tempVisMap[vp] = vp->isVisible();
-                    }
+                Gui::ViewProvider *vp = Gui::Application::Instance->getViewProvider(obj);
+                if (vp) {
+                    if (saveState) { tempVisMap[vp] = vp->isVisible(); }
                     vp->setVisible(axis);
                 }
             }
         }
 
         // Remember & Set plane visibility
-        for(App::DocumentObject* obj : origin->planes()) {
+        for (App::DocumentObject *obj : origin->planes()) {
             if (obj) {
-                Gui::ViewProvider* vp = Gui::Application::Instance->getViewProvider(obj);
-                if(vp) {
-                    if (saveState) {
-                        tempVisMap[vp] = vp->isVisible();
-                    }
+                Gui::ViewProvider *vp = Gui::Application::Instance->getViewProvider(obj);
+                if (vp) {
+                    if (saveState) { tempVisMap[vp] = vp->isVisible(); }
                     vp->setVisible(plane);
                 }
             }
         }
-    } catch (const Base::Exception &ex) {
-        Base::Console().Error ("%s\n", ex.what() );
+    }
+    catch (const Base::Exception &ex) {
+        Base::Console().Error("%s\n", ex.what());
     }
 
     // Remember & Set self visibility
     tempVisMap[this] = isVisible();
     setVisible(true);
-
 }
 
-void ViewProviderOrigin::resetTemporaryVisibility() {
-    for(std::pair<Gui::ViewProvider*, bool> pair : tempVisMap) {
+void ViewProviderOrigin::resetTemporaryVisibility()
+{
+    for (std::pair<Gui::ViewProvider *, bool> pair : tempVisMap) {
         pair.first->setVisible(pair.second);
     }
-    tempVisMap.clear ();
+    tempVisMap.clear();
 }
 
 double ViewProviderOrigin::defaultSize()
 {
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
-    return 0.25 * hGrp->GetFloat("NewDocumentCameraScale",100.0);
+    ParameterGrp::handle hGrp =
+        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
+    return 0.25 * hGrp->GetFloat("NewDocumentCameraScale", 100.0);
 }
 
-bool ViewProviderOrigin::isTemporaryVisibility() {
-    return !tempVisMap.empty();
-}
+bool ViewProviderOrigin::isTemporaryVisibility() { return !tempVisMap.empty(); }
 
-void ViewProviderOrigin::onChanged(const App::Property* prop) {
+void ViewProviderOrigin::onChanged(const App::Property *prop)
+{
     if (prop == &Size) {
         try {
             Gui::Application *app = Gui::Application::Instance;
-            Base::Vector3d sz = Size.getValue ();
-            auto origin = static_cast<App::Origin*> ( getObject() );
+            Base::Vector3d sz = Size.getValue();
+            auto origin = static_cast<App::Origin *>(getObject());
 
             // Calculate axes and planes sizes
-            double szXY = std::max ( sz.x, sz.y );
-            double szXZ = std::max ( sz.x, sz.z );
-            double szYZ = std::max ( sz.y, sz.z );
+            double szXY = std::max(sz.x, sz.y);
+            double szXZ = std::max(sz.x, sz.z);
+            double szYZ = std::max(sz.y, sz.z);
 
-            double szX = std::min ( szXY, szXZ );
-            double szY = std::min ( szXY, szYZ );
-            double szZ = std::min ( szXZ, szYZ );
+            double szX = std::min(szXY, szXZ);
+            double szY = std::min(szXY, szYZ);
+            double szZ = std::min(szXZ, szYZ);
 
             // Find view providers
-            Gui::ViewProviderPlane* vpPlaneXY, *vpPlaneXZ, *vpPlaneYZ;
-            Gui::ViewProviderLine* vpLineX, *vpLineY, *vpLineZ;
+            Gui::ViewProviderPlane *vpPlaneXY, *vpPlaneXZ, *vpPlaneYZ;
+            Gui::ViewProviderLine *vpLineX, *vpLineY, *vpLineZ;
             // Planes
-            vpPlaneXY = static_cast<Gui::ViewProviderPlane *> ( app->getViewProvider ( origin->getXY () ) );
-            vpPlaneXZ = static_cast<Gui::ViewProviderPlane *> ( app->getViewProvider ( origin->getXZ () ) );
-            vpPlaneYZ = static_cast<Gui::ViewProviderPlane *> ( app->getViewProvider ( origin->getYZ () ) );
+            vpPlaneXY =
+                static_cast<Gui::ViewProviderPlane *>(app->getViewProvider(origin->getXY()));
+            vpPlaneXZ =
+                static_cast<Gui::ViewProviderPlane *>(app->getViewProvider(origin->getXZ()));
+            vpPlaneYZ =
+                static_cast<Gui::ViewProviderPlane *>(app->getViewProvider(origin->getYZ()));
             // Axes
-            vpLineX = static_cast<Gui::ViewProviderLine *> ( app->getViewProvider ( origin->getX () ) );
-            vpLineY = static_cast<Gui::ViewProviderLine *> ( app->getViewProvider ( origin->getY () ) );
-            vpLineZ = static_cast<Gui::ViewProviderLine *> ( app->getViewProvider ( origin->getZ () ) );
+            vpLineX = static_cast<Gui::ViewProviderLine *>(app->getViewProvider(origin->getX()));
+            vpLineY = static_cast<Gui::ViewProviderLine *>(app->getViewProvider(origin->getY()));
+            vpLineZ = static_cast<Gui::ViewProviderLine *>(app->getViewProvider(origin->getZ()));
 
             // set their sizes
-            if (vpPlaneXY) { vpPlaneXY->Size.setValue ( szXY ); }
-            if (vpPlaneXZ) { vpPlaneXZ->Size.setValue ( szXZ ); }
-            if (vpPlaneYZ) { vpPlaneYZ->Size.setValue ( szYZ ); }
-            if (vpLineX) { vpLineX->Size.setValue ( szX ); }
-            if (vpLineY) { vpLineY->Size.setValue ( szY ); }
-            if (vpLineZ) { vpLineZ->Size.setValue ( szZ ); }
-
-        } catch (const Base::Exception &ex) {
+            if (vpPlaneXY) { vpPlaneXY->Size.setValue(szXY); }
+            if (vpPlaneXZ) { vpPlaneXZ->Size.setValue(szXZ); }
+            if (vpPlaneYZ) { vpPlaneYZ->Size.setValue(szYZ); }
+            if (vpLineX) { vpLineX->Size.setValue(szX); }
+            if (vpLineY) { vpLineY->Size.setValue(szY); }
+            if (vpLineZ) { vpLineZ->Size.setValue(szZ); }
+        }
+        catch (const Base::Exception &ex) {
             // While restoring a document don't report errors if one of the lines or planes
             // cannot be found.
-            App::Document* doc = getObject()->getDocument();
+            App::Document *doc = getObject()->getDocument();
             if (!doc->testStatus(App::Document::Restoring))
-                Base::Console().Error ("%s\n", ex.what() );
+                Base::Console().Error("%s\n", ex.what());
         }
     }
 
-    ViewProviderDocumentObject::onChanged ( prop );
+    ViewProviderDocumentObject::onChanged(prop);
 }
 
-bool ViewProviderOrigin::onDelete(const std::vector<std::string> &) {
-    auto origin = static_cast<App::Origin*>( getObject() );
+bool ViewProviderOrigin::onDelete(const std::vector<std::string> &)
+{
+    auto origin = static_cast<App::Origin *>(getObject());
 
-    if ( !origin->getInList().empty() ) {
-        return false;
-    }
+    if (!origin->getInList().empty()) { return false; }
 
     auto objs = origin->OriginFeatures.getValues();
     origin->OriginFeatures.setValues({});
 
-    for (auto obj: objs ) {
-        Gui::Command::doCommand( Gui::Command::Doc, "App.getDocument(\"%s\").removeObject(\"%s\")",
-                obj->getDocument()->getName(), obj->getNameInDocument() );
+    for (auto obj : objs) {
+        Gui::Command::doCommand(Gui::Command::Doc, "App.getDocument(\"%s\").removeObject(\"%s\")",
+                                obj->getDocument()->getName(), obj->getNameInDocument());
     }
 
     return true;

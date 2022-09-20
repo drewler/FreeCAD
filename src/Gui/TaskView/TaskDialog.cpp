@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMessageBox>
+#include <QMessageBox>
 #endif
 
 #include "TaskDialog.h"
@@ -38,16 +38,12 @@ using namespace Gui::TaskView;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 TaskDialog::TaskDialog()
-    : QObject(nullptr), pos(North)
-    , escapeButton(true)
-    , autoCloseTransaction(false)
-{
-
-}
+    : QObject(nullptr), pos(North), escapeButton(true), autoCloseTransaction(false)
+{}
 
 TaskDialog::~TaskDialog()
 {
-    for (std::vector<QWidget*>::iterator it=Content.begin();it!=Content.end();++it) {
+    for (std::vector<QWidget *>::iterator it = Content.begin(); it != Content.end(); ++it) {
         delete *it;
         *it = 0;
     }
@@ -55,10 +51,7 @@ TaskDialog::~TaskDialog()
 
 //==== Slots ===============================================================
 
-const std::vector<QWidget*> &TaskDialog::getDialogContent() const
-{
-    return Content;
-}
+const std::vector<QWidget *> &TaskDialog::getDialogContent() const { return Content; }
 
 bool TaskDialog::canClose() const
 {
@@ -68,50 +61,26 @@ bool TaskDialog::canClose() const
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::Yes);
     int ret = msgBox.exec();
-    if (ret == QMessageBox::Yes)
-        return true;
+    if (ret == QMessageBox::Yes) return true;
     else
         return false;
 }
 
 //==== calls from the TaskView ===============================================================
 
-void TaskDialog::open()
-{
+void TaskDialog::open() {}
 
-}
+void TaskDialog::closed() {}
 
-void TaskDialog::closed()
-{
+void TaskDialog::autoClosedOnTransactionChange() {}
 
-}
+void TaskDialog::clicked(int) {}
 
-void TaskDialog::autoClosedOnTransactionChange()
-{
+bool TaskDialog::accept() { return true; }
 
-}
+bool TaskDialog::reject() { return true; }
 
-void TaskDialog::clicked(int)
-{
-
-}
-
-bool TaskDialog::accept()
-{
-    return true;
-}
-
-bool TaskDialog::reject()
-{
-    return true;
-}
-
-void TaskDialog::helpRequested()
-{
-
-}
-
-
+void TaskDialog::helpRequested() {}
 
 
 #include "moc_TaskDialog.cpp"

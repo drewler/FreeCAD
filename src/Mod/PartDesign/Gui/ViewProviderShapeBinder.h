@@ -27,9 +27,10 @@
 #include <Mod/Part/Gui/ViewProvider.h>
 #include <Mod/PartDesign/PartDesignGlobal.h>
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderShapeBinder : public PartGui::ViewProviderPart
+class PartDesignGuiExport ViewProviderShapeBinder: public PartGui::ViewProviderPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderShapeBinder);
 
@@ -38,20 +39,19 @@ public:
     ViewProviderShapeBinder();
     ~ViewProviderShapeBinder() override;
 
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
     void highlightReferences(bool on);
-    
+
 protected:
     bool setEdit(int ModNum) override;
     void unsetEdit(int ModNum) override;
-    
+
 private:
     std::vector<App::Color> originalLineColors;
     std::vector<App::Color> originalFaceColors;
-
 };
 
-class PartDesignGuiExport ViewProviderSubShapeBinder : public PartGui::ViewProviderPart
+class PartDesignGuiExport ViewProviderSubShapeBinder: public PartGui::ViewProviderPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderShapeBinder);
 
@@ -61,29 +61,31 @@ public:
     /// Constructor
     ViewProviderSubShapeBinder();
 
-    bool canDropObjects() const override {return true;}
-    bool canDragAndDropObject(App::DocumentObject*) const override {return false;}
-    bool canDropObjectEx(App::DocumentObject *obj, App::DocumentObject *owner, 
-            const char *subname, const std::vector<std::string> &elements) const override;
-    std::string dropObjectEx(App::DocumentObject*, App::DocumentObject*, const char *, 
-            const std::vector<std::string> &) override;
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    bool canDropObjects() const override { return true; }
+    bool canDragAndDropObject(App::DocumentObject *) const override { return false; }
+    bool canDropObjectEx(App::DocumentObject *obj, App::DocumentObject *owner, const char *subname,
+                         const std::vector<std::string> &elements) const override;
+    std::string dropObjectEx(App::DocumentObject *, App::DocumentObject *, const char *,
+                             const std::vector<std::string> &) override;
+    std::vector<App::DocumentObject *> claimChildren() const override;
 
     bool doubleClicked() override;
-    void setupContextMenu(QMenu* menu, QObject* receiver, const char* member) override;
+    void setupContextMenu(QMenu *menu, QObject *receiver, const char *member) override;
     bool setEdit(int ModNum) override;
     void attach(App::DocumentObject *obj) override;
     void onChanged(const App::Property *prop) override;
 
 private:
-    enum {
+    enum
+    {
         Synchronize = 0,
         SelectObject = 1
     };
     void updatePlacement(bool transaction);
 };
 
-using ViewProviderSubShapeBinderPython = Gui::ViewProviderPythonFeatureT<ViewProviderSubShapeBinder>;
+using ViewProviderSubShapeBinderPython =
+    Gui::ViewProviderPythonFeatureT<ViewProviderSubShapeBinder>;
 
 } // namespace PartDesignGui
 

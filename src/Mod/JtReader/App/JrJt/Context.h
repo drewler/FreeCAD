@@ -32,17 +32,14 @@ using namespace std;
 class Context
 {
 public:
-	Context(istream &s) :Strm(s){};
-	uint8_t VersionMinor;
-	uint8_t VersionMajor;
+    Context(istream &s) : Strm(s) {};
+    uint8_t VersionMinor;
+    uint8_t VersionMajor;
 
-	bool Endiness;
+    bool Endiness;
 
-	istream & Strm;
-
+    istream &Strm;
 };
 
 
-
 #endif
-

@@ -48,59 +48,51 @@
 #include "SMESH_ComputeError.hxx"
 #include "SMESH_MesherHelper.hxx"
 
-typedef std::map< double, std::vector<const SMDS_MeshNode*> > StdMeshers_IJNodeMap;
+typedef std::map<double, std::vector<const SMDS_MeshNode *>> StdMeshers_IJNodeMap;
 
-class STDMESHERS_EXPORT StdMeshers_SMESHBlock {
- 
+class STDMESHERS_EXPORT StdMeshers_SMESHBlock
+{
+
 public:
-  //
-  StdMeshers_SMESHBlock();
-  
-  void Load (const TopoDS_Shell& theShell);
-  
-  void Load (const TopoDS_Shell& theShell,
-             const TopoDS_Vertex& theV000,
-             const TopoDS_Vertex& theV001);
-  
-  void ComputeParameters(const gp_Pnt& thePnt, 
-                         gp_XYZ& theXYZ);
-  
-  void ComputeParameters(const gp_Pnt& thePnt,
-                         const TopoDS_Shape& theShape,
-                         gp_XYZ& theXYZ);
-  
-  void ComputeParameters(const double& theU,
-                         const TopoDS_Shape& theShape,
-                         gp_XYZ& theXYZ);
-  
-  void Point(const gp_XYZ& theParams, 
-             gp_Pnt& thePnt);
-  
-  void Point(const gp_XYZ& theParams,
-             const TopoDS_Shape& theShape, 
-             gp_Pnt& thePnt);
-  
-  int ShapeID(const TopoDS_Shape& theShape); 
-  
-  const TopoDS_Shape& Shape(const int theID);
+    //
+    StdMeshers_SMESHBlock();
 
-  SMESH_Block & Block() { return myTBlock; }
+    void Load(const TopoDS_Shell &theShell);
 
-  bool IsForwadEdge(const int theEdgeID);
+    void Load(const TopoDS_Shell &theShell, const TopoDS_Vertex &theV000,
+              const TopoDS_Vertex &theV001);
 
-  int  ErrorStatus() const;
+    void ComputeParameters(const gp_Pnt &thePnt, gp_XYZ &theXYZ);
 
-  SMESH_ComputeErrorPtr GetError() const;
+    void ComputeParameters(const gp_Pnt &thePnt, const TopoDS_Shape &theShape, gp_XYZ &theXYZ);
+
+    void ComputeParameters(const double &theU, const TopoDS_Shape &theShape, gp_XYZ &theXYZ);
+
+    void Point(const gp_XYZ &theParams, gp_Pnt &thePnt);
+
+    void Point(const gp_XYZ &theParams, const TopoDS_Shape &theShape, gp_Pnt &thePnt);
+
+    int ShapeID(const TopoDS_Shape &theShape);
+
+    const TopoDS_Shape &Shape(const int theID);
+
+    SMESH_Block &Block() { return myTBlock; }
+
+    bool IsForwadEdge(const int theEdgeID);
+
+    int ErrorStatus() const;
+
+    SMESH_ComputeErrorPtr GetError() const;
 
 
 protected:
-  TopoDS_Shell                       myShell;
-  TopTools_IndexedMapOfOrientedShape myShapeIDMap;
-  SMESH_Block                        myTBlock;
-  TopoDS_Shape                       myEmptyShape;
-  std::vector<int>                   myIsEdgeForward;
-  //
-  int myErrorStatus;
+    TopoDS_Shell myShell;
+    TopTools_IndexedMapOfOrientedShape myShapeIDMap;
+    SMESH_Block myTBlock;
+    TopoDS_Shape myEmptyShape;
+    std::vector<int> myIsEdgeForward;
+    //
+    int myErrorStatus;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -110,54 +102,39 @@ protected:
 ////////////////////////////////////////////////////////////////////////
 #include "SMDS_MeshNode.hxx"
 
-class STDMESHERS_EXPORT StdMeshers_TNode {
+class STDMESHERS_EXPORT StdMeshers_TNode
+{
 
 public:
-  
-  StdMeshers_TNode(){
-    myNode=NULL;
-    myXYZ.SetCoord(99., 99., 99.);
-    myShapeSupportID=-1;
-    myBaseNodeID=-1;
-  }
-  
-  void SetNode(const SMDS_MeshNode* theNode) {
-    myNode=(SMDS_MeshNode*) theNode;
-  }
-  
-  const SMDS_MeshNode* Node()const {
-    return myNode;
-  }
+    StdMeshers_TNode()
+    {
+        myNode = NULL;
+        myXYZ.SetCoord(99., 99., 99.);
+        myShapeSupportID = -1;
+        myBaseNodeID = -1;
+    }
 
-  void SetShapeSupportID (const int theID) {
-    myShapeSupportID=theID;
-  }
-  
-  int ShapeSupportID()const {
-    return myShapeSupportID;
-  }
-  
-  void SetNormCoord (const gp_XYZ& theXYZ) {
-    myXYZ=theXYZ;
-  }
+    void SetNode(const SMDS_MeshNode *theNode) { myNode = (SMDS_MeshNode *)theNode; }
 
-  const gp_XYZ& NormCoord ()const{
-    return myXYZ;
-  }
-  
-  void SetBaseNodeID (const int theID) {
-    myBaseNodeID=theID;
-  }
-  
-  int BaseNodeID ()const{
-    return myBaseNodeID;
-  }
+    const SMDS_MeshNode *Node() const { return myNode; }
+
+    void SetShapeSupportID(const int theID) { myShapeSupportID = theID; }
+
+    int ShapeSupportID() const { return myShapeSupportID; }
+
+    void SetNormCoord(const gp_XYZ &theXYZ) { myXYZ = theXYZ; }
+
+    const gp_XYZ &NormCoord() const { return myXYZ; }
+
+    void SetBaseNodeID(const int theID) { myBaseNodeID = theID; }
+
+    int BaseNodeID() const { return myBaseNodeID; }
 
 private:
-  SMDS_MeshNode* myNode;
-  int  myShapeSupportID;
-  gp_XYZ         myXYZ;
-  int            myBaseNodeID;
+    SMDS_MeshNode *myNode;
+    int myShapeSupportID;
+    gp_XYZ myXYZ;
+    int myBaseNodeID;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -168,37 +145,30 @@ private:
 #include "SMESH_Mesh.hxx"
 #include <TopoDS_Shape.hxx>
 //
-class STDMESHERS_EXPORT StdMeshers_Penta_3D {
-//
-  public: // methods
+class STDMESHERS_EXPORT StdMeshers_Penta_3D
+{
+    //
+public: // methods
     StdMeshers_Penta_3D();
-    
+
     ~StdMeshers_Penta_3D();
-    
-    bool Compute(SMESH_Mesh& , const TopoDS_Shape& );
-    
-    int ErrorStatus() const {
-      if (myErrorStatus->IsOK())
-        return 0;
-      return myErrorStatus->myName;
+
+    bool Compute(SMESH_Mesh &, const TopoDS_Shape &);
+
+    int ErrorStatus() const
+    {
+        if (myErrorStatus->IsOK()) return 0;
+        return myErrorStatus->myName;
     }
 
-    SMESH_ComputeErrorPtr GetComputeError() const {
-      return myErrorStatus;
-    }
-   
-    void SetTolerance(const double theTol3D) {
-      myTol3D=theTol3D;
-    }
-    
-    double Tolerance() const {
-      return myTol3D;
-    }
+    SMESH_ComputeErrorPtr GetComputeError() const { return myErrorStatus; }
 
-    bool LoadIJNodes(StdMeshers_IJNodeMap & theIJNodes,
-                     const TopoDS_Face&     theFace,
-                     const TopoDS_Edge&     theBaseEdge,
-                     SMESHDS_Mesh*          theMesh);
+    void SetTolerance(const double theTol3D) { myTol3D = theTol3D; }
+
+    double Tolerance() const { return myTol3D; }
+
+    bool LoadIJNodes(StdMeshers_IJNodeMap &theIJNodes, const TopoDS_Face &theFace,
+                     const TopoDS_Edge &theBaseEdge, SMESHDS_Mesh *theMesh);
     // Load nodes bound to theFace into column (vectors) and rows
     // of theIJNodes.
     // The value of theIJNodes map is a vector of ordered nodes so
@@ -206,35 +176,27 @@ class STDMESHERS_EXPORT StdMeshers_Penta_3D {
     // The key of theIJNodes map is a normalized parameter of each
     // 0-the node on theBaseEdge.
 
-    bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                  MapShapeNbElems& aResMap);
+    bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
 
-  protected: // methods
-    
+protected: // methods
     void CheckData();
-    
+
     void MakeBlock();
 
     void MakeNodes();
 
-    double SetHorizEdgeXYZ(const gp_XYZ&                  aBNXYZ,
-                           const int                      aFaceID,
-                           std::vector<const SMDS_MeshNode*>*& aCol1,
-                           std::vector<const SMDS_MeshNode*>*& aCol2);
+    double SetHorizEdgeXYZ(const gp_XYZ &aBNXYZ, const int aFaceID,
+                           std::vector<const SMDS_MeshNode *> *&aCol1,
+                           std::vector<const SMDS_MeshNode *> *&aCol2);
 
-    void ShapeSupportID(const bool theIsUpperLayer,
-                        const SMESH_Block::TShapeID theBNSSID,
-                        SMESH_Block::TShapeID& theSSID);
+    void ShapeSupportID(const bool theIsUpperLayer, const SMESH_Block::TShapeID theBNSSID,
+                        SMESH_Block::TShapeID &theSSID);
 
-    void FindNodeOnShape(const TopoDS_Shape& aS,
-                         const gp_XYZ& aParams,
-                         const int z,
-                         StdMeshers_TNode& aTN);
+    void FindNodeOnShape(const TopoDS_Shape &aS, const gp_XYZ &aParams, const int z,
+                         StdMeshers_TNode &aTN);
 
-    void CreateNode(const bool theIsUpperLayer,
-                    const gp_XYZ& aParams,
-                    StdMeshers_TNode& aTN);
+    void CreateNode(const bool theIsUpperLayer, const gp_XYZ &aParams, StdMeshers_TNode &aTN);
 
     void ClearMeshOnFxy1();
 
@@ -245,32 +207,28 @@ class STDMESHERS_EXPORT StdMeshers_Penta_3D {
     int GetIndexOnLayer(const int aID);
 
     void MakeVolumeMesh();
-  
-    void SetMesh(SMESH_Mesh& theMesh) {
-      myMesh=(void *)&theMesh;
-    }
-    
-    SMESH_Mesh* GetMesh()const {
-      return (SMESH_Mesh*)myMesh;
-    }
-    
-  protected: // fields
-    TopoDS_Shape              myShape;
-    StdMeshers_SMESHBlock     myBlock;
-    void *                    myMesh;
-    SMESH_ComputeErrorPtr     myErrorStatus;
+
+    void SetMesh(SMESH_Mesh &theMesh) { myMesh = (void *)&theMesh; }
+
+    SMESH_Mesh *GetMesh() const { return (SMESH_Mesh *)myMesh; }
+
+protected: // fields
+    TopoDS_Shape myShape;
+    StdMeshers_SMESHBlock myBlock;
+    void *myMesh;
+    SMESH_ComputeErrorPtr myErrorStatus;
     //
-    std::vector <StdMeshers_TNode> myTNodes;
-    int                       myISize;
-    int                       myJSize;
-    double                    myTol3D;        // Tolerance value     
-    std::map < int, int >     myConnectingMap;
+    std::vector<StdMeshers_TNode> myTNodes;
+    int myISize;
+    int myJSize;
+    double myTol3D; // Tolerance value
+    std::map<int, int> myConnectingMap;
     //
     std::vector<StdMeshers_IJNodeMap> myWallNodesMaps; // nodes on a face
-    std::vector<gp_XYZ>               myShapeXYZ; // point on each sub-shape
+    std::vector<gp_XYZ> myShapeXYZ;                    // point on each sub-shape
 
     bool myCreateQuadratic;
-    SMESH_MesherHelper* myTool; // tool building quadratic elements
+    SMESH_MesherHelper *myTool; // tool building quadratic elements
 };
 
 #endif

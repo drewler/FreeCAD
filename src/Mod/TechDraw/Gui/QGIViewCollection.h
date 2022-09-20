@@ -35,16 +35,19 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport  QGIViewCollection : public QGIView
+class TechDrawGuiExport QGIViewCollection: public QGIView
 {
 public:
     QGIViewCollection();
     ~QGIViewCollection() override = default;
 
-    enum {Type = QGraphicsItem::UserType + 110};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 110
+    };
+    int type() const override { return Type; }
 };
 
-} // namespace MDIViewPageGui
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMVIEWCOLLECTION_H

@@ -1,4 +1,4 @@
- /**************************************************************************
+/**************************************************************************
  *   Copyright (c) 2015 FreeCAD Developers                                 *
  *   Author: WandererFan <wandererfan@gmail.com>                           *
  *                                                                         *
@@ -30,15 +30,16 @@
 #include <Gui/PropertyPage.h>
 #include <memory>
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 class Ui_DlgPrefsTechDrawGeneralImp;
 
-class DlgPrefsTechDrawGeneralImp : public Gui::Dialog::PreferencePage
+class DlgPrefsTechDrawGeneralImp: public Gui::Dialog::PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgPrefsTechDrawGeneralImp( QWidget* parent = nullptr );
+    explicit DlgPrefsTechDrawGeneralImp(QWidget *parent = nullptr);
     ~DlgPrefsTechDrawGeneralImp() override;
 
 protected:

@@ -12,10 +12,10 @@
 
 #include <wx/app.h>
 
-class wxWidgetsApp : public wxApp
+class wxWidgetsApp: public wxApp
 {
-    public:
-        virtual bool OnInit();
+public:
+    virtual bool OnInit();
 };
 
 #endif // WXWIDGETSAPP_H

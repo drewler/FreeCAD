@@ -30,25 +30,28 @@
 
 class QTreeWidgetItem;
 
-namespace Gui {
+namespace Gui
+{
 class Document;
 }
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawViewDimension;
 class DrawPage;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
 
 class Ui_TaskLinkDim;
-class TaskLinkDim : public QWidget
+class TaskLinkDim: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskLinkDim(std::vector<App::DocumentObject*> parts, std::vector<std::string>& subs, TechDraw::DrawPage* page);
+    TaskLinkDim(std::vector<App::DocumentObject *> parts, std::vector<std::string> &subs,
+                TechDraw::DrawPage *page);
     ~TaskLinkDim() override;
 
     bool accept();
@@ -58,25 +61,26 @@ protected:
     void changeEvent(QEvent *event) override;
     void loadAvailDims();
     void updateDims();
-    void loadToTree(const TechDraw::DrawViewDimension* dim, bool selected, Gui::Document* guiDoc);
-    bool dimReferencesSelection(const TechDraw::DrawViewDimension* dim) const;
+    void loadToTree(const TechDraw::DrawViewDimension *dim, bool selected, Gui::Document *guiDoc);
+    bool dimReferencesSelection(const TechDraw::DrawViewDimension *dim) const;
 
 protected Q_SLOTS:
-    void onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
+    void onCurrentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *);
 
 private:
     std::unique_ptr<Ui_TaskLinkDim> ui;
-    const std::vector<App::DocumentObject*> m_parts;
+    const std::vector<App::DocumentObject *> m_parts;
     const std::vector<std::string> m_subs;
-    TechDraw::DrawPage* m_page;
+    TechDraw::DrawPage *m_page;
 };
 
-class TaskDlgLinkDim : public Gui::TaskView::TaskDialog
+class TaskDlgLinkDim: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    TaskDlgLinkDim(std::vector<App::DocumentObject*> parts, std::vector<std::string>& subs, TechDraw::DrawPage* page);
+    TaskDlgLinkDim(std::vector<App::DocumentObject *> parts, std::vector<std::string> &subs,
+                   TechDraw::DrawPage *page);
     ~TaskDlgLinkDim() override;
 
     /// is called the TaskView when the dialog is opened
@@ -87,14 +91,13 @@ public:
     bool accept() override;
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
-    bool isAllowedAlterDocument() const override
-    { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
 
     void update();
 
 private:
-    TaskLinkDim * widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskLinkDim *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

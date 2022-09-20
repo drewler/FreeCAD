@@ -31,18 +31,18 @@
 namespace PartDesign
 {
 
-class PartDesignExport Thickness : public DressUp
+class PartDesignExport Thickness: public DressUp
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Thickness);
 
 public:
     Thickness();
 
-    App::PropertyLength         Value;
-    App::PropertyBool           Reversed;
-    App::PropertyBool           Intersection;
-    App::PropertyEnumeration    Mode;
-    App::PropertyEnumeration    Join;      
+    App::PropertyLength Value;
+    App::PropertyBool Reversed;
+    App::PropertyBool Intersection;
+    App::PropertyEnumeration Mode;
+    App::PropertyEnumeration Join;
 
     /** @name methods override feature */
     //@{
@@ -50,13 +50,14 @@ public:
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "PartDesignGui::ViewProviderThickness";
     }
     //@}
 private:
-    static const char* ModeEnums[];
-    static const char* JoinEnums[];
+    static const char *ModeEnums[];
+    static const char *JoinEnums[];
 };
 
 } //namespace PartDesign

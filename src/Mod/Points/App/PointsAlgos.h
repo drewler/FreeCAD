@@ -38,10 +38,10 @@ class PointsExport PointsAlgos
 public:
     /** Load a point cloud
      */
-    static void Load(PointKernel&, const char *FileName);
+    static void Load(PointKernel &, const char *FileName);
     /** Load a point cloud
      */
-    static void LoadAscii(PointKernel&, const char *FileName);
+    static void LoadAscii(PointKernel &, const char *FileName);
 };
 
 class Reader
@@ -49,16 +49,16 @@ class Reader
 public:
     Reader();
     virtual ~Reader();
-    virtual void read(const std::string& filename) = 0;
+    virtual void read(const std::string &filename) = 0;
 
     void clear();
-    const PointKernel& getPoints() const;
+    const PointKernel &getPoints() const;
     bool hasProperties() const;
-    const std::vector<float>& getIntensities() const;
+    const std::vector<float> &getIntensities() const;
     bool hasIntensities() const;
-    const std::vector<App::Color>& getColors() const;
+    const std::vector<App::Color> &getColors() const;
     bool hasColors() const;
-    const std::vector<Base::Vector3f>& getNormals() const;
+    const std::vector<Base::Vector3f> &getNormals() const;
     bool hasNormals() const;
     bool isStructured() const;
     int getWidth() const;
@@ -72,55 +72,53 @@ protected:
     int width, height;
 };
 
-class AscReader : public Reader
+class AscReader: public Reader
 {
 public:
     AscReader();
     ~AscReader() override;
-    void read(const std::string& filename) override;
+    void read(const std::string &filename) override;
 };
 
-class PlyReader : public Reader
+class PlyReader: public Reader
 {
 public:
     PlyReader();
     ~PlyReader() override;
-    void read(const std::string& filename) override;
+    void read(const std::string &filename) override;
 
 private:
-    std::size_t readHeader(std::istream&, std::string& format, std::size_t& offset,
-        std::vector<std::string>& fields, std::vector<std::string>& types,
-        std::vector<int>& sizes);
-    void readAscii(std::istream&, std::size_t offset, Eigen::MatrixXd& data);
-    void readBinary(bool swapByteOrder, std::istream&, std::size_t offset,
-        const std::vector<std::string>& types,
-        const std::vector<int>& sizes,
-        Eigen::MatrixXd& data);
+    std::size_t readHeader(std::istream &, std::string &format, std::size_t &offset,
+                           std::vector<std::string> &fields, std::vector<std::string> &types,
+                           std::vector<int> &sizes);
+    void readAscii(std::istream &, std::size_t offset, Eigen::MatrixXd &data);
+    void readBinary(bool swapByteOrder, std::istream &, std::size_t offset,
+                    const std::vector<std::string> &types, const std::vector<int> &sizes,
+                    Eigen::MatrixXd &data);
 };
 
-class PcdReader : public Reader
+class PcdReader: public Reader
 {
 public:
     PcdReader();
     ~PcdReader() override;
-    void read(const std::string& filename) override;
+    void read(const std::string &filename) override;
 
 private:
-    std::size_t readHeader(std::istream&, std::string& format, std::vector<std::string>& fields,
-        std::vector<std::string>& types, std::vector<int>& sizes);
-    void readAscii(std::istream&, Eigen::MatrixXd& data);
-    void readBinary(bool transpose, std::istream&,
-        const std::vector<std::string>& types,
-        const std::vector<int>& sizes,
-        Eigen::MatrixXd& data);
+    std::size_t readHeader(std::istream &, std::string &format, std::vector<std::string> &fields,
+                           std::vector<std::string> &types, std::vector<int> &sizes);
+    void readAscii(std::istream &, Eigen::MatrixXd &data);
+    void readBinary(bool transpose, std::istream &, const std::vector<std::string> &types,
+                    const std::vector<int> &sizes, Eigen::MatrixXd &data);
 };
 
-class E57Reader : public Reader
+class E57Reader: public Reader
 {
 public:
-    E57Reader(const bool& Color, const bool& State, const float& Distance);
+    E57Reader(const bool &Color, const bool &State, const float &Distance);
     ~E57Reader() override;
-    void read(const std::string& filename) override;
+    void read(const std::string &filename) override;
+
 protected:
     bool useColor, checkState;
     float minDistance;
@@ -129,19 +127,19 @@ protected:
 class Writer
 {
 public:
-    explicit Writer(const PointKernel&);
+    explicit Writer(const PointKernel &);
     virtual ~Writer();
-    virtual void write(const std::string& filename) = 0;
+    virtual void write(const std::string &filename) = 0;
 
-    void setIntensities(const std::vector<float>&);
-    void setColors(const std::vector<App::Color>&);
-    void setNormals(const std::vector<Base::Vector3f>&);
+    void setIntensities(const std::vector<float> &);
+    void setColors(const std::vector<App::Color> &);
+    void setNormals(const std::vector<Base::Vector3f> &);
     void setWidth(int);
     void setHeight(int);
-    void setPlacement(const Base::Placement&);
+    void setPlacement(const Base::Placement &);
 
 protected:
-    const PointKernel& points;
+    const PointKernel &points;
     std::vector<float> intensity;
     std::vector<App::Color> colors;
     std::vector<Base::Vector3f> normals;
@@ -149,28 +147,28 @@ protected:
     Base::Placement placement;
 };
 
-class AscWriter : public Writer
+class AscWriter: public Writer
 {
 public:
-    explicit AscWriter(const PointKernel&);
+    explicit AscWriter(const PointKernel &);
     ~AscWriter() override;
-    void write(const std::string& filename) override;
+    void write(const std::string &filename) override;
 };
 
-class PlyWriter : public Writer
+class PlyWriter: public Writer
 {
 public:
-    explicit PlyWriter(const PointKernel&);
+    explicit PlyWriter(const PointKernel &);
     ~PlyWriter() override;
-    void write(const std::string& filename) override;
+    void write(const std::string &filename) override;
 };
 
-class PcdWriter : public Writer
+class PcdWriter: public Writer
 {
 public:
-    explicit PcdWriter(const PointKernel&);
+    explicit PcdWriter(const PointKernel &);
     ~PcdWriter() override;
-    void write(const std::string& filename) override;
+    void write(const std::string &filename) override;
 };
 
 } // namespace Points

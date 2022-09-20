@@ -70,13 +70,17 @@ void QGICMark::setThick(float t)
 
 QColor QGICMark::getCMarkColor()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/Colors");
-    App::Color fcColor = App::Color((uint32_t) hGrp->GetUnsigned("CMarkColor", 0x08080800));
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Colors");
+    App::Color fcColor = App::Color((uint32_t)hGrp->GetUnsigned("CMarkColor", 0x08080800));
     return fcColor.asValue<QColor>();
 }
 
-void QGICMark::setPrettyNormal() {
+void QGICMark::setPrettyNormal()
+{
     m_colCurrent = getCMarkColor();
     update();
 }
@@ -86,13 +90,10 @@ void QGICMark::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
-    QGIVertex::paint (painter, &myOption, widget);
+    QGIVertex::paint(painter, &myOption, widget);
 }
 
-QRectF QGICMark::boundingRect() const
-{
-    return shape().controlPointRect();
-}
+QRectF QGICMark::boundingRect() const { return shape().controlPointRect(); }
 
 QPainterPath QGICMark::shape() const
 {
@@ -103,11 +104,13 @@ QPainterPath QGICMark::shape() const
     return outline;
 }
 
- double QGICMark::getMarkFuzz() const
+double QGICMark::getMarkFuzz() const
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp")->
-                                         GetGroup("Preferences")->GetGroup("Mod/TechDraw/General");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/General");
     double result = hGrp->GetFloat("MarkFuzz", 5.0);
     return result;
 }
-

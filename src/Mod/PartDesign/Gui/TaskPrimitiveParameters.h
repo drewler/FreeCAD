@@ -32,23 +32,25 @@
 #include "ViewProviderPrimitive.h"
 #include "TaskDatumParameters.h"
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui { 
+namespace PartDesignGui
+{
 class Ui_DlgPrimitives;
-class TaskBoxPrimitives : public Gui::TaskView::TaskBox,
-                          public Gui::DocumentObserver
+class TaskBoxPrimitives: public Gui::TaskView::TaskBox, public Gui::DocumentObserver
 {
     Q_OBJECT
 
 public:
-    explicit TaskBoxPrimitives(ViewProviderPrimitive* vp, QWidget* parent = nullptr);
+    explicit TaskBoxPrimitives(ViewProviderPrimitive *vp, QWidget *parent = nullptr);
     ~TaskBoxPrimitives() override;
 
     bool setPrimitive(App::DocumentObject *);
@@ -99,15 +101,15 @@ public Q_SLOTS:
 
 private:
     /** Notifies when the object is about to be removed. */
-    void slotDeletedObject(const Gui::ViewProviderDocumentObject& Obj) override;
+    void slotDeletedObject(const Gui::ViewProviderDocumentObject &Obj) override;
 
 private:
-    QWidget* proxy;
+    QWidget *proxy;
     std::unique_ptr<Ui_DlgPrimitives> ui;
-    ViewProviderPrimitive* vp;
+    ViewProviderPrimitive *vp;
 };
 
-class TaskPrimitiveParameters : public Gui::TaskView::TaskDialog
+class TaskPrimitiveParameters: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -122,9 +124,9 @@ protected:
     bool reject() override;
 
 private:
-    TaskBoxPrimitives*     primitive;
-    PartGui::TaskAttacher* parameter;
-    ViewProviderPrimitive* vp_prm;
+    TaskBoxPrimitives *primitive;
+    PartGui::TaskAttacher *parameter;
+    ViewProviderPrimitive *vp_prm;
 };
 
 } //namespace PartDesignGui

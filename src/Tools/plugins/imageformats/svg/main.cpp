@@ -52,7 +52,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QSvgPlugin : public QImageIOPlugin
+class QSvgPlugin: public QImageIOPlugin
 {
 public:
     QStringList keys() const;
@@ -65,16 +65,14 @@ QStringList QSvgPlugin::keys() const
     return QStringList() << QLatin1String("svg") << QLatin1String("svgz");
 }
 
-QImageIOPlugin::Capabilities QSvgPlugin::capabilities(QIODevice *device, const QByteArray &format) const
+QImageIOPlugin::Capabilities QSvgPlugin::capabilities(QIODevice *device,
+                                                      const QByteArray &format) const
 {
-    if (format == "svg" || format == "svgz")
-        return Capabilities(CanRead);
-    if (!format.isEmpty())
-        return 0;
+    if (format == "svg" || format == "svgz") return Capabilities(CanRead);
+    if (!format.isEmpty()) return 0;
 
     Capabilities cap;
-    if (device->isReadable() && QSvgIOHandler::canRead(device))
-        cap |= CanRead;
+    if (device->isReadable() && QSvgIOHandler::canRead(device)) cap |= CanRead;
     return cap;
 }
 

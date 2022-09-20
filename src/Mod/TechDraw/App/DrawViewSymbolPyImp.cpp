@@ -42,26 +42,21 @@ std::string DrawViewSymbolPy::representation() const
     return std::string("<DrawViewSymbol object>");
 }
 
-PyObject* DrawViewSymbolPy::dumpSymbol(PyObject *args)
+PyObject *DrawViewSymbolPy::dumpSymbol(PyObject *args)
 {
-    const char* fileSpec;
-    if (!PyArg_ParseTuple(args, "s", &fileSpec)) {
-       throw Py::TypeError("** dumpSymbol bad args.");
-    }
+    const char *fileSpec;
+    if (!PyArg_ParseTuple(args, "s", &fileSpec)) { throw Py::TypeError("** dumpSymbol bad args."); }
     auto dvs = getDrawViewSymbolPtr();
     std::string symbolRepr;
-    if (dvs) {
-        symbolRepr = dvs->Symbol.getValue();
-    }
+    if (dvs) { symbolRepr = dvs->Symbol.getValue(); }
 
     Base::FileInfo fi(fileSpec);
     Base::ofstream outfile;
     outfile.open(fi);
-    outfile.write (symbolRepr.c_str(), symbolRepr.size());
+    outfile.write(symbolRepr.c_str(), symbolRepr.size());
     outfile.close();
-    if (outfile.good()) {
-        outfile.close();
-    } else {
+    if (outfile.good()) { outfile.close(); }
+    else {
         std::string error = std::string("Can't write ");
         error += fileSpec;
         throw Py::RuntimeError(error);
@@ -69,12 +64,6 @@ PyObject* DrawViewSymbolPy::dumpSymbol(PyObject *args)
     Py_Return;
 }
 
-PyObject *DrawViewSymbolPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *DrawViewSymbolPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int DrawViewSymbolPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int DrawViewSymbolPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

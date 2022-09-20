@@ -37,7 +37,7 @@ class DrawViewPart;
 class CosmeticEdge;
 class Face;
 class LineFormat;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -49,16 +49,14 @@ class MDIViewPage;
 class ViewProviderViewPart;
 class Ui_TaskCosmeticLine;
 
-class TaskCosmeticLine : public QWidget
+class TaskCosmeticLine: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskCosmeticLine(TechDraw::DrawViewPart* partFeat,
-                        std::vector<Base::Vector3d> points,
-                        std::vector<bool> is3d);
-    TaskCosmeticLine(TechDraw::DrawViewPart* partFeat,
-                        std::string edgeName);
+    TaskCosmeticLine(TechDraw::DrawViewPart *partFeat, std::vector<Base::Vector3d> points,
+                     std::vector<bool> is3d);
+    TaskCosmeticLine(TechDraw::DrawViewPart *partFeat, std::string edgeName);
     ~TaskCosmeticLine() override;
 
     virtual bool accept();
@@ -77,27 +75,25 @@ protected:
 private:
     std::unique_ptr<Ui_TaskCosmeticLine> ui;
 
-    TechDraw::DrawViewPart* m_partFeat;
+    TechDraw::DrawViewPart *m_partFeat;
 
     std::string m_edgeName;
-    TechDraw::CosmeticEdge* m_ce;
-    TechDraw::CosmeticEdge* m_saveCE;
+    TechDraw::CosmeticEdge *m_ce;
+    TechDraw::CosmeticEdge *m_saveCE;
     std::vector<Base::Vector3d> m_points;
     std::vector<bool> m_is3d;
     bool m_createMode;
     std::string m_tag;
 };
 
-class TaskDlgCosmeticLine : public Gui::TaskView::TaskDialog
+class TaskDlgCosmeticLine: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    TaskDlgCosmeticLine(TechDraw::DrawViewPart* partFeat,
-                        std::vector<Base::Vector3d> points,
+    TaskDlgCosmeticLine(TechDraw::DrawViewPart *partFeat, std::vector<Base::Vector3d> points,
                         std::vector<bool> is3d);
-    TaskDlgCosmeticLine(TechDraw::DrawViewPart* partFeat,
-                        std::string edgeName);
+    TaskDlgCosmeticLine(TechDraw::DrawViewPart *partFeat, std::string edgeName);
     ~TaskDlgCosmeticLine() override;
 
 public:
@@ -110,17 +106,15 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    void helpRequested() override { return;}
-    bool isAllowedAlterDocument() const override
-                        { return false; }
+    void helpRequested() override { return; }
+    bool isAllowedAlterDocument() const override { return false; }
     void update();
 
 protected:
-
 private:
-    TaskCosmeticLine* widget;
+    TaskCosmeticLine *widget;
 
-    Gui::TaskView::TaskBox* taskbox;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

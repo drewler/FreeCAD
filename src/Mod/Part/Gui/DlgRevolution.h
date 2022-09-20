@@ -28,15 +28,16 @@
 #include <Gui/TaskView/TaskDialog.h>
 #include <Gui/TaskView/TaskView.h>
 
-namespace PartGui {
+namespace PartGui
+{
 
 class Ui_DlgRevolution;
-class DlgRevolution : public QDialog, public Gui::SelectionObserver
+class DlgRevolution: public QDialog, public Gui::SelectionObserver
 {
     Q_OBJECT
 
 public:
-    explicit DlgRevolution(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgRevolution(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgRevolution() override;
     void accept() override;
 
@@ -48,15 +49,15 @@ public:
     void setDirection(Base::Vector3d dir);
     void setPosition(Base::Vector3d dir);
     void setAxisLink(const App::PropertyLinkSub &lnk);
-    void setAxisLink(const char* objname, const char* subname);
+    void setAxisLink(const char *objname, const char *subname);
 
-    std::vector<App::DocumentObject*> getShapesToRevolve() const;
+    std::vector<App::DocumentObject *> getShapesToRevolve() const;
 
     bool validate();
 
 protected:
     void changeEvent(QEvent *e) override;
-    void keyPressEvent(QKeyEvent*) override;
+    void keyPressEvent(QKeyEvent *) override;
 
 private Q_SLOTS:
     void on_selectLine_clicked();
@@ -67,10 +68,10 @@ private Q_SLOTS:
 
 private:
     void findShapes();
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
 
     ///returns link to any of selected source shapes. Throws if nothing is selected for extrusion.
-    App::DocumentObject& getShapeToRevolve() const;
+    App::DocumentObject &getShapeToRevolve() const;
 
     ///automatically checks Solid checkbox depending on input shape
     void autoSolid();
@@ -78,10 +79,10 @@ private:
 private:
     std::unique_ptr<Ui_DlgRevolution> ui;
     class EdgeSelection;
-    EdgeSelection* filter;
+    EdgeSelection *filter;
 };
 
-class TaskRevolution : public Gui::TaskView::TaskDialog
+class TaskRevolution: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -93,11 +94,13 @@ public:
     bool accept() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 private:
-    DlgRevolution* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    DlgRevolution *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } // namespace PartGui

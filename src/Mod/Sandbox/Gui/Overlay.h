@@ -30,8 +30,9 @@
 #include <QPoint>
 #include <QList>
 
-namespace SandboxGui {
-class DrawingPlane : public Gui::BaseMouseSelection
+namespace SandboxGui
+{
+class DrawingPlane: public Gui::BaseMouseSelection
 {
 public:
     DrawingPlane();
@@ -40,10 +41,10 @@ public:
 protected:
     void initialize();
     void terminate();
-    virtual int mouseButtonEvent( const SoMouseButtonEvent * const e, const QPoint& pos );
-    virtual int locationEvent   ( const SoLocation2Event   * const e, const QPoint& pos );
-    virtual int keyboardEvent   ( const SoKeyboardEvent    * const e );
-    void draw ();
+    virtual int mouseButtonEvent(const SoMouseButtonEvent *const e, const QPoint &pos);
+    virtual int locationEvent(const SoLocation2Event *const e, const QPoint &pos);
+    virtual int keyboardEvent(const SoKeyboardEvent *const e);
+    void draw();
 
 private:
     void drawLineTo(const QPoint &endPoint);
@@ -55,9 +56,9 @@ private:
     QPoint lastPoint;
     QList<QPoint> selection;
 
-    QtGLFramebufferObject* fbo;
+    QtGLFramebufferObject *fbo;
 };
 
-} // SandboxGui
+} // namespace SandboxGui
 
 #endif // SANDBOXGUI_OVERLAY_H

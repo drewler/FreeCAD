@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <qobject.h>
+#include <qobject.h>
 #endif
 
 #include "Workbench.h"
@@ -41,18 +41,14 @@ using namespace PointsGui;
 /// @namespace PointsGui @class Workbench
 TYPESYSTEM_SOURCE(PointsGui::Workbench, Gui::StdWorkbench)
 
-Workbench::Workbench()
-{
-}
+Workbench::Workbench() {}
 
-Workbench::~Workbench()
-{
-}
+Workbench::~Workbench() {}
 
-Gui::ToolBarItem* Workbench::setupToolBars() const
+Gui::ToolBarItem *Workbench::setupToolBars() const
 {
-    Gui::ToolBarItem* root = StdWorkbench::setupToolBars();
-    Gui::ToolBarItem* pnt = new Gui::ToolBarItem( root );
+    Gui::ToolBarItem *root = StdWorkbench::setupToolBars();
+    Gui::ToolBarItem *pnt = new Gui::ToolBarItem(root);
     pnt->setCommand("Points tools");
     *pnt << "Points_Import"
          << "Points_Export"
@@ -64,11 +60,11 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
     return root;
 }
 
-Gui::ToolBarItem* Workbench::setupCommandBars() const
+Gui::ToolBarItem *Workbench::setupCommandBars() const
 {
     // point tools
-    Gui::ToolBarItem* root = new Gui::ToolBarItem;
-    Gui::ToolBarItem* pnt = new Gui::ToolBarItem( root );
+    Gui::ToolBarItem *root = new Gui::ToolBarItem;
+    Gui::ToolBarItem *pnt = new Gui::ToolBarItem(root);
     pnt->setCommand("Points tools");
     *pnt << "Points_Import"
          << "Points_Export"
@@ -78,11 +74,11 @@ Gui::ToolBarItem* Workbench::setupCommandBars() const
     return root;
 }
 
-Gui::MenuItem* Workbench::setupMenuBar() const
+Gui::MenuItem *Workbench::setupMenuBar() const
 {
-    Gui::MenuItem* root = StdWorkbench::setupMenuBar();
-    Gui::MenuItem* item = root->findItem("&Windows");
-    Gui::MenuItem* pnts = new Gui::MenuItem;
+    Gui::MenuItem *root = StdWorkbench::setupMenuBar();
+    Gui::MenuItem *item = root->findItem("&Windows");
+    Gui::MenuItem *pnts = new Gui::MenuItem;
     root->insertItem(item, pnts);
 
     pnts->setCommand("&Points");

@@ -31,20 +31,20 @@
 
 #include "SMDS_Position.hxx"
 
-class SMDS_EXPORT SMDS_FacePosition:public SMDS_Position
+class SMDS_EXPORT SMDS_FacePosition: public SMDS_Position
 {
 
-  public:
-        SMDS_FacePosition(double aUParam=0, double aVParam=0);
-        SMDS_TypeOfPosition GetTypeOfPosition() const;
-        void SetUParameter(double aUparam);
-        void SetVParameter(double aVparam);
-        void SetParameters(double aUparam, double aVparam);
-        double GetUParameter() const;
-        double GetVParameter() const;
+public:
+    SMDS_FacePosition(double aUParam = 0, double aVParam = 0);
+    SMDS_TypeOfPosition GetTypeOfPosition() const;
+    void SetUParameter(double aUparam);
+    void SetVParameter(double aVparam);
+    void SetParameters(double aUparam, double aVparam);
+    double GetUParameter() const;
+    double GetVParameter() const;
 
-  private:
-        double myUParameter;
-        double myVParameter;
+private:
+    double myUParameter;
+    double myVParameter;
 };
 #endif

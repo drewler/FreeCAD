@@ -36,125 +36,118 @@ using namespace std;
 
 //=======================================================================
 //function : SMDS_QuadraticEdge
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-SMDS_QuadraticEdge::SMDS_QuadraticEdge(const SMDS_MeshNode * node1,
-                                       const SMDS_MeshNode * node2,
-                                       const SMDS_MeshNode * node12)
-     :SMDS_LinearEdge(node1,node2)
+SMDS_QuadraticEdge::SMDS_QuadraticEdge(const SMDS_MeshNode *node1, const SMDS_MeshNode *node2,
+                                       const SMDS_MeshNode *node12)
+    : SMDS_LinearEdge(node1, node2)
 {
-  //MESSAGE("******************************************************* SMDS_QuadraticEdge");
-  myNodes[2]=node12;
+    //MESSAGE("******************************************************* SMDS_QuadraticEdge");
+    myNodes[2] = node12;
 }
 
 
 //=======================================================================
 //function : Print
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-void SMDS_QuadraticEdge::Print(ostream & OS) const
+void SMDS_QuadraticEdge::Print(ostream &OS) const
 {
-  OS << "quadratic edge <" << GetID() << "> : ( first-" << myNodes[0]
-     << " , last-" << myNodes[1] << " , medium-" << myNodes[2] << ") " << endl;
+    OS << "quadratic edge <" << GetID() << "> : ( first-" << myNodes[0] << " , last-" << myNodes[1]
+       << " , medium-" << myNodes[2] << ") " << endl;
 }
 
 
 //=======================================================================
 //function : NbNodes
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-int SMDS_QuadraticEdge::NbNodes() const
-{
-  return 3;
-}
+int SMDS_QuadraticEdge::NbNodes() const { return 3; }
 
 //=======================================================================
 //function : ChangeNodes
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_QuadraticEdge::ChangeNodes(const SMDS_MeshNode * node1,
-                                     const SMDS_MeshNode * node2,
-                                     const SMDS_MeshNode * node12)
+bool SMDS_QuadraticEdge::ChangeNodes(const SMDS_MeshNode *node1, const SMDS_MeshNode *node2,
+                                     const SMDS_MeshNode *node12)
 {
-  myNodes[0]=node1;
-  myNodes[1]=node2;
-  myNodes[2]=node12;
-  return true;
+    myNodes[0] = node1;
+    myNodes[1] = node2;
+    myNodes[2] = node12;
+    return true;
 }
 
 //=======================================================================
 //function : IsMediumNode
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_QuadraticEdge::IsMediumNode(const SMDS_MeshNode * node) const
+bool SMDS_QuadraticEdge::IsMediumNode(const SMDS_MeshNode *node) const
 {
-  return (myNodes[2]==node);
+    return (myNodes[2] == node);
 }
 
 namespace
 {
-  //=======================================================================
-  //class : _MyInterlacedNodeIterator
-  //purpose  : 
-  //=======================================================================
+//=======================================================================
+//class : _MyInterlacedNodeIterator
+//purpose  :
+//=======================================================================
 
-  class _MyInterlacedNodeIterator: public SMDS_NodeArrayIterator
-  {
-    const SMDS_MeshNode * myNodes[3];
-  public:
-    _MyInterlacedNodeIterator(const SMDS_MeshNode * const * nodes):
-      SMDS_NodeArrayIterator( myNodes, & myNodes[3] )
+class _MyInterlacedNodeIterator: public SMDS_NodeArrayIterator
+{
+    const SMDS_MeshNode *myNodes[3];
+
+public:
+    _MyInterlacedNodeIterator(const SMDS_MeshNode *const *nodes)
+        : SMDS_NodeArrayIterator(myNodes, &myNodes[3])
     {
-      myNodes[0] = nodes[0];
-      myNodes[1] = nodes[2];
-      myNodes[2] = nodes[1];
+        myNodes[0] = nodes[0];
+        myNodes[1] = nodes[2];
+        myNodes[2] = nodes[1];
     }
-  };
+};
 
-  //=======================================================================
-  //class : _MyNodeIterator
-  //purpose  : 
-  //=======================================================================
+//=======================================================================
+//class : _MyNodeIterator
+//purpose  :
+//=======================================================================
 
-  class _MyNodeIterator:public SMDS_NodeArrayElemIterator
-  {
-  public:
-    _MyNodeIterator(const SMDS_MeshNode * const * nodes):
-      SMDS_NodeArrayElemIterator( nodes, & nodes[3] ) {}
-  };
-}
+class _MyNodeIterator: public SMDS_NodeArrayElemIterator
+{
+public:
+    _MyNodeIterator(const SMDS_MeshNode *const *nodes)
+        : SMDS_NodeArrayElemIterator(nodes, &nodes[3])
+    {}
+};
+} // namespace
 
 //=======================================================================
 //function : interlacedNodesIterator
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 SMDS_NodeIteratorPtr SMDS_QuadraticEdge::interlacedNodesIterator() const
 {
-  return SMDS_NodeIteratorPtr (new _MyInterlacedNodeIterator (myNodes));
+    return SMDS_NodeIteratorPtr(new _MyInterlacedNodeIterator(myNodes));
 }
 
 //=======================================================================
 //function : elementsIterator
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 SMDS_ElemIteratorPtr SMDS_QuadraticEdge::elementsIterator(SMDSAbs_ElementType type) const
 {
-  switch(type)
-  {
-  case SMDSAbs_Edge:
-    return SMDS_MeshElement::elementsIterator(SMDSAbs_Edge); 
-  case SMDSAbs_Node:
-    return SMDS_ElemIteratorPtr(new _MyNodeIterator(myNodes));
-  default:
-    return SMDS_ElemIteratorPtr
-      (new SMDS_IteratorOfElements
-       (this,type, SMDS_ElemIteratorPtr(new _MyNodeIterator(myNodes))));
-  }
+    switch (type) {
+        case SMDSAbs_Edge: return SMDS_MeshElement::elementsIterator(SMDSAbs_Edge);
+        case SMDSAbs_Node: return SMDS_ElemIteratorPtr(new _MyNodeIterator(myNodes));
+        default:
+            return SMDS_ElemIteratorPtr(new SMDS_IteratorOfElements(
+                this, type, SMDS_ElemIteratorPtr(new _MyNodeIterator(myNodes))));
+    }
 }

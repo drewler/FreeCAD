@@ -24,11 +24,11 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QApplication>
-# include <QDir>
-# include <QFileInfo>
-# include <QMessageBox>
-# include <QTimer>
+#include <QApplication>
+#include <QDir>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QTimer>
 #endif
 
 #include <App/Application.h>
@@ -45,10 +45,10 @@
 using namespace Gui;
 using namespace Gui::Dialog;
 
-namespace Gui {
-
-struct NetworkRetrieverP
+namespace Gui
 {
+
+struct NetworkRetrieverP {
     // wget options
     int tries;
     int level;
@@ -74,8 +74,7 @@ struct NetworkRetrieverP
 
 /* TRANSLATOR Gui::NetworkRetriever */
 
-NetworkRetriever::NetworkRetriever( QObject * parent )
-  : QObject( parent )
+NetworkRetriever::NetworkRetriever(QObject *parent) : QObject(parent)
 {
     d = new NetworkRetrieverP;
     d->tries = 3;
@@ -91,11 +90,11 @@ NetworkRetriever::NetworkRetriever( QObject * parent )
     wget = new QProcess(this);
 
     // if wgets exits emit signal
-    connect(wget, SIGNAL(finished(int, QProcess::ExitStatus)),
-            this, SLOT(wgetFinished(int, QProcess::ExitStatus)));
+    connect(wget, SIGNAL(finished(int, QProcess::ExitStatus)), this,
+            SLOT(wgetFinished(int, QProcess::ExitStatus)));
 
     // if application quits kill wget immediately to avoid dangling processes
-    connect( qApp, SIGNAL(lastWindowClosed()), wget, SLOT(kill()) );
+    connect(qApp, SIGNAL(lastWindowClosed()), wget, SLOT(kill()));
 }
 
 NetworkRetriever::~NetworkRetriever()
@@ -115,8 +114,7 @@ NetworkRetriever::~NetworkRetriever()
  */
 void NetworkRetriever::testFailure()
 {
-    if ( wget->state() == QProcess::Running )
-    {
+    if (wget->state() == QProcess::Running) {
         d->fail = false;
         QString msg = tr("Download started...");
         Base::Console().Message("%s\n", msg.toUtf8().constData());
@@ -127,35 +125,26 @@ void NetworkRetriever::testFailure()
  * Sets the number of retries to \a tries. If \a tries is 0 the number of tries
  * is unlimited. The default value of the tries property is set to 3.
  */
-void NetworkRetriever::setNumberOfTries( int tries )
-{
-    d->tries = tries;
-}
+void NetworkRetriever::setNumberOfTries(int tries) { d->tries = tries; }
 
 /**
  * Sets output file to \a out where documents are written to.
  */
-void NetworkRetriever::setOutputFile( const QString& out )
-{
-    d->outputFile = out;
-}
+void NetworkRetriever::setOutputFile(const QString &out) { d->outputFile = out; }
 
 /**
  * If \a ts is true the timestamping is enabled, otherwise timestamping is
  * disabled. If timestamping is enabled files are no more re-retrieved unless
  * they are newer than the local files. As default the timestamping property is disabled.
  */
-void NetworkRetriever::setEnableTimestamp(bool ts)
-{
-    d->timeStamp = ts;
-}
+void NetworkRetriever::setEnableTimestamp(bool ts) { d->timeStamp = ts; }
 
 /**
  * If you are behind a proxy server then you have to specify your proxy url with \a proxy.
  * Moreover, if the proxy requires user authentication then you can specify the username
  * with \a user and the password with \a passwd.
  */
-void NetworkRetriever::setProxy( const QString& proxy, const QString& user, const QString& passwd )
+void NetworkRetriever::setProxy(const QString &proxy, const QString &user, const QString &passwd)
 {
     d->proxy = proxy;
     d->user = user;
@@ -169,7 +158,7 @@ void NetworkRetriever::setProxy( const QString& proxy, const QString& user, cons
  * property is 1.
  * \note: Use this with care!
  */
-void NetworkRetriever::setEnableRecursive( bool recursive, int level )
+void NetworkRetriever::setEnableRecursive(bool recursive, int level)
 {
     d->recurse = recursive;
     d->level = level;
@@ -179,74 +168,53 @@ void NetworkRetriever::setEnableRecursive( bool recursive, int level )
  * If \a folRel is true wget follows relative links only. As default
  * the follows relative property is false.
  */
-void NetworkRetriever::setFollowRelative( bool folRel )
-{
-    d->folRel = folRel;
-}
+void NetworkRetriever::setFollowRelative(bool folRel) { d->folRel = folRel; }
 
 /**
  * If \a convert is true all non-relative links are converted to
  * relative links. As default the convert property is true.
  */
-void NetworkRetriever::setEnableConvert( bool convert )
-{
-    d->convert = convert;
-}
+void NetworkRetriever::setEnableConvert(bool convert) { d->convert = convert; }
 
 /**
  * If \a img is true wget tries to get all needed image files
  * to display the HTML page. As default this behaviour is disabled..
  */
-void NetworkRetriever::setFetchImages( bool img )
-{
-    d->img = img;
-}
+void NetworkRetriever::setFetchImages(bool img) { d->img = img; }
 
 /**
  * Saves all text/html documents with .html extionsion if \a html is true.
  * As default the html property is false.
  */
-void NetworkRetriever::setEnableHTMLExtension( bool html )
-{
-    d->html = html;
-}
+void NetworkRetriever::setEnableHTMLExtension(bool html) { d->html = html; }
 
 /**
  * Do not ever ascend to the parent directory when retrieving recursively.
  */
-void NetworkRetriever::setNoParent( bool nop )
-{
-    d->nop = nop;
-}
+void NetworkRetriever::setNoParent(bool nop) { d->nop = nop; }
 
 /**
  * Sets the output directory to \a dir where all downloaded are written into.
  */
-void NetworkRetriever::setOutputDirectory( const QString& dir )
-{
-    d->dir = dir;
-}
+void NetworkRetriever::setOutputDirectory(const QString &dir) { d->dir = dir; }
 
 /**
  * wget starts to download \a startUrl and all referenced pages.
  */
-bool NetworkRetriever::startDownload( const QString& startUrl )
+bool NetworkRetriever::startDownload(const QString &startUrl)
 {
-    if ( !testWget() )
-        return false;
+    if (!testWget()) return false;
 
     d->startUrl = startUrl;
 
     // proxy as environment variable
-    if ( !d->proxy.isEmpty() )
-    {
+    if (!d->proxy.isEmpty()) {
         QStringList env = wget->environment();
         env << QString::fromLatin1("http_proxy=%1").arg(d->proxy);
         env << QString::fromLatin1("ftp_proxy=%1").arg(d->proxy);
         wget->setEnvironment(env);
     }
-    else
-    {
+    else {
         QStringList env = wget->environment();
         env.removeAll(QString::fromLatin1("http_proxy=%1").arg(d->proxy));
         env.removeAll(QString::fromLatin1("ftp_proxy=%1").arg(d->proxy));
@@ -258,77 +226,62 @@ bool NetworkRetriever::startDownload( const QString& startUrl )
     // since the wget option '--directory-prefix' seems not to work as expected
     // and QProcess::setWorkingDirectory() fails if the 'doc' directory doesn't
     // exist we must check for this and create it if needed.
-    if ( !d->dir.isEmpty() )
-    {
+    if (!d->dir.isEmpty()) {
         QDir dir(d->dir);
-        if (!dir.exists(d->dir))
-        {
-            if (!dir.mkdir(d->dir))
-            {
-                Base::Console().Error("Directory '%s' could not be created.", (const char*)d->dir.toLatin1());
+        if (!dir.exists(d->dir)) {
+            if (!dir.mkdir(d->dir)) {
+                Base::Console().Error("Directory '%s' could not be created.",
+                                      (const char *)d->dir.toLatin1());
                 return true; // please, no error message
             }
         }
 
-        wget->setWorkingDirectory( dir.path() );
+        wget->setWorkingDirectory(dir.path());
     }
 
     // user authentication
-    if ( !d->proxy.isEmpty() )
-    {
-        if ( !d->user.isEmpty() )
-        {
-            wgetArguments << QString::fromLatin1("--proxy-user=%1").arg( d->user );
-            if ( !d->passwd.isEmpty() )
-            {
-                wgetArguments << QString::fromLatin1("--proxy-passwd=%1").arg( d->passwd );
+    if (!d->proxy.isEmpty()) {
+        if (!d->user.isEmpty()) {
+            wgetArguments << QString::fromLatin1("--proxy-user=%1").arg(d->user);
+            if (!d->passwd.isEmpty()) {
+                wgetArguments << QString::fromLatin1("--proxy-passwd=%1").arg(d->passwd);
             }
         }
     }
 
     // output file
-    if ( !d->outputFile.isEmpty() )
-        wgetArguments << QString::fromLatin1("--output-document=%1").arg( d->outputFile );
+    if (!d->outputFile.isEmpty())
+        wgetArguments << QString::fromLatin1("--output-document=%1").arg(d->outputFile);
     // timestamping enabled -> update newer files only
-    if ( d->timeStamp )
-        wgetArguments << QString::fromLatin1("-N");
+    if (d->timeStamp) wgetArguments << QString::fromLatin1("-N");
     // get all needed image files
-    if ( d->img )
-        wgetArguments << QString::fromLatin1("-p");
+    if (d->img) wgetArguments << QString::fromLatin1("-p");
     // follow relative links only
-    if ( d->folRel )
-        wgetArguments<< QString::fromLatin1("-L");
-    if ( d->recurse )
-    {
+    if (d->folRel) wgetArguments << QString::fromLatin1("-L");
+    if (d->recurse) {
         wgetArguments << QString::fromLatin1("-r");
-        wgetArguments << QString::fromLatin1("--level=%1").arg( d->level );
+        wgetArguments << QString::fromLatin1("--level=%1").arg(d->level);
     }
 
-    if ( d->nop )
-        wgetArguments << QString::fromLatin1("-np");
+    if (d->nop) wgetArguments << QString::fromLatin1("-np");
 
     // convert absolute links in to relative
-    if ( d->convert )
-        wgetArguments << QString::fromLatin1("-k");
+    if (d->convert) wgetArguments << QString::fromLatin1("-k");
     // number of tries
-    wgetArguments << QString::fromLatin1("--tries=%1").arg( d->tries );
+    wgetArguments << QString::fromLatin1("--tries=%1").arg(d->tries);
     // use HTML file extension
-    if ( d->html )
-        wgetArguments << QString::fromLatin1("-E");
+    if (d->html) wgetArguments << QString::fromLatin1("-E");
 
     // start URL
     wgetArguments << startUrl;
 
 #ifdef FC_OS_LINUX
     // on Linux it seems that we have to change cwd
-    QString cwd = QDir::currentPath ();
-    if ( !d->dir.isEmpty() )
-    {
-        QDir::setCurrent(d->dir);
-    }
+    QString cwd = QDir::currentPath();
+    if (!d->dir.isEmpty()) { QDir::setCurrent(d->dir); }
 
     wget->start(QString::fromLatin1("wget"), wgetArguments);
-    QDir::setCurrent( cwd );
+    QDir::setCurrent(cwd);
 #else
     wget->start(QString::fromLatin1("wget"), wgetArguments);
 #endif
@@ -339,20 +292,14 @@ bool NetworkRetriever::startDownload( const QString& startUrl )
 /**
  * Returns true if wget is still downloading, otherwise returns false.
  */
-bool NetworkRetriever::isDownloading() const
-{
-    return wget->state() == QProcess::Running;
-}
+bool NetworkRetriever::isDownloading() const { return wget->state() == QProcess::Running; }
 
 /**
  * Kills wget if it is still running.
  */
 void NetworkRetriever::abort()
 {
-    if ( wget->state() == QProcess::Running)
-    {
-        QTimer::singleShot( 2000, wget, SLOT( kill() ) );
-    }
+    if (wget->state() == QProcess::Running) { QTimer::singleShot(2000, wget, SLOT(kill())); }
 }
 
 void NetworkRetriever::wgetFinished(int exitCode, QProcess::ExitStatus status)
@@ -384,50 +331,43 @@ bool NetworkRetriever::testWget()
 
 // --------------------------------------------------------------------
 
-StdCmdDownloadOnlineHelp::StdCmdDownloadOnlineHelp( QObject * parent)
-  : QObject(parent), Command("Std_DownloadOnlineHelp")
+StdCmdDownloadOnlineHelp::StdCmdDownloadOnlineHelp(QObject *parent)
+    : QObject(parent), Command("Std_DownloadOnlineHelp")
 {
-    sGroup        ="Help";
-    sMenuText     = QT_TR_NOOP("Download online help");
-    sToolTipText  = QT_TR_NOOP("Download %1's online help");
-    sWhatsThis    = "Std_DownloadOnlineHelp";
-    sStatusTip    = QT_TR_NOOP("Download %1's online help");
-    sPixmap       = "help";
+    sGroup = "Help";
+    sMenuText = QT_TR_NOOP("Download online help");
+    sToolTipText = QT_TR_NOOP("Download %1's online help");
+    sWhatsThis = "Std_DownloadOnlineHelp";
+    sStatusTip = QT_TR_NOOP("Download %1's online help");
+    sPixmap = "help";
 
-    wget = new NetworkRetriever( this );
+    wget = new NetworkRetriever(this);
     // downloading recursively and depth 5
-    wget->setEnableRecursive( true, 5 );
-    wget->setNumberOfTries( 3 );
-    wget->setEnableHTMLExtension( true );
-    wget->setEnableConvert( true );
+    wget->setEnableRecursive(true, 5);
+    wget->setNumberOfTries(3);
+    wget->setEnableHTMLExtension(true);
+    wget->setEnableConvert(true);
 
-    wget->setEnableTimestamp( true );
-    wget->setFetchImages( true );
-    wget->setFollowRelative( false );
-    wget->setNoParent( true );
+    wget->setEnableTimestamp(true);
+    wget->setFetchImages(true);
+    wget->setFollowRelative(false);
+    wget->setNoParent(true);
 
-    connect( wget, SIGNAL( wgetExited() ), this, SLOT( wgetFinished() ) );
+    connect(wget, SIGNAL(wgetExited()), this, SLOT(wgetFinished()));
 }
 
-StdCmdDownloadOnlineHelp::~StdCmdDownloadOnlineHelp()
-{
-    delete wget;
-}
+StdCmdDownloadOnlineHelp::~StdCmdDownloadOnlineHelp() { delete wget; }
 
-Action * StdCmdDownloadOnlineHelp::createAction()
+Action *StdCmdDownloadOnlineHelp::createAction()
 {
     Action *pcAction;
 
     QString exe = QString::fromStdString(App::Application::getExecutableName());
-    pcAction = new Action(this,getMainWindow());
-    pcAction->setText(QCoreApplication::translate(
-        this->className(), getMenuText()));
-    pcAction->setToolTip(QCoreApplication::translate(
-        this->className(), getToolTipText()).arg(exe));
-    pcAction->setStatusTip(QCoreApplication::translate(
-        this->className(), getStatusTip()).arg(exe));
-    pcAction->setWhatsThis(QCoreApplication::translate(
-        this->className(), getWhatsThis()).arg(exe));
+    pcAction = new Action(this, getMainWindow());
+    pcAction->setText(QCoreApplication::translate(this->className(), getMenuText()));
+    pcAction->setToolTip(QCoreApplication::translate(this->className(), getToolTipText()).arg(exe));
+    pcAction->setStatusTip(QCoreApplication::translate(this->className(), getStatusTip()).arg(exe));
+    pcAction->setWhatsThis(QCoreApplication::translate(this->className(), getWhatsThis()).arg(exe));
     pcAction->setIcon(Gui::BitmapFactory().pixmap(getPixmap()));
     pcAction->setShortcut(QString::fromLatin1(getAccel()));
 
@@ -438,14 +378,13 @@ void StdCmdDownloadOnlineHelp::languageChange()
 {
     if (_pcAction) {
         QString exe = QString::fromStdString(App::Application::getExecutableName());
-        _pcAction->setText(QCoreApplication::translate(
-            this->className(), getMenuText()));
-        _pcAction->setToolTip(QCoreApplication::translate(
-            this->className(), getToolTipText()).arg(exe));
-        _pcAction->setStatusTip(QCoreApplication::translate(
-            this->className(), getStatusTip()).arg(exe));
-        _pcAction->setWhatsThis(QCoreApplication::translate(
-            this->className(), getWhatsThis()).arg(exe));
+        _pcAction->setText(QCoreApplication::translate(this->className(), getMenuText()));
+        _pcAction->setToolTip(
+            QCoreApplication::translate(this->className(), getToolTipText()).arg(exe));
+        _pcAction->setStatusTip(
+            QCoreApplication::translate(this->className(), getStatusTip()).arg(exe));
+        _pcAction->setWhatsThis(
+            QCoreApplication::translate(this->className(), getWhatsThis()).arg(exe));
     }
 }
 
@@ -457,8 +396,8 @@ void StdCmdDownloadOnlineHelp::activated(int iMsg)
         hGrp = hGrp->GetGroup("Preferences")->GetGroup("OnlineHelp");
         std::string url = hGrp->GetASCII("DownloadURL", "www.freecadweb.org/wiki/");
         std::string prx = hGrp->GetASCII("ProxyText", "");
-        bool bUseProxy  = hGrp->GetBool ("UseProxy", false);
-        bool bAuthor    = hGrp->GetBool ("Authorize", false);
+        bool bUseProxy = hGrp->GetBool("UseProxy", false);
+        bool bAuthor = hGrp->GetBool("Authorize", false);
 
         if (bUseProxy) {
             QString username;
@@ -479,54 +418,54 @@ void StdCmdDownloadOnlineHelp::activated(int iMsg)
             wget->setProxy(QString::fromLatin1(prx.c_str()), username, password);
         }
 
-        int loop=3;
+        int loop = 3;
         bool canStart = false;
 
         // set output directory
         QString path = QString::fromStdString(App::Application::getHomePath());
         path += QString::fromLatin1("/doc/");
-        ParameterGrp::handle hURLGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/OnlineHelp");
-        path = QString::fromUtf8(hURLGrp->GetASCII( "DownloadLocation", path.toLatin1() ).c_str());
+        ParameterGrp::handle hURLGrp = App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/Preferences/OnlineHelp");
+        path = QString::fromUtf8(hURLGrp->GetASCII("DownloadLocation", path.toLatin1()).c_str());
 
         while (loop > 0) {
             loop--;
-            QFileInfo fi( path);
+            QFileInfo fi(path);
             if (!fi.exists()) {
                 if (QMessageBox::critical(getMainWindow(), tr("Non-existing directory"),
-                     tr("The directory '%1' does not exist.\n\n"
-                        "Do you want to specify an existing directory?").arg(fi.filePath()),
-                     QMessageBox::Yes|QMessageBox::Default, QMessageBox::No|QMessageBox::Escape) !=
-                     QMessageBox::Yes)
-                {
-                    // exit the command
-                    return;
-                }
-                else
-                {
-                    path = FileDialog::getExistingDirectory();
-                    if ( path.isEmpty() )
-                        return;
-                }
-            }
-
-            if (!fi.permission( QFile::WriteUser)) {
-                if (QMessageBox::critical(getMainWindow(), tr("Missing permission"),
-                     tr("You don't have write permission to '%1'\n\n"
-                        "Do you want to specify another directory?").arg(fi.filePath()),
-                     QMessageBox::Yes|QMessageBox::Default, QMessageBox::No|QMessageBox::Escape) !=
-                     QMessageBox::Yes)
-                {
+                                          tr("The directory '%1' does not exist.\n\n"
+                                             "Do you want to specify an existing directory?")
+                                              .arg(fi.filePath()),
+                                          QMessageBox::Yes | QMessageBox::Default,
+                                          QMessageBox::No | QMessageBox::Escape)
+                    != QMessageBox::Yes) {
                     // exit the command
                     return;
                 }
                 else {
                     path = FileDialog::getExistingDirectory();
-                    if ( path.isEmpty() )
-                        return;
+                    if (path.isEmpty()) return;
+                }
+            }
+
+            if (!fi.permission(QFile::WriteUser)) {
+                if (QMessageBox::critical(getMainWindow(), tr("Missing permission"),
+                                          tr("You don't have write permission to '%1'\n\n"
+                                             "Do you want to specify another directory?")
+                                              .arg(fi.filePath()),
+                                          QMessageBox::Yes | QMessageBox::Default,
+                                          QMessageBox::No | QMessageBox::Escape)
+                    != QMessageBox::Yes) {
+                    // exit the command
+                    return;
+                }
+                else {
+                    path = FileDialog::getExistingDirectory();
+                    if (path.isEmpty()) return;
                 }
             }
             else {
-                wget->setOutputDirectory( path );
+                wget->setOutputDirectory(path);
                 canStart = true;
                 break;
             }
@@ -535,8 +474,9 @@ void StdCmdDownloadOnlineHelp::activated(int iMsg)
         if (canStart) {
             bool ok = wget->startDownload(QString::fromLatin1(url.c_str()));
             if (!ok)
-                Base::Console().Error("The tool 'wget' couldn't be found. Please check your installation.");
-            else if ( wget->isDownloading() && _pcAction )
+                Base::Console().Error(
+                    "The tool 'wget' couldn't be found. Please check your installation.");
+            else if (wget->isDownloading() && _pcAction)
                 _pcAction->setText(tr("Stop downloading"));
         }
     }
@@ -549,9 +489,7 @@ void StdCmdDownloadOnlineHelp::activated(int iMsg)
 void StdCmdDownloadOnlineHelp::wgetFinished()
 {
     if (_pcAction)
-        _pcAction->setText(QCoreApplication::translate(
-            this->className(), getMenuText()));
+        _pcAction->setText(QCoreApplication::translate(this->className(), getMenuText()));
 }
 
 #include "moc_NetworkRetriever.cpp"
-

@@ -25,19 +25,19 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Standard_math.hxx>
-# include <BRep_Tool.hxx>
-# include <gp_Pnt.hxx>
-# include <Precision.hxx>
-# include <TopTools_IndexedMapOfShape.hxx>
-# include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-# include <TopExp.hxx>
-# include <TopExp_Explorer.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Edge.hxx>
-# include <TopoDS_Vertex.hxx>
-# include <algorithm>
-# include <cmath>
+#include <Standard_math.hxx>
+#include <BRep_Tool.hxx>
+#include <gp_Pnt.hxx>
+#include <Precision.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <algorithm>
+#include <cmath>
 #endif
 
 #include <Base/Console.h>
@@ -52,16 +52,9 @@
 
 using namespace Sketcher;
 
-SketchAnalysis::SketchAnalysis(Sketcher::SketchObject* Obj)
-  : sketch(Obj)
-{
+SketchAnalysis::SketchAnalysis(Sketcher::SketchObject *Obj) : sketch(Obj) {}
 
-}
-
-SketchAnalysis::~SketchAnalysis()
-{
-
-}
+SketchAnalysis::~SketchAnalysis() {}
 
 struct SketchAnalysis::VertexIds {
     Base::Vector3d v;
@@ -69,48 +62,39 @@ struct SketchAnalysis::VertexIds {
     Sketcher::PointPos PosId;
 };
 
-struct SketchAnalysis::Vertex_Less
-{
-    explicit Vertex_Less(double tolerance) : tolerance(tolerance){}
-    bool operator()(const VertexIds& x,
-                    const VertexIds& y) const
+struct SketchAnalysis::Vertex_Less {
+    explicit Vertex_Less(double tolerance) : tolerance(tolerance) {}
+    bool operator()(const VertexIds &x, const VertexIds &y) const
     {
-        if (fabs (x.v.x - y.v.x) > tolerance)
-            return x.v.x < y.v.x;
-        if (fabs (x.v.y - y.v.y) > tolerance)
-            return x.v.y < y.v.y;
-        if (fabs (x.v.z - y.v.z) > tolerance)
-            return x.v.z < y.v.z;
+        if (fabs(x.v.x - y.v.x) > tolerance) return x.v.x < y.v.x;
+        if (fabs(x.v.y - y.v.y) > tolerance) return x.v.y < y.v.y;
+        if (fabs(x.v.z - y.v.z) > tolerance) return x.v.z < y.v.z;
         return false; // points are considered to be equal
     }
+
 private:
     double tolerance;
 };
 
-struct SketchAnalysis::VertexID_Less
-{
-    bool operator()(const VertexIds& x,
-                    const VertexIds& y) const
+struct SketchAnalysis::VertexID_Less {
+    bool operator()(const VertexIds &x, const VertexIds &y) const
     {
-        return (x.GeoId < y.GeoId || ((x.GeoId == y.GeoId) && (x.PosId < y. PosId)));
+        return (x.GeoId < y.GeoId || ((x.GeoId == y.GeoId) && (x.PosId < y.PosId)));
     }
 };
 
-struct SketchAnalysis::Vertex_EqualTo
-{
-    explicit Vertex_EqualTo(double tolerance) : tolerance(tolerance){}
-    bool operator()(const VertexIds& x,
-                    const VertexIds& y) const
+struct SketchAnalysis::Vertex_EqualTo {
+    explicit Vertex_EqualTo(double tolerance) : tolerance(tolerance) {}
+    bool operator()(const VertexIds &x, const VertexIds &y) const
     {
-        if (fabs (x.v.x - y.v.x) <= tolerance) {
-            if (fabs (x.v.y - y.v.y) <= tolerance) {
-                if (fabs (x.v.z - y.v.z) <= tolerance) {
-                    return true;
-                }
+        if (fabs(x.v.x - y.v.x) <= tolerance) {
+            if (fabs(x.v.y - y.v.y) <= tolerance) {
+                if (fabs(x.v.z - y.v.z) <= tolerance) { return true; }
             }
         }
         return false;
     }
+
 private:
     double tolerance;
 };
@@ -120,49 +104,45 @@ struct SketchAnalysis::EdgeIds {
     int GeoId;
 };
 
-struct SketchAnalysis::Edge_Less
-{
-    explicit Edge_Less(double tolerance) : tolerance(tolerance){}
-    bool operator()(const EdgeIds& x,
-                    const EdgeIds& y) const
-                    {
-                        if (fabs (x.l - y.l) > tolerance)
-                            return x.l < y.l;
-                        return false; // points are considered to be equal
-                    }
+struct SketchAnalysis::Edge_Less {
+    explicit Edge_Less(double tolerance) : tolerance(tolerance) {}
+    bool operator()(const EdgeIds &x, const EdgeIds &y) const
+    {
+        if (fabs(x.l - y.l) > tolerance) return x.l < y.l;
+        return false; // points are considered to be equal
+    }
+
 private:
     double tolerance;
 };
 
-struct SketchAnalysis::Edge_EqualTo
-{
-    explicit Edge_EqualTo(double tolerance) : tolerance(tolerance){}
-    bool operator()(const EdgeIds& x,
-                    const EdgeIds& y) const
-                    {
-                        if (fabs (x.l - y.l) <= tolerance) {
-                            return true;
-                        }
-                        return false;
-                    }
+struct SketchAnalysis::Edge_EqualTo {
+    explicit Edge_EqualTo(double tolerance) : tolerance(tolerance) {}
+    bool operator()(const EdgeIds &x, const EdgeIds &y) const
+    {
+        if (fabs(x.l - y.l) <= tolerance) { return true; }
+        return false;
+    }
+
 private:
     double tolerance;
 };
 
-int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool includeconstruction /*=true*/)
+int SketchAnalysis::detectMissingPointOnPointConstraints(double precision,
+                                                         bool includeconstruction /*=true*/)
 {
     std::vector<VertexIds> vertexIds; // Holds a list of all vertices in the sketch
 
     // Build the list of sketch vertices
-    const std::vector<Part::Geometry *>& geom = sketch->getInternalGeometry();
-    for (std::size_t i=0; i<geom.size(); i++) {
+    const std::vector<Part::Geometry *> &geom = sketch->getInternalGeometry();
+    for (std::size_t i = 0; i < geom.size(); i++) {
         auto gf = GeometryFacade::getFacade(geom[i]);
 
-        if(gf->getConstruction() && !includeconstruction)
-            continue;
+        if (gf->getConstruction() && !includeconstruction) continue;
 
         if (gf->getGeometry()->getTypeId() == Part::GeomLineSegment::getClassTypeId()) {
-            const Part::GeomLineSegment *segm = static_cast<const Part::GeomLineSegment*>(gf->getGeometry());
+            const Part::GeomLineSegment *segm =
+                static_cast<const Part::GeomLineSegment *>(gf->getGeometry());
             VertexIds id;
             id.GeoId = (int)i;
             id.PosId = Sketcher::PointPos::start;
@@ -174,7 +154,8 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
             vertexIds.push_back(id);
         }
         else if (gf->getGeometry()->getTypeId() == Part::GeomArcOfCircle::getClassTypeId()) {
-            const Part::GeomArcOfCircle *segm = static_cast<const Part::GeomArcOfCircle*>(gf->getGeometry());
+            const Part::GeomArcOfCircle *segm =
+                static_cast<const Part::GeomArcOfCircle *>(gf->getGeometry());
             VertexIds id;
             id.GeoId = (int)i;
             id.PosId = Sketcher::PointPos::start;
@@ -186,7 +167,8 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
             vertexIds.push_back(id);
         }
         else if (gf->getGeometry()->getTypeId() == Part::GeomArcOfEllipse::getClassTypeId()) {
-            const Part::GeomArcOfEllipse *segm = static_cast<const Part::GeomArcOfEllipse*>(gf->getGeometry());
+            const Part::GeomArcOfEllipse *segm =
+                static_cast<const Part::GeomArcOfEllipse *>(gf->getGeometry());
             VertexIds id;
             id.GeoId = (int)i;
             id.PosId = Sketcher::PointPos::start;
@@ -198,7 +180,8 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
             vertexIds.push_back(id);
         }
         else if (gf->getGeometry()->getTypeId() == Part::GeomArcOfHyperbola::getClassTypeId()) {
-            const Part::GeomArcOfHyperbola *segm = static_cast<const Part::GeomArcOfHyperbola*>(gf->getGeometry());
+            const Part::GeomArcOfHyperbola *segm =
+                static_cast<const Part::GeomArcOfHyperbola *>(gf->getGeometry());
             VertexIds id;
             id.GeoId = (int)i;
             id.PosId = Sketcher::PointPos::start;
@@ -210,7 +193,8 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
             vertexIds.push_back(id);
         }
         else if (gf->getGeometry()->getTypeId() == Part::GeomArcOfParabola::getClassTypeId()) {
-            const Part::GeomArcOfParabola *segm = static_cast<const Part::GeomArcOfParabola*>(gf->getGeometry());
+            const Part::GeomArcOfParabola *segm =
+                static_cast<const Part::GeomArcOfParabola *>(gf->getGeometry());
             VertexIds id;
             id.GeoId = (int)i;
             id.PosId = Sketcher::PointPos::start;
@@ -222,7 +206,8 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
             vertexIds.push_back(id);
         }
         else if (gf->getGeometry()->getTypeId() == Part::GeomBSplineCurve::getClassTypeId()) {
-            const Part::GeomBSplineCurve *segm = static_cast<const Part::GeomBSplineCurve*>(gf->getGeometry());
+            const Part::GeomBSplineCurve *segm =
+                static_cast<const Part::GeomBSplineCurve *>(gf->getGeometry());
             VertexIds id;
             id.GeoId = (int)i;
             id.PosId = Sketcher::PointPos::start;
@@ -236,16 +221,16 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
         // TODO take into account single vertices ?
     }
 
-    std::sort(vertexIds.begin(), vertexIds.end(), Vertex_Less(precision)); // Sort points in geographic order
+    std::sort(vertexIds.begin(), vertexIds.end(),
+              Vertex_Less(precision)); // Sort points in geographic order
 
     // Build a list of all coincidence in the sketch
 
-    std::vector<Sketcher::Constraint*> coincidences = sketch->Constraints.getValues();
+    std::vector<Sketcher::Constraint *> coincidences = sketch->Constraints.getValues();
 
-    for (auto &constraint:sketch->Constraints.getValues()) {
-        if (constraint->Type == Sketcher::Coincident ||
-            constraint->Type == Sketcher::Tangent ||
-            constraint->Type == Sketcher::Perpendicular) {
+    for (auto &constraint : sketch->Constraints.getValues()) {
+        if (constraint->Type == Sketcher::Coincident || constraint->Type == Sketcher::Tangent
+            || constraint->Type == Sketcher::Perpendicular) {
             coincidences.push_back(constraint);
         }
         // TODO optimizing by removing constraints not applying on vertices ?
@@ -263,22 +248,22 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
         vt = std::adjacent_find(vt, vertexIds.end(), pred);
         if (vt < vertexIds.end()) { // If one found
             std::vector<VertexIds>::iterator vn;
-            std::set<VertexIds, VertexID_Less> vertexGrp; // Holds a single group of adjacent vertices
+            std::set<VertexIds, VertexID_Less>
+                vertexGrp; // Holds a single group of adjacent vertices
             // Extract the group of adjacent vertices
             vertexGrp.insert(*vt);
-            for (vn = vt+1; vn < vertexIds.end(); ++vn) {
-                if (pred(*vt,*vn)) {
-                    vertexGrp.insert(*vn);
-                }
+            for (vn = vt + 1; vn < vertexIds.end(); ++vn) {
+                if (pred(*vt, *vn)) { vertexGrp.insert(*vn); }
                 else {
                     break;
                 }
             }
 
-            std::vector<std::set<VertexIds, VertexID_Less>> coincVertexGrps; // Holds groups of coincident vertices
+            std::vector<std::set<VertexIds, VertexID_Less>>
+                coincVertexGrps; // Holds groups of coincident vertices
 
             // Decompose the group of adjacent vertices into groups of coincident vertices
-            for (auto &coincidence:coincidences) { // Going through existent coincidences
+            for (auto &coincidence : coincidences) { // Going through existent coincidences
                 VertexIds v1, v2;
                 v1.GeoId = coincidence->First;
                 v1.PosId = coincidence->FirstPos;
@@ -294,10 +279,8 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
                 if (nv1.empty() && nv2.empty()) {
                     std::set<VertexIds, VertexID_Less> *tempGrp = nullptr;
                     for (auto it = coincVertexGrps.begin(); it < coincVertexGrps.end(); ++it) {
-                        if ( (it->find(v1) != it->end()) || (it->find(v2) != it->end()) ) {
-                            if (!tempGrp) {
-                                tempGrp = &*it;
-                            }
+                        if ((it->find(v1) != it->end()) || (it->find(v2) != it->end())) {
+                            if (!tempGrp) { tempGrp = &*it; }
                             else {
                                 tempGrp->insert(it->begin(), it->end());
                                 coincVertexGrps.erase(it);
@@ -309,8 +292,8 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
                 }
 
                 // Look if one of the constrained vertices is already in a group of coincident vertices
-                for (std::set<VertexIds, VertexID_Less> &grp:coincVertexGrps) {
-                    if ( (grp.find(v1) != grp.end()) || (grp.find(v2) != grp.end()) ) {
+                for (std::set<VertexIds, VertexID_Less> &grp : coincVertexGrps) {
+                    if ((grp.find(v1) != grp.end()) || (grp.find(v2) != grp.end())) {
                         // If yes add them to the existing group
                         if (!nv1.empty()) grp.insert(nv1.value());
                         if (!nv2.empty()) grp.insert(nv2.value());
@@ -329,7 +312,7 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
 
             // If there are remaining vertices in the adjacent group (not in any existing constraint)
             // add them as being each a separate coincident group
-            for (auto &lonept: vertexGrp) {
+            for (auto &lonept : vertexGrp) {
                 std::set<VertexIds, VertexID_Less> newGrp;
                 newGrp.insert(lonept);
                 coincVertexGrps.push_back(newGrp);
@@ -341,12 +324,12 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
                 std::vector<std::set<VertexIds, VertexID_Less>>::iterator vn;
                 // Starting from the 2nd coincident group, generate a constraint between
                 // this group first vertex, and previous group first vertex
-                for (vn = coincVertexGrps.begin()+1; vn < coincVertexGrps.end(); ++vn) {
+                for (vn = coincVertexGrps.begin() + 1; vn < coincVertexGrps.end(); ++vn) {
                     ConstraintIds id;
                     id.Type = Coincident; // default point on point restriction
-                    id.v = (vn-1)->begin()->v;
-                    id.First = (vn-1)->begin()->GeoId;
-                    id.FirstPos = (vn-1)->begin()->PosId;
+                    id.v = (vn - 1)->begin()->v;
+                    id.First = (vn - 1)->begin()->GeoId;
+                    id.FirstPos = (vn - 1)->begin()->PosId;
                     id.Second = vn->begin()->GeoId;
                     id.SecondPos = vn->begin()->PosId;
                     missingCoincidences.push_back(id);
@@ -361,7 +344,7 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
     this->vertexConstraints.clear();
     this->vertexConstraints.reserve(missingCoincidences.size());
 
-    for (auto &coincidence:missingCoincidences) {
+    for (auto &coincidence : missingCoincidences) {
         this->vertexConstraints.push_back(coincidence);
     }
 
@@ -371,28 +354,31 @@ int SketchAnalysis::detectMissingPointOnPointConstraints(double precision, bool 
 
 void SketchAnalysis::analyseMissingPointOnPointCoincident(double angleprecision)
 {
-    for(auto & vc : vertexConstraints) {
+    for (auto &vc : vertexConstraints) {
 
         auto geo1 = sketch->getGeometry(vc.First);
         auto geo2 = sketch->getGeometry(vc.Second);
 
         // tangency point-on-point
-        const Part::GeomCurve * curve1 = dynamic_cast<const Part::GeomCurve *>(geo1);
-        const Part::GeomCurve * curve2 = dynamic_cast<const Part::GeomCurve *>(geo2);
+        const Part::GeomCurve *curve1 = dynamic_cast<const Part::GeomCurve *>(geo1);
+        const Part::GeomCurve *curve2 = dynamic_cast<const Part::GeomCurve *>(geo2);
 
-        if(curve1 && curve2) {
+        if (curve1 && curve2) {
 
-            if( geo1->getTypeId() == Part::GeomLineSegment::getClassTypeId() &&
-                geo2->getTypeId() == Part::GeomLineSegment::getClassTypeId()) {
+            if (geo1->getTypeId() == Part::GeomLineSegment::getClassTypeId()
+                && geo2->getTypeId() == Part::GeomLineSegment::getClassTypeId()) {
 
-                const Part::GeomLineSegment *segm1 = static_cast<const Part::GeomLineSegment*>(geo1);
-                const Part::GeomLineSegment *segm2 = static_cast<const Part::GeomLineSegment*>(geo2);
+                const Part::GeomLineSegment *segm1 =
+                    static_cast<const Part::GeomLineSegment *>(geo1);
+                const Part::GeomLineSegment *segm2 =
+                    static_cast<const Part::GeomLineSegment *>(geo2);
 
                 Base::Vector3d dir1 = segm1->getEndPoint() - segm1->getStartPoint();
                 Base::Vector3d dir2 = segm2->getEndPoint() - segm2->getStartPoint();
 
-                if( (checkVertical(dir1,angleprecision)  || checkHorizontal(dir1,angleprecision)) &&
-                    (checkVertical(dir2,angleprecision)  || checkHorizontal(dir2,angleprecision)) ) {
+                if ((checkVertical(dir1, angleprecision) || checkHorizontal(dir1, angleprecision))
+                    && (checkVertical(dir2, angleprecision)
+                        || checkHorizontal(dir2, angleprecision))) {
                     // this is a job for horizontal/vertical constraints alone
                     continue;
                 }
@@ -401,26 +387,22 @@ void SketchAnalysis::analyseMissingPointOnPointCoincident(double angleprecision)
             try {
                 double u1, u2;
 
-                curve1->closestParameter(vc.v,u1);
-                curve2->closestParameter(vc.v,u2);
+                curve1->closestParameter(vc.v, u1);
+                curve2->closestParameter(vc.v, u2);
 
                 Base::Vector3d tgv1 = curve1->firstDerivativeAtParameter(u1).Normalize();
                 Base::Vector3d tgv2 = curve2->firstDerivativeAtParameter(u2).Normalize();
 
-                if(fabs(tgv1*tgv2)>fabs(cos(angleprecision))) {
-                    vc.Type = Sketcher::Tangent;
-                }
-                else if(fabs(tgv1*tgv2)<fabs(cos(M_PI/2 - angleprecision))) {
+                if (fabs(tgv1 * tgv2) > fabs(cos(angleprecision))) { vc.Type = Sketcher::Tangent; }
+                else if (fabs(tgv1 * tgv2) < fabs(cos(M_PI / 2 - angleprecision))) {
                     vc.Type = Sketcher::Perpendicular;
                 }
-
             }
-            catch(Base::Exception &) {
-                Base::Console().Warning("Point-On-Point Coincidence analysis: unable to obtain derivative. Detection ignored.\n");
+            catch (Base::Exception &) {
+                Base::Console().Warning("Point-On-Point Coincidence analysis: unable to obtain "
+                                        "derivative. Detection ignored.\n");
                 continue;
             }
-
-
         }
     }
 }
@@ -429,31 +411,35 @@ void SketchAnalysis::analyseMissingPointOnPointCoincident(double angleprecision)
 void SketchAnalysis::makeMissingPointOnPointCoincident(bool onebyone)
 {
     int status, dofs;
-    std::vector<Sketcher::Constraint*> constr;
+    std::vector<Sketcher::Constraint *> constr;
 
-    for (std::vector<Sketcher::ConstraintIds>::iterator it = vertexConstraints.begin(); it != vertexConstraints.end(); ++it) {
-        Sketcher::Constraint* c = new Sketcher::Constraint();
+    for (std::vector<Sketcher::ConstraintIds>::iterator it = vertexConstraints.begin();
+         it != vertexConstraints.end(); ++it) {
+        Sketcher::Constraint *c = new Sketcher::Constraint();
         c->Type = it->Type;
         c->First = it->First;
         c->Second = it->Second;
         c->FirstPos = it->FirstPos;
         c->SecondPos = it->SecondPos;
 
-        if(onebyone) {
+        if (onebyone) {
             // addConstraint() creates a clone
             sketch->addConstraint(c);
             delete c;
 
-            solvesketch(status,dofs,true);
+            solvesketch(status, dofs, true);
 
-            if(status == -2) { //redundant constraints
+            if (status == -2) { //redundant constraints
                 sketch->autoRemoveRedundants(false);
 
-                solvesketch(status,dofs,false);
+                solvesketch(status, dofs, false);
             }
 
-            if(status) {
-                THROWMT(Base::RuntimeError, QT_TRANSLATE_NOOP("Exceptions", "Autoconstrain error: Unsolvable sketch while applying coincident constraints."));
+            if (status) {
+                THROWMT(Base::RuntimeError,
+                        QT_TRANSLATE_NOOP("Exceptions",
+                                          "Autoconstrain error: Unsolvable sketch while applying "
+                                          "coincident constraints."));
             }
         }
         else {
@@ -461,27 +447,27 @@ void SketchAnalysis::makeMissingPointOnPointCoincident(bool onebyone)
         }
     }
 
-    if(!onebyone)
-        sketch->addConstraints(constr);
+    if (!onebyone) sketch->addConstraints(constr);
 
     vertexConstraints.clear();
 
-    for (std::vector<Sketcher::Constraint*>::iterator it = constr.begin(); it != constr.end(); ++it) {
+    for (std::vector<Sketcher::Constraint *>::iterator it = constr.begin(); it != constr.end();
+         ++it) {
         delete *it;
     }
 }
 
 int SketchAnalysis::detectMissingVerticalHorizontalConstraints(double angleprecision)
 {
-    const std::vector<Part::Geometry *>& geom = sketch->getInternalGeometry();
+    const std::vector<Part::Geometry *> &geom = sketch->getInternalGeometry();
 
     verthorizConstraints.clear();
 
-    for (std::size_t i=0; i<geom.size(); i++) {
-        Part::Geometry* g = geom[i];
+    for (std::size_t i = 0; i < geom.size(); i++) {
+        Part::Geometry *g = geom[i];
 
         if (g->getTypeId() == Part::GeomLineSegment::getClassTypeId()) {
-            const Part::GeomLineSegment *segm = static_cast<const Part::GeomLineSegment*>(g);
+            const Part::GeomLineSegment *segm = static_cast<const Part::GeomLineSegment *>(g);
 
             Base::Vector3d dir = segm->getEndPoint() - segm->getStartPoint();
 
@@ -493,11 +479,11 @@ int SketchAnalysis::detectMissingVerticalHorizontalConstraints(double anglepreci
             id.Second = GeoEnum::GeoUndef;
             id.SecondPos = Sketcher::PointPos::none;
 
-            if( checkVertical(dir, angleprecision) ) {
+            if (checkVertical(dir, angleprecision)) {
                 id.Type = Sketcher::Vertical;
                 verthorizConstraints.push_back(id);
             }
-            else if (checkHorizontal(dir, angleprecision)  ) {
+            else if (checkHorizontal(dir, angleprecision)) {
                 id.Type = Sketcher::Horizontal;
                 verthorizConstraints.push_back(id);
             }
@@ -510,31 +496,35 @@ int SketchAnalysis::detectMissingVerticalHorizontalConstraints(double anglepreci
 void SketchAnalysis::makeMissingVerticalHorizontal(bool onebyone)
 {
     int status, dofs;
-    std::vector<Sketcher::Constraint*> constr;
+    std::vector<Sketcher::Constraint *> constr;
 
-    for (std::vector<Sketcher::ConstraintIds>::iterator it = verthorizConstraints.begin(); it != verthorizConstraints.end(); ++it) {
-        Sketcher::Constraint* c = new Sketcher::Constraint();
+    for (std::vector<Sketcher::ConstraintIds>::iterator it = verthorizConstraints.begin();
+         it != verthorizConstraints.end(); ++it) {
+        Sketcher::Constraint *c = new Sketcher::Constraint();
         c->Type = it->Type;
         c->First = it->First;
         c->Second = it->Second;
         c->FirstPos = it->FirstPos;
         c->SecondPos = it->SecondPos;
 
-        if(onebyone) {
+        if (onebyone) {
             // addConstraint() creates a clone
             sketch->addConstraint(c);
             delete c;
 
-            solvesketch(status,dofs,true);
+            solvesketch(status, dofs, true);
 
-            if(status == -2) { //redundant constraints
+            if (status == -2) { //redundant constraints
                 sketch->autoRemoveRedundants(false);
 
-                solvesketch(status,dofs,false);
+                solvesketch(status, dofs, false);
             }
 
-            if(status) {
-                THROWMT(Base::RuntimeError, QT_TRANSLATE_NOOP("Exceptions", "Autoconstrain error: Unsolvable sketch while applying vertical/horizontal constraints."));
+            if (status) {
+                THROWMT(Base::RuntimeError,
+                        QT_TRANSLATE_NOOP("Exceptions",
+                                          "Autoconstrain error: Unsolvable sketch while applying "
+                                          "vertical/horizontal constraints."));
             }
         }
         else {
@@ -542,24 +532,24 @@ void SketchAnalysis::makeMissingVerticalHorizontal(bool onebyone)
         }
     }
 
-    if(!onebyone)
-        sketch->addConstraints(constr);
+    if (!onebyone) sketch->addConstraints(constr);
 
     verthorizConstraints.clear();
 
-    for (std::vector<Sketcher::Constraint*>::iterator it = constr.begin(); it != constr.end(); ++it) {
+    for (std::vector<Sketcher::Constraint *>::iterator it = constr.begin(); it != constr.end();
+         ++it) {
         delete *it;
     }
 }
 
 bool SketchAnalysis::checkVertical(Base::Vector3d dir, double angleprecision)
 {
-    return (dir.x == 0. && dir.y != 0.) || ( fabs(dir.y/dir.x) > tan(M_PI/2 - angleprecision));
+    return (dir.x == 0. && dir.y != 0.) || (fabs(dir.y / dir.x) > tan(M_PI / 2 - angleprecision));
 }
 
 bool SketchAnalysis::checkHorizontal(Base::Vector3d dir, double angleprecision)
 {
-    return (dir.y == 0. && dir.x != 0.) || ( fabs(dir.x/dir.y) > (1/tan(angleprecision)));
+    return (dir.y == 0. && dir.x != 0.) || (fabs(dir.x / dir.y) > (1 / tan(angleprecision)));
 }
 
 int SketchAnalysis::detectMissingEqualityConstraints(double precision)
@@ -567,26 +557,26 @@ int SketchAnalysis::detectMissingEqualityConstraints(double precision)
     std::vector<EdgeIds> lineedgeIds;
     std::vector<EdgeIds> radiusedgeIds;
 
-    const std::vector<Part::Geometry *>& geom = sketch->getInternalGeometry();
-    for (std::size_t i=0; i<geom.size(); i++) {
-        Part::Geometry* g = geom[i];
+    const std::vector<Part::Geometry *> &geom = sketch->getInternalGeometry();
+    for (std::size_t i = 0; i < geom.size(); i++) {
+        Part::Geometry *g = geom[i];
 
         if (g->getTypeId() == Part::GeomLineSegment::getClassTypeId()) {
-            const Part::GeomLineSegment *segm = static_cast<const Part::GeomLineSegment*>(g);
+            const Part::GeomLineSegment *segm = static_cast<const Part::GeomLineSegment *>(g);
             EdgeIds id;
             id.GeoId = (int)i;
-            id.l = (segm->getEndPoint()-segm->getStartPoint()).Length();
+            id.l = (segm->getEndPoint() - segm->getStartPoint()).Length();
             lineedgeIds.push_back(id);
         }
         else if (g->getTypeId() == Part::GeomArcOfCircle::getClassTypeId()) {
-            const Part::GeomArcOfCircle *segm = static_cast<const Part::GeomArcOfCircle*>(g);
+            const Part::GeomArcOfCircle *segm = static_cast<const Part::GeomArcOfCircle *>(g);
             EdgeIds id;
             id.GeoId = (int)i;
             id.l = segm->getRadius();
             radiusedgeIds.push_back(id);
         }
         else if (g->getTypeId() == Part::GeomCircle::getClassTypeId()) {
-            const Part::GeomCircle *segm = static_cast<const Part::GeomCircle*>(g);
+            const Part::GeomCircle *segm = static_cast<const Part::GeomCircle *>(g);
             EdgeIds id;
             id.GeoId = (int)i;
             id.l = segm->getRadius();
@@ -605,8 +595,8 @@ int SketchAnalysis::detectMissingEqualityConstraints(double precision)
         vt = std::adjacent_find(vt, lineedgeIds.end(), pred);
         if (vt < lineedgeIds.end()) {
             std::vector<EdgeIds>::iterator vn;
-            for (vn = vt+1; vn != lineedgeIds.end(); ++vn) {
-                if (pred(*vt,*vn)) {
+            for (vn = vt + 1; vn != lineedgeIds.end(); ++vn) {
+                if (pred(*vt, *vn)) {
                     ConstraintIds id;
                     id.Type = Equal;
                     id.v.x = vt->l;
@@ -635,8 +625,8 @@ int SketchAnalysis::detectMissingEqualityConstraints(double precision)
         vt = std::adjacent_find(vt, radiusedgeIds.end(), pred);
         if (vt < radiusedgeIds.end()) {
             std::vector<EdgeIds>::iterator vn;
-            for (vn = vt+1; vn != radiusedgeIds.end(); ++vn) {
-                if (pred(*vt,*vn)) {
+            for (vn = vt + 1; vn != radiusedgeIds.end(); ++vn) {
+                if (pred(*vt, *vn)) {
                     ConstraintIds id;
                     id.Type = Equal;
                     id.v.x = vt->l;
@@ -659,8 +649,9 @@ int SketchAnalysis::detectMissingEqualityConstraints(double precision)
     // Go through the available 'Coincident', 'Tangent' or 'Perpendicular' constraints
     // and check which of them is forcing two vertexes to be coincident.
     // If there is none but two vertexes can be considered equal a coincident constraint is missing.
-    std::vector<Sketcher::Constraint*> constraint = sketch->Constraints.getValues();
-    for (std::vector<Sketcher::Constraint*>::iterator it = constraint.begin(); it != constraint.end(); ++it) {
+    std::vector<Sketcher::Constraint *> constraint = sketch->Constraints.getValues();
+    for (std::vector<Sketcher::Constraint *>::iterator it = constraint.begin();
+         it != constraint.end(); ++it) {
         if ((*it)->Type == Sketcher::Equal) {
             ConstraintIds id;
             id.First = (*it)->First;
@@ -668,19 +659,14 @@ int SketchAnalysis::detectMissingEqualityConstraints(double precision)
             id.Second = (*it)->Second;
             id.SecondPos = (*it)->SecondPos;
 
-            std::list<ConstraintIds>::iterator pos = std::find_if
-                (equallines.begin(), equallines.end(), Constraint_Equal(id));
+            std::list<ConstraintIds>::iterator pos =
+                std::find_if(equallines.begin(), equallines.end(), Constraint_Equal(id));
 
-            if (pos != equallines.end()) {
-                equallines.erase(pos);
-            }
+            if (pos != equallines.end()) { equallines.erase(pos); }
 
-            pos = std::find_if
-                (equalradius.begin(), equalradius.end(), Constraint_Equal(id));
+            pos = std::find_if(equalradius.begin(), equalradius.end(), Constraint_Equal(id));
 
-            if (pos != equalradius.end()) {
-                equalradius.erase(pos);
-            }
+            if (pos != equalradius.end()) { equalradius.erase(pos); }
         }
     }
 
@@ -694,7 +680,8 @@ int SketchAnalysis::detectMissingEqualityConstraints(double precision)
     this->radiusequalityConstraints.clear();
     this->radiusequalityConstraints.reserve(equalradius.size());
 
-    for (std::list<ConstraintIds>::iterator it = equalradius.begin(); it != equalradius.end(); ++it) {
+    for (std::list<ConstraintIds>::iterator it = equalradius.begin(); it != equalradius.end();
+         ++it) {
         this->radiusequalityConstraints.push_back(*it);
     }
 
@@ -704,34 +691,39 @@ int SketchAnalysis::detectMissingEqualityConstraints(double precision)
 void SketchAnalysis::makeMissingEquality(bool onebyone)
 {
     int status, dofs;
-    std::vector<Sketcher::Constraint*> constr;
+    std::vector<Sketcher::Constraint *> constr;
 
     std::vector<Sketcher::ConstraintIds> equalities(lineequalityConstraints);
-    equalities.insert(equalities.end(),radiusequalityConstraints.begin(), radiusequalityConstraints.end());
+    equalities.insert(equalities.end(), radiusequalityConstraints.begin(),
+                      radiusequalityConstraints.end());
 
-    for (std::vector<Sketcher::ConstraintIds>::iterator it = equalities.begin(); it != equalities.end(); ++it) {
-        Sketcher::Constraint* c = new Sketcher::Constraint();
+    for (std::vector<Sketcher::ConstraintIds>::iterator it = equalities.begin();
+         it != equalities.end(); ++it) {
+        Sketcher::Constraint *c = new Sketcher::Constraint();
         c->Type = it->Type;
         c->First = it->First;
         c->Second = it->Second;
         c->FirstPos = it->FirstPos;
         c->SecondPos = it->SecondPos;
 
-        if(onebyone) {
+        if (onebyone) {
             // addConstraint() creates a clone
             sketch->addConstraint(c);
             delete c;
 
-            solvesketch(status,dofs,true);
+            solvesketch(status, dofs, true);
 
-            if(status == -2) { //redundant constraints
+            if (status == -2) { //redundant constraints
                 sketch->autoRemoveRedundants(false);
 
-                solvesketch(status,dofs,false);
+                solvesketch(status, dofs, false);
             }
 
-            if(status) {
-                THROWMT(Base::RuntimeError, QT_TRANSLATE_NOOP("Exceptions", "Autoconstrain error: Unsolvable sketch while applying equality constraints."));
+            if (status) {
+                THROWMT(Base::RuntimeError,
+                        QT_TRANSLATE_NOOP("Exceptions",
+                                          "Autoconstrain error: Unsolvable sketch while applying "
+                                          "equality constraints."));
             }
         }
         else {
@@ -739,13 +731,13 @@ void SketchAnalysis::makeMissingEquality(bool onebyone)
         }
     }
 
-    if(!onebyone)
-        sketch->addConstraints(constr);
+    if (!onebyone) sketch->addConstraints(constr);
 
     lineequalityConstraints.clear();
     radiusequalityConstraints.clear();
 
-    for (std::vector<Sketcher::Constraint*>::iterator it = constr.begin(); it != constr.end(); ++it) {
+    for (std::vector<Sketcher::Constraint *>::iterator it = constr.begin(); it != constr.end();
+         ++it) {
         delete *it;
     }
 }
@@ -754,8 +746,7 @@ void SketchAnalysis::solvesketch(int &status, int &dofs, bool updategeo)
 {
     status = sketch->solve(updategeo);
 
-    if(updategeo)
-        dofs = sketch->setUpSketch();
+    if (updategeo) dofs = sketch->setUpSketch();
     else
         dofs = sketch->getLastDoF();
 
@@ -771,9 +762,10 @@ void SketchAnalysis::solvesketch(int &status, int &dofs, bool updategeo)
     }
 }
 
-int SketchAnalysis::autoconstraint(double precision, double angleprecision, bool includeconstruction)
+int SketchAnalysis::autoconstraint(double precision, double angleprecision,
+                                   bool includeconstruction)
 {
-    App::Document* doc = sketch->getDocument();
+    App::Document *doc = sketch->getDocument();
     doc->openTransaction("delete all constraints");
     // We start from zero
     sketch->deleteAllConstraints();
@@ -782,10 +774,12 @@ int SketchAnalysis::autoconstraint(double precision, double angleprecision, bool
 
     int status, dofs;
 
-    solvesketch(status,dofs,true);
+    solvesketch(status, dofs, true);
 
-    if(status) {// it should not be possible at this moment as we start from a clean situation
-        THROWMT(Base::RuntimeError, QT_TRANSLATE_NOOP("Exceptions", "Autoconstrain error: Unsolvable sketch without constraints."));
+    if (status) { // it should not be possible at this moment as we start from a clean situation
+        THROWMT(Base::RuntimeError,
+                QT_TRANSLATE_NOOP("Exceptions",
+                                  "Autoconstrain error: Unsolvable sketch without constraints."));
     }
 
     // STAGE 1: Vertical/Horizontal Line Segments
@@ -796,17 +790,20 @@ int SketchAnalysis::autoconstraint(double precision, double angleprecision, bool
     //       as the solver may move the geometry in the meantime and prevent correct detection
     int nc = detectMissingPointOnPointConstraints(precision, includeconstruction);
 
-    if (nc > 0) // STAGE 2a: Classify point-on-point into coincidents, endpoint perp, endpoint tangency
+    if (nc
+        > 0) // STAGE 2a: Classify point-on-point into coincidents, endpoint perp, endpoint tangency
         analyseMissingPointOnPointCoincident(angleprecision);
 
     // STAGE 3: Equality constraint detection
     int ne = detectMissingEqualityConstraints(precision);
 
-    Base::Console().Log("Constraints: Vertical/Horizontal: %d found. Point-on-point: %d. Equality: %d\n", nhv, nc, ne);
+    Base::Console().Log(
+        "Constraints: Vertical/Horizontal: %d found. Point-on-point: %d. Equality: %d\n", nhv, nc,
+        ne);
 
     // Applying STAGE 1, if any
-    if (nhv >0 ) {
-        App::Document* doc = sketch->getDocument();
+    if (nhv > 0) {
+        App::Document *doc = sketch->getDocument();
         doc->openTransaction("add vertical/horizontal constraints");
 
         makeMissingVerticalHorizontal();
@@ -814,21 +811,24 @@ int SketchAnalysis::autoconstraint(double precision, double angleprecision, bool
         // finish the transaction and update
         doc->commitTransaction();
 
-        solvesketch(status,dofs,true);
+        solvesketch(status, dofs, true);
 
-        if(status == -2) { // redundants
+        if (status == -2) { // redundants
             sketch->autoRemoveRedundants(false);
-            solvesketch(status,dofs,false);
+            solvesketch(status, dofs, false);
         }
 
-        if(status) {
-            THROWMT(Base::RuntimeError, QT_TRANSLATE_NOOP("Exceptions", "Autoconstrain error: Unsolvable sketch after applying horizontal and vertical constraints."));
+        if (status) {
+            THROWMT(Base::RuntimeError,
+                    QT_TRANSLATE_NOOP("Exceptions",
+                                      "Autoconstrain error: Unsolvable sketch after applying "
+                                      "horizontal and vertical constraints."));
         }
     }
 
     // Applying STAGE 2
-    if(nc > 0) {
-        App::Document* doc = sketch->getDocument();
+    if (nc > 0) {
+        App::Document *doc = sketch->getDocument();
         doc->openTransaction("add coincident constraint");
 
         makeMissingPointOnPointCoincident();
@@ -836,27 +836,30 @@ int SketchAnalysis::autoconstraint(double precision, double angleprecision, bool
         // finish the transaction and update
         doc->commitTransaction();
 
-        solvesketch(status,dofs,true);
+        solvesketch(status, dofs, true);
 
-        if(status == -2) { // redundants
+        if (status == -2) { // redundants
             sketch->autoRemoveRedundants(false);
-            solvesketch(status,dofs,false);
+            solvesketch(status, dofs, false);
         }
 
-        if(status) {
-            THROWMT(Base::RuntimeError, QT_TRANSLATE_NOOP("Exceptions", "Autoconstrain error: Unsolvable sketch after applying point-on-point constraints."));
+        if (status) {
+            THROWMT(Base::RuntimeError,
+                    QT_TRANSLATE_NOOP("Exceptions",
+                                      "Autoconstrain error: Unsolvable sketch after applying "
+                                      "point-on-point constraints."));
         }
     }
 
     // Applying STAGE 3
-    if(ne > 0) {
-        App::Document* doc = sketch->getDocument();
+    if (ne > 0) {
+        App::Document *doc = sketch->getDocument();
         doc->openTransaction("add equality constraints");
 
         try {
             makeMissingEquality();
         }
-        catch(Base::RuntimeError &) {
+        catch (Base::RuntimeError &) {
             doc->abortTransaction();
             throw;
         }
@@ -864,15 +867,19 @@ int SketchAnalysis::autoconstraint(double precision, double angleprecision, bool
         // finish the transaction and update
         doc->commitTransaction();
 
-        solvesketch(status,dofs,true);
+        solvesketch(status, dofs, true);
 
-        if(status == -2) { // redundants
+        if (status == -2) { // redundants
             sketch->autoRemoveRedundants(false);
-            solvesketch(status,dofs,false);
+            solvesketch(status, dofs, false);
         }
 
-        if(status) {
-            THROWMT(Base::RuntimeError, QT_TRANSLATE_NOOP("Exceptions", "Autoconstrain error: Unsolvable sketch after applying equality constraints."));
+        if (status) {
+            THROWMT(
+                Base::RuntimeError,
+                QT_TRANSLATE_NOOP(
+                    "Exceptions",
+                    "Autoconstrain error: Unsolvable sketch after applying equality constraints."));
         }
     }
 
@@ -893,13 +900,13 @@ std::vector<Base::Vector3d> SketchAnalysis::getOpenVertices() const
     // build up map vertex->edge
     TopTools_IndexedDataMapOfShapeListOfShape vertex2Edge;
     TopExp::MapShapesAndAncestors(shape, TopAbs_VERTEX, TopAbs_EDGE, vertex2Edge);
-    for (int i=1; i<= vertex2Edge.Extent(); ++i) {
-        const TopTools_ListOfShape& los = vertex2Edge.FindFromIndex(i);
+    for (int i = 1; i <= vertex2Edge.Extent(); ++i) {
+        const TopTools_ListOfShape &los = vertex2Edge.FindFromIndex(i);
         if (los.Extent() != 2) {
-            const TopoDS_Vertex& vertex = TopoDS::Vertex(vertex2Edge.FindKey(i));
+            const TopoDS_Vertex &vertex = TopoDS::Vertex(vertex2Edge.FindKey(i));
             gp_Pnt pnt = BRep_Tool::Pnt(vertex);
             Base::Vector3d pos;
-            invPlm.multVec(Base::Vector3d(pnt.X(), pnt.Y(), pnt.Z()),pos);
+            invPlm.multVec(Base::Vector3d(pnt.X(), pnt.Y(), pnt.Z()), pos);
             points.push_back(pos);
         }
     }
@@ -910,18 +917,16 @@ std::vector<Base::Vector3d> SketchAnalysis::getOpenVertices() const
 int SketchAnalysis::detectDegeneratedGeometries(double tolerance)
 {
     int countDegenerated = 0;
-    const std::vector<Part::Geometry *>& geom = sketch->getInternalGeometry();
-    for (std::size_t i=0; i<geom.size(); i++) {
+    const std::vector<Part::Geometry *> &geom = sketch->getInternalGeometry();
+    for (std::size_t i = 0; i < geom.size(); i++) {
         auto gf = GeometryFacade::getFacade(geom[i]);
 
-        if (gf->getConstruction())
-            continue;
+        if (gf->getConstruction()) continue;
 
         if (gf->getGeometry()->getTypeId().isDerivedFrom(Part::GeomCurve::getClassTypeId())) {
-            Part::GeomCurve* curve = static_cast<Part::GeomCurve*>(gf->getGeometry());
+            Part::GeomCurve *curve = static_cast<Part::GeomCurve *>(gf->getGeometry());
             double len = curve->length(curve->getFirstParameter(), curve->getLastParameter());
-            if (len < tolerance)
-                countDegenerated++;
+            if (len < tolerance) countDegenerated++;
         }
     }
 
@@ -931,18 +936,16 @@ int SketchAnalysis::detectDegeneratedGeometries(double tolerance)
 int SketchAnalysis::removeDegeneratedGeometries(double tolerance)
 {
     std::set<int> delInternalGeometries;
-    const std::vector<Part::Geometry *>& geom = sketch->getInternalGeometry();
-    for (std::size_t i=0; i<geom.size(); i++) {
-         auto gf = GeometryFacade::getFacade(geom[i]);
+    const std::vector<Part::Geometry *> &geom = sketch->getInternalGeometry();
+    for (std::size_t i = 0; i < geom.size(); i++) {
+        auto gf = GeometryFacade::getFacade(geom[i]);
 
-        if (gf->getConstruction())
-            continue;
+        if (gf->getConstruction()) continue;
 
         if (gf->getGeometry()->getTypeId().isDerivedFrom(Part::GeomCurve::getClassTypeId())) {
-            Part::GeomCurve* curve = static_cast<Part::GeomCurve*>(gf->getGeometry());
+            Part::GeomCurve *curve = static_cast<Part::GeomCurve *>(gf->getGeometry());
             double len = curve->length(curve->getFirstParameter(), curve->getLastParameter());
-            if (len < tolerance)
-                delInternalGeometries.insert(static_cast<int>(i));
+            if (len < tolerance) delInternalGeometries.insert(static_cast<int>(i));
         }
     }
 

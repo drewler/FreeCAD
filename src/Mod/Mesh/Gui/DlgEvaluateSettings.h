@@ -26,19 +26,20 @@
 
 #include <QDialog>
 
-namespace MeshGui {
+namespace MeshGui
+{
 
 class Ui_DlgEvaluateSettings;
 
 /**
  * \author Werner Mayer
  */
-class DlgEvaluateSettings : public QDialog
+class DlgEvaluateSettings: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DlgEvaluateSettings(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgEvaluateSettings(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgEvaluateSettings() override;
 
     void setNonmanifoldPointsChecked(bool);
@@ -51,7 +52,7 @@ public:
     bool isDegeneratedFacetsChecked() const;
 
 private:
-    Ui_DlgEvaluateSettings* ui;
+    Ui_DlgEvaluateSettings *ui;
 };
 
 } // namespace MeshGui

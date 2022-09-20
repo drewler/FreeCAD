@@ -38,22 +38,22 @@ class MeshObject;
 class MeshExport Segment
 {
 public:
-    Segment(const MeshObject*, bool mod);
-    Segment(const MeshObject*, const std::vector<FacetIndex>& inds, bool mod);
-    void addIndices(const std::vector<FacetIndex>& inds);
-    void removeIndices(const std::vector<FacetIndex>& inds);
-    const std::vector<FacetIndex>& getIndices() const;
+    Segment(const MeshObject *, bool mod);
+    Segment(const MeshObject *, const std::vector<FacetIndex> &inds, bool mod);
+    void addIndices(const std::vector<FacetIndex> &inds);
+    void removeIndices(const std::vector<FacetIndex> &inds);
+    const std::vector<FacetIndex> &getIndices() const;
     bool isEmpty() const { return _indices.empty(); }
 
-    Segment(const Segment&);
-    const Segment& operator = (const Segment&);
-    bool operator == (const Segment&) const;
+    Segment(const Segment &);
+    const Segment &operator=(const Segment &);
+    bool operator==(const Segment &) const;
 
-    void setName(const std::string& n) { _name = n; }
-    const std::string& getName() const { return _name; }
+    void setName(const std::string &n) { _name = n; }
+    const std::string &getName() const { return _name; }
 
-    void setColor(const std::string& c) { _color = c; }
-    const std::string& getColor() const { return _color; }
+    void setColor(const std::string &c) { _color = c; }
+    const std::string &getColor() const { return _color; }
 
     void save(bool on) { _save = on; }
     bool isSaved() const { return _save; }
@@ -62,7 +62,7 @@ public:
     friend class MeshObject;
 
 private:
-    const MeshObject* _mesh;
+    const MeshObject *_mesh;
     std::vector<FacetIndex> _indices;
     std::string _name;
     std::string _color;
@@ -73,29 +73,31 @@ public:
     class MeshExport const_facet_iterator
     {
     public:
-        const_facet_iterator(const Segment*, std::vector<FacetIndex>::const_iterator);
-        const_facet_iterator(const const_facet_iterator& fi);
+        const_facet_iterator(const Segment *, std::vector<FacetIndex>::const_iterator);
+        const_facet_iterator(const const_facet_iterator &fi);
         ~const_facet_iterator();
 
-        const_facet_iterator& operator=(const const_facet_iterator& fi);
-        const Facet& operator*() const;
-        const Facet* operator->() const;
-        bool operator==(const const_facet_iterator& fi) const;
-        bool operator!=(const const_facet_iterator& fi) const;
-        const_facet_iterator& operator++();
-        const_facet_iterator& operator--();
+        const_facet_iterator &operator=(const const_facet_iterator &fi);
+        const Facet &operator*() const;
+        const Facet *operator->() const;
+        bool operator==(const const_facet_iterator &fi) const;
+        bool operator!=(const const_facet_iterator &fi) const;
+        const_facet_iterator &operator++();
+        const_facet_iterator &operator--();
+
     private:
         void dereference() const;
-        const Segment* _segment;
+        const Segment *_segment;
         mutable Facet _facet;
         mutable MeshCore::MeshFacetIterator _f_it;
         std::vector<FacetIndex>::const_iterator _it;
     };
 
     const_facet_iterator facets_begin() const
-    { return const_facet_iterator(this, _indices.begin()); }
-    const_facet_iterator facets_end() const
-    { return const_facet_iterator(this, _indices.end()); }
+    {
+        return const_facet_iterator(this, _indices.begin());
+    }
+    const_facet_iterator facets_end() const { return const_facet_iterator(this, _indices.end()); }
 };
 
 } // namespace Mesh

@@ -30,18 +30,18 @@
 #include <QTextEdit>
 
 
-class MTextEdit : public QTextEdit {
+class MTextEdit: public QTextEdit
+{
     Q_OBJECT
-  public:
+public:
     MTextEdit(QWidget *parent);
 
-    void        dropImage(const QImage& image, const QString& format);
+    void dropImage(const QImage &image, const QString &format);
 
-  protected:
-    bool        canInsertFromMimeData(const QMimeData *source) const;
-    void        insertFromMimeData(const QMimeData *source);
-    QMimeData  *createMimeDataFromSelection() const;
-
+protected:
+    bool canInsertFromMimeData(const QMimeData *source) const;
+    void insertFromMimeData(const QMimeData *source);
+    QMimeData *createMimeDataFromSelection() const;
 };
 
 #endif

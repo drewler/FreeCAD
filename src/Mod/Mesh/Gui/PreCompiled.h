@@ -28,19 +28,19 @@
 
 // here get the warnings of too long specifiers disabled (needed for VC6)
 #ifdef _MSC_VER
-#   pragma warning( disable : 4005 )
-#   pragma warning( disable : 4251 )
-#   pragma warning( disable : 4503 )
-#   pragma warning( disable : 4275 )
-#   pragma warning( disable : 4273 )
-#   pragma warning( disable : 4786 )  // specifier longer then 255 chars
+#pragma warning(disable : 4005)
+#pragma warning(disable : 4251)
+#pragma warning(disable : 4503)
+#pragma warning(disable : 4275)
+#pragma warning(disable : 4273)
+#pragma warning(disable : 4786) // specifier longer then 255 chars
 #endif
 
 #ifdef _PreComp_
 
 // Gts
 #ifdef FC_USE_GTS
-#  include <gts.h>
+#include <gts.h>
 #endif
 // standard
 #include <cstdio>
@@ -61,18 +61,18 @@
 #include <vector>
 
 #ifdef FC_OS_WIN32
-# include <windows.h>
+#include <windows.h>
 #endif
 
 // Qt Toolkit
 #ifndef __QtAll__
-# include <Gui/QtAll.h>
+#include <Gui/QtAll.h>
 #endif
 
 // Inventor
 #ifndef __InventorAll__
-# include <Gui/InventorAll.h>
-# include <Inventor/annex/ForeignFiles/SoSTLFileKit.h>
+#include <Gui/InventorAll.h>
+#include <Inventor/annex/ForeignFiles/SoSTLFileKit.h>
 #endif
 
 #elif defined(FC_OS_WIN32)
@@ -80,6 +80,6 @@
 #define NOMINMAX
 #endif
 #include <Windows.h>
-#endif  //_PreComp_
+#endif //_PreComp_
 
-#endif // MESHGUI_PRECOMPILED_H 
+#endif // MESHGUI_PRECOMPILED_H

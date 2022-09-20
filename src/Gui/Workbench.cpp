@@ -23,8 +23,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QDockWidget>
-# include <QStatusBar>
+#include <QDockWidget>
+#include <QStatusBar>
 #endif
 
 #include "Workbench.h"
@@ -204,29 +204,19 @@ using namespace Gui;
 /// @namespace Gui @class Workbench
 TYPESYSTEM_SOURCE_ABSTRACT(Gui::Workbench, Base::BaseClass)
 
-Workbench::Workbench()
-{
-}
+Workbench::Workbench() {}
 
-Workbench::~Workbench()
-{
-}
+Workbench::~Workbench() {}
 
-std::string Workbench::name() const
-{
-    return _name;
-}
+std::string Workbench::name() const { return _name; }
 
-void Workbench::setName(const std::string& name)
-{
-    _name = name;
-}
+void Workbench::setName(const std::string &name) { _name = name; }
 
-void Workbench::setupCustomToolbars(ToolBarItem* root, const char* toolbar) const
+void Workbench::setupCustomToolbars(ToolBarItem *root, const char *toolbar) const
 {
     std::string name = this->name();
-    ParameterGrp::handle hGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
-        ->GetGroup("Workbench");
+    ParameterGrp::handle hGrp =
+        App::GetApplication().GetUserParameter().GetGroup("BaseApp")->GetGroup("Workbench");
     // workbench specific custom toolbars
     if (hGrp->HasGroup(name.c_str())) {
         hGrp = hGrp->GetGroup(name.c_str());
@@ -237,12 +227,10 @@ void Workbench::setupCustomToolbars(ToolBarItem* root, const char* toolbar) cons
     }
 
     // for this workbench global toolbars are not allowed
-    if (getTypeId() == NoneWorkbench::getClassTypeId())
-        return;
+    if (getTypeId() == NoneWorkbench::getClassTypeId()) return;
 
     // application-wide custom toolbars
-    hGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
-        ->GetGroup("Workbench");
+    hGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp")->GetGroup("Workbench");
     if (hGrp->HasGroup("Global")) {
         hGrp = hGrp->GetGroup("Global");
         if (hGrp->HasGroup(toolbar)) {
@@ -252,12 +240,13 @@ void Workbench::setupCustomToolbars(ToolBarItem* root, const char* toolbar) cons
     }
 }
 
-void Workbench::setupCustomToolbars(ToolBarItem* root, const Base::Reference<ParameterGrp>& hGrp) const
+void Workbench::setupCustomToolbars(ToolBarItem *root,
+                                    const Base::Reference<ParameterGrp> &hGrp) const
 {
-    std::vector<Base::Reference<ParameterGrp> > hGrps = hGrp->GetGroups();
-    CommandManager& rMgr = Application::Instance->commandManager();
+    std::vector<Base::Reference<ParameterGrp>> hGrps = hGrp->GetGroups();
+    CommandManager &rMgr = Application::Instance->commandManager();
     std::string separator = "Separator";
-    for (const auto & it : hGrps) {
+    for (const auto &it : hGrps) {
         bool active = it->GetBool("Active", true);
         if (!active) // ignore this toolbar
             continue;
@@ -265,16 +254,15 @@ void Workbench::setupCustomToolbars(ToolBarItem* root, const Base::Reference<Par
         bar->setCommand("Custom");
 
         // get the elements of the subgroups
-        std::vector<std::pair<std::string,std::string> > items = hGrp->GetGroup(it->GetGroupName())->GetASCIIMap();
-        for (const auto & item : items) {
-            if (item.first.substr(0, separator.size()) == separator) {
-                *bar << "Separator";
-            }
+        std::vector<std::pair<std::string, std::string>> items =
+            hGrp->GetGroup(it->GetGroupName())->GetASCIIMap();
+        for (const auto &item : items) {
+            if (item.first.substr(0, separator.size()) == separator) { *bar << "Separator"; }
             else if (item.first == "Name") {
                 bar->setCommand(item.second);
             }
             else {
-                Command* pCmd = rMgr.getCommandByName(item.first.c_str());
+                Command *pCmd = rMgr.getCommandByName(item.first.c_str());
                 if (!pCmd) { // unknown command
                     // first try the module name as is
                     std::string pyMod = item.second;
@@ -283,7 +271,7 @@ void Workbench::setupCustomToolbars(ToolBarItem* root, const Base::Reference<Par
                         // Try again
                         pCmd = rMgr.getCommandByName(item.first.c_str());
                     }
-                    catch(const Base::Exception&) {
+                    catch (const Base::Exception &) {
                     }
                 }
 
@@ -296,7 +284,7 @@ void Workbench::setupCustomToolbars(ToolBarItem* root, const Base::Reference<Par
                         // Try again
                         pCmd = rMgr.getCommandByName(item.first.c_str());
                     }
-                    catch(const Base::Exception&) {
+                    catch (const Base::Exception &) {
                     }
                 }
 
@@ -315,53 +303,60 @@ void Workbench::setupCustomShortcuts() const
     if (hGrp->HasGroup("Shortcut")) {
         hGrp = hGrp->GetGroup("Shortcut");
         // Get all user defined shortcuts
-        const CommandManager& cCmdMgr = Application::Instance->commandManager();
-        std::vector<std::pair<std::string,std::string> > items = hGrp->GetASCIIMap();
-        for (const auto & item : items) {
-            Command* cmd = cCmdMgr.getCommandByName(item.first.c_str());
+        const CommandManager &cCmdMgr = Application::Instance->commandManager();
+        std::vector<std::pair<std::string, std::string>> items = hGrp->GetASCIIMap();
+        for (const auto &item : items) {
+            Command *cmd = cCmdMgr.getCommandByName(item.first.c_str());
             if (cmd && cmd->getAction()) {
                 // may be UTF-8 encoded
                 QString str = QString::fromUtf8(item.second.c_str());
                 QKeySequence shortcut = str;
                 cmd->getAction()->setShortcut(shortcut.toString(QKeySequence::NativeText));
-                cmd->recreateTooltip(item.first.c_str(), cmd->getAction()); // The tooltip has the shortcut in it...
+                cmd->recreateTooltip(item.first.c_str(),
+                                     cmd->getAction()); // The tooltip has the shortcut in it...
             }
         }
     }
 }
 
-void Workbench::setupContextMenu(const char* recipient,MenuItem* item) const
+void Workbench::setupContextMenu(const char *recipient, MenuItem *item) const
 {
     Q_UNUSED(recipient);
     Q_UNUSED(item);
 }
 
-void Workbench::createMainWindowPopupMenu(MenuItem*) const
-{
-}
+void Workbench::createMainWindowPopupMenu(MenuItem *) const {}
 
-void Workbench::createLinkMenu(MenuItem *item) {
-    if(!item || !App::GetApplication().getActiveDocument())
-        return;
+void Workbench::createLinkMenu(MenuItem *item)
+{
+    if (!item || !App::GetApplication().getActiveDocument()) return;
     auto linkMenu = new MenuItem;
     linkMenu->setCommand("Link actions");
-    *linkMenu << "Std_LinkMakeGroup" << "Std_LinkMake";
+    *linkMenu << "Std_LinkMakeGroup"
+              << "Std_LinkMake";
 
     auto &rMgr = Application::Instance->commandManager();
-    const char *cmds[] = {"Std_LinkMakeRelative",nullptr,"Std_LinkUnlink","Std_LinkReplace",
-        "Std_LinkImport","Std_LinkImportAll",nullptr,"Std_LinkSelectLinked",
-        "Std_LinkSelectLinkedFinal","Std_LinkSelectAllLinks"};
+    const char *cmds[] = {"Std_LinkMakeRelative",
+                          nullptr,
+                          "Std_LinkUnlink",
+                          "Std_LinkReplace",
+                          "Std_LinkImport",
+                          "Std_LinkImportAll",
+                          nullptr,
+                          "Std_LinkSelectLinked",
+                          "Std_LinkSelectLinkedFinal",
+                          "Std_LinkSelectAllLinks"};
     bool separator = true;
-    for(const auto & i : cmds) {
-        if(!i) {
-            if(separator) {
+    for (const auto &i : cmds) {
+        if (!i) {
+            if (separator) {
                 separator = false;
                 *linkMenu << "Separator";
             }
             continue;
         }
         auto cmd = rMgr.getCommandByName(i);
-        if(cmd->isActive()) {
+        if (cmd->isActive()) {
             separator = true;
             *linkMenu << i;
         }
@@ -371,27 +366,26 @@ void Workbench::createLinkMenu(MenuItem *item) {
 
 std::vector<std::pair<std::string, std::string>> Workbench::staticMenuItems;
 
-void Workbench::addPermanentMenuItem(const std::string& cmd, const std::string& after)
+void Workbench::addPermanentMenuItem(const std::string &cmd, const std::string &after)
 {
     staticMenuItems.emplace_back(cmd, after);
 }
 
-void Workbench::removePermanentMenuItem(const std::string& cmd)
+void Workbench::removePermanentMenuItem(const std::string &cmd)
 {
-    auto it = std::find_if(staticMenuItems.begin(), staticMenuItems.end(), [cmd](const std::pair<std::string, std::string>& p) {
-        return (p.first == cmd);
-    });
+    auto it = std::find_if(
+        staticMenuItems.begin(), staticMenuItems.end(),
+        [cmd](const std::pair<std::string, std::string> &p) { return (p.first == cmd); });
 
-    if (it != staticMenuItems.end())
-        staticMenuItems.erase(it);
+    if (it != staticMenuItems.end()) staticMenuItems.erase(it);
 }
 
-void  Workbench::addPermanentMenuItems(MenuItem* mb) const
+void Workbench::addPermanentMenuItems(MenuItem *mb) const
 {
-    for (const auto& it : staticMenuItems) {
-        MenuItem* par = mb->findParentOf(it.second);
+    for (const auto &it : staticMenuItems) {
+        MenuItem *par = mb->findParentOf(it.second);
         if (par) {
-            Gui::MenuItem* item = par->findItem(it.second);
+            Gui::MenuItem *item = par->findItem(it.second);
             item = par->afterItem(item);
 
             auto add = new Gui::MenuItem();
@@ -401,19 +395,15 @@ void  Workbench::addPermanentMenuItems(MenuItem* mb) const
     }
 }
 
-void Workbench::activated()
-{
-}
+void Workbench::activated() {}
 
-void Workbench::deactivated()
-{
-}
+void Workbench::deactivated() {}
 
 bool Workbench::activate()
 {
-    ToolBarItem* tb = setupToolBars();
+    ToolBarItem *tb = setupToolBars();
     setupCustomToolbars(tb, "Toolbar");
-    ToolBarManager::getInstance()->setup( tb );
+    ToolBarManager::getInstance()->setup(tb);
     delete tb;
 
     //ToolBarItem* cb = setupCommandBars();
@@ -421,13 +411,13 @@ bool Workbench::activate()
     //ToolBoxManager::getInstance()->setup( cb );
     //delete cb;
 
-    DockWindowItems* dw = setupDockWindows();
-    DockWindowManager::instance()->setup( dw );
+    DockWindowItems *dw = setupDockWindows();
+    DockWindowManager::instance()->setup(dw);
     delete dw;
 
-    MenuItem* mb = setupMenuBar();
+    MenuItem *mb = setupMenuBar();
     addPermanentMenuItems(mb);
-    MenuManager::getInstance()->setup( mb );
+    MenuManager::getInstance()->setup(mb);
     delete mb;
 
     setupCustomShortcuts();
@@ -443,32 +433,26 @@ void Workbench::retranslate() const
     MenuManager::getInstance()->retranslate();
 }
 
-PyObject* Workbench::getPyObject()
-{
-    return new WorkbenchPy(this);
-}
+PyObject *Workbench::getPyObject() { return new WorkbenchPy(this); }
 
-void Workbench::addTaskWatcher(const std::vector<Gui::TaskView::TaskWatcher*> &Watcher)
+void Workbench::addTaskWatcher(const std::vector<Gui::TaskView::TaskWatcher *> &Watcher)
 {
-    Gui::TaskView::TaskView* taskView = Control().taskPanel();
-    if (taskView)
-        taskView->addTaskWatcher(Watcher);
+    Gui::TaskView::TaskView *taskView = Control().taskPanel();
+    if (taskView) taskView->addTaskWatcher(Watcher);
 }
 
 void Workbench::removeTaskWatcher()
 {
-    Gui::TaskView::TaskView* taskView = Control().taskPanel();
-    if (taskView)
-        taskView->clearTaskWatcher();
+    Gui::TaskView::TaskView *taskView = Control().taskPanel();
+    if (taskView) taskView->clearTaskWatcher();
 }
 
 std::list<std::string> Workbench::listToolbars() const
 {
     std::unique_ptr<ToolBarItem> tb(setupToolBars());
     std::list<std::string> bars;
-    QList<ToolBarItem*> items = tb->getItems();
-    for (const auto & item : items)
-        bars.push_back(item->command());
+    QList<ToolBarItem *> items = tb->getItems();
+    for (const auto &item : items) bars.push_back(item->command());
     return bars;
 }
 
@@ -477,13 +461,11 @@ std::list<std::pair<std::string, std::list<std::string>>> Workbench::getToolbarI
     std::unique_ptr<ToolBarItem> tb(setupToolBars());
 
     std::list<std::pair<std::string, std::list<std::string>>> itemsList;
-    QList<ToolBarItem*> items = tb->getItems();
-    for (const auto & item : items) {
-        QList<ToolBarItem*> sub = item->getItems();
+    QList<ToolBarItem *> items = tb->getItems();
+    for (const auto &item : items) {
+        QList<ToolBarItem *> sub = item->getItems();
         std::list<std::string> cmds;
-        for (const auto & jt : sub) {
-            cmds.push_back(jt->command());
-        }
+        for (const auto &jt : sub) { cmds.push_back(jt->command()); }
 
         itemsList.emplace_back(item->command(), cmds);
     }
@@ -494,9 +476,8 @@ std::list<std::string> Workbench::listMenus() const
 {
     std::unique_ptr<MenuItem> mb(setupMenuBar());
     std::list<std::string> menus;
-    QList<MenuItem*> items = mb->getItems();
-    for (const auto & item : items)
-        menus.push_back(item->command());
+    QList<MenuItem *> items = mb->getItems();
+    for (const auto &item : items) menus.push_back(item->command());
     return menus;
 }
 
@@ -504,9 +485,8 @@ std::list<std::string> Workbench::listCommandbars() const
 {
     std::unique_ptr<ToolBarItem> cb(setupCommandBars());
     std::list<std::string> bars;
-    QList<ToolBarItem*> items = cb->getItems();
-    for (const auto & item : items)
-        bars.push_back(item->command());
+    QList<ToolBarItem *> items = cb->getItems();
+    for (const auto &item : items) bars.push_back(item->command());
     return bars;
 }
 
@@ -562,84 +542,137 @@ std::list<std::string> Workbench::listCommandbars() const
 
 TYPESYSTEM_SOURCE(Gui::StdWorkbench, Gui::Workbench)
 
-StdWorkbench::StdWorkbench()
-  : Workbench()
-{
-}
+StdWorkbench::StdWorkbench() : Workbench() {}
 
-StdWorkbench::~StdWorkbench()
-{
-}
+StdWorkbench::~StdWorkbench() {}
 
-void StdWorkbench::setupContextMenu(const char* recipient, MenuItem* item) const
+void StdWorkbench::setupContextMenu(const char *recipient, MenuItem *item) const
 {
-    if (strcmp(recipient,"View") == 0)
-    {
+    if (strcmp(recipient, "View") == 0) {
         createLinkMenu(item);
         *item << "Separator";
 
         auto StdViews = new MenuItem;
-        StdViews->setCommand( "Standard views" );
+        StdViews->setCommand("Standard views");
 
-        *StdViews << "Std_ViewIsometric" << "Separator" << "Std_ViewHome" << "Std_ViewFront" << "Std_ViewTop" << "Std_ViewRight"
-                  << "Std_ViewRear" << "Std_ViewBottom" << "Std_ViewLeft"
-                  << "Separator" << "Std_ViewRotateLeft" << "Std_ViewRotateRight";
+        *StdViews << "Std_ViewIsometric"
+                  << "Separator"
+                  << "Std_ViewHome"
+                  << "Std_ViewFront"
+                  << "Std_ViewTop"
+                  << "Std_ViewRight"
+                  << "Std_ViewRear"
+                  << "Std_ViewBottom"
+                  << "Std_ViewLeft"
+                  << "Separator"
+                  << "Std_ViewRotateLeft"
+                  << "Std_ViewRotateRight";
 
         auto measure = new MenuItem();
         measure->setCommand("Measure");
-        *measure << "View_Measure_Toggle_All" << "View_Measure_Clear_All";
+        *measure << "View_Measure_Toggle_All"
+                 << "View_Measure_Clear_All";
 
-        *item << "Std_ViewFitAll" << "Std_ViewFitSelection" << "Std_DrawStyle" << StdViews << measure
-              << "Separator" << "Std_ViewDockUndockFullscreen";
+        *item << "Std_ViewFitAll"
+              << "Std_ViewFitSelection"
+              << "Std_DrawStyle" << StdViews << measure << "Separator"
+              << "Std_ViewDockUndockFullscreen";
 
         if (Gui::Selection().countObjectsOfType(App::DocumentObject::getClassTypeId()) > 0) {
-            *item << "Separator" << "Std_SetAppearance" << "Std_ToggleVisibility"
-                  << "Std_ToggleSelectability" << "Std_TreeSelection"
-                  << "Std_RandomColor" << "Separator" << "Std_Delete"
-                  << "Std_SendToPythonConsole" << "Std_TransformManip";
+            *item << "Separator"
+                  << "Std_SetAppearance"
+                  << "Std_ToggleVisibility"
+                  << "Std_ToggleSelectability"
+                  << "Std_TreeSelection"
+                  << "Std_RandomColor"
+                  << "Separator"
+                  << "Std_Delete"
+                  << "Std_SendToPythonConsole"
+                  << "Std_TransformManip";
         }
     }
-    else if (strcmp(recipient,"Tree") == 0)
-    {
+    else if (strcmp(recipient, "Tree") == 0) {
         if (Gui::Selection().countObjectsOfType(App::DocumentObject::getClassTypeId()) > 0) {
-            *item << "Std_ToggleVisibility" << "Std_ShowSelection" << "Std_HideSelection"
-                  << "Std_ToggleSelectability" << "Std_TreeSelectAllInstances" << "Separator"
-                  << "Std_SetAppearance" << "Std_RandomColor" << "Separator"
-                  << "Std_Cut" << "Std_Copy" << "Std_Paste" << "Std_Delete"
-                  << "Std_SendToPythonConsole" << "Separator";
+            *item << "Std_ToggleVisibility"
+                  << "Std_ShowSelection"
+                  << "Std_HideSelection"
+                  << "Std_ToggleSelectability"
+                  << "Std_TreeSelectAllInstances"
+                  << "Separator"
+                  << "Std_SetAppearance"
+                  << "Std_RandomColor"
+                  << "Separator"
+                  << "Std_Cut"
+                  << "Std_Copy"
+                  << "Std_Paste"
+                  << "Std_Delete"
+                  << "Std_SendToPythonConsole"
+                  << "Separator";
         }
     }
 }
 
-void StdWorkbench::createMainWindowPopupMenu(MenuItem* item) const
-{
-    *item << "Std_DlgCustomize";
-}
+void StdWorkbench::createMainWindowPopupMenu(MenuItem *item) const { *item << "Std_DlgCustomize"; }
 
-MenuItem* StdWorkbench::setupMenuBar() const
+MenuItem *StdWorkbench::setupMenuBar() const
 {
     // Setup the default menu bar
     auto menuBar = new MenuItem;
 
     // File
-    auto file = new MenuItem( menuBar );
+    auto file = new MenuItem(menuBar);
     file->setCommand("&File");
-    *file << "Std_New" << "Std_Open" << "Separator" << "Std_CloseActiveWindow"
-          << "Std_CloseAllWindows" << "Separator" << "Std_Save" << "Std_SaveAs"
-          << "Std_SaveCopy" << "Std_SaveAll" << "Std_Revert" << "Separator" << "Std_Import"
-          << "Std_Export" << "Std_MergeProjects" << "Std_ProjectInfo"
-          << "Separator" << "Std_Print" << "Std_PrintPreview" << "Std_PrintPdf"
-          << "Separator" << "Std_RecentFiles" << "Separator" << "Std_Quit";
+    *file << "Std_New"
+          << "Std_Open"
+          << "Separator"
+          << "Std_CloseActiveWindow"
+          << "Std_CloseAllWindows"
+          << "Separator"
+          << "Std_Save"
+          << "Std_SaveAs"
+          << "Std_SaveCopy"
+          << "Std_SaveAll"
+          << "Std_Revert"
+          << "Separator"
+          << "Std_Import"
+          << "Std_Export"
+          << "Std_MergeProjects"
+          << "Std_ProjectInfo"
+          << "Separator"
+          << "Std_Print"
+          << "Std_PrintPreview"
+          << "Std_PrintPdf"
+          << "Separator"
+          << "Std_RecentFiles"
+          << "Separator"
+          << "Std_Quit";
 
     // Edit
-    auto edit = new MenuItem( menuBar );
+    auto edit = new MenuItem(menuBar);
     edit->setCommand("&Edit");
-    *edit << "Std_Undo" << "Std_Redo" << "Separator" << "Std_Cut" << "Std_Copy"
-          << "Std_Paste" << "Std_DuplicateSelection" << "Separator"
-          << "Std_Refresh" << "Std_BoxSelection" << "Std_BoxElementSelection"
-          << "Std_SelectAll" << "Std_Delete" << "Std_SendToPythonConsole"
-          << "Separator" << "Std_Placement" << "Std_TransformManip" << "Std_Alignment"
-          << "Std_Edit" << "Separator" << "Std_UserEditMode" << "Separator" << "Std_DlgPreferences";
+    *edit << "Std_Undo"
+          << "Std_Redo"
+          << "Separator"
+          << "Std_Cut"
+          << "Std_Copy"
+          << "Std_Paste"
+          << "Std_DuplicateSelection"
+          << "Separator"
+          << "Std_Refresh"
+          << "Std_BoxSelection"
+          << "Std_BoxElementSelection"
+          << "Std_SelectAll"
+          << "Std_Delete"
+          << "Std_SendToPythonConsole"
+          << "Separator"
+          << "Std_Placement"
+          << "Std_TransformManip"
+          << "Std_Alignment"
+          << "Std_Edit"
+          << "Separator"
+          << "Std_UserEditMode"
+          << "Separator"
+          << "Std_DlgPreferences";
 
     auto axoviews = new MenuItem;
     axoviews->setCommand("Axonometric");
@@ -650,50 +683,84 @@ MenuItem* StdWorkbench::setupMenuBar() const
     // Standard views
     auto stdviews = new MenuItem;
     stdviews->setCommand("Standard views");
-    *stdviews << "Std_ViewFitAll" << "Std_ViewFitSelection" << axoviews
-              << "Separator" << "Std_ViewHome" << "Std_ViewFront" << "Std_ViewTop"
-              << "Std_ViewRight" << "Separator" << "Std_ViewRear"
-              << "Std_ViewBottom" << "Std_ViewLeft"
-              << "Separator" << "Std_ViewRotateLeft" << "Std_ViewRotateRight";
+    *stdviews << "Std_ViewFitAll"
+              << "Std_ViewFitSelection" << axoviews << "Separator"
+              << "Std_ViewHome"
+              << "Std_ViewFront"
+              << "Std_ViewTop"
+              << "Std_ViewRight"
+              << "Separator"
+              << "Std_ViewRear"
+              << "Std_ViewBottom"
+              << "Std_ViewLeft"
+              << "Separator"
+              << "Std_ViewRotateLeft"
+              << "Std_ViewRotateRight";
 
     // stereo
     auto view3d = new MenuItem;
     view3d->setCommand("&Stereo");
-    *view3d << "Std_ViewIvStereoRedGreen" << "Std_ViewIvStereoQuadBuff"
-            << "Std_ViewIvStereoInterleavedRows" << "Std_ViewIvStereoInterleavedColumns"
-            << "Std_ViewIvStereoOff" << "Separator" << "Std_ViewIvIssueCamPos";
+    *view3d << "Std_ViewIvStereoRedGreen"
+            << "Std_ViewIvStereoQuadBuff"
+            << "Std_ViewIvStereoInterleavedRows"
+            << "Std_ViewIvStereoInterleavedColumns"
+            << "Std_ViewIvStereoOff"
+            << "Separator"
+            << "Std_ViewIvIssueCamPos";
 
     // zoom
     auto zoom = new MenuItem;
     zoom->setCommand("&Zoom");
-    *zoom << "Std_ViewZoomIn" << "Std_ViewZoomOut" << "Separator" << "Std_ViewBoxZoom";
+    *zoom << "Std_ViewZoomIn"
+          << "Std_ViewZoomOut"
+          << "Separator"
+          << "Std_ViewBoxZoom";
 
     // Visibility
     auto visu = new MenuItem;
     visu->setCommand("Visibility");
-    *visu << "Std_ToggleVisibility" << "Std_ShowSelection" << "Std_HideSelection"
+    *visu << "Std_ToggleVisibility"
+          << "Std_ShowSelection"
+          << "Std_HideSelection"
           << "Std_SelectVisibleObjects"
-          << "Separator" << "Std_ToggleObjects" << "Std_ShowObjects" << "Std_HideObjects"
-          << "Separator" << "Std_ToggleSelectability"
-          << "Separator" << "View_Measure_Toggle_All" << "View_Measure_Clear_All";
+          << "Separator"
+          << "Std_ToggleObjects"
+          << "Std_ShowObjects"
+          << "Std_HideObjects"
+          << "Separator"
+          << "Std_ToggleSelectability"
+          << "Separator"
+          << "View_Measure_Toggle_All"
+          << "View_Measure_Clear_All";
 
     // View
-    auto view = new MenuItem( menuBar );
+    auto view = new MenuItem(menuBar);
     view->setCommand("&View");
-    *view << "Std_ViewCreate" << "Std_OrthographicCamera" << "Std_PerspectiveCamera" << "Std_MainFullscreen" << "Separator"
-          << stdviews << "Std_FreezeViews" << "Std_DrawStyle" << "Std_SelBoundingBox"
-          << "Separator" << view3d << zoom
-          << "Std_ViewDockUndockFullscreen" << "Std_AxisCross" << "Std_ToggleClipPlane"
+    *view << "Std_ViewCreate"
+          << "Std_OrthographicCamera"
+          << "Std_PerspectiveCamera"
+          << "Std_MainFullscreen"
+          << "Separator" << stdviews << "Std_FreezeViews"
+          << "Std_DrawStyle"
+          << "Std_SelBoundingBox"
+          << "Separator" << view3d << zoom << "Std_ViewDockUndockFullscreen"
+          << "Std_AxisCross"
+          << "Std_ToggleClipPlane"
           << "Std_TextureMapping"
-          << "Separator" << visu
-          << "Std_ToggleVisibility" << "Std_ToggleNavigation"
-          << "Std_SetAppearance" << "Std_RandomColor" << "Separator"
-          << "Std_Workbench" << "Std_ToolBarMenu" << "Std_DockViewMenu" << "Separator"
+          << "Separator" << visu << "Std_ToggleVisibility"
+          << "Std_ToggleNavigation"
+          << "Std_SetAppearance"
+          << "Std_RandomColor"
+          << "Separator"
+          << "Std_Workbench"
+          << "Std_ToolBarMenu"
+          << "Std_DockViewMenu"
+          << "Separator"
           << "Std_TreeViewActions"
           << "Std_ViewStatusBar";
 
     // Tools
-    auto tool = new MenuItem( menuBar );
+    auto tool = new MenuItem(menuBar);
     tool->setCommand("&Tools");
     *tool << "Std_DlgParameter"
           << "Separator"
@@ -715,7 +782,7 @@ MenuItem* StdWorkbench::setupMenuBar() const
 #endif
 
     // Macro
-    auto macro = new MenuItem( menuBar );
+    auto macro = new MenuItem(menuBar);
     macro->setCommand("&Macro");
     *macro << "Std_DlgMacroRecord"
            << "Std_MacroStopRecord"
@@ -731,86 +798,146 @@ MenuItem* StdWorkbench::setupMenuBar() const
            << "Std_ToggleBreakpoint";
 
     // Windows
-    auto wnd = new MenuItem( menuBar );
+    auto wnd = new MenuItem(menuBar);
     wnd->setCommand("&Windows");
-    *wnd << "Std_ActivateNextWindow" << "Std_ActivatePrevWindow" << "Separator"
-         << "Std_TileWindows" << "Std_CascadeWindows"
-         << "Std_ArrangeIcons" << "Separator" << "Std_WindowsMenu" << "Std_Windows";
+    *wnd << "Std_ActivateNextWindow"
+         << "Std_ActivatePrevWindow"
+         << "Separator"
+         << "Std_TileWindows"
+         << "Std_CascadeWindows"
+         << "Std_ArrangeIcons"
+         << "Separator"
+         << "Std_WindowsMenu"
+         << "Std_Windows";
 
     // Separator
-    auto sep = new MenuItem( menuBar );
-    sep->setCommand( "Separator" );
+    auto sep = new MenuItem(menuBar);
+    sep->setCommand("Separator");
 
     // Help
-    auto help = new MenuItem( menuBar );
+    auto help = new MenuItem(menuBar);
     help->setCommand("&Help");
-    *help << "Std_OnlineHelp" << "Std_FreeCADWebsite" << "Std_FreeCADDonation"
-          << "Std_FreeCADUserHub" << "Std_FreeCADPowerUserHub"
-          << "Std_PythonHelp" << "Std_FreeCADForum" << "Std_FreeCADFAQ"
-          << "Std_ReportBug" << "Std_About" << "Std_WhatsThis";
+    *help << "Std_OnlineHelp"
+          << "Std_FreeCADWebsite"
+          << "Std_FreeCADDonation"
+          << "Std_FreeCADUserHub"
+          << "Std_FreeCADPowerUserHub"
+          << "Std_PythonHelp"
+          << "Std_FreeCADForum"
+          << "Std_FreeCADFAQ"
+          << "Std_ReportBug"
+          << "Std_About"
+          << "Std_WhatsThis";
 
     return menuBar;
 }
 
-ToolBarItem* StdWorkbench::setupToolBars() const
+ToolBarItem *StdWorkbench::setupToolBars() const
 {
     auto root = new ToolBarItem;
 
     // File
-    auto file = new ToolBarItem( root );
+    auto file = new ToolBarItem(root);
     file->setCommand("File");
-    *file << "Std_New" << "Std_Open" << "Std_Save" << "Std_Print" << "Separator" << "Std_Cut"
-          << "Std_Copy" << "Std_Paste" << "Separator" << "Std_Undo" << "Std_Redo" << "Separator"
-          << "Std_UserEditMode" << "Separator" << "Std_Refresh" << "Separator" << "Std_WhatsThis";
+    *file << "Std_New"
+          << "Std_Open"
+          << "Std_Save"
+          << "Std_Print"
+          << "Separator"
+          << "Std_Cut"
+          << "Std_Copy"
+          << "Std_Paste"
+          << "Separator"
+          << "Std_Undo"
+          << "Std_Redo"
+          << "Separator"
+          << "Std_UserEditMode"
+          << "Separator"
+          << "Std_Refresh"
+          << "Separator"
+          << "Std_WhatsThis";
 
     // Workbench switcher
-    auto wb = new ToolBarItem( root );
+    auto wb = new ToolBarItem(root);
     wb->setCommand("Workbench");
     *wb << "Std_Workbench";
 
     // Macro
-    auto macro = new ToolBarItem( root );
+    auto macro = new ToolBarItem(root);
     macro->setCommand("Macro");
-    *macro << "Std_DlgMacroRecord" << "Std_MacroStopRecord" << "Std_DlgMacroExecute"
+    *macro << "Std_DlgMacroRecord"
+           << "Std_MacroStopRecord"
+           << "Std_DlgMacroExecute"
            << "Std_DlgMacroExecuteDirect";
 
     // View
-    auto view = new ToolBarItem( root );
+    auto view = new ToolBarItem(root);
     view->setCommand("View");
-    *view << "Std_ViewFitAll" << "Std_ViewFitSelection" << "Std_DrawStyle" << "Std_SelBoundingBox"
-          << "Separator" << "Std_SelBack" << "Std_SelForward" << "Std_LinkSelectActions"
-          << "Separator" << "Std_TreeViewActions" << "Std_ViewIsometric" << "Separator" << "Std_ViewFront"
-          << "Std_ViewTop" << "Std_ViewRight" << "Separator" << "Std_ViewRear" << "Std_ViewBottom"
-          << "Std_ViewLeft" << "Separator" << "Std_MeasureDistance" ;
+    *view << "Std_ViewFitAll"
+          << "Std_ViewFitSelection"
+          << "Std_DrawStyle"
+          << "Std_SelBoundingBox"
+          << "Separator"
+          << "Std_SelBack"
+          << "Std_SelForward"
+          << "Std_LinkSelectActions"
+          << "Separator"
+          << "Std_TreeViewActions"
+          << "Std_ViewIsometric"
+          << "Separator"
+          << "Std_ViewFront"
+          << "Std_ViewTop"
+          << "Std_ViewRight"
+          << "Separator"
+          << "Std_ViewRear"
+          << "Std_ViewBottom"
+          << "Std_ViewLeft"
+          << "Separator"
+          << "Std_MeasureDistance";
 
     // Structure
-    auto structure = new ToolBarItem( root );
+    auto structure = new ToolBarItem(root);
     structure->setCommand("Structure");
-    *structure << "Std_Part" << "Std_Group" << "Std_LinkMake" << "Std_LinkActions";
+    *structure << "Std_Part"
+               << "Std_Group"
+               << "Std_LinkMake"
+               << "Std_LinkActions";
 
     return root;
 }
 
-ToolBarItem* StdWorkbench::setupCommandBars() const
+ToolBarItem *StdWorkbench::setupCommandBars() const
 {
     auto root = new ToolBarItem;
 
     // View
-    auto view = new ToolBarItem( root );
+    auto view = new ToolBarItem(root);
     view->setCommand("Standard views");
-    *view << "Std_ViewFitAll" << "Std_ViewFitSelection" << "Std_ViewIsometric" << "Separator"
-          << "Std_ViewFront" << "Std_ViewRight" << "Std_ViewTop" << "Separator"
-          << "Std_ViewRear" << "Std_ViewLeft" << "Std_ViewBottom";
+    *view << "Std_ViewFitAll"
+          << "Std_ViewFitSelection"
+          << "Std_ViewIsometric"
+          << "Separator"
+          << "Std_ViewFront"
+          << "Std_ViewRight"
+          << "Std_ViewTop"
+          << "Separator"
+          << "Std_ViewRear"
+          << "Std_ViewLeft"
+          << "Std_ViewBottom";
     // Special Ops
-    auto macro = new ToolBarItem( root );
+    auto macro = new ToolBarItem(root);
     macro->setCommand("Special Ops");
-    *macro << "Std_DlgParameter" << "Std_DlgPreferences" << "Std_DlgMacroRecord" << "Std_MacroStopRecord"
-           << "Std_DlgMacroExecute" << "Std_DlgCustomize";
+    *macro << "Std_DlgParameter"
+           << "Std_DlgPreferences"
+           << "Std_DlgMacroRecord"
+           << "Std_MacroStopRecord"
+           << "Std_DlgMacroExecute"
+           << "Std_DlgCustomize";
 
     return root;
 }
 
-DockWindowItems* StdWorkbench::setupDockWindows() const
+DockWindowItems *StdWorkbench::setupDockWindows() const
 {
     auto root = new DockWindowItems();
     root->addDockWidget("Std_ToolBox", Qt::RightDockWidgetArea, false, false);
@@ -823,12 +950,15 @@ DockWindowItems* StdWorkbench::setupDockWindows() const
     root->addDockWidget("Std_PythonView", Qt::BottomDockWidgetArea, true, true);
 
     //Dagview through parameter.
-    ParameterGrp::handle group = App::GetApplication().GetUserParameter().
-          GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("DockWindows")->GetGroup("DAGView");
+    ParameterGrp::handle group = App::GetApplication()
+                                     .GetUserParameter()
+                                     .GetGroup("BaseApp")
+                                     ->GetGroup("Preferences")
+                                     ->GetGroup("DockWindows")
+                                     ->GetGroup("DAGView");
 
     bool enabled = group->GetBool("Enabled", false);
-    if (enabled)
-      root->addDockWidget("Std_DAGView", Qt::RightDockWidgetArea, false, false);
+    if (enabled) root->addDockWidget("Std_DAGView", Qt::RightDockWidgetArea, false, false);
 
     return root;
 }
@@ -837,118 +967,93 @@ DockWindowItems* StdWorkbench::setupDockWindows() const
 
 TYPESYSTEM_SOURCE(Gui::BlankWorkbench, Gui::Workbench)
 
-BlankWorkbench::BlankWorkbench()
-  : Workbench()
-{
-}
+BlankWorkbench::BlankWorkbench() : Workbench() {}
 
-BlankWorkbench::~BlankWorkbench()
-{
-}
+BlankWorkbench::~BlankWorkbench() {}
 
 void BlankWorkbench::activated()
 {
-    QList<QDockWidget*> dw = getMainWindow()->findChildren<QDockWidget*>();
-    for (auto & it : dw)
-        it->toggleViewAction()->setVisible(false);
+    QList<QDockWidget *> dw = getMainWindow()->findChildren<QDockWidget *>();
+    for (auto &it : dw) it->toggleViewAction()->setVisible(false);
     getMainWindow()->statusBar()->hide();
 }
 
-void BlankWorkbench::deactivated()
-{
-    getMainWindow()->statusBar()->show();
-}
+void BlankWorkbench::deactivated() { getMainWindow()->statusBar()->show(); }
 
-void BlankWorkbench::setupContextMenu(const char* recipient,MenuItem* item) const
+void BlankWorkbench::setupContextMenu(const char *recipient, MenuItem *item) const
 {
     Q_UNUSED(recipient);
     Q_UNUSED(item);
 }
 
-MenuItem* BlankWorkbench::setupMenuBar() const
-{
-    return new MenuItem();
-}
+MenuItem *BlankWorkbench::setupMenuBar() const { return new MenuItem(); }
 
-ToolBarItem* BlankWorkbench::setupToolBars() const
-{
-    return new ToolBarItem();
-}
+ToolBarItem *BlankWorkbench::setupToolBars() const { return new ToolBarItem(); }
 
-ToolBarItem* BlankWorkbench::setupCommandBars() const
-{
-    return new ToolBarItem();
-}
+ToolBarItem *BlankWorkbench::setupCommandBars() const { return new ToolBarItem(); }
 
-DockWindowItems* BlankWorkbench::setupDockWindows() const
-{
-    return new DockWindowItems();
-}
+DockWindowItems *BlankWorkbench::setupDockWindows() const { return new DockWindowItems(); }
 
 // --------------------------------------------------------------------
 
 TYPESYSTEM_SOURCE(Gui::NoneWorkbench, Gui::StdWorkbench)
 
-NoneWorkbench::NoneWorkbench()
-  : StdWorkbench()
-{
-}
+NoneWorkbench::NoneWorkbench() : StdWorkbench() {}
 
-NoneWorkbench::~NoneWorkbench()
-{
-}
+NoneWorkbench::~NoneWorkbench() {}
 
-void NoneWorkbench::setupContextMenu(const char* recipient,MenuItem* item) const
+void NoneWorkbench::setupContextMenu(const char *recipient, MenuItem *item) const
 {
     Q_UNUSED(recipient);
     Q_UNUSED(item);
 }
 
-MenuItem* NoneWorkbench::setupMenuBar() const
+MenuItem *NoneWorkbench::setupMenuBar() const
 {
     // Setup the default menu bar
     auto menuBar = new MenuItem;
 
     // File
-    auto file = new MenuItem( menuBar );
+    auto file = new MenuItem(menuBar);
     file->setCommand("&File");
     *file << "Std_Quit";
 
     // Edit
-    auto edit = new MenuItem( menuBar );
+    auto edit = new MenuItem(menuBar);
     edit->setCommand("&Edit");
     *edit << "Std_DlgPreferences";
 
     // View
-    auto view = new MenuItem( menuBar );
+    auto view = new MenuItem(menuBar);
     view->setCommand("&View");
     *view << "Std_Workbench";
 
     // Separator
-    auto sep = new MenuItem( menuBar );
+    auto sep = new MenuItem(menuBar);
     sep->setCommand("Separator");
 
     // Help
-    auto help = new MenuItem( menuBar );
+    auto help = new MenuItem(menuBar);
     help->setCommand("&Help");
-    *help << "Std_OnlineHelp" << "Std_About";
+    *help << "Std_OnlineHelp"
+          << "Std_About";
 
     return menuBar;
 }
 
-ToolBarItem* NoneWorkbench::setupToolBars() const
+ToolBarItem *NoneWorkbench::setupToolBars() const
 {
     auto root = new ToolBarItem;
     return root;
 }
 
-ToolBarItem* NoneWorkbench::setupCommandBars() const
+ToolBarItem *NoneWorkbench::setupCommandBars() const
 {
     auto root = new ToolBarItem;
     return root;
 }
 
-DockWindowItems* NoneWorkbench::setupDockWindows() const
+DockWindowItems *NoneWorkbench::setupDockWindows() const
 {
     auto root = new DockWindowItems();
     root->addDockWidget("Std_ReportView", Qt::BottomDockWidgetArea, true, false);
@@ -959,57 +1064,54 @@ DockWindowItems* NoneWorkbench::setupDockWindows() const
 
 TYPESYSTEM_SOURCE(Gui::TestWorkbench, Gui::Workbench)
 
-TestWorkbench::TestWorkbench()
-  : StdWorkbench()
-{
-}
+TestWorkbench::TestWorkbench() : StdWorkbench() {}
 
-TestWorkbench::~TestWorkbench()
-{
-}
+TestWorkbench::~TestWorkbench() {}
 
-MenuItem* TestWorkbench::setupMenuBar() const
+MenuItem *TestWorkbench::setupMenuBar() const
 {
     // Setup the default menu bar
-    MenuItem* menuBar = StdWorkbench::setupMenuBar();
+    MenuItem *menuBar = StdWorkbench::setupMenuBar();
 
-    MenuItem* item = menuBar->findItem("&Help");
+    MenuItem *item = menuBar->findItem("&Help");
     item->removeItem(item->findItem("Std_WhatsThis"));
 
     // Test commands
     auto test = new MenuItem;
-    menuBar->insertItem( item, test );
-    test->setCommand( "Test &Commands" );
-    *test << "Std_Test1" << "Std_Test2" << "Std_Test3" << "Std_Test4" << "Std_Test5"
-          << "Std_Test6" << "Std_Test7" << "Std_Test8";
+    menuBar->insertItem(item, test);
+    test->setCommand("Test &Commands");
+    *test << "Std_Test1"
+          << "Std_Test2"
+          << "Std_Test3"
+          << "Std_Test4"
+          << "Std_Test5"
+          << "Std_Test6"
+          << "Std_Test7"
+          << "Std_Test8";
 
     // Inventor View
     auto opiv = new MenuItem;
-    menuBar->insertItem( item, opiv );
+    menuBar->insertItem(item, opiv);
     opiv->setCommand("&Inventor View");
-    *opiv << "Std_ViewExample1" << "Std_ViewExample2" << "Std_ViewExample3";
+    *opiv << "Std_ViewExample1"
+          << "Std_ViewExample2"
+          << "Std_ViewExample3";
 
     return menuBar;
 }
 
-ToolBarItem* TestWorkbench::setupToolBars() const
-{
-    return nullptr;
-}
+ToolBarItem *TestWorkbench::setupToolBars() const { return nullptr; }
 
-ToolBarItem* TestWorkbench::setupCommandBars() const
-{
-    return nullptr;
-}
+ToolBarItem *TestWorkbench::setupCommandBars() const { return nullptr; }
 
 // -----------------------------------------------------------------------
 
 TYPESYSTEM_SOURCE_ABSTRACT(Gui::PythonBaseWorkbench, Gui::Workbench)
 
 PythonBaseWorkbench::PythonBaseWorkbench()
-  : _menuBar(nullptr), _contextMenu(nullptr), _toolBar(nullptr), _commandBar(nullptr), _workbenchPy(nullptr)
-{
-}
+    : _menuBar(nullptr), _contextMenu(nullptr), _toolBar(nullptr), _commandBar(nullptr),
+      _workbenchPy(nullptr)
+{}
 
 PythonBaseWorkbench::~PythonBaseWorkbench()
 {
@@ -1023,12 +1125,9 @@ PythonBaseWorkbench::~PythonBaseWorkbench()
     }
 }
 
-PyObject* PythonBaseWorkbench::getPyObject()
+PyObject *PythonBaseWorkbench::getPyObject()
 {
-    if (!_workbenchPy)
-    {
-        _workbenchPy = new PythonWorkbenchPy(this);
-    }
+    if (!_workbenchPy) { _workbenchPy = new PythonWorkbenchPy(this); }
 
     // Increment every time when this object is returned
     _workbenchPy->IncRef();
@@ -1036,83 +1135,65 @@ PyObject* PythonBaseWorkbench::getPyObject()
     return _workbenchPy;
 }
 
-MenuItem* PythonBaseWorkbench::setupMenuBar() const
-{
-    return _menuBar->copy();
-}
+MenuItem *PythonBaseWorkbench::setupMenuBar() const { return _menuBar->copy(); }
 
-ToolBarItem* PythonBaseWorkbench::setupToolBars() const
-{
-    return _toolBar->copy();
-}
+ToolBarItem *PythonBaseWorkbench::setupToolBars() const { return _toolBar->copy(); }
 
-ToolBarItem* PythonBaseWorkbench::setupCommandBars() const
-{
-    return _commandBar->copy();
-}
+ToolBarItem *PythonBaseWorkbench::setupCommandBars() const { return _commandBar->copy(); }
 
-DockWindowItems* PythonBaseWorkbench::setupDockWindows() const
-{
-    return new DockWindowItems();
-}
+DockWindowItems *PythonBaseWorkbench::setupDockWindows() const { return new DockWindowItems(); }
 
-void PythonBaseWorkbench::setupContextMenu(const char* recipient, MenuItem* item) const
+void PythonBaseWorkbench::setupContextMenu(const char *recipient, MenuItem *item) const
 {
     Q_UNUSED(recipient);
-    QList<MenuItem*> items = _contextMenu->getItems();
-    for (const auto & it : items) {
-        item->appendItem(it->copy());
-    }
+    QList<MenuItem *> items = _contextMenu->getItems();
+    for (const auto &it : items) { item->appendItem(it->copy()); }
 }
 
-void PythonBaseWorkbench::appendMenu(const std::list<std::string>& menu, const std::list<std::string>& items) const
+void PythonBaseWorkbench::appendMenu(const std::list<std::string> &menu,
+                                     const std::list<std::string> &items) const
 {
-    if ( menu.empty() || items.empty() )
-        return;
+    if (menu.empty() || items.empty()) return;
 
-    auto jt=menu.begin();
-    MenuItem* item = _menuBar->findItem( *jt );
-    if (!item)
-    {
+    auto jt = menu.begin();
+    MenuItem *item = _menuBar->findItem(*jt);
+    if (!item) {
         item = new MenuItem;
-        item->setCommand( *jt );
-        Gui::MenuItem* wnd = _menuBar->findItem( "&Windows" );
-        if (wnd)
-            _menuBar->insertItem(wnd, item);
+        item->setCommand(*jt);
+        Gui::MenuItem *wnd = _menuBar->findItem("&Windows");
+        if (wnd) _menuBar->insertItem(wnd, item);
         else
             _menuBar->appendItem(item);
     }
 
     // create sub menus
-    for ( jt++; jt != menu.end(); jt++ )
-    {
-        MenuItem* subitem = item->findItem( *jt );
-        if ( !subitem )
-        {
+    for (jt++; jt != menu.end(); jt++) {
+        MenuItem *subitem = item->findItem(*jt);
+        if (!subitem) {
             subitem = new MenuItem(item);
-            subitem->setCommand( *jt );
+            subitem->setCommand(*jt);
         }
         item = subitem;
     }
 
-    for (const auto & it : items)
-        *item << it;
+    for (const auto &it : items) *item << it;
 }
 
-void PythonBaseWorkbench::removeMenu(const std::string& menu) const
+void PythonBaseWorkbench::removeMenu(const std::string &menu) const
 {
-    MenuItem* item = _menuBar->findItem(menu);
-    if ( item ) {
+    MenuItem *item = _menuBar->findItem(menu);
+    if (item) {
         _menuBar->removeItem(item);
         delete item;
     }
 }
 
-void PythonBaseWorkbench::appendContextMenu(const std::list<std::string>& menu, const std::list<std::string>& items) const
+void PythonBaseWorkbench::appendContextMenu(const std::list<std::string> &menu,
+                                            const std::list<std::string> &items) const
 {
-    MenuItem* item = _contextMenu;
-    for (const auto & jt : menu) {
-        MenuItem* subitem = item->findItem(jt);
+    MenuItem *item = _contextMenu;
+    for (const auto &jt : menu) {
+        MenuItem *subitem = item->findItem(jt);
         if (!subitem) {
             subitem = new MenuItem(item);
             subitem->setCommand(jt);
@@ -1120,63 +1201,57 @@ void PythonBaseWorkbench::appendContextMenu(const std::list<std::string>& menu, 
         item = subitem;
     }
 
-    for (const auto & it : items)
-        *item << it;
+    for (const auto &it : items) *item << it;
 }
 
-void PythonBaseWorkbench::removeContextMenu(const std::string& menu) const
+void PythonBaseWorkbench::removeContextMenu(const std::string &menu) const
 {
-    MenuItem* item = _contextMenu->findItem(menu);
+    MenuItem *item = _contextMenu->findItem(menu);
     if (item) {
         _contextMenu->removeItem(item);
         delete item;
     }
 }
 
-void PythonBaseWorkbench::clearContextMenu()
-{
-    _contextMenu->clear();
-}
+void PythonBaseWorkbench::clearContextMenu() { _contextMenu->clear(); }
 
-void PythonBaseWorkbench::appendToolbar(const std::string& bar, const std::list<std::string>& items) const
+void PythonBaseWorkbench::appendToolbar(const std::string &bar,
+                                        const std::list<std::string> &items) const
 {
-    ToolBarItem* item = _toolBar->findItem(bar);
-    if (!item)
-    {
+    ToolBarItem *item = _toolBar->findItem(bar);
+    if (!item) {
         item = new ToolBarItem(_toolBar);
         item->setCommand(bar);
     }
 
-    for (const auto & it : items)
-        *item << it;
+    for (const auto &it : items) *item << it;
 }
 
-void PythonBaseWorkbench::removeToolbar(const std::string& bar) const
+void PythonBaseWorkbench::removeToolbar(const std::string &bar) const
 {
-    ToolBarItem* item = _toolBar->findItem(bar);
+    ToolBarItem *item = _toolBar->findItem(bar);
     if (item) {
         _toolBar->removeItem(item);
         delete item;
     }
 }
 
-void PythonBaseWorkbench::appendCommandbar(const std::string& bar, const std::list<std::string>& items) const
+void PythonBaseWorkbench::appendCommandbar(const std::string &bar,
+                                           const std::list<std::string> &items) const
 {
-    ToolBarItem* item = _commandBar->findItem( bar );
-    if ( !item )
-    {
+    ToolBarItem *item = _commandBar->findItem(bar);
+    if (!item) {
         item = new ToolBarItem(_commandBar);
         item->setCommand(bar);
     }
 
-    for (const auto & it : items)
-        *item << it;
+    for (const auto &it : items) *item << it;
 }
 
-void PythonBaseWorkbench::removeCommandbar(const std::string& bar) const
+void PythonBaseWorkbench::removeCommandbar(const std::string &bar) const
 {
-    ToolBarItem* item = _commandBar->findItem(bar);
-    if ( item ) {
+    ToolBarItem *item = _commandBar->findItem(bar);
+    if (item) {
         _commandBar->removeItem(item);
         delete item;
     }
@@ -1194,9 +1269,7 @@ PythonBlankWorkbench::PythonBlankWorkbench()
     _commandBar = new ToolBarItem;
 }
 
-PythonBlankWorkbench::~PythonBlankWorkbench()
-{
-}
+PythonBlankWorkbench::~PythonBlankWorkbench() {}
 
 // -----------------------------------------------------------------------
 
@@ -1211,39 +1284,28 @@ PythonWorkbench::PythonWorkbench()
     _commandBar = new ToolBarItem;
 }
 
-PythonWorkbench::~PythonWorkbench()
-{
-}
+PythonWorkbench::~PythonWorkbench() {}
 
-MenuItem* PythonWorkbench::setupMenuBar() const
-{
-    return _menuBar->copy();
-}
+MenuItem *PythonWorkbench::setupMenuBar() const { return _menuBar->copy(); }
 
-ToolBarItem* PythonWorkbench::setupToolBars() const
-{
-    return _toolBar->copy();
-}
+ToolBarItem *PythonWorkbench::setupToolBars() const { return _toolBar->copy(); }
 
-ToolBarItem* PythonWorkbench::setupCommandBars() const
-{
-    return _commandBar->copy();
-}
+ToolBarItem *PythonWorkbench::setupCommandBars() const { return _commandBar->copy(); }
 
-DockWindowItems* PythonWorkbench::setupDockWindows() const
+DockWindowItems *PythonWorkbench::setupDockWindows() const
 {
     StdWorkbench wb;
     return wb.setupDockWindows();
 }
 
-void PythonWorkbench::setupContextMenu(const char* recipient, MenuItem* item) const
+void PythonWorkbench::setupContextMenu(const char *recipient, MenuItem *item) const
 {
     StdWorkbench wb;
     wb.setupContextMenu(recipient, item);
     PythonBaseWorkbench::setupContextMenu(recipient, item);
 }
 
-void PythonWorkbench::createMainWindowPopupMenu(MenuItem* item) const
+void PythonWorkbench::createMainWindowPopupMenu(MenuItem *item) const
 {
     StdWorkbench wb;
     wb.createMainWindowPopupMenu(item);

@@ -30,19 +30,22 @@
 #include <Mod/Sketcher/App/GeoEnum.h>
 #include <Mod/Sketcher/App/GeometryFacade.h>
 
-namespace Base {
-    template< typename T >
-    class Vector3;
+namespace Base
+{
+template<typename T> class Vector3;
 }
 
-namespace Part {
-    class Geometry;
+namespace Part
+{
+class Geometry;
 }
 
-namespace Sketcher {
+namespace Sketcher
+{
 }
 
-namespace Sketcher {
+namespace Sketcher
+{
 
 /** @brief      Class for managing internal and external geometry as a single object
  *  @details
@@ -66,8 +69,8 @@ namespace Sketcher {
  * N.B.: Note that the index of the geomlist (all layers) and the GeoId can be converted
  * from each other as needed using the member functions (and sometimes the static functions).
  */
-template <typename T>
-class GeoListModel {
+template<typename T> class GeoListModel
+{
     using Vector3d = Base::Vector3<double>;
 
 
@@ -82,9 +85,9 @@ protected:
      * @param intgeocount: the number of internal geometries (non external) in the list.
      * @param ownerT: indicates whether the GeoListModel takes ownership of the elements of the std::vector<T> (for pointers)
      */
-    explicit GeoListModel(std::vector<T> && geometrylist, int intgeocount, bool ownerT = false);
+    explicit GeoListModel(std::vector<T> &&geometrylist, int intgeocount, bool ownerT = false);
 
-    explicit GeoListModel(const std::vector<T> & geometrylist, int intgeocount);
+    explicit GeoListModel(const std::vector<T> &geometrylist, int intgeocount);
 
 public:
     /** @brief Destructor having type dependent behaviour
@@ -102,11 +105,11 @@ public:
 
     // Explicit deletion to show intent (not that it is needed). This is a move only type.
     GeoListModel(const GeoListModel &) = delete;
-    GeoListModel& operator=(const GeoListModel&) = delete;
+    GeoListModel &operator=(const GeoListModel &) = delete;
 
     // enable move constructor and move assignment. This is a move only type.
     GeoListModel(GeoListModel &&) = default;
-    GeoListModel& operator=(GeoListModel&&) = default;
+    GeoListModel &operator=(GeoListModel &&) = default;
 
     /** @brief
      * GeoListModel manages the lifetime of its internal std::vector. This means that while the actual ownership
@@ -119,14 +122,16 @@ public:
      * For GeoListFacade ownership at GeoListModel level cannot be taken (ownerT cannot be true). An assertion is raised
      * if this happens. The ownership needs to be specified on the GeoListFacade objects themselves (setOwner method).
      */
-    static GeoListModel<T> getGeoListModel(std::vector<T> && geometrylist, int intgeocount, bool ownerT = false);
-    static const GeoListModel<T> getGeoListModel(const std::vector<T> & geometrylist, int intgeocount);
+    static GeoListModel<T> getGeoListModel(std::vector<T> &&geometrylist, int intgeocount,
+                                           bool ownerT = false);
+    static const GeoListModel<T> getGeoListModel(const std::vector<T> &geometrylist,
+                                                 int intgeocount);
 
 
     /** @brief
     * returns the geometry given by the GeoId
     */
-    const Part::Geometry * getGeometryFromGeoId(int geoId) const;
+    const Part::Geometry *getGeometryFromGeoId(int geoId) const;
 
     /** @brief returns a geometryfacade
      * @warning If the underlying model of the list is a naked pointed (Part::Geometry *), i.e. a GeoList instantiation, the
@@ -135,7 +140,7 @@ public:
      * This is not a problem when the model of the list is a std::unique_ptr<Sketcher::GeometryFacade>, because the lifetime is tied to
      * the GeometryFacade. It will destruct the pointer if it is the owner.
      */
-    const Sketcher::GeometryFacade * getGeometryFacadeFromGeoId(int geoId) const;
+    const Sketcher::GeometryFacade *getGeometryFacadeFromGeoId(int geoId) const;
 
     /** @brief
     * returns the GeoId index from the index in the geometry in geomlist format with which it was constructed.
@@ -151,7 +156,8 @@ public:
     *
     * @param index: the index of the list of geometry in geomlist format.
     */
-    static const Part::Geometry * getGeometryFromGeoId(const std::vector<T> & geometrylist, int geoId);
+    static const Part::Geometry *getGeometryFromGeoId(const std::vector<T> &geometrylist,
+                                                      int geoId);
 
     /** @brief returns a geometry facade
      * @warning If the underlying model of the list is a naked pointed (Part::Geometry *), the client (the user) bears responsibility
@@ -160,7 +166,8 @@ public:
      * This is not a problem when the model of the list is a std::unique_ptr<Sketcher::GeometryFacade>, because the lifetime is tied to
      * the model itself.
      */
-    static const Sketcher::GeometryFacade * getGeometryFacadeFromGeoId(const std::vector<T> & geometrylist, int geoId);
+    static const Sketcher::GeometryFacade *
+    getGeometryFacadeFromGeoId(const std::vector<T> &geometrylist, int geoId);
 
     /** @brief
      *  Obtain a GeoElementId class {GeoId, Pos} given a VertexId.
@@ -179,27 +186,27 @@ public:
      * It is the same format of vertex numbering used in the Sketcher, Sketch.cpp, and ViewProviderSketch.
      *
      */
-    int getVertexIdFromGeoElementId(const Sketcher::GeoElementId & geoelementId) const;
+    int getVertexIdFromGeoElementId(const Sketcher::GeoElementId &geoelementId) const;
 
     /** @brief
      *  Returns a point coordinates given {GeoId, Pos}.
      */
     Vector3d getPoint(int geoId, Sketcher::PointPos pos) const;
 
-     /** @brief
+    /** @brief
      *  Returns a point coordinates given GeoElementId {GeoId, Pos}.
      */
-    Vector3d getPoint(const GeoElementId & geid) const;
+    Vector3d getPoint(const GeoElementId &geid) const;
 
     /** @brief
     * returns the amount of internal (normal, non-external) geometry objects.
     */
-    int getInternalCount() const { return intGeoCount;}
+    int getInternalCount() const { return intGeoCount; }
 
     /** @brief
     * returns the amount of external geometry objects.
     */
-    int getExternalCount() const { return int(geomlist.size()) - intGeoCount;}
+    int getExternalCount() const { return int(geomlist.size()) - intGeoCount; }
 
     /** @brief
      * return a reference to the internal geometry list vector.
@@ -207,13 +214,13 @@ public:
      * @warning { It returns a reference to the internal list vector. The validity of the
      * reference depends on the lifetime of the GeoListModel object.}
      */
-     std::vector<T> & geometryList() { return const_cast<std::vector<T> &>(geomlist);}
+    std::vector<T> &geometryList() { return const_cast<std::vector<T> &>(geomlist); }
 
 public:
     std::vector<T> geomlist;
 
 private:
-    Vector3d getPoint(const Part::Geometry * geo, Sketcher::PointPos pos) const;
+    Vector3d getPoint(const Part::Geometry *geo, Sketcher::PointPos pos) const;
 
     void rebuildVertexIndex() const;
 
@@ -221,7 +228,8 @@ private:
     int intGeoCount;
     bool OwnerT;
     mutable bool indexInit;
-    mutable std::vector<Sketcher::GeoElementId> VertexId2GeoElementId; // these maps a lazy initialised on first demand.
+    mutable std::vector<Sketcher::GeoElementId>
+        VertexId2GeoElementId; // these maps a lazy initialised on first demand.
     mutable std::map<Sketcher::GeoElementId, int> GeoElementId2VertexId;
 };
 
@@ -231,10 +239,9 @@ using GeometryFacadeUniquePtr = std::unique_ptr<const Sketcher::GeometryFacade>;
 using GeoList = GeoListModel<GeometryPtr>;
 using GeoListFacade = GeoListModel<GeometryFacadeUniquePtr>;
 
-GeoListFacade getGeoListFacade(const GeoList & geolist);
+GeoListFacade getGeoListFacade(const GeoList &geolist);
 
 } // namespace Sketcher
 
 
 #endif // SKETCHER_GeoList_H
-

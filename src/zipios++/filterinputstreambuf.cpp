@@ -3,26 +3,26 @@
 
 #include "filterinputstreambuf.h"
 
-namespace zipios {
-
-FilterInputStreambuf::FilterInputStreambuf( streambuf *inbuf, bool del_inbuf ) 
-  : _inbuf( inbuf),
-    _del_inbuf( del_inbuf )
+namespace zipios
 {
-  _s_pos = 0;
-  if (!_inbuf) {
-    // throw an exception
-  }
+
+FilterInputStreambuf::FilterInputStreambuf(streambuf *inbuf, bool del_inbuf)
+    : _inbuf(inbuf), _del_inbuf(del_inbuf)
+{
+    _s_pos = 0;
+    if (!_inbuf) {
+        // throw an exception
+    }
 }
 
 
-FilterInputStreambuf::~FilterInputStreambuf() {
-  if (_del_inbuf)
-    delete _inbuf ;
+FilterInputStreambuf::~FilterInputStreambuf()
+{
+    if (_del_inbuf) delete _inbuf;
 }
 
 
-} // namespace
+} // namespace zipios
 
 /** \file
     Implementation of FilterInputStreambuf.

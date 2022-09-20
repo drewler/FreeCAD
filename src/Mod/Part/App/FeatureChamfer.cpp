@@ -22,13 +22,13 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepFilletAPI_MakeChamfer.hxx>
-# include <Precision.hxx>
-# include <TopExp.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Edge.hxx>
-# include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-# include <TopTools_IndexedMapOfShape.hxx>
+#include <BRepFilletAPI_MakeChamfer.hxx>
+#include <Precision.hxx>
+#include <TopExp.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #endif
 
 #include "FeatureChamfer.h"
@@ -38,15 +38,12 @@ using namespace Part;
 
 PROPERTY_SOURCE(Part::Chamfer, Part::FilletBase)
 
-Chamfer::Chamfer()
-{
-}
+Chamfer::Chamfer() {}
 
 App::DocumentObjectExecReturn *Chamfer::execute(void)
 {
-    App::DocumentObject* link = Base.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No object linked");
+    App::DocumentObject *link = Base.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No object linked");
 
     try {
         auto baseShape = Feature::getShape(link);
@@ -61,24 +58,21 @@ App::DocumentObjectExecReturn *Chamfer::execute(void)
             int id = it->edgeid;
             double radius1 = it->radius1;
             double radius2 = it->radius2;
-            const TopoDS_Edge& edge = TopoDS::Edge(mapOfEdges.FindKey(id));
-            const TopoDS_Face& face = TopoDS::Face(mapEdgeFace.FindFromKey(edge).First());
+            const TopoDS_Edge &edge = TopoDS::Edge(mapOfEdges.FindKey(id));
+            const TopoDS_Face &face = TopoDS::Face(mapEdgeFace.FindFromKey(edge).First());
             mkChamfer.Add(radius1, radius2, edge, face);
         }
 
         TopoDS_Shape shape = mkChamfer.Shape();
-        if (shape.IsNull())
-            return new App::DocumentObjectExecReturn("Resulting shape is null");
+        if (shape.IsNull()) return new App::DocumentObjectExecReturn("Resulting shape is null");
 
         //shapefix re #4285
         //https://www.forum.freecadweb.org/viewtopic.php?f=3&t=43890&sid=dae2fa6fda71670863a103b42739e47f
-        TopoShape* ts = new TopoShape(shape);
+        TopoShape *ts = new TopoShape(shape);
         double minTol = 2.0 * Precision::Confusion();
         double maxTol = 4.0 * Precision::Confusion();
         bool rc = ts->fix(Precision::Confusion(), minTol, maxTol);
-        if (rc) {
-            shape = ts->getShape();
-        }
+        if (rc) { shape = ts->getShape(); }
         delete ts;
 
         ShapeHistory history = buildHistory(mkChamfer, TopAbs_FACE, shape, baseShape);
@@ -92,8 +86,7 @@ App::DocumentObjectExecReturn *Chamfer::execute(void)
 
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
 }
-

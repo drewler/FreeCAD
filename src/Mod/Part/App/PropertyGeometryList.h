@@ -30,7 +30,8 @@
 #include "Geometry.h"
 
 
-namespace Base {
+namespace Base
+{
 class Writer;
 }
 
@@ -60,18 +61,14 @@ public:
 
     /** Sets the property
      */
-    void setValue(const Geometry*);
-    void setValues(const std::vector<Geometry*>&);
-    void setValues(std::vector<Geometry*>&&);
+    void setValue(const Geometry *);
+    void setValues(const std::vector<Geometry *> &);
+    void setValues(std::vector<Geometry *> &&);
 
     /// index operator
-    const Geometry *operator[] (const int idx) const {
-        return _lValueList[idx];
-    }
+    const Geometry *operator[](const int idx) const { return _lValueList[idx]; }
 
-    const std::vector<Geometry*> &getValues() const {
-        return _lValueList;
-    }
+    const std::vector<Geometry *> &getValues() const { return _lValueList; }
 
     void set1Value(int idx, std::unique_ptr<Geometry> &&);
 
@@ -87,7 +84,7 @@ public:
     unsigned int getMemSize() const override;
 
 private:
-    std::vector<Geometry*> _lValueList;
+    std::vector<Geometry *> _lValueList;
 };
 
 } // namespace Part

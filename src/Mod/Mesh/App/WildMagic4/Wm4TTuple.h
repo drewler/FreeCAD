@@ -29,41 +29,40 @@
 namespace Wm4
 {
 
-template <int DIMENSION, class TYPE>
-class TTuple
+template<int DIMENSION, class TYPE> class TTuple
 {
 public:
     // Construction and destruction.  The default constructor does not
     // initialize the tuple elements for native elements.  The tuple elements
     // are initialized for class data whenever TYPE initializes during its
     // default construction.
-    TTuple ();
-    TTuple (const TTuple& rkT);
-    ~TTuple ();
+    TTuple();
+    TTuple(const TTuple &rkT);
+    ~TTuple();
 
     // coordinate access
-    operator const TYPE* () const;
-    operator TYPE* ();
-    TYPE operator[] (int i) const;
-    TYPE& operator[] (int i);
+    operator const TYPE *() const;
+    operator TYPE *();
+    TYPE operator[](int i) const;
+    TYPE &operator[](int i);
 
     // assignment
-    TTuple& operator= (const TTuple& rkT);
+    TTuple &operator=(const TTuple &rkT);
 
     // Comparison.  The inequalities make the comparisons using memcmp, thus
     // treating the tuple as an array of unsigned bytes.
-    bool operator== (const TTuple& rkT) const;
-    bool operator!= (const TTuple& rkT) const;
-    bool operator<  (const TTuple& rkT) const;
-    bool operator<= (const TTuple& rkT) const;
-    bool operator>  (const TTuple& rkT) const;
-    bool operator>= (const TTuple& rkT) const;
+    bool operator==(const TTuple &rkT) const;
+    bool operator!=(const TTuple &rkT) const;
+    bool operator<(const TTuple &rkT) const;
+    bool operator<=(const TTuple &rkT) const;
+    bool operator>(const TTuple &rkT) const;
+    bool operator>=(const TTuple &rkT) const;
 
 private:
     TYPE m_atTuple[DIMENSION];
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4TTuple.inl"
 

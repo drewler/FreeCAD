@@ -35,7 +35,8 @@
 #include <boost_signals2.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
-namespace Base {
+namespace Base
+{
 class Writer;
 }
 
@@ -43,7 +44,7 @@ namespace Sketcher
 {
 class Constraint;
 
-class SketcherExport PropertyConstraintList : public App::PropertyLists
+class SketcherExport PropertyConstraintList: public App::PropertyLists
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -63,50 +64,51 @@ public:
     void setSize(int newSize) override;
     int getSize() const override;
 
-    const char* getEditorName() const override {
-        return "SketcherGui::PropertyConstraintListItem";
-    }
+    const char *getEditorName() const override { return "SketcherGui::PropertyConstraintListItem"; }
 
     /*!
       Sets a single constraint to the property at a certain
       position. The value is cloned inernally so it's in the
       responsibility of the caller to free the memory.
     */
-    void set1Value(const int idx, const Constraint*);
+    void set1Value(const int idx, const Constraint *);
     /*!
       Sets a single constraint to the property.
       The value is cloned inernally so it's in the
       responsibility of the caller to free the memory.
     */
-    void setValue(const Constraint*);
+    void setValue(const Constraint *);
     /*!
       Sets a vector of constraint to the property.
       The values of the array are cloned inernally so it's
       in the responsibility of the caller to free the memory.
     */
-    void setValues(const std::vector<Constraint*>&);
+    void setValues(const std::vector<Constraint *> &);
 
     /*!
       Sets a vector of constraint to the property.
       The values of the array are moved, and the ownership of constraints
       inside are taken by this property
     */
-    void setValues(std::vector<Constraint*>&&);
+    void setValues(std::vector<Constraint *> &&);
 
     /*!
      Index operator
      \note If the geometry is invalid then the index operator
            returns null. This must be checked by the caller.
     */
-    const Constraint *operator[] (const int idx) const {
+    const Constraint *operator[](const int idx) const
+    {
         return (invalidGeometry || invalidIndices) ? nullptr : _lValueList[idx];
     }
 
-    const std::vector<Constraint*> &getValues() const {
+    const std::vector<Constraint *> &getValues() const
+    {
         return (invalidGeometry || invalidIndices) ? _emptyValueList : _lValueList;
     }
-    const std::vector<Constraint*> &getValuesForce() const {//to suppress check for invalid geometry, to be used for sketch repairing.
-        return  _lValueList;
+    const std::vector<Constraint *> &getValuesForce() const
+    { //to suppress check for invalid geometry, to be used for sketch repairing.
+        return _lValueList;
     }
 
     PyObject *getPyObject() override;
@@ -131,23 +133,24 @@ public:
 
 
     const Constraint *getConstraint(const App::ObjectIdentifier &path) const;
-    void setPathValue(const App::ObjectIdentifier & path, const boost::any & value) override;
-    const boost::any getPathValue(const App::ObjectIdentifier & path) const override;
-    App::ObjectIdentifier canonicalPath(const App::ObjectIdentifier & p) const override;
-    void getPaths(std::vector<App::ObjectIdentifier> & paths) const override;
+    void setPathValue(const App::ObjectIdentifier &path, const boost::any &value) override;
+    const boost::any getPathValue(const App::ObjectIdentifier &path) const override;
+    App::ObjectIdentifier canonicalPath(const App::ObjectIdentifier &p) const override;
+    void getPaths(std::vector<App::ObjectIdentifier> &paths) const override;
 
     bool getPyPathValue(const App::ObjectIdentifier &path, Py::Object &res) const override;
 
-    using ConstraintInfo = std::pair<int, const Constraint*> ;
+    using ConstraintInfo = std::pair<int, const Constraint *>;
 
-    boost::signals2::signal<void (const std::map<App::ObjectIdentifier, App::ObjectIdentifier> &)> signalConstraintsRenamed;
-    boost::signals2::signal<void (const std::set<App::ObjectIdentifier> &)> signalConstraintsRemoved;
+    boost::signals2::signal<void(const std::map<App::ObjectIdentifier, App::ObjectIdentifier> &)>
+        signalConstraintsRenamed;
+    boost::signals2::signal<void(const std::set<App::ObjectIdentifier> &)> signalConstraintsRemoved;
 
     static std::string getConstraintName(const std::string &name, int i);
 
     static std::string getConstraintName(int i);
 
-    static int getIndexFromConstraintName(const std::string & name);
+    static int getIndexFromConstraintName(const std::string &name);
 
     static bool validConstraintName(const std::string &name);
 
@@ -166,7 +169,7 @@ private:
     bool restoreFromTransaction;
     bool invalidIndices;
 
-    void applyValues(std::vector<Constraint*>&&);
+    void applyValues(std::vector<Constraint *> &&);
     void applyValidGeometryKeys(const std::vector<unsigned int> &keys);
 
     static std::vector<Constraint *> _emptyValueList;

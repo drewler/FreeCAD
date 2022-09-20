@@ -33,10 +33,10 @@
  */
 //=============================================================================
 
-StdMeshers_Reversible1D::StdMeshers_Reversible1D(int hypId, int studyId, SMESH_Gen * gen)
-  :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_Reversible1D::StdMeshers_Reversible1D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _param_algo_dim = 1; 
+    _param_algo_dim = 1;
 }
 
 //=============================================================================
@@ -45,55 +45,52 @@ StdMeshers_Reversible1D::StdMeshers_Reversible1D(int hypId, int studyId, SMESH_G
  */
 //=============================================================================
 
-void StdMeshers_Reversible1D::SetReversedEdges( const std::vector<int>& ids )
+void StdMeshers_Reversible1D::SetReversedEdges(const std::vector<int> &ids)
 {
-  if ( ids != _edgeIDs )
-  {
-    _edgeIDs = ids;
-    NotifySubMeshesHypothesisModification();
-  }
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-std::ostream & StdMeshers_Reversible1D::SaveTo(std::ostream & save)
-{
-  save << " " << _edgeIDs.size() << " ";
-
-  if ( !_edgeIDs.empty() )
-  {
-    for ( size_t i = 0; i < _edgeIDs.size(); i++)
-      save << " " << _edgeIDs[i];
-    save << " " << _objEntry << " ";
-  }
-
-  return save;
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-std::istream & StdMeshers_Reversible1D::LoadFrom(std::istream & load)
-{
-  bool isOK;
-  int intVal;
-
-  isOK = (bool)(load >> intVal);
-  if (isOK && intVal > 0) {
-    _edgeIDs.reserve( intVal );
-    for (int i = 0; i < _edgeIDs.capacity() && isOK; i++) {
-      isOK = (bool)(load >> intVal);
-      if ( isOK ) _edgeIDs.push_back( intVal );
+    if (ids != _edgeIDs) {
+        _edgeIDs = ids;
+        NotifySubMeshesHypothesisModification();
     }
-    isOK = (bool)(load >> _objEntry);
-  }
+}
 
-  return load;
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+std::ostream &StdMeshers_Reversible1D::SaveTo(std::ostream &save)
+{
+    save << " " << _edgeIDs.size() << " ";
+
+    if (!_edgeIDs.empty()) {
+        for (size_t i = 0; i < _edgeIDs.size(); i++) save << " " << _edgeIDs[i];
+        save << " " << _objEntry << " ";
+    }
+
+    return save;
+}
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+std::istream &StdMeshers_Reversible1D::LoadFrom(std::istream &load)
+{
+    bool isOK;
+    int intVal;
+
+    isOK = (bool)(load >> intVal);
+    if (isOK && intVal > 0) {
+        _edgeIDs.reserve(intVal);
+        for (int i = 0; i < _edgeIDs.capacity() && isOK; i++) {
+            isOK = (bool)(load >> intVal);
+            if (isOK) _edgeIDs.push_back(intVal);
+        }
+        isOK = (bool)(load >> _objEntry);
+    }
+
+    return load;
 }

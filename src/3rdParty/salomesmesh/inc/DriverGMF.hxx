@@ -30,17 +30,16 @@
 
 namespace DriverGMF
 {
-  /*!
+/*!
    * \brief An object closing GMF mesh at destruction
    */
-  struct MeshCloser
-  {
+struct MeshCloser {
     int _gmfMeshID;
-    MeshCloser( const int gmfMeshID ): _gmfMeshID(gmfMeshID) {}
+    MeshCloser(const int gmfMeshID) : _gmfMeshID(gmfMeshID) {}
     ~MeshCloser();
-  };
+};
 
-  bool isExtensionCorrect( const std::string& fileName );
-}
+bool isExtensionCorrect(const std::string &fileName);
+} // namespace DriverGMF
 
 #endif

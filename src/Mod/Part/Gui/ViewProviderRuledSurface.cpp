@@ -37,29 +37,23 @@ using namespace std;
 PROPERTY_SOURCE(PartGui::ViewProviderRuledSurface, PartGui::ViewProviderPart)
 
 
-ViewProviderRuledSurface::ViewProviderRuledSurface()
-{
-  sPixmap = "Part_RuledSurface.svg";
-}
+ViewProviderRuledSurface::ViewProviderRuledSurface() { sPixmap = "Part_RuledSurface.svg"; }
 
-ViewProviderRuledSurface::~ViewProviderRuledSurface()
-{
+ViewProviderRuledSurface::~ViewProviderRuledSurface() {}
 
-}
-
-std::vector<App::DocumentObject*> ViewProviderRuledSurface::claimChildren() const
+std::vector<App::DocumentObject *> ViewProviderRuledSurface::claimChildren() const
 {
     // in a set each element is unique
-    std::set<App::DocumentObject*> temp;
-    temp.insert(static_cast<Part::RuledSurface*>(getObject())->Curve1.getValue());
-    temp.insert(static_cast<Part::RuledSurface*>(getObject())->Curve2.getValue());
+    std::set<App::DocumentObject *> temp;
+    temp.insert(static_cast<Part::RuledSurface *>(getObject())->Curve1.getValue());
+    temp.insert(static_cast<Part::RuledSurface *>(getObject())->Curve2.getValue());
 
-    std::vector<App::DocumentObject*> array;
+    std::vector<App::DocumentObject *> array;
     array.insert(array.begin(), temp.begin(), temp.end());
     return array;
 }
 
-void ViewProviderRuledSurface::updateData(const App::Property* prop)
+void ViewProviderRuledSurface::updateData(const App::Property *prop)
 {
     PartGui::ViewProviderPart::updateData(prop);
     if (prop->getTypeId() == Part::PropertyShapeHistory::getClassTypeId()) {
@@ -76,19 +70,16 @@ void ViewProviderRuledSurface::updateData(const App::Property* prop)
         Gui::Application::Instance->hideViewProvider(pCurve1);
     if (pCurve2)
         Gui::Application::Instance->hideViewProvider(pCurve2);*/
+}
 
-    }
-    
 bool ViewProviderRuledSurface::onDelete(const std::vector<std::string> &)
 {
     // get the input shape
-    Part::RuledSurface* pRuledSurface = static_cast<Part::RuledSurface*>(getObject()); 
-    App::DocumentObject *pCurve1 = pRuledSurface->Curve1.getValue(); 
+    Part::RuledSurface *pRuledSurface = static_cast<Part::RuledSurface *>(getObject());
+    App::DocumentObject *pCurve1 = pRuledSurface->Curve1.getValue();
     App::DocumentObject *pCurve2 = pRuledSurface->Curve2.getValue();
-    if (pCurve1)
-        Gui::Application::Instance->showViewProvider(pCurve1);
-    if (pCurve2)
-        Gui::Application::Instance->showViewProvider(pCurve2);
+    if (pCurve1) Gui::Application::Instance->showViewProvider(pCurve1);
+    if (pCurve2) Gui::Application::Instance->showViewProvider(pCurve2);
 
     return true;
 }
@@ -98,14 +89,14 @@ bool ViewProviderRuledSurface::onDelete(const std::vector<std::string> &)
 
 std::vector<std::string> ViewProviderRuledSurface::getDisplayModes() const
 {
-  // get the modes of the father
-  std::vector<std::string> StrList;
+    // get the modes of the father
+    std::vector<std::string> StrList;
 
-  // add your own modes
-  StrList.emplace_back("Flat Lines");
-  StrList.emplace_back("Shaded");
-  StrList.emplace_back("Wireframe");
-  StrList.emplace_back("Points");
+    // add your own modes
+    StrList.emplace_back("Flat Lines");
+    StrList.emplace_back("Shaded");
+    StrList.emplace_back("Wireframe");
+    StrList.emplace_back("Points");
 
-  return StrList;
+    return StrList;
 }

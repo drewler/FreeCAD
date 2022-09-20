@@ -24,8 +24,8 @@
 
 #include "MED_WrapperBase.hxx"
 
-#include <iostream>     
-#include <sstream>      
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <string.h>
 #include <stdexcept>
@@ -33,40 +33,49 @@
 
 namespace MED
 {
-  class MEDWRAPPER_EXPORT PrefixPrinter
-  {
+class MEDWRAPPER_EXPORT PrefixPrinter
+{
     static int myCounter;
     bool myIsActive;
-  public:
+
+public:
     PrefixPrinter(bool theIsActive = true);
     ~PrefixPrinter();
 
     static std::string GetPrefix();
-  };
-}
+};
+} // namespace MED
 
 #ifdef _DEBUG_
-  #define MSG(deb,msg) if(deb) std::cout<<MED::PrefixPrinter::GetPrefix()<<msg<<" ("<<__FILE__<<" ["<<__LINE__<<"])\n"
-  #define BEGMSG(deb,msg) if(deb) std::cout<<MED::PrefixPrinter::GetPrefix()<<msg
-  #define INITMSGA(deb,lev,msg) MED::PrefixPrinter aPrefixPrinter_##lev(deb); BEGMSG(deb,msg)
-  #define INITMSG(deb,msg) INITMSGA(deb,,msg)
-  #define ADDMSG(deb,msg) if(deb) std::cout<<msg
+#define MSG(deb, msg)                                                                              \
+    if (deb)                                                                                       \
+    std::cout << MED::PrefixPrinter::GetPrefix() << msg << " (" << __FILE__ << " [" << __LINE__    \
+              << "])\n"
+#define BEGMSG(deb, msg)                                                                           \
+    if (deb) std::cout << MED::PrefixPrinter::GetPrefix() << msg
+#define INITMSGA(deb, lev, msg)                                                                    \
+    MED::PrefixPrinter aPrefixPrinter_##lev(deb);                                                  \
+    BEGMSG(deb, msg)
+#define INITMSG(deb, msg) INITMSGA(deb, , msg)
+#define ADDMSG(deb, msg)                                                                           \
+    if (deb) std::cout << msg
 #else
-  #define MSG(deb,msg)
-  #define BEGMSG(deb,msg)
-  #define INITMSGA(deb,lev,msg)
-  #define INITMSG(deb,msg)
-  #define ADDMSG(deb,msg)
+#define MSG(deb, msg)
+#define BEGMSG(deb, msg)
+#define INITMSGA(deb, lev, msg)
+#define INITMSG(deb, msg)
+#define ADDMSG(deb, msg)
 #endif
 
 
 #ifndef EXCEPTION
 
-#define EXCEPTION(TYPE, MSG) {\
-  std::ostringstream aStream;\
-  aStream<<__FILE__<<"["<<__LINE__<<"]::"<<MSG;\
-  throw TYPE(aStream.str().c_str());\
-}
+#define EXCEPTION(TYPE, MSG)                                                                       \
+    {                                                                                              \
+        std::ostringstream aStream;                                                                \
+        aStream << __FILE__ << "[" << __LINE__ << "]::" << MSG;                                    \
+        throw TYPE(aStream.str().c_str());                                                         \
+    }
 
 #endif
 

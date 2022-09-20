@@ -8,56 +8,56 @@
 
 #include "filepath.h"
 
-namespace zipios {
+namespace zipios
+{
 
-using namespace std ;
+using namespace std;
 
-const char FilePath::_separator = '/' ;
+const char FilePath::_separator = '/';
 
 
-FilePath::FilePath( const string &path, bool check_exists )
-  : _checked( false ),
-    _path( path ) {
-  pruneTrailingSeparator() ;
-  if ( check_exists ) 
-    exists() ;
+FilePath::FilePath(const string &path, bool check_exists) : _checked(false), _path(path)
+{
+    pruneTrailingSeparator();
+    if (check_exists) exists();
 }
 
 
-void FilePath::check() const {
-  _checked     = true  ;  
-  _exists      = false ;
-  _is_reg      = false ;
-  _is_dir      = false ;
-  _is_char     = false ; 
-  _is_block    = false ;
-  _is_socket   = false ;
-  _is_fifo     = false ;
+void FilePath::check() const
+{
+    _checked = true;
+    _exists = false;
+    _is_reg = false;
+    _is_dir = false;
+    _is_char = false;
+    _is_block = false;
+    _is_socket = false;
+    _is_fifo = false;
 
-#if defined (__GNUC__)
-  struct stat buf ;
-  if ( stat( _path.c_str(), &buf ) != -1 ) {
+#if defined(__GNUC__)
+    struct stat buf;
+    if (stat(_path.c_str(), &buf) != -1) {
 #else
-  struct _stat buf ;
-  if ( _stat( _path.c_str(), &buf ) != -1 ) {
+    struct _stat buf;
+    if (_stat(_path.c_str(), &buf) != -1) {
 #endif
-    _exists    = true ;
+        _exists = true;
 #if defined(BOOST_WINNT)
-    _is_reg    = _S_IFREG & buf.st_mode ;
-    _is_dir    = _S_IFDIR & buf.st_mode ;
-    _is_char   = _S_IFCHR & buf.st_mode ;
+        _is_reg = _S_IFREG & buf.st_mode;
+        _is_dir = _S_IFDIR & buf.st_mode;
+        _is_char = _S_IFCHR & buf.st_mode;
 #else
-    _is_reg    = S_ISREG ( buf.st_mode ) ;
-    _is_dir    = S_ISDIR ( buf.st_mode ) ;
-    _is_char   = S_ISCHR ( buf.st_mode ) ;
-    _is_block  = S_ISBLK ( buf.st_mode ) ;
-    _is_socket = S_ISSOCK( buf.st_mode ) ;
-    _is_fifo   = S_ISFIFO( buf.st_mode ) ;
+        _is_reg = S_ISREG(buf.st_mode);
+        _is_dir = S_ISDIR(buf.st_mode);
+        _is_char = S_ISCHR(buf.st_mode);
+        _is_block = S_ISBLK(buf.st_mode);
+        _is_socket = S_ISSOCK(buf.st_mode);
+        _is_fifo = S_ISFIFO(buf.st_mode);
 #endif
-  } 
+    }
 }
 
-} // namespace
+} // namespace zipios
 
 /** \file
     Implementation of FilePath.

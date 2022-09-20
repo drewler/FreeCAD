@@ -29,7 +29,8 @@
 #include <App/Property.h>
 
 
-namespace Base {
+namespace Base
+{
 class Writer;
 }
 
@@ -59,17 +60,13 @@ public:
 
     /** Sets the property
      */
-    void setValue(CosmeticVertex*);
-    void setValues(const std::vector<CosmeticVertex*>&);
+    void setValue(CosmeticVertex *);
+    void setValues(const std::vector<CosmeticVertex *> &);
 
     /// index operator
-    const CosmeticVertex *operator[] (const int idx) const {
-        return _lValueList[idx];
-    }
+    const CosmeticVertex *operator[](const int idx) const { return _lValueList[idx]; }
 
-    const std::vector<CosmeticVertex*> &getValues(void) const {
-        return _lValueList;
-    }
+    const std::vector<CosmeticVertex *> &getValues(void) const { return _lValueList; }
 
     virtual PyObject *getPyObject(void);
     virtual void setPyObject(PyObject *);
@@ -83,7 +80,7 @@ public:
     virtual unsigned int getMemSize(void) const;
 
 private:
-    std::vector<CosmeticVertex*> _lValueList;
+    std::vector<CosmeticVertex *> _lValueList;
 };
 
 } // namespace TechDraw

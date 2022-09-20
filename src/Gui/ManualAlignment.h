@@ -35,15 +35,17 @@ class SbVec3f;
 class SoPickedPoint;
 class SoEventCallback;
 
-namespace Gui {
+namespace Gui
+{
 class Document;
 class AlignmentView;
 class View3DInventorViewer;
 
-class PickedPoint {
+class PickedPoint
+{
 public:
     PickedPoint() {}
-    PickedPoint(const Base::Vector3d& p, const Base::Vector3d& n) : point(p), normal(n) {}
+    PickedPoint(const Base::Vector3d &p, const Base::Vector3d &n) : point(p), normal(n) {}
     Base::Vector3d point;
     Base::Vector3d normal;
 };
@@ -62,33 +64,33 @@ public:
     /**
      * Add a mesh to the group.
      */
-    void addView(App::DocumentObject*);
-    std::vector<App::DocumentObject*> getViews() const;
+    void addView(App::DocumentObject *);
+    std::vector<App::DocumentObject *> getViews() const;
     /**
      * Checks for the view provider of one of the added views.
      */
-    bool hasView(Gui::ViewProviderDocumentObject*) const;
+    bool hasView(Gui::ViewProviderDocumentObject *) const;
     /**
      * Remove a previously added view by its view provider.
      */
-    void removeView(Gui::ViewProviderDocumentObject*);
+    void removeView(Gui::ViewProviderDocumentObject *);
     /**
      * Add the group and therefore all its added view providers to the Inventor tree.
      */
-    void addToViewer(Gui::View3DInventorViewer*) const;
+    void addToViewer(Gui::View3DInventorViewer *) const;
     /**
      * Remove all the view providers from the Inventor tree.
      */
-    void removeFromViewer(Gui::View3DInventorViewer*) const;
+    void removeFromViewer(Gui::View3DInventorViewer *) const;
     void setRandomColor();
     /**
      * Returns the document of the added views.
      */
-    Gui::Document* getDocument() const;
+    Gui::Document *getDocument() const;
     /**
      * Add a point to an array of picked points.
      */
-    void addPoint(const PickedPoint&);
+    void addPoint(const PickedPoint &);
     /**
      * Remove last point from array of picked points.
      */
@@ -100,7 +102,7 @@ public:
     /**
      * Return an array of picked points.
      */
-    const std::vector<PickedPoint>& getPoints() const;
+    const std::vector<PickedPoint> &getPoints() const;
     /**
      * Clear all picked points.
      */
@@ -109,7 +111,7 @@ public:
      * Set or unset the alignable mode for the added views. If a view is not alignable it also not pickable.
      */
     void setAlignable(bool);
-    void moveTo(AlignmentGroup&);
+    void moveTo(AlignmentGroup &);
     /**
      * Clear the list of added views.
      */
@@ -129,14 +131,14 @@ public:
 
 protected:
     std::vector<PickedPoint> _pickedPoints;
-    std::vector<Gui::ViewProviderDocumentObject*> _views;
+    std::vector<Gui::ViewProviderDocumentObject *> _views;
 };
 
 /**
  * The FixedGroup class can be used for a fixed group of views.
  * @author Werner Mayer
  */
-class GuiExport MovableGroup : public AlignmentGroup
+class GuiExport MovableGroup: public AlignmentGroup
 {
 public:
     MovableGroup();
@@ -147,7 +149,7 @@ public:
  * The FixedGroup class can be used for a fixed group of views.
  * @author Werner Mayer
  */
-class GuiExport FixedGroup : public AlignmentGroup
+class GuiExport FixedGroup: public AlignmentGroup
 {
 public:
     FixedGroup();
@@ -164,15 +166,15 @@ public:
     MovableGroupModel();
     ~MovableGroupModel();
 
-    void addGroup(const MovableGroup&);
-    void addGroups(const std::map<int, MovableGroup>&);
-    MovableGroup& activeGroup();
-    const MovableGroup& activeGroup() const;
+    void addGroup(const MovableGroup &);
+    void addGroups(const std::map<int, MovableGroup> &);
+    MovableGroup &activeGroup();
+    const MovableGroup &activeGroup() const;
     void continueAlignment();
     void clear();
     bool isEmpty() const;
     int count() const;
-    const MovableGroup& getGroup(int i) const;
+    const MovableGroup &getGroup(int i) const;
     Base::BoundBox3d getBoundingBox() const;
 
 protected:
@@ -185,7 +187,7 @@ private:
 /**
  * @author Werner Mayer
  */
-class GuiExport ManualAlignment : public QObject
+class GuiExport ManualAlignment: public QObject
 {
     Q_OBJECT
 
@@ -194,41 +196,41 @@ protected:
     ~ManualAlignment() override;
 
 public:
-    static ManualAlignment* instance();
+    static ManualAlignment *instance();
     static void destruct();
     static bool hasInstance();
 
     void setMinPoints(int minPoints);
-    void setFixedGroup(const FixedGroup&);
-    void setModel(const MovableGroupModel&);
+    void setFixedGroup(const FixedGroup &);
+    void setModel(const MovableGroupModel &);
     void clearAll();
 
-    void setViewingDirections(const Base::Vector3d& view1, const Base::Vector3d& up1,
-                              const Base::Vector3d& view2, const Base::Vector3d& up2);
+    void setViewingDirections(const Base::Vector3d &view1, const Base::Vector3d &up1,
+                              const Base::Vector3d &view2, const Base::Vector3d &up2);
     void startAlignment(Base::Type mousemodel);
     void finish();
     void align();
     bool canAlign() const;
     void cancel();
 
-    const Base::Placement & getTransform() const
-    { return myTransform; }
-    void alignObject(App::DocumentObject*);
+    const Base::Placement &getTransform() const { return myTransform; }
+    void alignObject(App::DocumentObject *);
 
     // Observer stuff
     /// Checks if the given object is about to be removed
-    void slotDeletedDocument(const Gui::Document& Doc);
+    void slotDeletedDocument(const Gui::Document &Doc);
     /// Checks if the given document is about to be closed
-    void slotDeletedObject(const Gui::ViewProvider& Obj);
+    void slotDeletedObject(const Gui::ViewProvider &Obj);
 
 protected:
-    bool computeAlignment(const std::vector<PickedPoint>& movPts, const std::vector<PickedPoint>& fixPts);
+    bool computeAlignment(const std::vector<PickedPoint> &movPts,
+                          const std::vector<PickedPoint> &fixPts);
     void continueAlignment();
     void showInstructions();
     /** @name Probe picking */
     //@{
-    static void probePickedCallback(void * ud, SoEventCallback * n);
-    bool applyPickedProbe(Gui::ViewProviderDocumentObject*, const SoPickedPoint* pnt);
+    static void probePickedCallback(void *ud, SoEventCallback *n);
+    bool applyPickedProbe(Gui::ViewProviderDocumentObject *, const SoPickedPoint *pnt);
     //@}
 
 protected Q_SLOTS:
@@ -244,10 +246,10 @@ Q_SIGNALS:
     void emitFinished();
 
 private:
-    SoNode* pickedPointsSubGraph(const SbVec3f& p, const SbVec3f& n, int id);
+    SoNode *pickedPointsSubGraph(const SbVec3f &p, const SbVec3f &n, int id);
     void closeViewer();
 
-    static ManualAlignment* _instance;
+    static ManualAlignment *_instance;
 
     using Connection = boost::signals2::connection;
     Connection connectApplicationDeletedDocument;
@@ -256,16 +258,15 @@ private:
     FixedGroup myFixedGroup;
     MovableGroupModel myAlignModel;
     QPointer<Gui::AlignmentView> myViewer;
-    Gui::Document* myDocument;
+    Gui::Document *myDocument;
     int myPickPoints;
     Base::Placement myTransform;
 
     class Private;
-    Private* d;
+    Private *d;
 };
 
 } // namespace Gui
 
 
 #endif // GUI_MANUALALIGNMENT_H
-

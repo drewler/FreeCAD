@@ -26,13 +26,14 @@
 #include <Mod/Part/App/Geometry.h>
 #include <Mod/Sketcher/SketcherGlobal.h>
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
-class SketcherGuiExport ViewProviderSketchGeometryExtension : public Part::GeometryExtension
+class SketcherGuiExport ViewProviderSketchGeometryExtension: public Part::GeometryExtension
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
-public:
 
+public:
     ViewProviderSketchGeometryExtension();
     ~ViewProviderSketchGeometryExtension() override = default;
 
@@ -48,14 +49,17 @@ public:
     // Applicability: General abstract concepts embodied in a geometry, in practice B-Spline poles.
     // Why not in SketchGeometryExtension? Because it is merely representation related. It has no place in
     // a console application.
-    virtual double getRepresentationFactor() const {return RepresentationFactor;}
-    virtual void setRepresentationFactor(double representationFactor) {RepresentationFactor = representationFactor;}
+    virtual double getRepresentationFactor() const { return RepresentationFactor; }
+    virtual void setRepresentationFactor(double representationFactor)
+    {
+        RepresentationFactor = representationFactor;
+    }
 
 protected:
-    void copyAttributes(Part::GeometryExtension * cpy) const override;
+    void copyAttributes(Part::GeometryExtension *cpy) const override;
 
 private:
-    ViewProviderSketchGeometryExtension(const ViewProviderSketchGeometryExtension&) = default;
+    ViewProviderSketchGeometryExtension(const ViewProviderSketchGeometryExtension &) = default;
 
 private:
     double RepresentationFactor;

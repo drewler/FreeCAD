@@ -45,13 +45,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_ProjectionSource2D::StdMeshers_ProjectionSource2D(int hypId, int studyId,
-                                                             SMESH_Gen * gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_ProjectionSource2D::StdMeshers_ProjectionSource2D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "ProjectionSource2D"; // used by Projection_2D
-  _param_algo_dim = 2; // 2D
-  _sourceMesh = 0;
+    _name = "ProjectionSource2D"; // used by Projection_2D
+    _param_algo_dim = 2;          // 2D
+    _sourceMesh = 0;
 }
 
 //=============================================================================
@@ -64,29 +63,27 @@ StdMeshers_ProjectionSource2D::StdMeshers_ProjectionSource2D(int hypId, int stud
 
 StdMeshers_ProjectionSource2D::~StdMeshers_ProjectionSource2D()
 {
-  MESSAGE( "StdMeshers_ProjectionSource2D::~StdMeshers_ProjectionSource2D" );
+    MESSAGE("StdMeshers_ProjectionSource2D::~StdMeshers_ProjectionSource2D");
 }
 
 //=============================================================================
-  /*!
+/*!
    * Sets a source <face> to take a mesh pattern from
    */
 //=============================================================================
 
-void StdMeshers_ProjectionSource2D::SetSourceFace(const TopoDS_Shape& Face)
+void StdMeshers_ProjectionSource2D::SetSourceFace(const TopoDS_Shape &Face)
 {
-  if ( Face.IsNull() )
-    throw SALOME_Exception(LOCALIZED("Null Face is not allowed"));
+    if (Face.IsNull()) throw SALOME_Exception(LOCALIZED("Null Face is not allowed"));
 
-  if ( Face.ShapeType() != TopAbs_FACE && Face.ShapeType() != TopAbs_COMPOUND )
-    throw SALOME_Exception(LOCALIZED("Wrong shape type"));
+    if (Face.ShapeType() != TopAbs_FACE && Face.ShapeType() != TopAbs_COMPOUND)
+        throw SALOME_Exception(LOCALIZED("Wrong shape type"));
 
-  if ( !_sourceFace.IsSame( Face ) )
-  {
-    _sourceFace = Face;
+    if (!_sourceFace.IsSame(Face)) {
+        _sourceFace = Face;
 
-    NotifySubMeshesHypothesisModification();
-  }
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -97,46 +94,42 @@ void StdMeshers_ProjectionSource2D::SetSourceFace(const TopoDS_Shape& Face)
  */
 //=============================================================================
 
-void StdMeshers_ProjectionSource2D::SetVertexAssociation(const TopoDS_Shape& sourceVertex1,
-                                                         const TopoDS_Shape& sourceVertex2,
-                                                         const TopoDS_Shape& targetVertex1,
-                                                         const TopoDS_Shape& targetVertex2)
+void StdMeshers_ProjectionSource2D::SetVertexAssociation(const TopoDS_Shape &sourceVertex1,
+                                                         const TopoDS_Shape &sourceVertex2,
+                                                         const TopoDS_Shape &targetVertex1,
+                                                         const TopoDS_Shape &targetVertex2)
 {
-  if ( sourceVertex1.IsNull() != targetVertex1.IsNull() ||
-       sourceVertex2.IsNull() != targetVertex2.IsNull() )
-    throw SALOME_Exception(LOCALIZED("Vertices must be provided in couples"));
+    if (sourceVertex1.IsNull() != targetVertex1.IsNull()
+        || sourceVertex2.IsNull() != targetVertex2.IsNull())
+        throw SALOME_Exception(LOCALIZED("Vertices must be provided in couples"));
 
-  if ( sourceVertex1.IsNull() != sourceVertex2.IsNull() )
-  {
-    // possibly there is only 1 vertex in the face
-    if ( !_sourceFace.IsNull() &&
-         SMESH_MesherHelper::Count( _sourceFace, TopAbs_VERTEX, /*ignoreSame=*/true) != 1 )
-      throw SALOME_Exception(LOCALIZED("Two or none pairs of vertices must be provided"));
-  }
+    if (sourceVertex1.IsNull() != sourceVertex2.IsNull()) {
+        // possibly there is only 1 vertex in the face
+        if (!_sourceFace.IsNull()
+            && SMESH_MesherHelper::Count(_sourceFace, TopAbs_VERTEX, /*ignoreSame=*/true) != 1)
+            throw SALOME_Exception(LOCALIZED("Two or none pairs of vertices must be provided"));
+    }
 
-  if ( !sourceVertex1.IsNull() )
-    if ( sourceVertex1.ShapeType() != TopAbs_VERTEX ||
-         targetVertex1.ShapeType() != TopAbs_VERTEX )
-      throw SALOME_Exception(LOCALIZED("Wrong shape type"));
+    if (!sourceVertex1.IsNull())
+        if (sourceVertex1.ShapeType() != TopAbs_VERTEX
+            || targetVertex1.ShapeType() != TopAbs_VERTEX)
+            throw SALOME_Exception(LOCALIZED("Wrong shape type"));
 
-  if ( !sourceVertex2.IsNull() )
-    if ( sourceVertex2.ShapeType() != TopAbs_VERTEX ||
-         targetVertex2.ShapeType() != TopAbs_VERTEX )
-      throw SALOME_Exception(LOCALIZED("Wrong shape type"));
+    if (!sourceVertex2.IsNull())
+        if (sourceVertex2.ShapeType() != TopAbs_VERTEX
+            || targetVertex2.ShapeType() != TopAbs_VERTEX)
+            throw SALOME_Exception(LOCALIZED("Wrong shape type"));
 
 
-  if ( !_sourceVertex1.IsSame( sourceVertex1 ) ||
-       !_sourceVertex2.IsSame( sourceVertex2 ) ||
-       !_targetVertex1.IsSame( targetVertex1 ) ||
-       !_targetVertex2.IsSame( targetVertex2 ) )
-  {
-    _sourceVertex1 = TopoDS::Vertex( sourceVertex1 );
-    _sourceVertex2 = TopoDS::Vertex( sourceVertex2 );
-    _targetVertex1 = TopoDS::Vertex( targetVertex1 );
-    _targetVertex2 = TopoDS::Vertex( targetVertex2 );
+    if (!_sourceVertex1.IsSame(sourceVertex1) || !_sourceVertex2.IsSame(sourceVertex2)
+        || !_targetVertex1.IsSame(targetVertex1) || !_targetVertex2.IsSame(targetVertex2)) {
+        _sourceVertex1 = TopoDS::Vertex(sourceVertex1);
+        _sourceVertex2 = TopoDS::Vertex(sourceVertex2);
+        _targetVertex1 = TopoDS::Vertex(targetVertex1);
+        _targetVertex2 = TopoDS::Vertex(targetVertex2);
 
-    NotifySubMeshesHypothesisModification();
-  }
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -145,12 +138,12 @@ void StdMeshers_ProjectionSource2D::SetVertexAssociation(const TopoDS_Shape& sou
  */
 //=============================================================================
 
-void StdMeshers_ProjectionSource2D::SetSourceMesh(SMESH_Mesh* mesh)
+void StdMeshers_ProjectionSource2D::SetSourceMesh(SMESH_Mesh *mesh)
 {
-  if ( _sourceMesh != mesh ) {
-    _sourceMesh = mesh;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (_sourceMesh != mesh) {
+        _sourceMesh = mesh;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -159,10 +152,7 @@ void StdMeshers_ProjectionSource2D::SetSourceMesh(SMESH_Mesh* mesh)
  */
 //=============================================================================
 
-TopoDS_Shape StdMeshers_ProjectionSource2D::GetSourceFace() const
-{
-  return _sourceFace;
-}
+TopoDS_Shape StdMeshers_ProjectionSource2D::GetSourceFace() const { return _sourceFace; }
 
 //=============================================================================
 /*!
@@ -173,12 +163,11 @@ TopoDS_Shape StdMeshers_ProjectionSource2D::GetSourceFace() const
 
 TopoDS_Vertex StdMeshers_ProjectionSource2D::GetSourceVertex(int i) const
 {
-  if ( i == 1 )
-    return _sourceVertex1;
-  else if ( i == 2 )
-    return _sourceVertex2;
-  else
-    throw SALOME_Exception(LOCALIZED("Wrong vertex index"));
+    if (i == 1) return _sourceVertex1;
+    else if (i == 2)
+        return _sourceVertex2;
+    else
+        throw SALOME_Exception(LOCALIZED("Wrong vertex index"));
 }
 
 //=============================================================================
@@ -190,12 +179,11 @@ TopoDS_Vertex StdMeshers_ProjectionSource2D::GetSourceVertex(int i) const
 
 TopoDS_Vertex StdMeshers_ProjectionSource2D::GetTargetVertex(int i) const
 {
-  if ( i == 1 )
-    return _targetVertex1;
-  else if ( i == 2 )
-    return _targetVertex2;
-  else
-    throw SALOME_Exception(LOCALIZED("Wrong vertex index"));
+    if (i == 1) return _targetVertex1;
+    else if (i == 2)
+        return _targetVertex2;
+    else
+        throw SALOME_Exception(LOCALIZED("Wrong vertex index"));
 }
 
 //=============================================================================
@@ -204,16 +192,16 @@ TopoDS_Vertex StdMeshers_ProjectionSource2D::GetTargetVertex(int i) const
  */
 //=============================================================================
 
-ostream & StdMeshers_ProjectionSource2D::SaveTo(ostream & save)
+ostream &StdMeshers_ProjectionSource2D::SaveTo(ostream &save)
 {
-  // we store it in order to be able to detect that hypo is really modified
-  save << " " << _sourceFace.TShape().operator->()  ;
-  save << " " << _sourceVertex1.TShape().operator->();
-  save << " " << _targetVertex1.TShape().operator->();
-  save << " " << _sourceVertex2.TShape().operator->();
-  save << " " << _targetVertex2.TShape().operator->();
-  save << " " << ( _sourceMesh ? _sourceMesh->GetId() : -1 );
-  return save;
+    // we store it in order to be able to detect that hypo is really modified
+    save << " " << _sourceFace.TShape().operator->();
+    save << " " << _sourceVertex1.TShape().operator->();
+    save << " " << _targetVertex1.TShape().operator->();
+    save << " " << _sourceVertex2.TShape().operator->();
+    save << " " << _targetVertex2.TShape().operator->();
+    save << " " << (_sourceMesh ? _sourceMesh->GetId() : -1);
+    return save;
 }
 
 //=============================================================================
@@ -222,11 +210,11 @@ ostream & StdMeshers_ProjectionSource2D::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_ProjectionSource2D::LoadFrom(istream & load)
+istream &StdMeshers_ProjectionSource2D::LoadFrom(istream &load)
 {
-  // impossible to restore w/o any context
-  // It is done by servant
-  return load;
+    // impossible to restore w/o any context
+    // It is done by servant
+    return load;
 }
 
 //=============================================================================
@@ -235,10 +223,7 @@ istream & StdMeshers_ProjectionSource2D::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_ProjectionSource2D & hyp)
-{
-  return hyp.SaveTo( save );
-}
+ostream &operator<<(ostream &save, StdMeshers_ProjectionSource2D &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -246,9 +231,9 @@ ostream & operator <<(ostream & save, StdMeshers_ProjectionSource2D & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_ProjectionSource2D & hyp)
+istream &operator>>(istream &load, StdMeshers_ProjectionSource2D &hyp)
 {
-  return hyp.LoadFrom( load );
+    return hyp.LoadFrom(load);
 }
 
 //================================================================================
@@ -260,10 +245,9 @@ istream & operator >>(istream & load, StdMeshers_ProjectionSource2D & hyp)
  */
 //================================================================================
 
-bool StdMeshers_ProjectionSource2D::SetParametersByMesh(const SMESH_Mesh*   ,
-                                                        const TopoDS_Shape& )
+bool StdMeshers_ProjectionSource2D::SetParametersByMesh(const SMESH_Mesh *, const TopoDS_Shape &)
 {
-  return false;
+    return false;
 }
 
 //================================================================================
@@ -272,17 +256,15 @@ bool StdMeshers_ProjectionSource2D::SetParametersByMesh(const SMESH_Mesh*   ,
  */
 //================================================================================
 
-void StdMeshers_ProjectionSource2D::GetStoreParams(TopoDS_Shape& s1,
-                                                   TopoDS_Shape& s2,
-                                                   TopoDS_Shape& s3,
-                                                   TopoDS_Shape& s4,
-                                                   TopoDS_Shape& s5) const
+void StdMeshers_ProjectionSource2D::GetStoreParams(TopoDS_Shape &s1, TopoDS_Shape &s2,
+                                                   TopoDS_Shape &s3, TopoDS_Shape &s4,
+                                                   TopoDS_Shape &s5) const
 {
-  s1 = _sourceFace;
-  s2 = _sourceVertex1;
-  s3 = _sourceVertex2;
-  s4 = _targetVertex1;
-  s5 = _targetVertex2;
+    s1 = _sourceFace;
+    s2 = _sourceVertex1;
+    s3 = _sourceVertex2;
+    s4 = _targetVertex1;
+    s5 = _targetVertex2;
 }
 
 //================================================================================
@@ -291,19 +273,16 @@ void StdMeshers_ProjectionSource2D::GetStoreParams(TopoDS_Shape& s1,
  */
 //================================================================================
 
-void StdMeshers_ProjectionSource2D::RestoreParams(const TopoDS_Shape& s1,
-                                                  const TopoDS_Shape& s2,
-                                                  const TopoDS_Shape& s3,
-                                                  const TopoDS_Shape& s4,
-                                                  const TopoDS_Shape& s5,
-                                                  SMESH_Mesh*         mesh)
+void StdMeshers_ProjectionSource2D::RestoreParams(const TopoDS_Shape &s1, const TopoDS_Shape &s2,
+                                                  const TopoDS_Shape &s3, const TopoDS_Shape &s4,
+                                                  const TopoDS_Shape &s5, SMESH_Mesh *mesh)
 {
-  _sourceFace    = s1;
-  _sourceVertex1 = TopoDS::Vertex( s2 );
-  _sourceVertex2 = TopoDS::Vertex( s3 );
-  _targetVertex1 = TopoDS::Vertex( s4 );
-  _targetVertex2 = TopoDS::Vertex( s5 );
-  _sourceMesh   = mesh;
+    _sourceFace = s1;
+    _sourceVertex1 = TopoDS::Vertex(s2);
+    _sourceVertex2 = TopoDS::Vertex(s3);
+    _targetVertex1 = TopoDS::Vertex(s4);
+    _targetVertex2 = TopoDS::Vertex(s5);
+    _sourceMesh = mesh;
 }
 
 //================================================================================
@@ -313,9 +292,8 @@ void StdMeshers_ProjectionSource2D::RestoreParams(const TopoDS_Shape& s1,
  */
 //================================================================================
 
-bool StdMeshers_ProjectionSource2D::SetParametersByDefaults(const TDefaults&  /*dflts*/,
-                                                            const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_ProjectionSource2D::SetParametersByDefaults(const TDefaults & /*dflts*/,
+                                                            const SMESH_Mesh * /*theMesh*/)
 {
-  return false;
+    return false;
 }
-

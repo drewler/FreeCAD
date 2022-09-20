@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #endif
 
 #include <Base/GeometryPyCXX.h>
@@ -34,12 +34,9 @@
 using namespace Part;
 
 // returns a string which represents the object e.g. when printed in python
-std::string BoundedCurvePy::representation() const
-{
-    return "<Curve object>";
-}
+std::string BoundedCurvePy::representation() const { return "<Curve object>"; }
 
-PyObject *BoundedCurvePy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *BoundedCurvePy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     // never create such objects with the constructor
     PyErr_SetString(PyExc_RuntimeError,
@@ -48,10 +45,7 @@ PyObject *BoundedCurvePy::PyMake(struct _typeobject *, PyObject *, PyObject *)  
 }
 
 // constructor method
-int BoundedCurvePy::PyInit(PyObject* /*args*/, PyObject* /*kwd*/)
-{
-    return 0;
-}
+int BoundedCurvePy::PyInit(PyObject * /*args*/, PyObject * /*kwd*/) { return 0; }
 
 Py::Object BoundedCurvePy::getStartPoint() const
 {
@@ -63,12 +57,6 @@ Py::Object BoundedCurvePy::getEndPoint() const
     return Py::Vector(getGeomBoundedCurvePtr()->getEndPoint());
 }
 
-PyObject *BoundedCurvePy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *BoundedCurvePy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int BoundedCurvePy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int BoundedCurvePy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

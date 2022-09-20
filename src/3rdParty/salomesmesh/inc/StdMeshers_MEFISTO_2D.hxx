@@ -47,45 +47,37 @@ class StdMeshers_FaceSide;
 class STDMESHERS_EXPORT StdMeshers_MEFISTO_2D: public SMESH_2D_Algo
 {
 public:
-  StdMeshers_MEFISTO_2D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_MEFISTO_2D();
+    StdMeshers_MEFISTO_2D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_MEFISTO_2D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh& aMesh,
-                               const TopoDS_Shape& aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh,
-                       const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
-  typedef boost::shared_ptr< StdMeshers_FaceSide> StdMeshers_FaceSidePtr;
-  typedef std::vector< StdMeshers_FaceSidePtr > TWireVector;
+    typedef boost::shared_ptr<StdMeshers_FaceSide> StdMeshers_FaceSidePtr;
+    typedef std::vector<StdMeshers_FaceSidePtr> TWireVector;
 
-  bool LoadPoints(TWireVector &                       wires,
-                  R2*                                 uvslf, 
-                  std::vector< const SMDS_MeshNode*>& mefistoToDS,
-                  double scalex, double               scaley);
-
-  void ComputeScaleOnFace(SMESH_Mesh& aMesh,
-                          const TopoDS_Face& aFace,
-                          double& scalex,
-                          double& scaley);
-
-  void StoreResult (Z nbst, R2* uvst, Z nbt, Z* nust, 
-                    std::vector< const SMDS_MeshNode*>& mefistoToDS,
+    bool LoadPoints(TWireVector &wires, R2 *uvslf, std::vector<const SMDS_MeshNode *> &mefistoToDS,
                     double scalex, double scaley);
-                                          
+
+    void ComputeScaleOnFace(SMESH_Mesh &aMesh, const TopoDS_Face &aFace, double &scalex,
+                            double &scaley);
+
+    void StoreResult(Z nbst, R2 *uvst, Z nbt, Z *nust,
+                     std::vector<const SMDS_MeshNode *> &mefistoToDS, double scalex, double scaley);
+
 protected:
-  double                            _edgeLength;
-  double                            _maxElementArea;
-  const StdMeshers_MaxElementArea*  _hypMaxElementArea;
-  const StdMeshers_LengthFromEdges* _hypLengthFromEdges;
+    double _edgeLength;
+    double _maxElementArea;
+    const StdMeshers_MaxElementArea *_hypMaxElementArea;
+    const StdMeshers_LengthFromEdges *_hypLengthFromEdges;
 
-  std::list<const SMDS_MeshNode*> myNodesOnCommonV;
+    std::list<const SMDS_MeshNode *> myNodesOnCommonV;
 
-  SMESH_MesherHelper* _helper; // tool for working with quadratic elements
+    SMESH_MesherHelper *_helper; // tool for working with quadratic elements
 };
 
 #endif

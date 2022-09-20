@@ -39,42 +39,33 @@
 
 using namespace SIM::Coin3D::Quarter;
 
-ImageReader::ImageReader()
-{
-  SbImage::addReadImageCB(ImageReader::readImageCB, this);
-}
+ImageReader::ImageReader() { SbImage::addReadImageCB(ImageReader::readImageCB, this); }
 
-ImageReader::~ImageReader()
-{
-  SbImage::removeReadImageCB(ImageReader::readImageCB, this);
-}
+ImageReader::~ImageReader() { SbImage::removeReadImageCB(ImageReader::readImageCB, this); }
 
-SbBool
-ImageReader::readImage(const SbString & filename, SbImage & sbimage) const
+SbBool ImageReader::readImage(const SbString &filename, SbImage &sbimage) const
 {
-  QImage image;
-  if (image.load(filename.getString())) {
-    //int c;
-    //int w = image.width();
-    //int h = image.height();
+    QImage image;
+    if (image.load(filename.getString())) {
+        //int c;
+        //int w = image.width();
+        //int h = image.height();
 
-    // Keep in 8-bits mode if that was what we read
-    if (image.depth() != 8 || !image.isGrayscale()) {
-      // FIXME: consider if we should detect allGrayscale() and alpha (c = 2)
-      image = image.convertToFormat(image.hasAlphaChannel() ?
-                                    QImage::Format_ARGB32 : QImage::Format_RGB32);
+        // Keep in 8-bits mode if that was what we read
+        if (image.depth() != 8 || !image.isGrayscale()) {
+            // FIXME: consider if we should detect allGrayscale() and alpha (c = 2)
+            image = image.convertToFormat(image.hasAlphaChannel() ? QImage::Format_ARGB32
+                                                                  : QImage::Format_RGB32);
+        }
+
+        QtCoinCompatibility::QImageToSbImage(image, sbimage);
+        return true;
     }
-
-    QtCoinCompatibility::QImageToSbImage(image,sbimage);
-    return true;
-  }
-  return false;
+    return false;
 }
 
 
-
-SbBool
-ImageReader::readImageCB(const SbString & filename, SbImage * image, void * closure)
+SbBool ImageReader::readImageCB(const SbString &filename, SbImage *image, void *closure)
 {
-  return ((ImageReader*)closure)->readImage(filename, *image);
+    return ((ImageReader *)closure)->readImage(filename, *image);
 }

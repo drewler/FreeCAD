@@ -103,135 +103,165 @@ class GeometryFacadePy;
  * It is intended to work on borrowed memory allocation. But the getFacade has an owner parameter to take ownership of the
  * geometry pointer if that is intended (this can also be achieved via the setOwner method once created).
  */
-class SketcherExport GeometryFacade : public Base::BaseClass, private ISketchGeometryExtension
+class SketcherExport GeometryFacade: public Base::BaseClass, private ISketchGeometryExtension
 {
-TYPESYSTEM_HEADER_WITH_OVERRIDE();
+    TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 protected:
-    explicit GeometryFacade(const Part::Geometry * geometry, bool owner = false);
+    explicit GeometryFacade(const Part::Geometry *geometry, bool owner = false);
     GeometryFacade(); // As TYPESYSTEM requirement
 
     friend class GeometryFacadePy;
 
 public: // Factory methods
-    static std::unique_ptr<GeometryFacade> getFacade(Part::Geometry * geometry, bool owner = false);
-    static std::unique_ptr<const GeometryFacade> getFacade(const Part::Geometry * geometry);
+    static std::unique_ptr<GeometryFacade> getFacade(Part::Geometry *geometry, bool owner = false);
+    static std::unique_ptr<const GeometryFacade> getFacade(const Part::Geometry *geometry);
 
 public: // Utility methods
-    static void ensureSketchGeometryExtension(Part::Geometry * geometry);
-    static void copyId(const Part::Geometry * src, Part::Geometry * dst);
-    static bool getConstruction(const Part::Geometry * geometry);
-    static void setConstruction(Part::Geometry * geometry, bool construction);
-    static bool isInternalType(const Part::Geometry * geometry, InternalType::InternalType type);
-    static bool getBlocked(const Part::Geometry * geometry);
+    static void ensureSketchGeometryExtension(Part::Geometry *geometry);
+    static void copyId(const Part::Geometry *src, Part::Geometry *dst);
+    static bool getConstruction(const Part::Geometry *geometry);
+    static void setConstruction(Part::Geometry *geometry, bool construction);
+    static bool isInternalType(const Part::Geometry *geometry, InternalType::InternalType type);
+    static bool getBlocked(const Part::Geometry *geometry);
 
 public:
     // Explicit deletion to show intent (not that it is needed)
-    GeometryFacade(const GeometryFacade&) = delete;
-    GeometryFacade& operator=(const GeometryFacade&) = delete;
+    GeometryFacade(const GeometryFacade &) = delete;
+    GeometryFacade &operator=(const GeometryFacade &) = delete;
 
-    GeometryFacade(GeometryFacade&&) = default;
-    GeometryFacade& operator=(GeometryFacade&&) = default;
+    GeometryFacade(GeometryFacade &&) = default;
+    GeometryFacade &operator=(GeometryFacade &&) = default;
 
     ~GeometryFacade() override;
     void setGeometry(Part::Geometry *geometry);
 
-    void setOwner(bool owner) {
-        OwnerGeo = owner;
-    }
+    void setOwner(bool owner) { OwnerGeo = owner; }
 
     // returns if the facade is the owner of the geometry pointer.
-    bool getOwner() const {
-        return OwnerGeo;
-    }
+    bool getOwner() const { return OwnerGeo; }
 
     // Geometry Extension Interface
-    inline long getId() const override {return getGeoExt()->getId();}
-    void setId(long id) override {getGeoExt()->setId(id);}
+    inline long getId() const override { return getGeoExt()->getId(); }
+    void setId(long id) override { getGeoExt()->setId(id); }
 
-    InternalType::InternalType getInternalType() const override {return getGeoExt()->getInternalType();}
-    void setInternalType(InternalType::InternalType type) override {getGeoExt()->setInternalType(type);}
+    InternalType::InternalType getInternalType() const override
+    {
+        return getGeoExt()->getInternalType();
+    }
+    void setInternalType(InternalType::InternalType type) override
+    {
+        getGeoExt()->setInternalType(type);
+    }
 
     bool testGeometryMode(int flag) const override { return getGeoExt()->testGeometryMode(flag); }
-    void setGeometryMode(int flag, bool v=true) override { getGeoExt()->setGeometryMode(flag, v); }
+    void setGeometryMode(int flag, bool v = true) override
+    {
+        getGeoExt()->setGeometryMode(flag, v);
+    }
 
-    int getGeometryLayerId() const override { return getGeoExt()->getGeometryLayerId();}
-    void setGeometryLayerId(int geolayer) override { getGeoExt()->setGeometryLayerId(geolayer);}
+    int getGeometryLayerId() const override { return getGeoExt()->getGeometryLayerId(); }
+    void setGeometryLayerId(int geolayer) override { getGeoExt()->setGeometryLayerId(geolayer); }
 
     // Convenience accessor
-    bool getBlocked() const { return this->testGeometryMode(GeometryMode::Blocked);}
-    void setBlocked(bool status = true) {this->setGeometryMode(GeometryMode::Blocked, status);}
+    bool getBlocked() const { return this->testGeometryMode(GeometryMode::Blocked); }
+    void setBlocked(bool status = true) { this->setGeometryMode(GeometryMode::Blocked, status); }
 
-    inline bool getConstruction() const {return this->testGeometryMode(GeometryMode::Construction);}
-    inline void setConstruction(bool construction) {this->setGeometryMode(GeometryMode::Construction, construction);}
+    inline bool getConstruction() const
+    {
+        return this->testGeometryMode(GeometryMode::Construction);
+    }
+    inline void setConstruction(bool construction)
+    {
+        this->setGeometryMode(GeometryMode::Construction, construction);
+    }
 
     bool isInternalAligned() const { return this->getInternalType() != InternalType::None; }
 
     // Geometry Extension Information
-    inline const std::string &getExtensionName () const {return SketchGeoExtension->getName();}
+    inline const std::string &getExtensionName() const { return SketchGeoExtension->getName(); }
 
     // Geometry Element
-    template <  typename GeometryT = Part::Geometry,
-                typename = typename std::enable_if<
-                    std::is_base_of<Part::Geometry, typename std::decay<GeometryT>::type>::value
-             >::type
-    >
-    GeometryT * getGeometry() {return dynamic_cast<GeometryT *>(const_cast<Part::Geometry *>(Geo));}
+    template<typename GeometryT = Part::Geometry,
+             typename = typename std::enable_if<std::is_base_of<
+                 Part::Geometry, typename std::decay<GeometryT>::type>::value>::type>
+    GeometryT *getGeometry()
+    {
+        return dynamic_cast<GeometryT *>(const_cast<Part::Geometry *>(Geo));
+    }
 
     // Geometry Element
-    template <  typename GeometryT = Part::Geometry,
-                typename = typename std::enable_if<
-                    std::is_base_of<Part::Geometry, typename std::decay<GeometryT>::type>::value
-             >::type
-    >
-    const GeometryT * getGeometry() const {return dynamic_cast<const GeometryT *>(Geo);}
+    template<typename GeometryT = Part::Geometry,
+             typename = typename std::enable_if<std::is_base_of<
+                 Part::Geometry, typename std::decay<GeometryT>::type>::value>::type>
+    const GeometryT *getGeometry() const
+    {
+        return dynamic_cast<const GeometryT *>(Geo);
+    }
 
     PyObject *getPyObject() override;
 
     // Geometry Interface
-    TopoDS_Shape toShape() const {return getGeo()->toShape();}
-    const Handle(Geom_Geometry)& handle() const {return getGeo()->handle();}
-    Part::Geometry *copy() const {return getGeo()->copy();}
-    Part::Geometry *clone() const {return getGeo()->clone();}
-    boost::uuids::uuid getTag() const {return getGeo()->getTag();}
+    TopoDS_Shape toShape() const { return getGeo()->toShape(); }
+    const Handle(Geom_Geometry) & handle() const { return getGeo()->handle(); }
+    Part::Geometry *copy() const { return getGeo()->copy(); }
+    Part::Geometry *clone() const { return getGeo()->clone(); }
+    boost::uuids::uuid getTag() const { return getGeo()->getTag(); }
 
-    std::vector<std::weak_ptr<const Part::GeometryExtension>> getExtensions() const {return getGeo()->getExtensions();}
-    bool hasExtension(Base::Type type) const {return getGeo()->hasExtension(type);}
-    bool hasExtension(const std::string & name) const {return getGeo()->hasExtension(name);}
-    std::weak_ptr<const Part::GeometryExtension> getExtension(Base::Type type) const {return getGeo()->getExtension(type);}
-    std::weak_ptr<const Part::GeometryExtension> getExtension(std::string name) const {return getGeo()->getExtension(name);}
-    void setExtension(std::unique_ptr<Part::GeometryExtension> &&geo) {return getGeo()->setExtension(std::move(geo));}
-    void deleteExtension(Base::Type type) {return getGeo()->deleteExtension(type);}
-    void deleteExtension(const std::string & name) {return getGeo()->deleteExtension(name);}
+    std::vector<std::weak_ptr<const Part::GeometryExtension>> getExtensions() const
+    {
+        return getGeo()->getExtensions();
+    }
+    bool hasExtension(Base::Type type) const { return getGeo()->hasExtension(type); }
+    bool hasExtension(const std::string &name) const { return getGeo()->hasExtension(name); }
+    std::weak_ptr<const Part::GeometryExtension> getExtension(Base::Type type) const
+    {
+        return getGeo()->getExtension(type);
+    }
+    std::weak_ptr<const Part::GeometryExtension> getExtension(std::string name) const
+    {
+        return getGeo()->getExtension(name);
+    }
+    void setExtension(std::unique_ptr<Part::GeometryExtension> &&geo)
+    {
+        return getGeo()->setExtension(std::move(geo));
+    }
+    void deleteExtension(Base::Type type) { return getGeo()->deleteExtension(type); }
+    void deleteExtension(const std::string &name) { return getGeo()->deleteExtension(name); }
 
-    void mirror(const Base::Vector3d & point) {return getGeo()->mirror(point);}
-    void mirror(const Base::Vector3d & point, Base::Vector3d dir) {return getGeo()->mirror(point, dir);}
-    void rotate(const Base::Placement & plm) {return getGeo()->rotate(plm);}
-    void scale(const Base::Vector3d & vec, double scale) {return getGeo()->scale(vec, scale);}
-    void transform(const Base::Matrix4D & mat) {return getGeo()->transform(mat);}
-    void translate(const Base::Vector3d & vec) {return getGeo()->translate(vec);}
+    void mirror(const Base::Vector3d &point) { return getGeo()->mirror(point); }
+    void mirror(const Base::Vector3d &point, Base::Vector3d dir)
+    {
+        return getGeo()->mirror(point, dir);
+    }
+    void rotate(const Base::Placement &plm) { return getGeo()->rotate(plm); }
+    void scale(const Base::Vector3d &vec, double scale) { return getGeo()->scale(vec, scale); }
+    void transform(const Base::Matrix4D &mat) { return getGeo()->transform(mat); }
+    void translate(const Base::Vector3d &vec) { return getGeo()->translate(vec); }
 
     // convenience GeometryFunctions
-    bool isGeoType(const Base::Type &type) const { return getGeo()->getTypeId() == type;}
+    bool isGeoType(const Base::Type &type) const { return getGeo()->getTypeId() == type; }
 
 private:
     void initExtension();
     void initExtension() const;
 
-    const Part::Geometry * getGeo() const {return Geo;}
-    Part::Geometry * getGeo() {return const_cast<Part::Geometry *>(Geo);}
+    const Part::Geometry *getGeo() const { return Geo; }
+    Part::Geometry *getGeo() { return const_cast<Part::Geometry *>(Geo); }
 
-    std::shared_ptr<const SketchGeometryExtension> getGeoExt() const {return SketchGeoExtension;}
-    std::shared_ptr<SketchGeometryExtension> getGeoExt () {return std::const_pointer_cast<SketchGeometryExtension>(SketchGeoExtension);}
+    std::shared_ptr<const SketchGeometryExtension> getGeoExt() const { return SketchGeoExtension; }
+    std::shared_ptr<SketchGeometryExtension> getGeoExt()
+    {
+        return std::const_pointer_cast<SketchGeometryExtension>(SketchGeoExtension);
+    }
 
-    static void throwOnNullPtr(const Part::Geometry * geo);
+    static void throwOnNullPtr(const Part::Geometry *geo);
 
 private:
-    const Part::Geometry * Geo;
+    const Part::Geometry *Geo;
     bool OwnerGeo;
     std::shared_ptr<const SketchGeometryExtension> SketchGeoExtension;
 };
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -260,44 +290,52 @@ private:
  *    HLine->setConstruction(true);
  *    ExternalGeo.push_back(HLine->getGeometry());
  */
-template < typename GeometryT >
-class SketcherExport GeometryTypedFacade : public GeometryFacade
+template<typename GeometryT> class SketcherExport GeometryTypedFacade: public GeometryFacade
 {
-    static_assert(  std::is_base_of<Part::Geometry, typename std::decay<GeometryT>::type>::value &&
-                    !std::is_same<Part::Geometry, typename std::decay<GeometryT>::type>::value, "Only for classes derived from Geometry!");
-    private:
-    explicit GeometryTypedFacade(const Part::Geometry * geometry, bool owner = false):GeometryFacade(geometry, owner) {}
-    GeometryTypedFacade():GeometryFacade() {}
+    static_assert(std::is_base_of<Part::Geometry, typename std::decay<GeometryT>::type>::value
+                      && !std::is_same<Part::Geometry, typename std::decay<GeometryT>::type>::value,
+                  "Only for classes derived from Geometry!");
+
+private:
+    explicit GeometryTypedFacade(const Part::Geometry *geometry, bool owner = false)
+        : GeometryFacade(geometry, owner)
+    {}
+    GeometryTypedFacade() : GeometryFacade() {}
 
 public: // Factory methods
-    static std::unique_ptr<GeometryTypedFacade<GeometryT>> getTypedFacade(GeometryT * geometry, bool owner = false) {
-        if(geometry)
-            return std::unique_ptr<GeometryTypedFacade<GeometryT>>(new GeometryTypedFacade(geometry, owner));
+    static std::unique_ptr<GeometryTypedFacade<GeometryT>> getTypedFacade(GeometryT *geometry,
+                                                                          bool owner = false)
+    {
+        if (geometry)
+            return std::unique_ptr<GeometryTypedFacade<GeometryT>>(
+                new GeometryTypedFacade(geometry, owner));
         else
             return std::unique_ptr<GeometryTypedFacade<GeometryT>>(nullptr);
     }
-    static std::unique_ptr<const GeometryTypedFacade<GeometryT>> getTypedFacade(const GeometryT * geometry) {
-        if(geometry)
-            return std::unique_ptr<const GeometryTypedFacade<GeometryT>>(new GeometryTypedFacade(geometry));
+    static std::unique_ptr<const GeometryTypedFacade<GeometryT>>
+    getTypedFacade(const GeometryT *geometry)
+    {
+        if (geometry)
+            return std::unique_ptr<const GeometryTypedFacade<GeometryT>>(
+                new GeometryTypedFacade(geometry));
         else
             return std::unique_ptr<const GeometryTypedFacade<GeometryT>>(nullptr);
     }
 
     // This function takes direct ownership of the object it creates.
-    template < typename... Args >
-    static std::unique_ptr<GeometryTypedFacade<GeometryT>> getTypedFacade(Args&&... args) {
-        return GeometryTypedFacade::getTypedFacade(new GeometryT(std::forward<Args>(args)...), true);
+    template<typename... Args>
+    static std::unique_ptr<GeometryTypedFacade<GeometryT>> getTypedFacade(Args &&...args)
+    {
+        return GeometryTypedFacade::getTypedFacade(new GeometryT(std::forward<Args>(args)...),
+                                                   true);
     }
 
     // Geometry Element
-    GeometryT * getTypedGeometry() {return GeometryFacade::getGeometry<GeometryT>();}
+    GeometryT *getTypedGeometry() { return GeometryFacade::getGeometry<GeometryT>(); }
 
     // Geometry Element
-    GeometryT * getTypedGeometry() const {return GeometryFacade::getGeometry<GeometryT>();}
+    GeometryT *getTypedGeometry() const { return GeometryFacade::getGeometry<GeometryT>(); }
 };
-
-
-
 
 
 } //namespace Sketcher

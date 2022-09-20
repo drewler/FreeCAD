@@ -27,9 +27,11 @@
 #include <Inventor/nodes/SoTransformation.h>
 
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport SoAutoZoomTranslation : public SoTransformation  {
+class GuiExport SoAutoZoomTranslation: public SoTransformation
+{
     using inherited = SoTransformation;
 
     SO_NODE_HEADER(SoAutoZoomTranslation);
@@ -42,18 +44,17 @@ public:
 
 protected:
     virtual ~SoAutoZoomTranslation() {}
-    virtual void doAction(SoAction * action);
-    virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);
-    virtual void getMatrix(SoGetMatrixAction * action);
+    virtual void doAction(SoAction *action);
+    virtual void getPrimitiveCount(SoGetPrimitiveCountAction *action);
+    virtual void getMatrix(SoGetMatrixAction *action);
     virtual void GLRender(SoGLRenderAction *action);
-    virtual void getBoundingBox(SoGetBoundingBoxAction * action);
-    virtual void callback(SoCallbackAction * action);
-    virtual void pick(SoPickAction * action);
-    float getScaleFactor(SoAction*) const;
+    virtual void getBoundingBox(SoGetBoundingBoxAction *action);
+    virtual void callback(SoCallbackAction *action);
+    virtual void pick(SoPickAction *action);
+    float getScaleFactor(SoAction *) const;
 
 private:
-
 };
 
-}
+} // namespace Gui
 #endif // GUI_SOAUTOZOOMTRANSLATION_H

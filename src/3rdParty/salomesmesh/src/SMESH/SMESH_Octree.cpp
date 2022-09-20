@@ -35,9 +35,7 @@
  */
 //===========================================================================
 
-SMESH_Octree::SMESH_Octree (SMESH_TreeLimit* limit): TBaseTree( limit )
-{
-}
+SMESH_Octree::SMESH_Octree(SMESH_TreeLimit *limit) : TBaseTree(limit) {}
 
 //=================================================================
 /*!
@@ -45,18 +43,18 @@ SMESH_Octree::SMESH_Octree (SMESH_TreeLimit* limit): TBaseTree( limit )
  */
 //=================================================================
 
-Bnd_B3d* SMESH_Octree::newChildBox(int childIndex) const
+Bnd_B3d *SMESH_Octree::newChildBox(int childIndex) const
 {
-  gp_XYZ min = getBox()->CornerMin();
-  gp_XYZ max = getBox()->CornerMax();
-  gp_XYZ HSize = (max - min)/2.;
-  gp_XYZ childHsize = HSize/2.;
+    gp_XYZ min = getBox()->CornerMin();
+    gp_XYZ max = getBox()->CornerMax();
+    gp_XYZ HSize = (max - min) / 2.;
+    gp_XYZ childHsize = HSize / 2.;
 
-  gp_XYZ minChild( min.X() + childIndex%2     * HSize.X(),
-                   min.Y() + (childIndex%4)/2 * HSize.Y(),
-                   min.Z() + ( childIndex>=4 ) * HSize.Z());
+    gp_XYZ minChild(min.X() + childIndex % 2 * HSize.X(),
+                    min.Y() + (childIndex % 4) / 2 * HSize.Y(),
+                    min.Z() + (childIndex >= 4) * HSize.Z());
 
-  return new Bnd_B3d(minChild+childHsize,childHsize);
+    return new Bnd_B3d(minChild + childHsize, childHsize);
 }
 
 //===========================================================================
@@ -67,13 +65,12 @@ Bnd_B3d* SMESH_Octree::newChildBox(int childIndex) const
 
 double SMESH_Octree::maxSize() const
 {
-  if ( getBox() && !getBox()->IsVoid() )
-  {
-    gp_XYZ min = getBox()->CornerMin();
-    gp_XYZ max = getBox()->CornerMax();
-    gp_XYZ Size = (max - min);
-    double returnVal = (Size.X()>Size.Y())?Size.X():Size.Y();
-    return (returnVal>Size.Z())?returnVal:Size.Z();
-  }
-  return 0.;
+    if (getBox() && !getBox()->IsVoid()) {
+        gp_XYZ min = getBox()->CornerMin();
+        gp_XYZ max = getBox()->CornerMax();
+        gp_XYZ Size = (max - min);
+        double returnVal = (Size.X() > Size.Y()) ? Size.X() : Size.Y();
+        return (returnVal > Size.Z()) ? returnVal : Size.Z();
+    }
+    return 0.;
 }

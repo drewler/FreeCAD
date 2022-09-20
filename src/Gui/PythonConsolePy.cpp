@@ -34,24 +34,19 @@ void PythonStdout::init_type()
     behaviors().doc("Redirection of stdout to FreeCAD's Python console window");
     // you must have overwritten the virtual functions
     behaviors().supportRepr();
-    add_varargs_method("write",&PythonStdout::write,"write()");
-    add_varargs_method("flush",&PythonStdout::flush,"flush()");
-    add_noargs_method("isatty",&PythonStdout::isatty,"isatty()");
+    add_varargs_method("write", &PythonStdout::write, "write()");
+    add_varargs_method("flush", &PythonStdout::flush, "flush()");
+    add_noargs_method("isatty", &PythonStdout::isatty, "isatty()");
 }
 
-PythonStdout::PythonStdout(PythonConsole *pc)
-  : pyConsole(pc)
-{
-}
+PythonStdout::PythonStdout(PythonConsole *pc) : pyConsole(pc) {}
 
-PythonStdout::~PythonStdout()
-{
-}
+PythonStdout::~PythonStdout() {}
 
 Py::Object PythonStdout::getattr(const char *name)
 {
     if (strcmp(name, "softspace") == 0) {
-        int i=0;
+        int i = 0;
         return Py::Int(i);
     }
     return getattr_methods(name);
@@ -65,15 +60,15 @@ Py::Object PythonStdout::repr()
     return Py::String(s_out.str());
 }
 
-Py::Object PythonStdout::write(const Py::Tuple& args)
+Py::Object PythonStdout::write(const Py::Tuple &args)
 {
-    PyObject* output;
-    if (!PyArg_ParseTuple(args.ptr(), "O!",&PyUnicode_Type, &output))
+    PyObject *output;
+    if (!PyArg_ParseTuple(args.ptr(), "O!", &PyUnicode_Type, &output))
         throw Py::TypeError("PythonStdout.write() takes exactly one argument of type str");
 
-    PyObject* unicode = PyUnicode_AsEncodedString(output, "utf-8", nullptr);
+    PyObject *unicode = PyUnicode_AsEncodedString(output, "utf-8", nullptr);
     if (unicode) {
-        const char* string = PyBytes_AsString(unicode);
+        const char *string = PyBytes_AsString(unicode);
         int maxlen = qstrlen(string) > 10000 ? 10000 : -1;
         pyConsole->insertPythonOutput(QString::fromUtf8(string, maxlen));
         Py_DECREF(unicode);
@@ -82,15 +77,9 @@ Py::Object PythonStdout::write(const Py::Tuple& args)
     return Py::None();
 }
 
-Py::Object PythonStdout::flush(const Py::Tuple&)
-{
-    return Py::None();
-}
+Py::Object PythonStdout::flush(const Py::Tuple &) { return Py::None(); }
 
-Py::Object PythonStdout::isatty()
-{
-    return Py::False();
-}
+Py::Object PythonStdout::isatty() { return Py::False(); }
 
 // -------------------------------------------------------------------------
 
@@ -100,24 +89,19 @@ void PythonStderr::init_type()
     behaviors().doc("Redirection of stdout to FreeCAD's Python console window");
     // you must have overwritten the virtual functions
     behaviors().supportRepr();
-    add_varargs_method("write",&PythonStderr::write,"write()");
-    add_varargs_method("flush",&PythonStderr::flush,"flush()");
-    add_noargs_method("isatty",&PythonStderr::isatty,"isatty()");
+    add_varargs_method("write", &PythonStderr::write, "write()");
+    add_varargs_method("flush", &PythonStderr::flush, "flush()");
+    add_noargs_method("isatty", &PythonStderr::isatty, "isatty()");
 }
 
-PythonStderr::PythonStderr(PythonConsole *pc)
-  : pyConsole(pc)
-{
-}
+PythonStderr::PythonStderr(PythonConsole *pc) : pyConsole(pc) {}
 
-PythonStderr::~PythonStderr()
-{
-}
+PythonStderr::~PythonStderr() {}
 
 Py::Object PythonStderr::getattr(const char *name)
 {
     if (strcmp(name, "softspace") == 0) {
-        int i=0;
+        int i = 0;
         return Py::Int(i);
     }
     return getattr_methods(name);
@@ -131,15 +115,15 @@ Py::Object PythonStderr::repr()
     return Py::String(s_out.str());
 }
 
-Py::Object PythonStderr::write(const Py::Tuple& args)
+Py::Object PythonStderr::write(const Py::Tuple &args)
 {
-    PyObject* output;
-    if (!PyArg_ParseTuple(args.ptr(), "O!",&PyUnicode_Type, &output))
+    PyObject *output;
+    if (!PyArg_ParseTuple(args.ptr(), "O!", &PyUnicode_Type, &output))
         throw Py::TypeError("PythonStderr.write() takes exactly one argument of type str");
 
-    PyObject* unicode = PyUnicode_AsEncodedString(output, "utf-8", nullptr);
+    PyObject *unicode = PyUnicode_AsEncodedString(output, "utf-8", nullptr);
     if (unicode) {
-        const char* string = PyBytes_AsString(unicode);
+        const char *string = PyBytes_AsString(unicode);
         int maxlen = qstrlen(string) > 10000 ? 10000 : -1;
         pyConsole->insertPythonError(QString::fromUtf8(string, maxlen));
         Py_DECREF(unicode);
@@ -148,15 +132,9 @@ Py::Object PythonStderr::write(const Py::Tuple& args)
     return Py::None();
 }
 
-Py::Object PythonStderr::flush(const Py::Tuple&)
-{
-    return Py::None();
-}
+Py::Object PythonStderr::flush(const Py::Tuple &) { return Py::None(); }
 
-Py::Object PythonStderr::isatty()
-{
-    return Py::False();
-}
+Py::Object PythonStderr::isatty() { return Py::False(); }
 
 // -------------------------------------------------------------------------
 
@@ -166,23 +144,19 @@ void OutputStdout::init_type()
     behaviors().doc("Redirection of stdout to FreeCAD's output window");
     // you must have overwritten the virtual functions
     behaviors().supportRepr();
-    add_varargs_method("write",&OutputStdout::write,"write()");
-    add_varargs_method("flush",&OutputStdout::flush,"flush()");
-    add_noargs_method("isatty",&OutputStdout::isatty,"isatty()");
+    add_varargs_method("write", &OutputStdout::write, "write()");
+    add_varargs_method("flush", &OutputStdout::flush, "flush()");
+    add_noargs_method("isatty", &OutputStdout::isatty, "isatty()");
 }
 
-OutputStdout::OutputStdout()
-{
-}
+OutputStdout::OutputStdout() {}
 
-OutputStdout::~OutputStdout()
-{
-}
+OutputStdout::~OutputStdout() {}
 
 Py::Object OutputStdout::getattr(const char *name)
 {
     if (strcmp(name, "softspace") == 0) {
-        int i=0;
+        int i = 0;
         return Py::Int(i);
     }
     return getattr_methods(name);
@@ -196,31 +170,25 @@ Py::Object OutputStdout::repr()
     return Py::String(s_out.str());
 }
 
-Py::Object OutputStdout::write(const Py::Tuple& args)
+Py::Object OutputStdout::write(const Py::Tuple &args)
 {
-    PyObject* output;
-    if (!PyArg_ParseTuple(args.ptr(), "O!",&PyUnicode_Type, &output))
+    PyObject *output;
+    if (!PyArg_ParseTuple(args.ptr(), "O!", &PyUnicode_Type, &output))
         throw Py::TypeError("OutputStdout.write() takes exactly one argument of type str");
 
-    PyObject* unicode = PyUnicode_AsEncodedString(output, "utf-8", nullptr);
+    PyObject *unicode = PyUnicode_AsEncodedString(output, "utf-8", nullptr);
     if (unicode) {
-        const char* string = PyBytes_AsString(unicode);
-        Base::Console().Message("%s",string);
+        const char *string = PyBytes_AsString(unicode);
+        Base::Console().Message("%s", string);
         Py_DECREF(unicode);
     }
 
     return Py::None();
 }
 
-Py::Object OutputStdout::flush(const Py::Tuple&)
-{
-    return Py::None();
-}
+Py::Object OutputStdout::flush(const Py::Tuple &) { return Py::None(); }
 
-Py::Object OutputStdout::isatty()
-{
-    return Py::False();
-}
+Py::Object OutputStdout::isatty() { return Py::False(); }
 
 
 // -------------------------------------------------------------------------
@@ -231,23 +199,19 @@ void OutputStderr::init_type()
     behaviors().doc("Redirection of stdout to FreeCAD's output window");
     // you must have overwritten the virtual functions
     behaviors().supportRepr();
-    add_varargs_method("write",&OutputStderr::write,"write()");
-    add_varargs_method("flush",&OutputStderr::flush,"flush()");
-    add_noargs_method("isatty",&OutputStderr::isatty,"isatty()");
+    add_varargs_method("write", &OutputStderr::write, "write()");
+    add_varargs_method("flush", &OutputStderr::flush, "flush()");
+    add_noargs_method("isatty", &OutputStderr::isatty, "isatty()");
 }
 
-OutputStderr::OutputStderr()
-{
-}
+OutputStderr::OutputStderr() {}
 
-OutputStderr::~OutputStderr()
-{
-}
+OutputStderr::~OutputStderr() {}
 
 Py::Object OutputStderr::getattr(const char *name)
 {
     if (strcmp(name, "softspace") == 0) {
-        int i=0;
+        int i = 0;
         return Py::Int(i);
     }
     return getattr_methods(name);
@@ -261,31 +225,25 @@ Py::Object OutputStderr::repr()
     return Py::String(s_out.str());
 }
 
-Py::Object OutputStderr::write(const Py::Tuple& args)
+Py::Object OutputStderr::write(const Py::Tuple &args)
 {
-    PyObject* output;
-    if (!PyArg_ParseTuple(args.ptr(), "O!",&PyUnicode_Type, &output))
+    PyObject *output;
+    if (!PyArg_ParseTuple(args.ptr(), "O!", &PyUnicode_Type, &output))
         throw Py::TypeError("OutputStderr.write() takes exactly one argument of type str");
 
-    PyObject* unicode = PyUnicode_AsEncodedString(output, "utf-8", nullptr);
+    PyObject *unicode = PyUnicode_AsEncodedString(output, "utf-8", nullptr);
     if (unicode) {
-        const char* string = PyBytes_AsString(unicode);
-        Base::Console().Error("%s",string);
+        const char *string = PyBytes_AsString(unicode);
+        Base::Console().Error("%s", string);
         Py_DECREF(unicode);
     }
 
     return Py::None();
 }
 
-Py::Object OutputStderr::flush(const Py::Tuple&)
-{
-    return Py::None();
-}
+Py::Object OutputStderr::flush(const Py::Tuple &) { return Py::None(); }
 
-Py::Object OutputStderr::isatty()
-{
-    return Py::False();
-}
+Py::Object OutputStderr::isatty() { return Py::False(); }
 
 
 // -------------------------------------------------------------------------
@@ -296,17 +254,12 @@ void PythonStdin::init_type()
     behaviors().doc("Redirection of stdin to FreeCAD to open an input dialog");
     // you must have overwritten the virtual functions
     behaviors().supportRepr();
-    add_varargs_method("readline",&PythonStdin::readline,"readline()");
+    add_varargs_method("readline", &PythonStdin::readline, "readline()");
 }
 
-PythonStdin::PythonStdin(PythonConsole *pc)
-  : pyConsole(pc)
-{
-}
+PythonStdin::PythonStdin(PythonConsole *pc) : pyConsole(pc) {}
 
-PythonStdin::~PythonStdin()
-{
-}
+PythonStdin::~PythonStdin() {}
 
 Py::Object PythonStdin::repr()
 {
@@ -316,7 +269,7 @@ Py::Object PythonStdin::repr()
     return Py::String(s_out.str());
 }
 
-Py::Object PythonStdin::readline(const Py::Tuple& /*args*/)
+Py::Object PythonStdin::readline(const Py::Tuple & /*args*/)
 {
-    return Py::String( (const char *)pyConsole->readline().toLatin1() );
+    return Py::String((const char *)pyConsole->readline().toLatin1());
 }

@@ -35,11 +35,10 @@ namespace Wm4
 // coefficients for a quadratic equation that represents a sphere.  This
 // approach tends to converge rapidly.
 
-template <class Real> WM4_FOUNDATION_ITEM
-bool SphereFit3 (int iQuantity, const Vector3<Real>* akPoint,
-    int iMaxIterations, Sphere3<Real>& rkSphere,
-    bool bInitialCenterIsAverage);
+template<class Real>
+WM4_FOUNDATION_ITEM bool SphereFit3(int iQuantity, const Vector3<Real> *akPoint, int iMaxIterations,
+                                    Sphere3<Real> &rkSphere, bool bInitialCenterIsAverage);
 
-}
+} // namespace Wm4
 
 #endif

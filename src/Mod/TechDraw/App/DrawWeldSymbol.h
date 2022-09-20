@@ -25,8 +25,8 @@
 
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
-# include <App/DocumentObject.h>
-# include <App/FeaturePython.h>
+#include <App/DocumentObject.h>
+#include <App/FeaturePython.h>
 
 #include "DrawView.h"
 
@@ -36,7 +36,7 @@ namespace TechDraw
 class DrawTile;
 class DrawTileWeld;
 
-class TechDrawExport DrawWeldSymbol : public TechDraw::DrawView
+class TechDrawExport DrawWeldSymbol: public TechDraw::DrawView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawWeldSymbol);
 
@@ -44,27 +44,25 @@ public:
     DrawWeldSymbol();
     ~DrawWeldSymbol() = default;
 
-    App::PropertyLink         Leader;
-    App::PropertyBool         AllAround;
-    App::PropertyBool         FieldWeld;
-    App::PropertyBool         AlternatingWeld;
-    App::PropertyString       TailText;
+    App::PropertyLink Leader;
+    App::PropertyBool AllAround;
+    App::PropertyBool FieldWeld;
+    App::PropertyBool AlternatingWeld;
+    App::PropertyString TailText;
 
     short mustExecute() const override;
     App::DocumentObjectExecReturn *execute() override;
     void onSettingDocument() override;
 
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderWeld";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderWeld"; }
     PyObject *getPyObject() override;
-    QRectF getRect() const override { return { 0, 0, 1, 1}; }
+    QRectF getRect() const override { return {0, 0, 1, 1}; }
 
     bool isTailRightSide();
-    std::vector<DrawTileWeld*> getTiles() const;
+    std::vector<DrawTileWeld *> getTiles() const;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
 
 private:
 };

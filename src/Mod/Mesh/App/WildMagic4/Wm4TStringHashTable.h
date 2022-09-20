@@ -29,56 +29,57 @@
 namespace Wm4
 {
 
-template <class TVALUE>
-class TStringHashTable
+template<class TVALUE> class TStringHashTable
 {
 public:
     // construction and destruction
-    TStringHashTable (int iTableSize);
-    ~TStringHashTable ();
+    TStringHashTable(int iTableSize);
+    ~TStringHashTable();
 
     // element access
-    int GetQuantity () const;
+    int GetQuantity() const;
 
     // insert a key-value pair into the hash table
-    bool Insert (const std::string& rkKey, const TVALUE& rtValue);
+    bool Insert(const std::string &rkKey, const TVALUE &rtValue);
 
     // search for a key and returns it value (null, if key does not exist)
-    TVALUE* Find (const std::string& rkKey) const;
+    TVALUE *Find(const std::string &rkKey) const;
 
     // remove key-value pairs from the hash table
-    bool Remove (const std::string& rkKey);
-    void RemoveAll ();
+    bool Remove(const std::string &rkKey);
+    void RemoveAll();
 
     // linear traversal of table
-    TVALUE* GetFirst (std::string* pkKey) const;
-    TVALUE* GetNext (std::string* pkKey) const;
+    TVALUE *GetFirst(std::string *pkKey) const;
+    TVALUE *GetNext(std::string *pkKey) const;
 
 private:
     class HashItem
     {
     public:
-        HashItem () : m_kKey("") { /**/ }
+        HashItem() : m_kKey("")
+        { /**/
+        }
 
         std::string m_kKey;
         TVALUE m_tValue;
-        HashItem* m_pkNext;
+        HashItem *m_pkNext;
     };
 
     // key-to-index construction
-    int HashFunction (const std::string& rkKey) const;
+    int HashFunction(const std::string &rkKey) const;
 
     // hash table
     int m_iTableSize;
     int m_iQuantity;
-    HashItem** m_apkTable;
+    HashItem **m_apkTable;
 
     // iterator for traversal
     mutable int m_iIndex;
-    mutable HashItem* m_pkItem;
+    mutable HashItem *m_pkItem;
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4TStringHashTable.inl"
 

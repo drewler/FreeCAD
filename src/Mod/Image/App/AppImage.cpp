@@ -18,8 +18,9 @@
 #include "ImagePlane.h"
 
 
-namespace Image {
-class Module : public Py::ExtensionModule<Module>
+namespace Image
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("Image")
@@ -32,17 +33,14 @@ public:
 private:
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace Image
 
 /* Python entry */
 PyMOD_INIT_FUNC(Image)
 {
-    PyObject* mod = Image::initModule();
+    PyObject *mod = Image::initModule();
     Base::Console().Log("Loading Image module... done\n");
 
     Image::ImagePlane::init();

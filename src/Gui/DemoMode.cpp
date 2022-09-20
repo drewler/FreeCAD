@@ -22,9 +22,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QCursor>
-# include <QTimer>
-# include <Inventor/nodes/SoCamera.h>
+#include <QCursor>
+#include <QTimer>
+#include <Inventor/nodes/SoCamera.h>
 #endif
 
 #include <Base/Tools.h>
@@ -42,8 +42,8 @@ using namespace Gui::Dialog;
 
 /* TRANSLATOR Gui::Dialog::DemoMode */
 
-DemoMode::DemoMode(QWidget* /*parent*/, Qt::WindowFlags fl)
-  : QDialog(nullptr, fl | Qt::WindowStaysOnTopHint), viewAxis(0, 0, -1), ui(new Ui_DemoMode)
+DemoMode::DemoMode(QWidget * /*parent*/, Qt::WindowFlags fl)
+    : QDialog(nullptr, fl | Qt::WindowStaysOnTopHint), viewAxis(0, 0, -1), ui(new Ui_DemoMode)
 {
     // create widgets
     ui->setupUi(this);
@@ -61,19 +61,15 @@ DemoMode::DemoMode(QWidget* /*parent*/, Qt::WindowFlags fl)
 }
 
 /** Destroys the object and frees any allocated resources */
-DemoMode::~DemoMode()
-{
-    delete ui;
-}
+DemoMode::~DemoMode() { delete ui; }
 
 void DemoMode::reset()
 {
     on_fullscreen_toggled(false);
-    Gui::View3DInventor* view = activeView();
-    if (view)
-        view->getViewer()->stopAnimating();
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View");
+    Gui::View3DInventor *view = activeView();
+    if (view) view->getViewer()->stopAnimating();
+    ParameterGrp::handle hGrp =
+        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
     hGrp->Notify("UseAutoRotation");
 }
 
@@ -105,8 +101,7 @@ bool DemoMode::eventFilter(QObject *obj, QEvent *event)
 
 void DemoMode::showEvent(QShowEvent *)
 {
-    if (this->wasHidden)
-        this->move(this->pnt);
+    if (this->wasHidden) this->move(this->pnt);
     this->wasHidden = false;
 }
 
@@ -118,13 +113,13 @@ void DemoMode::hideEvent(QHideEvent *)
     showHideTimer->stop();
 }
 
-Gui::View3DInventor* DemoMode::activeView() const
+Gui::View3DInventor *DemoMode::activeView() const
 {
-    Document* doc = Application::Instance->activeDocument();
+    Document *doc = Application::Instance->activeDocument();
     if (doc) {
-        MDIView* view = doc->getActiveView();
+        MDIView *view = doc->getActiveView();
         if (view && view->isDerivedFrom(Gui::View3DInventor::getClassTypeId())) {
-            return static_cast<Gui::View3DInventor*>(view);
+            return static_cast<Gui::View3DInventor *>(view);
         }
     }
 
@@ -137,45 +132,39 @@ float DemoMode::getSpeed(int v) const
     return speed;
 }
 
-SbVec3f DemoMode::getDirection(Gui::View3DInventor* view) const
+SbVec3f DemoMode::getDirection(Gui::View3DInventor *view) const
 {
-    SoCamera* cam = view->getViewer()->getSoRenderManager()->getCamera();
-    if (!cam)
-        return this->viewAxis;
+    SoCamera *cam = view->getViewer()->getSoRenderManager()->getCamera();
+    if (!cam) return this->viewAxis;
     SbRotation rot = cam->orientation.getValue();
     SbRotation inv = rot.inverse();
     SbVec3f vec(this->viewAxis);
     inv.multVec(vec, vec);
-    if (vec.length() < FLT_EPSILON)
-        vec = this->viewAxis;
+    if (vec.length() < FLT_EPSILON) vec = this->viewAxis;
     vec.normalize();
     return vec;
 }
 
 void DemoMode::on_angleSlider_valueChanged(int v)
 {
-    Gui::View3DInventor* view = activeView();
+    Gui::View3DInventor *view = activeView();
     if (view) {
-        SoCamera* cam = view->getViewer()->getSoRenderManager()->getCamera();
-        if (!cam)
-            return;
-        auto angle = Base::toRadians<float>(/*90-v*/v - this->oldvalue);
+        SoCamera *cam = view->getViewer()->getSoRenderManager()->getCamera();
+        if (!cam) return;
+        auto angle = Base::toRadians<float>(/*90-v*/ v - this->oldvalue);
         SbRotation rot(SbVec3f(-1, 0, 0), angle);
-        reorientCamera(cam ,rot);
+        reorientCamera(cam, rot);
         this->oldvalue = v;
-        if (view->getViewer()->isAnimating()) {
-            startAnimation(view);
-        }
+        if (view->getViewer()->isAnimating()) { startAnimation(view); }
     }
 }
 
-void DemoMode::reorientCamera(SoCamera * cam, const SbRotation & rot)
+void DemoMode::reorientCamera(SoCamera *cam, const SbRotation &rot)
 {
     // Find global coordinates of focal point.
     SbVec3f direction;
     cam->orientation.getValue().multVec(SbVec3f(0, 0, -1), direction);
-    SbVec3f focalpoint = cam->position.getValue() +
-                         cam->focalDistance.getValue() * direction;
+    SbVec3f focalpoint = cam->position.getValue() + cam->focalDistance.getValue() * direction;
 
     // Set new orientation value by accumulating the new rotation.
     cam->orientation = rot * cam->orientation.getValue();
@@ -188,22 +177,20 @@ void DemoMode::reorientCamera(SoCamera * cam, const SbRotation & rot)
 void DemoMode::on_speedSlider_valueChanged(int v)
 {
     Q_UNUSED(v);
-    Gui::View3DInventor* view = activeView();
-    if (view && view->getViewer()->isAnimating()) {
-        startAnimation(view);
-    }
+    Gui::View3DInventor *view = activeView();
+    if (view && view->getViewer()->isAnimating()) { startAnimation(view); }
 }
 
 void DemoMode::on_playButton_toggled(bool pressed)
 {
-    Gui::View3DInventor* view = activeView();
+    Gui::View3DInventor *view = activeView();
     if (view) {
         if (pressed) {
             if (!view->getViewer()->isAnimating()) {
-                SoCamera* cam = view->getViewer()->getSoRenderManager()->getCamera();
+                SoCamera *cam = view->getViewer()->getSoRenderManager()->getCamera();
                 if (cam) {
                     SbRotation rot = cam->orientation.getValue();
-                    SbVec3f vec(0,-1,0);
+                    SbVec3f vec(0, -1, 0);
                     rot.multVec(vec, this->viewAxis);
                 }
             }
@@ -220,10 +207,10 @@ void DemoMode::on_playButton_toggled(bool pressed)
 
 void DemoMode::on_fullscreen_toggled(bool on)
 {
-    Gui::View3DInventor* view = activeView();
+    Gui::View3DInventor *view = activeView();
     if (view) {
         CommandManager &rcCmdMgr = Application::Instance->commandManager();
-        Command* cmd = rcCmdMgr.getCommandByName("Std_ViewDockUndockFullscreen");
+        Command *cmd = rcCmdMgr.getCommandByName("Std_ViewDockUndockFullscreen");
         if (cmd) cmd->invoke(on ? MDIView::FullScreen : MDIView::Child);
         this->activateWindow();
         ui->playButton->setChecked(false);
@@ -238,39 +225,30 @@ void DemoMode::on_fullscreen_toggled(bool on)
     }
 }
 
-void DemoMode::on_timeout_valueChanged(int v)
-{
-    timer->setInterval(v * 1000);
-}
+void DemoMode::on_timeout_valueChanged(int v) { timer->setInterval(v * 1000); }
 
 void DemoMode::onAutoPlay()
 {
-    Gui::View3DInventor* view = activeView();
-    if (view && !view->getViewer()->isAnimating()) {
-        ui->playButton->setChecked(true);
-    }
+    Gui::View3DInventor *view = activeView();
+    if (view && !view->getViewer()->isAnimating()) { ui->playButton->setChecked(true); }
 }
 
-void DemoMode::startAnimation(Gui::View3DInventor* view)
+void DemoMode::startAnimation(Gui::View3DInventor *view)
 {
-    if (!view->getViewer()->isAnimationEnabled())
-        view->getViewer()->setAnimationEnabled(true);
-    view->getViewer()->startAnimating(getDirection(view),
-        getSpeed(ui->speedSlider->value()));
+    if (!view->getViewer()->isAnimationEnabled()) view->getViewer()->setAnimationEnabled(true);
+    view->getViewer()->startAnimating(getDirection(view), getSpeed(ui->speedSlider->value()));
 }
 
 void DemoMode::on_timerCheck_toggled(bool on)
 {
-    if (on)
-        timer->start();
+    if (on) timer->start();
     else
         timer->stop();
 }
 
 void DemoMode::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange)
-        ui->retranslateUi(this);
+    if (e->type() == QEvent::LanguageChange) ui->retranslateUi(this);
     QDialog::changeEvent(e);
 }
 

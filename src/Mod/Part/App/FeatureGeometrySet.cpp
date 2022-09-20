@@ -31,20 +31,17 @@ using namespace Part;
 PROPERTY_SOURCE(Part::FeatureGeometrySet, Part::Feature)
 
 
-FeatureGeometrySet::FeatureGeometrySet()
-{
-    ADD_PROPERTY(GeometrySet,(nullptr));
-}
+FeatureGeometrySet::FeatureGeometrySet() { ADD_PROPERTY(GeometrySet, (nullptr)); }
 
 
 App::DocumentObjectExecReturn *FeatureGeometrySet::execute()
 {
     TopoShape result;
 
-    const std::vector<Geometry*> &Geoms = GeometrySet.getValues();
+    const std::vector<Geometry *> &Geoms = GeometrySet.getValues();
 
     bool first = true;
-    for(std::vector<Geometry*>::const_iterator it=Geoms.begin();it!=Geoms.end();++it){
+    for (std::vector<Geometry *>::const_iterator it = Geoms.begin(); it != Geoms.end(); ++it) {
         TopoDS_Shape sh = (*it)->toShape();
         if (first) {
             first = false;
@@ -54,7 +51,7 @@ App::DocumentObjectExecReturn *FeatureGeometrySet::execute()
             result.setShape(result.fuse(sh));
         }
     }
-    
+
     Shape.setValue(result);
 
     return App::DocumentObject::StdReturn;

@@ -35,14 +35,12 @@
  */
 //=============================================================================
 
-StdMeshers_NumberOfLayers2D::StdMeshers_NumberOfLayers2D(int hypId,
-                                                         int studyId,
-                                                         SMESH_Gen * gen)
-  : StdMeshers_NumberOfLayers(hypId, studyId, gen)
+StdMeshers_NumberOfLayers2D::StdMeshers_NumberOfLayers2D(int hypId, int studyId, SMESH_Gen *gen)
+    : StdMeshers_NumberOfLayers(hypId, studyId, gen)
 {
-  _name = "NumberOfLayers2D"; // used by RadialQuadrangle_1D2D
-  _param_algo_dim = 2; // 2D
-  _nbLayers = 1;
+    _name = "NumberOfLayers2D"; // used by RadialQuadrangle_1D2D
+    _param_algo_dim = 2;        // 2D
+    _nbLayers = 1;
 }
 
 //=============================================================================
@@ -55,6 +53,5 @@ StdMeshers_NumberOfLayers2D::StdMeshers_NumberOfLayers2D(int hypId,
 
 StdMeshers_NumberOfLayers2D::~StdMeshers_NumberOfLayers2D()
 {
-  MESSAGE( "StdMeshers_NumberOfLayers2D::~StdMeshers_NumberOfLayers2D" );
+    MESSAGE("StdMeshers_NumberOfLayers2D::~StdMeshers_NumberOfLayers2D");
 }
-

@@ -31,15 +31,16 @@
 #endif
 
 
-namespace Gui {
+namespace Gui
+{
 
 struct SequencerDialogPrivate;
 
 class ProgressDialog;
-class GuiExport SequencerDialog : public Base::SequencerBase
+class GuiExport SequencerDialog: public Base::SequencerBase
 {
 public:
-    static SequencerDialog* instance();
+    static SequencerDialog *instance();
     void pause() override;
     void resume() override;
     bool isBlocking() const override;
@@ -47,12 +48,12 @@ public:
 
 protected:
     /** Construction */
-    SequencerDialog ();
+    SequencerDialog();
     /** Destruction */
-    ~SequencerDialog () override;
+    ~SequencerDialog() override;
 
     /** Puts text to the progress dialog */
-    void setText (const char* pszTxt) override;
+    void setText(const char *pszTxt) override;
     /** Starts the progress dialog */
     void startStep() override;
     /** Increase the step indicator of the progress dialog. */
@@ -71,21 +72,21 @@ private:
     void abort();
     //@}
 
-    SequencerDialogPrivate* d;
-    static SequencerDialog* _pclSingleton;
+    SequencerDialogPrivate *d;
+    static SequencerDialog *_pclSingleton;
 
     friend class ProgressDialog;
 };
 
-class ProgressDialog : public QProgressDialog
+class ProgressDialog: public QProgressDialog
 {
     Q_OBJECT
 
 public:
     /** Construction */
-    explicit ProgressDialog (SequencerDialog* s, QWidget * parent=nullptr);
+    explicit ProgressDialog(SequencerDialog *s, QWidget *parent = nullptr);
     /** Destruction */
-    ~ProgressDialog () override;
+    ~ProgressDialog() override;
 
 protected Q_SLOTS:
     void onCancel();
@@ -96,20 +97,20 @@ private Q_SLOTS:
     void setValueEx(int value);
     void aboutToShow();
     void aboutToHide();
-    void showEvent(QShowEvent*) override;
-    void hideEvent(QHideEvent*) override;
+    void showEvent(QShowEvent *) override;
+    void hideEvent(QHideEvent *) override;
 
 protected:
     bool canAbort() const;
 
 private:
-    SequencerDialog* sequencer;
+    SequencerDialog *sequencer;
 
 #ifdef QT_WINEXTRAS_LIB
     /* Set up the taskbar progress in windows */
     void setupTaskBarProgress(void);
-    QWinTaskbarProgress* m_taskbarProgress;
-    QWinTaskbarButton* m_taskbarButton;
+    QWinTaskbarProgress *m_taskbarProgress;
+    QWinTaskbarButton *m_taskbarButton;
 #endif
     friend class SequencerDialog;
 };

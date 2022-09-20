@@ -21,11 +21,11 @@
  ****************************************************************************/
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Qt>
-# include <QListWidget>
-# include <QListWidgetItem>
-# include <QPushButton>
-# include <QList>
+#include <Qt>
+#include <QListWidget>
+#include <QListWidgetItem>
+#include <QPushButton>
+#include <QList>
 #endif
 
 #include <Base/Console.h>
@@ -39,11 +39,10 @@ using namespace TechDrawGui;
 
 /* TRANSLATOR Gui::DlgPageChooser */
 
-DlgPageChooser::DlgPageChooser(
-        const std::vector<std::string> labels,
-        const std::vector<std::string> names,
-        QWidget* parent, Qt::WindowFlags fl)
-  : QDialog(parent, fl), ui(new Ui_DlgPageChooser)
+DlgPageChooser::DlgPageChooser(const std::vector<std::string> labels,
+                               const std::vector<std::string> names, QWidget *parent,
+                               Qt::WindowFlags fl)
+    : QDialog(parent, fl), ui(new Ui_DlgPageChooser)
 {
     ui->setupUi(this);
     ui->lwPages->setSortingEnabled(true);
@@ -65,7 +64,7 @@ DlgPageChooser::~DlgPageChooser()
 
 void DlgPageChooser::fillList(std::vector<std::string> labels, std::vector<std::string> names)
 {
-    QListWidgetItem* item;
+    QListWidgetItem *item;
     QString qLabel;
     QString qName;
     QString qText;
@@ -83,21 +82,17 @@ void DlgPageChooser::fillList(std::vector<std::string> labels, std::vector<std::
 std::string DlgPageChooser::getSelection() const
 {
     std::string result;
-    QList<QListWidgetItem*> sels = ui->lwPages->selectedItems();
+    QList<QListWidgetItem *> sels = ui->lwPages->selectedItems();
     if (!sels.empty()) {
-        QListWidgetItem* item = sels.front();
+        QListWidgetItem *item = sels.front();
         result = item->data(Qt::UserRole).toByteArray().constData();
     }
     return result;
 }
 
 
-void DlgPageChooser::accept() {
-    QDialog::accept();
-}
+void DlgPageChooser::accept() { QDialog::accept(); }
 
-void DlgPageChooser::reject() {
-    QDialog::reject();
-}
+void DlgPageChooser::reject() { QDialog::reject(); }
 
 #include "moc_DlgPageChooser.cpp"

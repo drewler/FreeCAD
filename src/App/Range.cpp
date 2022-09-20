@@ -39,7 +39,7 @@ using namespace App;
 const int App::CellAddress::MAX_ROWS = 16384;
 const int App::CellAddress::MAX_COLUMNS = 26 * 26 + 26;
 
-Range::Range(const char * range, bool normalize)
+Range::Range(const char *range, bool normalize)
 {
     std::string from;
     std::string to;
@@ -64,42 +64,31 @@ Range::Range(const char * range, bool normalize)
     row_end = end.row();
     col_end = end.col();
 
-    if (normalize)
-        this->normalize();
+    if (normalize) this->normalize();
     row_curr = row_begin;
     col_curr = col_begin;
 }
 
 Range::Range(int _row_begin, int _col_begin, int _row_end, int _col_end, bool normalize)
-    : row_begin(_row_begin)
-    , col_begin(_col_begin)
-    , row_end(_row_end)
-    , col_end(_col_end)
+    : row_begin(_row_begin), col_begin(_col_begin), row_end(_row_end), col_end(_col_end)
 {
-    if (normalize)
-        this->normalize();
+    if (normalize) this->normalize();
     row_curr = row_begin;
     col_curr = col_begin;
 }
 
 Range::Range(const CellAddress &from, const CellAddress &to, bool normalize)
-    : row_begin(from.row())
-    , col_begin(from.col())
-    , row_end(to.row())
-    , col_end(to.col())
+    : row_begin(from.row()), col_begin(from.col()), row_end(to.row()), col_end(to.col())
 {
-    if (normalize)
-        this->normalize();
+    if (normalize) this->normalize();
     row_curr = row_begin;
     col_curr = col_begin;
 }
 
 void Range::normalize()
 {
-    if (row_begin > row_end)
-        std::swap(row_begin, row_end);
-    if (col_begin > col_end)
-        std::swap(col_begin, col_end);
+    if (row_begin > row_end) std::swap(row_begin, row_end);
+    if (col_begin > col_end) std::swap(col_begin, col_end);
 }
 
 bool Range::next()
@@ -110,8 +99,7 @@ bool Range::next()
         return true;
     }
     if (col_curr < col_end) {
-        if (row_curr == row_end + 1)
-            return false;
+        if (row_curr == row_end + 1) return false;
         row_curr = row_begin;
         ++col_curr;
         return true;
@@ -131,8 +119,7 @@ int App::decodeRow(const std::string &rowstr, bool silent)
 {
     int row = validRow(rowstr);
 
-    if (silent || row >= 0)
-        return row;
+    if (silent || row >= 0) return row;
     else
         throw Base::IndexError("Invalid row specification.");
 }
@@ -140,13 +127,14 @@ int App::decodeRow(const std::string &rowstr, bool silent)
 /**
  * Assumes well-formed input. A through ZZZ. 0-based output
  */
-int columnStringToNum(const std::string &colstr){
-  double out {0};
-  int pos {0};
-  for(auto chr = colstr.crbegin(); chr != colstr.crend(); chr++){
-    out += (*chr - 'A' + 1) * std::pow(26, pos++);
-  }
-  return static_cast<int>(out - 1);
+int columnStringToNum(const std::string &colstr)
+{
+    double out {0};
+    int pos {0};
+    for (auto chr = colstr.crbegin(); chr != colstr.crend(); chr++) {
+        out += (*chr - 'A' + 1) * std::pow(26, pos++);
+    }
+    return static_cast<int>(out - 1);
 }
 
 /**
@@ -158,12 +146,10 @@ int columnStringToNum(const std::string &colstr){
   *
   */
 
-int App::decodeColumn( const std::string &colstr, bool silent )
+int App::decodeColumn(const std::string &colstr, bool silent)
 {
-    if(validColumn( colstr ) )
-        return columnStringToNum( colstr );
-    if( silent )
-        return -1;
+    if (validColumn(colstr)) return columnStringToNum(colstr);
+    if (silent) return -1;
     throw Base::IndexError("Invalid column specification");
 }
 
@@ -177,11 +163,10 @@ int App::decodeColumn( const std::string &colstr, bool silent )
 
 int App::validRow(const std::string &rowstr)
 {
-    char * end;
+    char *end;
     int i = strtol(rowstr.c_str(), &end, 10);
 
-    if (i <=0 || i > CellAddress::MAX_ROWS || *end)
-        return -1;
+    if (i <= 0 || i > CellAddress::MAX_ROWS || *end) return -1;
 
     return i - 1;
 }
@@ -195,7 +180,7 @@ int App::validRow(const std::string &rowstr)
   *
   */
 
-bool App::validColumn( const std::string &colstr )
+bool App::validColumn(const std::string &colstr)
 {
     return boost::regex_match(colstr, boost::regex("[A-Z]{1,3}"));
 }
@@ -210,7 +195,7 @@ bool App::validColumn( const std::string &colstr )
   *
   */
 
-App::CellAddress App::stringToAddress(const char * strAddress, bool silent)
+App::CellAddress App::stringToAddress(const char *strAddress, bool silent)
 {
     assert(strAddress);
 
@@ -218,20 +203,18 @@ App::CellAddress App::stringToAddress(const char * strAddress, bool silent)
     boost::cmatch cm;
 
     if (boost::regex_match(strAddress, cm, e)) {
-        bool absCol = (cm[1].first[0]=='$');
-        std::string r,c;
-        if(absCol)
-            c = std::string(cm[1].first+1,cm[1].second);
+        bool absCol = (cm[1].first[0] == '$');
+        std::string r, c;
+        if (absCol) c = std::string(cm[1].first + 1, cm[1].second);
         else
-            c = std::string(cm[1].first,cm[1].second);
-        bool absRow = (cm[2].first[0]=='$');
-        if(absRow) 
-            r = std::string(cm[2].first+1,cm[2].second);
+            c = std::string(cm[1].first, cm[1].second);
+        bool absRow = (cm[2].first[0] == '$');
+        if (absRow) r = std::string(cm[2].first + 1, cm[2].second);
         else
-            r = std::string(cm[2].first,cm[2].second);
-        return CellAddress(decodeRow(r,silent), decodeColumn(c,silent), absRow, absCol);
+            r = std::string(cm[2].first, cm[2].second);
+        return CellAddress(decodeRow(r, silent), decodeColumn(c, silent), absRow, absCol);
     }
-    else if(silent)
+    else if (silent)
         return CellAddress();
     else
         throw Base::RuntimeError("Invalid cell specifier.");
@@ -249,11 +232,8 @@ std::string App::CellAddress::toString(Cell cell) const
 
     Base::Flags<Cell> flags(cell);
     if (flags.testFlag(Cell::ShowColumn)) {
-        if (_absCol && flags.testFlag(Cell::Absolute))
-            s << '$';
-        if (col() < 26) {
-            s << static_cast<char>('A' + col());
-        }
+        if (_absCol && flags.testFlag(Cell::Absolute)) s << '$';
+        if (col() < 26) { s << static_cast<char>('A' + col()); }
         else {
             int colnum = col() - 26;
 
@@ -263,22 +243,21 @@ std::string App::CellAddress::toString(Cell cell) const
     }
 
     if (flags.testFlag(Cell::ShowRow)) {
-        if (_absRow && flags.testFlag(Cell::Absolute))
-            s << '$';
+        if (_absRow && flags.testFlag(Cell::Absolute)) s << '$';
         s << (row() + 1);
     }
 
     return s.str();
 }
 
-bool App::CellAddress::parseAbsoluteAddress(const char *txt) {
-    if(txt[0]=='$' || (txt[0] && txt[1] && (txt[1]=='$' || txt[2]=='$'))) {
-        CellAddress addr = stringToAddress(txt,true);
-        if(addr.isValid()) {
+bool App::CellAddress::parseAbsoluteAddress(const char *txt)
+{
+    if (txt[0] == '$' || (txt[0] && txt[1] && (txt[1] == '$' || txt[2] == '$'))) {
+        CellAddress addr = stringToAddress(txt, true);
+        if (addr.isValid()) {
             *this = addr;
             return true;
         }
     }
     return false;
 }
-

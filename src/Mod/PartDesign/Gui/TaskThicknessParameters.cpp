@@ -24,9 +24,9 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QAction>
-# include <QListWidget>
-# include <QMessageBox>
+#include <QAction>
+#include <QListWidget>
+#include <QMessageBox>
 #endif
 
 #include <Base/Interpreter.h>
@@ -46,15 +46,15 @@ using namespace Gui;
 /* TRANSLATOR PartDesignGui::TaskThicknessParameters */
 
 TaskThicknessParameters::TaskThicknessParameters(ViewProviderDressUp *DressUpView, QWidget *parent)
-    : TaskDressUpParameters(DressUpView, false, true, parent)
-    , ui(new Ui_TaskThicknessParameters)
+    : TaskDressUpParameters(DressUpView, false, true, parent), ui(new Ui_TaskThicknessParameters)
 {
     // we need a separate container widget to add all controls to
     proxy = new QWidget(this);
     ui->setupUi(proxy);
     this->groupLayout()->addWidget(proxy);
 
-    PartDesign::Thickness* pcThickness = static_cast<PartDesign::Thickness*>(DressUpView->getObject());
+    PartDesign::Thickness *pcThickness =
+        static_cast<PartDesign::Thickness *>(DressUpView->getObject());
     double a = pcThickness->Value.getValue();
 
     ui->Value->setMinimum(0.0);
@@ -73,38 +73,31 @@ TaskThicknessParameters::TaskThicknessParameters(ViewProviderDressUp *DressUpVie
     ui->checkIntersection->setChecked(i);
 
     std::vector<std::string> strings = pcThickness->Base.getSubValues();
-    for (std::vector<std::string>::const_iterator i = strings.begin(); i != strings.end(); i++)
-    {
+    for (std::vector<std::string>::const_iterator i = strings.begin(); i != strings.end(); i++) {
         ui->listWidgetReferences->addItem(QString::fromStdString(*i));
     }
 
     QMetaObject::connectSlotsByName(this);
 
-    connect(ui->Value, SIGNAL(valueChanged(double)),
-        this, SLOT(onValueChanged(double)));
-    connect(ui->checkReverse, SIGNAL(toggled(bool)),
-        this, SLOT(onReversedChanged(bool)));
-    connect(ui->checkIntersection, SIGNAL(toggled(bool)),
-        this, SLOT(onIntersectionChanged(bool)));
-    connect(ui->buttonRefAdd, SIGNAL(toggled(bool)),
-        this, SLOT(onButtonRefAdd(bool)));
-    connect(ui->buttonRefRemove, SIGNAL(toggled(bool)),
-        this, SLOT(onButtonRefRemove(bool)));
-    connect(ui->modeComboBox, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(onModeChanged(int)));
-    connect(ui->joinComboBox, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(onJoinTypeChanged(int)));
+    connect(ui->Value, SIGNAL(valueChanged(double)), this, SLOT(onValueChanged(double)));
+    connect(ui->checkReverse, SIGNAL(toggled(bool)), this, SLOT(onReversedChanged(bool)));
+    connect(ui->checkIntersection, SIGNAL(toggled(bool)), this, SLOT(onIntersectionChanged(bool)));
+    connect(ui->buttonRefAdd, SIGNAL(toggled(bool)), this, SLOT(onButtonRefAdd(bool)));
+    connect(ui->buttonRefRemove, SIGNAL(toggled(bool)), this, SLOT(onButtonRefRemove(bool)));
+    connect(ui->modeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onModeChanged(int)));
+    connect(ui->joinComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onJoinTypeChanged(int)));
 
     // Create context menu
     createDeleteAction(ui->listWidgetReferences, ui->buttonRefRemove);
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(onRefDeleted()));
 
-    connect(ui->listWidgetReferences, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
-        this, SLOT(setSelection(QListWidgetItem*)));
-    connect(ui->listWidgetReferences, SIGNAL(itemClicked(QListWidgetItem*)),
-        this, SLOT(setSelection(QListWidgetItem*)));
-    connect(ui->listWidgetReferences, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-        this, SLOT(doubleClicked(QListWidgetItem*)));
+    connect(ui->listWidgetReferences,
+            SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this,
+            SLOT(setSelection(QListWidgetItem *)));
+    connect(ui->listWidgetReferences, SIGNAL(itemClicked(QListWidgetItem *)), this,
+            SLOT(setSelection(QListWidgetItem *)));
+    connect(ui->listWidgetReferences, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this,
+            SLOT(doubleClicked(QListWidgetItem *)));
 
     int mode = pcThickness->Mode.getValue();
     ui->modeComboBox->setCurrentIndex(mode);
@@ -116,13 +109,12 @@ TaskThicknessParameters::TaskThicknessParameters(ViewProviderDressUp *DressUpVie
     hideOnError();
 }
 
-void TaskThicknessParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
+void TaskThicknessParameters::onSelectionChanged(const Gui::SelectionChanges &msg)
 {
     // executed when the user selected something in the CAD object
     // adds/deletes the selection accordingly
 
-    if (selectionMode == none)
-        return;
+    if (selectionMode == none) return;
 
     if (msg.Type == Gui::SelectionChanges::AddSelection) {
         if (referenceSelected(msg)) {
@@ -133,7 +125,8 @@ void TaskThicknessParameters::onSelectionChanged(const Gui::SelectionChanges& ms
                     deleteAction->setEnabled(true);
                     deleteAction->setStatusTip(QString());
                     ui->buttonRefRemove->setEnabled(true);
-                    ui->buttonRefRemove->setToolTip(tr("Click button to enter selection mode,\nclick again to end selection"));
+                    ui->buttonRefRemove->setToolTip(
+                        tr("Click button to enter selection mode,\nclick again to end selection"));
                 }
             }
             else {
@@ -153,7 +146,7 @@ void TaskThicknessParameters::onSelectionChanged(const Gui::SelectionChanges& ms
             }
             // highlight existing references for possible further selections
             DressUpView->highlightReferences(true);
-        } 
+        }
     }
 }
 
@@ -174,7 +167,7 @@ void TaskThicknessParameters::onRefDeleted(void)
     DressUpView->highlightReferences(false);
 
     // get the list of items to be deleted
-    QList<QListWidgetItem*> selectedList = ui->listWidgetReferences->selectedItems();
+    QList<QListWidgetItem *> selectedList = ui->listWidgetReferences->selectedItems();
 
     // if all items are selected, we must stop because one must be kept to avoid that the feature gets broken
     if (selectedList.count() == ui->listWidgetReferences->model()->rowCount()) {
@@ -183,8 +176,9 @@ void TaskThicknessParameters::onRefDeleted(void)
     }
 
     // get the thickness object
-    PartDesign::Thickness* pcThickness = static_cast<PartDesign::Thickness*>(DressUpView->getObject());
-    App::DocumentObject* base = pcThickness->Base.getValue();
+    PartDesign::Thickness *pcThickness =
+        static_cast<PartDesign::Thickness *>(DressUpView->getObject());
+    App::DocumentObject *base = pcThickness->Base.getValue();
     // get all thickness references
     std::vector<std::string> refs = pcThickness->Base.getSubValues();
     setupTransaction();
@@ -219,7 +213,8 @@ void TaskThicknessParameters::onRefDeleted(void)
 void TaskThicknessParameters::onValueChanged(double angle)
 {
     clearButtons(none);
-    PartDesign::Thickness* pcThickness = static_cast<PartDesign::Thickness*>(DressUpView->getObject());
+    PartDesign::Thickness *pcThickness =
+        static_cast<PartDesign::Thickness *>(DressUpView->getObject());
     setupTransaction();
     pcThickness->Value.setValue(angle);
     pcThickness->getDocument()->recomputeFeature(pcThickness);
@@ -227,10 +222,12 @@ void TaskThicknessParameters::onValueChanged(double angle)
     hideOnError();
 }
 
-void TaskThicknessParameters::onJoinTypeChanged(int join) {
+void TaskThicknessParameters::onJoinTypeChanged(int join)
+{
 
     clearButtons(none);
-    PartDesign::Thickness* pcThickness = static_cast<PartDesign::Thickness*>(DressUpView->getObject());
+    PartDesign::Thickness *pcThickness =
+        static_cast<PartDesign::Thickness *>(DressUpView->getObject());
     setupTransaction();
     pcThickness->Join.setValue(join);
     pcThickness->getDocument()->recomputeFeature(pcThickness);
@@ -238,10 +235,12 @@ void TaskThicknessParameters::onJoinTypeChanged(int join) {
     hideOnError();
 }
 
-void TaskThicknessParameters::onModeChanged(int mode) {
+void TaskThicknessParameters::onModeChanged(int mode)
+{
 
     clearButtons(none);
-    PartDesign::Thickness* pcThickness = static_cast<PartDesign::Thickness*>(DressUpView->getObject());
+    PartDesign::Thickness *pcThickness =
+        static_cast<PartDesign::Thickness *>(DressUpView->getObject());
     setupTransaction();
     pcThickness->Mode.setValue(mode);
     pcThickness->getDocument()->recomputeFeature(pcThickness);
@@ -249,14 +248,13 @@ void TaskThicknessParameters::onModeChanged(int mode) {
     hideOnError();
 }
 
-double TaskThicknessParameters::getValue(void) const
-{
-    return ui->Value->value().getValue();
-}
+double TaskThicknessParameters::getValue(void) const { return ui->Value->value().getValue(); }
 
-void TaskThicknessParameters::onReversedChanged(const bool on) {
+void TaskThicknessParameters::onReversedChanged(const bool on)
+{
     clearButtons(none);
-    PartDesign::Thickness* pcThickness = static_cast<PartDesign::Thickness*>(DressUpView->getObject());
+    PartDesign::Thickness *pcThickness =
+        static_cast<PartDesign::Thickness *>(DressUpView->getObject());
     setupTransaction();
     pcThickness->Reversed.setValue(on);
     pcThickness->getDocument()->recomputeFeature(pcThickness);
@@ -264,14 +262,13 @@ void TaskThicknessParameters::onReversedChanged(const bool on) {
     hideOnError();
 }
 
-bool TaskThicknessParameters::getReversed(void) const
-{
-    return ui->checkReverse->isChecked();
-}
+bool TaskThicknessParameters::getReversed(void) const { return ui->checkReverse->isChecked(); }
 
-void TaskThicknessParameters::onIntersectionChanged(const bool on) {
+void TaskThicknessParameters::onIntersectionChanged(const bool on)
+{
     clearButtons(none);
-    PartDesign::Thickness* pcThickness = static_cast<PartDesign::Thickness*>(DressUpView->getObject());
+    PartDesign::Thickness *pcThickness =
+        static_cast<PartDesign::Thickness *>(DressUpView->getObject());
     pcThickness->Intersection.setValue(on);
     pcThickness->getDocument()->recomputeFeature(pcThickness);
     // hide the thickness if there was a computation error
@@ -283,15 +280,9 @@ bool TaskThicknessParameters::getIntersection(void) const
     return ui->checkIntersection->isChecked();
 }
 
-int TaskThicknessParameters::getJoinType(void) const {
-    
-    return ui->joinComboBox->currentIndex();
-}
+int TaskThicknessParameters::getJoinType(void) const { return ui->joinComboBox->currentIndex(); }
 
-int TaskThicknessParameters::getMode(void) const {
-
-    return ui->modeComboBox->currentIndex();
-}
+int TaskThicknessParameters::getMode(void) const { return ui->modeComboBox->currentIndex(); }
 
 TaskThicknessParameters::~TaskThicknessParameters()
 {
@@ -299,23 +290,18 @@ TaskThicknessParameters::~TaskThicknessParameters()
         Gui::Selection().clearSelection();
         Gui::Selection().rmvSelectionGate();
     }
-    catch (const Py::Exception&) {
+    catch (const Py::Exception &) {
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
 }
 
-bool TaskThicknessParameters::event(QEvent *e)
-{
-    return TaskDressUpParameters::KeyEvent(e);
-}
+bool TaskThicknessParameters::event(QEvent *e) { return TaskDressUpParameters::KeyEvent(e); }
 
 void TaskThicknessParameters::changeEvent(QEvent *e)
 {
     TaskBox::changeEvent(e);
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(proxy);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(proxy); }
 }
 
 
@@ -327,15 +313,12 @@ void TaskThicknessParameters::changeEvent(QEvent *e)
 TaskDlgThicknessParameters::TaskDlgThicknessParameters(ViewProviderThickness *DressUpView)
     : TaskDlgDressUpParameters(DressUpView)
 {
-    parameter  = new TaskThicknessParameters(DressUpView);
+    parameter = new TaskThicknessParameters(DressUpView);
 
     Content.push_back(parameter);
 }
 
-TaskDlgThicknessParameters::~TaskDlgThicknessParameters()
-{
-
-}
+TaskDlgThicknessParameters::~TaskDlgThicknessParameters() {}
 
 //==== calls from the TaskView ===============================================================
 
@@ -357,16 +340,15 @@ TaskDlgThicknessParameters::~TaskDlgThicknessParameters()
 bool TaskDlgThicknessParameters::accept()
 {
     auto obj = vp->getObject();
-    if (!obj->isError())
-        parameter->showObject();
+    if (!obj->isError()) parameter->showObject();
 
-    TaskThicknessParameters* draftparameter = static_cast<TaskThicknessParameters*>(parameter);
+    TaskThicknessParameters *draftparameter = static_cast<TaskThicknessParameters *>(parameter);
 
-    FCMD_OBJ_CMD(obj,"Value = " << draftparameter->getValue());
-    FCMD_OBJ_CMD(obj,"Reversed = " << draftparameter->getReversed());
-    FCMD_OBJ_CMD(obj,"Mode = " << draftparameter->getMode());
-    FCMD_OBJ_CMD(obj,"Intersection = " << draftparameter->getIntersection());
-    FCMD_OBJ_CMD(obj,"Join = " << draftparameter->getJoinType());
+    FCMD_OBJ_CMD(obj, "Value = " << draftparameter->getValue());
+    FCMD_OBJ_CMD(obj, "Reversed = " << draftparameter->getReversed());
+    FCMD_OBJ_CMD(obj, "Mode = " << draftparameter->getMode());
+    FCMD_OBJ_CMD(obj, "Intersection = " << draftparameter->getIntersection());
+    FCMD_OBJ_CMD(obj, "Join = " << draftparameter->getJoinType());
 
     return TaskDlgDressUpParameters::accept();
 }

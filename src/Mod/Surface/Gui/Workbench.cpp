@@ -36,13 +36,9 @@ using namespace SurfaceGui;
 /// @namespace SurfaceGui @class Workbench
 TYPESYSTEM_SOURCE(SurfaceGui::Workbench, Gui::StdWorkbench)
 
-Workbench::Workbench()
-{
-}
+Workbench::Workbench() {}
 
-Workbench::~Workbench()
-{
-}
+Workbench::~Workbench() {}
 
 Gui::MenuItem *Workbench::setupMenuBar() const
 {

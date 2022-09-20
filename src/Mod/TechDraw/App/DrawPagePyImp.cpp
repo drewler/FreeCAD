@@ -21,12 +21,9 @@
 using namespace TechDraw;
 
 // returns a string which represents the object e.g. when printed in python
-std::string DrawPagePy::representation() const
-{
-    return std::string("<DrawPage object>");
-}
+std::string DrawPagePy::representation() const { return std::string("<DrawPage object>"); }
 
-PyObject* DrawPagePy::addView(PyObject* args)
+PyObject *DrawPagePy::addView(PyObject *args)
 {
     //this implements iRC = pyPage.addView(pyView)  -or-
     //doCommand(Doc, "App.activeDocument().%s.addView(App.activeDocument().%s)", PageName.c_str(), FeatName.c_str());
@@ -37,17 +34,17 @@ PyObject* DrawPagePy::addView(PyObject* args)
         return nullptr;
     }
 
-    DrawPage* page = getDrawPagePtr();                         //get DrawPage for pyPage
+    DrawPage *page = getDrawPagePtr(); //get DrawPage for pyPage
     //TODO: argument 1 arrives as "DocumentObjectPy", not "DrawViewPy"
     //how to validate that obj is DrawView before use??
-    DrawViewPy* pyView = static_cast<TechDraw::DrawViewPy*>(pcDocObj);
-    DrawView* view = pyView->getDrawViewPtr();                 //get DrawView for pyView
+    DrawViewPy *pyView = static_cast<TechDraw::DrawViewPy *>(pcDocObj);
+    DrawView *view = pyView->getDrawViewPtr(); //get DrawView for pyView
 
     int rc = page->addView(view);
-    return PyLong_FromLong((long) rc);
+    return PyLong_FromLong((long)rc);
 }
 
-PyObject* DrawPagePy::removeView(PyObject* args)
+PyObject *DrawPagePy::removeView(PyObject *args)
 {
     //this implements iRC = pyPage.removeView(pyView)  -or-
     //doCommand(Doc, "App.activeDocument().%s.removeView(App.activeDocument().%s)", PageName.c_str(), FeatName.c_str());
@@ -58,45 +55,49 @@ PyObject* DrawPagePy::removeView(PyObject* args)
         return nullptr;
     }
 
-    DrawPage* page = getDrawPagePtr();                         //get DrawPage for pyPage
+    DrawPage *page = getDrawPagePtr(); //get DrawPage for pyPage
     //how to validate that obj is DrawView before use??
-    DrawViewPy* pyView = static_cast<TechDraw::DrawViewPy*>(pcDocObj);
-    DrawView* view = pyView->getDrawViewPtr();                 //get DrawView for pyView
+    DrawViewPy *pyView = static_cast<TechDraw::DrawViewPy *>(pcDocObj);
+    DrawView *view = pyView->getDrawViewPtr(); //get DrawView for pyView
 
     int rc = page->removeView(view);
 
-    return PyLong_FromLong((long) rc);
+    return PyLong_FromLong((long)rc);
 }
 
-PyObject* DrawPagePy::getAllViews(PyObject* args)
+PyObject *DrawPagePy::getAllViews(PyObject *args)
 {
-    (void) args;
-    DrawPage* page = getDrawPagePtr();
-    std::vector<App::DocumentObject*> allViews = page->getAllViews();
+    (void)args;
+    DrawPage *page = getDrawPagePtr();
+    std::vector<App::DocumentObject *> allViews = page->getAllViews();
 
     Py::List ret;
-    for (auto&v: allViews) {
+    for (auto &v : allViews) {
         if (v->isDerivedFrom(TechDraw::DrawProjGroupItem::getClassTypeId())) {
-            TechDraw::DrawProjGroupItem* dpgi = static_cast<TechDraw::DrawProjGroupItem*>(v);
-            ret.append(Py::asObject(new TechDraw::DrawProjGroupItemPy(dpgi)));   //is this legit? or need to make new copy of dv?
-        } else if (v->isDerivedFrom(TechDraw::DrawViewPart::getClassTypeId())) {
-            TechDraw::DrawViewPart* dvp = static_cast<TechDraw::DrawViewPart*>(v);
+            TechDraw::DrawProjGroupItem *dpgi = static_cast<TechDraw::DrawProjGroupItem *>(v);
+            ret.append(Py::asObject(new TechDraw::DrawProjGroupItemPy(
+                dpgi))); //is this legit? or need to make new copy of dv?
+        }
+        else if (v->isDerivedFrom(TechDraw::DrawViewPart::getClassTypeId())) {
+            TechDraw::DrawViewPart *dvp = static_cast<TechDraw::DrawViewPart *>(v);
             ret.append(Py::asObject(new TechDraw::DrawViewPartPy(dvp)));
-        } else if (v->isDerivedFrom(TechDraw::DrawViewAnnotation::getClassTypeId())) {
-            TechDraw::DrawViewAnnotation* dva = static_cast<TechDraw::DrawViewAnnotation*>(v);
+        }
+        else if (v->isDerivedFrom(TechDraw::DrawViewAnnotation::getClassTypeId())) {
+            TechDraw::DrawViewAnnotation *dva = static_cast<TechDraw::DrawViewAnnotation *>(v);
             ret.append(Py::asObject(new TechDraw::DrawViewAnnotationPy(dva)));
-        } else {
-            TechDraw::DrawView* dv = static_cast<TechDraw::DrawView*>(v);
+        }
+        else {
+            TechDraw::DrawView *dv = static_cast<TechDraw::DrawView *>(v);
             ret.append(Py::asObject(new TechDraw::DrawViewPy(dv)));
         }
     }
     return Py::new_reference_to(ret);
 }
 
-PyObject* DrawPagePy::requestPaint(PyObject* args)
+PyObject *DrawPagePy::requestPaint(PyObject *args)
 {
-    (void) args;
-    DrawPage* page = getDrawPagePtr();
+    (void)args;
+    DrawPage *page = getDrawPagePtr();
     page->requestPaint();
     Py_INCREF(Py_None);
     return Py_None;
@@ -104,32 +105,26 @@ PyObject* DrawPagePy::requestPaint(PyObject* args)
 
 
 //    double getPageWidth() const;
-PyObject* DrawPagePy::getPageWidth(PyObject *)
+PyObject *DrawPagePy::getPageWidth(PyObject *)
 {
     PyErr_SetString(PyExc_NotImplementedError, "Not yet implemented");
     return nullptr;
 }
 
 //    double getPageHeight() const;
-PyObject* DrawPagePy::getPageHeight(PyObject *)
+PyObject *DrawPagePy::getPageHeight(PyObject *)
 {
     PyErr_SetString(PyExc_NotImplementedError, "Not yet implemented");
     return nullptr;
 }
 
 //    const char* getPageOrientation() const;
-PyObject* DrawPagePy::getPageOrientation(PyObject *)
+PyObject *DrawPagePy::getPageOrientation(PyObject *)
 {
     PyErr_SetString(PyExc_NotImplementedError, "Not yet implemented");
     return nullptr;
 }
 
-PyObject *DrawPagePy::getCustomAttributes(const char* ) const
-{
-    return nullptr;
-}
+PyObject *DrawPagePy::getCustomAttributes(const char *) const { return nullptr; }
 
-int DrawPagePy::setCustomAttributes(const char* , PyObject *)
-{
-    return 0;
-}
+int DrawPagePy::setCustomAttributes(const char *, PyObject *) { return 0; }

@@ -23,7 +23,7 @@
 //  SMESH SMDS : implementation of Salome mesh data structure
 //
 #ifdef _MSC_VER
-#pragma warning(disable:4786)
+#pragma warning(disable : 4786)
 #endif
 
 #include "SMDS_SetIterator.hxx"
@@ -38,47 +38,39 @@ using namespace std;
 
 //=======================================================================
 //function : NbEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-int SMDS_FaceOfNodes::NbEdges() const
-{
-        return NbNodes();
-}
+int SMDS_FaceOfNodes::NbEdges() const { return NbNodes(); }
 
-int SMDS_FaceOfNodes::NbFaces() const
-{
-        return 1;
-}
+int SMDS_FaceOfNodes::NbFaces() const { return 1; }
 
-int SMDS_FaceOfNodes::NbNodes() const
-{
-        return myNbNodes;
-}
+int SMDS_FaceOfNodes::NbNodes() const { return myNbNodes; }
 
 //=======================================================================
 //function : Print
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-void SMDS_FaceOfNodes::Print(ostream & OS) const
+void SMDS_FaceOfNodes::Print(ostream &OS) const
 {
-        OS << "face <" << GetID() << " > : ";
-        int i;
-        for (i = 0; i < NbNodes() - 1; i++) OS << myNodes[i] << ",";
-        OS << myNodes[i] << ") " << endl;
+    OS << "face <" << GetID() << " > : ";
+    int i;
+    for (i = 0; i < NbNodes() - 1; i++) OS << myNodes[i] << ",";
+    OS << myNodes[i] << ") " << endl;
 }
 
 //=======================================================================
 //function : elementsIterator
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-class SMDS_FaceOfNodes_MyIterator:public SMDS_NodeArrayElemIterator
+class SMDS_FaceOfNodes_MyIterator: public SMDS_NodeArrayElemIterator
 {
- public:
-  SMDS_FaceOfNodes_MyIterator(const SMDS_MeshNode* const *s, int l):
-    SMDS_NodeArrayElemIterator( s, & s[ l ] ) {}
+public:
+    SMDS_FaceOfNodes_MyIterator(const SMDS_MeshNode *const *s, int l)
+        : SMDS_NodeArrayElemIterator(s, &s[l])
+    {}
 };
 
 /// ===================================================================
@@ -87,85 +79,75 @@ class SMDS_FaceOfNodes_MyIterator:public SMDS_NodeArrayElemIterator
  */
 /// ===================================================================
 
-class _MyEdgeIterator : public SMDS_ElemIterator
+class _MyEdgeIterator: public SMDS_ElemIterator
 {
-  vector< const SMDS_MeshElement* > myElems;
-  int myIndex;
-public:
-  _MyEdgeIterator(const SMDS_FaceOfNodes* face):myIndex(0) {
-    myElems.reserve( face->NbNodes() );
-    for ( int i = 0; i < face->NbNodes(); ++i ) {
-      const SMDS_MeshElement* edge =
-        SMDS_Mesh::FindEdge( face->GetNode( i ), face->GetNodeWrap( i + 1 ));
-      if ( edge )
-        myElems.push_back( edge );
-    }
-  }
-  /// Return true if and only if there are other object in this iterator
-  virtual bool more() { return myIndex < myElems.size(); }
+    vector<const SMDS_MeshElement *> myElems;
+    int myIndex;
 
-  /// Return the current object and step to the next one
-  virtual const SMDS_MeshElement* next() { return myElems[ myIndex++ ]; }
+public:
+    _MyEdgeIterator(const SMDS_FaceOfNodes *face) : myIndex(0)
+    {
+        myElems.reserve(face->NbNodes());
+        for (int i = 0; i < face->NbNodes(); ++i) {
+            const SMDS_MeshElement *edge =
+                SMDS_Mesh::FindEdge(face->GetNode(i), face->GetNodeWrap(i + 1));
+            if (edge) myElems.push_back(edge);
+        }
+    }
+    /// Return true if and only if there are other object in this iterator
+    virtual bool more() { return myIndex < myElems.size(); }
+
+    /// Return the current object and step to the next one
+    virtual const SMDS_MeshElement *next() { return myElems[myIndex++]; }
 };
 
-SMDS_ElemIteratorPtr SMDS_FaceOfNodes::elementsIterator
-                         (SMDSAbs_ElementType type) const
+SMDS_ElemIteratorPtr SMDS_FaceOfNodes::elementsIterator(SMDSAbs_ElementType type) const
 {
-  switch(type)
-  {
-  case SMDSAbs_Face:
-    return SMDS_MeshElement::elementsIterator(SMDSAbs_Face);
-  case SMDSAbs_Node:
-    return SMDS_ElemIteratorPtr(new SMDS_FaceOfNodes_MyIterator(myNodes,myNbNodes));
-  case SMDSAbs_Edge:
-    return SMDS_ElemIteratorPtr(new _MyEdgeIterator( this ));
-    break;
-  default:
-    return SMDS_ElemIteratorPtr
-      (new SMDS_IteratorOfElements
-       (this,type,SMDS_ElemIteratorPtr
-        (new SMDS_FaceOfNodes_MyIterator(myNodes,myNbNodes))));
-  }
-  return SMDS_ElemIteratorPtr();
+    switch (type) {
+        case SMDSAbs_Face: return SMDS_MeshElement::elementsIterator(SMDSAbs_Face);
+        case SMDSAbs_Node:
+            return SMDS_ElemIteratorPtr(new SMDS_FaceOfNodes_MyIterator(myNodes, myNbNodes));
+        case SMDSAbs_Edge: return SMDS_ElemIteratorPtr(new _MyEdgeIterator(this)); break;
+        default:
+            return SMDS_ElemIteratorPtr(new SMDS_IteratorOfElements(
+                this, type,
+                SMDS_ElemIteratorPtr(new SMDS_FaceOfNodes_MyIterator(myNodes, myNbNodes))));
+    }
+    return SMDS_ElemIteratorPtr();
 }
 
-SMDS_FaceOfNodes::SMDS_FaceOfNodes(const SMDS_MeshNode* node1,
-                                   const SMDS_MeshNode* node2,
-                                   const SMDS_MeshNode* node3)
+SMDS_FaceOfNodes::SMDS_FaceOfNodes(const SMDS_MeshNode *node1, const SMDS_MeshNode *node2,
+                                   const SMDS_MeshNode *node3)
 {
-  //MESSAGE("******************************************************* SMDS_FaceOfNodes");
-        myNbNodes = 3;
-        myNodes[0]=node1;
-        myNodes[1]=node2;
-        myNodes[2]=node3;
-        myNodes[3]=0;
+    //MESSAGE("******************************************************* SMDS_FaceOfNodes");
+    myNbNodes = 3;
+    myNodes[0] = node1;
+    myNodes[1] = node2;
+    myNodes[2] = node3;
+    myNodes[3] = 0;
 }
 
-SMDS_FaceOfNodes::SMDS_FaceOfNodes(const SMDS_MeshNode* node1,
-                                   const SMDS_MeshNode* node2,
-                                   const SMDS_MeshNode* node3,
-                                   const SMDS_MeshNode* node4)
+SMDS_FaceOfNodes::SMDS_FaceOfNodes(const SMDS_MeshNode *node1, const SMDS_MeshNode *node2,
+                                   const SMDS_MeshNode *node3, const SMDS_MeshNode *node4)
 {
-  //MESSAGE("******************************************************* SMDS_FaceOfNodes");
-        myNbNodes = 4;
-        myNodes[0]=node1;
-        myNodes[1]=node2;
-        myNodes[2]=node3;
-        myNodes[3]=node4;       
+    //MESSAGE("******************************************************* SMDS_FaceOfNodes");
+    myNbNodes = 4;
+    myNodes[0] = node1;
+    myNodes[1] = node2;
+    myNodes[2] = node3;
+    myNodes[3] = node4;
 }
-bool SMDS_FaceOfNodes::ChangeNodes(const SMDS_MeshNode* nodes[],
-                                   const int            nbNodes)
+bool SMDS_FaceOfNodes::ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes)
 {
-  myNbNodes = nbNodes;
-  myNodes[0]=nodes[0];
-  myNodes[1]=nodes[1];
-  myNodes[2]=nodes[2];
-  if (nbNodes == 4)
-    myNodes[3]=nodes[3];
-  else if (nbNodes != 3)
-    return false;
+    myNbNodes = nbNodes;
+    myNodes[0] = nodes[0];
+    myNodes[1] = nodes[1];
+    myNodes[2] = nodes[2];
+    if (nbNodes == 4) myNodes[3] = nodes[3];
+    else if (nbNodes != 3)
+        return false;
 
-  return true;
+    return true;
 }
 
 /*!
@@ -173,16 +155,13 @@ bool SMDS_FaceOfNodes::ChangeNodes(const SMDS_MeshNode* nodes[],
  * \param ind - node index
  * \retval const SMDS_MeshNode* - the node
  */
-const SMDS_MeshNode* SMDS_FaceOfNodes::GetNode(const int ind) const
-{
-  return myNodes[ ind ];
-}
+const SMDS_MeshNode *SMDS_FaceOfNodes::GetNode(const int ind) const { return myNodes[ind]; }
 
 SMDSAbs_EntityType SMDS_FaceOfNodes::GetEntityType() const
 {
-  return NbNodes() == 3 ? SMDSEntity_Triangle : SMDSEntity_Quadrangle;
+    return NbNodes() == 3 ? SMDSEntity_Triangle : SMDSEntity_Quadrangle;
 }
 SMDSAbs_GeometryType SMDS_FaceOfNodes::GetGeomType() const
 {
-  return NbNodes() == 3 ? SMDSGeom_TRIANGLE : SMDSGeom_QUADRANGLE;
+    return NbNodes() == 3 ? SMDSGeom_TRIANGLE : SMDSGeom_QUADRANGLE;
 }

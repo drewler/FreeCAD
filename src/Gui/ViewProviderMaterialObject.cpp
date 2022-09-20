@@ -23,8 +23,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QApplication>
-# include <QStyle>
+#include <QApplication>
+#include <QStyle>
 #endif
 
 #include "ViewProviderMaterialObject.h"
@@ -41,14 +41,9 @@ PROPERTY_SOURCE(Gui::ViewProviderMaterialObject, Gui::ViewProviderDocumentObject
 /**
  * Creates the view provider for an object group.
  */
-ViewProviderMaterialObject::ViewProviderMaterialObject()
-{
+ViewProviderMaterialObject::ViewProviderMaterialObject() {}
 
-}
-
-ViewProviderMaterialObject::~ViewProviderMaterialObject()
-{
-}
+ViewProviderMaterialObject::~ViewProviderMaterialObject() {}
 
 bool ViewProviderMaterialObject::doubleClicked()
 {
@@ -72,11 +67,12 @@ QIcon ViewProviderMaterialObject::getIcon() const
 
 // Python feature -----------------------------------------------------------------------
 
-namespace Gui {
+namespace Gui
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(Gui::ViewProviderMaterialObjectPython, Gui::ViewProviderMaterialObject)
 /// @endcond
 
 // explicit template instantiation
 template class GuiExport ViewProviderPythonFeatureT<ViewProviderMaterialObject>;
-}
+} // namespace Gui

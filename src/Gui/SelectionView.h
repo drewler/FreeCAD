@@ -32,17 +32,19 @@ class QListWidgetItem;
 class QCheckBox;
 class QLabel;
 
-namespace App {
+namespace App
+{
 class DocumentObject;
 }
 
-namespace Gui {
-namespace DockWnd {
+namespace Gui
+{
+namespace DockWnd
+{
 
 /** A test class. A more elaborate class description.
  */
-class SelectionView : public Gui::DockWindow,
-                      public Gui::SelectionObserver
+class SelectionView: public Gui::DockWindow, public Gui::SelectionObserver
 {
     Q_OBJECT
 
@@ -51,7 +53,7 @@ public:
      * A constructor.
      * A more elaborate description of the constructor.
      */
-    explicit SelectionView(Gui::Document* pcDocument, QWidget *parent=nullptr);
+    explicit SelectionView(Gui::Document *pcDocument, QWidget *parent = nullptr);
 
     /**
      * A destructor.
@@ -60,32 +62,32 @@ public:
     ~SelectionView() override;
 
     /// Observer message from the Selection
-    void onSelectionChanged(const SelectionChanges& msg) override;
+    void onSelectionChanged(const SelectionChanges &msg) override;
 
-    void leaveEvent(QEvent*) override;
+    void leaveEvent(QEvent *) override;
 
-    bool onMsg(const char* pMsg,const char** ppReturn) override;
+    bool onMsg(const char *pMsg, const char **ppReturn) override;
 
-    const char *getName() const override {return "SelectionView";}
+    const char *getName() const override { return "SelectionView"; }
 
     /// get called when the document is changed or updated
     void onUpdate() override;
 
-    QListWidget* selectionView;
-    QLabel*      countLabel;
+    QListWidget *selectionView;
+    QLabel *countLabel;
 
     QCheckBox *enablePickList;
     QListWidget *pickList;
 
 public Q_SLOTS:
     /// get called when text is entered in the search box
-    void search(const QString& text);
+    void search(const QString &text);
     /// get called when enter is pressed in the search box
     void validateSearch();
     /// get called when the list is right-clicked
-    void onItemContextMenu(const QPoint& point);
+    void onItemContextMenu(const QPoint &point);
     /// different actions
-    void select(QListWidgetItem* item=nullptr);
+    void select(QListWidgetItem *item = nullptr);
     void deselect();
     void zoom();
     void treeSelect();
@@ -93,21 +95,21 @@ public Q_SLOTS:
     void touch();
     void showPart();
     void onEnablePickList();
-    void toggleSelect(QListWidgetItem* item=nullptr);
-    void preselect(QListWidgetItem* item=nullptr);
+    void toggleSelect(QListWidgetItem *item = nullptr);
+    void preselect(QListWidgetItem *item = nullptr);
 
 protected:
     void showEvent(QShowEvent *) override;
     void hideEvent(QHideEvent *) override;
 
 private:
-    QString getModule(const char* type) const;
-    QString getProperty(App::DocumentObject* obj) const;
-    bool supportPart(App::DocumentObject* obj, const QString& part) const;
+    QString getModule(const char *type) const;
+    QString getProperty(App::DocumentObject *obj) const;
+    bool supportPart(App::DocumentObject *obj, const QString &part) const;
 
 private:
-    float x,y,z;
-    std::vector<App::DocumentObject*> searchList;
+    float x, y, z;
+    std::vector<App::DocumentObject *> searchList;
     bool openedAutomatically;
 };
 

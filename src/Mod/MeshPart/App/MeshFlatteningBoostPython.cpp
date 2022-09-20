@@ -21,7 +21,6 @@
  ***************************************************************************/
 
 
-
 #include "PreCompiled.h"
 #include <Base/Interpreter.h>
 #include <Mod/Part/App/TopoShapeFacePy.h>
@@ -54,46 +53,43 @@
 #include <ShapeFix_Edge.hxx>
 
 
-
 namespace py = boost::python;
 
-const TopoDS_Face& getTopoDSFace(const py::object& face)
+const TopoDS_Face &getTopoDSFace(const py::object &face)
 {
-    if (PyObject_TypeCheck(face.ptr(), &(Part::TopoShapeFacePy::Type)))
-    {
-        const Part::TopoShapeFacePy* f = static_cast<Part::TopoShapeFacePy*>(face.ptr());
-        const TopoDS_Face& myFace = TopoDS::Face(f->getTopoShapePtr()->getShape());
+    if (PyObject_TypeCheck(face.ptr(), &(Part::TopoShapeFacePy::Type))) {
+        const Part::TopoShapeFacePy *f = static_cast<Part::TopoShapeFacePy *>(face.ptr());
+        const TopoDS_Face &myFace = TopoDS::Face(f->getTopoShapePtr()->getShape());
         return myFace;
     }
     else
         throw std::invalid_argument("must be a face");
 }
 
-const TopoDS_Edge& getTopoDSEdge(py::object* edge)
+const TopoDS_Edge &getTopoDSEdge(py::object *edge)
 {
-    if (PyObject_TypeCheck(edge->ptr(), &(Part::TopoShapeEdgePy::Type)))
-    {
-        const Part::TopoShapeEdgePy* e = static_cast<Part::TopoShapeEdgePy*>(edge->ptr());
-        const TopoDS_Edge& myEdge = TopoDS::Edge(e->getTopoShapePtr()->getShape());
+    if (PyObject_TypeCheck(edge->ptr(), &(Part::TopoShapeEdgePy::Type))) {
+        const Part::TopoShapeEdgePy *e = static_cast<Part::TopoShapeEdgePy *>(edge->ptr());
+        const TopoDS_Edge &myEdge = TopoDS::Edge(e->getTopoShapePtr()->getShape());
         return myEdge;
     }
     else
         throw std::invalid_argument("must be an edge");
 }
 
-Py::Object makeEdge(const TopoDS_Edge& edge)
+Py::Object makeEdge(const TopoDS_Edge &edge)
 {
     return Py::asObject(new Part::TopoShapeEdgePy(new Part::TopoShape(edge)));
 }
 
-std::shared_ptr<FaceUnwrapper> FaceUnwrapper_face(const py::object& face)
+std::shared_ptr<FaceUnwrapper> FaceUnwrapper_face(const py::object &face)
 {
-    const TopoDS_Face& myFace = getTopoDSFace(face);
+    const TopoDS_Face &myFace = getTopoDSFace(face);
     return std::shared_ptr<FaceUnwrapper>(new FaceUnwrapper(myFace));
 }
 
-std::shared_ptr<FaceUnwrapper> FaceUnwrapper_mesh(const py::object& points,
-                                                    const py::object& facets)
+std::shared_ptr<FaceUnwrapper> FaceUnwrapper_mesh(const py::object &points,
+                                                  const py::object &facets)
 {
     try {
         Py::Sequence l1(points.ptr());
@@ -124,22 +120,22 @@ std::shared_ptr<FaceUnwrapper> FaceUnwrapper_mesh(const py::object& points,
 
         return std::shared_ptr<FaceUnwrapper>(new FaceUnwrapper(coords, triangles));
     }
-    catch (const Py::Exception&) {
+    catch (const Py::Exception &) {
         Base::PyException e;
         throw std::invalid_argument(e.what());
     }
 }
 
-boost::python::list interpolateFlatFacePy(FaceUnwrapper& instance, const py::object& face)
+boost::python::list interpolateFlatFacePy(FaceUnwrapper &instance, const py::object &face)
 {
-    const TopoDS_Face& myFace = getTopoDSFace(face);
+    const TopoDS_Face &myFace = getTopoDSFace(face);
     ColMat<double, 3> mat = instance.interpolateFlatFace(myFace);
     boost::python::list plist;
     auto cols = mat.cols();
     auto rows = mat.rows();
-    for (int i=0; i<rows; i++) {
+    for (int i = 0; i < rows; i++) {
         boost::python::list vec;
-        for (int j=0; j<cols; j++) {
+        for (int j = 0; j < cols; j++) {
             double c = mat.coeff(i, j);
             vec.append(c);
         }
@@ -148,7 +144,7 @@ boost::python::list interpolateFlatFacePy(FaceUnwrapper& instance, const py::obj
     return plist;
 }
 
-boost::python::list getFlatBoundaryNodesPy(FaceUnwrapper& instance)
+boost::python::list getFlatBoundaryNodesPy(FaceUnwrapper &instance)
 {
     std::vector<ColMat<double, 3>> mat_array = instance.getFlatBoundaryNodes();
 
@@ -157,9 +153,9 @@ boost::python::list getFlatBoundaryNodesPy(FaceUnwrapper& instance)
         boost::python::list plist;
         auto cols = mat.cols();
         auto rows = mat.rows();
-        for (int i=0; i<rows; i++) {
+        for (int i = 0; i < rows; i++) {
             boost::python::list vec;
-            for (int j=0; j<cols; j++) {
+            for (int j = 0; j < cols; j++) {
                 double c = mat.coeff(i, j);
                 vec.append(c);
             }
@@ -171,20 +167,17 @@ boost::python::list getFlatBoundaryNodesPy(FaceUnwrapper& instance)
     return ary;
 }
 
-namespace fm {
-// https://www.boost.org/doc/libs/1_52_0/libs/python/doc/v2/faq.html
-template<typename eigen_type>
-struct eigen_matrix
+namespace fm
 {
-    static PyObject* convert(const eigen_type& mat)
+// https://www.boost.org/doc/libs/1_52_0/libs/python/doc/v2/faq.html
+template<typename eigen_type> struct eigen_matrix {
+    static PyObject *convert(const eigen_type &mat)
     {
         // <class 'numpy.array'>
         py::list ary;
         for (int i = 0; i < mat.rows(); i++) {
             py::list row;
-            for (int j = 0; j < mat.cols(); j++) {
-                row.append(mat.coeff(i ,j));
-            }
+            for (int j = 0; j < mat.cols(); j++) { row.append(mat.coeff(i, j)); }
             ary.append(row);
         }
         return boost::python::incref(ary.ptr());
@@ -199,7 +192,7 @@ struct eigen_matrix
 BOOST_PYTHON_MODULE(flatmesh)
 {
     //m.doc() = "functions to unwrapp faces/ meshes";
-    
+
     py::class_<lscmrelax::LscmRelax>("LscmRelax")
         .def(py::init<ColMat<double, 3>, ColMat<long, 3>, std::vector<long>>())
         .def("lscm", &lscmrelax::LscmRelax::lscm)
@@ -210,7 +203,7 @@ BOOST_PYTHON_MODULE(flatmesh)
         .def_readonly("MATRIX", &lscmrelax::LscmRelax::MATRIX)
         .def_readonly("area", &lscmrelax::LscmRelax::get_area)
         .def_readonly("flat_area", &lscmrelax::LscmRelax::get_flat_area)
-//        .def_readonly("flat_vertices", [](lscmrelax::LscmRelax& L){return L.flat_vertices.transpose();}, py::return_value_policy<py::copy_const_reference>())
+        //        .def_readonly("flat_vertices", [](lscmrelax::LscmRelax& L){return L.flat_vertices.transpose();}, py::return_value_policy<py::copy_const_reference>())
         .def_readonly("flat_vertices_3D", &lscmrelax::LscmRelax::get_flat_vertices_3D);
 
     py::class_<nurbs::NurbsBase2D>("NurbsBase2D")
@@ -218,7 +211,7 @@ BOOST_PYTHON_MODULE(flatmesh)
         .def_readonly("u_knots", &nurbs::NurbsBase2D::u_knots)
         .def_readonly("weights", &nurbs::NurbsBase2D::weights)
         .def_readonly("degree_u", &nurbs::NurbsBase2D::degree_u)
-//         .def_readonly("v_knots", &nurbs::NurbsBase2D::u_knots)
+        //         .def_readonly("v_knots", &nurbs::NurbsBase2D::u_knots)
         .def_readonly("degree_v", &nurbs::NurbsBase2D::degree_u)
         .def("getUVMesh", &nurbs::NurbsBase2D::getUVMesh)
         .def("computeFirstDerivatives", &nurbs::NurbsBase2D::computeFirstDerivatives)
@@ -251,16 +244,28 @@ BOOST_PYTHON_MODULE(flatmesh)
         .def("findFlatNodes", &FaceUnwrapper::findFlatNodes)
         .def("interpolateFlatFace", &interpolateFlatFacePy)
         .def("getFlatBoundaryNodes", &getFlatBoundaryNodesPy)
-        .add_property("tris", py::make_getter(&FaceUnwrapper::tris, py::return_value_policy<py::return_by_value>()))
-        .add_property("nodes", py::make_getter(&FaceUnwrapper::xyz_nodes, py::return_value_policy<py::return_by_value>()))
-        .add_property("uv_nodes", py::make_getter(&FaceUnwrapper::uv_nodes, py::return_value_policy<py::return_by_value>()))
-        .add_property("ze_nodes", py::make_getter(&FaceUnwrapper::ze_nodes, py::return_value_policy<py::return_by_value>()))
-        .add_property("ze_poles", py::make_getter(&FaceUnwrapper::ze_poles, py::return_value_policy<py::return_by_value>()))
-        .add_property("A", py::make_getter(&FaceUnwrapper::A, py::return_value_policy<py::return_by_value>()));
+        .add_property(
+            "tris",
+            py::make_getter(&FaceUnwrapper::tris, py::return_value_policy<py::return_by_value>()))
+        .add_property("nodes",
+                      py::make_getter(&FaceUnwrapper::xyz_nodes,
+                                      py::return_value_policy<py::return_by_value>()))
+        .add_property("uv_nodes",
+                      py::make_getter(&FaceUnwrapper::uv_nodes,
+                                      py::return_value_policy<py::return_by_value>()))
+        .add_property("ze_nodes",
+                      py::make_getter(&FaceUnwrapper::ze_nodes,
+                                      py::return_value_policy<py::return_by_value>()))
+        .add_property("ze_poles",
+                      py::make_getter(&FaceUnwrapper::ze_poles,
+                                      py::return_value_policy<py::return_by_value>()))
+        .add_property(
+            "A",
+            py::make_getter(&FaceUnwrapper::A, py::return_value_policy<py::return_by_value>()));
 
     fm::eigen_matrix<spMat>::to_python_converter();
     fm::eigen_matrix<ColMat<double, 2>>::to_python_converter();
     fm::eigen_matrix<ColMat<double, 3>>::to_python_converter();
-    fm::eigen_matrix<ColMat<long,   1>>::to_python_converter();
-    fm::eigen_matrix<ColMat<long,   3>>::to_python_converter();
+    fm::eigen_matrix<ColMat<long, 1>>::to_python_converter();
+    fm::eigen_matrix<ColMat<long, 3>>::to_python_converter();
 }

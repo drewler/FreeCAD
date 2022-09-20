@@ -46,7 +46,7 @@ public:
     *  Constructor
     *\param std::vector<Base::Vector3d>
     */
-    explicit BlendPoint(const std::vector<Base::Vector3d>& vectorList);
+    explicit BlendPoint(const std::vector<Base::Vector3d> &vectorList);
     ~BlendPoint() = default;
     /*!
     *  Scale the blendpoint vectors
@@ -70,7 +70,6 @@ public:
 
 private:
 };
-}// namespace Surface
+} // namespace Surface
 
 #endif
-

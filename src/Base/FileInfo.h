@@ -42,31 +42,32 @@ namespace Base
 class BaseExport FileInfo
 {
 public:
-    enum Permissions {
+    enum Permissions
+    {
         WriteOnly = 0x01,
         ReadOnly = 0x02,
         ReadWrite = 0x03,
     };
 
     /// Construction
-    FileInfo (const char* _FileName="");
-    FileInfo (const std::string &_FileName);
+    FileInfo(const char *_FileName = "");
+    FileInfo(const std::string &_FileName);
     /// Set a new file name
-    void setFile(const char* name);
+    void setFile(const char *name);
     /// Set a new file name
-    void setFile(const std::string &name){setFile(name.c_str());}
+    void setFile(const std::string &name) { setFile(name.c_str()); }
 
 
     /** @name extraction of information */
     //@{
     /// Returns the file name, including the path (which may be absolute or relative).
-    std::string filePath () const;
+    std::string filePath() const;
     /// Returns the dir path name (which may be absolute or relative).
-    std::string dirPath () const;
+    std::string dirPath() const;
     /// Returns the name of the file, excluding the path, including the extension.
-    std::string fileName () const;
+    std::string fileName() const;
     /// Returns the name of the file, excluding the path and the extension.
-    std::string fileNamePure () const;
+    std::string fileNamePure() const;
     /// Convert the path name into a UTF-16 encoded wide string format.
     /// @note: Use this function on Windows only.
     std::wstring toStdWString() const;
@@ -78,7 +79,7 @@ public:
      *  ext = fi.extension();   // ext = "gz"
      *@endcode
      */
-    std::string extension () const;
+    std::string extension() const;
     /** Returns the complete extension of the file.
      * The complete extension consists of all characters in the file after (but not including)
      * the first '.' character.
@@ -87,27 +88,27 @@ public:
      *  ext = fi.completeExtension();   // ext = "tar.gz"
      *@endcode
      */
-    std::string completeExtension () const;
+    std::string completeExtension() const;
     /// Checks for a special extension, NOT case sensitive
-    bool hasExtension (const char* Ext) const;
+    bool hasExtension(const char *Ext) const;
     //@}
 
     /** @name methods to test the status of the file or dir */
     //@{
     /// Does the file exist?
-    bool exists () const;
+    bool exists() const;
     /// Checks if the file exist and is readable
-    bool isReadable () const;
+    bool isReadable() const;
     /// Checks if the file exist and is writable
-    bool isWritable () const;
+    bool isWritable() const;
     /// Tries to set the file permission
-    bool setPermissions (Permissions);
+    bool setPermissions(Permissions);
     /// Checks if it is a file (not a directory)
-    bool isFile () const;
+    bool isFile() const;
     /// Checks if it is a directory (not a file)
-    bool isDir () const;
+    bool isDir() const;
     /// The size of the file
-    unsigned int size () const;
+    unsigned int size() const;
     /// Returns the time when the file was last modified.
     TimeInfo lastModified() const;
     /// Returns the time when the file was last read (accessed).
@@ -117,7 +118,7 @@ public:
     /** @name Directory management*/
     //@{
     /// Creates a directory. Returns true if successful; otherwise returns false.
-    bool createDirectory( ) const;
+    bool createDirectory() const;
     /// Creates a directory and all its parent directories. Returns true if successful; otherwise returns false.
     bool createDirectories() const;
     /// Get a list of the directory content
@@ -131,20 +132,20 @@ public:
     /// Delete the file
     bool deleteFile() const;
     /// Rename the file
-    bool renameFile(const char* NewName);
+    bool renameFile(const char *NewName);
     /// Rename the file
-    bool copyTo(const char* NewName) const;
+    bool copyTo(const char *NewName) const;
 
     /** @name Tools */
     //@{
     /// Get a unique File Name in the given or (if 0) in the temp path
-    static std::string getTempFileName(const char* FileName=nullptr, const char* path=nullptr);
+    static std::string getTempFileName(const char *FileName = nullptr, const char *path = nullptr);
     /// Get the path to the dir which is considered to temp files
     static const std::string &getTempPath();
     /// Convert from filesystem path to string
-    static std::string pathToString(const boost::filesystem::path& p);
+    static std::string pathToString(const boost::filesystem::path &p);
     /// Convert from string to filesystem path
-    static boost::filesystem::path stringToPath(const std::string& str);
+    static boost::filesystem::path stringToPath(const std::string &str);
     //@}
 
 protected:

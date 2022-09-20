@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QMutexLocker>
+#include <QMutexLocker>
 #endif
 
 #include "DocumentThread.h"
@@ -40,33 +40,23 @@
 using namespace Sandbox;
 
 
-DocumentThread::DocumentThread(QObject* parent)
-  : QThread(parent)
-{
-}
+DocumentThread::DocumentThread(QObject *parent) : QThread(parent) {}
 
-DocumentThread::~DocumentThread()
-{
-}
+DocumentThread::~DocumentThread() {}
 
 void DocumentThread::run()
 {
-    App::Document* doc = App::GetApplication().getActiveDocument();
+    App::Document *doc = App::GetApplication().getActiveDocument();
     DocumentProtector dp(doc);
-    dp.addObject("Mesh::Ellipsoid", (const char*)objectName().toLatin1());
+    dp.addObject("Mesh::Ellipsoid", (const char *)objectName().toLatin1());
     dp.recompute();
 }
 
 // --------------------------------------
 
-WorkerThread::WorkerThread(QObject* parent)
-  : QThread(parent)
-{
-}
+WorkerThread::WorkerThread(QObject *parent) : QThread(parent) {}
 
-WorkerThread::~WorkerThread()
-{
-}
+WorkerThread::~WorkerThread() {}
 
 void WorkerThread::run()
 {
@@ -76,11 +66,9 @@ void WorkerThread::run()
     int max = 100000000;
 #endif
     Base::SequencerLauncher seq("Do something meaningful...", max);
-    double val=0;
-    for (int i=0; i<max; i++) {
-        for (int j=0; j<max; j++) {
-            val = sin(0.12345);
-        }
+    double val = 0;
+    for (int i = 0; i < max; i++) {
+        for (int j = 0; j < max; j++) { val = sin(0.12345); }
         seq.next(true);
     }
     Q_UNUSED(val);
@@ -90,14 +78,9 @@ void WorkerThread::run()
 
 QMutex PythonThread::mutex(QMutex::Recursive);
 
-PythonThread::PythonThread(QObject* parent)
-  : QThread(parent)
-{
-}
+PythonThread::PythonThread(QObject *parent) : QThread(parent) {}
 
-PythonThread::~PythonThread()
-{
-}
+PythonThread::~PythonThread() {}
 
 void PythonThread::run()
 {
@@ -122,59 +105,46 @@ void PythonThread::run()
         msleep(10);
 #else
 
-        Base::Interpreter().runString(
-            "import Sandbox, Mesh, MeshGui\n"
-            "doc=App.ActiveDocument\n"
-            "dp=Sandbox.DocumentProtector(doc)\n"
-            "dp.addObject(\"Mesh::Ellipsoid\",\"Mesh\")\n"
-            "dp.recompute()\n");
+        Base::Interpreter().runString("import Sandbox, Mesh, MeshGui\n"
+                                      "doc=App.ActiveDocument\n"
+                                      "dp=Sandbox.DocumentProtector(doc)\n"
+                                      "dp.addObject(\"Mesh::Ellipsoid\",\"Mesh\")\n"
+                                      "dp.recompute()\n");
         msleep(10);
 #endif
     }
-    catch (const Base::PyException& e) {
+    catch (const Base::PyException &e) {
         Base::Console().Error(e.what());
     }
 }
 
 // --------------------------------------
 
-MeshLoaderThread::MeshLoaderThread(const QString& fn, QObject* parent)
-  : QThread(parent), filename(fn)
-{
-}
+MeshLoaderThread::MeshLoaderThread(const QString &fn, QObject *parent)
+    : QThread(parent), filename(fn)
+{}
 
-MeshLoaderThread::~MeshLoaderThread()
-{
-}
+MeshLoaderThread::~MeshLoaderThread() {}
 
-Base::Reference<Mesh::MeshObject> MeshLoaderThread::getMesh() const
-{
-    return this->mesh;
-}
+Base::Reference<Mesh::MeshObject> MeshLoaderThread::getMesh() const { return this->mesh; }
 
 void MeshLoaderThread::run()
 {
     this->mesh = new Mesh::MeshObject();
-    this->mesh->load((const char*)filename.toUtf8());
+    this->mesh->load((const char *)filename.toUtf8());
 }
 
 // --------------------------------------
 
 PROPERTY_SOURCE(Sandbox::SandboxObject, App::DocumentObject)
 
-SandboxObject::SandboxObject()
-{
-    ADD_PROPERTY(Integer,(4711)  );
-}
+SandboxObject::SandboxObject() { ADD_PROPERTY(Integer, (4711)); }
 
-SandboxObject::~SandboxObject()
-{
-}
+SandboxObject::~SandboxObject() {}
 
 short SandboxObject::mustExecute(void) const
 {
-    if (Integer.isTouched())
-        return 1;
+    if (Integer.isTouched()) return 1;
     return 0;
 }
 
@@ -184,7 +154,7 @@ App::DocumentObjectExecReturn *SandboxObject::execute(void)
     return 0;
 }
 
-void SandboxObject::onChanged(const App::Property* prop)
+void SandboxObject::onChanged(const App::Property *prop)
 {
     if (prop == &Integer)
         Base::Console().Message("SandboxObject::onChanged(%d)\n", Integer.getValue());
@@ -203,43 +173,37 @@ void SandboxObject::resetValue()
     Integer.setValue(4711);
 }
 
-DocumentTestThread::DocumentTestThread(QObject* parent)
-  : QThread(parent)
-{
-}
+DocumentTestThread::DocumentTestThread(QObject *parent) : QThread(parent) {}
 
-DocumentTestThread::~DocumentTestThread()
-{
-}
+DocumentTestThread::~DocumentTestThread() {}
 
 void DocumentTestThread::run()
 {
     Base::Console().Message("DocumentTestThread::run()\n");
-    App::Document* doc = App::GetApplication().getActiveDocument();
+    App::Document *doc = App::GetApplication().getActiveDocument();
     DocumentProtector dp(doc);
-    SandboxObject* obj = static_cast<SandboxObject*>(dp.addObject("Sandbox::SandboxObject"));
+    SandboxObject *obj = static_cast<SandboxObject *>(dp.addObject("Sandbox::SandboxObject"));
 
     DocumentObjectProtector op(obj);
-    App::PropertyString Name;Name.setValue("MyLabel");
+    App::PropertyString Name;
+    Name.setValue("MyLabel");
     op.setProperty("Label", Name);
 
-    App::PropertyInteger Int;Int.setValue(2);
+    App::PropertyInteger Int;
+    Int.setValue(2);
     op.setProperty("Integer", Int);
-    op.execute(CallableWithArgs<SandboxObject,int,&SandboxObject::setIntValue>(obj,4));
+    op.execute(CallableWithArgs<SandboxObject, int, &SandboxObject::setIntValue>(obj, 4));
 
     dp.recompute();
-    op.execute(Callable<SandboxObject,&SandboxObject::resetValue>(obj));
+    op.execute(Callable<SandboxObject, &SandboxObject::resetValue>(obj));
 }
 
 
-DocumentSaverThread::DocumentSaverThread(App::Document* doc, QObject* parent)
-  : QThread(parent), doc(doc)
-{
-}
+DocumentSaverThread::DocumentSaverThread(App::Document *doc, QObject *parent)
+    : QThread(parent), doc(doc)
+{}
 
-DocumentSaverThread::~DocumentSaverThread()
-{
-}
+DocumentSaverThread::~DocumentSaverThread() {}
 
 void DocumentSaverThread::run()
 {

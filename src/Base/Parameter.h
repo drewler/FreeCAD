@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 
- /**
+/**
  * \file Parameter.h
  * \brief The classes defined here are used to interface with the XML-based
  * FreeCAD config files: user.cfg and system.cfg files. It can parse, get,
@@ -32,7 +32,7 @@
 #ifndef BASE__PARAMETER_H
 #define BASE__PARAMETER_H
 
- // Python stuff
+// Python stuff
 using PyObject = struct _object;
 
 #ifdef FC_OS_MACOSX
@@ -57,11 +57,11 @@ using PyObject = struct _object;
 #include "Observer.h"
 
 #ifdef _MSC_VER
-#	pragma warning( disable : 4251 )
-#	pragma warning( disable : 4503 )
-#	pragma warning( disable : 4786 )  // specifier longer then 255 chars
-#	pragma warning( disable : 4290 )  // not implemented throw specification
-#	pragma warning( disable : 4275 )
+#pragma warning(disable : 4251)
+#pragma warning(disable : 4503)
+#pragma warning(disable : 4786) // specifier longer then 255 chars
+#pragma warning(disable : 4290) // not implemented throw specification
+#pragma warning(disable : 4275)
 #endif
 
 
@@ -90,7 +90,7 @@ class ParameterManager;
  *  kind of preferences and so on.
  *  @see ParameterManager
  */
-class  BaseExport ParameterGrp : public Base::Handled,public Base::Subject <const char*>
+class BaseExport ParameterGrp: public Base::Handled, public Base::Subject<const char *>
 {
 public:
     /** @name copy and insertation */
@@ -100,29 +100,29 @@ public:
     /// overwrite everything similar, leave the others alone
     void insertTo(Base::Reference<ParameterGrp>);
     /// export this group to a file
-    void exportTo(const char* FileName);
+    void exportTo(const char *FileName);
     /// import from a file to this group
-    void importFrom(const char* FileName);
+    void importFrom(const char *FileName);
     /// insert from a file to this group, overwrite only the similar
-    void insert(const char* FileName);
+    void insert(const char *FileName);
     //@}
 
     /** @name methods for group handling */
     //@{
     /// get a handle to a sub group or create one
-    Base::Reference<ParameterGrp> GetGroup(const char* Name);
+    Base::Reference<ParameterGrp> GetGroup(const char *Name);
     /// get a vector of all sub groups in this group
-    std::vector<Base::Reference<ParameterGrp> > GetGroups();
+    std::vector<Base::Reference<ParameterGrp>> GetGroups();
     /// test if this group is empty
     bool IsEmpty() const;
     /// test if a special sub group is in this group
-    bool HasGroup(const char* Name) const;
+    bool HasGroup(const char *Name) const;
     /// type of the handle
     using handle = Base::Reference<ParameterGrp>;
     /// remove a sub group from this group
-    void RemoveGrp(const char* Name);
+    void RemoveGrp(const char *Name);
     /// rename a sub group from this group
-    bool RenameGrp(const char* OldName, const char* NewName);
+    bool RenameGrp(const char *OldName, const char *NewName);
     /// clears everything in this group (all types)
     void Clear();
     //@}
@@ -130,97 +130,96 @@ public:
     /** @name methods for bool handling */
     //@{
     /// read bool values or give default
-    bool GetBool(const char* Name, bool bPreset=false) const;
+    bool GetBool(const char *Name, bool bPreset = false) const;
     /// set a bool value
-    void SetBool(const char* Name, bool bValue);
+    void SetBool(const char *Name, bool bValue);
     /// get a vector of all bool values in this group
-    std::vector<bool> GetBools(const char * sFilter = nullptr) const;
+    std::vector<bool> GetBools(const char *sFilter = nullptr) const;
     /// get a map with all bool values and the keys of this group
-    std::vector<std::pair<std::string,bool> > GetBoolMap(const char * sFilter = nullptr) const;
+    std::vector<std::pair<std::string, bool>> GetBoolMap(const char *sFilter = nullptr) const;
     /// remove a bool value from this group
-    void RemoveBool(const char* Name);
+    void RemoveBool(const char *Name);
     //@}
 
     /** @name methods for Int handling */
     //@{
     /// read bool values or give default
-    long GetInt(const char* Name, long lPreset=0) const;
+    long GetInt(const char *Name, long lPreset = 0) const;
     /// set a int value
-    void SetInt(const char* Name, long lValue);
+    void SetInt(const char *Name, long lValue);
     /// get a vector of all int values in this group
-    std::vector<long> GetInts(const char * sFilter = nullptr) const;
+    std::vector<long> GetInts(const char *sFilter = nullptr) const;
     /// get a map with all int values and the keys of this group
-    std::vector<std::pair<std::string,long> > GetIntMap(const char * sFilter = nullptr) const;
+    std::vector<std::pair<std::string, long>> GetIntMap(const char *sFilter = nullptr) const;
     /// remove a int value from this group
-    void RemoveInt(const char* Name);
+    void RemoveInt(const char *Name);
     //@}
 
     /** @name methods for Unsigned Int handling */
     //@{
     /// read uint values or give default
-    unsigned long GetUnsigned(const char* Name, unsigned long lPreset=0) const;
+    unsigned long GetUnsigned(const char *Name, unsigned long lPreset = 0) const;
     /// set a uint value
-    void SetUnsigned(const char* Name, unsigned long lValue);
+    void SetUnsigned(const char *Name, unsigned long lValue);
     /// get a vector of all uint values in this group
-    std::vector<unsigned long> GetUnsigneds(const char * sFilter = nullptr) const;
+    std::vector<unsigned long> GetUnsigneds(const char *sFilter = nullptr) const;
     /// get a map with all uint values and the keys of this group
-    std::vector<std::pair<std::string,unsigned long> > GetUnsignedMap(const char * sFilter = nullptr) const;
+    std::vector<std::pair<std::string, unsigned long>>
+    GetUnsignedMap(const char *sFilter = nullptr) const;
     /// remove a uint value from this group
-    void RemoveUnsigned(const char* Name);
+    void RemoveUnsigned(const char *Name);
     //@}
 
 
     /** @name methods for Float handling */
     //@{
     /// set a float value
-    double GetFloat(const char* Name, double dPreset=0.0) const;
+    double GetFloat(const char *Name, double dPreset = 0.0) const;
     /// read float values or give default
-    void SetFloat(const char* Name, double dValue);
+    void SetFloat(const char *Name, double dValue);
     /// get a vector of all float values in this group
-    std::vector<double> GetFloats(const char * sFilter = nullptr) const;
+    std::vector<double> GetFloats(const char *sFilter = nullptr) const;
     /// get a map with all float values and the keys of this group
-    std::vector<std::pair<std::string,double> > GetFloatMap(const char * sFilter = nullptr) const;
+    std::vector<std::pair<std::string, double>> GetFloatMap(const char *sFilter = nullptr) const;
     /// remove a float value from this group
-    void RemoveFloat(const char* Name);
+    void RemoveFloat(const char *Name);
     //@}
 
 
     /** @name methods for Blob handling (not implemented yet) */
     //@{
     /// set a blob value
-    void  SetBlob(const char* Name, void *pValue, long lLength);
+    void SetBlob(const char *Name, void *pValue, long lLength);
     /// read blob values or give default
-    void GetBlob(const char* Name, void * pBuf, long lMaxLength, void* pPreset=nullptr) const;
+    void GetBlob(const char *Name, void *pBuf, long lMaxLength, void *pPreset = nullptr) const;
     /// remove a blob value from this group
-    void RemoveBlob(const char* Name);
+    void RemoveBlob(const char *Name);
     //@}
-
 
 
     /** @name methods for String handling */
     //@{
     /// set a string value
-    void  SetASCII(const char* Name, const char *sValue);
+    void SetASCII(const char *Name, const char *sValue);
     /// read a string values
-    std::string GetASCII(const char* Name, const char * pPreset=nullptr) const;
+    std::string GetASCII(const char *Name, const char *pPreset = nullptr) const;
     /// remove a string value from this group
-    void RemoveASCII(const char* Name);
+    void RemoveASCII(const char *Name);
     /** Return all string elements in this group as a vector of strings
      *  Its also possible to set a filter criteria.
      *  @param sFilter only strings which name includes sFilter are put in the vector
      *  @return std::vector of std::strings
      */
-    std::vector<std::string> GetASCIIs(const char * sFilter = nullptr) const;
+    std::vector<std::string> GetASCIIs(const char *sFilter = nullptr) const;
     /// Same as GetASCIIs() but with key,value map
-    std::vector<std::pair<std::string,std::string> > GetASCIIMap(const char * sFilter = nullptr) const;
+    std::vector<std::pair<std::string, std::string>>
+    GetASCIIMap(const char *sFilter = nullptr) const;
     //@}
 
     friend class ParameterManager;
 
     /// returns the name
-    const char* GetGroupName() const {
-        return _cName.c_str();
-    }
+    const char *GetGroupName() const { return _cName.c_str(); }
 
     /** Notifies all observers for all entries except of sub-groups.
      */
@@ -228,14 +227,16 @@ public:
 
 protected:
     /// constructor is protected (handle concept)
-    ParameterGrp(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *GroupNode=nullptr,const char* sName=nullptr);
+    ParameterGrp(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *GroupNode = nullptr,
+                 const char *sName = nullptr);
     /// destructor is protected (handle concept)
     ~ParameterGrp() override;
     /// helper function for GetGroup
-    Base::Reference<ParameterGrp> _GetGroup(const char* Name);
+    Base::Reference<ParameterGrp> _GetGroup(const char *Name);
     bool ShouldRemove() const;
 
-    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *FindNextElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *Prev, const char* Type) const;
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *
+    FindNextElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *Prev, const char *Type) const;
 
     /** Find an element specified by Type and Name
      *  Search in the parent element Start for the first occurrence of an
@@ -243,26 +244,30 @@ protected:
      *  the pointer to that element, otherwise NULL
      *  If the names not given it returns the first occurrence of Type.
      */
-    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *FindElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *Start, const char* Type, const char* Name=nullptr) const;
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *
+    FindElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *Start, const char *Type,
+                const char *Name = nullptr) const;
 
     /** Find an element specified by Type and Name or create it if not found
      *  Search in the parent element Start for the first occurrence of an
      *  element of Type and with the attribute Name=Name. On success it returns
      *  the pointer to that element, otherwise it creates the element and returns the pointer.
      */
-    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *FindOrCreateElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *Start, const char* Type, const char* Name) const;
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *
+    FindOrCreateElement(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *Start, const char *Type,
+                        const char *Name) const;
 
     /** Find an attribute specified by Name
      */
-    XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *FindAttribute(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *Node, const char* Name) const;
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *
+    FindAttribute(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *Node, const char *Name) const;
 
     /// DOM Node of the Base node of this group
     XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *_pGroupNode;
     /// the own name
     std::string _cName;
     /// map of already exported groups
-    std::map <std::string ,Base::Reference<ParameterGrp> > _GroupMap;
-
+    std::map<std::string, Base::Reference<ParameterGrp>> _GroupMap;
 };
 
 /** The parameter serializer class
@@ -275,12 +280,12 @@ protected:
 class BaseExport ParameterSerializer
 {
 public:
-    ParameterSerializer(const std::string& fn);
+    ParameterSerializer(const std::string &fn);
     virtual ~ParameterSerializer();
 
-    virtual void SaveDocument(const ParameterManager&);
-    virtual int LoadDocument(ParameterManager&);
-    virtual bool LoadOrCreateDocument(ParameterManager&);
+    virtual void SaveDocument(const ParameterManager &);
+    virtual int LoadDocument(ParameterManager &);
+    virtual bool LoadOrCreateDocument(ParameterManager &);
 
 protected:
     std::string filename;
@@ -291,7 +296,7 @@ protected:
  *  Does loading, saving and handling the DOM document.
  *  @see ParameterGrp
  */
-class BaseExport ParameterManager : public ParameterGrp
+class BaseExport ParameterManager: public ParameterGrp
 {
 public:
     ParameterManager();
@@ -299,52 +304,50 @@ public:
     static void Init();
     static void Terminate();
 
-    int   LoadDocument(const char* sFileName);
-    int   LoadDocument(const XERCES_CPP_NAMESPACE_QUALIFIER InputSource&);
-    bool  LoadOrCreateDocument(const char* sFileName);
-    void  SaveDocument(const char* sFileName) const;
-    void  SaveDocument(XERCES_CPP_NAMESPACE_QUALIFIER XMLFormatTarget* pFormatTarget) const;
-    void  CreateDocument();
-    void  CheckDocument() const;
+    int LoadDocument(const char *sFileName);
+    int LoadDocument(const XERCES_CPP_NAMESPACE_QUALIFIER InputSource &);
+    bool LoadOrCreateDocument(const char *sFileName);
+    void SaveDocument(const char *sFileName) const;
+    void SaveDocument(XERCES_CPP_NAMESPACE_QUALIFIER XMLFormatTarget *pFormatTarget) const;
+    void CreateDocument();
+    void CheckDocument() const;
 
     /** @name Parameter serialization */
     //@{
     /// Sets a serializer. The ParameterManager takes ownership of the serializer.
-    void  SetSerializer(ParameterSerializer*);
+    void SetSerializer(ParameterSerializer *);
     /// Returns true if a serializer is set, otherwise false is returned.
-    bool  HasSerializer() const;
+    bool HasSerializer() const;
     /// Loads an XML document by calling the serializer's load method.
-    int   LoadDocument();
+    int LoadDocument();
     /// Loads or creates an XML document by calling the serializer's load method.
-    bool  LoadOrCreateDocument();
+    bool LoadOrCreateDocument();
     /// Saves an XML document by calling the serializer's save method.
-    void  SaveDocument() const;
+    void SaveDocument() const;
     //@}
 
 private:
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument *_pDocument;
+    ParameterSerializer *paramSerializer;
 
-    XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument   *_pDocument;
-    ParameterSerializer * paramSerializer;
-
-    bool          gDoNamespaces         ;
-    bool          gDoSchema             ;
-    bool          gSchemaFullChecking   ;
-    bool          gDoCreate             ;
+    bool gDoNamespaces;
+    bool gDoSchema;
+    bool gSchemaFullChecking;
+    bool gDoCreate;
 
 
-    const XMLCh*  gOutputEncoding       ;
-    const XMLCh*  gMyEOLSequence        ;
+    const XMLCh *gOutputEncoding;
+    const XMLCh *gMyEOLSequence;
 
-    bool          gSplitCdataSections   ;
-    bool          gDiscardDefaultContent;
-    bool          gUseFilter            ;
-    bool          gFormatPrettyPrint    ;
-
+    bool gSplitCdataSections;
+    bool gDiscardDefaultContent;
+    bool gUseFilter;
+    bool gFormatPrettyPrint;
 };
 
 /** python wrapper function
 */
-BaseExport PyObject* GetPyObject( const Base::Reference<ParameterGrp> &hcParamGrp);
+BaseExport PyObject *GetPyObject(const Base::Reference<ParameterGrp> &hcParamGrp);
 
 
 #endif // BASE__PARAMETER_H

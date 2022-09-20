@@ -34,18 +34,21 @@ class QAction;
 class QListWidget;
 class QListWidgetItem;
 
-namespace Part {
-    class Feature;
+namespace Part
+{
+class Feature;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class TaskDressUpParameters : public Gui::TaskView::TaskBox, public Gui::SelectionObserver
+class TaskDressUpParameters: public Gui::TaskView::TaskBox, public Gui::SelectionObserver
 {
     Q_OBJECT
 
 public:
-    TaskDressUpParameters(ViewProviderDressUp *DressUpView, bool selectEdges, bool selectFaces, QWidget* parent = nullptr);
+    TaskDressUpParameters(ViewProviderDressUp *DressUpView, bool selectEdges, bool selectFaces,
+                          QWidget *parent = nullptr);
     ~TaskDressUpParameters() override;
 
     const std::vector<std::string> getReferences(void) const;
@@ -58,41 +61,45 @@ public:
     /// Apply the changes made to the object to it
     virtual void apply() {}
 
-    int getTransactionID() const {
-        return transactionID;
-    }
+    int getTransactionID() const { return transactionID; }
 
 protected Q_SLOTS:
     void onButtonRefAdd(const bool checked);
     void onButtonRefRemove(const bool checked);
-    void doubleClicked(QListWidgetItem* item);
-    void setSelection(QListWidgetItem* current);
+    void doubleClicked(QListWidgetItem *item);
+    void setSelection(QListWidgetItem *current);
     void itemClickedTimeout();
     virtual void onRefDeleted(void) = 0;
-    void createDeleteAction(QListWidget* parentList, QWidget* parentButton);
-    void createAddAllEdgesAction(QListWidget* parentList);
+    void createDeleteAction(QListWidget *parentList, QWidget *parentButton);
+    void createAddAllEdgesAction(QListWidget *parentList);
 
 protected:
     void exitSelectionMode();
-    bool referenceSelected(const Gui::SelectionChanges& msg);
+    bool referenceSelected(const Gui::SelectionChanges &msg);
     bool wasDoubleClicked = false;
     bool KeyEvent(QEvent *e);
     void hideOnError();
-    void addAllEdges(QListWidget* listWidget);
+    void addAllEdges(QListWidget *listWidget);
 
 protected:
-    enum selectionModes { none, refAdd, refRemove, plane, line };
+    enum selectionModes
+    {
+        none,
+        refAdd,
+        refRemove,
+        plane,
+        line
+    };
     virtual void clearButtons(const selectionModes notThis) = 0;
-    static void removeItemFromListWidget(QListWidget* widget, const char* itemstr);
+    static void removeItemFromListWidget(QListWidget *widget, const char *itemstr);
 
-    ViewProviderDressUp* getDressUpView() const
-    { return DressUpView; }
+    ViewProviderDressUp *getDressUpView() const { return DressUpView; }
 
 protected:
-    QWidget* proxy;
+    QWidget *proxy;
     ViewProviderDressUp *DressUpView;
-    QAction* deleteAction;
-    QAction* addAllEdgesAction;
+    QAction *deleteAction;
+    QAction *addAllEdgesAction;
 
     bool allowFaces, allowEdges;
     selectionModes selectionMode;
@@ -100,7 +107,7 @@ protected:
 };
 
 /// simulation dialog for the TaskView
-class TaskDlgDressUpParameters : public TaskDlgFeatureParameters
+class TaskDlgDressUpParameters: public TaskDlgFeatureParameters
 {
     Q_OBJECT
 
@@ -108,8 +115,7 @@ public:
     explicit TaskDlgDressUpParameters(ViewProviderDressUp *DressUpView);
     ~TaskDlgDressUpParameters() override;
 
-    ViewProviderDressUp* getDressUpView() const
-    { return static_cast<ViewProviderDressUp*>(vp); }
+    ViewProviderDressUp *getDressUpView() const { return static_cast<ViewProviderDressUp *>(vp); }
 
 public:
     /// is called by the framework if the dialog is accepted (Ok)
@@ -117,7 +123,7 @@ public:
     bool reject() override;
 
 protected:
-    TaskDressUpParameters  *parameter;
+    TaskDressUpParameters *parameter;
 };
 
 } //namespace PartDesignGui

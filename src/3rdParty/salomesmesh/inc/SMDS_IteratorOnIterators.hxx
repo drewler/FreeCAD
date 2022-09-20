@@ -37,31 +37,30 @@
 /// BE CAREFUL: iterator pointed value is static_cast'ed to VALUE
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename VALUE,
-         typename CONTAINER_OF_ITERATORS >
-class SMDS_IteratorOnIterators : public SMDS_Iterator<VALUE>
+template<typename VALUE, typename CONTAINER_OF_ITERATORS>
+class SMDS_IteratorOnIterators: public SMDS_Iterator<VALUE>
 {
 protected:
-  CONTAINER_OF_ITERATORS _iterators;
-  typename CONTAINER_OF_ITERATORS::iterator _beg, _end;
+    CONTAINER_OF_ITERATORS _iterators;
+    typename CONTAINER_OF_ITERATORS::iterator _beg, _end;
+
 public:
-  SMDS_IteratorOnIterators(const CONTAINER_OF_ITERATORS& iterators):
-    _iterators( iterators ), _beg( _iterators.begin()), _end(_iterators.end() )
-  {
-    while ( _beg != _end && !(*_beg)->more()) ++_beg;
-  }
+    SMDS_IteratorOnIterators(const CONTAINER_OF_ITERATORS &iterators)
+        : _iterators(iterators), _beg(_iterators.begin()), _end(_iterators.end())
+    {
+        while (_beg != _end && !(*_beg)->more()) ++_beg;
+    }
 
-  /// Return true iff there are other object in this iterator
-  virtual bool more() { return _beg != _end && (*_beg)->more(); }
+    /// Return true iff there are other object in this iterator
+    virtual bool more() { return _beg != _end && (*_beg)->more(); }
 
-  /// Return the current object and step to the next one
-  virtual VALUE next()
-  {
-    VALUE __v = (VALUE)(*_beg)->next();
-    while ( _beg != _end && !(*_beg)->more())
-      ++_beg;
-    return __v;
-  }
+    /// Return the current object and step to the next one
+    virtual VALUE next()
+    {
+        VALUE __v = (VALUE)(*_beg)->next();
+        while (_beg != _end && !(*_beg)->more()) ++_beg;
+        return __v;
+    }
 };
 
 #endif

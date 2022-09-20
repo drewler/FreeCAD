@@ -3,25 +3,25 @@
 
 #include "filteroutputstreambuf.h"
 
-namespace zipios {
-
-FilterOutputStreambuf::FilterOutputStreambuf( streambuf *outbuf, bool del_outbuf ) 
-  : _outbuf( outbuf),
-    _del_outbuf( del_outbuf )
+namespace zipios
 {
-  if (!_outbuf) {
-    // throw an exception
-  }
+
+FilterOutputStreambuf::FilterOutputStreambuf(streambuf *outbuf, bool del_outbuf)
+    : _outbuf(outbuf), _del_outbuf(del_outbuf)
+{
+    if (!_outbuf) {
+        // throw an exception
+    }
 }
 
 
-FilterOutputStreambuf::~FilterOutputStreambuf() {
-  if (_del_outbuf)
-    delete _outbuf ;
+FilterOutputStreambuf::~FilterOutputStreambuf()
+{
+    if (_del_outbuf) delete _outbuf;
 }
 
 
-} // namespace
+} // namespace zipios
 
 /** \file
     Implementation of FilterOutputStreambuf.

@@ -32,7 +32,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Line : public Part::Datum
+class PartDesignExport Line: public Part::Datum
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Line);
 
@@ -43,15 +43,16 @@ public:
     App::PropertyEnumeration ResizeMode;
     App::PropertyLength Length;
     void onChanged(const App::Property *prop) override;
-    
-    const char* getViewProviderName() const override {
+
+    const char *getViewProviderName() const override
+    {
         return "PartDesignGui::ViewProviderDatumLine";
     }
 
     Base::Vector3d getDirection() const;
-    
+
 private:
-    static const char* ResizeModeEnums[];
+    static const char *ResizeModeEnums[];
 };
 
 } //namespace PartDesign

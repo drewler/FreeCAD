@@ -23,8 +23,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class Segment3
+template<class Real> class Segment3
 {
 public:
     // The segment is represented as P+t*D, where P is the segment origin,
@@ -36,19 +35,18 @@ public:
     // axis direction, and e is the extent.
 
     // construction
-    Segment3 ();  // uninitialized
-    Segment3 (const Vector3<Real>& rkOrigin, const Vector3<Real>& rkDirection,
-        Real fExtent);
+    Segment3(); // uninitialized
+    Segment3(const Vector3<Real> &rkOrigin, const Vector3<Real> &rkDirection, Real fExtent);
 
     // end points
-    Vector3<Real> GetPosEnd () const;  // P+e*D
-    Vector3<Real> GetNegEnd () const;  // P-e*D
+    Vector3<Real> GetPosEnd() const; // P+e*D
+    Vector3<Real> GetNegEnd() const; // P-e*D
 
     Vector3<Real> Origin, Direction;
     Real Extent;
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4Segment3.inl"
 
@@ -57,6 +55,6 @@ namespace Wm4
 typedef Segment3<float> Segment3f;
 typedef Segment3<double> Segment3d;
 
-}
+} // namespace Wm4
 
 #endif

@@ -30,14 +30,17 @@
 class QPixmap;
 class QTabWidget;
 
-namespace App {
-  class Property;
-  class PropertyContainer;
-  class DocumentObject;
-}
+namespace App
+{
+class Property;
+class PropertyContainer;
+class DocumentObject;
+} // namespace App
 
-namespace Gui {
-namespace PropertyEditor {
+namespace Gui
+{
+namespace PropertyEditor
+{
 
 class EditableListView;
 class EditableItem;
@@ -46,21 +49,22 @@ class PropertyEditor;
 } // namespace PropertyEditor
 } // namespace Gui
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 
 /** The property view class.
  */
-class PropertyView : public QWidget, public Gui::SelectionObserver
+class PropertyView: public QWidget, public Gui::SelectionObserver
 {
     Q_OBJECT
 
 public:
-    explicit PropertyView(QWidget *parent=nullptr);
+    explicit PropertyView(QWidget *parent = nullptr);
     ~PropertyView() override;
 
-    Gui::PropertyEditor::PropertyEditor* propertyEditorView;
-    Gui::PropertyEditor::PropertyEditor* propertyEditorData;
+    Gui::PropertyEditor::PropertyEditor *propertyEditorView;
+    Gui::PropertyEditor::PropertyEditor *propertyEditorData;
     void clearPropertyItemSelection();
     static bool showAll();
     static void setShowAll(bool);
@@ -77,17 +81,17 @@ protected:
     void hideEvent(QHideEvent *) override;
 
 private:
-    void onSelectionChanged(const SelectionChanges& msg) override;
-    void slotChangePropertyData(const App::Property&);
-    void slotChangePropertyView(const Gui::ViewProvider&, const App::Property&);
-    void slotAppendDynamicProperty(const App::Property&);
-    void slotRemoveDynamicProperty(const App::Property&);
-    void slotChangePropertyEditor(const App::Document&, const App::Property&);
+    void onSelectionChanged(const SelectionChanges &msg) override;
+    void slotChangePropertyData(const App::Property &);
+    void slotChangePropertyView(const Gui::ViewProvider &, const App::Property &);
+    void slotAppendDynamicProperty(const App::Property &);
+    void slotRemoveDynamicProperty(const App::Property &);
+    void slotChangePropertyEditor(const App::Document &, const App::Property &);
     void slotRollback();
-    void slotActiveDocument(const Gui::Document&);
-    void slotDeleteDocument(const Gui::Document&);
-    void slotDeletedViewObject(const Gui::ViewProvider&);
-    void slotDeletedObject(const App::DocumentObject&);
+    void slotActiveDocument(const Gui::Document &);
+    void slotDeleteDocument(const Gui::Document &);
+    void slotDeletedViewObject(const Gui::ViewProvider &);
+    void slotDeletedObject(const App::DocumentObject &);
 
     void checkEnable(const char *doc = nullptr);
 
@@ -107,20 +111,21 @@ private:
     Connection connectDelObject;
     Connection connectDelViewObject;
     Connection connectChangedDocument;
-    QTabWidget* tabs;
-    QTimer* timer;
+    QTabWidget *tabs;
+    QTimer *timer;
 };
 
-namespace DockWnd {
+namespace DockWnd
+{
 
 /** A dock window with the embedded property view.
  */
-class PropertyDockView : public Gui::DockWindow
+class PropertyDockView: public Gui::DockWindow
 {
     Q_OBJECT
 
 public:
-    explicit PropertyDockView(Gui::Document*  pcDocument, QWidget *parent=nullptr);
+    explicit PropertyDockView(Gui::Document *pcDocument, QWidget *parent = nullptr);
     ~PropertyDockView() override;
 };
 

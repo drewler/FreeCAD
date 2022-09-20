@@ -33,10 +33,11 @@ class SoSeparator;
 class SbVec3f;
 class SoTransform;
 
-namespace PartGui {
+namespace PartGui
+{
 
 
-class PartGuiExport ViewProviderPlaneParametric : public ViewProviderPrimitive
+class PartGuiExport ViewProviderPlaneParametric: public ViewProviderPrimitive
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderPlaneParametric);
 
@@ -49,10 +50,9 @@ public:
     std::vector<std::string> getDisplayModes() const override;
 
 protected:
-
 };
 
-class PartGuiExport ViewProviderFace : public ViewProviderPlaneParametric
+class PartGuiExport ViewProviderFace: public ViewProviderPlaneParametric
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderFace);
 
@@ -60,17 +60,16 @@ public:
     ViewProviderFace();
     ~ViewProviderFace() override;
 
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    std::vector<App::DocumentObject *> claimChildren() const override;
     bool canDragObjects() const override;
-    bool canDragObject(App::DocumentObject*) const override;
-    void dragObject(App::DocumentObject*) override;
+    bool canDragObject(App::DocumentObject *) const override;
+    void dragObject(App::DocumentObject *) override;
     bool canDropObjects() const override;
-    bool canDropObject(App::DocumentObject*) const override;
-    void dropObject(App::DocumentObject*) override;
+    bool canDropObject(App::DocumentObject *) const override;
+    void dropObject(App::DocumentObject *) override;
 };
 
 } // namespace PartGui
 
 
 #endif // PARTGUI_VIEWPROVIDERPLANEPARAMETRIC_H
-

@@ -1,4 +1,4 @@
- /**************************************************************************
+/**************************************************************************
  *   Copyright (c) 2020 FreeCAD Developers                                 *
  *   Author: Uwe Stöhr <uwestoehr@lyx.org>                                 *
  *                                                                         *
@@ -30,15 +30,16 @@
 #include <Gui/PropertyPage.h>
 #include <memory>
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 class Ui_DlgPrefsTechDrawAnnotationImp;
 
-class DlgPrefsTechDrawAnnotationImp : public Gui::Dialog::PreferencePage
+class DlgPrefsTechDrawAnnotationImp: public Gui::Dialog::PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgPrefsTechDrawAnnotationImp( QWidget* parent = nullptr );
+    explicit DlgPrefsTechDrawAnnotationImp(QWidget *parent = nullptr);
     ~DlgPrefsTechDrawAnnotationImp() override;
 
 public Q_SLOTS:

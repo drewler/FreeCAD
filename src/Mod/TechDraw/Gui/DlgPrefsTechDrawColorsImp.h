@@ -1,4 +1,4 @@
- /**************************************************************************
+/**************************************************************************
  *   Copyright (c) 2020 FreeCAD Developers                                 *
  *   Author: Uwe Stöhr <uwestoehr@lyx.org>                                 *
  *                                                                         *
@@ -30,15 +30,16 @@
 #include <Gui/PropertyPage.h>
 #include <memory>
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 class Ui_DlgPrefsTechDrawColorsImp;
 
-class DlgPrefsTechDrawColorsImp : public Gui::Dialog::PreferencePage
+class DlgPrefsTechDrawColorsImp: public Gui::Dialog::PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgPrefsTechDrawColorsImp( QWidget* parent = nullptr );
+    explicit DlgPrefsTechDrawColorsImp(QWidget *parent = nullptr);
     ~DlgPrefsTechDrawColorsImp() override;
 
 protected:

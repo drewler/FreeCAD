@@ -30,36 +30,35 @@
 #include "ViewProviderDrawingView.h"
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderProjGroup : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderProjGroup: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderProjGroup);
 
 public:
+    ViewProviderProjGroup();           /// constructor
+    ~ViewProviderProjGroup() override; /// destructor
 
-     ViewProviderProjGroup();  /// constructor
-     ~ViewProviderProjGroup() override; /// destructor
-
-    bool useNewSelectionModel() const override {return false;}
+    bool useNewSelectionModel() const override { return false; }
     /// returns a list of all possible modes
     std::vector<std::string> getDisplayModes() const override;
 
     /// Claim all the views for the page
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    std::vector<App::DocumentObject *> claimChildren() const override;
 
     /// Is called by the tree if the user double click on the object
     bool doubleClicked() override;
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
-    TechDraw::DrawProjGroup* getObject() const;
-    TechDraw::DrawProjGroup* getViewObject() const override;
+    TechDraw::DrawProjGroup *getObject() const;
+    TechDraw::DrawProjGroup *getViewObject() const override;
     bool onDelete(const std::vector<std::string> &) override;
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
 
 protected:
     bool setEdit(int ModNum) override;
-
 };
 
 } // namespace TechDrawGui

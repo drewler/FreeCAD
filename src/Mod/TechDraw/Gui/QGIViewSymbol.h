@@ -31,7 +31,8 @@
 #include "QGIView.h"
 
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawViewSymbol;
 }
 
@@ -40,14 +41,17 @@ namespace TechDrawGui
 class QGCustomSvg;
 class QGDisplayArea;
 
-class TechDrawGuiExport QGIViewSymbol : public QGIView
+class TechDrawGuiExport QGIViewSymbol: public QGIView
 {
 public:
     QGIViewSymbol();
     ~QGIViewSymbol() override;
 
-    enum {Type = QGraphicsItem::UserType + 121};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 121
+    };
+    int type() const override { return Type; }
 
     void updateView(bool update = false) override;
     void setViewSymbolFeature(TechDraw::DrawViewSymbol *obj);
@@ -60,9 +64,9 @@ protected:
     virtual void drawSvg();
     void symbolToSvg(QByteArray qba);
 
-    QGDisplayArea* m_displayArea;
+    QGDisplayArea *m_displayArea;
     QGCustomSvg *m_svgItem;
 };
 
-} // namespace
+} // namespace TechDrawGui
 #endif // DRAWINGGUI_QGRAPHICSITEMVIEWSYMBOL_H

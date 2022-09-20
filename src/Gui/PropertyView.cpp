@@ -22,9 +22,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QEvent>
-# include <QGridLayout>
-# include <QTimer>
+#include <QEvent>
+#include <QGridLayout>
+#include <QTimer>
 #endif
 
 #include <App/Document.h>
@@ -49,11 +49,12 @@ using namespace Gui::DockWnd;
 using namespace Gui::PropertyEditor;
 namespace bp = boost::placeholders;
 
-static ParameterGrp::handle _GetParam() {
+static ParameterGrp::handle _GetParam()
+{
     static ParameterGrp::handle hGrp;
-    if(!hGrp) {
+    if (!hGrp) {
         hGrp = App::GetApplication().GetParameterGroupByPath(
-                "User parameter:BaseApp/Preferences/PropertyView");
+            "User parameter:BaseApp/Preferences/PropertyView");
     }
     return hGrp;
 }
@@ -66,74 +67,64 @@ static ParameterGrp::handle _GetParam() {
  * in two tabs.
  */
 PropertyView::PropertyView(QWidget *parent)
-  : QWidget(parent), SelectionObserver(false, ResolveMode::NoResolve)
+    : QWidget(parent), SelectionObserver(false, ResolveMode::NoResolve)
 {
-    auto pLayout = new QGridLayout( this );
+    auto pLayout = new QGridLayout(this);
     pLayout->setSpacing(0);
-    pLayout->setMargin (0);
+    pLayout->setMargin(0);
 
     timer = new QTimer(this);
     timer->setSingleShot(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
 
-    tabs = new QTabWidget (this);
+    tabs = new QTabWidget(this);
     tabs->setObjectName(QString::fromUtf8("propertyTab"));
     tabs->setTabPosition(QTabWidget::South);
     pLayout->addWidget(tabs, 0, 0);
 
     propertyEditorView = new Gui::PropertyEditor::PropertyEditor();
-    propertyEditorView->setAutomaticDocumentUpdate(_GetParam()->GetBool("AutoTransactionView", false));
+    propertyEditorView->setAutomaticDocumentUpdate(
+        _GetParam()->GetBool("AutoTransactionView", false));
     propertyEditorView->setAutomaticExpand(_GetParam()->GetBool("AutoExpandView", false));
     tabs->addTab(propertyEditorView, tr("View"));
 
     propertyEditorData = new Gui::PropertyEditor::PropertyEditor();
-    propertyEditorData->setAutomaticDocumentUpdate(_GetParam()->GetBool("AutoTransactionData", true));
+    propertyEditorData->setAutomaticDocumentUpdate(
+        _GetParam()->GetBool("AutoTransactionData", true));
     propertyEditorData->setAutomaticExpand(_GetParam()->GetBool("AutoExpandData", false));
     tabs->addTab(propertyEditorData, tr("Data"));
 
     int preferredTab = _GetParam()->GetInt("LastTabIndex", 1);
 
-    if ( preferredTab > 0 && preferredTab < tabs->count() )
-        tabs->setCurrentIndex(preferredTab);
+    if (preferredTab > 0 && preferredTab < tabs->count()) tabs->setCurrentIndex(preferredTab);
 
     // connect after adding all tabs, so adding doesn't thrash the parameter
     connect(tabs, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
-    this->connectPropData =
-    App::GetApplication().signalChangedObject.connect(boost::bind
-        (&PropertyView::slotChangePropertyData, this, bp::_2));
-    this->connectPropView =
-    Gui::Application::Instance->signalChangedObject.connect(boost::bind
-        (&PropertyView::slotChangePropertyView, this, bp::_1, bp::_2));
-    this->connectPropAppend =
-    App::GetApplication().signalAppendDynamicProperty.connect(boost::bind
-        (&PropertyView::slotAppendDynamicProperty, this, bp::_1));
-    this->connectPropRemove =
-    App::GetApplication().signalRemoveDynamicProperty.connect(boost::bind
-        (&PropertyView::slotRemoveDynamicProperty, this, bp::_1));
-    this->connectPropChange =
-    App::GetApplication().signalChangePropertyEditor.connect(boost::bind
-        (&PropertyView::slotChangePropertyEditor, this, bp::_1, bp::_2));
-    this->connectUndoDocument =
-    App::GetApplication().signalUndoDocument.connect(boost::bind
-        (&PropertyView::slotRollback, this));
-    this->connectRedoDocument =
-    App::GetApplication().signalRedoDocument.connect(boost::bind
-        (&PropertyView::slotRollback, this));
-    this->connectActiveDoc =
-    Application::Instance->signalActiveDocument.connect(boost::bind
-        (&PropertyView::slotActiveDocument, this, bp::_1));
-    this->connectDelDocument =
-        Application::Instance->signalDeleteDocument.connect(
-                boost::bind(&PropertyView::slotDeleteDocument, this, bp::_1));
-    this->connectDelViewObject =
-        Application::Instance->signalDeletedObject.connect(
-                boost::bind(&PropertyView::slotDeletedViewObject, this, bp::_1));
-    this->connectDelObject =
-        App::GetApplication().signalDeletedObject.connect(
-                boost::bind(&PropertyView::slotDeletedObject, this, bp::_1));
+    this->connectPropData = App::GetApplication().signalChangedObject.connect(
+        boost::bind(&PropertyView::slotChangePropertyData, this, bp::_2));
+    this->connectPropView = Gui::Application::Instance->signalChangedObject.connect(
+        boost::bind(&PropertyView::slotChangePropertyView, this, bp::_1, bp::_2));
+    this->connectPropAppend = App::GetApplication().signalAppendDynamicProperty.connect(
+        boost::bind(&PropertyView::slotAppendDynamicProperty, this, bp::_1));
+    this->connectPropRemove = App::GetApplication().signalRemoveDynamicProperty.connect(
+        boost::bind(&PropertyView::slotRemoveDynamicProperty, this, bp::_1));
+    this->connectPropChange = App::GetApplication().signalChangePropertyEditor.connect(
+        boost::bind(&PropertyView::slotChangePropertyEditor, this, bp::_1, bp::_2));
+    this->connectUndoDocument = App::GetApplication().signalUndoDocument.connect(
+        boost::bind(&PropertyView::slotRollback, this));
+    this->connectRedoDocument = App::GetApplication().signalRedoDocument.connect(
+        boost::bind(&PropertyView::slotRollback, this));
+    this->connectActiveDoc = Application::Instance->signalActiveDocument.connect(
+        boost::bind(&PropertyView::slotActiveDocument, this, bp::_1));
+    this->connectDelDocument = Application::Instance->signalDeleteDocument.connect(
+        boost::bind(&PropertyView::slotDeleteDocument, this, bp::_1));
+    this->connectDelViewObject = Application::Instance->signalDeletedObject.connect(
+        boost::bind(&PropertyView::slotDeletedViewObject, this, bp::_1));
+    this->connectDelObject = App::GetApplication().signalDeletedObject.connect(
+        boost::bind(&PropertyView::slotDeletedObject, this, bp::_1));
     this->connectChangedDocument = App::GetApplication().signalChangedDocument.connect(
-            boost::bind(&PropertyView::slotChangePropertyData, this, bp::_2));
+        boost::bind(&PropertyView::slotChangePropertyData, this, bp::_2));
 }
 
 PropertyView::~PropertyView()
@@ -154,16 +145,15 @@ PropertyView::~PropertyView()
 
 static bool _ShowAll;
 
-bool PropertyView::showAll() {
-    return _ShowAll;
-}
+bool PropertyView::showAll() { return _ShowAll; }
 
-void PropertyView::setShowAll(bool enable) {
-    if(_ShowAll != enable) {
+void PropertyView::setShowAll(bool enable)
+{
+    if (_ShowAll != enable) {
         _ShowAll = enable;
-        const auto views = getMainWindow()->findChildren<PropertyView*>();
-        for(auto view : views) {
-            if(view->isVisible()) {
+        const auto views = getMainWindow()->findChildren<PropertyView *>();
+        for (auto view : views) {
+            if (view->isVisible()) {
                 view->propertyEditorData->buildUp();
                 view->propertyEditorView->buildUp();
                 view->onTimer();
@@ -172,7 +162,8 @@ void PropertyView::setShowAll(bool enable) {
     }
 }
 
-void PropertyView::hideEvent(QHideEvent *ev) {
+void PropertyView::hideEvent(QHideEvent *ev)
+{
     this->timer->stop();
     this->detachSelection();
     // clear the properties before hiding.
@@ -182,13 +173,15 @@ void PropertyView::hideEvent(QHideEvent *ev) {
     QWidget::hideEvent(ev);
 }
 
-void PropertyView::showEvent(QShowEvent *ev) {
+void PropertyView::showEvent(QShowEvent *ev)
+{
     this->attachSelection();
     this->timer->start(ViewParams::instance()->getPropertyViewTimer());
     QWidget::showEvent(ev);
 }
 
-void PropertyView::clearPropertyItemSelection() {
+void PropertyView::clearPropertyItemSelection()
+{
     QModelIndex index;
     propertyEditorData->clearSelection();
     propertyEditorData->setCurrentIndex(index);
@@ -196,7 +189,8 @@ void PropertyView::clearPropertyItemSelection() {
     propertyEditorView->setCurrentIndex(index);
 }
 
-void PropertyView::slotRollback() {
+void PropertyView::slotRollback()
+{
     // PropertyItemDelegate will setup application active transaction on
     // entering edit mode, and close active transaction when exit editing.  But,
     // when the user clicks undo/redo button while editing some property, the
@@ -206,7 +200,7 @@ void PropertyView::slotRollback() {
     clearPropertyItemSelection();
 }
 
-void PropertyView::slotChangePropertyData(const App::Property& prop)
+void PropertyView::slotChangePropertyData(const App::Property &prop)
 {
     if (propertyEditorData->propOwners.count(prop.getContainer())) {
         propertyEditorData->updateProperty(prop);
@@ -214,7 +208,7 @@ void PropertyView::slotChangePropertyData(const App::Property& prop)
     }
 }
 
-void PropertyView::slotChangePropertyView(const Gui::ViewProvider&, const App::Property& prop)
+void PropertyView::slotChangePropertyView(const Gui::ViewProvider &, const App::Property &prop)
 {
     if (propertyEditorView->propOwners.count(prop.getContainer())) {
         propertyEditorView->updateProperty(prop);
@@ -222,46 +216,45 @@ void PropertyView::slotChangePropertyView(const Gui::ViewProvider&, const App::P
     }
 }
 
-bool PropertyView::isPropertyHidden(const App::Property *prop) {
-    return prop && !showAll() &&
-        ((prop->getType() & App::Prop_Hidden) || prop->testStatus(App::Property::Hidden));
+bool PropertyView::isPropertyHidden(const App::Property *prop)
+{
+    return prop && !showAll()
+        && ((prop->getType() & App::Prop_Hidden) || prop->testStatus(App::Property::Hidden));
 }
 
-void PropertyView::slotAppendDynamicProperty(const App::Property& prop)
+void PropertyView::slotAppendDynamicProperty(const App::Property &prop)
 {
-    if (isPropertyHidden(&prop))
-        return;
+    if (isPropertyHidden(&prop)) return;
 
-    App::PropertyContainer* parent = prop.getContainer();
+    App::PropertyContainer *parent = prop.getContainer();
     if (propertyEditorData->propOwners.count(parent)
-            || propertyEditorView->propOwners.count(parent))
-    {
+        || propertyEditorView->propOwners.count(parent)) {
         timer->start(ViewParams::instance()->getPropertyViewTimer());
     }
 }
 
-void PropertyView::slotRemoveDynamicProperty(const App::Property& prop)
+void PropertyView::slotRemoveDynamicProperty(const App::Property &prop)
 {
-    App::PropertyContainer* parent = prop.getContainer();
-    if(propertyEditorData->propOwners.count(parent))
-        propertyEditorData->removeProperty(prop);
-    else if(propertyEditorView->propOwners.count(parent))
+    App::PropertyContainer *parent = prop.getContainer();
+    if (propertyEditorData->propOwners.count(parent)) propertyEditorData->removeProperty(prop);
+    else if (propertyEditorView->propOwners.count(parent))
         propertyEditorView->removeProperty(prop);
     else
         return;
     timer->start(ViewParams::instance()->getPropertyViewTimer());
 }
 
-void PropertyView::slotChangePropertyEditor(const App::Document &, const App::Property& prop)
+void PropertyView::slotChangePropertyEditor(const App::Document &, const App::Property &prop)
 {
-    App::PropertyContainer* parent = prop.getContainer();
+    App::PropertyContainer *parent = prop.getContainer();
     if (propertyEditorData->propOwners.count(parent)
-            || propertyEditorView->propOwners.count(parent))
+        || propertyEditorView->propOwners.count(parent))
         timer->start(ViewParams::instance()->getPropertyViewTimer());
 }
 
-void PropertyView::slotDeleteDocument(const Gui::Document &doc) {
-    if(propertyEditorData->propOwners.count(doc.getDocument())) {
+void PropertyView::slotDeleteDocument(const Gui::Document &doc)
+{
+    if (propertyEditorData->propOwners.count(doc.getDocument())) {
         propertyEditorView->buildUp();
         propertyEditorData->buildUp();
         clearPropertyItemSelection();
@@ -269,8 +262,9 @@ void PropertyView::slotDeleteDocument(const Gui::Document &doc) {
     }
 }
 
-void PropertyView::slotDeletedViewObject(const Gui::ViewProvider &vp) {
-    if(propertyEditorView->propOwners.count(&vp)) {
+void PropertyView::slotDeletedViewObject(const Gui::ViewProvider &vp)
+{
+    if (propertyEditorView->propOwners.count(&vp)) {
         propertyEditorView->buildUp();
         propertyEditorData->buildUp();
         clearPropertyItemSelection();
@@ -278,8 +272,9 @@ void PropertyView::slotDeletedViewObject(const Gui::ViewProvider &vp) {
     }
 }
 
-void PropertyView::slotDeletedObject(const App::DocumentObject &obj) {
-    if(propertyEditorData->propOwners.count(&obj)) {
+void PropertyView::slotDeletedObject(const App::DocumentObject &obj)
+{
+    if (propertyEditorData->propOwners.count(&obj)) {
         propertyEditorView->buildUp();
         propertyEditorData->buildUp();
         clearPropertyItemSelection();
@@ -292,59 +287,57 @@ void PropertyView::slotActiveDocument(const Gui::Document &doc)
     checkEnable(doc.getDocument()->getName());
 }
 
-void PropertyView::checkEnable(const char *doc) {
-    if(ViewParams::instance()->getEnablePropertyViewForInactiveDocument()) {
+void PropertyView::checkEnable(const char *doc)
+{
+    if (ViewParams::instance()->getEnablePropertyViewForInactiveDocument()) {
         setEnabled(true);
         return;
     }
     // check if at least one selected object is part of the active document
     setEnabled(!Selection().hasSelection()
-            || Selection().hasSelection(doc, ResolveMode::NoResolve));
+               || Selection().hasSelection(doc, ResolveMode::NoResolve));
 }
 
-struct PropertyView::PropInfo
-{
+struct PropertyView::PropInfo {
     std::string propName;
     int propId;
-    std::vector<App::Property*> propList;
+    std::vector<App::Property *> propList;
 };
 
 struct PropertyView::PropFind {
-    const PropInfo& item;
-    explicit PropFind(const PropInfo& item) : item(item) {}
-    bool operator () (const PropInfo& elem) const
+    const PropInfo &item;
+    explicit PropFind(const PropInfo &item) : item(item) {}
+    bool operator()(const PropInfo &elem) const
     {
-        return (elem.propId == item.propId) &&
-               (elem.propName == item.propName);
+        return (elem.propId == item.propId) && (elem.propName == item.propName);
     }
 };
 
-void PropertyView::onSelectionChanged(const SelectionChanges& msg)
+void PropertyView::onSelectionChanged(const SelectionChanges &msg)
 {
-    if (msg.Type != SelectionChanges::AddSelection &&
-        msg.Type != SelectionChanges::RmvSelection &&
-        msg.Type != SelectionChanges::SetSelection &&
-        msg.Type != SelectionChanges::ClrSelection)
+    if (msg.Type != SelectionChanges::AddSelection && msg.Type != SelectionChanges::RmvSelection
+        && msg.Type != SelectionChanges::SetSelection && msg.Type != SelectionChanges::ClrSelection)
         return;
 
     // clear the properties.
     timer->start(ViewParams::instance()->getPropertyViewTimer());
 }
 
-void PropertyView::onTimer() {
+void PropertyView::onTimer()
+{
 
     timer->stop();
 
-    if(!this->isSelectionAttached()) {
+    if (!this->isSelectionAttached()) {
         propertyEditorData->buildUp();
         propertyEditorView->buildUp();
         clearPropertyItemSelection();
         return;
     }
 
-    if(!Gui::Selection().hasSelection()) {
+    if (!Gui::Selection().hasSelection()) {
         auto gdoc = TreeWidget::selectedDocument();
-        if(!gdoc || !gdoc->getDocument()) {
+        if (!gdoc || !gdoc->getDocument()) {
             propertyEditorData->buildUp();
             propertyEditorView->buildUp();
             clearPropertyItemSelection();
@@ -354,11 +347,10 @@ void PropertyView::onTimer() {
         PropertyModel::PropertyList docProps;
 
         auto doc = gdoc->getDocument();
-        std::map<std::string,App::Property*> props;
+        std::map<std::string, App::Property *> props;
         doc->getPropertyMap(props);
-        for(auto &v : props)
-            docProps.emplace_back(v.first,
-                    std::vector<App::Property*>(1,v.second));
+        for (auto &v : props)
+            docProps.emplace_back(v.first, std::vector<App::Property *>(1, v.second));
         propertyEditorData->buildUp(std::move(docProps));
         tabs->setCurrentIndex(1);
         return;
@@ -372,28 +364,26 @@ void PropertyView::onTimer() {
     bool checkLink = true;
     ViewProviderDocumentObject *vpLast = nullptr;
     auto sels = Gui::Selection().getSelectionEx("*");
-    for(auto &sel : sels) {
+    for (auto &sel : sels) {
         App::DocumentObject *ob = sel.getObject();
-        if(!ob) continue;
+        if (!ob) continue;
 
         // Do not process an object more than once
-        if(!objSet.insert(ob).second)
-            continue;
+        if (!objSet.insert(ob).second) continue;
 
-        std::vector<App::Property*> dataList;
-        std::map<std::string, App::Property*> viewList;
+        std::vector<App::Property *> dataList;
+        std::map<std::string, App::Property *> viewList;
 
         auto vp = Application::Instance->getViewProvider(ob);
-        if(!vp) {
+        if (!vp) {
             checkLink = false;
             ob->getPropertyList(dataList);
             continue;
         }
 
-        if(vp->isDerivedFrom(ViewProviderDocumentObject::getClassTypeId())) {
-            auto cvp = static_cast<ViewProviderDocumentObject*>(vp);
-            if(vpLast && cvp!=vpLast)
-                checkLink = false;
+        if (vp->isDerivedFrom(ViewProviderDocumentObject::getClassTypeId())) {
+            auto cvp = static_cast<ViewProviderDocumentObject *>(vp);
+            if (vpLast && cvp != vpLast) checkLink = false;
             vpLast = cvp;
         }
 
@@ -405,17 +395,14 @@ void PropertyView::onTimer() {
         // store the properties with <name,id> as key in a map
         {
             for (auto prop : dataList) {
-                if (isPropertyHidden(prop))
-                    continue;
+                if (isPropertyHidden(prop)) continue;
 
                 PropInfo nameType;
                 nameType.propName = prop->getName();
                 nameType.propId = prop->getTypeId().getKey();
 
                 auto pi = std::find_if(propDataMap.begin(), propDataMap.end(), PropFind(nameType));
-                if (pi != propDataMap.end()) {
-                    pi->propList.push_back(prop);
-                }
+                if (pi != propDataMap.end()) { pi->propList.push_back(prop); }
                 else {
                     nameType.propList.push_back(prop);
                     propDataMap.push_back(nameType);
@@ -424,19 +411,16 @@ void PropertyView::onTimer() {
         }
         // the same for the view properties
         {
-            std::map<std::string, App::Property*>::iterator pt;
+            std::map<std::string, App::Property *>::iterator pt;
             for (pt = viewList.begin(); pt != viewList.end(); ++pt) {
-                if (isPropertyHidden(pt->second))
-                    continue;
+                if (isPropertyHidden(pt->second)) continue;
 
                 PropInfo nameType;
                 nameType.propName = pt->first;
                 nameType.propId = pt->second->getTypeId().getKey();
 
                 auto pi = std::find_if(propViewMap.begin(), propViewMap.end(), PropFind(nameType));
-                if (pi != propViewMap.end()) {
-                    pi->propList.push_back(pt->second);
-                }
+                if (pi != propViewMap.end()) { pi->propList.push_back(pt->second); }
                 else {
                     nameType.propList.push_back(pt->second);
                     propViewMap.push_back(nameType);
@@ -450,70 +434,65 @@ void PropertyView::onTimer() {
     // name and id
     std::vector<PropInfo>::const_iterator it;
     PropertyModel::PropertyList dataProps;
-    std::map<std::string, std::vector<App::Property*> > dataPropsMap;
+    std::map<std::string, std::vector<App::Property *>> dataPropsMap;
     PropertyModel::PropertyList viewProps;
 
-    if(checkLink && vpLast) {
+    if (checkLink && vpLast) {
         // In case the only selected object is a link, insert the link's own
         // property before the linked object
         App::DocumentObject *obj = vpLast->getObject();
         auto linked = obj;
-        if(obj && obj->canLinkProperties() && (linked=obj->getLinkedObject(true))!=obj && linked) {
-            std::vector<App::Property*> dataList;
-            std::map<std::string, App::Property*> propMap;
+        if (obj && obj->canLinkProperties() && (linked = obj->getLinkedObject(true)) != obj
+            && linked) {
+            std::vector<App::Property *> dataList;
+            std::map<std::string, App::Property *> propMap;
             obj->getPropertyMap(propMap);
             linked->getPropertyList(dataList);
-            for(auto prop : dataList) {
-                if(isPropertyHidden(prop))
-                    continue;
+            for (auto prop : dataList) {
+                if (isPropertyHidden(prop)) continue;
                 std::string name(prop->getName());
                 auto it = propMap.find(name);
-                if(it!=propMap.end() && !isPropertyHidden(it->second))
-                    continue;
-                std::vector<App::Property*> items(1,prop);
-                if(prop->testStatus(App::Property::PropDynamic))
-                    dataPropsMap.emplace(name+"*",std::move(items));
+                if (it != propMap.end() && !isPropertyHidden(it->second)) continue;
+                std::vector<App::Property *> items(1, prop);
+                if (prop->testStatus(App::Property::PropDynamic))
+                    dataPropsMap.emplace(name + "*", std::move(items));
                 else
-                    dataProps.emplace_back(name+"*", std::move(items));
+                    dataProps.emplace_back(name + "*", std::move(items));
             }
             auto vpLinked = Application::Instance->getViewProvider(linked);
-            if(vpLinked) {
+            if (vpLinked) {
                 propMap.clear();
                 vpLast->getPropertyMap(propMap);
                 dataList.clear();
                 vpLinked->getPropertyList(dataList);
-                for(auto prop : dataList) {
-                    if(isPropertyHidden(prop))
-                        continue;
+                for (auto prop : dataList) {
+                    if (isPropertyHidden(prop)) continue;
                     std::string name(prop->getName());
                     auto it = propMap.find(name);
-                    if(it!=propMap.end() && !isPropertyHidden(it->second))
-                        continue;
-                    std::vector<App::Property*> items(1,prop);
-                    viewProps.emplace_back(name+"*", std::move(items));
+                    if (it != propMap.end() && !isPropertyHidden(it->second)) continue;
+                    std::vector<App::Property *> items(1, prop);
+                    viewProps.emplace_back(name + "*", std::move(items));
                 }
             }
         }
     }
 
-    for(auto &v : dataPropsMap)
-        dataProps.emplace_back(v.first,std::move(v.second));
+    for (auto &v : dataPropsMap) dataProps.emplace_back(v.first, std::move(v.second));
 
     dataPropsMap.clear();
 
     for (it = propDataMap.begin(); it != propDataMap.end(); ++it) {
         if (it->propList.size() == sels.size()) {
-            if(it->propList[0]->testStatus(App::Property::PropDynamic))
+            if (it->propList[0]->testStatus(App::Property::PropDynamic))
                 dataPropsMap.emplace(it->propName, std::move(it->propList));
             else
                 dataProps.emplace_back(it->propName, std::move(it->propList));
         }
     }
 
-    for(auto &v : dataPropsMap)
-        dataProps.emplace_back(v.first,std::move(v.second));
+    for (auto &v : dataPropsMap) dataProps.emplace_back(v.first, std::move(v.second));
 
-    propertyEditorData->buildUp(std::move(dataProps),true);
+    propertyEditorData->buildUp(std::move(dataProps), true);
 
     for (it = propViewMap.begin(); it != propViewMap.end(); ++it) {
         if (it->propList.size() == sels.size())
@@ -526,10 +505,7 @@ void PropertyView::onTimer() {
     checkEnable();
 }
 
-void PropertyView::tabChanged(int index)
-{
-    _GetParam()->SetInt("LastTabIndex",index);
-}
+void PropertyView::tabChanged(int index) { _GetParam()->SetInt("LastTabIndex", index); }
 
 void PropertyView::changeEvent(QEvent *e)
 {
@@ -543,22 +519,20 @@ void PropertyView::changeEvent(QEvent *e)
 
 /* TRANSLATOR Gui::DockWnd::PropertyDockView */
 
-PropertyDockView::PropertyDockView(Gui::Document* pcDocument, QWidget *parent)
-  : DockWindow(pcDocument,parent)
+PropertyDockView::PropertyDockView(Gui::Document *pcDocument, QWidget *parent)
+    : DockWindow(pcDocument, parent)
 {
     setWindowTitle(tr("Property View"));
 
     auto view = new PropertyView(this);
     auto pLayout = new QGridLayout(this);
     pLayout->setSpacing(0);
-    pLayout->setMargin (0);
+    pLayout->setMargin(0);
     pLayout->addWidget(view, 0, 0);
 
-    resize( 200, 400 );
+    resize(200, 400);
 }
 
-PropertyDockView::~PropertyDockView()
-{
-}
+PropertyDockView::~PropertyDockView() {}
 
 #include "moc_PropertyView.cpp"

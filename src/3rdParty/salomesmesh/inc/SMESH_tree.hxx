@@ -34,16 +34,18 @@
 //================================================================================
 // Data limiting the tree height
 struct SMESH_TreeLimit {
-  // MaxLevel of the Tree
-  int    myMaxLevel;
-  // Minimal size of the Box
-  double myMinBoxSize;
+    // MaxLevel of the Tree
+    int myMaxLevel;
+    // Minimal size of the Box
+    double myMinBoxSize;
 
-  // Default:
-  // maxLevel-> 8^8 = 16777216 terminal trees at most
-  // minSize -> box size not checked
-  SMESH_TreeLimit(int maxLevel=8, double minSize=0.):myMaxLevel(maxLevel),myMinBoxSize(minSize) {}
-  virtual ~SMESH_TreeLimit() {} // it can be inherited
+    // Default:
+    // maxLevel-> 8^8 = 16777216 terminal trees at most
+    // minSize -> box size not checked
+    SMESH_TreeLimit(int maxLevel = 8, double minSize = 0.)
+        : myMaxLevel(maxLevel), myMinBoxSize(minSize)
+    {}
+    virtual ~SMESH_TreeLimit() {} // it can be inherited
 };
 
 //================================================================================
@@ -52,77 +54,74 @@ struct SMESH_TreeLimit {
  */
 //================================================================================
 
-template< class BND_BOX,
-          int   NB_CHILDREN>
-class SMESH_Tree
+template<class BND_BOX, int NB_CHILDREN> class SMESH_Tree
 {
- public:
+public:
+    typedef BND_BOX box_type;
 
-  typedef BND_BOX box_type;
+    // Constructor. limit must be provided at tree root construction.
+    // limit will be deleted by SMESH_Tree
+    SMESH_Tree(SMESH_TreeLimit *limit = 0);
 
-  // Constructor. limit must be provided at tree root construction.
-  // limit will be deleted by SMESH_Tree
-  SMESH_Tree (SMESH_TreeLimit* limit=0);
+    // Destructor
+    virtual ~SMESH_Tree();
 
-  // Destructor
-  virtual ~SMESH_Tree ();
+    // Compute the Tree. Must be called by constructor of inheriting class
+    void compute();
 
-  // Compute the Tree. Must be called by constructor of inheriting class
-  void                   compute();
+    // Tell if Tree is a leaf or not.
+    // An inheriting class can influence it via myIsLeaf protected field
+    bool isLeaf() const;
 
-  // Tell if Tree is a leaf or not.
-  // An inheriting class can influence it via myIsLeaf protected field
-  bool                   isLeaf() const;
+    // Return its level
+    int level() const { return myLevel; }
 
-  // Return its level
-  int                    level() const { return myLevel; }
+    // Return Bounding Box of the Tree
+    const box_type *getBox() const { return myBox; }
 
-  // Return Bounding Box of the Tree
-  const box_type*        getBox() const { return myBox; }
+    // Return height of the tree, full or from this level to topest leaf
+    int getHeight(const bool full = true) const;
 
-  // Return height of the tree, full or from this level to topest leaf
-  int                    getHeight(const bool full=true) const;
+    static int nbChildren() { return NB_CHILDREN; }
 
-  static int             nbChildren() { return NB_CHILDREN; }
-
-  // Compute the biggest dimension of my box
-  virtual double         maxSize() const = 0;
+    // Compute the biggest dimension of my box
+    virtual double maxSize() const = 0;
 
 protected:
-  // Return box of the whole tree
-  virtual box_type*      buildRootBox() = 0;
+    // Return box of the whole tree
+    virtual box_type *buildRootBox() = 0;
 
-  // Allocate a child
-  virtual SMESH_Tree*    newChild() const = 0;
+    // Allocate a child
+    virtual SMESH_Tree *newChild() const = 0;
 
-  // Allocate a bndbox according to childIndex. childIndex is zero based
-  virtual box_type*      newChildBox(int childIndex) const = 0;
+    // Allocate a bndbox according to childIndex. childIndex is zero based
+    virtual box_type *newChildBox(int childIndex) const = 0;
 
-  // Fill in data of the children
-  virtual void           buildChildrenData() = 0;
+    // Fill in data of the children
+    virtual void buildChildrenData() = 0;
 
-  // members
+    // members
 
-  // Array of children
-  SMESH_Tree**   myChildren;
+    // Array of children
+    SMESH_Tree **myChildren;
 
-  // Point the father, NULL for the level 0
-  SMESH_Tree*    myFather;
+    // Point the father, NULL for the level 0
+    SMESH_Tree *myFather;
 
-  // Tell us if the Tree is a leaf or not
-  bool           myIsLeaf;
+    // Tell us if the Tree is a leaf or not
+    bool myIsLeaf;
 
-  // Tree limit
-  const SMESH_TreeLimit* myLimit;
+    // Tree limit
+    const SMESH_TreeLimit *myLimit;
 
-  // Bounding box of a tree
-  box_type*      myBox;
+    // Bounding box of a tree
+    box_type *myBox;
 
-  // Level of the Tree
-  int            myLevel;
+    // Level of the Tree
+    int myLevel;
 
-  // Build the children recursively
-  void                   buildChildren();
+    // Build the children recursively
+    void buildChildren();
 };
 
 //===========================================================================
@@ -132,16 +131,11 @@ protected:
  */
 //===========================================================================
 
-template< class BND_BOX, int NB_CHILDREN>
-SMESH_Tree<BND_BOX,NB_CHILDREN>::SMESH_Tree (SMESH_TreeLimit* limit):
-  myChildren(0),
-  myFather(0),
-  myIsLeaf( false ),
-  myLimit( limit ),
-  myLevel(0),
-  myBox(0)
+template<class BND_BOX, int NB_CHILDREN>
+SMESH_Tree<BND_BOX, NB_CHILDREN>::SMESH_Tree(SMESH_TreeLimit *limit)
+    : myChildren(0), myFather(0), myIsLeaf(false), myLimit(limit), myLevel(0), myBox(0)
 {
-  //if ( !myLimit ) myLimit = new SMESH_TreeLimit();
+    //if ( !myLimit ) myLimit = new SMESH_TreeLimit();
 }
 
 //================================================================================
@@ -150,18 +144,15 @@ SMESH_Tree<BND_BOX,NB_CHILDREN>::SMESH_Tree (SMESH_TreeLimit* limit):
  */
 //================================================================================
 
-template< class BND_BOX, int NB_CHILDREN>
-void SMESH_Tree<BND_BOX,NB_CHILDREN>::compute()
+template<class BND_BOX, int NB_CHILDREN> void SMESH_Tree<BND_BOX, NB_CHILDREN>::compute()
 {
-  if ( myLevel==0 )
-  {
-    if ( !myLimit ) myLimit = new SMESH_TreeLimit();
-    myBox = buildRootBox();
-    if ( myLimit->myMinBoxSize > 0. && maxSize() <= myLimit->myMinBoxSize )
-      myIsLeaf = true;
-    else
-      buildChildren();
-  }
+    if (myLevel == 0) {
+        if (!myLimit) myLimit = new SMESH_TreeLimit();
+        myBox = buildRootBox();
+        if (myLimit->myMinBoxSize > 0. && maxSize() <= myLimit->myMinBoxSize) myIsLeaf = true;
+        else
+            buildChildren();
+    }
 }
 
 //======================================
@@ -170,25 +161,19 @@ void SMESH_Tree<BND_BOX,NB_CHILDREN>::compute()
  */
 //======================================
 
-template< class BND_BOX, int NB_CHILDREN>
-SMESH_Tree<BND_BOX,NB_CHILDREN>::~SMESH_Tree ()
+template<class BND_BOX, int NB_CHILDREN> SMESH_Tree<BND_BOX, NB_CHILDREN>::~SMESH_Tree()
 {
-  if ( myChildren )
-  {
-    if ( !isLeaf() )
-    {
-      for(int i = 0; i<NB_CHILDREN; i++)
-        delete myChildren[i];
-      delete[] myChildren;
-      myChildren = 0;
+    if (myChildren) {
+        if (!isLeaf()) {
+            for (int i = 0; i < NB_CHILDREN; i++) delete myChildren[i];
+            delete[] myChildren;
+            myChildren = 0;
+        }
     }
-  }
-  if ( myBox )
-    delete myBox;
-  myBox = 0;
-  if ( level() == 0 )
-    delete myLimit;
-  myLimit = 0;
+    if (myBox) delete myBox;
+    myBox = 0;
+    if (level() == 0) delete myLimit;
+    myLimit = 0;
 }
 
 //=================================================================
@@ -197,44 +182,39 @@ SMESH_Tree<BND_BOX,NB_CHILDREN>::~SMESH_Tree ()
  */
 //=================================================================
 
-template< class BND_BOX, int NB_CHILDREN>
-void SMESH_Tree<BND_BOX,NB_CHILDREN>::buildChildren()
+template<class BND_BOX, int NB_CHILDREN> void SMESH_Tree<BND_BOX, NB_CHILDREN>::buildChildren()
 {
-  if ( isLeaf() ) return;
+    if (isLeaf()) return;
 
-  myChildren = new SMESH_Tree*[NB_CHILDREN];
+    myChildren = new SMESH_Tree *[NB_CHILDREN];
 
-  // get the whole model size
-  double rootSize = 0;
-  {
-    SMESH_Tree* root = this;
-    while ( root->myLevel > 0 )
-      root = root->myFather;
-    rootSize = root->maxSize();
-  }
-  for (int i = 0; i < NB_CHILDREN; i++)
-  {
-    // The child is of the same type than its father (For instance, a SMESH_OctreeNode)
-    // We allocate the memory we need for the child
-    myChildren[i] = newChild();
-    // and we assign to him its box.
-    myChildren[i]->myFather = this;
-    if (myChildren[i]->myLimit)
-      delete myChildren[i]->myLimit;
-    myChildren[i]->myLimit = myLimit;
-    myChildren[i]->myLevel = myLevel + 1;
-    myChildren[i]->myBox = newChildBox( i );
-    myChildren[i]->myBox->Enlarge( rootSize * 1e-10 );
-    if ( myLimit->myMinBoxSize > 0. && myChildren[i]->maxSize() <= myLimit->myMinBoxSize )
-      myChildren[i]->myIsLeaf = true;
-  }
+    // get the whole model size
+    double rootSize = 0;
+    {
+        SMESH_Tree *root = this;
+        while (root->myLevel > 0) root = root->myFather;
+        rootSize = root->maxSize();
+    }
+    for (int i = 0; i < NB_CHILDREN; i++) {
+        // The child is of the same type than its father (For instance, a SMESH_OctreeNode)
+        // We allocate the memory we need for the child
+        myChildren[i] = newChild();
+        // and we assign to him its box.
+        myChildren[i]->myFather = this;
+        if (myChildren[i]->myLimit) delete myChildren[i]->myLimit;
+        myChildren[i]->myLimit = myLimit;
+        myChildren[i]->myLevel = myLevel + 1;
+        myChildren[i]->myBox = newChildBox(i);
+        myChildren[i]->myBox->Enlarge(rootSize * 1e-10);
+        if (myLimit->myMinBoxSize > 0. && myChildren[i]->maxSize() <= myLimit->myMinBoxSize)
+            myChildren[i]->myIsLeaf = true;
+    }
 
-  // After building the NB_CHILDREN boxes, we put the data into the children.
-  buildChildrenData();
+    // After building the NB_CHILDREN boxes, we put the data into the children.
+    buildChildrenData();
 
-  //After we pass to the next level of the Tree
-  for (int i = 0; i<NB_CHILDREN; i++)
-    myChildren[i]->buildChildren();
+    //After we pass to the next level of the Tree
+    for (int i = 0; i < NB_CHILDREN; i++) myChildren[i]->buildChildren();
 }
 
 //================================================================================
@@ -244,10 +224,9 @@ void SMESH_Tree<BND_BOX,NB_CHILDREN>::buildChildren()
  */
 //================================================================================
 
-template< class BND_BOX, int NB_CHILDREN>
-bool SMESH_Tree<BND_BOX,NB_CHILDREN>::isLeaf() const
+template<class BND_BOX, int NB_CHILDREN> bool SMESH_Tree<BND_BOX, NB_CHILDREN>::isLeaf() const
 {
-  return myIsLeaf || ((myLimit->myMaxLevel > 0) ? (level() >= myLimit->myMaxLevel) : false );
+    return myIsLeaf || ((myLimit->myMaxLevel > 0) ? (level() >= myLimit->myMaxLevel) : false);
 }
 
 //================================================================================
@@ -256,23 +235,19 @@ bool SMESH_Tree<BND_BOX,NB_CHILDREN>::isLeaf() const
  */
 //================================================================================
 
-template< class BND_BOX, int NB_CHILDREN>
-int SMESH_Tree<BND_BOX,NB_CHILDREN>::getHeight(const bool full) const
+template<class BND_BOX, int NB_CHILDREN>
+int SMESH_Tree<BND_BOX, NB_CHILDREN>::getHeight(const bool full) const
 {
-  if ( full && myFather )
-    return myFather->getHeight( true );
+    if (full && myFather) return myFather->getHeight(true);
 
-  if ( isLeaf() )
-    return 1;
+    if (isLeaf()) return 1;
 
-  int height = 0;
-  for (int i = 0; i<NB_CHILDREN; i++)
-  {
-    int h = myChildren[i]->getHeight( false );
-    if ( h > height)
-        height = h;
-  }
-  return height + 1;
+    int height = 0;
+    for (int i = 0; i < NB_CHILDREN; i++) {
+        int h = myChildren[i]->getHeight(false);
+        if (h > height) height = h;
+    }
+    return height + 1;
 }
 
 #endif

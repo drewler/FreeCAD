@@ -37,15 +37,18 @@
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGIGhostHighlight : public QObject, public QGIHighlight
+class TechDrawGuiExport QGIGhostHighlight: public QObject, public QGIHighlight
 {
     Q_OBJECT
 public:
     explicit QGIGhostHighlight();
     ~QGIGhostHighlight();
 
-    enum {Type = QGraphicsItem::UserType + 177};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 177
+    };
+    int type() const override { return Type; }
 
     void setInteractive(bool state);
     void setRadius(double r);
@@ -62,6 +65,6 @@ protected:
 private:
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // TECHDRAWGUI_QGIGHOSTHIGHLIGHT_H

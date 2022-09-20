@@ -27,69 +27,53 @@
 namespace MED
 {
 
-  //! To extend the boost::shared_ptr to support such features automatic dynamic cast
-  /*!
+//! To extend the boost::shared_ptr to support such features automatic dynamic cast
+/*!
     All entities of the MEDWrapper package are handled as pointer.
     This class was introduced to provide correct and flexible memory management 
     for all of the MEDWrapper objects.
   */
-  template<class T> class SharedPtr: public boost::shared_ptr<T>
-  {
-  public:
+template<class T> class SharedPtr: public boost::shared_ptr<T>
+{
+public:
     //! Default constructor
     SharedPtr() {}
 
     //! Construct the class by any type of a pointer
-    template<class Y>
-    explicit SharedPtr(Y * p): 
-      boost::shared_ptr<T>(p) 
-    {}
+    template<class Y> explicit SharedPtr(Y *p) : boost::shared_ptr<T>(p) {}
 
     //! Construct the class by any specialisation of the class
     template<class Y>
-    SharedPtr(SharedPtr<Y> const & r):
-      boost::shared_ptr<T>(boost::dynamic_pointer_cast<T,Y>(r))
+    SharedPtr(SharedPtr<Y> const &r) : boost::shared_ptr<T>(boost::dynamic_pointer_cast<T, Y>(r))
     {}
 
     //! Copy-constructor
-    template<class Y>
-    SharedPtr& 
-    operator=(SharedPtr<Y> const & r)
+    template<class Y> SharedPtr &operator=(SharedPtr<Y> const &r)
     {
-      SharedPtr<T>(r).swap(*this);
-      return *this;
+        SharedPtr<T>(r).swap(*this);
+        return *this;
     }
 
     //! Introduce a flexible way to reset the wrapped pointer
-    template<class Y> 
-    SharedPtr& 
-    operator()(Y * p) // Y must be complete
+    template<class Y> SharedPtr &operator()(Y *p) // Y must be complete
     {
-      return operator=<Y>(SharedPtr<Y>(p));
+        return operator=<Y>(SharedPtr<Y>(p));
     }
 
     //! Introduce a flexible way to reset the wrapped pointer
-    template<class Y> 
-    SharedPtr& 
-    operator()(SharedPtr<Y> const & r) // Y must be complete
+    template<class Y> SharedPtr &operator()(SharedPtr<Y> const &r) // Y must be complete
     {
-      return operator=<Y>(SharedPtr<Y>(r));
+        return operator=<Y>(SharedPtr<Y>(r));
     }
 
     //! To provide a flexible way to use reference to the wrapped pointer (const version)
-    operator const T& () const 
-    { 
-      return *(this->get());
-    }
+    operator const T &() const { return *(this->get()); }
 
     //! To provide a flexible way to use reference to the wrapped pointer
-    operator T& () 
-    { 
-      return *(this->get());
-    }
-  };
+    operator T &() { return *(this->get()); }
+};
 
-}
+} // namespace MED
 
 
 #endif

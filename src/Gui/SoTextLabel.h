@@ -35,13 +35,15 @@
 #include <FCGlobal.h>
 
 
-namespace Gui {
+namespace Gui
+{
 
 /**
  * A text label with a background color.
  * @author Werner Mayer
  */
-class GuiExport SoTextLabel : public SoText2 {
+class GuiExport SoTextLabel: public SoText2
+{
     using inherited = SoText2;
 
     SO_NODE_HEADER(SoTextLabel);
@@ -63,7 +65,8 @@ protected:
  * A text label for the color bar.
  * @author Werner Mayer
  */
-class GuiExport SoColorBarLabel : public SoText2 {
+class GuiExport SoColorBarLabel: public SoText2
+{
     using inherited = SoText2;
 
     SO_NODE_HEADER(SoColorBarLabel);
@@ -73,10 +76,11 @@ public:
     SoColorBarLabel();
 
 protected:
-    void computeBBox(SoAction * action, SbBox3f & box, SbVec3f & center) override;
+    void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center) override;
 };
 
-class GuiExport SoStringLabel : public SoNode {
+class GuiExport SoStringLabel: public SoNode
+{
     using inherited = SoNode;
 
     SO_NODE_HEADER(SoStringLabel);
@@ -86,47 +90,51 @@ public:
     SoStringLabel();
 
     SoMFString string;
-    SoSFColor  textColor;
-    SoSFName   name;
-    SoSFInt32  size;
+    SoSFColor textColor;
+    SoSFName name;
+    SoSFInt32 size;
 
 protected:
     ~SoStringLabel() override {}
     void GLRender(SoGLRenderAction *action) override;
 };
 
-class GuiExport SoFrameLabel : public SoImage {
+class GuiExport SoFrameLabel: public SoImage
+{
     using inherited = SoImage;
 
     SO_NODE_HEADER(SoFrameLabel);
 
 public:
-    enum Justification {
-        LEFT, RIGHT, CENTER
+    enum Justification
+    {
+        LEFT,
+        RIGHT,
+        CENTER
     };
 
     static void initClass();
     SoFrameLabel();
 
     SoMFString string;
-    SoSFColor  textColor;
-    SoSFColor  backgroundColor;
-    SoSFEnum   justification;
-    SoSFName   name;
-    SoSFInt32  size;
-    SoSFBool   frame;
-  //SoSFImage  image;
+    SoSFColor textColor;
+    SoSFColor backgroundColor;
+    SoSFEnum justification;
+    SoSFName name;
+    SoSFInt32 size;
+    SoSFBool frame;
+    //SoSFImage  image;
 
 protected:
     ~SoFrameLabel() override {}
-    void notify(SoNotList * list) override;
+    void notify(SoNotList *list) override;
     void GLRender(SoGLRenderAction *action) override;
 
 private:
     void drawImage();
 };
 
-class GuiExport TranslateManip : public SoTransformManip
+class GuiExport TranslateManip: public SoTransformManip
 {
     SO_NODE_HEADER(TranslateManip);
 
@@ -143,4 +151,3 @@ private:
 } // namespace Gui
 
 #endif // GUI_SOTEXTLABEL_H
-

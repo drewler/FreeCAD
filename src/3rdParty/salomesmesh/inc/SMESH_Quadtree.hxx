@@ -38,25 +38,24 @@
  * - descendant*    newChild() const; // a new child instance
  * - void           buildChildrenData(); // Fill in data of the children
  */
-class SMESHUtils_EXPORT SMESH_Quadtree : public SMESH_Tree< Bnd_B2d, 4 >
+class SMESHUtils_EXPORT SMESH_Quadtree: public SMESH_Tree<Bnd_B2d, 4>
 {
 public:
-  typedef SMESH_Tree< Bnd_B2d, 4> TBaseTree;
+    typedef SMESH_Tree<Bnd_B2d, 4> TBaseTree;
 
-  // Constructor. limit must be provided at tree root construction.
-  // limit will be deleted by SMESH_Quadtree
-  SMESH_Quadtree (SMESH_TreeLimit* limit=0);
+    // Constructor. limit must be provided at tree root construction.
+    // limit will be deleted by SMESH_Quadtree
+    SMESH_Quadtree(SMESH_TreeLimit *limit = 0);
 
-  // Compute the bigger dimension of my box
-  double                 maxSize() const;
+    // Compute the bigger dimension of my box
+    double maxSize() const;
 
-  // Return index of a child the given point is in
-  //inline int             getChildIndex(double x, double y, const gp_XY& boxMiddle)const;
+    // Return index of a child the given point is in
+    //inline int             getChildIndex(double x, double y, const gp_XY& boxMiddle)const;
 
- protected:
-
-  // Allocate a bndbox according to childIndex. childIndex is zero based
-  virtual Bnd_B2d*       newChildBox(int childIndex) const;
+protected:
+    // Allocate a bndbox according to childIndex. childIndex is zero based
+    virtual Bnd_B2d *newChildBox(int childIndex) const;
 };
 
 //================================================================================

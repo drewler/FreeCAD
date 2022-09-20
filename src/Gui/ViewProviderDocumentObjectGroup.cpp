@@ -33,7 +33,8 @@
 using namespace Gui;
 
 
-PROPERTY_SOURCE_WITH_EXTENSIONS(Gui::ViewProviderDocumentObjectGroup, Gui::ViewProviderDocumentObject)
+PROPERTY_SOURCE_WITH_EXTENSIONS(Gui::ViewProviderDocumentObjectGroup,
+                                Gui::ViewProviderDocumentObject)
 
 
 /**
@@ -46,9 +47,7 @@ ViewProviderDocumentObjectGroup::ViewProviderDocumentObjectGroup()
     sPixmap = "folder";
 }
 
-ViewProviderDocumentObjectGroup::~ViewProviderDocumentObjectGroup()
-{
-}
+ViewProviderDocumentObjectGroup::~ViewProviderDocumentObjectGroup() {}
 
 std::vector<std::string> ViewProviderDocumentObjectGroup::getDisplayModes() const
 {
@@ -56,30 +55,28 @@ std::vector<std::string> ViewProviderDocumentObjectGroup::getDisplayModes() cons
     return std::vector<std::string>();
 }
 
-bool ViewProviderDocumentObjectGroup::isShow() const
-{
-    return Visibility.getValue();
-}
+bool ViewProviderDocumentObjectGroup::isShow() const { return Visibility.getValue(); }
 
 QIcon ViewProviderDocumentObjectGroup::getIcon() const
 {
-    return mergeGreyableOverlayIcons (Gui::BitmapFactory().iconFromTheme(sPixmap));
+    return mergeGreyableOverlayIcons(Gui::BitmapFactory().iconFromTheme(sPixmap));
 }
 
 /**
  * Extracts the associated view providers of the objects of the associated object group group.
  */
-void ViewProviderDocumentObjectGroup::getViewProviders(std::vector<ViewProviderDocumentObject*>& vp) const
+void ViewProviderDocumentObjectGroup::getViewProviders(
+    std::vector<ViewProviderDocumentObject *> &vp) const
 {
-    App::DocumentObject* doc = getObject();
+    App::DocumentObject *doc = getObject();
     if (doc->getTypeId().isDerivedFrom(App::DocumentObjectGroup::getClassTypeId())) {
-        Gui::Document* gd = Application::Instance->getDocument(doc->getDocument());
-        auto grp = (App::DocumentObjectGroup*)doc;
-        std::vector<App::DocumentObject*> obj = grp->getObjects();
-        for (const auto & it : obj) {
-            ViewProvider* v = gd->getViewProvider(it);
+        Gui::Document *gd = Application::Instance->getDocument(doc->getDocument());
+        auto grp = (App::DocumentObjectGroup *)doc;
+        std::vector<App::DocumentObject *> obj = grp->getObjects();
+        for (const auto &it : obj) {
+            ViewProvider *v = gd->getViewProvider(it);
             if (v && v->getTypeId().isDerivedFrom(ViewProviderDocumentObject::getClassTypeId()))
-                vp.push_back((ViewProviderDocumentObject*)v);
+                vp.push_back((ViewProviderDocumentObject *)v);
         }
     }
 }
@@ -87,11 +84,13 @@ void ViewProviderDocumentObjectGroup::getViewProviders(std::vector<ViewProviderD
 
 // Python feature -----------------------------------------------------------------------
 
-namespace Gui {
+namespace Gui
+{
 /// @cond DOXERR
-PROPERTY_SOURCE_TEMPLATE(Gui::ViewProviderDocumentObjectGroupPython, Gui::ViewProviderDocumentObjectGroup)
+PROPERTY_SOURCE_TEMPLATE(Gui::ViewProviderDocumentObjectGroupPython,
+                         Gui::ViewProviderDocumentObjectGroup)
 /// @endcond
 
 // explicit template instantiation
 template class GuiExport ViewProviderPythonFeatureT<ViewProviderDocumentObjectGroup>;
-}
+} // namespace Gui

@@ -42,13 +42,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_ProjectionSource3D::StdMeshers_ProjectionSource3D(int hypId, int studyId,
-                                                             SMESH_Gen * gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_ProjectionSource3D::StdMeshers_ProjectionSource3D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "ProjectionSource3D"; // used by Projection_3D
-  _param_algo_dim = 3; // 3D
-  _sourceMesh = 0;
+    _name = "ProjectionSource3D"; // used by Projection_3D
+    _param_algo_dim = 3;          // 3D
+    _sourceMesh = 0;
 }
 
 //=============================================================================
@@ -61,29 +60,26 @@ StdMeshers_ProjectionSource3D::StdMeshers_ProjectionSource3D(int hypId, int stud
 
 StdMeshers_ProjectionSource3D::~StdMeshers_ProjectionSource3D()
 {
-  MESSAGE( "StdMeshers_ProjectionSource3D::~StdMeshers_ProjectionSource3D" );
+    MESSAGE("StdMeshers_ProjectionSource3D::~StdMeshers_ProjectionSource3D");
 }
 
 //=============================================================================
-  /*!
+/*!
    * Sets a source <face> to take a mesh pattern from
    */
 //=============================================================================
 
-void StdMeshers_ProjectionSource3D::SetSource3DShape(const TopoDS_Shape& Shape)
+void StdMeshers_ProjectionSource3D::SetSource3DShape(const TopoDS_Shape &Shape)
 {
-  if ( Shape.IsNull() )
-    throw SALOME_Exception(LOCALIZED("Null Shape is not allowed"));
+    if (Shape.IsNull()) throw SALOME_Exception(LOCALIZED("Null Shape is not allowed"));
 
-  if ( SMESH_Gen::GetShapeDim( Shape ) != 3 )
-    throw SALOME_Exception(LOCALIZED("Wrong shape type"));
+    if (SMESH_Gen::GetShapeDim(Shape) != 3) throw SALOME_Exception(LOCALIZED("Wrong shape type"));
 
-  if ( !_sourceShape.IsSame( Shape ) )
-  {
-    _sourceShape = Shape;
+    if (!_sourceShape.IsSame(Shape)) {
+        _sourceShape = Shape;
 
-    NotifySubMeshesHypothesisModification();
-  }
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -94,36 +90,32 @@ void StdMeshers_ProjectionSource3D::SetSource3DShape(const TopoDS_Shape& Shape)
  */
 //=============================================================================
 
-void StdMeshers_ProjectionSource3D::SetVertexAssociation(const TopoDS_Shape& sourceVertex1,
-                                                         const TopoDS_Shape& sourceVertex2,
-                                                         const TopoDS_Shape& targetVertex1,
-                                                         const TopoDS_Shape& targetVertex2)
+void StdMeshers_ProjectionSource3D::SetVertexAssociation(const TopoDS_Shape &sourceVertex1,
+                                                         const TopoDS_Shape &sourceVertex2,
+                                                         const TopoDS_Shape &targetVertex1,
+                                                         const TopoDS_Shape &targetVertex2)
 {
-  if ( sourceVertex1.IsNull() != targetVertex1.IsNull() ||
-       sourceVertex2.IsNull() != targetVertex2.IsNull() ||
-       sourceVertex1.IsNull() != targetVertex2.IsNull() )
-    throw SALOME_Exception(LOCALIZED("Two or none pairs of vertices must be provided"));
+    if (sourceVertex1.IsNull() != targetVertex1.IsNull()
+        || sourceVertex2.IsNull() != targetVertex2.IsNull()
+        || sourceVertex1.IsNull() != targetVertex2.IsNull())
+        throw SALOME_Exception(LOCALIZED("Two or none pairs of vertices must be provided"));
 
-  if ( !sourceVertex1.IsNull() ) {
-    if ( sourceVertex1.ShapeType() != TopAbs_VERTEX ||
-         sourceVertex2.ShapeType() != TopAbs_VERTEX ||
-         targetVertex1.ShapeType() != TopAbs_VERTEX ||
-         targetVertex2.ShapeType() != TopAbs_VERTEX )
-      throw SALOME_Exception(LOCALIZED("Wrong shape type"));
-  }
+    if (!sourceVertex1.IsNull()) {
+        if (sourceVertex1.ShapeType() != TopAbs_VERTEX || sourceVertex2.ShapeType() != TopAbs_VERTEX
+            || targetVertex1.ShapeType() != TopAbs_VERTEX
+            || targetVertex2.ShapeType() != TopAbs_VERTEX)
+            throw SALOME_Exception(LOCALIZED("Wrong shape type"));
+    }
 
-  if ( !_sourceVertex1.IsSame( sourceVertex1 ) ||
-       !_sourceVertex2.IsSame( sourceVertex2 ) ||
-       !_targetVertex1.IsSame( targetVertex1 ) ||
-       !_targetVertex2.IsSame( targetVertex2 ) )
-  {
-    _sourceVertex1 = TopoDS::Vertex( sourceVertex1 );
-    _sourceVertex2 = TopoDS::Vertex( sourceVertex2 );
-    _targetVertex1 = TopoDS::Vertex( targetVertex1 );
-    _targetVertex2 = TopoDS::Vertex( targetVertex2 );
+    if (!_sourceVertex1.IsSame(sourceVertex1) || !_sourceVertex2.IsSame(sourceVertex2)
+        || !_targetVertex1.IsSame(targetVertex1) || !_targetVertex2.IsSame(targetVertex2)) {
+        _sourceVertex1 = TopoDS::Vertex(sourceVertex1);
+        _sourceVertex2 = TopoDS::Vertex(sourceVertex2);
+        _targetVertex1 = TopoDS::Vertex(targetVertex1);
+        _targetVertex2 = TopoDS::Vertex(targetVertex2);
 
-    NotifySubMeshesHypothesisModification();
-  }
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -132,12 +124,12 @@ void StdMeshers_ProjectionSource3D::SetVertexAssociation(const TopoDS_Shape& sou
  */
 //=============================================================================
 
-void StdMeshers_ProjectionSource3D::SetSourceMesh(SMESH_Mesh* mesh)
+void StdMeshers_ProjectionSource3D::SetSourceMesh(SMESH_Mesh *mesh)
 {
-  if ( _sourceMesh != mesh ) {
-    _sourceMesh = mesh;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (_sourceMesh != mesh) {
+        _sourceMesh = mesh;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -146,10 +138,7 @@ void StdMeshers_ProjectionSource3D::SetSourceMesh(SMESH_Mesh* mesh)
  */
 //=============================================================================
 
-TopoDS_Shape StdMeshers_ProjectionSource3D::GetSource3DShape() const
-{
-  return _sourceShape;
-}
+TopoDS_Shape StdMeshers_ProjectionSource3D::GetSource3DShape() const { return _sourceShape; }
 
 //=============================================================================
 /*!
@@ -160,12 +149,11 @@ TopoDS_Shape StdMeshers_ProjectionSource3D::GetSource3DShape() const
 
 TopoDS_Vertex StdMeshers_ProjectionSource3D::GetSourceVertex(int i) const
 {
-  if ( i == 1 )
-    return _sourceVertex1;
-  else if ( i == 2 )
-    return _sourceVertex2;
-  else
-    throw SALOME_Exception(LOCALIZED("Wrong vertex index"));
+    if (i == 1) return _sourceVertex1;
+    else if (i == 2)
+        return _sourceVertex2;
+    else
+        throw SALOME_Exception(LOCALIZED("Wrong vertex index"));
 }
 
 //=============================================================================
@@ -177,12 +165,11 @@ TopoDS_Vertex StdMeshers_ProjectionSource3D::GetSourceVertex(int i) const
 
 TopoDS_Vertex StdMeshers_ProjectionSource3D::GetTargetVertex(int i) const
 {
-  if ( i == 1 )
-    return _targetVertex1;
-  else if ( i == 2 )
-    return _targetVertex2;
-  else
-    throw SALOME_Exception(LOCALIZED("Wrong vertex index"));
+    if (i == 1) return _targetVertex1;
+    else if (i == 2)
+        return _targetVertex2;
+    else
+        throw SALOME_Exception(LOCALIZED("Wrong vertex index"));
 }
 
 
@@ -192,16 +179,16 @@ TopoDS_Vertex StdMeshers_ProjectionSource3D::GetTargetVertex(int i) const
  */
 //=============================================================================
 
-ostream & StdMeshers_ProjectionSource3D::SaveTo(ostream & save)
+ostream &StdMeshers_ProjectionSource3D::SaveTo(ostream &save)
 {
-  // we store it in order to be able to detect that hypo is really modified
-  save << " " << _sourceShape.TShape().operator->()  ;
-  save << " " << _sourceVertex1.TShape().operator->();
-  save << " " << _targetVertex1.TShape().operator->();
-  save << " " << _sourceVertex2.TShape().operator->();
-  save << " " << _targetVertex2.TShape().operator->();
-  save << " " << ( _sourceMesh ? _sourceMesh->GetId() : -1 );
-  return save;
+    // we store it in order to be able to detect that hypo is really modified
+    save << " " << _sourceShape.TShape().operator->();
+    save << " " << _sourceVertex1.TShape().operator->();
+    save << " " << _targetVertex1.TShape().operator->();
+    save << " " << _sourceVertex2.TShape().operator->();
+    save << " " << _targetVertex2.TShape().operator->();
+    save << " " << (_sourceMesh ? _sourceMesh->GetId() : -1);
+    return save;
 }
 
 //=============================================================================
@@ -210,11 +197,11 @@ ostream & StdMeshers_ProjectionSource3D::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_ProjectionSource3D::LoadFrom(istream & load)
+istream &StdMeshers_ProjectionSource3D::LoadFrom(istream &load)
 {
-  // impossible to restore w/o any context
-  // It is done by servant
-  return load;
+    // impossible to restore w/o any context
+    // It is done by servant
+    return load;
 }
 
 //=============================================================================
@@ -223,10 +210,7 @@ istream & StdMeshers_ProjectionSource3D::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_ProjectionSource3D & hyp)
-{
-  return hyp.SaveTo( save );
-}
+ostream &operator<<(ostream &save, StdMeshers_ProjectionSource3D &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -234,9 +218,9 @@ ostream & operator <<(ostream & save, StdMeshers_ProjectionSource3D & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_ProjectionSource3D & hyp)
+istream &operator>>(istream &load, StdMeshers_ProjectionSource3D &hyp)
 {
-  return hyp.LoadFrom( load );
+    return hyp.LoadFrom(load);
 }
 
 //================================================================================
@@ -248,10 +232,9 @@ istream & operator >>(istream & load, StdMeshers_ProjectionSource3D & hyp)
  */
 //================================================================================
 
-bool StdMeshers_ProjectionSource3D::SetParametersByMesh(const SMESH_Mesh*   ,
-                                                        const TopoDS_Shape& )
+bool StdMeshers_ProjectionSource3D::SetParametersByMesh(const SMESH_Mesh *, const TopoDS_Shape &)
 {
-  return false;
+    return false;
 }
 
 //================================================================================
@@ -260,17 +243,15 @@ bool StdMeshers_ProjectionSource3D::SetParametersByMesh(const SMESH_Mesh*   ,
  */
 //================================================================================
 
-void StdMeshers_ProjectionSource3D::GetStoreParams(TopoDS_Shape& s1,
-                                                   TopoDS_Shape& s2,
-                                                   TopoDS_Shape& s3,
-                                                   TopoDS_Shape& s4,
-                                                   TopoDS_Shape& s5) const
+void StdMeshers_ProjectionSource3D::GetStoreParams(TopoDS_Shape &s1, TopoDS_Shape &s2,
+                                                   TopoDS_Shape &s3, TopoDS_Shape &s4,
+                                                   TopoDS_Shape &s5) const
 {
-  s1 = _sourceShape;
-  s2 = _sourceVertex1;
-  s3 = _sourceVertex2;
-  s4 = _targetVertex1;
-  s5 = _targetVertex2;
+    s1 = _sourceShape;
+    s2 = _sourceVertex1;
+    s3 = _sourceVertex2;
+    s4 = _targetVertex1;
+    s5 = _targetVertex2;
 }
 
 //================================================================================
@@ -279,19 +260,16 @@ void StdMeshers_ProjectionSource3D::GetStoreParams(TopoDS_Shape& s1,
  */
 //================================================================================
 
-void StdMeshers_ProjectionSource3D::RestoreParams(const TopoDS_Shape& s1,
-                                                  const TopoDS_Shape& s2,
-                                                  const TopoDS_Shape& s3,
-                                                  const TopoDS_Shape& s4,
-                                                  const TopoDS_Shape& s5,
-                                                  SMESH_Mesh*         mesh)
+void StdMeshers_ProjectionSource3D::RestoreParams(const TopoDS_Shape &s1, const TopoDS_Shape &s2,
+                                                  const TopoDS_Shape &s3, const TopoDS_Shape &s4,
+                                                  const TopoDS_Shape &s5, SMESH_Mesh *mesh)
 {
-  _sourceShape   = s1;
-  _sourceVertex1 = TopoDS::Vertex( s2 );
-  _sourceVertex2 = TopoDS::Vertex( s3 );
-  _targetVertex1 = TopoDS::Vertex( s4 );
-  _targetVertex2 = TopoDS::Vertex( s5 );
-  _sourceMesh   = mesh;
+    _sourceShape = s1;
+    _sourceVertex1 = TopoDS::Vertex(s2);
+    _sourceVertex2 = TopoDS::Vertex(s3);
+    _targetVertex1 = TopoDS::Vertex(s4);
+    _targetVertex2 = TopoDS::Vertex(s5);
+    _sourceMesh = mesh;
 }
 
 //================================================================================
@@ -301,9 +279,8 @@ void StdMeshers_ProjectionSource3D::RestoreParams(const TopoDS_Shape& s1,
  */
 //================================================================================
 
-bool StdMeshers_ProjectionSource3D::SetParametersByDefaults(const TDefaults&  /*dflts*/,
-                                                            const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_ProjectionSource3D::SetParametersByDefaults(const TDefaults & /*dflts*/,
+                                                            const SMESH_Mesh * /*theMesh*/)
 {
-  return false;
+    return false;
 }
-

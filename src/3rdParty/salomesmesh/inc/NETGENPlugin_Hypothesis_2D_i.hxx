@@ -42,32 +42,30 @@ class SMESH_Gen;
 
 // NETGENPlugin parameters hypothesis (2D case)
 
-class NETGENPLUGIN_EXPORT  NETGENPlugin_Hypothesis_2D_i:
-  public virtual POA_NETGENPlugin::NETGENPlugin_Hypothesis_2D,
-  public NETGENPlugin_Hypothesis_i
+class NETGENPLUGIN_EXPORT NETGENPlugin_Hypothesis_2D_i
+    : public virtual POA_NETGENPlugin::NETGENPlugin_Hypothesis_2D,
+      public NETGENPlugin_Hypothesis_i
 {
- public:
-  // Constructor
-  NETGENPlugin_Hypothesis_2D_i (PortableServer::POA_ptr thePOA,
-                                int                     theStudyId,
-                                ::SMESH_Gen*            theGenImpl);
-  // Destructor
-  virtual ~NETGENPlugin_Hypothesis_2D_i();
+public:
+    // Constructor
+    NETGENPlugin_Hypothesis_2D_i(PortableServer::POA_ptr thePOA, int theStudyId,
+                                 ::SMESH_Gen *theGenImpl);
+    // Destructor
+    virtual ~NETGENPlugin_Hypothesis_2D_i();
 
-  // Get implementation
-  ::NETGENPlugin_Hypothesis_2D* GetImpl();
-  
-  // Verify whether hypothesis supports given entity type 
-  CORBA::Boolean IsDimSupported( SMESH::Dimension type );
+    // Get implementation
+    ::NETGENPlugin_Hypothesis_2D *GetImpl();
 
- protected:
+    // Verify whether hypothesis supports given entity type
+    CORBA::Boolean IsDimSupported(SMESH::Dimension type);
 
-  // to remember whether a parameter is already set (issue 0021364)
-  // enum SettingMethod
-  // {
-  //   METH_SetQuadAllowed = NETGENPlugin_Hypothesis_i::METH_LAST * 2,
-  //   METH_LAST           = METH_SetQuadAllowed
-  // };
+protected:
+    // to remember whether a parameter is already set (issue 0021364)
+    // enum SettingMethod
+    // {
+    //   METH_SetQuadAllowed = NETGENPlugin_Hypothesis_i::METH_LAST * 2,
+    //   METH_LAST           = METH_SetQuadAllowed
+    // };
 };
 
 #endif

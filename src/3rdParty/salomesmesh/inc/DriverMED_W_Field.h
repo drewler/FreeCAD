@@ -37,47 +37,42 @@
 
 class MESHDRIVERMED_EXPORT DriverMED_W_Field: public Driver_SMESHDS_Mesh
 {
- public:
+public:
+    DriverMED_W_Field();
 
-  DriverMED_W_Field();
+    void AddODOnVertices(bool toAdd) { _addODOnVertices = toAdd; }
 
-  void AddODOnVertices(bool toAdd) { _addODOnVertices = toAdd; }
+    bool Set(SMESHDS_Mesh *mesh, const std::string &fieldName, SMDSAbs_ElementType type,
+             const int nbComps, const bool isIntData);
 
-  bool Set(SMESHDS_Mesh *      mesh,
-           const std::string & fieldName,
-           SMDSAbs_ElementType type,
-           const int           nbComps,
-           const bool          isIntData);
+    void SetCompName(const int iComp, const char *name);
 
-  void SetCompName(const int iComp, const char* name);
+    void SetDtIt(const int dt, const int it);
 
-  void SetDtIt(const int dt, const int it);
+    void AddValue(double val);
+    void AddValue(int val);
 
-  void AddValue( double val );
-  void AddValue( int    val );
-
-  /*
+    /*
    * Returns elements in the order they are written in MED file. Result can be NULL!
    */
-  SMDS_ElemIteratorPtr GetOrderedElems();
+    SMDS_ElemIteratorPtr GetOrderedElems();
 
-  /*
+    /*
    * Add one field to the file
    */
-  virtual Status Perform();
+    virtual Status Perform();
 
- private:
+private:
+    std::string _fieldName;
+    SMDSAbs_ElementType _elemType;
+    std::vector<std::string> _compNames;
+    std::vector<double> _dblValues;
+    std::vector<int> _intValues;
+    int _dt, _it;
+    bool _addODOnVertices;
 
-  std::string                _fieldName;
-  SMDSAbs_ElementType        _elemType;
-  std::vector< std::string > _compNames;
-  std::vector< double >      _dblValues;
-  std::vector< int >         _intValues;
-  int                        _dt, _it;
-  bool                       _addODOnVertices;
-
-  std::vector< const SMDS_MeshElement* >              _elemsByGeom[SMDSEntity_Last];
-  std::vector< std::pair< SMDSAbs_EntityType, int > > _nbElemsByGeom;
+    std::vector<const SMDS_MeshElement *> _elemsByGeom[SMDSEntity_Last];
+    std::vector<std::pair<SMDSAbs_EntityType, int>> _nbElemsByGeom;
 };
 
 #endif

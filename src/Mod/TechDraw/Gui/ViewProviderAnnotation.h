@@ -31,10 +31,11 @@
 #include "ViewProviderDrawingView.h"
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 
-class TechDrawGuiExport ViewProviderAnnotation : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderAnnotation: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderAnnotation);
 
@@ -44,10 +45,10 @@ public:
     /// destructor
     ~ViewProviderAnnotation() override;
 
-    bool useNewSelectionModel() const override {return false;}
-    void updateData(const App::Property*) override;
+    bool useNewSelectionModel() const override { return false; }
+    void updateData(const App::Property *) override;
 
-    TechDraw::DrawViewAnnotation* getViewObject() const override;
+    TechDraw::DrawViewAnnotation *getViewObject() const override;
 };
 
 } // namespace TechDrawGui

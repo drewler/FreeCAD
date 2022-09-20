@@ -22,54 +22,53 @@
 // Created   : Wed Mar 14 18:28:45 2007
 // Author    : Edward AGAPOV (eap)
 // Module    : SMESH
-// $Header: 
+// $Header:
 //
 #ifndef SMESH_Comment_HeaderFile
 #define SMESH_Comment_HeaderFile
 
-# include <string>
-# include <sstream>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
 /*!
  * \brief Class to generate string from any type
  */
-class SMESH_Comment : public string
+class SMESH_Comment: public string
 {
-  ostringstream _s ;
+    ostringstream _s;
 
-public :
+public:
+    SMESH_Comment() : string("") {}
 
-  SMESH_Comment():string("") {}
+    SMESH_Comment(const SMESH_Comment &c) : string()
+    {
+        _s << c.c_str();
+        this->string::operator=(_s.str());
+    }
 
-  SMESH_Comment(const SMESH_Comment& c):string() {
-    _s << c.c_str() ;
-    this->string::operator=( _s.str() );
-  }
+    SMESH_Comment &operator=(const SMESH_Comment &c)
+    {
+        _s << c.c_str();
+        this->string::operator=(_s.str());
+        return *this;
+    }
 
-  SMESH_Comment & operator=(const SMESH_Comment& c) {
-    _s << c.c_str() ;
-    this->string::operator=( _s.str() );
-    return *this;
-  }
+    template<class T> SMESH_Comment(const T &anything)
+    {
+        _s << anything;
+        this->string::operator=(_s.str());
+    }
 
-  template <class T>
-  SMESH_Comment( const T &anything ) {
-    _s << anything ;
-    this->string::operator=( _s.str() );
-  }
+    template<class T> SMESH_Comment &operator<<(const T &anything)
+    {
+        _s << anything;
+        this->string::operator=(_s.str());
+        return *this;
+    }
 
-  template <class T>
-  SMESH_Comment & operator<<( const T &anything ) {
-    _s << anything ;
-    this->string::operator=( _s.str() );
-    return *this ;
-  }
-
-  operator char*() const {
-    return (char*)c_str();
-  }
+    operator char *() const { return (char *)c_str(); }
 };
 
 

@@ -39,76 +39,75 @@ using namespace std;
 class NETGENPLUGIN_EXPORT NETGENPlugin_SimpleHypothesis_2D: public SMESH_Hypothesis
 {
 public:
+    NETGENPlugin_SimpleHypothesis_2D(int hypId, int studyId, SMESH_Gen *gen);
 
-  NETGENPlugin_SimpleHypothesis_2D(int hypId, int studyId, SMESH_Gen * gen);
-
-  /*!
+    /*!
    * Sets <number of segments> value
    */
-  void SetNumberOfSegments(int nb);
-  /*!
+    void SetNumberOfSegments(int nb);
+    /*!
    * Returns <number of segments> value.
    * Can be zero in case if LocalLength() has been set
    */
-  int GetNumberOfSegments() const { return _nbSegments; }
+    int GetNumberOfSegments() const { return _nbSegments; }
 
-  /*!
+    /*!
    * Sets <segment length> value
    */
-  void SetLocalLength(double segmentLength);
-  /*!
+    void SetLocalLength(double segmentLength);
+    /*!
    * Returns <segment length> value.
    * Can be zero in case if NumberOfSegments() has been set
    */
-  double GetLocalLength() const { return _segmentLength; }
+    double GetLocalLength() const { return _segmentLength; }
 
-  /*!
+    /*!
    * Sets <maximum element area> to be dependent on 1D discretization
    */
-  void LengthFromEdges();
+    void LengthFromEdges();
 
-  /*!
+    /*!
    * Sets <maximum element area> value.
    * Zero or negative value means same as LengthFromEdges().
    */
-  void SetMaxElementArea(double area);
-  /*!
+    void SetMaxElementArea(double area);
+    /*!
    * Returns <maximum element area> value.
    * Can be zero in case of LengthFromEdges()
    */
-  double GetMaxElementArea() const { return _area; }
+    double GetMaxElementArea() const { return _area; }
 
-  /*!
+    /*!
    * Enables/disables generation of quadrangular faces
    */
-  void SetAllowQuadrangles(bool toAllow);
-  /*!
+    void SetAllowQuadrangles(bool toAllow);
+    /*!
    * Returns true if generation of quadrangular faces is enabled
    */
-  bool GetAllowQuadrangles() const;
+    bool GetAllowQuadrangles() const;
 
-  // Persistence
-  virtual ostream & SaveTo(ostream & save);
-  virtual istream & LoadFrom(istream & load);
+    // Persistence
+    virtual ostream &SaveTo(ostream &save);
+    virtual istream &LoadFrom(istream &load);
 
-  /*!
+    /*!
    * \brief Set parameters by mesh
    * \param theMesh - the built mesh
    * \param theShape - the geometry of interest
    * \retval bool - true if theShape is meshed
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
 private:
-  int    _nbSegments;
-  double _segmentLength, _area;
-  bool   _allowQuad;
+    int _nbSegments;
+    double _segmentLength, _area;
+    bool _allowQuad;
 };
 
 #endif

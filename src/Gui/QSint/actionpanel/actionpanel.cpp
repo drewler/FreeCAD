@@ -16,8 +16,7 @@ namespace QSint
 {
 
 
-ActionPanel::ActionPanel(QWidget *parent) :
-    BaseClass(parent), mySpacer(nullptr)
+ActionPanel::ActionPanel(QWidget *parent) : BaseClass(parent), mySpacer(nullptr)
 {
     setProperty("class", "panel");
 
@@ -33,21 +32,21 @@ ActionPanel::ActionPanel(QWidget *parent) :
 
 void ActionPanel::setScheme(ActionPanelScheme *scheme)
 {
-  if (scheme) {
-    myScheme = scheme;
-    setStyleSheet(myScheme->actionStyle);
+    if (scheme) {
+        myScheme = scheme;
+        setStyleSheet(myScheme->actionStyle);
 
-    // set scheme for children
-    QObjectList list(children());
-    foreach(QObject *obj, list) {
-      if (dynamic_cast<ActionGroup*>(obj)) {
-        ((ActionGroup*)obj)->setScheme(scheme);
-        continue;
-      }
+        // set scheme for children
+        QObjectList list(children());
+        foreach (QObject *obj, list) {
+            if (dynamic_cast<ActionGroup *>(obj)) {
+                ((ActionGroup *)obj)->setScheme(scheme);
+                continue;
+            }
+        }
+
+        update();
     }
-
-    update();
-  }
 }
 
 //void ActionPanel::paintEvent ( QPaintEvent * event )
@@ -60,61 +59,56 @@ void ActionPanel::setScheme(ActionPanelScheme *scheme)
 
 void ActionPanel::addWidget(QWidget *w)
 {
-  if (w)
-    layout()->addWidget(w);
+    if (w) layout()->addWidget(w);
 }
 
 void ActionPanel::removeWidget(QWidget *w)
 {
-  if (w)
-    layout()->removeWidget(w);
+    if (w) layout()->removeWidget(w);
 }
 
 void ActionPanel::addStretch(int s)
 {
-  Q_UNUSED(s); 
-  //((QVBoxLayout*)layout())->addStretch(s);
-  if (!mySpacer) {
-    mySpacer = new QSpacerItem(0,0,QSizePolicy::Minimum, QSizePolicy::Expanding);
-    layout()->addItem(mySpacer);
-  }
+    Q_UNUSED(s);
+    //((QVBoxLayout*)layout())->addStretch(s);
+    if (!mySpacer) {
+        mySpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        layout()->addItem(mySpacer);
+    }
 }
 
 void ActionPanel::removeStretch()
 {
-  if (mySpacer) {
-    layout()->removeItem(mySpacer);
-    delete mySpacer;
-    mySpacer = nullptr;
-  }
+    if (mySpacer) {
+        layout()->removeItem(mySpacer);
+        delete mySpacer;
+        mySpacer = nullptr;
+    }
 }
 
-ActionGroup * ActionPanel::createGroup()
+ActionGroup *ActionPanel::createGroup()
 {
-    ActionGroup * group = new ActionGroup(this);
+    ActionGroup *group = new ActionGroup(this);
     addWidget(group);
     return group;
 }
 
-ActionGroup * ActionPanel::createGroup(const QString &title, bool expandable)
+ActionGroup *ActionPanel::createGroup(const QString &title, bool expandable)
 {
-    ActionGroup * box = new ActionGroup(title, expandable, this);
+    ActionGroup *box = new ActionGroup(title, expandable, this);
     addWidget(box);
     return box;
 }
 
-ActionGroup * ActionPanel::createGroup(const QPixmap &icon, const QString &title, bool expandable)
+ActionGroup *ActionPanel::createGroup(const QPixmap &icon, const QString &title, bool expandable)
 {
-    ActionGroup * box = new ActionGroup(icon, title, expandable, this);
+    ActionGroup *box = new ActionGroup(icon, title, expandable, this);
     addWidget(box);
     return box;
 }
 
 
-QSize ActionPanel::minimumSizeHint() const
-{
-    return QSize(200,150);
-}
+QSize ActionPanel::minimumSizeHint() const { return QSize(200, 150); }
 
 
-} // namespace
+} // namespace QSint

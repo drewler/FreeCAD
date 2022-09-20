@@ -51,59 +51,58 @@ namespace DockWnd
  * which also deletes the item to be removed.
  * \author Werner Mayer
  */
-class GuiExport ToolBox : public QWidget
+class GuiExport ToolBox: public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  ToolBox( QWidget *parent=nullptr );
-  virtual ~ToolBox();
+    ToolBox(QWidget *parent = nullptr);
+    virtual ~ToolBox();
 
-  int addItem ( QWidget * w, const QString & label );
-  int addItem ( QWidget * item, const QIcon & iconSet, const QString & label );
-  int insertItem ( int index, QWidget * item, const QString & label );
-  int insertItem ( int index, QWidget * item, const QIcon & iconSet, const QString & label );
+    int addItem(QWidget *w, const QString &label);
+    int addItem(QWidget *item, const QIcon &iconSet, const QString &label);
+    int insertItem(int index, QWidget *item, const QString &label);
+    int insertItem(int index, QWidget *item, const QIcon &iconSet, const QString &label);
 
-  void removeItem ( int index );
+    void removeItem(int index);
 
-  void setItemEnabled ( int index, bool enabled );
-  bool isItemEnabled ( int index ) const;
+    void setItemEnabled(int index, bool enabled);
+    bool isItemEnabled(int index) const;
 
-  void setItemText ( int index, const QString & label );
-  QString itemText ( int index ) const;
+    void setItemText(int index, const QString &label);
+    QString itemText(int index) const;
 
-  void setItemIcon ( int index, const QIcon & iconSet );
-  QIcon itemIcon ( int index ) const;
+    void setItemIcon(int index, const QIcon &iconSet);
+    QIcon itemIcon(int index) const;
 
-  void setItemToolTip ( int index, const QString & toolTip );
-  QString itemToolTip ( int index ) const;
+    void setItemToolTip(int index, const QString &toolTip);
+    QString itemToolTip(int index) const;
 
-  QWidget * currentWidget () const;
+    QWidget *currentWidget() const;
 
-  int currentIndex () const;
-  QWidget * widget ( int index ) const;
-  int indexOf ( QWidget * item ) const;
-  int count () const;
+    int currentIndex() const;
+    QWidget *widget(int index) const;
+    int indexOf(QWidget *item) const;
+    int count() const;
 
 public Q_SLOTS:
-  void setCurrentIndex ( int index );
-  void setCurrentWidget ( QWidget * item );
+    void setCurrentIndex(int index);
+    void setCurrentWidget(QWidget *item);
 
 protected:
-  void changeEvent(QEvent *e);
+    void changeEvent(QEvent *e);
 
 Q_SIGNALS:
-  /** This signal is emitted when the current item changed.
+    /** This signal is emitted when the current item changed.
    * The new current item's index is passed in index, or -1 if there is no current item.
    */
-  void currentChanged ( int index );
+    void currentChanged(int index);
 
 private:
-  QToolBox* _pToolBox;
+    QToolBox *_pToolBox;
 };
 
 } // namespace DockWnd
 } // namespace Gui
 
 #endif // GUI_DOCKWND_TOOLBOX_H
-

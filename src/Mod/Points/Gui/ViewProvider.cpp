@@ -24,16 +24,16 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Inventor/nodes/SoCamera.h>
-# include <Inventor/nodes/SoCoordinate3.h>
-# include <Inventor/nodes/SoDrawStyle.h>
-# include <Inventor/nodes/SoPointSet.h>
-# include <Inventor/nodes/SoIndexedPointSet.h>
-# include <Inventor/nodes/SoMaterial.h>
-# include <Inventor/nodes/SoMaterialBinding.h>
-# include <Inventor/nodes/SoNormal.h>
-# include <Inventor/errors/SoDebugError.h>
-# include <Inventor/events/SoMouseButtonEvent.h>
+#include <Inventor/nodes/SoCamera.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoPointSet.h>
+#include <Inventor/nodes/SoIndexedPointSet.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoMaterialBinding.h>
+#include <Inventor/nodes/SoNormal.h>
+#include <Inventor/errors/SoDebugError.h>
+#include <Inventor/events/SoMouseButtonEvent.h>
 #endif
 
 #include <boost/math/special_functions/fpclassify.hpp>
@@ -67,7 +67,7 @@ using namespace Points;
 PROPERTY_SOURCE_ABSTRACT(PointsGui::ViewProviderPoints, Gui::ViewProviderGeometryObject)
 
 
-App::PropertyFloatConstraint::Constraints ViewProviderPoints::floatRange = {1.0,64.0,1.0};
+App::PropertyFloatConstraint::Constraints ViewProviderPoints::floatRange = {1.0, 64.0, 1.0};
 
 ViewProviderPoints::ViewProviderPoints()
 {
@@ -107,28 +107,26 @@ ViewProviderPoints::~ViewProviderPoints()
     pcPointStyle->unref();
 }
 
-void ViewProviderPoints::onChanged(const App::Property* prop)
+void ViewProviderPoints::onChanged(const App::Property *prop)
 {
-    if (prop == &PointSize) {
-        pcPointStyle->pointSize = PointSize.getValue();
-    }
+    if (prop == &PointSize) { pcPointStyle->pointSize = PointSize.getValue(); }
     else if (prop == &SelectionStyle) {
-        pcHighlight->style = SelectionStyle.getValue() ? Gui::SoFCSelection::BOX
-                                                       : Gui::SoFCSelection::EMISSIVE;
+        pcHighlight->style =
+            SelectionStyle.getValue() ? Gui::SoFCSelection::BOX : Gui::SoFCSelection::EMISSIVE;
     }
     else {
         ViewProviderGeometryObject::onChanged(prop);
     }
 }
 
-void ViewProviderPoints::setVertexColorMode(App::PropertyColorList* pcProperty)
+void ViewProviderPoints::setVertexColorMode(App::PropertyColorList *pcProperty)
 {
-    const std::vector<App::Color>& val = pcProperty->getValues();
+    const std::vector<App::Color> &val = pcProperty->getValues();
 
     pcColorMat->diffuseColor.setNum(val.size());
-    SbColor* col = pcColorMat->diffuseColor.startEditing();
+    SbColor *col = pcColorMat->diffuseColor.startEditing();
 
-    std::size_t i=0;
+    std::size_t i = 0;
     for (std::vector<App::Color>::const_iterator it = val.begin(); it != val.end(); ++it) {
         col[i++].setValue(it->r, it->g, it->b);
     }
@@ -136,14 +134,14 @@ void ViewProviderPoints::setVertexColorMode(App::PropertyColorList* pcProperty)
     pcColorMat->diffuseColor.finishEditing();
 }
 
-void ViewProviderPoints::setVertexGreyvalueMode(Points::PropertyGreyValueList* pcProperty)
+void ViewProviderPoints::setVertexGreyvalueMode(Points::PropertyGreyValueList *pcProperty)
 {
-    const std::vector<float>& val = pcProperty->getValues();
+    const std::vector<float> &val = pcProperty->getValues();
 
     pcColorMat->diffuseColor.setNum(val.size());
-    SbColor* col = pcColorMat->diffuseColor.startEditing();
+    SbColor *col = pcColorMat->diffuseColor.startEditing();
 
-    std::size_t i=0;
+    std::size_t i = 0;
     for (std::vector<float>::const_iterator it = val.begin(); it != val.end(); ++it) {
         col[i++].setValue(*it, *it, *it);
     }
@@ -151,14 +149,14 @@ void ViewProviderPoints::setVertexGreyvalueMode(Points::PropertyGreyValueList* p
     pcColorMat->diffuseColor.finishEditing();
 }
 
-void ViewProviderPoints::setVertexNormalMode(Points::PropertyNormalList* pcProperty)
+void ViewProviderPoints::setVertexNormalMode(Points::PropertyNormalList *pcProperty)
 {
-    const std::vector<Base::Vector3f>& val = pcProperty->getValues();
+    const std::vector<Base::Vector3f> &val = pcProperty->getValues();
 
     pcPointsNormal->vector.setNum(val.size());
-    SbVec3f* norm = pcPointsNormal->vector.startEditing();
+    SbVec3f *norm = pcPointsNormal->vector.startEditing();
 
-    std::size_t i=0;
+    std::size_t i = 0;
     for (std::vector<Base::Vector3f>::const_iterator it = val.begin(); it != val.end(); ++it) {
         norm[i++].setValue(it->x, it->y, it->z);
     }
@@ -166,21 +164,24 @@ void ViewProviderPoints::setVertexNormalMode(Points::PropertyNormalList* pcPrope
     pcPointsNormal->vector.finishEditing();
 }
 
-void ViewProviderPoints::setDisplayMode(const char* ModeName)
+void ViewProviderPoints::setDisplayMode(const char *ModeName)
 {
     int numPoints = pcPointsCoord->point.getNum();
 
-    if (strcmp("Color",ModeName) == 0) {
-        std::map<std::string,App::Property*> Map;
+    if (strcmp("Color", ModeName) == 0) {
+        std::map<std::string, App::Property *> Map;
         pcObject->getPropertyMap(Map);
-        for (std::map<std::string,App::Property*>::iterator it = Map.begin(); it != Map.end(); ++it) {
+        for (std::map<std::string, App::Property *>::iterator it = Map.begin(); it != Map.end();
+             ++it) {
             Base::Type type = it->second->getTypeId();
             if (type == App::PropertyColorList::getClassTypeId()) {
-                App::PropertyColorList* colors = static_cast<App::PropertyColorList*>(it->second);
+                App::PropertyColorList *colors = static_cast<App::PropertyColorList *>(it->second);
                 if (numPoints != colors->getSize()) {
 #ifdef FC_DEBUG
-                    SoDebugError::postWarning("ViewProviderPoints::setDisplayMode",
-                                              "The number of points (%d) doesn't match with the number of colors (%d).", numPoints, colors->getSize());
+                    SoDebugError::postWarning(
+                        "ViewProviderPoints::setDisplayMode",
+                        "The number of points (%d) doesn't match with the number of colors (%d).",
+                        numPoints, colors->getSize());
 #endif
                     // fallback
                     setDisplayMaskMode("Point");
@@ -193,40 +194,48 @@ void ViewProviderPoints::setDisplayMode(const char* ModeName)
             }
         }
     }
-    else if (strcmp("Intensity",ModeName) == 0) {
-        std::map<std::string,App::Property*> Map;
+    else if (strcmp("Intensity", ModeName) == 0) {
+        std::map<std::string, App::Property *> Map;
         pcObject->getPropertyMap(Map);
-        for (std::map<std::string,App::Property*>::iterator it = Map.begin(); it != Map.end(); ++it) {
+        for (std::map<std::string, App::Property *>::iterator it = Map.begin(); it != Map.end();
+             ++it) {
             Base::Type type = it->second->getTypeId();
             if (type == Points::PropertyGreyValueList::getClassTypeId()) {
-                Points::PropertyGreyValueList* greyValues = static_cast<Points::PropertyGreyValueList*>(it->second);
+                Points::PropertyGreyValueList *greyValues =
+                    static_cast<Points::PropertyGreyValueList *>(it->second);
                 if (numPoints != greyValues->getSize()) {
 #ifdef FC_DEBUG
                     SoDebugError::postWarning("ViewProviderPoints::setDisplayMode",
-                                              "The number of points (%d) doesn't match with the number of grey values (%d).", numPoints, greyValues->getSize());
+                                              "The number of points (%d) doesn't match with the "
+                                              "number of grey values (%d).",
+                                              numPoints, greyValues->getSize());
 #endif
                     // Intensity mode is not possible then set the default () mode instead.
                     setDisplayMaskMode("Point");
                 }
                 else {
-                    setVertexGreyvalueMode((Points::PropertyGreyValueList*)it->second);
+                    setVertexGreyvalueMode((Points::PropertyGreyValueList *)it->second);
                     setDisplayMaskMode("Color");
                 }
                 break;
             }
         }
     }
-    else if (strcmp("Shaded",ModeName) == 0) {
-        std::map<std::string,App::Property*> Map;
+    else if (strcmp("Shaded", ModeName) == 0) {
+        std::map<std::string, App::Property *> Map;
         pcObject->getPropertyMap(Map);
-        for (std::map<std::string,App::Property*>::iterator it = Map.begin(); it != Map.end(); ++it) {
+        for (std::map<std::string, App::Property *>::iterator it = Map.begin(); it != Map.end();
+             ++it) {
             Base::Type type = it->second->getTypeId();
             if (type == Points::PropertyNormalList::getClassTypeId()) {
-                Points::PropertyNormalList* normals = static_cast<Points::PropertyNormalList*>(it->second);
+                Points::PropertyNormalList *normals =
+                    static_cast<Points::PropertyNormalList *>(it->second);
                 if (numPoints != normals->getSize()) {
 #ifdef FC_DEBUG
-                    SoDebugError::postWarning("ViewProviderPoints::setDisplayMode",
-                                              "The number of points (%d) doesn't match with the number of normals (%d).", numPoints, normals->getSize());
+                    SoDebugError::postWarning(
+                        "ViewProviderPoints::setDisplayMode",
+                        "The number of points (%d) doesn't match with the number of normals (%d).",
+                        numPoints, normals->getSize());
 #endif
                     // fallback
                     setDisplayMaskMode("Point");
@@ -239,7 +248,7 @@ void ViewProviderPoints::setDisplayMode(const char* ModeName)
             }
         }
     }
-    else if (strcmp("Points",ModeName) == 0) {
+    else if (strcmp("Points", ModeName) == 0) {
         setDisplayMaskMode("Point");
     }
 
@@ -262,13 +271,13 @@ std::vector<std::string> ViewProviderPoints::getDisplayModes() const
 
 #else
     if (pcObject) {
-        std::map<std::string,App::Property*> Map;
+        std::map<std::string, App::Property *> Map;
         pcObject->getPropertyMap(Map);
 
-        for (std::map<std::string,App::Property*>::iterator it = Map.begin(); it != Map.end(); ++it) {
+        for (std::map<std::string, App::Property *>::iterator it = Map.begin(); it != Map.end();
+             ++it) {
             Base::Type type = it->second->getTypeId();
-            if (type == Points::PropertyNormalList::getClassTypeId())
-                StrList.push_back("Shaded");
+            if (type == Points::PropertyNormalList::getClassTypeId()) StrList.push_back("Shaded");
             else if (type == Points::PropertyGreyValueList::getClassTypeId())
                 StrList.push_back("Intensity");
             else if (type == App::PropertyColorList::getClassTypeId())
@@ -282,27 +291,12 @@ std::vector<std::string> ViewProviderPoints::getDisplayModes() const
 
 QIcon ViewProviderPoints::getIcon() const
 {
-    static const char * const Points_Feature_xpm[] = {
-        "16 16 4 1",
-        ".	c none",
-        "s	c #000000",
-        "b	c #FFFF00",
-        "r	c #FF0000",
-        "ss.....ss.....bb",
-        "ss..ss.ss.....bb",
-        "....ss..........",
-        "...........bb...",
-        ".ss..ss....bb...",
-        ".ss..ss.........",
-        "........bb....bb",
-        "ss......bb....bb",
-        "ss..rr......bb..",
-        "....rr......bb..",
-        "........bb......",
-        "..rr....bb..bb..",
-        "..rr........bb..",
-        ".....rr.........",
-        "rr...rr..rr..rr.",
+    static const char *const Points_Feature_xpm[] = {
+        "16 16 4 1",        ".	c none",        "s	c #000000",     "b	c #FFFF00",
+        "r	c #FF0000",     "ss.....ss.....bb", "ss..ss.ss.....bb", "....ss..........",
+        "...........bb...", ".ss..ss....bb...", ".ss..ss.........", "........bb....bb",
+        "ss......bb....bb", "ss..rr......bb..", "....rr......bb..", "........bb......",
+        "..rr....bb..bb..", "..rr........bb..", ".....rr.........", "rr...rr..rr..rr.",
         "rr.......rr..rr."};
     QPixmap px(Points_Feature_xpm);
     return px;
@@ -310,8 +304,7 @@ QIcon ViewProviderPoints::getIcon() const
 
 bool ViewProviderPoints::setEdit(int ModNum)
 {
-    if (ModNum == ViewProvider::Transform)
-        return ViewProviderGeometryObject::setEdit(ModNum);
+    if (ModNum == ViewProvider::Transform) return ViewProviderGeometryObject::setEdit(ModNum);
     else if (ModNum == ViewProvider::Cutting)
         return true;
     return false;
@@ -319,27 +312,25 @@ bool ViewProviderPoints::setEdit(int ModNum)
 
 void ViewProviderPoints::unsetEdit(int ModNum)
 {
-    if (ModNum == ViewProvider::Transform)
-        ViewProviderGeometryObject::unsetEdit(ModNum);
+    if (ModNum == ViewProvider::Transform) ViewProviderGeometryObject::unsetEdit(ModNum);
 }
 
-void ViewProviderPoints::clipPointsCallback(void *, SoEventCallback * n)
+void ViewProviderPoints::clipPointsCallback(void *, SoEventCallback *n)
 {
     // When this callback function is invoked we must in either case leave the edit mode
-    Gui::View3DInventorViewer* view  = static_cast<Gui::View3DInventorViewer*>(n->getUserData());
+    Gui::View3DInventorViewer *view = static_cast<Gui::View3DInventorViewer *>(n->getUserData());
     view->setEditing(false);
     view->removeEventCallback(SoMouseButtonEvent::getClassTypeId(), clipPointsCallback);
     n->setHandled();
 
     std::vector<SbVec2f> clPoly = view->getGLPolygon();
-    if (clPoly.size() < 3)
-        return;
-    if (clPoly.front() != clPoly.back())
-        clPoly.push_back(clPoly.front());
+    if (clPoly.size() < 3) return;
+    if (clPoly.front() != clPoly.back()) clPoly.push_back(clPoly.front());
 
-    std::vector<Gui::ViewProvider*> views = view->getDocument()->getViewProvidersOfType(ViewProviderPoints::getClassTypeId());
-    for (std::vector<Gui::ViewProvider*>::iterator it = views.begin(); it != views.end(); ++it) {
-        ViewProviderPoints* that = static_cast<ViewProviderPoints*>(*it);
+    std::vector<Gui::ViewProvider *> views =
+        view->getDocument()->getViewProvidersOfType(ViewProviderPoints::getClassTypeId());
+    for (std::vector<Gui::ViewProvider *>::iterator it = views.begin(); it != views.end(); ++it) {
+        ViewProviderPoints *that = static_cast<ViewProviderPoints *>(*it);
         if (that->getEditingMode() > -1) {
             that->finishEditing();
             that->cut(clPoly, *view);
@@ -359,12 +350,9 @@ ViewProviderScattered::ViewProviderScattered()
     pcPoints->ref();
 }
 
-ViewProviderScattered::~ViewProviderScattered()
-{
-    pcPoints->unref();
-}
+ViewProviderScattered::~ViewProviderScattered() { pcPoints->unref(); }
 
-void ViewProviderScattered::attach(App::DocumentObject* pcObj)
+void ViewProviderScattered::attach(App::DocumentObject *pcObj)
 {
     // call parent's attach to define display modes
     ViewProviderGeometryObject::attach(pcObj);
@@ -380,7 +368,7 @@ void ViewProviderScattered::attach(App::DocumentObject* pcObj)
     std::vector<std::string> modes = getDisplayModes();
 
     // points part ---------------------------------------------
-    SoGroup* pcPointRoot = new SoGroup();
+    SoGroup *pcPointRoot = new SoGroup();
     pcPointRoot->addChild(pcPointStyle);
     pcPointRoot->addChild(pcShapeMaterial);
     pcPointRoot->addChild(pcHighlight);
@@ -388,7 +376,7 @@ void ViewProviderScattered::attach(App::DocumentObject* pcObj)
 
     // points shaded ---------------------------------------------
     if (std::find(modes.begin(), modes.end(), std::string("Shaded")) != modes.end()) {
-        SoGroup* pcPointShadedRoot = new SoGroup();
+        SoGroup *pcPointShadedRoot = new SoGroup();
         pcPointShadedRoot->addChild(pcPointStyle);
         pcPointShadedRoot->addChild(pcShapeMaterial);
         pcPointShadedRoot->addChild(pcPointsNormal);
@@ -397,11 +385,11 @@ void ViewProviderScattered::attach(App::DocumentObject* pcObj)
     }
 
     // color shaded  ------------------------------------------
-    if (std::find(modes.begin(), modes.end(), std::string("Color")) != modes.end() ||
-        std::find(modes.begin(), modes.end(), std::string("Intensity")) != modes.end()) {
-        SoGroup* pcColorShadedRoot = new SoGroup();
+    if (std::find(modes.begin(), modes.end(), std::string("Color")) != modes.end()
+        || std::find(modes.begin(), modes.end(), std::string("Intensity")) != modes.end()) {
+        SoGroup *pcColorShadedRoot = new SoGroup();
         pcColorShadedRoot->addChild(pcPointStyle);
-        SoMaterialBinding* pcMatBinding = new SoMaterialBinding;
+        SoMaterialBinding *pcMatBinding = new SoMaterialBinding;
         pcMatBinding->value = SoMaterialBinding::PER_VERTEX_INDEXED;
         pcColorShadedRoot->addChild(pcColorMat);
         pcColorShadedRoot->addChild(pcMatBinding);
@@ -410,7 +398,7 @@ void ViewProviderScattered::attach(App::DocumentObject* pcObj)
     }
 }
 
-void ViewProviderScattered::updateData(const App::Property* prop)
+void ViewProviderScattered::updateData(const App::Property *prop)
 {
     ViewProviderPoints::updateData(prop);
     if (prop->getTypeId() == Points::PropertyPointKernel::getClassTypeId()) {
@@ -431,77 +419,78 @@ void ViewProviderScattered::updateData(const App::Property* prop)
     }
 }
 
-void ViewProviderScattered::cut(const std::vector<SbVec2f>& picked, Gui::View3DInventorViewer &Viewer)
+void ViewProviderScattered::cut(const std::vector<SbVec2f> &picked,
+                                Gui::View3DInventorViewer &Viewer)
 {
     // create the polygon from the picked points
     Base::Polygon2d cPoly;
     for (std::vector<SbVec2f>::const_iterator it = picked.begin(); it != picked.end(); ++it) {
-        cPoly.Add(Base::Vector2d((*it)[0],(*it)[1]));
+        cPoly.Add(Base::Vector2d((*it)[0], (*it)[1]));
     }
 
     // get a reference to the point feature
-    Points::Feature* fea = static_cast<Points::Feature*>(pcObject);
-    const Points::PointKernel& points = fea->Points.getValue();
+    Points::Feature *fea = static_cast<Points::Feature *>(pcObject);
+    const Points::PointKernel &points = fea->Points.getValue();
 
-    SoCamera* pCam = Viewer.getSoRenderManager()->getCamera();
-    SbViewVolume  vol = pCam->getViewVolume();
+    SoCamera *pCam = Viewer.getSoRenderManager()->getCamera();
+    SbViewVolume vol = pCam->getViewVolume();
 
     // search for all points inside/outside the polygon
     std::vector<unsigned long> removeIndices;
     removeIndices.reserve(points.size());
 
     unsigned long index = 0;
-    for (Points::PointKernel::const_iterator jt = points.begin(); jt != points.end(); ++jt, ++index) {
-        SbVec3f pt(jt->x,jt->y,jt->z);
+    for (Points::PointKernel::const_iterator jt = points.begin(); jt != points.end();
+         ++jt, ++index) {
+        SbVec3f pt(jt->x, jt->y, jt->z);
 
         // project from 3d to 2d
         vol.projectToScreen(pt, pt);
-        if (cPoly.Contains(Base::Vector2d(pt[0],pt[1])))
-            removeIndices.push_back(index);
+        if (cPoly.Contains(Base::Vector2d(pt[0], pt[1]))) removeIndices.push_back(index);
     }
 
-    if (removeIndices.empty())
-        return; // nothing needs to be done
+    if (removeIndices.empty()) return; // nothing needs to be done
 
     //Remove the points from the cloud and open a transaction object for the undo/redo stuff
-    Gui::Application::Instance->activeDocument()->openCommand(QT_TRANSLATE_NOOP("Command", "Cut points"));
+    Gui::Application::Instance->activeDocument()->openCommand(
+        QT_TRANSLATE_NOOP("Command", "Cut points"));
 
     // sets the points outside the polygon to update the Inventor node
     fea->Points.removeIndices(removeIndices);
 
-    std::map<std::string,App::Property*> Map;
+    std::map<std::string, App::Property *> Map;
     pcObject->getPropertyMap(Map);
 
-    for (std::map<std::string,App::Property*>::iterator it = Map.begin(); it != Map.end(); ++it) {
+    for (std::map<std::string, App::Property *>::iterator it = Map.begin(); it != Map.end(); ++it) {
         Base::Type type = it->second->getTypeId();
         if (type == Points::PropertyNormalList::getClassTypeId()) {
-            static_cast<Points::PropertyNormalList*>(it->second)->removeIndices(removeIndices);
+            static_cast<Points::PropertyNormalList *>(it->second)->removeIndices(removeIndices);
         }
         else if (type == Points::PropertyGreyValueList::getClassTypeId()) {
-            static_cast<Points::PropertyGreyValueList*>(it->second)->removeIndices(removeIndices);
+            static_cast<Points::PropertyGreyValueList *>(it->second)->removeIndices(removeIndices);
         }
         else if (type == App::PropertyColorList::getClassTypeId()) {
             //static_cast<App::PropertyColorList*>(it->second)->removeIndices(removeIndices);
-            const std::vector<App::Color>& colors = static_cast<App::PropertyColorList*>(it->second)->getValues();
+            const std::vector<App::Color> &colors =
+                static_cast<App::PropertyColorList *>(it->second)->getValues();
 
-            if (removeIndices.size() > colors.size())
-                break;
+            if (removeIndices.size() > colors.size()) break;
 
             std::vector<App::Color> remainValue;
             remainValue.reserve(colors.size() - removeIndices.size());
 
             std::vector<unsigned long>::iterator pos = removeIndices.begin();
-            for (std::vector<App::Color>::const_iterator jt = colors.begin(); jt != colors.end(); ++jt) {
+            for (std::vector<App::Color>::const_iterator jt = colors.begin(); jt != colors.end();
+                 ++jt) {
                 unsigned long index = jt - colors.begin();
-                if (pos == removeIndices.end())
-                    remainValue.push_back( *jt );
+                if (pos == removeIndices.end()) remainValue.push_back(*jt);
                 else if (index != *pos)
-                    remainValue.push_back( *jt );
+                    remainValue.push_back(*jt);
                 else
                     ++pos;
             }
 
-            static_cast<App::PropertyColorList*>(it->second)->setValues(remainValue);
+            static_cast<App::PropertyColorList *>(it->second)->setValues(remainValue);
         }
     }
 
@@ -520,12 +509,9 @@ ViewProviderStructured::ViewProviderStructured()
     pcPoints->ref();
 }
 
-ViewProviderStructured::~ViewProviderStructured()
-{
-    pcPoints->unref();
-}
+ViewProviderStructured::~ViewProviderStructured() { pcPoints->unref(); }
 
-void ViewProviderStructured::attach(App::DocumentObject* pcObj)
+void ViewProviderStructured::attach(App::DocumentObject *pcObj)
 {
     // call parent's attach to define display modes
     ViewProviderGeometryObject::attach(pcObj);
@@ -541,7 +527,7 @@ void ViewProviderStructured::attach(App::DocumentObject* pcObj)
     std::vector<std::string> modes = getDisplayModes();
 
     // points part ---------------------------------------------
-    SoGroup* pcPointRoot = new SoGroup();
+    SoGroup *pcPointRoot = new SoGroup();
     pcPointRoot->addChild(pcPointStyle);
     pcPointRoot->addChild(pcShapeMaterial);
     pcPointRoot->addChild(pcHighlight);
@@ -549,7 +535,7 @@ void ViewProviderStructured::attach(App::DocumentObject* pcObj)
 
     // points shaded ---------------------------------------------
     if (std::find(modes.begin(), modes.end(), std::string("Shaded")) != modes.end()) {
-        SoGroup* pcPointShadedRoot = new SoGroup();
+        SoGroup *pcPointShadedRoot = new SoGroup();
         pcPointShadedRoot->addChild(pcPointStyle);
         pcPointShadedRoot->addChild(pcShapeMaterial);
         pcPointShadedRoot->addChild(pcPointsNormal);
@@ -558,11 +544,11 @@ void ViewProviderStructured::attach(App::DocumentObject* pcObj)
     }
 
     // color shaded  ------------------------------------------
-    if (std::find(modes.begin(), modes.end(), std::string("Color")) != modes.end() ||
-        std::find(modes.begin(), modes.end(), std::string("Intensity")) != modes.end()) {
-        SoGroup* pcColorShadedRoot = new SoGroup();
+    if (std::find(modes.begin(), modes.end(), std::string("Color")) != modes.end()
+        || std::find(modes.begin(), modes.end(), std::string("Intensity")) != modes.end()) {
+        SoGroup *pcColorShadedRoot = new SoGroup();
         pcColorShadedRoot->addChild(pcPointStyle);
-        SoMaterialBinding* pcMatBinding = new SoMaterialBinding;
+        SoMaterialBinding *pcMatBinding = new SoMaterialBinding;
         pcMatBinding->value = SoMaterialBinding::PER_VERTEX_INDEXED;
         pcColorShadedRoot->addChild(pcColorMat);
         pcColorShadedRoot->addChild(pcMatBinding);
@@ -571,7 +557,7 @@ void ViewProviderStructured::attach(App::DocumentObject* pcObj)
     }
 }
 
-void ViewProviderStructured::updateData(const App::Property* prop)
+void ViewProviderStructured::updateData(const App::Property *prop)
 {
     ViewProviderPoints::updateData(prop);
     if (prop->getTypeId() == Points::PropertyPointKernel::getClassTypeId()) {
@@ -583,20 +569,21 @@ void ViewProviderStructured::updateData(const App::Property* prop)
     }
 }
 
-void ViewProviderStructured::cut(const std::vector<SbVec2f>& picked, Gui::View3DInventorViewer &Viewer)
+void ViewProviderStructured::cut(const std::vector<SbVec2f> &picked,
+                                 Gui::View3DInventorViewer &Viewer)
 {
     // create the polygon from the picked points
     Base::Polygon2d cPoly;
     for (std::vector<SbVec2f>::const_iterator it = picked.begin(); it != picked.end(); ++it) {
-        cPoly.Add(Base::Vector2d((*it)[0],(*it)[1]));
+        cPoly.Add(Base::Vector2d((*it)[0], (*it)[1]));
     }
 
     // get a reference to the point feature
-    Points::Feature* fea = static_cast<Points::Feature*>(pcObject);
-    const Points::PointKernel& points = fea->Points.getValue();
+    Points::Feature *fea = static_cast<Points::Feature *>(pcObject);
+    const Points::PointKernel &points = fea->Points.getValue();
 
-    SoCamera* pCam = Viewer.getSoRenderManager()->getCamera();
-    SbViewVolume  vol = pCam->getViewVolume();
+    SoCamera *pCam = Viewer.getSoRenderManager()->getCamera();
+    SbViewVolume vol = pCam->getViewVolume();
 
     // search for all points inside/outside the polygon
     Points::PointKernel newKernel;
@@ -607,12 +594,13 @@ void ViewProviderStructured::cut(const std::vector<SbVec2f>& picked, Gui::View3D
     for (Points::PointKernel::const_iterator jt = points.begin(); jt != points.end(); ++jt) {
         // valid point?
         Base::Vector3d vec(*jt);
-        if (!(boost::math::isnan(jt->x) || boost::math::isnan(jt->y) || boost::math::isnan(jt->z))) {
-            SbVec3f pt(jt->x,jt->y,jt->z);
+        if (!(boost::math::isnan(jt->x) || boost::math::isnan(jt->y)
+              || boost::math::isnan(jt->z))) {
+            SbVec3f pt(jt->x, jt->y, jt->z);
 
             // project from 3d to 2d
             vol.projectToScreen(pt, pt);
-            if (cPoly.Contains(Base::Vector2d(pt[0],pt[1]))) {
+            if (cPoly.Contains(Base::Vector2d(pt[0], pt[1]))) {
                 invalidatePoints = true;
                 vec.Set(nan, nan, nan);
             }
@@ -623,7 +611,8 @@ void ViewProviderStructured::cut(const std::vector<SbVec2f>& picked, Gui::View3D
 
     if (invalidatePoints) {
         //Remove the points from the cloud and open a transaction object for the undo/redo stuff
-        Gui::Application::Instance->activeDocument()->openCommand(QT_TRANSLATE_NOOP("Command", "Cut points"));
+        Gui::Application::Instance->activeDocument()->openCommand(
+            QT_TRANSLATE_NOOP("Command", "Cut points"));
 
         // sets the points outside the polygon to update the Inventor node
         fea->Points.setValue(newKernel);
@@ -636,21 +625,23 @@ void ViewProviderStructured::cut(const std::vector<SbVec2f>& picked, Gui::View3D
 
 // -------------------------------------------------
 
-namespace Gui {
+namespace Gui
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(PointsGui::ViewProviderPython, PointsGui::ViewProviderScattered)
 /// @endcond
 
 // explicit template instantiation
 template class PointsGuiExport ViewProviderPythonFeatureT<PointsGui::ViewProviderScattered>;
-}
+} // namespace Gui
 
 // -------------------------------------------------
 
-void ViewProviderPointsBuilder::buildNodes(const App::Property* prop, std::vector<SoNode*>& nodes) const
+void ViewProviderPointsBuilder::buildNodes(const App::Property *prop,
+                                           std::vector<SoNode *> &nodes) const
 {
-    SoCoordinate3 *pcPointsCoord=nullptr;
-    SoPointSet *pcPoints=nullptr;
+    SoCoordinate3 *pcPointsCoord = nullptr;
+    SoPointSet *pcPoints = nullptr;
 
     if (nodes.empty()) {
         pcPointsCoord = new SoCoordinate3();
@@ -660,27 +651,29 @@ void ViewProviderPointsBuilder::buildNodes(const App::Property* prop, std::vecto
     }
     else if (nodes.size() == 2) {
         if (nodes[0]->getTypeId() == SoCoordinate3::getClassTypeId())
-            pcPointsCoord = static_cast<SoCoordinate3*>(nodes[0]);
+            pcPointsCoord = static_cast<SoCoordinate3 *>(nodes[0]);
         if (nodes[1]->getTypeId() == SoPointSet::getClassTypeId())
-            pcPoints = static_cast<SoPointSet*>(nodes[1]);
+            pcPoints = static_cast<SoPointSet *>(nodes[1]);
     }
 
-    if (pcPointsCoord && pcPoints)
-        createPoints(prop, pcPointsCoord, pcPoints);
+    if (pcPointsCoord && pcPoints) createPoints(prop, pcPointsCoord, pcPoints);
 }
 
-void ViewProviderPointsBuilder::createPoints(const App::Property* prop, SoCoordinate3* coords, SoPointSet* points) const
+void ViewProviderPointsBuilder::createPoints(const App::Property *prop, SoCoordinate3 *coords,
+                                             SoPointSet *points) const
 {
-    const Points::PropertyPointKernel* prop_points = static_cast<const Points::PropertyPointKernel*>(prop);
-    const Points::PointKernel& cPts = prop_points->getValue();
+    const Points::PropertyPointKernel *prop_points =
+        static_cast<const Points::PropertyPointKernel *>(prop);
+    const Points::PointKernel &cPts = prop_points->getValue();
 
     coords->point.setNum(cPts.size());
-    SbVec3f* vec = coords->point.startEditing();
+    SbVec3f *vec = coords->point.startEditing();
 
     // get all points
-    std::size_t idx=0;
-    const std::vector<Points::PointKernel::value_type>& kernel = cPts.getBasicPoints();
-    for (std::vector<Points::PointKernel::value_type>::const_iterator it = kernel.begin(); it != kernel.end(); ++it, idx++) {
+    std::size_t idx = 0;
+    const std::vector<Points::PointKernel::value_type> &kernel = cPts.getBasicPoints();
+    for (std::vector<Points::PointKernel::value_type>::const_iterator it = kernel.begin();
+         it != kernel.end(); ++it, idx++) {
         vec[idx].setValue(it->x, it->y, it->z);
     }
 
@@ -688,32 +681,36 @@ void ViewProviderPointsBuilder::createPoints(const App::Property* prop, SoCoordi
     coords->point.finishEditing();
 }
 
-void ViewProviderPointsBuilder::createPoints(const App::Property* prop, SoCoordinate3* coords, SoIndexedPointSet* points) const
+void ViewProviderPointsBuilder::createPoints(const App::Property *prop, SoCoordinate3 *coords,
+                                             SoIndexedPointSet *points) const
 {
-    const Points::PropertyPointKernel* prop_points = static_cast<const Points::PropertyPointKernel*>(prop);
-    const Points::PointKernel& cPts = prop_points->getValue();
+    const Points::PropertyPointKernel *prop_points =
+        static_cast<const Points::PropertyPointKernel *>(prop);
+    const Points::PointKernel &cPts = prop_points->getValue();
 
     coords->point.setNum(cPts.size());
-    SbVec3f* vec = coords->point.startEditing();
+    SbVec3f *vec = coords->point.startEditing();
 
     // get all points
-    std::size_t idx=0;
+    std::size_t idx = 0;
     std::vector<int32_t> indices;
     indices.reserve(cPts.size());
-    const std::vector<Points::PointKernel::value_type>& kernel = cPts.getBasicPoints();
-    for (std::vector<Points::PointKernel::value_type>::const_iterator it = kernel.begin(); it != kernel.end(); ++it, idx++) {
+    const std::vector<Points::PointKernel::value_type> &kernel = cPts.getBasicPoints();
+    for (std::vector<Points::PointKernel::value_type>::const_iterator it = kernel.begin();
+         it != kernel.end(); ++it, idx++) {
         vec[idx].setValue(it->x, it->y, it->z);
         // valid point?
-        if (!(boost::math::isnan(it->x) || boost::math::isnan(it->y) || boost::math::isnan(it->z))) {
+        if (!(boost::math::isnan(it->x) || boost::math::isnan(it->y)
+              || boost::math::isnan(it->z))) {
             indices.push_back(idx);
         }
     }
     coords->point.finishEditing();
 
     // get all point indices
-    idx=0;
+    idx = 0;
     points->coordIndex.setNum(indices.size());
-    int32_t* pos = points->coordIndex.startEditing();
+    int32_t *pos = points->coordIndex.startEditing();
     for (std::vector<int32_t>::iterator it = indices.begin(); it != indices.end(); ++it) {
         pos[idx++] = *it;
     }

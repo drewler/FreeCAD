@@ -28,7 +28,7 @@
 
 
 #ifdef _MSC_VER
-#   pragma warning(disable : 4005)
+#pragma warning(disable : 4005)
 #endif
 
 #ifdef _PreComp_
@@ -71,13 +71,13 @@
 #include <bitset>
 
 #ifdef FC_OS_WIN32
-# include <windows.h>
+#include <windows.h>
 #endif
 
 
 // Qt Toolkit
 #ifndef __QtAll__
-# include <Gui/QtAll.h>
+#include <Gui/QtAll.h>
 #endif
 
 #include <QMessageBox>
@@ -87,7 +87,7 @@
 
 // Inventor
 #ifndef __InventorAll__
-# include <Gui/InventorAll.h>
+#include <Gui/InventorAll.h>
 #endif
 
 #endif // _PreComp_

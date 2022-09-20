@@ -33,7 +33,8 @@
 #include <App/Material.h>
 
 
-namespace Gui {
+namespace Gui
+{
 
 class SoFCSelectionRoot;
 struct SoFCSelectionContextBase;
@@ -42,14 +43,13 @@ using SoFCSelectionContextBasePtr = std::shared_ptr<SoFCSelectionContextBase>;
 struct GuiExport SoFCSelectionContextBase {
     virtual ~SoFCSelectionContextBase() {}
     typedef int MergeFunc(int status, SoFCSelectionContextBasePtr &output,
-            SoFCSelectionContextBasePtr input, SoFCSelectionRoot *node);
+                          SoFCSelectionContextBasePtr input, SoFCSelectionRoot *node);
 };
 
 struct SoFCSelectionContext;
 using SoFCSelectionContextPtr = std::shared_ptr<SoFCSelectionContext>;
 
-struct GuiExport SoFCSelectionContext : SoFCSelectionContextBase
-{
+struct GuiExport SoFCSelectionContext: SoFCSelectionContextBase {
     int highlightIndex = -1;
     std::set<int> selectionIndex;
     SbColor selectionColor;
@@ -58,39 +58,32 @@ struct GuiExport SoFCSelectionContext : SoFCSelectionContextBase
 
     ~SoFCSelectionContext() override;
 
-    bool isSelected() const {
-        return !selectionIndex.empty();
-    }
+    bool isSelected() const { return !selectionIndex.empty(); }
 
-    void selectAll() {
+    void selectAll()
+    {
         selectionIndex.clear();
         selectionIndex.insert(-1);
     }
 
-    bool isSelectAll() const{
-        return !selectionIndex.empty() && *selectionIndex.begin()<0;
+    bool isSelectAll() const { return !selectionIndex.empty() && *selectionIndex.begin() < 0; }
+
+    bool isHighlighted() const { return highlightIndex >= 0; }
+
+    bool isHighlightAll() const
+    {
+        return highlightIndex == INT_MAX && (selectionIndex.empty() || isSelectAll());
     }
 
-    bool isHighlighted() const {
-        return highlightIndex>=0;
-    }
+    void highlightAll() { highlightIndex = INT_MAX; }
 
-    bool isHighlightAll() const{
-        return highlightIndex==INT_MAX && (selectionIndex.empty() || isSelectAll());
-    }
-
-    void highlightAll() {
-        highlightIndex = INT_MAX;
-    }
-
-    void removeHighlight() {
-        highlightIndex = -1;
-    }
+    void removeHighlight() { highlightIndex = -1; }
 
     bool removeIndex(int index);
     bool checkGlobal(SoFCSelectionContextPtr ctx);
 
-    virtual SoFCSelectionContextBasePtr copy() {
+    virtual SoFCSelectionContextBasePtr copy()
+    {
         return std::make_shared<SoFCSelectionContext>(*this);
     }
 
@@ -100,17 +93,17 @@ struct GuiExport SoFCSelectionContext : SoFCSelectionContextBase
 struct SoFCSelectionContextEx;
 using SoFCSelectionContextExPtr = std::shared_ptr<SoFCSelectionContextEx>;
 
-struct GuiExport SoFCSelectionContextEx : SoFCSelectionContext
-{
-    std::map<int,App::Color> colors;
+struct GuiExport SoFCSelectionContextEx: SoFCSelectionContext {
+    std::map<int, App::Color> colors;
     float trans0 = 0.0;
 
-    bool setColors(const std::map<std::string,App::Color> &colors, const std::string &element);
+    bool setColors(const std::map<std::string, App::Color> &colors, const std::string &element);
     uint32_t packColor(const App::Color &c, bool &hasTransparency);
     bool applyColor(int idx, std::vector<uint32_t> &packedColors, bool &hasTransparency);
     bool isSingleColor(uint32_t &color, bool &hasTransparency);
 
-    SoFCSelectionContextBasePtr copy() override {
+    SoFCSelectionContextBasePtr copy() override
+    {
         return std::make_shared<SoFCSelectionContextEx>(*this);
     }
 
@@ -120,13 +113,15 @@ struct GuiExport SoFCSelectionContextEx : SoFCSelectionContext
 class SoHighlightElementAction;
 class SoSelectionElementAction;
 
-class GuiExport SoFCSelectionCounter {
+class GuiExport SoFCSelectionCounter
+{
 public:
     SoFCSelectionCounter();
     virtual ~SoFCSelectionCounter();
     bool checkRenderCache(SoState *state);
     void checkAction(SoHighlightElementAction *hlaction);
     void checkAction(SoSelectionElementAction *selaction, SoFCSelectionContextPtr ctx);
+
 protected:
     std::shared_ptr<int> counter;
     bool hasSelection;
@@ -134,5 +129,5 @@ protected:
     static int cachingMode;
 };
 
-}
+} // namespace Gui
 #endif //GUI_SOFCSELECTIONCONTEXT_H

@@ -29,66 +29,62 @@
 
 #include "SMESHDS_GroupBase.hxx"
 #include "SMESH_Controls.hxx"
-  
+
 /*!
  * \brief Groups whose contents is dynamically updated using the filter
  */
 class SMESHDS_EXPORT SMESHDS_GroupOnFilter: public SMESHDS_GroupBase
 {
- public:
+public:
+    SMESHDS_GroupOnFilter(const int theID, const SMESHDS_Mesh *theMesh,
+                          const SMDSAbs_ElementType theType,
+                          const SMESH_PredicatePtr &thePredicate);
 
-  SMESHDS_GroupOnFilter (const int                 theID,
-                         const SMESHDS_Mesh*       theMesh,
-                         const SMDSAbs_ElementType theType,
-                         const SMESH_PredicatePtr& thePredicate);
+    void SetPredicate(const SMESH_PredicatePtr &thePredicate);
 
-  void SetPredicate( const SMESH_PredicatePtr& thePredicate);
+    SMESH_PredicatePtr GetPredicate() const { return myPredicate; }
 
-  SMESH_PredicatePtr GetPredicate() const { return myPredicate; }
+    std::vector<int> GetMeshInfo() const;
 
-  std::vector< int > GetMeshInfo() const;
-
-  template< typename IDTYPE >
-    int GetElementIds( IDTYPE* ids ) const
-  {
-    return getElementIds( (void*)ids, sizeof(IDTYPE));
-  }
+    template<typename IDTYPE> int GetElementIds(IDTYPE *ids) const
+    {
+        return getElementIds((void *)ids, sizeof(IDTYPE));
+    }
 
 
-  virtual int  Extent() const;
+    virtual int Extent() const;
 
-  virtual bool IsEmpty();
+    virtual bool IsEmpty();
 
-  virtual bool Contains (const int theID);
+    virtual bool Contains(const int theID);
 
-  virtual bool Contains (const SMDS_MeshElement* elem);
+    virtual bool Contains(const SMDS_MeshElement *elem);
 
-  virtual SMDS_ElemIteratorPtr GetElements() const;
+    virtual SMDS_ElemIteratorPtr GetElements() const;
 
-  virtual VTK_MTIME_TYPE GetTic() const;
+    virtual VTK_MTIME_TYPE GetTic() const;
 
-  bool         IsUpToDate() const;
+    bool IsUpToDate() const;
 
- private:
+private:
+    void update() const;
+    void setChanged(bool changed = true);
+    const SMDS_MeshElement *setNbElemToSkip(SMDS_ElemIteratorPtr &elIt);
+    int getElementIds(void *ids, size_t idSize) const;
 
-  void update() const;
-  void setChanged(bool changed=true);
-  const SMDS_MeshElement* setNbElemToSkip( SMDS_ElemIteratorPtr& elIt );
-  int getElementIds( void* ids, size_t idSize ) const;
+    // We use two ways of optimaization:
+    // 1) The case of little free memory. Remember nb of KO elements (myNbElemToSkip)
+    //    to skip before the first OK element. As well remember total nb of OK
+    //    elements (myMeshInfo) to stop iteration as all OK elements are found.
+    // 2) The case of enough free memory. Remember all OK elements (myElements).
 
-  // We use two ways of optimaization:
-  // 1) The case of little free memory. Remember nb of KO elements (myNbElemToSkip)
-  //    to skip before the first OK element. As well remember total nb of OK
-  //    elements (myMeshInfo) to stop iteration as all OK elements are found.
-  // 2) The case of enough free memory. Remember all OK elements (myElements).
-
-  SMESH_PredicatePtr                    myPredicate;
-  std::vector< int >                    myMeshInfo;
-  std::vector< const SMDS_MeshElement*> myElements;
-  bool                                  myElementsOK;
-  VTK_MTIME_TYPE                        myMeshModifTime; // when myMeshInfo was updated
-  int                                   myPredicateTic;
-  size_t                                myNbElemToSkip;
+    SMESH_PredicatePtr myPredicate;
+    std::vector<int> myMeshInfo;
+    std::vector<const SMDS_MeshElement *> myElements;
+    bool myElementsOK;
+    VTK_MTIME_TYPE myMeshModifTime; // when myMeshInfo was updated
+    int myPredicateTic;
+    size_t myNbElemToSkip;
 };
 
 #endif

@@ -27,23 +27,22 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM Delaunay
+template<class Real> class WM4_FOUNDATION_ITEM Delaunay
 {
 public:
     // Abstract base class.
-    virtual ~Delaunay ();
+    virtual ~Delaunay();
 
     // Member accessors.  For notational purposes in this class documentation,
     // The number of vertices is VQ and the vertex array is V.
-    int GetQueryType () const;
-    int GetVertexQuantity () const;
-    Real GetEpsilon () const;
-    bool GetOwner () const;
+    int GetQueryType() const;
+    int GetVertexQuantity() const;
+    Real GetEpsilon() const;
+    bool GetOwner() const;
 
     // The dimension of the result, call it d.  If n is the dimension of the
     // space of the input points, then 0 <= d <= n.
-    int GetDimension () const;
+    int GetDimension() const;
 
     // The interpretations of the return values of these functions depends on
     // the dimension.  Generally, SQ = GetSimplexQuantity() is the number of
@@ -53,9 +52,9 @@ public:
     // A = GetAdjacencies() contains SQ tuples, each tuple having d+1 elements
     // and representing those simplices adjacent to the d+1 faces of a
     // simplex.  An index A[*] is relative to the index array I.
-    int GetSimplexQuantity () const;
-    const int* GetIndices () const;
-    const int* GetAdjacencies () const;
+    int GetSimplexQuantity() const;
+    const int *GetIndices() const;
+    const int *GetAdjacencies() const;
 
     // Dimension d = 0.
     //   SQ = 1
@@ -144,19 +143,18 @@ protected:
     // transferred to this class.  If you want the input vertices to be
     // deleted by this class, set bOwner to 'true'; otherwise, you own the
     // array and must delete it yourself.
-    Delaunay (int iVertexQuantity, Real fEpsilon, bool bOwner,
-        Query::Type eQueryType);
+    Delaunay(int iVertexQuantity, Real fEpsilon, bool bOwner, Query::Type eQueryType);
 
     // Support for streaming to/from disk.
-    bool Load (FILE* pkIFile);
-    bool Save (FILE* pkOFile) const;
+    bool Load(FILE *pkIFile);
+    bool Save(FILE *pkOFile) const;
 
     Query::Type m_eQueryType;
     int m_iVertexQuantity;
     int m_iDimension;
     int m_iSimplexQuantity;
-    int* m_aiIndex;
-    int* m_aiAdjacent;
+    int *m_aiIndex;
+    int *m_aiAdjacent;
     Real m_fEpsilon;
     bool m_bOwner;
 };
@@ -164,6 +162,6 @@ protected:
 typedef Delaunay<float> Delaunayf;
 typedef Delaunay<double> Delaunayd;
 
-}
+} // namespace Wm4
 
 #endif

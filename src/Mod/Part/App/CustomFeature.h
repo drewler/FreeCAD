@@ -32,7 +32,7 @@ namespace Part
 /** Base class of all custom feature classes which are almost used as base
  * for python feature classes.
  */
-class PartExport CustomFeature : public Part::Feature
+class PartExport CustomFeature: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::UserFeature);
 
@@ -49,9 +49,7 @@ public:
     //@}
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderCustom";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderCustom"; }
 };
 
 using CustomFeaturePython = App::FeaturePythonT<CustomFeature>;

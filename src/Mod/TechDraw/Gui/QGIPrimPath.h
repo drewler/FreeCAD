@@ -39,16 +39,20 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGIPrimPath : public QGraphicsPathItem
+class TechDrawGuiExport QGIPrimPath: public QGraphicsPathItem
 {
 public:
     explicit QGIPrimPath();
     ~QGIPrimPath() {}
 
-    enum {Type = QGraphicsItem::UserType + 170};
+    enum
+    {
+        Type = QGraphicsItem::UserType + 170
+    };
 
-    int type() const override { return Type;}
-    virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr ) override;
+    int type() const override { return Type; }
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr) override;
     virtual QPainterPath shape() const override { return path(); }
 
     void setHighlighted(bool state);
@@ -56,7 +60,7 @@ public:
     virtual void setPrettyPre();
     virtual void setPrettySel();
     virtual void setWidth(double w);
-    virtual double getWidth() { return m_width;}
+    virtual double getWidth() { return m_width; }
     Qt::PenStyle getStyle() { return m_styleCurrent; }
     void setStyle(Qt::PenStyle s);
     void setStyle(int s);
@@ -91,27 +95,26 @@ protected:
     QPen m_pen;
     QColor m_colCurrent;
     QColor m_colNormal;
-    bool   m_colOverride;
+    bool m_colOverride;
     Qt::PenStyle m_styleCurrent;
     double m_width;
     Qt::PenCapStyle m_capStyle;
 
     QBrush m_brush;
-    Qt::BrushStyle m_fillStyleCurrent;                 //current fill style
-    QColor m_fillColorCurrent;                         //current fill color
+    Qt::BrushStyle m_fillStyleCurrent; //current fill style
+    QColor m_fillColorCurrent;         //current fill color
 
-    QColor m_colDefFill;                        //"no color" default normal fill color
-    QColor m_colNormalFill;                     //current Normal fill color def or plain fill
-    Qt::BrushStyle m_styleDef;                  //default Normal fill style
-    Qt::BrushStyle m_styleNormal;               //current Normal fill style
-    Qt::BrushStyle m_styleSelect;               //Select/preSelect fill style
+    QColor m_colDefFill;          //"no color" default normal fill color
+    QColor m_colNormalFill;       //current Normal fill color def or plain fill
+    Qt::BrushStyle m_styleDef;    //default Normal fill style
+    Qt::BrushStyle m_styleNormal; //current Normal fill style
+    Qt::BrushStyle m_styleSelect; //Select/preSelect fill style
 
     bool m_fillOverride;
 
 private:
-
 };
 
-} // namespace MDIViewPageGui
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGIPRIMPATH_H

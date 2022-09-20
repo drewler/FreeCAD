@@ -21,7 +21,6 @@
  ***************************************************************************/
 
 
-
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
@@ -45,19 +44,11 @@ using namespace Points;
 
 PROPERTY_SOURCE(Points::Feature, App::GeoFeature)
 
-Feature::Feature()
-{
-    ADD_PROPERTY(Points, (PointKernel()));
-}
+Feature::Feature() { ADD_PROPERTY(Points, (PointKernel())); }
 
-Feature::~Feature()
-{
-}
+Feature::~Feature() {}
 
-short Feature::mustExecute() const
-{
-    return 0;
-}
+short Feature::mustExecute() const { return 0; }
 
 App::DocumentObjectExecReturn *Feature::execute()
 {
@@ -65,10 +56,7 @@ App::DocumentObjectExecReturn *Feature::execute()
     return App::DocumentObject::StdReturn;
 }
 
-void Feature::Restore(Base::XMLReader &reader)
-{
-    GeoFeature::Restore(reader);
-}
+void Feature::Restore(Base::XMLReader &reader) { GeoFeature::Restore(reader); }
 
 void Feature::RestoreDocFile(Base::Reader &reader)
 {
@@ -76,7 +64,7 @@ void Feature::RestoreDocFile(Base::Reader &reader)
     Points.RestoreDocFile(reader);
 }
 
-void Feature::onChanged(const App::Property* prop)
+void Feature::onChanged(const App::Property *prop)
 {
     // if the placement has changed apply the change to the point data as well
     if (prop == &this->Placement) {
@@ -86,8 +74,7 @@ void Feature::onChanged(const App::Property* prop)
     else if (prop == &this->Points) {
         Base::Placement p;
         p.fromMatrix(this->Points.getTransform());
-        if (p != this->Placement.getValue())
-            this->Placement.setValue(p);
+        if (p != this->Placement.getValue()) this->Placement.setValue(p);
     }
 
     GeoFeature::onChanged(prop);
@@ -95,26 +82,28 @@ void Feature::onChanged(const App::Property* prop)
 
 // ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(Points::FeatureCustom, Points::Feature)
 /// @endcond
 
 // explicit template instantiation
 template class PointsExport FeatureCustomT<Points::Feature>;
-}
+} // namespace App
 
 // ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(Points::FeaturePython, Points::Feature)
-template<> const char* Points::FeaturePython::getViewProviderName() const {
+template<> const char *Points::FeaturePython::getViewProviderName() const
+{
     return "PointsGui::ViewProviderPython";
 }
 /// @endcond
 
 // explicit template instantiation
 template class PointsExport FeaturePythonT<Points::Feature>;
-}
-
+} // namespace App

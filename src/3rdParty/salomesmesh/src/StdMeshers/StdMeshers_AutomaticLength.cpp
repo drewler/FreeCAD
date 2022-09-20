@@ -47,14 +47,14 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_AutomaticLength::StdMeshers_AutomaticLength(int hypId, int studyId, SMESH_Gen * gen)
-  :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_AutomaticLength::StdMeshers_AutomaticLength(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "AutomaticLength";
-  _param_algo_dim = 1; // is used by SMESH_Regular_1D
+    _name = "AutomaticLength";
+    _param_algo_dim = 1; // is used by SMESH_Regular_1D
 
-  _mesh = 0;
-  _fineness = 0;
+    _mesh = 0;
+    _fineness = 0;
 }
 
 //=============================================================================
@@ -63,9 +63,7 @@ StdMeshers_AutomaticLength::StdMeshers_AutomaticLength(int hypId, int studyId, S
  */
 //=============================================================================
 
-StdMeshers_AutomaticLength::~StdMeshers_AutomaticLength()
-{
-}
+StdMeshers_AutomaticLength::~StdMeshers_AutomaticLength() {}
 
 //================================================================================
 /*!
@@ -81,53 +79,53 @@ StdMeshers_AutomaticLength::~StdMeshers_AutomaticLength()
 //================================================================================
 
 const double theCoarseConst = 0.5;
-const double theFineConst   = 4.5;
+const double theFineConst = 4.5;
 
 void StdMeshers_AutomaticLength::SetFineness(double theFineness)
 {
-  if ( theFineness < 0.0 || theFineness > 1.0 )
-    throw SALOME_Exception(LOCALIZED("theFineness is out of range [0.0-1.0]"));
+    if (theFineness < 0.0 || theFineness > 1.0)
+        throw SALOME_Exception(LOCALIZED("theFineness is out of range [0.0-1.0]"));
 
-  if ( _fineness != theFineness )
-  {
-    NotifySubMeshesHypothesisModification();
-    _fineness = theFineness;
-  }
+    if (_fineness != theFineness) {
+        NotifySubMeshesHypothesisModification();
+        _fineness = theFineness;
+    }
 }
 
-namespace {
+namespace
+{
 
-  //================================================================================
-  /*!
+//================================================================================
+/*!
    * \brief Return pointer to TopoDS_TShape
    * \param theShape - The TopoDS_Shape
    * \retval inline const TopoDS_TShape* - result
    */
-  //================================================================================
+//================================================================================
 
-  inline const TopoDS_TShape* getTShape(const TopoDS_Shape& theShape)
-  {
+inline const TopoDS_TShape *getTShape(const TopoDS_Shape &theShape)
+{
     return theShape.TShape().operator->();
-  }
+}
 
-  //================================================================================
-  /*!
+//================================================================================
+/*!
    * \brief computes segment length by S0 and edge length
    */
-  //================================================================================
+//================================================================================
 
-  const double a14divPI = 14. / M_PI;
+const double a14divPI = 14. / M_PI;
 
 
-  inline double segLength(double S0, double edgeLen, double minLen )
-  {
+inline double segLength(double S0, double edgeLen, double minLen)
+{
     // PAL10237
     // S = S0 * f(L/Lmin) where f(x) = 1 + (2/Pi * 7 * atan(x/5) )
 
     // =>
     // S = S0 * ( 1 + 14/PI * atan( L / ( 5 * Lmin )))
-    return S0 * ( 1. + a14divPI * atan( edgeLen / ( 5 * minLen )));
-  }
+    return S0 * (1. + a14divPI * atan(edgeLen / (5 * minLen)));
+}
 #if 0
   //const double a14divPI = 14. / M_PI;
   const double a2div7divPI = 2. / 7. / M_PI;
@@ -154,19 +152,17 @@ namespace {
     return S0 * ( 1. + a2div7divPI * Lratio * atan( 5 * Lratio ));
   }
 #endif
-  //================================================================================
-  /*!
+//================================================================================
+/*!
    * \brief Compute segment length for all edges
    * \param theMesh - The mesh
    * \param theTShapeToLengthMap - The map of edge to segment length
    */
-  //================================================================================
+//================================================================================
 
-  void computeLengths( SMESHDS_Mesh*                       aMesh,
-                       map<const TopoDS_TShape*, double> & theTShapeToLengthMap,
-                       double &                            theS0,
-                       double &                            theMinLen)
-  {
+void computeLengths(SMESHDS_Mesh *aMesh, map<const TopoDS_TShape *, double> &theTShapeToLengthMap,
+                    double &theS0, double &theMinLen)
+{
     theTShapeToLengthMap.clear();
 
     TopoDS_Shape aMainShape = aMesh->ShapeToMesh();
@@ -174,20 +170,19 @@ namespace {
     // Find length of longest and shortest edge
     double Lmin = DBL_MAX, Lmax = -DBL_MAX;
     TopTools_IndexedMapOfShape edgeMap;
-    TopExp::MapShapes( aMainShape, TopAbs_EDGE, edgeMap);
-    for ( int i = 1; i <= edgeMap.Extent(); ++i )
-    {
-      TopoDS_Edge edge = TopoDS::Edge( edgeMap(i) );
-      //if ( BRep_Tool::Degenerated( edge )) continue;
+    TopExp::MapShapes(aMainShape, TopAbs_EDGE, edgeMap);
+    for (int i = 1; i <= edgeMap.Extent(); ++i) {
+        TopoDS_Edge edge = TopoDS::Edge(edgeMap(i));
+        //if ( BRep_Tool::Degenerated( edge )) continue;
 
-      Standard_Real L = SMESH_Algo::EdgeLength( edge );
-      if ( L < DBL_MIN ) continue;
+        Standard_Real L = SMESH_Algo::EdgeLength(edge);
+        if (L < DBL_MIN) continue;
 
-      if ( L > Lmax ) Lmax = L;
-      if ( L < Lmin ) Lmin = L;
+        if (L > Lmax) Lmax = L;
+        if (L < Lmin) Lmin = L;
 
-      // remember i-th edge length
-      theTShapeToLengthMap.insert( make_pair( getTShape( edge ), L ));
+        // remember i-th edge length
+        theTShapeToLengthMap.insert(make_pair(getTShape(edge), L));
     }
 
     // Compute S0 - minimal segement length, is computed by the shortest EDGE
@@ -209,26 +204,24 @@ namespace {
     const int NbSegMin = 5, NbSegMax = 10; //  on axis NbSeg
     const double Lrat1 = 1., Lrat2 = 10.;  //  on axis Lmax/Lmin
 
-    double Lratio = Lmax/Lmin;
+    double Lratio = Lmax / Lmin;
     double NbSeg = NbSegMin;
-    if ( Lratio < Lrat2 )
-      NbSeg += ( Lrat2 - Lratio ) / ( Lrat2 - Lrat1 )  * ( NbSegMax - NbSegMin );
+    if (Lratio < Lrat2) NbSeg += (Lrat2 - Lratio) / (Lrat2 - Lrat1) * (NbSegMax - NbSegMin);
 
-    double S0 = Lmin / (int) NbSeg;
-    MESSAGE( "S0 = " << S0 << ", Lmin = " << Lmin << ", Nbseg = " << (int) NbSeg);
+    double S0 = Lmin / (int)NbSeg;
+    MESSAGE("S0 = " << S0 << ", Lmin = " << Lmin << ", Nbseg = " << (int)NbSeg);
 
     // Compute segments length for all edges
 
-    map<const TopoDS_TShape*, double>::iterator tshape_length = theTShapeToLengthMap.begin();
-    for ( ; tshape_length != theTShapeToLengthMap.end(); ++tshape_length )
-    {
-      double & L = tshape_length->second;
-      L = segLength( S0, L, Lmin );
+    map<const TopoDS_TShape *, double>::iterator tshape_length = theTShapeToLengthMap.begin();
+    for (; tshape_length != theTShapeToLengthMap.end(); ++tshape_length) {
+        double &L = tshape_length->second;
+        L = segLength(S0, L, Lmin);
     }
     theS0 = S0;
     theMinLen = Lmin;
-  }
 }
+} // namespace
 
 //=============================================================================
 /*!
@@ -236,19 +229,17 @@ namespace {
  */
 //=============================================================================
 
-double StdMeshers_AutomaticLength::GetLength(const SMESH_Mesh* theMesh,
-                                             const double      theEdgeLength)
+double StdMeshers_AutomaticLength::GetLength(const SMESH_Mesh *theMesh, const double theEdgeLength)
 {
-  if ( !theMesh ) throw SALOME_Exception(LOCALIZED("NULL Mesh"));
+    if (!theMesh) throw SALOME_Exception(LOCALIZED("NULL Mesh"));
 
-  SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* > ( theMesh )->GetMeshDS();
-  if ( theMesh != _mesh )
-  {
-    computeLengths( aMeshDS, _TShapeToLength, _S0, _minLen );
-    _mesh = theMesh;
-  }
-  double L = segLength( _S0, theEdgeLength, _minLen );
-  return L / (theCoarseConst + theFineConst * _fineness);
+    SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
+    if (theMesh != _mesh) {
+        computeLengths(aMeshDS, _TShapeToLength, _S0, _minLen);
+        _mesh = theMesh;
+    }
+    double L = segLength(_S0, theEdgeLength, _minLen);
+    return L / (theCoarseConst + theFineConst * _fineness);
 }
 
 //=============================================================================
@@ -257,28 +248,25 @@ double StdMeshers_AutomaticLength::GetLength(const SMESH_Mesh* theMesh,
  */
 //=============================================================================
 
-double StdMeshers_AutomaticLength::GetLength(const SMESH_Mesh*   theMesh,
-                                             const TopoDS_Shape& anEdge)
+double StdMeshers_AutomaticLength::GetLength(const SMESH_Mesh *theMesh, const TopoDS_Shape &anEdge)
 {
-  if ( !theMesh ) throw SALOME_Exception(LOCALIZED("NULL Mesh"));
+    if (!theMesh) throw SALOME_Exception(LOCALIZED("NULL Mesh"));
 
-  if ( anEdge.IsNull() || anEdge.ShapeType() != TopAbs_EDGE )
-    throw SALOME_Exception(LOCALIZED("Bad edge shape"));
+    if (anEdge.IsNull() || anEdge.ShapeType() != TopAbs_EDGE)
+        throw SALOME_Exception(LOCALIZED("Bad edge shape"));
 
-  if ( theMesh != _mesh )
-  {
-    SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* > ( theMesh )->GetMeshDS();
-    computeLengths( aMeshDS, _TShapeToLength, _S0, _minLen );
-    _mesh = theMesh;
-  }
+    if (theMesh != _mesh) {
+        SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
+        computeLengths(aMeshDS, _TShapeToLength, _S0, _minLen);
+        _mesh = theMesh;
+    }
 
-  map<const TopoDS_TShape*, double>::iterator tshape_length =
-    _TShapeToLength.find( getTShape( anEdge ));
+    map<const TopoDS_TShape *, double>::iterator tshape_length =
+        _TShapeToLength.find(getTShape(anEdge));
 
-  if ( tshape_length == _TShapeToLength.end() )
-    return 1; // it is a dgenerated edge
+    if (tshape_length == _TShapeToLength.end()) return 1; // it is a dgenerated edge
 
-  return tshape_length->second / (theCoarseConst + theFineConst * _fineness);
+    return tshape_length->second / (theCoarseConst + theFineConst * _fineness);
 }
 
 //=============================================================================
@@ -287,10 +275,10 @@ double StdMeshers_AutomaticLength::GetLength(const SMESH_Mesh*   theMesh,
  */
 //=============================================================================
 
-ostream & StdMeshers_AutomaticLength::SaveTo(ostream & save)
+ostream &StdMeshers_AutomaticLength::SaveTo(ostream &save)
 {
-  save << _fineness;
-  return save;
+    save << _fineness;
+    return save;
 }
 
 //=============================================================================
@@ -299,11 +287,10 @@ ostream & StdMeshers_AutomaticLength::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_AutomaticLength::LoadFrom(istream & load)
+istream &StdMeshers_AutomaticLength::LoadFrom(istream &load)
 {
-  if ( ! ( load >> _fineness ))
-    load.clear(ios::badbit | load.rdstate());
-  return load;
+    if (!(load >> _fineness)) load.clear(ios::badbit | load.rdstate());
+    return load;
 }
 
 //=============================================================================
@@ -312,10 +299,7 @@ istream & StdMeshers_AutomaticLength::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_AutomaticLength & hyp)
-{
-  return hyp.SaveTo( save );
-}
+ostream &operator<<(ostream &save, StdMeshers_AutomaticLength &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -323,10 +307,7 @@ ostream & operator <<(ostream & save, StdMeshers_AutomaticLength & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_AutomaticLength & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+istream &operator>>(istream &load, StdMeshers_AutomaticLength &hyp) { return hyp.LoadFrom(load); }
 
 //================================================================================
 /*!
@@ -337,60 +318,51 @@ istream & operator >>(istream & load, StdMeshers_AutomaticLength & hyp)
  */
 //================================================================================
 
-bool StdMeshers_AutomaticLength::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                     const TopoDS_Shape& theShape)
+bool StdMeshers_AutomaticLength::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                     const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _fineness = 0;
+    _fineness = 0;
 
-  SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* >( theMesh )->GetMeshDS();
+    SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
 
-  int nbEdges = 0;
-  TopTools_IndexedMapOfShape edgeMap;
-  TopExp::MapShapes( theShape, TopAbs_EDGE, edgeMap );
-  for ( int i = 1; i <= edgeMap.Extent(); ++i )
-  {
-    const TopoDS_Edge& edge = TopoDS::Edge( edgeMap( i ));
+    int nbEdges = 0;
+    TopTools_IndexedMapOfShape edgeMap;
+    TopExp::MapShapes(theShape, TopAbs_EDGE, edgeMap);
+    for (int i = 1; i <= edgeMap.Extent(); ++i) {
+        const TopoDS_Edge &edge = TopoDS::Edge(edgeMap(i));
 
-    // assure the base automatic length is stored in _TShapeToLength
-    if ( i == 1 ) 
-      GetLength( theMesh, edge );
+        // assure the base automatic length is stored in _TShapeToLength
+        if (i == 1) GetLength(theMesh, edge);
 
-    // get current segment length
-    double L = SMESH_Algo::EdgeLength( edge );
-    if ( L <= DBL_MIN )
-      continue;
-    SMESHDS_SubMesh * eSubMesh = aMeshDS->MeshElements( edge );
-    if ( !eSubMesh )
-      return false;
-    int nbSeg = eSubMesh->NbElements();
-    if ( nbSeg < 1 )
-      continue;
-    double segLen = L / nbSeg;
+        // get current segment length
+        double L = SMESH_Algo::EdgeLength(edge);
+        if (L <= DBL_MIN) continue;
+        SMESHDS_SubMesh *eSubMesh = aMeshDS->MeshElements(edge);
+        if (!eSubMesh) return false;
+        int nbSeg = eSubMesh->NbElements();
+        if (nbSeg < 1) continue;
+        double segLen = L / nbSeg;
 
-    // get segment length from _TShapeToLength
-    map<const TopoDS_TShape*, double>::iterator tshape_length =
-      _TShapeToLength.find( getTShape( edge ));
-    if ( tshape_length == _TShapeToLength.end() )
-      continue;
-    double autoLen = tshape_length->second;
+        // get segment length from _TShapeToLength
+        map<const TopoDS_TShape *, double>::iterator tshape_length =
+            _TShapeToLength.find(getTShape(edge));
+        if (tshape_length == _TShapeToLength.end()) continue;
+        double autoLen = tshape_length->second;
 
-    // segLen = autoLen / (theCoarseConst + theFineConst * _fineness) -->
-    _fineness += ( autoLen / segLen - theCoarseConst ) / theFineConst;
+        // segLen = autoLen / (theCoarseConst + theFineConst * _fineness) -->
+        _fineness += (autoLen / segLen - theCoarseConst) / theFineConst;
 
-    ++nbEdges;
-  }
-  if ( nbEdges )
-    _fineness /= nbEdges;
+        ++nbEdges;
+    }
+    if (nbEdges) _fineness /= nbEdges;
 
-  if (_fineness > 1.0)
-    _fineness = 1.0;
-  else if (_fineness < 0.0)
-    _fineness = 0.0;
+    if (_fineness > 1.0) _fineness = 1.0;
+    else if (_fineness < 0.0)
+        _fineness = 0.0;
 
-  return nbEdges;
+    return nbEdges;
 }
 
 //================================================================================
@@ -400,27 +372,27 @@ bool StdMeshers_AutomaticLength::SetParametersByMesh(const SMESH_Mesh*   theMesh
  */
 //================================================================================
 
-bool StdMeshers_AutomaticLength::SetParametersByDefaults(const TDefaults&  /*theDflts*/,
-                                                         const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_AutomaticLength::SetParametersByDefaults(const TDefaults & /*theDflts*/,
+                                                         const SMESH_Mesh * /*theMesh*/)
 {
-  return false;
+    return false;
 
-  // assure the base automatic length is stored in _TShapeToLength
-//   GetLength( theMesh, elemLenght );
+    // assure the base automatic length is stored in _TShapeToLength
+    //   GetLength( theMesh, elemLenght );
 
-//   // find maximal edge length
-//   double maxLen = 0;
-//   map<const TopoDS_TShape*, double>::iterator
-//     tshape_length = _TShapeToLength.begin(), slEnd = _TShapeToLength.end();
-//   for ( ; tshape_length != slEnd; ++tshape_length )
-//     if ( tshape_length->second > maxLen )
-//       maxLen = tshape_length->second;
+    //   // find maximal edge length
+    //   double maxLen = 0;
+    //   map<const TopoDS_TShape*, double>::iterator
+    //     tshape_length = _TShapeToLength.begin(), slEnd = _TShapeToLength.end();
+    //   for ( ; tshape_length != slEnd; ++tshape_length )
+    //     if ( tshape_length->second > maxLen )
+    //       maxLen = tshape_length->second;
 
-//   // automatic length for longest element
-//   double autoLen = GetLength( theMesh, maxLen );
+    //   // automatic length for longest element
+    //   double autoLen = GetLength( theMesh, maxLen );
 
-//   // elemLenght = autoLen / (theCoarseConst + theFineConst * _fineness) -->
-//   _fineness = ( autoLen / elemLenght - theCoarseConst ) / theFineConst;
+    //   // elemLenght = autoLen / (theCoarseConst + theFineConst * _fineness) -->
+    //   _fineness = ( autoLen / elemLenght - theCoarseConst ) / theFineConst;
 
-//   return true;
+    //   return true;
 }

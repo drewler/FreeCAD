@@ -30,7 +30,8 @@
 #include <App/PropertyFile.h>
 #include <App/PropertyLinks.h>
 
-namespace App {
+namespace App
+{
 class Color;
 }
 
@@ -38,7 +39,7 @@ namespace TechDraw
 {
 class DrawViewPart;
 
-class TechDrawExport DrawHatch : public App::DocumentObject
+class TechDrawExport DrawHatch: public App::DocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawHatch);
 
@@ -46,27 +47,25 @@ public:
     DrawHatch();
     ~DrawHatch() = default;
 
-    App::PropertyLinkSub     Source;       // the dvp & face this hatch belongs to
-    App::PropertyFile        HatchPattern;
+    App::PropertyLinkSub Source; // the dvp & face this hatch belongs to
+    App::PropertyFile HatchPattern;
     App::PropertyFileIncluded SvgIncluded;
 
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
 
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderHatch";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderHatch"; }
     void unsetupObject() override;
 
     //return PyObject as DrawHatchPy
     PyObject *getPyObject() override;
 
-    DrawViewPart* getSourceView() const;
+    DrawViewPart *getSourceView() const;
     bool affectsFace(int i);
     bool removeSub(std::string toRemove);
     bool removeSub(int i);
     bool empty();
-    static bool faceIsHatched(int i, std::vector<TechDraw::DrawHatch*> hatchObjs);
+    static bool faceIsHatched(int i, std::vector<TechDraw::DrawHatch *> hatchObjs);
     static std::string prefSvgHatch();
     static App::Color prefSvgHatchColor();
 
@@ -74,14 +73,13 @@ public:
     bool isBitmapHatch() const;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     void onDocumentRestored() override;
     void setupObject() override;
     void setupFileIncluded();
     void replaceFileIncluded(std::string newSvgFile);
 
 private:
-
 };
 
 using DrawHatchPython = App::FeaturePythonT<DrawHatch>;

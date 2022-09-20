@@ -56,12 +56,6 @@ std::string DrawWeldSymbolPy::representation() const
 //    Py_Return;
 //}
 
-PyObject *DrawWeldSymbolPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *DrawWeldSymbolPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int DrawWeldSymbolPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int DrawWeldSymbolPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

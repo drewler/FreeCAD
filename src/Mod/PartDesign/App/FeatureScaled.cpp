@@ -23,9 +23,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepGProp.hxx>
-# include <GProp_GProps.hxx>
-# include <Precision.hxx>
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
+#include <Precision.hxx>
 #endif
 
 #include "FeatureScaled.h"
@@ -34,51 +34,50 @@
 
 using namespace PartDesign;
 
-namespace PartDesign {
+namespace PartDesign
+{
 
 
 PROPERTY_SOURCE(PartDesign::Scaled, PartDesign::Transformed)
 
 Scaled::Scaled()
 {
-    ADD_PROPERTY(Factor,(2.0));
-    ADD_PROPERTY(Occurrences,(2));
+    ADD_PROPERTY(Factor, (2.0));
+    ADD_PROPERTY(Occurrences, (2));
 }
 
 short Scaled::mustExecute() const
 {
-    if (Factor.isTouched() ||
-        Occurrences.isTouched())
-        return 1;
+    if (Factor.isTouched() || Occurrences.isTouched()) return 1;
     return Transformed::mustExecute();
 }
 
-const std::list<gp_Trsf> Scaled::getTransformations(const std::vector<App::DocumentObject*> originals)
+const std::list<gp_Trsf>
+Scaled::getTransformations(const std::vector<App::DocumentObject *> originals)
 {
     double factor = Factor.getValue();
-    if (factor < Precision::Confusion())
-        throw Base::ValueError("Scaling factor too small");
+    if (factor < Precision::Confusion()) throw Base::ValueError("Scaling factor too small");
     int occurrences = Occurrences.getValue();
-    if (occurrences < 2)
-        throw Base::ValueError("At least two occurrences required");
+    if (occurrences < 2) throw Base::ValueError("At least two occurrences required");
 
     double f = (factor - 1.0) / double(occurrences - 1);
 
     // Find centre of gravity of first original
     // FIXME: This method will NOT give the expected result for more than one original!
-    Part::Feature* originalFeature = static_cast<Part::Feature*>(originals.front());
+    Part::Feature *originalFeature = static_cast<Part::Feature *>(originals.front());
     TopoDS_Shape original;
 
     if (originalFeature->getTypeId().isDerivedFrom(PartDesign::FeatureAddSub::getClassTypeId())) {
-        PartDesign::FeatureAddSub* Feature = static_cast<PartDesign::FeatureAddSub*>(originalFeature);
+        PartDesign::FeatureAddSub *Feature =
+            static_cast<PartDesign::FeatureAddSub *>(originalFeature);
         //if(Feature->getAddSubType() == FeatureAddSub::Additive)
         //    original = Feature->AddSubShape.getShape().getShape();
         //else
-            original = Feature->AddSubShape.getShape().getShape();
+        original = Feature->AddSubShape.getShape().getShape();
     }
 
     GProp_GProps props;
-    BRepGProp::VolumeProperties(original,props);
+    BRepGProp::VolumeProperties(original, props);
     gp_Pnt cog = props.CentreOfMass();
 
     // Note: The original feature is NOT included in the list of transformations! Therefore
@@ -95,4 +94,4 @@ const std::list<gp_Trsf> Scaled::getTransformations(const std::vector<App::Docum
     return transformations;
 }
 
-}
+} // namespace PartDesign

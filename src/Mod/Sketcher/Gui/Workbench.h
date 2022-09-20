@@ -29,12 +29,13 @@
 #include <Gui/ToolBarManager.h>
 #include <Mod/Sketcher/SketcherGlobal.h>
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 /**
  * @author Werner Mayer
  */
-class SketcherGuiExport Workbench : public Gui::StdWorkbench
+class SketcherGuiExport Workbench: public Gui::StdWorkbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -43,24 +44,24 @@ public:
     ~Workbench() override;
 
 protected:
-    Gui::MenuItem* setupMenuBar() const override;
-    Gui::ToolBarItem* setupToolBars() const override;
-    Gui::ToolBarItem* setupCommandBars() const override;
+    Gui::MenuItem *setupMenuBar() const override;
+    Gui::ToolBarItem *setupToolBars() const override;
+    Gui::ToolBarItem *setupCommandBars() const override;
 };
 
-SketcherGuiExport void addSketcherWorkbenchSketchActions(Gui::MenuItem& sketch);
-SketcherGuiExport void addSketcherWorkbenchGeometries(Gui::MenuItem& geom);
-SketcherGuiExport void addSketcherWorkbenchConstraints(Gui::MenuItem& cons);
-SketcherGuiExport void addSketcherWorkbenchTools(Gui::MenuItem& consaccel);
-SketcherGuiExport void addSketcherWorkbenchBSplines(Gui::MenuItem& bspline);
-SketcherGuiExport void addSketcherWorkbenchVirtualSpace(Gui::MenuItem& virtualspace);
+SketcherGuiExport void addSketcherWorkbenchSketchActions(Gui::MenuItem &sketch);
+SketcherGuiExport void addSketcherWorkbenchGeometries(Gui::MenuItem &geom);
+SketcherGuiExport void addSketcherWorkbenchConstraints(Gui::MenuItem &cons);
+SketcherGuiExport void addSketcherWorkbenchTools(Gui::MenuItem &consaccel);
+SketcherGuiExport void addSketcherWorkbenchBSplines(Gui::MenuItem &bspline);
+SketcherGuiExport void addSketcherWorkbenchVirtualSpace(Gui::MenuItem &virtualspace);
 
-SketcherGuiExport void addSketcherWorkbenchSketchActions(Gui::ToolBarItem& sketch);
-SketcherGuiExport void addSketcherWorkbenchGeometries(Gui::ToolBarItem& geom);
-SketcherGuiExport void addSketcherWorkbenchConstraints(Gui::ToolBarItem& cons);
-SketcherGuiExport void addSketcherWorkbenchTools(Gui::ToolBarItem& consaccel);
-SketcherGuiExport void addSketcherWorkbenchBSplines(Gui::ToolBarItem& bspline);
-SketcherGuiExport void addSketcherWorkbenchVirtualSpace(Gui::ToolBarItem& virtualspace);
+SketcherGuiExport void addSketcherWorkbenchSketchActions(Gui::ToolBarItem &sketch);
+SketcherGuiExport void addSketcherWorkbenchGeometries(Gui::ToolBarItem &geom);
+SketcherGuiExport void addSketcherWorkbenchConstraints(Gui::ToolBarItem &cons);
+SketcherGuiExport void addSketcherWorkbenchTools(Gui::ToolBarItem &consaccel);
+SketcherGuiExport void addSketcherWorkbenchBSplines(Gui::ToolBarItem &bspline);
+SketcherGuiExport void addSketcherWorkbenchVirtualSpace(Gui::ToolBarItem &virtualspace);
 
 } // namespace SketcherGui
 

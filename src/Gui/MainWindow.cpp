@@ -23,32 +23,32 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QApplication>
-# include <QByteArray>
-# include <QCheckBox>
-# include <QClipboard>
-# include <QCloseEvent>
-# include <QContextMenuEvent>
-# include <QDesktopServices>
-# include <QDockWidget>
-# include <QFontMetrics>
-# include <QKeySequence>
-# include <QLabel>
-# include <QMdiSubWindow>
-# include <QMenu>
-# include <QMessageBox>
-# include <QMimeData>
-# include <QPainter>
-# include <QScreen>
-# include <QSettings>
-# include <QSignalMapper>
-# include <QStatusBar>
-# include <QThread>
-# include <QTimer>
-# include <QToolBar>
-# include <QUrlQuery>
-# include <QWhatsThis>
-# include <QPushButton>
+#include <QApplication>
+#include <QByteArray>
+#include <QCheckBox>
+#include <QClipboard>
+#include <QCloseEvent>
+#include <QContextMenuEvent>
+#include <QDesktopServices>
+#include <QDockWidget>
+#include <QFontMetrics>
+#include <QKeySequence>
+#include <QLabel>
+#include <QMdiSubWindow>
+#include <QMenu>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QPainter>
+#include <QScreen>
+#include <QSettings>
+#include <QSignalMapper>
+#include <QStatusBar>
+#include <QThread>
+#include <QTimer>
+#include <QToolBar>
+#include <QUrlQuery>
+#include <QWhatsThis>
+#include <QPushButton>
 #endif
 
 #include <App/Application.h>
@@ -97,7 +97,7 @@
 #include "DlgObjectSelection.h"
 #include "Tools.h"
 
-FC_LOG_LEVEL_INIT("MainWindow",false,true,true)
+FC_LOG_LEVEL_INIT("MainWindow", false, true, true)
 
 #if defined(Q_OS_WIN32)
 #define slots
@@ -108,9 +108,10 @@ using namespace Gui::DockWnd;
 using namespace std;
 
 
-MainWindow* MainWindow::instance = nullptr;
+MainWindow *MainWindow::instance = nullptr;
 
-namespace Gui {
+namespace Gui
+{
 
 /**
  * The CustomMessageEvent class is used to send messages as events in the methods
@@ -120,20 +121,17 @@ namespace Gui {
  * This makes the usage of StatusBarObserver thread-safe.
  * @author Werner Mayer
  */
-class CustomMessageEvent : public QEvent
+class CustomMessageEvent: public QEvent
 {
 public:
-    CustomMessageEvent(int t, const QString& s, int timeout=0)
-      : QEvent(QEvent::User), _type(t), msg(s), _timeout(timeout)
-    { }
-    ~CustomMessageEvent() override
-    { }
-    int type() const
-    { return _type; }
-    const QString& message() const
-    { return msg; }
-    int timeout() const
-    { return _timeout; }
+    CustomMessageEvent(int t, const QString &s, int timeout = 0)
+        : QEvent(QEvent::User), _type(t), msg(s), _timeout(timeout)
+    {}
+    ~CustomMessageEvent() override {}
+    int type() const { return _type; }
+    const QString &message() const { return msg; }
+    int timeout() const { return _timeout; }
+
 private:
     int _type;
     QString msg;
@@ -142,46 +140,42 @@ private:
 
 // -------------------------------------
 // Pimpl class
-struct MainWindowP
-{
-    QLabel* sizeLabel;
-    QLabel* actionLabel;
-    QTimer* actionTimer;
-    QTimer* statusTimer;
-    QTimer* activityTimer;
-    QMdiArea* mdiArea;
+struct MainWindowP {
+    QLabel *sizeLabel;
+    QLabel *actionLabel;
+    QTimer *actionTimer;
+    QTimer *statusTimer;
+    QTimer *activityTimer;
+    QMdiArea *mdiArea;
     QPointer<MDIView> activeView;
-    QSignalMapper* windowMapper;
-    QSplashScreen* splashscreen;
-    StatusBarObserver* status;
+    QSignalMapper *windowMapper;
+    QSplashScreen *splashscreen;
+    StatusBarObserver *status;
     bool whatsthis;
     QString whatstext;
-    Assistant* assistant;
+    Assistant *assistant;
     int currentStatusType = 100;
     int actionUpdateDelay = 0;
-    QMap<QString, QPointer<UrlHandler> > urlHandler;
+    QMap<QString, QPointer<UrlHandler>> urlHandler;
 };
 
-class MDITabbar : public QTabBar
+class MDITabbar: public QTabBar
 {
 public:
-    explicit MDITabbar( QWidget * parent = nullptr ) : QTabBar(parent)
+    explicit MDITabbar(QWidget *parent = nullptr) : QTabBar(parent)
     {
         menu = new QMenu(this);
         setDrawBase(false);
         setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     }
 
-    ~MDITabbar() override
-    {
-        delete menu;
-    }
+    ~MDITabbar() override { delete menu; }
 
 protected:
-    void contextMenuEvent ( QContextMenuEvent * e ) override
+    void contextMenuEvent(QContextMenuEvent *e) override
     {
         menu->clear();
-        CommandManager& cMgr = Application::Instance->commandManager();
+        CommandManager &cMgr = Application::Instance->commandManager();
         if (tabRect(currentIndex()).contains(e->pos()))
             cMgr.getCommandByName("Std_CloseActiveWindow")->addTo(menu);
         cMgr.getCommandByName("Std_CloseAllWindows")->addTo(menu);
@@ -195,46 +189,41 @@ protected:
     }
 
 private:
-    QMenu* menu;
+    QMenu *menu;
 };
 
 #if defined(Q_OS_WIN32)
-class MainWindowTabBar : public QTabBar
+class MainWindowTabBar: public QTabBar
 {
 public:
-    MainWindowTabBar(QWidget *parent) : QTabBar(parent)
-    {
-        setExpanding(false);
-    }
+    MainWindowTabBar(QWidget *parent) : QTabBar(parent) { setExpanding(false); }
+
 protected:
     bool event(QEvent *e)
     {
         // show the tooltip if tab is too small to fit label
-        if (e->type() != QEvent::ToolTip)
-            return QTabBar::event(e);
+        if (e->type() != QEvent::ToolTip) return QTabBar::event(e);
         QSize size = this->size();
         QSize hint = sizeHint();
         if (shape() == QTabBar::RoundedWest || shape() == QTabBar::RoundedEast) {
             size.transpose();
             hint.transpose();
         }
-        if (size.width() < hint.width())
-            return QTabBar::event(e);
+        if (size.width() < hint.width()) return QTabBar::event(e);
         e->accept();
         return true;
     }
-    void tabInserted (int index)
+    void tabInserted(int index)
     {
         // get all dock windows
-        QList<QDockWidget*> dw = getMainWindow()->findChildren<QDockWidget*>();
-        for (QList<QDockWidget*>::iterator it = dw.begin(); it != dw.end(); ++it) {
+        QList<QDockWidget *> dw = getMainWindow()->findChildren<QDockWidget *>();
+        for (QList<QDockWidget *>::iterator it = dw.begin(); it != dw.end(); ++it) {
             // compare tab text and window title to get the right dock window
             if (this->tabText(index) == (*it)->windowTitle()) {
-                QWidget* dock = (*it)->widget();
+                QWidget *dock = (*it)->widget();
                 if (dock) {
                     QIcon icon = dock->windowIcon();
-                    if (!icon.isNull())
-                        setTabIcon(index, icon);
+                    if (!icon.isNull()) setTabIcon(index, icon);
                 }
                 break;
             }
@@ -248,8 +237,8 @@ protected:
 
 /* TRANSLATOR Gui::MainWindow */
 
-MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
-  : QMainWindow( parent, f/*WDestructiveClose*/ )
+MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags f)
+    : QMainWindow(parent, f /*WDestructiveClose*/)
 {
     d = new MainWindowP;
     d->splashscreen = nullptr;
@@ -270,7 +259,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     d->mdiArea->setTabsMovable(true);
     d->mdiArea->setTabPosition(QTabWidget::South);
     d->mdiArea->setViewMode(QMdiArea::TabbedView);
-    auto tab = d->mdiArea->findChild<QTabBar*>();
+    auto tab = d->mdiArea->findChild<QTabBar *>();
     if (tab) {
         tab->setTabsClosable(true);
         // The tabs might be very wide
@@ -280,11 +269,12 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     d->mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     d->mdiArea->setOption(QMdiArea::DontMaximizeSubWindowOnActivation, false);
     d->mdiArea->setActivationOrder(QMdiArea::ActivationHistoryOrder);
-    d->mdiArea->setBackground(QBrush(QColor(160,160,160)));
+    d->mdiArea->setBackground(QBrush(QColor(160, 160, 160)));
     setCentralWidget(d->mdiArea);
 
     statusBar()->setObjectName(QString::fromLatin1("statusBar"));
-    connect(statusBar(), SIGNAL(messageChanged(const QString &)), this, SLOT(statusMessageChanged()));
+    connect(statusBar(), SIGNAL(messageChanged(const QString &)), this,
+            SLOT(statusMessageChanged()));
 
     // labels and progressbar
     d->status = new StatusBarObserver();
@@ -293,24 +283,24 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     d->sizeLabel = new QLabel(tr("Dimension"), statusBar());
     d->sizeLabel->setMinimumWidth(120);
     statusBar()->addWidget(d->actionLabel, 1);
-    QProgressBar* progressBar = Gui::SequencerBar::instance()->getProgressBar(statusBar());
+    QProgressBar *progressBar = Gui::SequencerBar::instance()->getProgressBar(statusBar());
     statusBar()->addPermanentWidget(progressBar, 0);
     statusBar()->addPermanentWidget(d->sizeLabel, 0);
 
     // clears the action label
-    d->actionTimer = new QTimer( this );
+    d->actionTimer = new QTimer(this);
     d->actionTimer->setObjectName(QString::fromLatin1("actionTimer"));
     connect(d->actionTimer, SIGNAL(timeout()), d->actionLabel, SLOT(clear()));
 
     // clear status type
-    d->statusTimer = new QTimer( this );
+    d->statusTimer = new QTimer(this);
     d->statusTimer->setObjectName(QString::fromLatin1("statusTimer"));
     connect(d->statusTimer, SIGNAL(timeout()), this, SLOT(clearStatus()));
 
     // update gui timer
     d->activityTimer = new QTimer(this);
     d->activityTimer->setObjectName(QString::fromLatin1("activityTimer"));
-    connect(d->activityTimer, SIGNAL(timeout()),this, SLOT(_updateActions()));
+    connect(d->activityTimer, SIGNAL(timeout()), this, SLOT(_updateActions()));
     d->activityTimer->setSingleShot(false);
     d->activityTimer->start(150);
 
@@ -321,10 +311,10 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     d->windowMapper = new QSignalMapper(this);
 
     // connection between workspace, window menu and tab bar
-    connect(d->windowMapper, SIGNAL(mapped(QWidget *)),
-            this, SLOT(onSetActiveSubWindow(QWidget*)));
-    connect(d->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
-            this, SLOT(onWindowActivated(QMdiSubWindow* )));
+    connect(d->windowMapper, SIGNAL(mapped(QWidget *)), this,
+            SLOT(onSetActiveSubWindow(QWidget *)));
+    connect(d->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow *)), this,
+            SLOT(onWindowActivated(QMdiSubWindow *)));
 
     setupDockWindows();
 
@@ -340,7 +330,7 @@ MainWindow::~MainWindow()
     instance = nullptr;
 }
 
-MainWindow* MainWindow::getInstance()
+MainWindow *MainWindow::getInstance()
 {
     // MainWindow has a public constructor
     return instance;
@@ -349,10 +339,9 @@ MainWindow* MainWindow::getInstance()
 void MainWindow::setupDockWindows()
 {
     std::string hiddenDockWindows;
-    const std::map<std::string,std::string>& config = App::Application::Config();
+    const std::map<std::string, std::string> &config = App::Application::Config();
     auto ht = config.find("HiddenDockWindow");
-    if (ht != config.end())
-        hiddenDockWindows = ht->second;
+    if (ht != config.end()) hiddenDockWindows = ht->second;
 
     bool treeView = setupTreeView(hiddenDockWindows);
     bool propertyView = setupPropertyView(hiddenDockWindows);
@@ -365,25 +354,32 @@ void MainWindow::setupDockWindows()
     setupDAGView(hiddenDockWindows);
 }
 
-bool MainWindow::setupTreeView(const std::string& hiddenDockWindows)
+bool MainWindow::setupTreeView(const std::string &hiddenDockWindows)
 {
     if (hiddenDockWindows.find("Std_TreeView") == std::string::npos) {
         //work through parameter.
-        ParameterGrp::handle group = App::GetApplication().GetUserParameter().
-                GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("DockWindows")->GetGroup("TreeView");
+        ParameterGrp::handle group = App::GetApplication()
+                                         .GetUserParameter()
+                                         .GetGroup("BaseApp")
+                                         ->GetGroup("Preferences")
+                                         ->GetGroup("DockWindows")
+                                         ->GetGroup("TreeView");
         bool enabled = group->GetBool("Enabled", true);
         if (enabled != group->GetBool("Enabled", false)) {
-            enabled = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
-                            ->GetGroup("MainWindow")->GetGroup("DockWindows")->GetBool("Std_TreeView",false);
+            enabled = App::GetApplication()
+                          .GetUserParameter()
+                          .GetGroup("BaseApp")
+                          ->GetGroup("MainWindow")
+                          ->GetGroup("DockWindows")
+                          ->GetBool("Std_TreeView", false);
         }
         group->SetBool("Enabled", enabled); //ensure entry exists.
         if (enabled) {
             auto tree = new TreeDockWidget(nullptr, this);
-            tree->setObjectName
-                (QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Tree view")));
+            tree->setObjectName(QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget", "Tree view")));
             tree->setMinimumWidth(210);
 
-            DockWindowManager* pDockMgr = DockWindowManager::instance();
+            DockWindowManager *pDockMgr = DockWindowManager::instance();
             pDockMgr->registerDockWindow("Std_TreeView", tree);
             return true;
         }
@@ -392,26 +388,34 @@ bool MainWindow::setupTreeView(const std::string& hiddenDockWindows)
     return false;
 }
 
-bool MainWindow::setupPropertyView(const std::string& hiddenDockWindows)
+bool MainWindow::setupPropertyView(const std::string &hiddenDockWindows)
 {
     // Property view
     if (hiddenDockWindows.find("Std_PropertyView") == std::string::npos) {
         //work through parameter.
-        ParameterGrp::handle group = App::GetApplication().GetUserParameter().
-                GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("DockWindows")->GetGroup("PropertyView");
+        ParameterGrp::handle group = App::GetApplication()
+                                         .GetUserParameter()
+                                         .GetGroup("BaseApp")
+                                         ->GetGroup("Preferences")
+                                         ->GetGroup("DockWindows")
+                                         ->GetGroup("PropertyView");
         bool enabled = group->GetBool("Enabled", true);
         if (enabled != group->GetBool("Enabled", false)) {
-            enabled = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
-                            ->GetGroup("MainWindow")->GetGroup("DockWindows")->GetBool("Std_PropertyView",false);
+            enabled = App::GetApplication()
+                          .GetUserParameter()
+                          .GetGroup("BaseApp")
+                          ->GetGroup("MainWindow")
+                          ->GetGroup("DockWindows")
+                          ->GetBool("Std_PropertyView", false);
         }
         group->SetBool("Enabled", enabled); //ensure entry exists.
         if (enabled) {
             auto pcPropView = new PropertyDockView(nullptr, this);
-            pcPropView->setObjectName
-                (QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Property view")));
+            pcPropView->setObjectName(
+                QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget", "Property view")));
             pcPropView->setMinimumWidth(210);
 
-            DockWindowManager* pDockMgr = DockWindowManager::instance();
+            DockWindowManager *pDockMgr = DockWindowManager::instance();
             pDockMgr->registerDockWindow("Std_PropertyView", pcPropView);
             return true;
         }
@@ -420,16 +424,16 @@ bool MainWindow::setupPropertyView(const std::string& hiddenDockWindows)
     return false;
 }
 
-bool MainWindow::setupSelectionView(const std::string& hiddenDockWindows)
+bool MainWindow::setupSelectionView(const std::string &hiddenDockWindows)
 {
     // Selection view
     if (hiddenDockWindows.find("Std_SelectionView") == std::string::npos) {
         auto pcSelectionView = new SelectionView(nullptr, this);
-        pcSelectionView->setObjectName
-            (QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Selection view")));
+        pcSelectionView->setObjectName(
+            QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget", "Selection view")));
         pcSelectionView->setMinimumWidth(210);
 
-        DockWindowManager* pDockMgr = DockWindowManager::instance();
+        DockWindowManager *pDockMgr = DockWindowManager::instance();
         pDockMgr->registerDockWindow("Std_SelectionView", pcSelectionView);
         return true;
     }
@@ -437,21 +441,26 @@ bool MainWindow::setupSelectionView(const std::string& hiddenDockWindows)
     return false;
 }
 
-bool MainWindow::setupComboView(const std::string& hiddenDockWindows, bool enable)
+bool MainWindow::setupComboView(const std::string &hiddenDockWindows, bool enable)
 {
     // Combo view
     if (hiddenDockWindows.find("Std_ComboView") == std::string::npos) {
         if (!enable) {
-            ParameterGrp::handle group = App::GetApplication().GetUserParameter().
-                    GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("DockWindows")->GetGroup("ComboView");
+            ParameterGrp::handle group = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("DockWindows")
+                                             ->GetGroup("ComboView");
             enable = group->GetBool("Enabled", true);
         }
 
         auto pcComboView = new ComboView(enable, nullptr, this);
-        pcComboView->setObjectName(QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Combo View")));
+        pcComboView->setObjectName(
+            QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget", "Combo View")));
         pcComboView->setMinimumWidth(150);
 
-        DockWindowManager* pDockMgr = DockWindowManager::instance();
+        DockWindowManager *pDockMgr = DockWindowManager::instance();
         pDockMgr->registerDockWindow("Std_ComboView", pcComboView);
         return true;
     }
@@ -459,7 +468,7 @@ bool MainWindow::setupComboView(const std::string& hiddenDockWindows, bool enabl
     return false;
 }
 
-bool MainWindow::setupDAGView(const std::string& hiddenDockWindows)
+bool MainWindow::setupDAGView(const std::string &hiddenDockWindows)
 {
     //TODO: Add external object support for DAGView
 
@@ -467,24 +476,28 @@ bool MainWindow::setupDAGView(const std::string& hiddenDockWindows)
     if (hiddenDockWindows.find("Std_DAGView") == std::string::npos) {
         //work through parameter.
         // old group name
-        ParameterGrp::handle deprecateGroup = App::GetApplication().GetUserParameter().
-              GetGroup("BaseApp")->GetGroup("Preferences");
+        ParameterGrp::handle deprecateGroup =
+            App::GetApplication().GetUserParameter().GetGroup("BaseApp")->GetGroup("Preferences");
         bool enabled = false;
         if (deprecateGroup->HasGroup("DAGView")) {
             deprecateGroup = deprecateGroup->GetGroup("DAGView");
             enabled = deprecateGroup->GetBool("Enabled", enabled);
         }
         // new group name
-        ParameterGrp::handle group = App::GetApplication().GetUserParameter().
-              GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("DockWindows")->GetGroup("DAGView");
+        ParameterGrp::handle group = App::GetApplication()
+                                         .GetUserParameter()
+                                         .GetGroup("BaseApp")
+                                         ->GetGroup("Preferences")
+                                         ->GetGroup("DockWindows")
+                                         ->GetGroup("DAGView");
         enabled = group->GetBool("Enabled", enabled);
         group->SetBool("Enabled", enabled); //ensure entry exists.
         if (enabled) {
             auto dagDockWindow = new DAG::DockWindow(nullptr, this);
-            dagDockWindow->setObjectName
-                (QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","DAG View")));
+            dagDockWindow->setObjectName(
+                QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget", "DAG View")));
 
-            DockWindowManager* pDockMgr = DockWindowManager::instance();
+            DockWindowManager *pDockMgr = DockWindowManager::instance();
             pDockMgr->registerDockWindow("Std_DAGView", dagDockWindow);
             return true;
         }
@@ -493,16 +506,16 @@ bool MainWindow::setupDAGView(const std::string& hiddenDockWindows)
     return false;
 }
 
-bool MainWindow::setupReportView(const std::string& hiddenDockWindows)
+bool MainWindow::setupReportView(const std::string &hiddenDockWindows)
 {
     // Report view
     if (hiddenDockWindows.find("Std_ReportView") == std::string::npos) {
         auto pcReport = new ReportOutput(this);
         pcReport->setWindowIcon(BitmapFactory().pixmap("MacroEditor"));
-        pcReport->setObjectName
-            (QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Report view")));
+        pcReport->setObjectName(
+            QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget", "Report view")));
 
-        DockWindowManager* pDockMgr = DockWindowManager::instance();
+        DockWindowManager *pDockMgr = DockWindowManager::instance();
         pDockMgr->registerDockWindow("Std_ReportView", pcReport);
 
         auto rvObserver = new ReportOutputObserver(pcReport);
@@ -513,16 +526,16 @@ bool MainWindow::setupReportView(const std::string& hiddenDockWindows)
     return false;
 }
 
-bool MainWindow::setupPythonConsole(const std::string& hiddenDockWindows)
+bool MainWindow::setupPythonConsole(const std::string &hiddenDockWindows)
 {
     // Python console
     if (hiddenDockWindows.find("Std_PythonView") == std::string::npos) {
         auto pcPython = new PythonConsole(this);
         pcPython->setWindowIcon(Gui::BitmapFactory().iconFromTheme("applications-python"));
-        pcPython->setObjectName
-            (QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Python console")));
+        pcPython->setObjectName(
+            QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget", "Python console")));
 
-        DockWindowManager* pDockMgr = DockWindowManager::instance();
+        DockWindowManager *pDockMgr = DockWindowManager::instance();
         pDockMgr->registerDockWindow("Std_PythonView", pcPython);
         return true;
     }
@@ -530,22 +543,21 @@ bool MainWindow::setupPythonConsole(const std::string& hiddenDockWindows)
     return false;
 }
 
-QMenu* MainWindow::createPopupMenu ()
+QMenu *MainWindow::createPopupMenu()
 {
-    QMenu* menu = QMainWindow::createPopupMenu();
-    Workbench* wb = WorkbenchManager::instance()->active();
+    QMenu *menu = QMainWindow::createPopupMenu();
+    Workbench *wb = WorkbenchManager::instance()->active();
     if (wb) {
         MenuItem item;
         wb->createMainWindowPopupMenu(&item);
         if (item.hasItems()) {
             menu->addSeparator();
-            QList<MenuItem*> items = item.getItems();
-            for (const auto & item : items) {
-                if (item->command() == "Separator") {
-                    menu->addSeparator();
-                }
+            QList<MenuItem *> items = item.getItems();
+            for (const auto &item : items) {
+                if (item->command() == "Separator") { menu->addSeparator(); }
                 else {
-                    Command* cmd = Application::Instance->commandManager().getCommandByName(item->command().c_str());
+                    Command *cmd = Application::Instance->commandManager().getCommandByName(
+                        item->command().c_str());
                     if (cmd) cmd->addTo(menu);
                 }
             }
@@ -555,33 +567,22 @@ QMenu* MainWindow::createPopupMenu ()
     return menu;
 }
 
-void MainWindow::arrangeIcons()
-{
-    d->mdiArea->tileSubWindows();
-}
+void MainWindow::arrangeIcons() { d->mdiArea->tileSubWindows(); }
 
-void MainWindow::tile()
-{
-    d->mdiArea->tileSubWindows();
-}
+void MainWindow::tile() { d->mdiArea->tileSubWindows(); }
 
-void MainWindow::cascade()
-{
-    d->mdiArea->cascadeSubWindows();
-}
+void MainWindow::cascade() { d->mdiArea->cascadeSubWindows(); }
 
-void MainWindow::closeActiveWindow ()
-{
-    d->mdiArea->closeActiveSubWindow();
-}
+void MainWindow::closeActiveWindow() { d->mdiArea->closeActiveSubWindow(); }
 
-int MainWindow::confirmSave(const char *docName, QWidget *parent, bool addCheckbox) {
-    QMessageBox box(parent?parent:this);
+int MainWindow::confirmSave(const char *docName, QWidget *parent, bool addCheckbox)
+{
+    QMessageBox box(parent ? parent : this);
     box.setIcon(QMessageBox::Question);
     box.setWindowTitle(QObject::tr("Unsaved document"));
-    if(docName)
+    if (docName)
         box.setText(QObject::tr("Do you want to save your changes to document '%1' before closing?")
-                    .arg(QString::fromUtf8(docName)));
+                        .arg(QString::fromUtf8(docName)));
     else
         box.setText(QObject::tr("Do you want to save your changes to document before closing?"));
 
@@ -592,23 +593,26 @@ int MainWindow::confirmSave(const char *docName, QWidget *parent, bool addCheckb
 
     QCheckBox checkBox(QObject::tr("Apply answer to all"));
     ParameterGrp::handle hGrp;
-    if(addCheckbox) {
-         hGrp = App::GetApplication().GetUserParameter().
-            GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("General");
-        checkBox.setChecked(hGrp->GetBool("ConfirmAll",false));
+    if (addCheckbox) {
+        hGrp = App::GetApplication()
+                   .GetUserParameter()
+                   .GetGroup("BaseApp")
+                   ->GetGroup("Preferences")
+                   ->GetGroup("General");
+        checkBox.setChecked(hGrp->GetBool("ConfirmAll", false));
         checkBox.blockSignals(true);
         box.addButton(&checkBox, QMessageBox::ResetRole);
     }
 
     // add shortcuts
-    QAbstractButton* saveBtn = box.button(QMessageBox::Save);
+    QAbstractButton *saveBtn = box.button(QMessageBox::Save);
     if (saveBtn->shortcut().isEmpty()) {
         QString text = saveBtn->text();
         text.prepend(QLatin1Char('&'));
         saveBtn->setShortcut(QKeySequence::mnemonic(text));
     }
 
-    QAbstractButton* discardBtn = box.button(QMessageBox::Discard);
+    QAbstractButton *discardBtn = box.button(QMessageBox::Discard);
     if (discardBtn->shortcut().isEmpty()) {
         QString text = discardBtn->text();
         text.prepend(QLatin1Char('&'));
@@ -617,27 +621,25 @@ int MainWindow::confirmSave(const char *docName, QWidget *parent, bool addCheckb
 
     int res = ConfirmSaveResult::Cancel;
     box.adjustSize(); // Silence warnings from Qt on Windows
-    switch (box.exec())
-    {
-    case QMessageBox::Save:
-        res = checkBox.isChecked()?ConfirmSaveResult::SaveAll:ConfirmSaveResult::Save;
-        break;
-    case QMessageBox::Discard:
-        res = checkBox.isChecked()?ConfirmSaveResult::DiscardAll:ConfirmSaveResult::Discard;
-        break;
+    switch (box.exec()) {
+        case QMessageBox::Save:
+            res = checkBox.isChecked() ? ConfirmSaveResult::SaveAll : ConfirmSaveResult::Save;
+            break;
+        case QMessageBox::Discard:
+            res = checkBox.isChecked() ? ConfirmSaveResult::DiscardAll : ConfirmSaveResult::Discard;
+            break;
     }
-    if(addCheckbox && res)
-        hGrp->SetBool("ConfirmAll",checkBox.isChecked());
+    if (addCheckbox && res) hGrp->SetBool("ConfirmAll", checkBox.isChecked());
     return res;
 }
 
-bool MainWindow::closeAllDocuments (bool close)
+bool MainWindow::closeAllDocuments(bool close)
 {
     auto docs = App::GetApplication().getDocuments();
     try {
         docs = App::Document::getDependentDocuments(docs, true);
     }
-    catch(Base::Exception &e) {
+    catch (Base::Exception &e) {
         e.ReportException();
     }
 
@@ -647,34 +649,25 @@ bool MainWindow::closeAllDocuments (bool close)
 
     for (auto doc : docs) {
         auto gdoc = Application::Instance->getDocument(doc);
-        if (!gdoc)
-            continue;
-        if (!gdoc->canClose(false))
-            return false;
-        if (!gdoc->isModified()
-                || doc->testStatus(App::Document::PartialDoc)
-                || doc->testStatus(App::Document::TempDoc))
+        if (!gdoc) continue;
+        if (!gdoc->canClose(false)) return false;
+        if (!gdoc->isModified() || doc->testStatus(App::Document::PartialDoc)
+            || doc->testStatus(App::Document::TempDoc))
             continue;
         bool save = saveAll;
         if (!save && checkModify) {
-            int res = confirmSave(doc->Label.getStrValue().c_str(), this, docs.size()>1);
-            switch (res)
-            {
-            case ConfirmSaveResult::Cancel:
-                return false;
-            case ConfirmSaveResult::SaveAll:
-                saveAll = true;
-                /* FALLTHRU */
-            case ConfirmSaveResult::Save:
-                save = true;
-                break;
-            case ConfirmSaveResult::DiscardAll:
-                checkModify = false;
+            int res = confirmSave(doc->Label.getStrValue().c_str(), this, docs.size() > 1);
+            switch (res) {
+                case ConfirmSaveResult::Cancel: return false;
+                case ConfirmSaveResult::SaveAll:
+                    saveAll = true;
+                    /* FALLTHRU */
+                case ConfirmSaveResult::Save: save = true; break;
+                case ConfirmSaveResult::DiscardAll: checkModify = false;
             }
         }
 
-        if (save && !gdoc->save())
-            failedSaves++;
+        if (save && !gdoc->save()) failedSaves++;
     }
 
     if (failedSaves > 0) {
@@ -682,57 +675,44 @@ bool MainWindow::closeAllDocuments (bool close)
             getMainWindow(),
             QObject::tr("%1 Document(s) not saved").arg(QString::number(failedSaves)),
             QObject::tr("Some documents could not be saved. Do you want to cancel closing?"),
-            QMessageBox::Discard | QMessageBox::Cancel,
-            QMessageBox::Discard);
-        if (ret == QMessageBox::Cancel)
-            return false;
+            QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard);
+        if (ret == QMessageBox::Cancel) return false;
     }
 
-    if (close)
-        App::GetApplication().closeAllDocuments();
+    if (close) App::GetApplication().closeAllDocuments();
 
     return true;
 }
 
-void MainWindow::activateNextWindow ()
-{
-    d->mdiArea->activateNextSubWindow();
-}
+void MainWindow::activateNextWindow() { d->mdiArea->activateNextSubWindow(); }
 
-void MainWindow::activatePreviousWindow ()
-{
-    d->mdiArea->activatePreviousSubWindow();
-}
+void MainWindow::activatePreviousWindow() { d->mdiArea->activatePreviousSubWindow(); }
 
-void MainWindow::activateWorkbench(const QString& name)
+void MainWindow::activateWorkbench(const QString &name)
 {
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
+    ParameterGrp::handle hGrp =
+        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
     bool saveWB = hGrp->GetBool("SaveWBbyTab", false);
-    QMdiSubWindow* subWin = d->mdiArea->activeSubWindow();
+    QMdiSubWindow *subWin = d->mdiArea->activeSubWindow();
     if (subWin && saveWB) {
         QString currWb = subWin->property("ownWB").toString();
-        if (currWb.isEmpty() || currWb != name) {
-            subWin->setProperty("ownWB", name);
-        }
+        if (currWb.isEmpty() || currWb != name) { subWin->setProperty("ownWB", name); }
     }
     // emit this signal
     Q_EMIT workbenchActivated(name);
     updateActions(true);
 }
 
-void MainWindow::whatsThis()
-{
-    QWhatsThis::enterWhatsThisMode();
-}
+void MainWindow::whatsThis() { QWhatsThis::enterWhatsThisMode(); }
 
-void MainWindow::showDocumentation(const QString& help)
+void MainWindow::showDocumentation(const QString &help)
 {
     Base::PyGILStateLocker lock;
-    PyObject* module = PyImport_ImportModule("Help");
+    PyObject *module = PyImport_ImportModule("Help");
     if (module) {
         Py_DECREF(module);
-        Gui::Command::addModule(Gui::Command::Gui,"Help");
-        Gui::Command::doCommand(Gui::Command::Gui,"Help.show(\"%s\")", help.toStdString().c_str());
+        Gui::Command::addModule(Gui::Command::Gui, "Help");
+        Gui::Command::doCommand(Gui::Command::Gui, "Help.show(\"%s\")", help.toStdString().c_str());
     }
     else {
         PyErr_Clear();
@@ -741,14 +721,17 @@ void MainWindow::showDocumentation(const QString& help)
             QMessageBox msgBox(getMainWindow());
             msgBox.setWindowTitle(tr("Help addon needed!"));
             msgBox.setText(tr("The Help system of %1 is now handled by the \"Help\" addon. "
-               "It can easily be installed via the Addons Manager").arg(QString(qApp->applicationName())));
-            QAbstractButton* pButtonAddonMgr = msgBox.addButton(tr("Open Addon Manager"), QMessageBox::YesRole);
+                              "It can easily be installed via the Addons Manager")
+                               .arg(QString(qApp->applicationName())));
+            QAbstractButton *pButtonAddonMgr =
+                msgBox.addButton(tr("Open Addon Manager"), QMessageBox::YesRole);
             msgBox.addButton(QMessageBox::Ok);
             msgBox.exec();
             if (msgBox.clickedButton() == pButtonAddonMgr) {
-                ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Addons");
+                ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
+                    "User parameter:BaseApp/Preferences/Addons");
                 hGrp->SetASCII("SelectedAddon", "Help");
-                Gui::Command::doCommand(Gui::Command::Gui,"Gui.runCommand('Std_AddonMgr',0)");
+                Gui::Command::doCommand(Gui::Command::Gui, "Gui.runCommand('Std_AddonMgr',0)");
             }
         }
         else {
@@ -766,7 +749,7 @@ bool MainWindow::event(QEvent *e)
         // the application to observe what happens in eventFilter().
         d->whatstext.clear();
         if (!d->whatsthis) {
-            d-> whatsthis = true;
+            d->whatsthis = true;
             qApp->installEventFilter(this);
         }
     }
@@ -776,34 +759,34 @@ bool MainWindow::event(QEvent *e)
         // this in eventFilter().
     }
     else if (e->type() == QEvent::WhatsThisClicked) {
-        auto wt = static_cast<QWhatsThisClickedEvent*>(e);
+        auto wt = static_cast<QWhatsThisClickedEvent *>(e);
         showDocumentation(wt->href());
     }
     else if (e->type() == QEvent::ApplicationWindowIconChange) {
         // if application icon changes apply it to the main window and the "About..." dialog
         this->setWindowIcon(QApplication::windowIcon());
-        Command* about = Application::Instance->commandManager().getCommandByName("Std_About");
+        Command *about = Application::Instance->commandManager().getCommandByName("Std_About");
         if (about) {
-            Action* action = about->getAction();
+            Action *action = about->getAction();
             if (action) action->setIcon(QApplication::windowIcon());
         }
     }
     else if (e->type() == Spaceball::ButtonEvent::ButtonEventType) {
         auto buttonEvent = dynamic_cast<Spaceball::ButtonEvent *>(e);
-        if (!buttonEvent)
-            return true;
+        if (!buttonEvent) return true;
         buttonEvent->setHandled(true);
         //only going to respond to button press events.
-        if (buttonEvent->buttonStatus() != Spaceball::BUTTON_PRESSED)
-            return true;
-        ParameterGrp::handle group = App::GetApplication().GetUserParameter().GetGroup("BaseApp")->
-                GetGroup("Spaceball")->GetGroup("Buttons");
+        if (buttonEvent->buttonStatus() != Spaceball::BUTTON_PRESSED) return true;
+        ParameterGrp::handle group = App::GetApplication()
+                                         .GetUserParameter()
+                                         .GetGroup("BaseApp")
+                                         ->GetGroup("Spaceball")
+                                         ->GetGroup("Buttons");
         QByteArray groupName(QVariant(buttonEvent->buttonNumber()).toByteArray());
         if (group->HasGroup(groupName.data())) {
             ParameterGrp::handle commandGroup = group->GetGroup(groupName.data());
             std::string commandName(commandGroup->GetASCII("Command"));
-            if (commandName.empty())
-                return true;
+            if (commandName.empty()) return true;
             else
                 Application::Instance->commandManager().runCommandByName(commandName.c_str());
         }
@@ -812,41 +795,37 @@ bool MainWindow::event(QEvent *e)
     }
     else if (e->type() == Spaceball::MotionEvent::MotionEventType) {
         auto motionEvent = dynamic_cast<Spaceball::MotionEvent *>(e);
-        if (!motionEvent)
-            return true;
+        if (!motionEvent) return true;
         motionEvent->setHandled(true);
         Gui::Document *doc = Application::Instance->activeDocument();
-        if (!doc)
-            return true;
+        if (!doc) return true;
         auto temp = dynamic_cast<View3DInventor *>(doc->getActiveView());
-        if (!temp)
-            return true;
+        if (!temp) return true;
         View3DInventorViewer *view = temp->getViewer();
         if (view) {
             Spaceball::MotionEvent anotherEvent(*motionEvent);
             qApp->sendEvent(view, &anotherEvent);
         }
         return true;
-    }else if(e->type() == QEvent::StatusTip) {
+    }
+    else if (e->type() == QEvent::StatusTip) {
         // make sure warning and error message don't get blocked by tooltips
-        if(std::abs(d->currentStatusType) <= MainWindow::Wrn)
-            return true;
+        if (std::abs(d->currentStatusType) <= MainWindow::Wrn) return true;
     }
     return QMainWindow::event(e);
 }
 
-bool MainWindow::eventFilter(QObject* o, QEvent* e)
+bool MainWindow::eventFilter(QObject *o, QEvent *e)
 {
     if (o != this) {
         if (e->type() == QEvent::WindowStateChange) {
             // notify all mdi views when the active view receives a show normal, show minimized
             // or show maximized event
-            auto view = qobject_cast<MDIView*>(o);
+            auto view = qobject_cast<MDIView *>(o);
             if (view) { // emit this signal
-                Qt::WindowStates oldstate = static_cast<QWindowStateChangeEvent*>(e)->oldState();
+                Qt::WindowStates oldstate = static_cast<QWindowStateChangeEvent *>(e)->oldState();
                 Qt::WindowStates newstate = view->windowState();
-                if (oldstate != newstate)
-                    Q_EMIT windowStateChanged(view);
+                if (oldstate != newstate) Q_EMIT windowStateChanged(view);
             }
         }
 
@@ -855,15 +834,14 @@ bool MainWindow::eventFilter(QObject* o, QEvent* e)
         // Thus, we have to observe WhatThis events if called for a widget, use its text and
         // must avoid to make the bubble widget visible.
         if (e->type() == QEvent::WhatsThis) {
-            if (!o->isWidgetType())
-                return false;
+            if (!o->isWidgetType()) return false;
             // clicked on a widget in what's this mode
             auto w = static_cast<QWidget *>(o);
             d->whatstext = w->whatsThis();
         }
         if (e->type() == QEvent::WhatsThisClicked) {
             // if the widget is a top-level window
-            if (o->isWidgetType() && qobject_cast<QWidget*>(o)->isWindow()) {
+            if (o->isWidgetType() && qobject_cast<QWidget *>(o)->isWindow()) {
                 // re-direct to the widget
                 QApplication::sendEvent(this, e);
             }
@@ -873,8 +851,9 @@ bool MainWindow::eventFilter(QObject* o, QEvent* e)
         if (o->inherits("QMenu") && QWhatsThis::inWhatsThisMode()) {
             bool whatthis = false;
             if (e->type() == QEvent::KeyPress) {
-                auto ke = static_cast<QKeyEvent*>(e);
-                if (ke->key() == Qt::Key_Return || ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_F1)
+                auto ke = static_cast<QKeyEvent *>(e);
+                if (ke->key() == Qt::Key_Return || ke->key() == Qt::Key_Enter
+                    || ke->key() == Qt::Key_F1)
                     whatthis = true;
             }
             else if (e->type() == QEvent::MouseButtonRelease)
@@ -882,12 +861,11 @@ bool MainWindow::eventFilter(QObject* o, QEvent* e)
             else if (e->type() == QEvent::EnterWhatsThisMode)
                 whatthis = true;
             if (whatthis) {
-                QAction* cur = static_cast<QMenu*>(o)->activeAction();
+                QAction *cur = static_cast<QMenu *>(o)->activeAction();
                 if (cur) {
                     // get the help text for later usage
                     QString s = cur->whatsThis();
-                    if (s.isEmpty())
-                        s = static_cast<QMenu*>(o)->whatsThis();
+                    if (s.isEmpty()) s = static_cast<QMenu *>(o)->whatsThis();
                     d->whatstext = s;
                 }
             }
@@ -916,28 +894,28 @@ bool MainWindow::eventFilter(QObject* o, QEvent* e)
     return QMainWindow::eventFilter(o, e);
 }
 
-void MainWindow::addWindow(MDIView* view)
+void MainWindow::addWindow(MDIView *view)
 {
     // make workspace parent of view
     bool isempty = d->mdiArea->subWindowList().isEmpty();
-    auto child = qobject_cast<QMdiSubWindow*>(view->parentWidget());
-    if(!child) {
+    auto child = qobject_cast<QMdiSubWindow *>(view->parentWidget());
+    if (!child) {
         child = new QMdiSubWindow(d->mdiArea->viewport());
         child->setAttribute(Qt::WA_DeleteOnClose);
         child->setWidget(view);
         child->setWindowIcon(view->windowIcon());
-        QMenu* menu = child->systemMenu();
+        QMenu *menu = child->systemMenu();
 
         // See StdCmdCloseActiveWindow (#0002631)
-        QList<QAction*> acts = menu->actions();
-        for (auto & act : acts) {
+        QList<QAction *> acts = menu->actions();
+        for (auto &act : acts) {
             if (act->shortcut() == QKeySequence(QKeySequence::Close)) {
                 act->setShortcuts(QList<QKeySequence>());
                 break;
             }
         }
 
-        QAction* action = menu->addAction(tr("Close All"));
+        QAction *action = menu->addAction(tr("Close All"));
         connect(action, SIGNAL(triggered()), d->mdiArea, SLOT(closeAllSubWindows()));
         d->mdiArea->addSubWindow(child);
     }
@@ -949,8 +927,7 @@ void MainWindow::addWindow(MDIView* view)
     view->installEventFilter(this);
 
     // show the very first window in maximized mode
-    if (isempty)
-        view->showMaximized();
+    if (isempty) view->showMaximized();
     else
         view->show();
 }
@@ -961,7 +938,7 @@ void MainWindow::addWindow(MDIView* view)
  * If you want to avoid that the Gui::MDIView instance gets destructed too you
  * must reparent it afterwards, e.g. set parent to NULL.
  */
-void MainWindow::removeWindow(Gui::MDIView* view, bool close)
+void MainWindow::removeWindow(Gui::MDIView *view, bool close)
 {
     // free all connections
     disconnect(view, &MDIView::message, this, &MainWindow::showMessage);
@@ -970,9 +947,9 @@ void MainWindow::removeWindow(Gui::MDIView* view, bool close)
     view->removeEventFilter(this);
 
     // check if the focus widget is a child of the view
-    QWidget* foc = this->focusWidget();
+    QWidget *foc = this->focusWidget();
     if (foc) {
-        QWidget* par = foc->parentWidget();
+        QWidget *par = foc->parentWidget();
         while (par) {
             if (par == view) {
                 foc->clearFocus();
@@ -982,7 +959,7 @@ void MainWindow::removeWindow(Gui::MDIView* view, bool close)
         }
     }
 
-    QWidget* parent = view->parentWidget();
+    QWidget *parent = view->parentWidget();
 
     // The call of 'd->mdiArea->removeSubWindow(parent)' causes the QMdiSubWindow
     // to lose its parent and thus the notification in QMdiSubWindow::closeEvent
@@ -993,20 +970,19 @@ void MainWindow::removeWindow(Gui::MDIView* view, bool close)
     // The above mentioned problem can be fixed by setParent(0) which triggers a
     // ChildRemoved event being handled properly inside QMidArea::viewportEvent()
     //
-    auto subwindow = qobject_cast<QMdiSubWindow*>(parent);
-    if(subwindow && d->mdiArea->subWindowList().contains(subwindow)) {
+    auto subwindow = qobject_cast<QMdiSubWindow *>(parent);
+    if (subwindow && d->mdiArea->subWindowList().contains(subwindow)) {
         subwindow->setParent(nullptr);
 
         assert(!d->mdiArea->subWindowList().contains(subwindow));
         // d->mdiArea->removeSubWindow(parent);
     }
 
-    if(close)
-        parent->deleteLater();
+    if (close) parent->deleteLater();
     updateActions();
 }
 
-void MainWindow::tabChanged(MDIView* view)
+void MainWindow::tabChanged(MDIView *view)
 {
     Q_UNUSED(view);
     updateActions();
@@ -1014,9 +990,8 @@ void MainWindow::tabChanged(MDIView* view)
 
 void MainWindow::tabCloseRequested(int index)
 {
-    auto tab = d->mdiArea->findChild<QTabBar*>();
-    if (index < 0 || index >= tab->count())
-        return;
+    auto tab = d->mdiArea->findChild<QTabBar *>();
+    if (index < 0 || index >= tab->count()) return;
 
     const QList<QMdiSubWindow *> subWindows = d->mdiArea->subWindowList();
     Q_ASSERT(index < subWindows.size());
@@ -1029,36 +1004,33 @@ void MainWindow::tabCloseRequested(int index)
 
 void MainWindow::onSetActiveSubWindow(QWidget *window)
 {
-    if (!window)
-        return;
+    if (!window) return;
     d->mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow *>(window));
     updateActions();
 }
 
-void MainWindow::setActiveWindow(MDIView* view)
+void MainWindow::setActiveWindow(MDIView *view)
 {
-    if (!view || d->activeView == view)
-        return;
+    if (!view || d->activeView == view) return;
     onSetActiveSubWindow(view->parentWidget());
     d->activeView = view;
     Application::Instance->viewActivated(view);
 }
 
-void MainWindow::onWindowActivated(QMdiSubWindow* w)
+void MainWindow::onWindowActivated(QMdiSubWindow *w)
 {
-    if (!w)
-        return;
-    auto view = dynamic_cast<MDIView*>(w->widget());
+    if (!w) return;
+    auto view = dynamic_cast<MDIView *>(w->widget());
 
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
+    ParameterGrp::handle hGrp =
+        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
     bool saveWB = hGrp->GetBool("SaveWBbyTab", false);
     if (saveWB) {
         QString currWb = w->property("ownWB").toString();
-        if (! currWb.isEmpty()) {
-            this->activateWorkbench(currWb);
-        }
+        if (!currWb.isEmpty()) { this->activateWorkbench(currWb); }
         else {
-            w->setProperty("ownWB", QString::fromStdString(WorkbenchManager::instance()->active()->name()));
+            w->setProperty("ownWB",
+                           QString::fromStdString(WorkbenchManager::instance()->active()->name()));
         }
     }
 
@@ -1072,7 +1044,7 @@ void MainWindow::onWindowActivated(QMdiSubWindow* w)
     // at least under Linux. It seems to be a problem with the window manager.
     // Under Windows it seems to work though it's not really sure that it works reliably.
     // Result: So, we accept the first problem to be sure to avoid the second one.
-    if ( !view /*|| !mdi->isActiveWindow()*/ )
+    if (!view /*|| !mdi->isActiveWindow()*/)
         return; // either no MDIView or no valid object or no top-level window
 
     // set active the appropriate window (it needs not to be part of mdiIds, e.g. directly after creation)
@@ -1083,42 +1055,39 @@ void MainWindow::onWindowActivated(QMdiSubWindow* w)
 
 void MainWindow::onWindowsMenuAboutToShow()
 {
-    QList<QMdiSubWindow*> windows = d->mdiArea->subWindowList(QMdiArea::CreationOrder);
-    QWidget* active = d->mdiArea->activeSubWindow();
+    QList<QMdiSubWindow *> windows = d->mdiArea->subWindowList(QMdiArea::CreationOrder);
+    QWidget *active = d->mdiArea->activeSubWindow();
 
     // We search for the 'Std_WindowsMenu' command that provides the list of actions
-    CommandManager& cMgr = Application::Instance->commandManager();
-    Command* cmd = cMgr.getCommandByName("Std_WindowsMenu");
-    QList<QAction*> actions = qobject_cast<ActionGroup*>(cmd->getAction())->actions();
+    CommandManager &cMgr = Application::Instance->commandManager();
+    Command *cmd = cMgr.getCommandByName("Std_WindowsMenu");
+    QList<QAction *> actions = qobject_cast<ActionGroup *>(cmd->getAction())->actions();
 
     // do the connection only once
     static bool firstShow = true;
     if (firstShow) {
         firstShow = false;
-        QAction* last = actions.isEmpty() ? 0 : actions.last();
-        for (const auto & action : actions) {
-            if (action == last)
-                break; // this is a separator
+        QAction *last = actions.isEmpty() ? 0 : actions.last();
+        for (const auto &action : actions) {
+            if (action == last) break; // this is a separator
             connect(action, SIGNAL(triggered()), d->windowMapper, SLOT(map()));
         }
     }
 
-    int numWindows = std::min<int>(actions.count()-1, windows.count());
+    int numWindows = std::min<int>(actions.count() - 1, windows.count());
     for (int index = 0; index < numWindows; index++) {
-        QWidget* child = windows.at(index);
-        QAction* action = actions.at(index);
+        QWidget *child = windows.at(index);
+        QAction *action = actions.at(index);
         QString text;
         QString title = child->windowTitle();
         int lastIndex = title.lastIndexOf(QString::fromLatin1("[*]"));
         if (lastIndex > 0) {
             title = title.left(lastIndex);
-            if (child->isWindowModified())
-                title = QString::fromLatin1("%1*").arg(title);
+            if (child->isWindowModified()) title = QString::fromLatin1("%1*").arg(title);
         }
-        if (index < 9)
-            text = QString::fromLatin1("&%1 %2").arg(index+1).arg(title);
+        if (index < 9) text = QString::fromLatin1("&%1 %2").arg(index + 1).arg(title);
         else
-            text = QString::fromLatin1("%1 %2").arg(index+1).arg(title);
+            text = QString::fromLatin1("%1 %2").arg(index + 1).arg(title);
         action->setText(text);
         action->setVisible(true);
         action->setChecked(child == active);
@@ -1129,18 +1098,17 @@ void MainWindow::onWindowsMenuAboutToShow()
     for (int index = numWindows; index < actions.count(); index++)
         actions[index]->setVisible(false);
     // show the separator
-    if (numWindows > 0)
-        actions.last()->setVisible(true);
+    if (numWindows > 0) actions.last()->setVisible(true);
 }
 
 void MainWindow::onToolBarMenuAboutToShow()
 {
-    auto menu = static_cast<QMenu*>(sender());
+    auto menu = static_cast<QMenu *>(sender());
     menu->clear();
-    QList<QToolBar*> dock = this->findChildren<QToolBar*>();
-    for (const auto & it : dock) {
+    QList<QToolBar *> dock = this->findChildren<QToolBar *>();
+    for (const auto &it : dock) {
         if (it->parentWidget() == this) {
-            QAction* action = it->toggleViewAction();
+            QAction *action = it->toggleViewAction();
             action->setToolTip(tr("Toggles this toolbar"));
             action->setStatusTip(tr("Toggles this toolbar"));
             action->setWhatsThis(tr("Toggles this toolbar"));
@@ -1151,11 +1119,11 @@ void MainWindow::onToolBarMenuAboutToShow()
 
 void MainWindow::onDockWindowMenuAboutToShow()
 {
-    auto menu = static_cast<QMenu*>(sender());
+    auto menu = static_cast<QMenu *>(sender());
     menu->clear();
-    QList<QDockWidget*> dock = this->findChildren<QDockWidget*>();
-    for (auto & it : dock) {
-        QAction* action = it->toggleViewAction();
+    QList<QDockWidget *> dock = this->findChildren<QDockWidget *>();
+    for (auto &it : dock) {
+        QAction *action = it->toggleViewAction();
         action->setToolTip(tr("Toggles this dockable window"));
         action->setStatusTip(tr("Toggles this dockable window"));
         action->setWhatsThis(tr("Toggles this dockable window"));
@@ -1163,57 +1131,50 @@ void MainWindow::onDockWindowMenuAboutToShow()
     }
 }
 
-QList<QWidget*> MainWindow::windows(QMdiArea::WindowOrder order) const
+QList<QWidget *> MainWindow::windows(QMdiArea::WindowOrder order) const
 {
-    QList<QWidget*> mdis;
-    QList<QMdiSubWindow*> wnds = d->mdiArea->subWindowList(order);
-    for (const auto & wnd : wnds) {
-        mdis << wnd->widget();
-    }
+    QList<QWidget *> mdis;
+    QList<QMdiSubWindow *> wnds = d->mdiArea->subWindowList(order);
+    for (const auto &wnd : wnds) { mdis << wnd->widget(); }
     return mdis;
 }
 
-MDIView* MainWindow::activeWindow() const
+MDIView *MainWindow::activeWindow() const
 {
     // each activated window notifies this main window when it is activated
     return d->activeView;
 }
 
-void MainWindow::closeEvent (QCloseEvent * e)
+void MainWindow::closeEvent(QCloseEvent *e)
 {
     Application::Instance->tryClose(e);
     if (e->isAccepted()) {
         // Send close event to all non-modal dialogs
-        QList<QDialog*> dialogs = this->findChildren<QDialog*>();
+        QList<QDialog *> dialogs = this->findChildren<QDialog *>();
         // It is possible that closing a dialog internally closes further dialogs. Thus,
         // we have to check the pointer before.
-        QVector< QPointer<QDialog> > dialogs_ptr;
-        for (const auto & dialog : dialogs) {
-            dialogs_ptr.append(dialog);
+        QVector<QPointer<QDialog>> dialogs_ptr;
+        for (const auto &dialog : dialogs) { dialogs_ptr.append(dialog); }
+        for (auto &it : dialogs_ptr) {
+            if (!it.isNull()) it->close();
         }
-        for (auto & it : dialogs_ptr) {
-            if (!it.isNull())
-                it->close();
-        }
-        QList<MDIView*> mdis = this->findChildren<MDIView*>();
+        QList<MDIView *> mdis = this->findChildren<MDIView *>();
         // Force to close any remaining (passive) MDI child views
-        for (auto & mdi : mdis) {
+        for (auto &mdi : mdis) {
             mdi->hide();
             mdi->deleteLater();
         }
 
-        if (Workbench* wb = WorkbenchManager::instance()->active())
-            wb->removeTaskWatcher();
+        if (Workbench *wb = WorkbenchManager::instance()->active()) wb->removeTaskWatcher();
 
-        Q_EMIT  mainWindowClosed();
+        Q_EMIT mainWindowClosed();
         d->activityTimer->stop();
 
         // https://forum.freecadweb.org/viewtopic.php?f=8&t=67748
         // When the session manager jumps in it can happen that the closeEvent()
         // function is triggered twice and for the second call the main window might be
         // invisible. In this case the window settings shouldn't be saved.
-        if (isVisible())
-            saveWindowSettings();
+        if (isVisible()) saveWindowSettings();
 
         delete d->assistant;
         d->assistant = nullptr;
@@ -1221,9 +1182,8 @@ void MainWindow::closeEvent (QCloseEvent * e)
         // See createMimeDataFromSelection
         QVariant prop = this->property("x-documentobject-file");
         if (!prop.isNull()) {
-            Base::FileInfo fi((const char*)prop.toByteArray());
-            if (fi.exists())
-                fi.deleteFile();
+            Base::FileInfo fi((const char *)prop.toByteArray());
+            if (fi.exists()) fi.deleteFile();
         }
 
         if (this->property("QuitOnClosed").isValid()) {
@@ -1233,36 +1193,35 @@ void MainWindow::closeEvent (QCloseEvent * e)
     }
 }
 
-void MainWindow::showEvent(QShowEvent* e)
+void MainWindow::showEvent(QShowEvent *e)
 {
     std::clog << "Show main window" << std::endl;
     QMainWindow::showEvent(e);
 }
 
-void MainWindow::hideEvent(QHideEvent* e)
+void MainWindow::hideEvent(QHideEvent *e)
 {
     std::clog << "Hide main window" << std::endl;
     QMainWindow::hideEvent(e);
 }
 
-void MainWindow::processMessages(const QList<QByteArray> & msg)
+void MainWindow::processMessages(const QList<QByteArray> &msg)
 {
     // handle all the messages to open files
     try {
         WaitCursor wc;
         std::list<std::string> files;
         QByteArray action("OpenFile:");
-        for (const auto & it : msg) {
-            if (it.startsWith(action))
-                files.emplace_back(it.mid(action.size()).constData());
+        for (const auto &it : msg) {
+            if (it.startsWith(action)) files.emplace_back(it.mid(action.size()).constData());
         }
         files = App::Application::processFiles(files);
-        for (const auto & file : files) {
+        for (const auto &file : files) {
             QString filename = QString::fromUtf8(file.c_str(), file.size());
             FileDialog::setWorkingDirectory(filename);
         }
     }
-    catch (const Base::SystemExitException&) {
+    catch (const Base::SystemExitException &) {
     }
 }
 
@@ -1273,10 +1232,10 @@ void MainWindow::delayedStartup()
         try {
             Base::Interpreter().runString(Base::ScriptFactory().ProduceScript("FreeCADTest"));
         }
-        catch (const Base::SystemExitException&) {
+        catch (const Base::SystemExitException &) {
             throw;
         }
-        catch (const Base::Exception& e) {
+        catch (const Base::Exception &e) {
             e.ReportException();
         }
         return;
@@ -1286,16 +1245,16 @@ void MainWindow::delayedStartup()
     try {
         std::list<std::string> files = App::Application::getCmdLineFiles();
         files = App::Application::processFiles(files);
-        for (const auto & file : files) {
+        for (const auto &file : files) {
             QString filename = QString::fromUtf8(file.c_str(), file.size());
             FileDialog::setWorkingDirectory(filename);
         }
     }
-    catch (const Base::SystemExitException&) {
+    catch (const Base::SystemExitException &) {
         throw;
     }
 
-    const std::map<std::string,std::string>& cfg = App::Application::Config();
+    const std::map<std::string, std::string> &cfg = App::Application::Config();
     auto it = cfg.find("StartHidden");
     if (it != cfg.end()) {
         QApplication::quit();
@@ -1305,10 +1264,10 @@ void MainWindow::delayedStartup()
     // Create new document?
     ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("Document");
     if (hGrp->GetBool("CreateNewDoc", false)) {
-        if (App::GetApplication().getDocuments().empty()){
+        if (App::GetApplication().getDocuments().empty()) {
             App::GetApplication().newDocument();
             Gui::Command::doCommand(Gui::Command::Gui,
-                "Gui.activeDocument().activeView().viewDefaultOrientation()");
+                                    "Gui.activeDocument().activeView().viewDefaultOrientation()");
         }
     }
 
@@ -1317,29 +1276,22 @@ void MainWindow::delayedStartup()
     }
 }
 
-void MainWindow::appendRecentFile(const QString& filename)
+void MainWindow::appendRecentFile(const QString &filename)
 {
-    auto recent = this->findChild<RecentFilesAction *>
-        (QString::fromLatin1("recentFiles"));
-    if (recent) {
-        recent->appendFile(filename);
-    }
+    auto recent = this->findChild<RecentFilesAction *>(QString::fromLatin1("recentFiles"));
+    if (recent) { recent->appendFile(filename); }
 }
 
-void MainWindow::appendRecentMacro(const QString& filename)
+void MainWindow::appendRecentMacro(const QString &filename)
 {
-    auto recent = this->findChild<RecentMacrosAction *>
-        (QString::fromLatin1("recentMacros"));
-    if (recent) {
-        recent->appendFile(filename);
-    }
+    auto recent = this->findChild<RecentMacrosAction *>(QString::fromLatin1("recentMacros"));
+    if (recent) { recent->appendFile(filename); }
 }
 
 void MainWindow::updateActions(bool delay)
 {
     //make it safe to call before the main window is actually created
-    if (!instance)
-        return;
+    if (!instance) return;
 
     if (!d->activityTimer->isActive()) {
         // If for some reason updateActions() is called from a worker thread
@@ -1347,15 +1299,14 @@ void MainWindow::updateActions(bool delay)
         // the whole application in a weird state
         if (d->activityTimer->thread() != QThread::currentThread()) {
             QMetaObject::invokeMethod(d->activityTimer, "start", Qt::QueuedConnection,
-                QGenericReturnArgument(), Q_ARG(int, 150));
+                                      QGenericReturnArgument(), Q_ARG(int, 150));
         }
         else {
             d->activityTimer->start(150);
         }
     }
     else if (delay) {
-        if (!d->actionUpdateDelay)
-            d->actionUpdateDelay = 1;
+        if (!d->actionUpdateDelay) d->actionUpdateDelay = 1;
     }
     else {
         d->actionUpdateDelay = -1;
@@ -1374,8 +1325,8 @@ void MainWindow::_updateActions()
 
 void MainWindow::updateEditorActions()
 {
-    Command* cmd = nullptr;
-    CommandManager& mgr = Application::Instance->commandManager();
+    Command *cmd = nullptr;
+    CommandManager &mgr = Application::Instance->commandManager();
 
     cmd = mgr.getCommandByName("Std_Cut");
     if (cmd) cmd->testActive();
@@ -1395,13 +1346,13 @@ void MainWindow::updateEditorActions()
 
 void MainWindow::switchToTopLevelMode()
 {
-    QList<QDockWidget*> dw = this->findChildren<QDockWidget*>();
-    for (auto & it : dw) {
+    QList<QDockWidget *> dw = this->findChildren<QDockWidget *>();
+    for (auto &it : dw) {
         it->setParent(nullptr, Qt::Window);
         it->show();
     }
-    QList<QWidget*> mdi = getMainWindow()->windows();
-    for (auto & it : mdi) {
+    QList<QWidget *> mdi = getMainWindow()->windows();
+    for (auto &it : mdi) {
         it->setParent(nullptr, Qt::Window);
         it->show();
     }
@@ -1411,10 +1362,9 @@ void MainWindow::switchToDockedMode()
 {
     // Search for all top-level MDI views
     QWidgetList toplevel = QApplication::topLevelWidgets();
-    for (const auto & it : toplevel) {
-        auto view = qobject_cast<MDIView*>(it);
-        if (view)
-            view->setCurrentViewMode(MDIView::Child);
+    for (const auto &it : toplevel) {
+        auto view = qobject_cast<MDIView *>(it);
+        if (view) view->setCurrentViewMode(MDIView::Child);
     }
 }
 
@@ -1437,11 +1387,11 @@ void MainWindow::loadWindowSettings()
     maxHeight -= pos.y();
     this->resize(config.value(QString::fromLatin1("Size"), QSize(maxWidth, maxHeight)).toSize());
 
-    int x1,x2,y1,y2;
+    int x1, x2, y1, y2;
     // make sure that the main window is not totally out of the visible rectangle
     rect.getCoords(&x1, &y1, &x2, &y2);
-    pos.setX(qMin(qMax(pos.x(),x1-this->width()+30),x2-30));
-    pos.setY(qMin(qMax(pos.y(),y1-10),y2-10));
+    pos.setX(qMin(qMax(pos.x(), x1 - this->width() + 30), x2 - 30));
+    pos.setY(qMin(qMax(pos.y(), y1 - 10), y2 - 10));
     this->move(pos);
     {
         // tmp. disable the report window to suppress some bothering warnings
@@ -1484,10 +1434,13 @@ void MainWindow::startSplasher()
 {
     // startup splasher
     // when running in verbose mode no splasher
-    if (!(App::Application::Config()["Verbose"] == "Strict") &&
-         (App::Application::Config()["RunMode"] == "Gui")) {
-        ParameterGrp::handle hGrp = App::GetApplication().GetUserParameter().
-            GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("General");
+    if (!(App::Application::Config()["Verbose"] == "Strict")
+        && (App::Application::Config()["RunMode"] == "Gui")) {
+        ParameterGrp::handle hGrp = App::GetApplication()
+                                        .GetUserParameter()
+                                        .GetGroup("BaseApp")
+                                        ->GetGroup("Preferences")
+                                        ->GetGroup("General");
         // first search for an external image file
         if (hGrp->GetBool("ShowSplasher", true)) {
             d->splashscreen = new SplashScreen(this->splashImage());
@@ -1512,8 +1465,7 @@ QPixmap MainWindow::aboutImage() const
     // See if we have a custom About screen image set
     QPixmap about_image;
     QFileInfo fi(QString::fromLatin1("images:about_image.png"));
-    if (fi.isFile() && fi.exists())
-        about_image.load(fi.filePath(), "PNG");
+    if (fi.isFile() && fi.exists()) about_image.load(fi.filePath(), "PNG");
 
     std::string about_path = App::Application::Config()["AboutImage"];
     if (!about_path.empty() && about_image.isNull()) {
@@ -1525,9 +1477,7 @@ QPixmap MainWindow::aboutImage() const
         about_image.load(path);
 
         // Now try the icon paths
-        if (about_image.isNull()) {
-            about_image = Gui::BitmapFactory().pixmap(about_path.c_str());
-        }
+        if (about_image.isNull()) { about_image = Gui::BitmapFactory().pixmap(about_path.c_str()); }
     }
 
     return about_image;
@@ -1538,8 +1488,7 @@ QPixmap MainWindow::splashImage() const
     // search in the UserAppData dir as very first
     QPixmap splash_image;
     QFileInfo fi(QString::fromLatin1("images:splash_image.png"));
-    if (fi.isFile() && fi.exists())
-        splash_image.load(fi.filePath(), "PNG");
+    if (fi.isFile() && fi.exists()) splash_image.load(fi.filePath(), "PNG");
 
     // if no image was found try the config
     std::string splash_path = App::Application::Config()["SplashScreen"];
@@ -1567,22 +1516,27 @@ QPixmap MainWindow::splashImage() const
     }
 
     // include application name and version number
-    std::map<std::string,std::string>::const_iterator tc = App::Application::Config().find("SplashInfoColor");
+    std::map<std::string, std::string>::const_iterator tc =
+        App::Application::Config().find("SplashInfoColor");
     if (tc != App::Application::Config().end()) {
         QString title = qApp->applicationName();
-        QString major   = QString::fromLatin1(App::Application::Config()["BuildVersionMajor"].c_str());
-        QString minor   = QString::fromLatin1(App::Application::Config()["BuildVersionMinor"].c_str());
+        QString major =
+            QString::fromLatin1(App::Application::Config()["BuildVersionMajor"].c_str());
+        QString minor =
+            QString::fromLatin1(App::Application::Config()["BuildVersionMinor"].c_str());
         QString version = QString::fromLatin1("%1.%2").arg(major, minor);
         QString position, fontFamily;
 
-        std::map<std::string,std::string>::const_iterator te = App::Application::Config().find("SplashInfoExeName");
-        std::map<std::string,std::string>::const_iterator tv = App::Application::Config().find("SplashInfoVersion");
-        std::map<std::string,std::string>::const_iterator tp = App::Application::Config().find("SplashInfoPosition");
-        std::map<std::string,std::string>::const_iterator tf = App::Application::Config().find("SplashInfoFont");
-        if (te != App::Application::Config().end())
-            title = QString::fromUtf8(te->second.c_str());
-        if (tv != App::Application::Config().end())
-            version = QString::fromUtf8(tv->second.c_str());
+        std::map<std::string, std::string>::const_iterator te =
+            App::Application::Config().find("SplashInfoExeName");
+        std::map<std::string, std::string>::const_iterator tv =
+            App::Application::Config().find("SplashInfoVersion");
+        std::map<std::string, std::string>::const_iterator tp =
+            App::Application::Config().find("SplashInfoPosition");
+        std::map<std::string, std::string>::const_iterator tf =
+            App::Application::Config().find("SplashInfoFont");
+        if (te != App::Application::Config().end()) title = QString::fromUtf8(te->second.c_str());
+        if (tv != App::Application::Config().end()) version = QString::fromUtf8(tv->second.c_str());
         if (tp != App::Application::Config().end())
             position = QString::fromUtf8(tp->second.c_str());
         if (tf != App::Application::Config().end())
@@ -1592,8 +1546,7 @@ QPixmap MainWindow::splashImage() const
         painter.begin(&splash_image);
         if (!fontFamily.isEmpty()) {
             QFont font = painter.font();
-            if (font.fromString(fontFamily))
-                painter.setFont(font);
+            if (font.fromString(fontFamily)) painter.setFont(font);
         }
 
         QFont fontExe = painter.font();
@@ -1637,9 +1590,9 @@ QPixmap MainWindow::splashImage() const
 /**
  * Drops the event \a e and tries to open the files.
  */
-void MainWindow::dropEvent (QDropEvent* e)
+void MainWindow::dropEvent(QDropEvent *e)
 {
-    const QMimeData* data = e->mimeData();
+    const QMimeData *data = e->mimeData();
     if (data->hasUrls()) {
         // load the files into the active document if there is one, otherwise let create one
         loadUrls(App::GetApplication().getActiveDocument(), data->urls());
@@ -1649,13 +1602,11 @@ void MainWindow::dropEvent (QDropEvent* e)
     }
 }
 
-void MainWindow::dragEnterEvent (QDragEnterEvent * e)
+void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 {
     // Here we must allow uri drafs and check them in dropEvent
-    const QMimeData* data = e->mimeData();
-    if (data->hasUrls()) {
-        e->accept();
-    }
+    const QMimeData *data = e->mimeData();
+    if (data->hasUrls()) { e->accept(); }
     else {
         e->ignore();
     }
@@ -1666,44 +1617,41 @@ static QLatin1String _MimeDocObjX("application/x-documentobject-x");
 static QLatin1String _MimeDocObjFile("application/x-documentobject-file");
 static QLatin1String _MimeDocObjXFile("application/x-documentobject-x-file");
 
-QMimeData * MainWindow::createMimeDataFromSelection () const
+QMimeData *MainWindow::createMimeDataFromSelection() const
 {
-    std::vector<App::DocumentObject*> sel;
-    std::set<App::DocumentObject*> objSet;
-    for(auto &s : Selection().getCompleteSelection()) {
-        if(s.pObject && s.pObject->getNameInDocument() && objSet.insert(s.pObject).second)
+    std::vector<App::DocumentObject *> sel;
+    std::set<App::DocumentObject *> objSet;
+    for (auto &s : Selection().getCompleteSelection()) {
+        if (s.pObject && s.pObject->getNameInDocument() && objSet.insert(s.pObject).second)
             sel.push_back(s.pObject);
     }
-    if(sel.empty())
-        return nullptr;
+    if (sel.empty()) return nullptr;
 
     auto all = App::Document::getDependencyList(sel);
     if (all.size() > sel.size()) {
-        DlgObjectSelection dlg(sel,getMainWindow());
-        if(dlg.exec()!=QDialog::Accepted)
-            return nullptr;
+        DlgObjectSelection dlg(sel, getMainWindow());
+        if (dlg.exec() != QDialog::Accepted) return nullptr;
         sel = dlg.getSelections();
-        if(sel.empty())
-            return nullptr;
+        if (sel.empty()) return nullptr;
     }
 
-    std::vector<App::Document*> unsaved;
-    bool hasXLink = App::PropertyXLink::hasXLink(sel,&unsaved);
-    if(!unsaved.empty()) {
-        QMessageBox::critical(getMainWindow(), tr("Unsaved document"),
+    std::vector<App::Document *> unsaved;
+    bool hasXLink = App::PropertyXLink::hasXLink(sel, &unsaved);
+    if (!unsaved.empty()) {
+        QMessageBox::critical(
+            getMainWindow(), tr("Unsaved document"),
             tr("The exported object contains external link. Please save the document"
-                "at least once before exporting."));
+               "at least once before exporting."));
         return nullptr;
     }
 
-    unsigned int memsize=1000; // ~ for the meta-information
-    for (const auto & it : sel)
-        memsize += it->getMemSize();
+    unsigned int memsize = 1000; // ~ for the meta-information
+    for (const auto &it : sel) memsize += it->getMemSize();
 
     // if less than ~10 MB
-    bool use_buffer=(memsize < 0xA00000);
+    bool use_buffer = (memsize < 0xA00000);
     QByteArray res;
-    if(use_buffer) {
+    if (use_buffer) {
         try {
             res.reserve(memsize);
         }
@@ -1715,20 +1663,20 @@ QMimeData * MainWindow::createMimeDataFromSelection () const
     WaitCursor wc;
     QString mime;
     if (use_buffer) {
-        mime = hasXLink?_MimeDocObjX:_MimeDocObj;
+        mime = hasXLink ? _MimeDocObjX : _MimeDocObj;
         Base::ByteArrayOStreambuf buf(res);
         std::ostream str(&buf);
         // need this instance to call MergeDocuments::Save()
-        App::Document* doc = sel.front()->getDocument();
+        App::Document *doc = sel.front()->getDocument();
         MergeDocuments mimeView(doc);
         doc->exportObjects(sel, str);
     }
     else {
-        mime = hasXLink?_MimeDocObjXFile:_MimeDocObjFile;
+        mime = hasXLink ? _MimeDocObjXFile : _MimeDocObjFile;
         static Base::FileInfo fi(App::Application::getTempFileName());
         Base::ofstream str(fi, std::ios::out | std::ios::binary);
         // need this instance to call MergeDocuments::Save()
-        App::Document* doc = sel.front()->getDocument();
+        App::Document *doc = sel.front()->getDocument();
         MergeDocuments mimeView(doc);
         doc->exportObjects(sel, str);
         str.close();
@@ -1736,60 +1684,59 @@ QMimeData * MainWindow::createMimeDataFromSelection () const
 
         // store the path name as a custom property and
         // delete this file when closing the application
-        const_cast<MainWindow*>(this)->setProperty("x-documentobject-file", res);
+        const_cast<MainWindow *>(this)->setProperty("x-documentobject-file", res);
     }
 
     auto mimeData = new QMimeData();
-    mimeData->setData(mime,res);
+    mimeData->setData(mime, res);
     return mimeData;
 }
 
-bool MainWindow::canInsertFromMimeData (const QMimeData * source) const
+bool MainWindow::canInsertFromMimeData(const QMimeData *source) const
 {
-    if (!source)
-        return false;
-    return source->hasUrls() ||
-        source->hasFormat(_MimeDocObj) || source->hasFormat(_MimeDocObjX) ||
-        source->hasFormat(_MimeDocObjFile) || source->hasFormat(_MimeDocObjXFile);
+    if (!source) return false;
+    return source->hasUrls() || source->hasFormat(_MimeDocObj) || source->hasFormat(_MimeDocObjX)
+        || source->hasFormat(_MimeDocObjFile) || source->hasFormat(_MimeDocObjXFile);
 }
 
-void MainWindow::insertFromMimeData (const QMimeData * mimeData)
+void MainWindow::insertFromMimeData(const QMimeData *mimeData)
 {
-    if (!mimeData)
-        return;
+    if (!mimeData) return;
     bool fromDoc = false;
     bool hasXLink = false;
     QString format;
-    if(mimeData->hasFormat(_MimeDocObj))
-        format = _MimeDocObj;
-    else if(mimeData->hasFormat(_MimeDocObjX)) {
+    if (mimeData->hasFormat(_MimeDocObj)) format = _MimeDocObj;
+    else if (mimeData->hasFormat(_MimeDocObjX)) {
         format = _MimeDocObjX;
         hasXLink = true;
-    }else if(mimeData->hasFormat(_MimeDocObjFile)) {
+    }
+    else if (mimeData->hasFormat(_MimeDocObjFile)) {
         format = _MimeDocObjFile;
         fromDoc = true;
-    }else if(mimeData->hasFormat(_MimeDocObjXFile)) {
+    }
+    else if (mimeData->hasFormat(_MimeDocObjXFile)) {
         format = _MimeDocObjXFile;
         fromDoc = true;
         hasXLink = true;
-    }else {
+    }
+    else {
         if (mimeData->hasUrls())
             loadUrls(App::GetApplication().getActiveDocument(), mimeData->urls());
         return;
     }
 
-    App::Document* doc = App::GetApplication().getActiveDocument();
-    if(!doc) doc = App::GetApplication().newDocument();
+    App::Document *doc = App::GetApplication().getActiveDocument();
+    if (!doc) doc = App::GetApplication().newDocument();
 
-    if(hasXLink && !doc->isSaved()) {
-        int ret = QMessageBox::question(getMainWindow(), tr("Unsaved document"),
+    if (hasXLink && !doc->isSaved()) {
+        int ret = QMessageBox::question(
+            getMainWindow(), tr("Unsaved document"),
             tr("To link to external objects, the document must be saved at least once.\n"
                "Do you want to save the document now?"),
-            QMessageBox::Yes,QMessageBox::No);
-        if(ret != QMessageBox::Yes || !Application::Instance->getDocument(doc)->saveAs())
-            return;
+            QMessageBox::Yes, QMessageBox::No);
+        if (ret != QMessageBox::Yes || !Application::Instance->getDocument(doc)->saveAs()) return;
     }
-    if(!fromDoc) {
+    if (!fromDoc) {
         QByteArray res = mimeData->data(format);
 
         doc->openTransaction("Paste");
@@ -1797,12 +1744,12 @@ void MainWindow::insertFromMimeData (const QMimeData * mimeData)
         std::istream in(nullptr);
         in.rdbuf(&buf);
         MergeDocuments mimeView(doc);
-        std::vector<App::DocumentObject*> newObj = mimeView.importObjects(in);
-        std::vector<App::DocumentObjectGroup*> grp = Gui::Selection().getObjectsOfType<App::DocumentObjectGroup>();
+        std::vector<App::DocumentObject *> newObj = mimeView.importObjects(in);
+        std::vector<App::DocumentObjectGroup *> grp =
+            Gui::Selection().getObjectsOfType<App::DocumentObjectGroup>();
         if (grp.size() == 1) {
-            Gui::Document* gui = Application::Instance->getDocument(doc);
-            if (gui)
-                gui->addRootObjectsToGroup(newObj, grp.front());
+            Gui::Document *gui = Application::Instance->getDocument(doc);
+            if (gui) gui->addRootObjectsToGroup(newObj, grp.front());
         }
         doc->commitTransaction();
     }
@@ -1810,36 +1757,33 @@ void MainWindow::insertFromMimeData (const QMimeData * mimeData)
         QByteArray res = mimeData->data(format);
 
         doc->openTransaction("Paste");
-        Base::FileInfo fi((const char*)res);
+        Base::FileInfo fi((const char *)res);
         Base::ifstream str(fi, std::ios::in | std::ios::binary);
         MergeDocuments mimeView(doc);
-        std::vector<App::DocumentObject*> newObj = mimeView.importObjects(str);
+        std::vector<App::DocumentObject *> newObj = mimeView.importObjects(str);
         str.close();
-        std::vector<App::DocumentObjectGroup*> grp = Gui::Selection().getObjectsOfType<App::DocumentObjectGroup>();
+        std::vector<App::DocumentObjectGroup *> grp =
+            Gui::Selection().getObjectsOfType<App::DocumentObjectGroup>();
         if (grp.size() == 1) {
-            Gui::Document* gui = Application::Instance->getDocument(doc);
-            if (gui)
-                gui->addRootObjectsToGroup(newObj, grp.front());
+            Gui::Document *gui = Application::Instance->getDocument(doc);
+            if (gui) gui->addRootObjectsToGroup(newObj, grp.front());
         }
         doc->commitTransaction();
     }
 }
 
-void MainWindow::setUrlHandler(const QString &scheme, Gui::UrlHandler* handler)
+void MainWindow::setUrlHandler(const QString &scheme, Gui::UrlHandler *handler)
 {
     d->urlHandler[scheme] = handler;
 }
 
-void MainWindow::unsetUrlHandler(const QString &scheme)
-{
-    d->urlHandler.remove(scheme);
-}
+void MainWindow::unsetUrlHandler(const QString &scheme) { d->urlHandler.remove(scheme); }
 
-void MainWindow::loadUrls(App::Document* doc, const QList<QUrl>& urls)
+void MainWindow::loadUrls(App::Document *doc, const QList<QUrl> &urls)
 {
     QStringList files;
-    for (const auto & it : urls) {
-        QMap<QString, QPointer<UrlHandler> >::iterator jt = d->urlHandler.find(it.scheme());
+    for (const auto &it : urls) {
+        QMap<QString, QPointer<UrlHandler>>::iterator jt = d->urlHandler.find(it.scheme());
         if (jt != d->urlHandler.end() && !jt->isNull()) {
             // delegate the loading to the url handler
             (*jt)->openUrl(doc, it);
@@ -1848,13 +1792,11 @@ void MainWindow::loadUrls(App::Document* doc, const QList<QUrl>& urls)
 
         QFileInfo info(it.toLocalFile());
         if (info.exists() && info.isFile()) {
-            if (info.isSymLink())
-                info.setFile(info.symLinkTarget());
-            std::vector<std::string> module = App::GetApplication()
-                .getImportModules(info.completeSuffix().toLatin1());
+            if (info.isSymLink()) info.setFile(info.symLinkTarget());
+            std::vector<std::string> module =
+                App::GetApplication().getImportModules(info.completeSuffix().toLatin1());
             if (module.empty()) {
-                module = App::GetApplication()
-                    .getImportModules(info.suffix().toLatin1());
+                module = App::GetApplication().getImportModules(info.suffix().toLatin1());
             }
             if (!module.empty()) {
                 // ok, we support files with this extension
@@ -1862,11 +1804,11 @@ void MainWindow::loadUrls(App::Document* doc, const QList<QUrl>& urls)
             }
             else {
                 Base::Console().Message("No support to load file '%s'\n",
-                    (const char*)info.absoluteFilePath().toUtf8());
+                                        (const char *)info.absoluteFilePath().toUtf8());
             }
         }
         else if (it.scheme().toLower() == QLatin1String("http")) {
-            Gui::Dialog::DownloadManager* dm = Gui::Dialog::DownloadManager::getInstance();
+            Gui::Dialog::DownloadManager *dm = Gui::Dialog::DownloadManager::getInstance();
             dm->download(dm->redirectUrl(it));
         }
 
@@ -1878,7 +1820,7 @@ void MainWindow::loadUrls(App::Document* doc, const QList<QUrl>& urls)
                 url.setQuery(urlq);
                 url.setScheme(QLatin1String("http"));
             }
-            Gui::Dialog::DownloadManager* dm = Gui::Dialog::DownloadManager::getInstance();
+            Gui::Dialog::DownloadManager *dm = Gui::Dialog::DownloadManager::getInstance();
             dm->download(dm->redirectUrl(url));
         }
 
@@ -1887,7 +1829,8 @@ void MainWindow::loadUrls(App::Document* doc, const QList<QUrl>& urls)
         }
     }
 
-    QByteArray docName = doc ? QByteArray(doc->getName()) : qApp->translate("StdCmdNew","Unnamed").toUtf8();
+    QByteArray docName =
+        doc ? QByteArray(doc->getName()) : qApp->translate("StdCmdNew", "Unnamed").toUtf8();
     SelectModule::Dict dict = SelectModule::importHandler(files);
     // load the files with the associated modules
     for (SelectModule::Dict::iterator it = dict.begin(); it != dict.end(); ++it) {
@@ -1901,20 +1844,19 @@ void MainWindow::changeEvent(QEvent *e)
     if (e->type() == QEvent::LanguageChange) {
         d->sizeLabel->setText(tr("Dimension"));
 
-        CommandManager& rclMan = Application::Instance->commandManager();
-        std::vector<Command*> cmd = rclMan.getAllCommands();
-        for (auto & it : cmd)
-            it->languageChange();
+        CommandManager &rclMan = Application::Instance->commandManager();
+        std::vector<Command *> cmd = rclMan.getAllCommands();
+        for (auto &it : cmd) it->languageChange();
 
         // reload current workbench to retranslate all actions and window titles
-        Workbench* wb = WorkbenchManager::instance()->active();
+        Workbench *wb = WorkbenchManager::instance()->active();
         if (wb) wb->retranslate();
     }
     else if (e->type() == QEvent::ActivationChange) {
         if (isActiveWindow()) {
-            QMdiSubWindow* mdi = d->mdiArea->currentSubWindow();
+            QMdiSubWindow *mdi = d->mdiArea->currentSubWindow();
             if (mdi) {
-                auto view = dynamic_cast<MDIView*>(mdi->widget());
+                auto view = dynamic_cast<MDIView *>(mdi->widget());
                 if (view && getMainWindow()->activeWindow() != view) {
                     d->activeView = view;
                     Application::Instance->viewActivated(view);
@@ -1927,14 +1869,15 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::clearStatus() {
+void MainWindow::clearStatus()
+{
     d->currentStatusType = 100;
     statusBar()->setStyleSheet(QString::fromLatin1("#statusBar{}"));
 }
 
-void MainWindow::statusMessageChanged() {
-    if(d->currentStatusType<0)
-        d->currentStatusType = -d->currentStatusType;
+void MainWindow::statusMessageChanged()
+{
+    if (d->currentStatusType < 0) d->currentStatusType = -d->currentStatusType;
     else {
         // here probably means the status bar message is changed by QMainWindow
         // internals, e.g. for displaying tooltip and stuff. Set reset what
@@ -1944,29 +1887,29 @@ void MainWindow::statusMessageChanged() {
     }
 }
 
-void MainWindow::showMessage(const QString& message, int timeout) {
-    if(QApplication::instance()->thread() != QThread::currentThread()) {
-        QApplication::postEvent(this, new CustomMessageEvent(MainWindow::Tmp,message,timeout));
+void MainWindow::showMessage(const QString &message, int timeout)
+{
+    if (QApplication::instance()->thread() != QThread::currentThread()) {
+        QApplication::postEvent(this, new CustomMessageEvent(MainWindow::Tmp, message, timeout));
         return;
     }
     d->actionLabel->setText(message.simplified());
-    if(timeout) {
+    if (timeout) {
         d->actionTimer->setSingleShot(true);
         d->actionTimer->start(timeout);
-    }else
+    }
+    else
         d->actionTimer->stop();
 }
 
-void MainWindow::showStatus(int type, const QString& message)
+void MainWindow::showStatus(int type, const QString &message)
 {
-    if(QApplication::instance()->thread() != QThread::currentThread()) {
-        QApplication::postEvent(this,
-                new CustomMessageEvent(type,message));
+    if (QApplication::instance()->thread() != QThread::currentThread()) {
+        QApplication::postEvent(this, new CustomMessageEvent(type, message));
         return;
     }
 
-    if(d->currentStatusType < type)
-        return;
+    if (d->currentStatusType < type) return;
 
     d->statusTimer->setSingleShot(true);
     // TODO: hardcode?
@@ -1975,19 +1918,13 @@ void MainWindow::showStatus(int type, const QString& message)
 
     QFontMetrics fm(statusBar()->font());
     QString msg = fm.elidedText(message, Qt::ElideMiddle, this->d->actionLabel->width());
-    switch(type) {
-    case MainWindow::Err:
-        statusBar()->setStyleSheet(d->status->err);
-        break;
-    case MainWindow::Wrn:
-        statusBar()->setStyleSheet(d->status->wrn);
-        break;
-    case MainWindow::Pane:
-        statusBar()->setStyleSheet(QString::fromLatin1("#statusBar{}"));
-        break;
-    default:
-        statusBar()->setStyleSheet(d->status->msg);
-        break;
+    switch (type) {
+        case MainWindow::Err: statusBar()->setStyleSheet(d->status->err); break;
+        case MainWindow::Wrn: statusBar()->setStyleSheet(d->status->wrn); break;
+        case MainWindow::Pane:
+            statusBar()->setStyleSheet(QString::fromLatin1("#statusBar{}"));
+            break;
+        default: statusBar()->setStyleSheet(d->status->msg); break;
     }
     d->currentStatusType = -type;
     statusBar()->showMessage(msg.simplified(), timeout);
@@ -1997,61 +1934,55 @@ void MainWindow::showStatus(int type, const QString& message)
 // set text to the pane
 void MainWindow::setPaneText(int i, QString text)
 {
-    if (i==1) {
-        showStatus(MainWindow::Pane, text);
-    }
-    else if (i==2) {
+    if (i == 1) { showStatus(MainWindow::Pane, text); }
+    else if (i == 2) {
         d->sizeLabel->setText(text);
     }
 }
 
-void MainWindow::customEvent(QEvent* e)
+void MainWindow::customEvent(QEvent *e)
 {
     if (e->type() == QEvent::User) {
-        auto ce = static_cast<Gui::CustomMessageEvent*>(e);
+        auto ce = static_cast<Gui::CustomMessageEvent *>(e);
         QString msg = ce->message();
-        switch(ce->type()) {
-        case MainWindow::Log: {
-            if (msg.startsWith(QLatin1String("#Inventor V2.1 ascii "))) {
-                Gui::Document *d = Application::Instance->activeDocument();
-                if (d) {
-                    auto view = new ViewProviderExtern();
-                    try {
-                        view->setModeByString("1",msg.toLatin1().constData());
-                        d->setAnnotationViewProvider("Vdbg",view);
-                    }
-                    catch (...) {
-                        delete view;
+        switch (ce->type()) {
+            case MainWindow::Log: {
+                if (msg.startsWith(QLatin1String("#Inventor V2.1 ascii "))) {
+                    Gui::Document *d = Application::Instance->activeDocument();
+                    if (d) {
+                        auto view = new ViewProviderExtern();
+                        try {
+                            view->setModeByString("1", msg.toLatin1().constData());
+                            d->setAnnotationViewProvider("Vdbg", view);
+                        }
+                        catch (...) {
+                            delete view;
+                        }
                     }
                 }
+                break;
             }
-            break;
-        } case MainWindow::Tmp: {
-            showMessage(msg, ce->timeout());
-            break;
-        } default:
-            showStatus(ce->type(),msg);
+            case MainWindow::Tmp: {
+                showMessage(msg, ce->timeout());
+                break;
+            }
+            default: showStatus(ce->type(), msg);
         }
     }
     else if (e->type() == ActionStyleEvent::EventType) {
-        QList<TaskView::TaskView*> tasks = findChildren<TaskView::TaskView*>();
-        if (static_cast<ActionStyleEvent*>(e)->getType() == ActionStyleEvent::Clear) {
-            for (auto & task : tasks) {
-                task->clearActionStyle();
-            }
+        QList<TaskView::TaskView *> tasks = findChildren<TaskView::TaskView *>();
+        if (static_cast<ActionStyleEvent *>(e)->getType() == ActionStyleEvent::Clear) {
+            for (auto &task : tasks) { task->clearActionStyle(); }
         }
         else {
-            for (auto & task : tasks) {
-                task->restoreActionStyle();
-            }
+            for (auto &task : tasks) { task->restoreActionStyle(); }
         }
     }
 }
 
 // ----------------------------------------------------------
 
-StatusBarObserver::StatusBarObserver()
-  : WindowParameter("OutputWindow")
+StatusBarObserver::StatusBarObserver() : WindowParameter("OutputWindow")
 {
     msg = QString::fromLatin1("#statusBar{color: #000000}"); // black
     wrn = QString::fromLatin1("#statusBar{color: #ffaa00}"); // orange
@@ -2067,40 +1998,35 @@ StatusBarObserver::~StatusBarObserver()
     Base::Console().DetachObserver(this);
 }
 
-void StatusBarObserver::OnChange(Base::Subject<const char*> &rCaller, const char * sReason)
+void StatusBarObserver::OnChange(Base::Subject<const char *> &rCaller, const char *sReason)
 {
-    ParameterGrp& rclGrp = ((ParameterGrp&)rCaller);
+    ParameterGrp &rclGrp = ((ParameterGrp &)rCaller);
     auto format = QString::fromLatin1("#statusBar{color: %1}");
     if (strcmp(sReason, "colorText") == 0) {
-        unsigned long col = rclGrp.GetUnsigned( sReason );
-        this->msg = format.arg(QColor((col >> 24) & 0xff,(col >> 16) & 0xff,(col >> 8) & 0xff).name());
+        unsigned long col = rclGrp.GetUnsigned(sReason);
+        this->msg =
+            format.arg(QColor((col >> 24) & 0xff, (col >> 16) & 0xff, (col >> 8) & 0xff).name());
     }
     else if (strcmp(sReason, "colorWarning") == 0) {
-        unsigned long col = rclGrp.GetUnsigned( sReason );
-        this->wrn = format.arg(QColor((col >> 24) & 0xff,(col >> 16) & 0xff,(col >> 8) & 0xff).name());
+        unsigned long col = rclGrp.GetUnsigned(sReason);
+        this->wrn =
+            format.arg(QColor((col >> 24) & 0xff, (col >> 16) & 0xff, (col >> 8) & 0xff).name());
     }
     else if (strcmp(sReason, "colorError") == 0) {
-        unsigned long col = rclGrp.GetUnsigned( sReason );
-        this->err = format.arg(QColor((col >> 24) & 0xff,(col >> 16) & 0xff,(col >> 8) & 0xff).name());
+        unsigned long col = rclGrp.GetUnsigned(sReason);
+        this->err =
+            format.arg(QColor((col >> 24) & 0xff, (col >> 16) & 0xff, (col >> 8) & 0xff).name());
     }
 }
 
-void StatusBarObserver::SendLog(const std::string& msg, Base::LogStyle level)
+void StatusBarObserver::SendLog(const std::string &msg, Base::LogStyle level)
 {
     int messageType = -1;
-    switch(level){
-        case Base::LogStyle::Warning:
-            messageType = MainWindow::Wrn;
-            break;
-        case Base::LogStyle::Message:
-            messageType = MainWindow::Msg;
-            break;
-        case Base::LogStyle::Error:
-            messageType = MainWindow::Err;
-            break;
-        case Base::LogStyle::Log:
-            messageType = MainWindow::Log;
-            break;
+    switch (level) {
+        case Base::LogStyle::Warning: messageType = MainWindow::Wrn; break;
+        case Base::LogStyle::Message: messageType = MainWindow::Msg; break;
+        case Base::LogStyle::Error: messageType = MainWindow::Err; break;
+        case Base::LogStyle::Log: messageType = MainWindow::Log; break;
     }
 
     // Send the event to the main window to allow thread-safety. Qt will delete it when done.
@@ -2112,15 +2038,9 @@ void StatusBarObserver::SendLog(const std::string& msg, Base::LogStyle level)
 
 int ActionStyleEvent::EventType = -1;
 
-ActionStyleEvent::ActionStyleEvent(Style type)
-  : QEvent(QEvent::Type(EventType)), type(type)
-{
-}
+ActionStyleEvent::ActionStyleEvent(Style type) : QEvent(QEvent::Type(EventType)), type(type) {}
 
-ActionStyleEvent::Style ActionStyleEvent::getType() const
-{
-    return type;
-}
+ActionStyleEvent::Style ActionStyleEvent::getType() const { return type; }
 
 
 #include "moc_MainWindow.cpp"

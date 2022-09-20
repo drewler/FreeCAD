@@ -32,36 +32,39 @@
 
 class QPixmap;
 
-namespace Sketcher {
-    class Sketch;
-    class SketchObject;
-}
+namespace Sketcher
+{
+class Sketch;
+class SketchObject;
+} // namespace Sketcher
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class ViewProviderSketch;
-
 
 
 /**
  * Class to convert Part::Geometry to Vector2d based collections
  */
-class CurveConverter final : public ParameterGrp::ObserverType {
+class CurveConverter final: public ParameterGrp::ObserverType
+{
 
 public:
     CurveConverter();
 
     ~CurveConverter();
 
-    std::vector<Base::Vector2d> toVector2D(const Part::Geometry * geometry);
+    std::vector<Base::Vector2d> toVector2D(const Part::Geometry *geometry);
 
-    std::list<std::vector<Base::Vector2d>> toVector2DList(const std::vector<Part::Geometry *> &geometries);
+    std::list<std::vector<Base::Vector2d>>
+    toVector2DList(const std::vector<Part::Geometry *> &geometries);
 
 private:
     void updateCurvedEdgeCountSegmentsParameter();
 
     /** Observer for parameter group. */
-    void OnChange(Base::Subject<const char*> &rCaller, const char * sReason) override;
+    void OnChange(Base::Subject<const char *> &rCaller, const char *sReason) override;
 
 private:
     int curvedEdgeCountSegments;
@@ -73,15 +76,21 @@ private:
  * too tight coupling, while still allowing well defined collaboration,
  * DrawSketchHandler accesses ViewProviderSketch via this Attorney class
  */
-class ViewProviderSketchDrawSketchHandlerAttorney {
+class ViewProviderSketchDrawSketchHandlerAttorney
+{
 private:
     static inline void setConstraintSelectability(ViewProviderSketch &vp, bool enabled = true);
-    static inline void setPositionText(ViewProviderSketch &vp, const Base::Vector2d &Pos, const SbString &txt);
+    static inline void setPositionText(ViewProviderSketch &vp, const Base::Vector2d &Pos,
+                                       const SbString &txt);
     static inline void setPositionText(ViewProviderSketch &vp, const Base::Vector2d &Pos);
     static inline void resetPositionText(ViewProviderSketch &vp);
-    static inline void drawEdit(ViewProviderSketch &vp, const std::vector<Base::Vector2d> &EditCurve);
-    static inline void drawEdit(ViewProviderSketch &vp, const std::list<std::vector<Base::Vector2d>> &list);
-    static inline void drawEditMarkers(ViewProviderSketch &vp, const std::vector<Base::Vector2d> &EditMarkers, unsigned int augmentationlevel = 0);
+    static inline void drawEdit(ViewProviderSketch &vp,
+                                const std::vector<Base::Vector2d> &EditCurve);
+    static inline void drawEdit(ViewProviderSketch &vp,
+                                const std::list<std::vector<Base::Vector2d>> &list);
+    static inline void drawEditMarkers(ViewProviderSketch &vp,
+                                       const std::vector<Base::Vector2d> &EditMarkers,
+                                       unsigned int augmentationlevel = 0);
     static inline void setAxisPickStyle(ViewProviderSketch &vp, bool on);
     static inline void moveCursorToSketchPoint(ViewProviderSketch &vp, Base::Vector2d point);
     static inline void preselectAtPoint(ViewProviderSketch &vp, Base::Vector2d point);
@@ -117,11 +126,11 @@ public:
     void activate(ViewProviderSketch *);
     void deactivate();
 
-    virtual void mouseMove(Base::Vector2d onSketchPos)=0;
-    virtual bool pressButton(Base::Vector2d onSketchPos)=0;
-    virtual bool releaseButton(Base::Vector2d onSketchPos)=0;
-    virtual bool onSelectionChanged(const Gui::SelectionChanges&) { return false; }
-    virtual void registerPressedKey(bool /*pressed*/, int /*key*/){}
+    virtual void mouseMove(Base::Vector2d onSketchPos) = 0;
+    virtual bool pressButton(Base::Vector2d onSketchPos) = 0;
+    virtual bool releaseButton(Base::Vector2d onSketchPos) = 0;
+    virtual bool onSelectionChanged(const Gui::SelectionChanges &) { return false; }
+    virtual void registerPressedKey(bool /*pressed*/, int /*key*/) {}
 
     virtual void quit();
 
@@ -137,8 +146,9 @@ public:
                            AutoConstraint::TargetType type = AutoConstraint::VERTEX);
     // createowncommand indicates whether a separate command shall be create and committed (for example for undo purposes) or not
     // is not it is the responsibility of the developer to create and commit the command appropriately.
-    void createAutoConstraints(const std::vector<AutoConstraint> &autoConstrs,
-                               int geoId, Sketcher::PointPos pointPos=Sketcher::PointPos::none, bool createowncommand = true);
+    void createAutoConstraints(const std::vector<AutoConstraint> &autoConstrs, int geoId,
+                               Sketcher::PointPos pointPos = Sketcher::PointPos::none,
+                               bool createowncommand = true);
 
     void setPositionText(const Base::Vector2d &Pos, const SbString &text);
     void setPositionText(const Base::Vector2d &Pos);
@@ -147,9 +157,9 @@ public:
 
 private: // NVI
     virtual void preActivated();
-    virtual void activated(){}
-    virtual void deactivated(){}
-    virtual void postDeactivated(){}
+    virtual void activated() {}
+    virtual void deactivated() {}
+    virtual void postDeactivated() {}
 
 protected: // NVI requiring base implementation
     virtual QString getCrosshairCursorSVGName() const;
@@ -165,7 +175,7 @@ protected:
 
     /** @name Icon helpers */
     //@{
-    void setCursor(const QPixmap &pixmap, int x,int y, bool autoScale=true);
+    void setCursor(const QPixmap &pixmap, int x, int y, bool autoScale = true);
 
     /// updates the actCursor with the icon by calling getCrosshairCursorSVGName(),
     /// enabling to set data member dependent icons (i.e. for different construction methods)
@@ -188,37 +198,39 @@ protected:
     void drawEdit(const std::vector<Base::Vector2d> &EditCurve);
     void drawEdit(const std::list<std::vector<Base::Vector2d>> &list);
     void drawEdit(const std::vector<Part::Geometry *> &geometries);
-    void drawEditMarkers(const std::vector<Base::Vector2d> &EditMarkers, unsigned int augmentationlevel = 0);
+    void drawEditMarkers(const std::vector<Base::Vector2d> &EditMarkers,
+                         unsigned int augmentationlevel = 0);
     void setAxisPickStyle(bool on);
     void moveCursorToSketchPoint(Base::Vector2d point);
     void preselectAtPoint(Base::Vector2d point);
 
-    void drawPositionAtCursor(const Base::Vector2d & position);
-    void drawDirectionAtCursor(const Base::Vector2d & position, const Base::Vector2d & origin);
+    void drawPositionAtCursor(const Base::Vector2d &position);
+    void drawDirectionAtCursor(const Base::Vector2d &position, const Base::Vector2d &origin);
 
     int getPreselectPoint() const;
     int getPreselectCurve() const;
     int getPreselectCross() const;
 
-    Sketcher::SketchObject * getSketchObject();
+    Sketcher::SketchObject *getSketchObject();
 
 private:
     void setSvgCursor(const QString &svgName, int x, int y,
-                      const std::map<unsigned long, unsigned long>& colorMapping = std::map<unsigned long, unsigned long>());
+                      const std::map<unsigned long, unsigned long> &colorMapping =
+                          std::map<unsigned long, unsigned long>());
 
     void addCursorTail(std::vector<QPixmap> &pixmaps);
 
     void applyCursor(QCursor &newCursor);
 
-    void setCrosshairCursor(const QString & svgName);
-    void setCrosshairCursor(const char* svgName);
+    void setCrosshairCursor(const QString &svgName);
+    void setCrosshairCursor(const char *svgName);
 
 protected:
     /**
      * Returns constraints icons scaled to width.
      **/
-    std::vector<QPixmap> suggestedConstraintsPixmaps(
-            std::vector<AutoConstraint> &suggestedConstraints);
+    std::vector<QPixmap>
+    suggestedConstraintsPixmaps(std::vector<AutoConstraint> &suggestedConstraints);
 
     ViewProviderSketch *sketchgui;
     QCursor oldCursor;
@@ -231,4 +243,3 @@ protected:
 
 
 #endif // SKETCHERGUI_DrawSketchHandler_H
-

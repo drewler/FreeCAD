@@ -27,42 +27,45 @@
 
 #include <QGraphicsRectItem>
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawTemplate;
 }
 
 namespace TechDrawGui
 {
-    /// QGraphicsRectItem-derived class for the text fields in title blocks
-    /*!
+/// QGraphicsRectItem-derived class for the text fields in title blocks
+/*!
      * Makes an area on the drawing that's clickable, so appropriate
      * Properties of the template can be modified.
      */
-class TechDrawGuiExport TemplateTextField : public QGraphicsRectItem
+class TechDrawGuiExport TemplateTextField: public QGraphicsRectItem
 {
-    public:
-        TemplateTextField(QGraphicsItem *parent,
-                          TechDraw::DrawTemplate *myTmplte,
-                          const std::string &myFieldName);
+public:
+    TemplateTextField(QGraphicsItem *parent, TechDraw::DrawTemplate *myTmplte,
+                      const std::string &myFieldName);
 
-        virtual ~TemplateTextField() = default;
+    virtual ~TemplateTextField() = default;
 
-        enum {Type = QGraphicsItem::UserType + 160};
-        int type() const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 160
+    };
+    int type() const { return Type; }
 
-        /// Returns the field name that this TemplateTextField represents
-        std::string fieldName() const { return fieldNameStr; }
+    /// Returns the field name that this TemplateTextField represents
+    std::string fieldName() const { return fieldNameStr; }
 
-    protected:
-        TechDraw::DrawTemplate *tmplte;
-        std::string fieldNameStr;
+protected:
+    TechDraw::DrawTemplate *tmplte;
+    std::string fieldNameStr;
 
-        /// Need this to properly handle mouse release
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    /// Need this to properly handle mouse release
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-        /// Trigger the dialog for editing template text
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    /// Trigger the dialog for editing template text
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
-}   // namespace TechDrawGui
+} // namespace TechDrawGui
 
 #endif // #ifndef DRAWINGGUI_TEMPLATETEXTFIELD_H

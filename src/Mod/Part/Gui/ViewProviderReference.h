@@ -46,10 +46,11 @@ class SbVec3f;
 class SoSphere;
 class SoScale;
 
-namespace PartGui {
+namespace PartGui
+{
 
 
-class PartGuiExport ViewProviderPartReference : public Gui::ViewProviderGeometryObject
+class PartGuiExport ViewProviderPartReference: public Gui::ViewProviderGeometryObject
 {
     PROPERTY_HEADER(PartGui::ViewProviderPartReference);
 
@@ -71,28 +72,28 @@ public:
 
 
     virtual void attach(App::DocumentObject *);
-    virtual void setDisplayMode(const char* ModeName);
+    virtual void setDisplayMode(const char *ModeName);
     /// returns a list of all possible modes
     virtual std::vector<std::string> getDisplayModes(void) const;
     /// Update the view representation
     void reload();
 
-    virtual void updateData(const App::Property*);
+    virtual void updateData(const App::Property *);
 
 protected:
     /// get called by the container whenever a property has been changed
-    virtual void onChanged(const App::Property* prop);
+    virtual void onChanged(const App::Property *prop);
     //bool loadParameter();
 
     // nodes for the data representation
-    SoGroup  *EdgeRoot;
-    SoGroup  *FaceRoot;
-    SoGroup  *VertexRoot;
-    SoMaterial   *pcLineMaterial;
-    SoMaterial   *pcPointMaterial;
-    SoDrawStyle  *pcLineStyle;
-    SoDrawStyle  *pcPointStyle;
-    SoSwitch     *pcControlPoints;
+    SoGroup *EdgeRoot;
+    SoGroup *FaceRoot;
+    SoGroup *VertexRoot;
+    SoMaterial *pcLineMaterial;
+    SoMaterial *pcPointMaterial;
+    SoDrawStyle *pcLineStyle;
+    SoDrawStyle *pcPointStyle;
+    SoSwitch *pcControlPoints;
     SoShapeHints *pShapeHints;
 
 private:
@@ -101,13 +102,11 @@ private:
     bool noPerVertexNormals;
     bool qualityNormals;
     static App::PropertyFloatConstraint::Constraints floatRange;
-    static const char* LightingEnums[];
+    static const char *LightingEnums[];
 };
-
 
 
 } // namespace PartGui
 
 
 #endif // PARTGUI_ViewProviderPartReference_H
-

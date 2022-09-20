@@ -23,8 +23,7 @@
 namespace Wm4
 {
 
-template <class Real>
-class Line3
+template<class Real> class Line3
 {
 public:
     // The line is represented as P+t*D where P is the line origin and D is
@@ -32,8 +31,8 @@ public:
     // direction vector satisfies this condition.
 
     // construction
-    Line3 ();  // uninitialized
-    Line3 (const Vector3<Real>& rkOrigin, const Vector3<Real>& rkDirection);
+    Line3(); // uninitialized
+    Line3(const Vector3<Real> &rkOrigin, const Vector3<Real> &rkDirection);
 
     Vector3<Real> Origin, Direction;
 };
@@ -46,6 +45,6 @@ namespace Wm4
 {
 typedef Line3<float> Line3f;
 typedef Line3<double> Line3d;
-}
+} // namespace Wm4
 
 #endif

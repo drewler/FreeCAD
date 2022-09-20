@@ -26,14 +26,15 @@
 #include <Mod/Part/PartGlobal.h>
 
 
-namespace App {
+namespace App
+{
 class Document;
 }
 
 namespace Part
 {
 
-PartExport int ImportIgesParts(App::Document *pcDoc, const char* Name);
+PartExport int ImportIgesParts(App::Document *pcDoc, const char *Name);
 
 } //namespace Part
 

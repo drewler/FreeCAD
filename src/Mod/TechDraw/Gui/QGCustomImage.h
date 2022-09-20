@@ -41,18 +41,20 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGCustomImage : public QGraphicsPixmapItem
+class TechDrawGuiExport QGCustomImage: public QGraphicsPixmapItem
 {
 public:
     explicit QGCustomImage();
     ~QGCustomImage() override;
 
-    enum {Type = QGraphicsItem::UserType + 201};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 201
+    };
+    int type() const override { return Type; }
 
-    void paint( QPainter *painter,
-                        const QStyleOptionGraphicsItem *option,
-                        QWidget *widget = nullptr ) override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget = nullptr) override;
     virtual void centerAt(QPointF centerPos);
     virtual void centerAt(double cX, double cY);
     virtual bool load(QString fileSpec);
@@ -61,7 +63,6 @@ public:
 
 protected:
     QPixmap m_px;
-
 };
 
 } // namespace TechDrawGui

@@ -28,15 +28,17 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderFillet,PartDesignGui::ViewProviderDressUp)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderFillet, PartDesignGui::ViewProviderDressUp)
 
 
-const std::string & ViewProviderFillet::featureName() const {
+const std::string &ViewProviderFillet::featureName() const
+{
     static const std::string name = "Fillet";
     return name;
 }
 
 
-TaskDlgFeatureParameters *ViewProviderFillet::getEditDialog() {
-    return new TaskDlgFilletParameters (this);
+TaskDlgFeatureParameters *ViewProviderFillet::getEditDialog()
+{
+    return new TaskDlgFilletParameters(this);
 }

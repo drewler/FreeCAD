@@ -32,17 +32,8 @@
 using namespace Part;
 
 // returns a string which represent the object e.g. when printed in python
-std::string PartFeaturePy::representation() const
-{
-    return std::string("<Part::PartFeature>");
-}
+std::string PartFeaturePy::representation() const { return std::string("<Part::PartFeature>"); }
 
-PyObject *PartFeaturePy::getCustomAttributes(const char* ) const
-{
-    return nullptr;
-}
+PyObject *PartFeaturePy::getCustomAttributes(const char *) const { return nullptr; }
 
-int PartFeaturePy::setCustomAttributes(const char* , PyObject *)
-{
-    return 0; 
-}
+int PartFeaturePy::setCustomAttributes(const char *, PyObject *) { return 0; }

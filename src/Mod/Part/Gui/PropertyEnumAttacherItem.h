@@ -40,9 +40,10 @@ class PartGuiExport PropertyEnumAttacherItem: public Gui::PropertyEditor::Proper
 public:
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget* editor, const QVariant& data) const override;
-    QVariant editorData(QWidget* editor) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
+    QVariant editorData(QWidget *editor) const override;
 
 protected Q_SLOTS:
     void openTask();

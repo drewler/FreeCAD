@@ -27,22 +27,15 @@
 
 using namespace std;
 
-CCmdLineParser::CCmdLineParser(int argc, char** argv)
-{
-    SplitLine(argc, argv);
-}
+CCmdLineParser::CCmdLineParser(int argc, char **argv) { SplitLine(argc, argv); }
 
-CCmdParam CCmdLineParser::GetArgumentList(const char* pSwitch)
+CCmdParam CCmdLineParser::GetArgumentList(const char *pSwitch)
 {
-    if (HasSwitch(pSwitch))
-    {
+    if (HasSwitch(pSwitch)) {
         CCmdLineParser::iterator theIterator;
 
         theIterator = find(pSwitch);
-        if (theIterator!=end())
-        {
-            return (*theIterator).second;
-        }
+        if (theIterator != end()) { return (*theIterator).second; }
     }
 
     CCmdParam param;
@@ -54,7 +47,7 @@ CCmdParam CCmdLineParser::GetArgumentList(const char* pSwitch)
 QString CImageConvApp::m_Executable = "ImageConv";
 QString CImageConvApp::m_BmpFactory = "BmpFactoryIcons.cpp";
 
-CImageConvApp::CImageConvApp(const QString& sFile)
+CImageConvApp::CImageConvApp(const QString &sFile)
 {
     m_bUpdate = false;
     m_Output = sFile;
@@ -62,48 +55,37 @@ CImageConvApp::CImageConvApp(const QString& sFile)
     m_Dir.setNameFilters(filter.split(';'));
 }
 
-void CImageConvApp::SetOutputFile(const QString& sFile) 
-{
-    m_Output = sFile;
-}
+void CImageConvApp::SetOutputFile(const QString &sFile) { m_Output = sFile; }
 
-void CImageConvApp::SetNameFilters(const QStringList& nameFilter)
+void CImageConvApp::SetNameFilters(const QStringList &nameFilter)
 {
     m_Dir.setNameFilters(nameFilter);
 }
 
-bool CImageConvApp::Save(const QString& fn)
+bool CImageConvApp::Save(const QString &fn)
 {
     int iPos = fn.indexOf(".");
 
-    QString ext  = fn.mid(iPos+1);  // extension of filename
-    QString name = fn.mid(0,iPos);  // filename without extension
+    QString ext = fn.mid(iPos + 1); // extension of filename
+    QString name = fn.mid(0, iPos); // filename without extension
 
-    if (!m_clPixmap.isNull())
-    {
-        if (!fn.isEmpty())
-        {
-            return m_clPixmap.save(fn, ext.toUpper().toLatin1());
-        }
+    if (!m_clPixmap.isNull()) {
+        if (!fn.isEmpty()) { return m_clPixmap.save(fn, ext.toUpper().toLatin1()); }
     }
 
     return false;
 }
 
-bool CImageConvApp::Load(const QString& fn)
+bool CImageConvApp::Load(const QString &fn)
 {
     QByteArray ext = QImageReader::imageFormat(fn);
 
-    if (!fn.isEmpty())
-        return m_clPixmap.load( fn, ext);
+    if (!fn.isEmpty()) return m_clPixmap.load(fn, ext);
 
     return false;
 }
 
-const QPixmap& CImageConvApp::GetPixmap() const
-{
-    return m_clPixmap;
-}
+const QPixmap &CImageConvApp::GetPixmap() const { return m_clPixmap; }
 
 bool CImageConvApp::ConvertToXPM(bool bAppendToFile)
 {
@@ -111,43 +93,35 @@ bool CImageConvApp::ConvertToXPM(bool bAppendToFile)
 
     // print to the console
     cout << "Try converting to XPM..." << endl;
-    if (list.count() == 0)
-    {
-        cout << "Cannot find " << (const char*)m_Dir.nameFilters().join(" ").toLatin1() << endl;
+    if (list.count() == 0) {
+        cout << "Cannot find " << (const char *)m_Dir.nameFilters().join(" ").toLatin1() << endl;
         return false;
     }
 
-    for (QStringList::Iterator it = list.begin(); it != list.end(); ++it)
-    {
+    for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
         QByteArray ext = QImageReader::imageFormat(*it);
-        if (ext.isEmpty())
-            continue; // no image format
+        if (ext.isEmpty()) continue; // no image format
 
-        if (m_Output == *it)
-            continue; // if the file is the output file itself
+        if (m_Output == *it) continue; // if the file is the output file itself
 
-        cout << "Converting " << (const char*)(*it).toLatin1() << " ...";
-    
-        if (Load(*it) == true)
-        {
+        cout << "Converting " << (const char *)(*it).toLatin1() << " ...";
+
+        if (Load(*it) == true) {
             QString name(*it);
-            name.replace(name.indexOf(".")+1, 4, "xpm");
+            name.replace(name.indexOf(".") + 1, 4, "xpm");
 
             bool ok;
 
             QFileInfo fi(*it);
-            if (bAppendToFile)
-                ok = AppendToFile(fi.baseName());
+            if (bAppendToFile) ok = AppendToFile(fi.baseName());
             else
                 ok = Save(name);
 
-            if (ok)
-                cout << "Done" << endl;
+            if (ok) cout << "Done" << endl;
             else
                 cout << "failed" << endl;
         }
-        else
-        {
+        else {
             cout << "failed" << endl;
         }
     }
@@ -162,13 +136,11 @@ void CImageConvApp::CreateBmpFactory()
     QFileInfo fi(m_BmpFactory);
 
     // already exists
-    if (fi.exists() && fi.isFile())
-        return;
+    if (fi.exists() && fi.isFile()) return;
 
     QFile fw(m_BmpFactory);
-    QTextStream tw (&fw);
-    if (!fw.open(QIODevice::Text | QIODevice::Unbuffered | QIODevice::WriteOnly))
-        return;
+    QTextStream tw(&fw);
+    if (!fw.open(QIODevice::Text | QIODevice::Unbuffered | QIODevice::WriteOnly)) return;
 
     // write header stuff
     tw << "\n";
@@ -179,7 +151,7 @@ void CImageConvApp::CreateBmpFactory()
     fw.close();
 }
 
-bool CImageConvApp::AppendToFile(const QString& file)
+bool CImageConvApp::AppendToFile(const QString &file)
 {
     CreateBmpFactory();
 
@@ -189,7 +161,7 @@ bool CImageConvApp::AppendToFile(const QString& file)
     // save as XPM into tmp. buffer
     QByteArray str;
     QBuffer buf(&str);
-    buf.open (QIODevice::WriteOnly);
+    buf.open(QIODevice::WriteOnly);
     QImageWriter iio(&buf, "XPM");
     QImage im;
     im = m_clPixmap.toImage();
@@ -204,41 +176,38 @@ bool CImageConvApp::AppendToFile(const QString& file)
     // open file
     bool found = false;
     QFile fw(m_Output);
-    if (fw.open(QIODevice::ReadOnly))
-    {
-        QTextStream tr (&fw);
+    if (fw.open(QIODevice::ReadOnly)) {
+        QTextStream tr(&fw);
         QString line;
-        do 
-        {
+        do {
             line = tr.readLine();
             if ((line.indexOf(file)) != -1) // icon already registered
             {
                 found = true;
             }
-        } while (!tr.atEnd() && !found);  
+        } while (!tr.atEnd() && !found);
 
         fw.close();
     }
 
     // register new icon
-    if (!found)
-    {
-        if (!fw.open(QIODevice::Text | QIODevice::Unbuffered | QIODevice::ReadWrite | QIODevice::Append))
+    if (!found) {
+        if (!fw.open(QIODevice::Text | QIODevice::Unbuffered | QIODevice::ReadWrite
+                     | QIODevice::Append))
             return false;
 
         // write into file now
-        QTextStream tw (&fw);
+        QTextStream tw(&fw);
         tw << txt << "\n";
         fw.close();
-  
-        if (m_bUpdate)
-        {
+
+        if (m_bUpdate) {
             QFile bmp(m_BmpFactory);
-            QTextStream ts (&bmp);
+            QTextStream ts(&bmp);
             if (!bmp.open(QIODevice::Text | QIODevice::Unbuffered | QIODevice::WriteOnly))
                 return false;
 
-            bmp.seek(bmp.size()-3);
+            bmp.seek(bmp.size() - 3);
             ts << "  rclBmpFactory.addXPM(\"" << file << "\", " << file << ");\n";
             ts << "}\n";
             bmp.close();
@@ -250,46 +219,54 @@ bool CImageConvApp::AppendToFile(const QString& file)
 
 void CImageConvApp::Error()
 {
-    cerr << "Usage: " << (const char*)m_Executable.toLatin1() << " [OPTION(S)] -i input file(s) {-o output file}" << endl;
-    cerr << "Try '"   << (const char*)m_Executable.toLatin1() << " --help' for more information." << endl;
+    cerr << "Usage: " << (const char *)m_Executable.toLatin1()
+         << " [OPTION(S)] -i input file(s) {-o output file}" << endl;
+    cerr << "Try '" << (const char *)m_Executable.toLatin1() << " --help' for more information."
+         << endl;
 
     exit(0);
 }
 
 void CImageConvApp::Version()
 {
-    cerr << (const char*)m_Executable.toLatin1() << " 1.0.0 " << endl;
+    cerr << (const char *)m_Executable.toLatin1() << " 1.0.0 " << endl;
     exit(0);
 }
 
 void CImageConvApp::Usage()
 {
-    cerr << "Usage: " << (const char*)m_Executable.toLatin1() << " [OPTION(S)] -i input file(s) {-o output file}\n" << endl;
+    cerr << "Usage: " << (const char *)m_Executable.toLatin1()
+         << " [OPTION(S)] -i input file(s) {-o output file}\n"
+         << endl;
     cerr << "Options:" << endl;
 
     cerr << "  -i       \tSpecify the input file(s).\n"
             "           \tSeveral filenames must be separated by a blank.\n"
             "           \tIf you want to select all files of a format\n"
-            "           \tyou also can write \"*.[FORMAT]\" (e.g. *.png).\n"  
-            "           \tSpecifying several files only makes sense in\n" 
-            "           \taddition with -a or -x." << endl;
+            "           \tyou also can write \"*.[FORMAT]\" (e.g. *.png).\n"
+            "           \tSpecifying several files only makes sense in\n"
+            "           \taddition with -a or -x."
+         << endl;
 
     cerr << "  -o       \tSpecify the output file." << endl;
 
     cerr << "  -x, --xpm\tConvert all specified image files to XPM.\n"
             "           \tFor each specified image file a corresponding\n"
             "           \tXPM file will be created.\n"
-            "           \tWith -i you can specify the input files." << endl;
+            "           \tWith -i you can specify the input files."
+         << endl;
 
     cerr << "  -a, --append\tConvert all specified image files to XPM and\n"
             "           \tappend the result to the file specified with -o.\n"
-            "           \tWith -i you can specify the input files.\n" << endl;
+            "           \tWith -i you can specify the input files.\n"
+         << endl;
 
 
     cerr << "  -u, --update\tUpdate the file \"BmpFactoryIcons.cpp\"\n"
             "           \tThis is a special mode to add icons to the FreeCAD's\n"
             "           \tbitmap factory automatically.\n"
-            "           \tThis switch is only available in addition with -a.\n" << endl;
+            "           \tThis switch is only available in addition with -a.\n"
+         << endl;
 
     cerr << "  -v, --version\tPrint the version and exit." << endl;
 
@@ -297,8 +274,10 @@ void CImageConvApp::Usage()
 
     cerr << "This program supports the following image formats:\n"
             " BMP, GIF, JPEG, MNG, PNG, PNM, XBM and XPM\n\n"
-         << (const char*)m_Executable.toLatin1() << " uses Qt Version " << qVersion() << "\n"
-            "Qt can be downloaded at http://www.trolltech.com." << endl;
+         << (const char *)m_Executable.toLatin1() << " uses Qt Version " << qVersion()
+         << "\n"
+            "Qt can be downloaded at http://www.trolltech.com."
+         << endl;
 
     exit(0);
 }

@@ -45,89 +45,82 @@ class SMESH_Gen;
  */
 // =========================================================
 
-class STDMESHERS_EXPORT StdMeshers_ProjectionSource3D:  public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_ProjectionSource3D: public SMESH_Hypothesis
 {
 public:
-  // Constructor
-  StdMeshers_ProjectionSource3D( int hypId, int studyId, SMESH_Gen * gen );
-  // Destructor
-  virtual ~StdMeshers_ProjectionSource3D();
+    // Constructor
+    StdMeshers_ProjectionSource3D(int hypId, int studyId, SMESH_Gen *gen);
+    // Destructor
+    virtual ~StdMeshers_ProjectionSource3D();
 
-  /*!
+    /*!
    * Sets a source <shape> to take a mesh pattern from
    */
-  void SetSource3DShape(const TopoDS_Shape& shape);
+    void SetSource3DShape(const TopoDS_Shape &shape);
 
-  /*!
+    /*!
    * Returns the source shape
    */
-  TopoDS_Shape GetSource3DShape() const;
+    TopoDS_Shape GetSource3DShape() const;
 
-  /*!
+    /*!
    * Sets source <mesh> to take a mesh pattern from
    */
-  void SetSourceMesh(SMESH_Mesh* mesh);
+    void SetSourceMesh(SMESH_Mesh *mesh);
 
-  /*!
+    /*!
    * Return source mesh
    */
-  SMESH_Mesh* GetSourceMesh() const { return _sourceMesh; }
+    SMESH_Mesh *GetSourceMesh() const { return _sourceMesh; }
 
-  /*!
+    /*!
    * Sets vertex association between the source shape and the target one.
    * This parameter is optional.
    * Two vertices must belong to one edge of a shape
    */
-  void SetVertexAssociation(const TopoDS_Shape& sourceVertex1,
-                            const TopoDS_Shape& sourceVertex2,
-                            const TopoDS_Shape& targetVertex1,
-                            const TopoDS_Shape& targetVertex2);
+    void SetVertexAssociation(const TopoDS_Shape &sourceVertex1, const TopoDS_Shape &sourceVertex2,
+                              const TopoDS_Shape &targetVertex1, const TopoDS_Shape &targetVertex2);
 
-  /*!
+    /*!
    * Returns the <i>-th source vertex associated with the <i>-th target vertex.
    * Result may be nil if association not set.
    */
-  TopoDS_Vertex GetSourceVertex(int i) const;
+    TopoDS_Vertex GetSourceVertex(int i) const;
 
-  /*!
+    /*!
    * Returns the <i>-th target vertex associated with the <i>-th source vertex.
    * Result may be nil if association not set.
    */
-  TopoDS_Vertex GetTargetVertex(int i) const;
+    TopoDS_Vertex GetTargetVertex(int i) const;
 
-  /*!
+    /*!
    * \brief Test if vertex association defined
     * \retval bool - test result
    */
-  bool HasVertexAssociation() const
-  { return ( !_sourceVertex1.IsNull() && !_targetVertex1.IsNull() &&
-             !_sourceVertex2.IsNull() && !_targetVertex2.IsNull()); }
+    bool HasVertexAssociation() const
+    {
+        return (!_sourceVertex1.IsNull() && !_targetVertex1.IsNull() && !_sourceVertex2.IsNull()
+                && !_targetVertex2.IsNull());
+    }
 
-  /*!
+    /*!
    * \brief Return all parameters
    */
-  void GetStoreParams(TopoDS_Shape& s1,
-                      TopoDS_Shape& s2,
-                      TopoDS_Shape& s3,
-                      TopoDS_Shape& s4,
-                      TopoDS_Shape& s5) const;
+    void GetStoreParams(TopoDS_Shape &s1, TopoDS_Shape &s2, TopoDS_Shape &s3, TopoDS_Shape &s4,
+                        TopoDS_Shape &s5) const;
 
-  /*!
+    /*!
    * \brief Set all parameters without notifying on modification
    */
-  void RestoreParams(const TopoDS_Shape& s1,
-                     const TopoDS_Shape& s2,
-                     const TopoDS_Shape& s3,
-                     const TopoDS_Shape& s4,
-                     const TopoDS_Shape& s5,
-                     SMESH_Mesh*         mesh);
+    void RestoreParams(const TopoDS_Shape &s1, const TopoDS_Shape &s2, const TopoDS_Shape &s3,
+                       const TopoDS_Shape &s4, const TopoDS_Shape &s5, SMESH_Mesh *mesh);
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  friend std::ostream & operator <<(std::ostream & save, StdMeshers_ProjectionSource3D & hyp);
-  friend std::istream & operator >>(std::istream & load, StdMeshers_ProjectionSource3D & hyp);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    friend std::ostream &operator<<(std::ostream &save, StdMeshers_ProjectionSource3D &hyp);
+    friend std::istream &operator>>(std::istream &load, StdMeshers_ProjectionSource3D &hyp);
 
-  /*!
+    /*!
    * \brief Initialize parameters by the mesh built on the geometry
     * \param theMesh - the built mesh
     * \param theShape - the geometry of interest
@@ -135,24 +128,21 @@ public:
     *
     * Implementation does noting
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
 protected:
-
-  TopoDS_Shape  _sourceShape;
-  SMESH_Mesh*   _sourceMesh;
-  TopoDS_Vertex _sourceVertex1;
-  TopoDS_Vertex _sourceVertex2;
-  TopoDS_Vertex _targetVertex1;
-  TopoDS_Vertex _targetVertex2;
-
+    TopoDS_Shape _sourceShape;
+    SMESH_Mesh *_sourceMesh;
+    TopoDS_Vertex _sourceVertex1;
+    TopoDS_Vertex _sourceVertex2;
+    TopoDS_Vertex _targetVertex1;
+    TopoDS_Vertex _targetVertex2;
 };
 
 #endif
-

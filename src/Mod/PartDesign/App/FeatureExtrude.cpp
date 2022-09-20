@@ -23,15 +23,15 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRep_Builder.hxx>
-# include <BRepFeat_MakePrism.hxx>
-# include <BRepPrimAPI_MakePrism.hxx>
-# include <gp_Dir.hxx>
-# include <Precision.hxx>
-# include <TopExp_Explorer.hxx>
-# include <TopoDS_Compound.hxx>
-# include <TopoDS_Face.hxx>
-# include <TopoDS_Shape.hxx>
+#include <BRep_Builder.hxx>
+#include <BRepFeat_MakePrism.hxx>
+#include <BRepPrimAPI_MakePrism.hxx>
+#include <gp_Dir.hxx>
+#include <Precision.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Shape.hxx>
 #endif
 
 #include <App/Document.h>
@@ -44,33 +44,24 @@ using namespace PartDesign;
 
 PROPERTY_SOURCE(PartDesign::FeatureExtrude, PartDesign::ProfileBased)
 
-App::PropertyQuantityConstraint::Constraints FeatureExtrude::signedLengthConstraint = { -DBL_MAX, DBL_MAX, 1.0 };
+App::PropertyQuantityConstraint::Constraints FeatureExtrude::signedLengthConstraint = {
+    -DBL_MAX, DBL_MAX, 1.0};
 double FeatureExtrude::maxAngle = 90 - Base::toDegrees<double>(Precision::Angular());
-App::PropertyAngle::Constraints FeatureExtrude::floatAngle = { -maxAngle, maxAngle, 1.0 };
+App::PropertyAngle::Constraints FeatureExtrude::floatAngle = {-maxAngle, maxAngle, 1.0};
 
-FeatureExtrude::FeatureExtrude()
-{
-}
+FeatureExtrude::FeatureExtrude() {}
 
 short FeatureExtrude::mustExecute() const
 {
-    if (Placement.isTouched() ||
-        Type.isTouched() ||
-        Length.isTouched() ||
-        Length2.isTouched() ||
-        TaperAngle.isTouched() ||
-        TaperAngle2.isTouched() ||
-        UseCustomVector.isTouched() ||
-        Direction.isTouched() ||
-        ReferenceAxis.isTouched() ||
-        AlongSketchNormal.isTouched() ||
-        Offset.isTouched() ||
-        UpToFace.isTouched())
+    if (Placement.isTouched() || Type.isTouched() || Length.isTouched() || Length2.isTouched()
+        || TaperAngle.isTouched() || TaperAngle2.isTouched() || UseCustomVector.isTouched()
+        || Direction.isTouched() || ReferenceAxis.isTouched() || AlongSketchNormal.isTouched()
+        || Offset.isTouched() || UpToFace.isTouched())
         return 1;
     return ProfileBased::mustExecute();
 }
 
-Base::Vector3d FeatureExtrude::computeDirection(const Base::Vector3d& sketchVector)
+Base::Vector3d FeatureExtrude::computeDirection(const Base::Vector3d &sketchVector)
 {
     Base::Vector3d extrudeDirection;
 
@@ -82,18 +73,15 @@ Base::Vector3d FeatureExtrude::computeDirection(const Base::Vector3d& sketchVect
         }
         else {
             // update Direction from ReferenceAxis
-            App::DocumentObject* pcReferenceAxis = ReferenceAxis.getValue();
-            const std::vector<std::string>& subReferenceAxis = ReferenceAxis.getSubValues();
+            App::DocumentObject *pcReferenceAxis = ReferenceAxis.getValue();
+            const std::vector<std::string> &subReferenceAxis = ReferenceAxis.getSubValues();
             Base::Vector3d base;
             Base::Vector3d dir;
-            getAxis(pcReferenceAxis, subReferenceAxis, base, dir, ForbiddenAxis::NotPerpendicularWithNormal);
+            getAxis(pcReferenceAxis, subReferenceAxis, base, dir,
+                    ForbiddenAxis::NotPerpendicularWithNormal);
             switch (addSubType) {
-            case Type::Additive:
-                extrudeDirection = dir;
-                break;
-            case Type::Subtractive:
-                extrudeDirection = -dir;
-                break;
+                case Type::Additive: extrudeDirection = dir; break;
+                case Type::Subtractive: extrudeDirection = -dir; break;
             }
         }
     }
@@ -112,8 +100,7 @@ Base::Vector3d FeatureExtrude::computeDirection(const Base::Vector3d& sketchVect
     Direction.setReadOnly(!UseCustomVector.getValue());
     ReferenceAxis.setReadOnly(UseCustomVector.getValue());
     // UseCustomVector allows AlongSketchNormal but !UseCustomVector does not forbid it
-    if (UseCustomVector.getValue())
-        AlongSketchNormal.setReadOnly(false);
+    if (UseCustomVector.getValue()) AlongSketchNormal.setReadOnly(false);
 
     // explicitly set the Direction so that the dialog shows also the used direction
     // if the sketch's normal vector was used
@@ -123,30 +110,24 @@ Base::Vector3d FeatureExtrude::computeDirection(const Base::Vector3d& sketchVect
 
 bool FeatureExtrude::hasTaperedAngle() const
 {
-    return fabs(TaperAngle.getValue()) > Base::toRadians(Precision::Angular()) ||
-           fabs(TaperAngle2.getValue()) > Base::toRadians(Precision::Angular());
+    return fabs(TaperAngle.getValue()) > Base::toRadians(Precision::Angular())
+        || fabs(TaperAngle2.getValue()) > Base::toRadians(Precision::Angular());
 }
 
-void FeatureExtrude::generatePrism(TopoDS_Shape& prism,
-                                   const TopoDS_Shape& sketchshape,
-                                   const std::string& method,
-                                   const gp_Dir& direction,
-                                   const double L,
-                                   const double L2,
-                                   const bool midplane,
+void FeatureExtrude::generatePrism(TopoDS_Shape &prism, const TopoDS_Shape &sketchshape,
+                                   const std::string &method, const gp_Dir &direction,
+                                   const double L, const double L2, const bool midplane,
                                    const bool reversed)
 {
     if (method == "Length" || method == "TwoLengths" || method == "ThroughAll") {
         double Ltotal = L;
         double Loffset = 0.;
-        if (method == "ThroughAll")
-            Ltotal = getThroughAllLength();
+        if (method == "ThroughAll") Ltotal = getThroughAllLength();
 
 
         if (method == "TwoLengths") {
             Ltotal += L2;
-            if (reversed)
-                Loffset = -L;
+            if (reversed) Loffset = -L;
             else
                 Loffset = -L2;
         }
@@ -184,21 +165,16 @@ void FeatureExtrude::generatePrism(TopoDS_Shape& prism,
     }
     else {
         std::stringstream str;
-        str << "ProfileBased: Internal error: Unknown method '"
-            << method << "' for generatePrism()";
+        str << "ProfileBased: Internal error: Unknown method '" << method
+            << "' for generatePrism()";
         throw Base::RuntimeError(str.str());
     }
 }
 
-void FeatureExtrude::generatePrism(TopoDS_Shape& prism,
-                                   const std::string& method,
-                                   const TopoDS_Shape& baseshape,
-                                   const TopoDS_Shape& profileshape,
-                                   const TopoDS_Face& supportface,
-                                   const TopoDS_Face& uptoface,
-                                   const gp_Dir& direction,
-                                   PrismMode Mode,
-                                   Standard_Boolean Modify)
+void FeatureExtrude::generatePrism(TopoDS_Shape &prism, const std::string &method,
+                                   const TopoDS_Shape &baseshape, const TopoDS_Shape &profileshape,
+                                   const TopoDS_Face &supportface, const TopoDS_Face &uptoface,
+                                   const gp_Dir &direction, PrismMode Mode, Standard_Boolean Modify)
 {
     if (method == "UpToFirst" || method == "UpToFace" || method == "UpToLast") {
         BRepFeat_MakePrism PrismMaker;
@@ -210,54 +186,50 @@ void FeatureExtrude::generatePrism(TopoDS_Shape& prism,
                 throw Base::RuntimeError("ProfileBased: Up to face: Could not extrude the sketch!");
 
             base = PrismMaker.Shape();
-            if (Mode == PrismMode::None)
-                Mode = PrismMode::FuseWithBase;
+            if (Mode == PrismMode::None) Mode = PrismMode::FuseWithBase;
         }
 
         prism = base;
     }
     else {
         std::stringstream str;
-        str << "ProfileBased: Internal error: Unknown method '"
-            << method << "' for generatePrism()";
+        str << "ProfileBased: Internal error: Unknown method '" << method
+            << "' for generatePrism()";
         throw Base::RuntimeError(str.str());
     }
 }
 
-void FeatureExtrude::generateTaperedPrism(TopoDS_Shape& prism,
-                                          const TopoDS_Shape& sketchshape,
-                                          const std::string& method,
-                                          const gp_Dir& direction,
-                                          const double L,
-                                          const double L2,
-                                          const double angle,
-                                          const double angle2,
-                                          const bool midplane)
+void FeatureExtrude::generateTaperedPrism(TopoDS_Shape &prism, const TopoDS_Shape &sketchshape,
+                                          const std::string &method, const gp_Dir &direction,
+                                          const double L, const double L2, const double angle,
+                                          const double angle2, const bool midplane)
 {
     std::list<TopoDS_Shape> drafts;
-    bool isSolid = true; // in PD we only generate solids, while Part Extrude can also create only shells
-    bool isPartDesign = true; // there is an OCC bug with single-edge wires (circles) we need to treat differently for PD and Part
+    bool isSolid =
+        true; // in PD we only generate solids, while Part Extrude can also create only shells
+    bool isPartDesign =
+        true; // there is an OCC bug with single-edge wires (circles) we need to treat differently for PD and Part
     if (method == "ThroughAll") {
-        Part::ExtrusionHelper::makeDraft(sketchshape, direction, getThroughAllLength(),
-            0.0, Base::toRadians(angle), 0.0, isSolid, drafts, isPartDesign);
+        Part::ExtrusionHelper::makeDraft(sketchshape, direction, getThroughAllLength(), 0.0,
+                                         Base::toRadians(angle), 0.0, isSolid, drafts,
+                                         isPartDesign);
     }
     else if (method == "TwoLengths") {
-        Part::ExtrusionHelper::makeDraft(sketchshape, direction, L, L2,
-            Base::toRadians(angle), Base::toRadians(angle2), isSolid, drafts, isPartDesign);
+        Part::ExtrusionHelper::makeDraft(sketchshape, direction, L, L2, Base::toRadians(angle),
+                                         Base::toRadians(angle2), isSolid, drafts, isPartDesign);
     }
     else if (method == "Length") {
         if (midplane) {
             Part::ExtrusionHelper::makeDraft(sketchshape, direction, L / 2, L / 2,
-                Base::toRadians(angle), Base::toRadians(angle), isSolid, drafts, isPartDesign);
+                                             Base::toRadians(angle), Base::toRadians(angle),
+                                             isSolid, drafts, isPartDesign);
         }
         else
-            Part::ExtrusionHelper::makeDraft(sketchshape, direction, L, 0.0,
-                Base::toRadians(angle), 0.0, isSolid, drafts, isPartDesign);
+            Part::ExtrusionHelper::makeDraft(sketchshape, direction, L, 0.0, Base::toRadians(angle),
+                                             0.0, isSolid, drafts, isPartDesign);
     }
 
-    if (drafts.empty()) {
-        throw Base::RuntimeError("Creation of tapered object failed");
-    }
+    if (drafts.empty()) { throw Base::RuntimeError("Creation of tapered object failed"); }
     else if (drafts.size() == 1) {
         prism = drafts.front();
     }

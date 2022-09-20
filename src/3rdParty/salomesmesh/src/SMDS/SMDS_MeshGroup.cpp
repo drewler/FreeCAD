@@ -26,7 +26,7 @@
 //  Module : SMESH
 //
 #ifdef _MSC_VER
-#pragma warning(disable:4786)
+#pragma warning(disable : 4786)
 #endif
 
 #include "SMDS_MeshGroup.hxx"
@@ -36,143 +36,132 @@ using namespace std;
 
 //=======================================================================
 //function : SMDS_MeshGroup
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-SMDS_MeshGroup::SMDS_MeshGroup(const SMDS_Mesh * theMesh,
-                               const SMDSAbs_ElementType theType)
-  :myMesh(theMesh),myType(theType), myParent(NULL), myTic(0)
-{
-}
+SMDS_MeshGroup::SMDS_MeshGroup(const SMDS_Mesh *theMesh, const SMDSAbs_ElementType theType)
+    : myMesh(theMesh), myType(theType), myParent(NULL), myTic(0)
+{}
 
 //=======================================================================
 //function : SMDS_MeshGroup
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-SMDS_MeshGroup::SMDS_MeshGroup(SMDS_MeshGroup * theParent,
-                               const SMDSAbs_ElementType theType)
-        :myMesh(theParent->myMesh),myType(theType), myParent(theParent)
-{
-}
+SMDS_MeshGroup::SMDS_MeshGroup(SMDS_MeshGroup *theParent, const SMDSAbs_ElementType theType)
+    : myMesh(theParent->myMesh), myType(theType), myParent(theParent)
+{}
 
 //=======================================================================
 //function : AddSubGroup
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-const SMDS_MeshGroup *SMDS_MeshGroup::AddSubGroup
-                (const SMDSAbs_ElementType theType)
+const SMDS_MeshGroup *SMDS_MeshGroup::AddSubGroup(const SMDSAbs_ElementType theType)
 {
-        const SMDS_MeshGroup * subgroup = new SMDS_MeshGroup(this,theType);
-        myChildren.insert(myChildren.end(),subgroup);
-        return subgroup;
+    const SMDS_MeshGroup *subgroup = new SMDS_MeshGroup(this, theType);
+    myChildren.insert(myChildren.end(), subgroup);
+    return subgroup;
 }
 
 //=======================================================================
 //function : RemoveSubGroup
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_MeshGroup::RemoveSubGroup(const SMDS_MeshGroup * theGroup)
+bool SMDS_MeshGroup::RemoveSubGroup(const SMDS_MeshGroup *theGroup)
 {
-        bool found = false;     
-        list<const SMDS_MeshGroup*>::iterator itgroup;
-        for(itgroup=myChildren.begin(); itgroup!=myChildren.end(); itgroup++)
-        {
-                const SMDS_MeshGroup* subgroup=*itgroup;
-                if (subgroup == theGroup)
-                {
-                        found = true;
-                        myChildren.erase(itgroup);
-                }
+    bool found = false;
+    list<const SMDS_MeshGroup *>::iterator itgroup;
+    for (itgroup = myChildren.begin(); itgroup != myChildren.end(); itgroup++) {
+        const SMDS_MeshGroup *subgroup = *itgroup;
+        if (subgroup == theGroup) {
+            found = true;
+            myChildren.erase(itgroup);
         }
+    }
 
-        return found;
+    return found;
 }
 
 //=======================================================================
 //function : RemoveFromParent
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 bool SMDS_MeshGroup::RemoveFromParent()
 {
-        
-        if (myParent==NULL) return false;
-        else
-        {
-                return (myParent->RemoveSubGroup(this));
-        }
+
+    if (myParent == NULL) return false;
+    else {
+        return (myParent->RemoveSubGroup(this));
+    }
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void SMDS_MeshGroup::Clear()
 {
-  myElements.clear();
-  myType = SMDSAbs_All;
-  ++myTic;
+    myElements.clear();
+    myType = SMDSAbs_All;
+    ++myTic;
 }
 
 //=======================================================================
 //function : Add
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_MeshGroup::Add(const SMDS_MeshElement * theElem)
+bool SMDS_MeshGroup::Add(const SMDS_MeshElement *theElem)
 {
-  // the type of the group is determined by the first element added
-  if (myElements.empty()) {
-    myType = theElem->GetType();
-  }
-  else if (theElem->GetType() != myType) {
-    MESSAGE("SMDS_MeshGroup::Add : Type Mismatch "<<theElem->GetType()<<"!="<<myType);
-    return false;
-  }
-        
-  myElements.insert(myElements.end(), theElem);
-  ++myTic;
+    // the type of the group is determined by the first element added
+    if (myElements.empty()) { myType = theElem->GetType(); }
+    else if (theElem->GetType() != myType) {
+        MESSAGE("SMDS_MeshGroup::Add : Type Mismatch " << theElem->GetType() << "!=" << myType);
+        return false;
+    }
 
-  return true;
+    myElements.insert(myElements.end(), theElem);
+    ++myTic;
+
+    return true;
 }
 
 //=======================================================================
 //function : Remove
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_MeshGroup::Remove(const SMDS_MeshElement * theElem)
+bool SMDS_MeshGroup::Remove(const SMDS_MeshElement *theElem)
 {
-  set<const SMDS_MeshElement *>::iterator found = myElements.find(theElem);
-  if ( found != myElements.end() ) {
-    myElements.erase(found);
-    if (myElements.empty()) myType = SMDSAbs_All;
-    ++myTic;
-    return true;
-  }
-  return false;
+    set<const SMDS_MeshElement *>::iterator found = myElements.find(theElem);
+    if (found != myElements.end()) {
+        myElements.erase(found);
+        if (myElements.empty()) myType = SMDSAbs_All;
+        ++myTic;
+        return true;
+    }
+    return false;
 }
 
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_MeshGroup::Contains(const SMDS_MeshElement * theElem) const
+bool SMDS_MeshGroup::Contains(const SMDS_MeshElement *theElem) const
 {
-        return myElements.find(theElem)!=myElements.end();
+    return myElements.find(theElem) != myElements.end();
 }
 
 //=======================================================================
 //function : SetType
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void SMDS_MeshGroup::SetType(const SMDSAbs_ElementType theType)
 {
-  if (IsEmpty())
-    myType = theType;
+    if (IsEmpty()) myType = theType;
 }

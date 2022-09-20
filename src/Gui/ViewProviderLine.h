@@ -30,14 +30,16 @@
 namespace Gui
 {
 
-class GuiExport ViewProviderLine : public ViewProviderOriginFeature {
+class GuiExport ViewProviderLine: public ViewProviderOriginFeature
+{
     PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderLine);
+
 public:
     /// Constructor
     ViewProviderLine();
     ~ViewProviderLine() override;
 
-    void attach ( App::DocumentObject * ) override;
+    void attach(App::DocumentObject *) override;
 };
 
 } //namespace Gui

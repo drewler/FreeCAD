@@ -36,7 +36,7 @@ class ActionGroup;
     WinVistaPanelScheme (Windows Vista variation), MacPanelScheme (MacOS variation),
     AndroidPanelScheme (Android variation).
 */
-class QSINT_EXPORT ActionPanel : public QFrame
+class QSINT_EXPORT ActionPanel: public QFrame
 {
     typedef QFrame BaseClass;
 
@@ -67,21 +67,21 @@ public:
 
     /** Creates and adds to the ActionPanel's vertical layout an empty ActionGroup without header.
       */
-    ActionGroup* createGroup();
+    ActionGroup *createGroup();
 
     /** Creates and adds to the ActionPanel's vertical layout an empty ActionGroup with header's
         text set to \a title, but with no icon.
 
         If \a expandable set to \a true (default), the group can be expanded/collapsed by the user.
       */
-    ActionGroup* createGroup(const QString &title, bool expandable = true);
+    ActionGroup *createGroup(const QString &title, bool expandable = true);
 
     /** Creates and adds to the ActionPanel's vertical layout an empty ActionGroup with header's
         text set to \a title and icon set to \a icon.
 
         If \a expandable set to \a true (default), the group can be expanded/collapsed by the user.
       */
-    ActionGroup* createGroup(const QPixmap &icon, const QString &title, bool expandable = true);
+    ActionGroup *createGroup(const QPixmap &icon, const QString &title, bool expandable = true);
 
     /** Sets the scheme of the panel and all the child groups to \a scheme.
 
@@ -99,6 +99,6 @@ protected:
 };
 
 
-} // namespace
+} // namespace QSint
 
 #endif // ACTIONPANEL_H

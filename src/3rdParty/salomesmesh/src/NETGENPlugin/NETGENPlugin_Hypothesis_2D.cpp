@@ -37,13 +37,12 @@ using namespace std;
  *  
  */
 //=============================================================================
-NETGENPlugin_Hypothesis_2D::NETGENPlugin_Hypothesis_2D (int hypId, int studyId,
-                                                        SMESH_Gen * gen)
-  : NETGENPlugin_Hypothesis(hypId, studyId, gen)/*,
+NETGENPlugin_Hypothesis_2D::NETGENPlugin_Hypothesis_2D(int hypId, int studyId, SMESH_Gen *gen)
+    : NETGENPlugin_Hypothesis(hypId, studyId, gen) /*,
     _quadAllowed (GetDefaultQuadAllowed())*/
 {
-  _name = "NETGEN_Parameters_2D";
-  _param_algo_dim = 2;
+    _name = "NETGEN_Parameters_2D";
+    _param_algo_dim = 2;
 }
 
 //=============================================================================
@@ -62,7 +61,7 @@ NETGENPlugin_Hypothesis_2D::NETGENPlugin_Hypothesis_2D (int hypId, int studyId,
 
 // //=============================================================================
 // /*!
-//  *  
+//  *
 //  */
 // //=============================================================================
 // bool NETGENPlugin_Hypothesis_2D::GetDefaultQuadAllowed()
@@ -72,7 +71,7 @@ NETGENPlugin_Hypothesis_2D::NETGENPlugin_Hypothesis_2D (int hypId, int studyId,
 
 // //=============================================================================
 // /*!
-//  *  
+//  *
 //  */
 // //=============================================================================
 // ostream & NETGENPlugin_Hypothesis_2D::SaveTo(ostream & save)
@@ -86,7 +85,7 @@ NETGENPlugin_Hypothesis_2D::NETGENPlugin_Hypothesis_2D (int hypId, int studyId,
 
 // //=============================================================================
 // /*!
-//  *  
+//  *
 //  */
 // //=============================================================================
 // istream & NETGENPlugin_Hypothesis_2D::LoadFrom(istream & load)

@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMutexLocker>
+#include <QMutexLocker>
 #endif
 
 #include "Sequencer.h"
@@ -33,62 +33,52 @@
 
 using namespace Base;
 
-namespace Base {
-    struct SequencerP {
-        // members
-        static std::vector<SequencerBase*> _instances; /**< A vector of all created instances */
-        static SequencerLauncher* _topLauncher; /**< The outermost launcher */
-        static QRecursiveMutex mutex; /**< A mutex-locker for the launcher */
-        /** Sets a global sequencer object.
+namespace Base
+{
+struct SequencerP {
+    // members
+    static std::vector<SequencerBase *> _instances; /**< A vector of all created instances */
+    static SequencerLauncher *_topLauncher;         /**< The outermost launcher */
+    static QRecursiveMutex mutex;                   /**< A mutex-locker for the launcher */
+    /** Sets a global sequencer object.
          * Access to the last registered object is performed by @see Sequencer().
          */
-        static void appendInstance (SequencerBase* s)
-        {
-            _instances.push_back(s);
-        }
-        static void removeInstance (SequencerBase* s)
-        {
-            std::vector<SequencerBase*>::iterator it;
-            it = std::find(_instances.begin(), _instances.end(), s);
-            _instances.erase(it);
-        }
-        static SequencerBase& getInstance ()
-        {
-            return *_instances.back();
-        }
-    };
+    static void appendInstance(SequencerBase *s) { _instances.push_back(s); }
+    static void removeInstance(SequencerBase *s)
+    {
+        std::vector<SequencerBase *>::iterator it;
+        it = std::find(_instances.begin(), _instances.end(), s);
+        _instances.erase(it);
+    }
+    static SequencerBase &getInstance() { return *_instances.back(); }
+};
 
-    /**
+/**
      * The _instances member just stores the pointer of the
      * all instantiated SequencerBase objects.
      */
-    std::vector<SequencerBase*> SequencerP::_instances;
-    SequencerLauncher* SequencerP::_topLauncher = nullptr;
-    QRecursiveMutex SequencerP::mutex;
-}
+std::vector<SequencerBase *> SequencerP::_instances;
+SequencerLauncher *SequencerP::_topLauncher = nullptr;
+QRecursiveMutex SequencerP::mutex;
+} // namespace Base
 
-SequencerBase& SequencerBase::Instance ()
+SequencerBase &SequencerBase::Instance()
 {
     // not initialized?
-    if (SequencerP::_instances.size() == 0) {
-        new ConsoleSequencer();
-    }
+    if (SequencerP::_instances.size() == 0) { new ConsoleSequencer(); }
 
     return SequencerP::getInstance();
 }
 
 SequencerBase::SequencerBase()
-  : nProgress(0), nTotalSteps(0), _bLocked(false), _bCanceled(false), _nLastPercentage(-1)
+    : nProgress(0), nTotalSteps(0), _bLocked(false), _bCanceled(false), _nLastPercentage(-1)
 {
     SequencerP::appendInstance(this);
 }
 
-SequencerBase::~SequencerBase()
-{
-    SequencerP::removeInstance(this);
-}
+SequencerBase::~SequencerBase() { SequencerP::removeInstance(this); }
 
-bool SequencerBase::start(const char* pszStr, size_t steps)
+bool SequencerBase::start(const char *pszStr, size_t steps)
 {
     // reset current state of progress (in percent)
     this->_nLastPercentage = -1;
@@ -100,20 +90,14 @@ bool SequencerBase::start(const char* pszStr, size_t steps)
     setText(pszStr);
 
     // reimplemented in sub-classes
-    if (!this->_bLocked)
-        startStep();
+    if (!this->_bLocked) startStep();
 
     return true;
 }
 
-size_t SequencerBase::numberOfSteps() const
-{
-    return this->nTotalSteps;
-}
+size_t SequencerBase::numberOfSteps() const { return this->nTotalSteps; }
 
-void SequencerBase::startStep()
-{
-}
+void SequencerBase::startStep() {}
 
 bool SequencerBase::next(bool canAbort)
 {
@@ -126,20 +110,15 @@ bool SequencerBase::next(bool canAbort)
         this->_nLastPercentage = perc;
 
         // if not locked
-        if (!this->_bLocked)
-            nextStep(canAbort);
+        if (!this->_bLocked) nextStep(canAbort);
     }
 
     return this->nProgress < this->nTotalSteps;
 }
 
-void SequencerBase::nextStep( bool )
-{
-}
+void SequencerBase::nextStep(bool) {}
 
-void SequencerBase::setProgress(size_t)
-{
-}
+void SequencerBase::setProgress(size_t) {}
 
 bool SequencerBase::stop()
 {
@@ -147,18 +126,11 @@ bool SequencerBase::stop()
     return true;
 }
 
-void SequencerBase::pause()
-{
-}
+void SequencerBase::pause() {}
 
-void SequencerBase::resume()
-{
-}
+void SequencerBase::resume() {}
 
-bool SequencerBase::isBlocking() const
-{
-    return true;
-}
+bool SequencerBase::isBlocking() const { return true; }
 
 bool SequencerBase::setLocked(bool bLocked)
 {
@@ -186,47 +158,27 @@ bool SequencerBase::wasCanceled() const
     return this->_bCanceled;
 }
 
-void SequencerBase::tryToCancel()
-{
-    this->_bCanceled = true;
-}
+void SequencerBase::tryToCancel() { this->_bCanceled = true; }
 
-void SequencerBase::rejectCancel()
-{
-    this->_bCanceled = false;
-}
+void SequencerBase::rejectCancel() { this->_bCanceled = false; }
 
-int SequencerBase::progressInPercent() const
-{
-    return this->_nLastPercentage;
-}
+int SequencerBase::progressInPercent() const { return this->_nLastPercentage; }
 
-void SequencerBase::resetData()
-{
-    this->_bCanceled = false;
-}
+void SequencerBase::resetData() { this->_bCanceled = false; }
 
-void SequencerBase::setText(const char*)
-{
-}
+void SequencerBase::setText(const char *) {}
 
 // ---------------------------------------------------------
 
 using Base::ConsoleSequencer;
 
-void ConsoleSequencer::setText (const char* pszTxt)
-{
-    printf("%s...\n", pszTxt);
-}
+void ConsoleSequencer::setText(const char *pszTxt) { printf("%s...\n", pszTxt); }
 
-void ConsoleSequencer::startStep()
-{
-}
+void ConsoleSequencer::startStep() {}
 
-void ConsoleSequencer::nextStep( bool )
+void ConsoleSequencer::nextStep(bool)
 {
-    if (this->nTotalSteps != 0)
-        printf("\t\t\t\t\t\t(%d %%)\t\r", progressInPercent());
+    if (this->nTotalSteps != 0) printf("\t\t\t\t\t\t(%d %%)\t\r", progressInPercent());
 }
 
 void ConsoleSequencer::resetData()
@@ -237,7 +189,7 @@ void ConsoleSequencer::resetData()
 
 // ---------------------------------------------------------
 
-SequencerLauncher::SequencerLauncher(const char* pszStr, size_t steps)
+SequencerLauncher::SequencerLauncher(const char *pszStr, size_t steps)
 {
     QMutexLocker locker(&SequencerP::mutex);
     // Have we already an instance of SequencerLauncher created?
@@ -250,14 +202,11 @@ SequencerLauncher::SequencerLauncher(const char* pszStr, size_t steps)
 SequencerLauncher::~SequencerLauncher()
 {
     QMutexLocker locker(&SequencerP::mutex);
-    if (SequencerP::_topLauncher == this)
-        SequencerBase::Instance().stop();
-    if (SequencerP::_topLauncher == this) {
-        SequencerP::_topLauncher = nullptr;
-    }
+    if (SequencerP::_topLauncher == this) SequencerBase::Instance().stop();
+    if (SequencerP::_topLauncher == this) { SequencerP::_topLauncher = nullptr; }
 }
 
-void SequencerLauncher::setText (const char* pszTxt)
+void SequencerLauncher::setText(const char *pszTxt)
 {
     QMutexLocker locker(&SequencerP::mutex);
     SequencerBase::Instance().setText(pszTxt);
@@ -266,8 +215,7 @@ void SequencerLauncher::setText (const char* pszTxt)
 bool SequencerLauncher::next(bool canAbort)
 {
     QMutexLocker locker(&SequencerP::mutex);
-    if (SequencerP::_topLauncher != this)
-        return true; // ignore
+    if (SequencerP::_topLauncher != this) return true; // ignore
     return SequencerBase::Instance().next(canAbort);
 }
 
@@ -283,10 +231,7 @@ size_t SequencerLauncher::numberOfSteps() const
     return SequencerBase::Instance().numberOfSteps();
 }
 
-bool SequencerLauncher::wasCanceled() const
-{
-    return SequencerBase::Instance().wasCanceled();
-}
+bool SequencerLauncher::wasCanceled() const { return SequencerBase::Instance().wasCanceled(); }
 
 // ---------------------------------------------------------
 
@@ -300,9 +245,9 @@ void ProgressIndicatorPy::init_type()
     behaviors().supportSetattr();
     behaviors().set_tp_new(PyMake);
 
-    add_varargs_method("start",&ProgressIndicatorPy::start,"start(string,int)");
-    add_varargs_method("next",&ProgressIndicatorPy::next,"next()");
-    add_varargs_method("stop",&ProgressIndicatorPy::stop,"stop()");
+    add_varargs_method("start", &ProgressIndicatorPy::start, "start(string,int)");
+    add_varargs_method("next", &ProgressIndicatorPy::next, "next()");
+    add_varargs_method("stop", &ProgressIndicatorPy::stop, "stop()");
 }
 
 PyObject *ProgressIndicatorPy::PyMake(struct _typeobject *, PyObject *, PyObject *)
@@ -320,27 +265,24 @@ Py::Object ProgressIndicatorPy::repr()
     return Py::String(s);
 }
 
-Py::Object ProgressIndicatorPy::start(const Py::Tuple& args)
+Py::Object ProgressIndicatorPy::start(const Py::Tuple &args)
 {
-    char* text;
+    char *text;
     unsigned int steps;
-    if (!PyArg_ParseTuple(args.ptr(), "sI",&text,&steps))
-        throw Py::Exception();
-    if (!_seq.get())
-        _seq.reset(new SequencerLauncher(text,steps));
+    if (!PyArg_ParseTuple(args.ptr(), "sI", &text, &steps)) throw Py::Exception();
+    if (!_seq.get()) _seq.reset(new SequencerLauncher(text, steps));
     return Py::None();
 }
 
-Py::Object ProgressIndicatorPy::next(const Py::Tuple& args)
+Py::Object ProgressIndicatorPy::next(const Py::Tuple &args)
 {
-    int b=0;
-    if (!PyArg_ParseTuple(args.ptr(), "|i",&b))
-        throw Py::Exception();
+    int b = 0;
+    if (!PyArg_ParseTuple(args.ptr(), "|i", &b)) throw Py::Exception();
     if (_seq.get()) {
         try {
             _seq->next(b ? true : false);
         }
-        catch (const Base::AbortException&) {
+        catch (const Base::AbortException &) {
             _seq.reset();
             throw Py::RuntimeError("abort progress indicator");
         }
@@ -348,10 +290,9 @@ Py::Object ProgressIndicatorPy::next(const Py::Tuple& args)
     return Py::None();
 }
 
-Py::Object ProgressIndicatorPy::stop(const Py::Tuple& args)
+Py::Object ProgressIndicatorPy::stop(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
     _seq.reset();
     return Py::None();
 }

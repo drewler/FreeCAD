@@ -28,9 +28,10 @@
 #include <Gui/ViewProviderDocumentObject.h>
 #include <Mod/TechDraw/App/DrawTile.h>
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderTile : public Gui::ViewProviderDocumentObject
+class TechDrawGuiExport ViewProviderTile: public Gui::ViewProviderDocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderTile);
 
@@ -40,11 +41,11 @@ public:
     /// destructor
     ~ViewProviderTile() override;
 
-    bool useNewSelectionModel() const override {return false;}
+    bool useNewSelectionModel() const override { return false; }
     bool canDelete(App::DocumentObject *obj) const override;
 
-/*    virtual TechDraw::DrawTile* getViewObject() const;*/
-    virtual TechDraw::DrawTile* getFeature() const;
+    /*    virtual TechDraw::DrawTile* getViewObject() const;*/
+    virtual TechDraw::DrawTile *getFeature() const;
 };
 
 } // namespace TechDrawGui

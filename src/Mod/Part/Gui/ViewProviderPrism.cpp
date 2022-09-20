@@ -34,15 +34,9 @@ using namespace std;
 PROPERTY_SOURCE(PartGui::ViewProviderPrism, PartGui::ViewProviderPrimitive)
 
 
-ViewProviderPrism::ViewProviderPrism()
-{
-    sPixmap = "Part_Prism_Parametric";
-}
+ViewProviderPrism::ViewProviderPrism() { sPixmap = "Part_Prism_Parametric"; }
 
-ViewProviderPrism::~ViewProviderPrism()
-{
-
-}
+ViewProviderPrism::~ViewProviderPrism() {}
 
 // **********************************************************************************
 
@@ -66,15 +60,9 @@ std::vector<std::string> ViewProviderPrism::getDisplayModes() const
 PROPERTY_SOURCE(PartGui::ViewProviderWedge, PartGui::ViewProviderPrimitive)
 
 
-ViewProviderWedge::ViewProviderWedge()
-{
-    sPixmap = "Part_Wedge_Parametric";
-}
+ViewProviderWedge::ViewProviderWedge() { sPixmap = "Part_Wedge_Parametric"; }
 
-ViewProviderWedge::~ViewProviderWedge()
-{
-
-}
+ViewProviderWedge::~ViewProviderWedge() {}
 
 // **********************************************************************************
 

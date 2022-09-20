@@ -39,25 +39,28 @@ class SoRayPickAction;
 class SoPickedPoint;
 class SbVec3s;
 
-namespace Base {
-    template< typename T >
-    class Vector3;
+namespace Base
+{
+template<typename T> class Vector3;
 
-    class Vector2d;
+class Vector2d;
 
-    class Placement;
+class Placement;
+} // namespace Base
+
+namespace Part
+{
+class Geometry;
 }
 
-namespace Part {
-    class Geometry;
-}
+namespace Sketcher
+{
+class Constraint;
+class PropertyConstraintList;
+}; // namespace Sketcher
 
-namespace Sketcher {
-    class Constraint;
-    class PropertyConstraintList;
-};
-
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class ViewProviderSketch;
 class EditModeConstraintCoinManager;
@@ -105,10 +108,11 @@ class SketcherGuiExport EditModeCoinManager
     * EditModeCoinManager and its helpers, initialising the EditModeCoinManager to the current configuration
     * and handle in real time any change to their values.
     */
-    class ParameterObserver : public ParameterGrp::ObserverType
+    class ParameterObserver: public ParameterGrp::ObserverType
     {
     private:
-        enum class OverlayVisibilityParameter {
+        enum class OverlayVisibilityParameter
+        {
             BSplineDegree,
             BSplineControlPolygonVisible,
             BSplineCombVisible,
@@ -117,7 +121,7 @@ class SketcherGuiExport EditModeCoinManager
         };
 
     public:
-        explicit ParameterObserver(EditModeCoinManager & client);
+        explicit ParameterObserver(EditModeCoinManager &client);
         ~ParameterObserver() override;
 
         void subscribeToParameters();
@@ -125,18 +129,18 @@ class SketcherGuiExport EditModeCoinManager
         void unsubscribeToParameters();
 
         /** Observer for parameter group. */
-        void OnChange(Base::Subject<const char*> &rCaller, const char * sReason) override;
+        void OnChange(Base::Subject<const char *> &rCaller, const char *sReason) override;
 
     private:
         void initParameters();
-        void updateCurvedEdgeCountSegmentsParameter(const std::string & parametername);
-        void updateLineRenderingOrderParameters(const std::string & parametername);
-        void updateConstraintPresentationParameters(const std::string & parametername);
-        void updateElementSizeParameters(const std::string & parametername);
+        void updateCurvedEdgeCountSegmentsParameter(const std::string &parametername);
+        void updateLineRenderingOrderParameters(const std::string &parametername);
+        void updateConstraintPresentationParameters(const std::string &parametername);
+        void updateElementSizeParameters(const std::string &parametername);
         void updateColor(SbColor &sbcolor, const std::string &parametername);
 
         template<OverlayVisibilityParameter visibilityparameter>
-        void updateOverlayVisibilityParameter(const std::string & parametername);
+        void updateOverlayVisibilityParameter(const std::string &parametername);
 
     private:
         std::map<std::string, std::function<void(const std::string &)>> str2updatefunction;
@@ -157,13 +161,15 @@ public:
      *
      */
     struct PreselectionResult {
-        enum SpecialValues {
+        enum SpecialValues
+        {
             InvalidPoint = -1,
             InvalidCurve = -1,
             ExternalCurve = -3
         };
 
-        enum class Axes {
+        enum class Axes
+        {
             None = -1,
             RootPoint = 0,
             HorizontalAxis = 1,
@@ -171,11 +177,13 @@ public:
         };
 
         int PointIndex = InvalidPoint;
-        int GeoIndex = InvalidCurve; // valid values are 0,1,2,... for normal geometry and -3,-4,-5,... for external geometry
+        int GeoIndex =
+            InvalidCurve; // valid values are 0,1,2,... for normal geometry and -3,-4,-5,... for external geometry
         Axes Cross = Axes::None;
         std::set<int> ConstrIndices;
 
-        inline void clear() {
+        inline void clear()
+        {
             PointIndex = InvalidPoint;
             GeoIndex = InvalidCurve;
             Cross = Axes::None;
@@ -187,9 +195,10 @@ public:
     explicit EditModeCoinManager(ViewProviderSketch &vp);
     ~EditModeCoinManager();
 
-     /** @name Temporary edit curves and markers */
+    /** @name Temporary edit curves and markers */
     //@{
-    void drawEditMarkers(const std::vector<Base::Vector2d> &EditMarkers, unsigned int augmentationlevel);
+    void drawEditMarkers(const std::vector<Base::Vector2d> &EditMarkers,
+                         unsigned int augmentationlevel);
     void drawEdit(const std::vector<Base::Vector2d> &EditCurve);
     void drawEdit(const std::list<std::vector<Base::Vector2d>> &list);
     void setPositionText(const Base::Vector2d &Pos, const SbString &txt);
@@ -200,13 +209,14 @@ public:
 
     /** @name handle preselection and selection of points */
     //@{
-    PreselectionResult detectPreselection(SoPickedPoint * Point, const SbVec2s &cursorPos);
+    PreselectionResult detectPreselection(SoPickedPoint *Point, const SbVec2s &cursorPos);
     /// The client is responsible for unref-ing the SoGroup to release the memory.
-    SoGroup* getSelectedConstraints();
+    SoGroup *getSelectedConstraints();
     //@}
 
     /** @name update coin nodes*/
-    void processGeometryConstraintsInformationOverlay(const GeoListFacade & geolistfacade, bool rebuildinformationlayer);
+    void processGeometryConstraintsInformationOverlay(const GeoListFacade &geolistfacade,
+                                                      bool rebuildinformationlayer);
 
     void updateVirtualSpace();
 
@@ -215,17 +225,18 @@ public:
     void drawConstraintIcons();
 
     // This specific overload is to use a specific geometry list, which may be a temporal one
-    void drawConstraintIcons(const GeoListFacade & geolistfacade);
+    void drawConstraintIcons(const GeoListFacade &geolistfacade);
     //@}
 
     /** @name coin node access*/
-    SoSeparator* getRootEditNode();
+    SoSeparator *getRootEditNode();
     //@}
 
     /** @name update coin colors*/
     //@{
     void updateColor();
-    void updateColor(const GeoListFacade & geolistfacade); // overload to be used with temporal geometry.
+    void
+    updateColor(const GeoListFacade &geolistfacade); // overload to be used with temporal geometry.
     //@}
 
 
@@ -241,11 +252,11 @@ public:
 
 private:
     // This function populates the coin nodes with the information of the current geometry
-    void processGeometry(const GeoListFacade & geolistfacade);
+    void processGeometry(const GeoListFacade &geolistfacade);
 
     // This function populates the geometry information layer of coin. It requires the analysis information
     // gathered during the processGeometry step, so it is not possible to run both in parallel.
-    void processGeometryInformationOverlay(const GeoListFacade & geolistfacade);
+    void processGeometryInformationOverlay(const GeoListFacade &geolistfacade);
 
     // updates the Axes length to extend beyond the calculated bounding box magnitude
     void updateAxesLength();
@@ -253,7 +264,7 @@ private:
     // updates the parameters to be used for the Overlay information layer
     void updateOverlayParameters();
 
-    void updateGeometryColor(const GeoListFacade & geolistfacade, bool issketchinvalid);
+    void updateGeometryColor(const GeoListFacade &geolistfacade, bool issketchinvalid);
 
     // causes the ViewProvider to draw
     void redrawViewProvider();
@@ -270,7 +281,7 @@ private:
 
 private:
     /// Reference to ViewProviderSketch in order to access the public and the Attorney Interface
-    ViewProviderSketch & viewProvider;
+    ViewProviderSketch &viewProvider;
     /// Observer to track all the needed parameters.
     std::unique_ptr<EditModeCoinManager::ParameterObserver> pObserver;
 
@@ -296,4 +307,3 @@ private:
 
 
 #endif // SKETCHERGUI_EditModeCoinManager_H
-

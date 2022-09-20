@@ -23,13 +23,13 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepAlgo.hxx>
-# include <BRepFilletAPI_MakeFillet.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Edge.hxx>
-# include <TopTools_ListOfShape.hxx>
-# include <ShapeFix_Shape.hxx>
-# include <ShapeFix_ShapeTolerance.hxx>
+#include <BRepAlgo.hxx>
+#include <BRepFilletAPI_MakeFillet.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <ShapeFix_Shape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
 #endif
 
 #include <Base/Exception.h>
@@ -44,7 +44,7 @@ using namespace PartDesign;
 
 PROPERTY_SOURCE(PartDesign::Fillet, PartDesign::DressUp)
 
-const App::PropertyQuantityConstraint::Constraints floatRadius = {0.0,FLT_MAX,0.1};
+const App::PropertyQuantityConstraint::Constraints floatRadius = {0.0, FLT_MAX, 0.1};
 
 Fillet::Fillet()
 {
@@ -52,14 +52,14 @@ Fillet::Fillet()
     Radius.setUnit(Base::Unit::Length);
     Radius.setConstraints(&floatRadius);
     ADD_PROPERTY_TYPE(UseAllEdges, (false), "Fillet", App::Prop_None,
-      "Fillet all edges if true, else use only those edges in Base property.\n"
-      "If true, then this overrides any edge changes made to the Base property or in the dialog.\n");
+                      "Fillet all edges if true, else use only those edges in Base property.\n"
+                      "If true, then this overrides any edge changes made to the Base property or "
+                      "in the dialog.\n");
 }
 
 short Fillet::mustExecute() const
 {
-    if (Placement.isTouched() || Radius.isTouched())
-        return 1;
+    if (Placement.isTouched() || Radius.isTouched()) return 1;
     return DressUp::mustExecute();
 }
 
@@ -68,18 +68,19 @@ App::DocumentObjectExecReturn *Fillet::execute()
     Part::TopoShape TopShape;
     try {
         TopShape = getBaseShape();
-    } catch (Base::Exception& e) {
+    }
+    catch (Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
-    std::vector<std::string> SubNames = std::vector<std::string>(Base.getSubValues());  
+    std::vector<std::string> SubNames = std::vector<std::string>(Base.getSubValues());
 
-    if (UseAllEdges.getValue()){
+    if (UseAllEdges.getValue()) {
         SubNames.clear();
         std::string edgeTypeName = Part::TopoShape::shapeName(TopAbs_EDGE); //"Edge"
         int count = TopShape.countSubElements(edgeTypeName.c_str());
-        for (int ii = 0; ii < count; ii++){
+        for (int ii = 0; ii < count; ii++) {
             std::ostringstream edgeName;
-            edgeName << edgeTypeName << ii+1;
+            edgeName << edgeTypeName << ii + 1;
             SubNames.push_back(edgeName.str());
         }
     }
@@ -88,10 +89,10 @@ App::DocumentObjectExecReturn *Fillet::execute()
 
     if (SubNames.empty())
         return new App::DocumentObjectExecReturn("Fillet not possible on selected shapes");
-    
+
     double radius = Radius.getValue();
-    
-    if(radius <= 0)
+
+    if (radius <= 0)
         return new App::DocumentObjectExecReturn("Fillet radius must be greater than zero");
 
     this->positionByBaseFeature();
@@ -102,24 +103,24 @@ App::DocumentObjectExecReturn *Fillet::execute()
     try {
         BRepFilletAPI_MakeFillet mkFillet(baseShape.getShape());
 
-        for (std::vector<std::string>::const_iterator it=SubNames.begin(); it != SubNames.end(); ++it) {
+        for (std::vector<std::string>::const_iterator it = SubNames.begin(); it != SubNames.end();
+             ++it) {
             TopoDS_Edge edge = TopoDS::Edge(baseShape.getSubShape(it->c_str()));
             mkFillet.Add(radius, edge);
         }
 
         mkFillet.Build();
-        if (!mkFillet.IsDone())
-            return new App::DocumentObjectExecReturn("Failed to create fillet");
+        if (!mkFillet.IsDone()) return new App::DocumentObjectExecReturn("Failed to create fillet");
 
         TopoDS_Shape shape = mkFillet.Shape();
-        if (shape.IsNull())
-            return new App::DocumentObjectExecReturn("Resulting shape is null");
+        if (shape.IsNull()) return new App::DocumentObjectExecReturn("Resulting shape is null");
 
         TopTools_ListOfShape aLarg;
         aLarg.Append(baseShape.getShape());
         if (!BRepAlgo::IsValid(aLarg, shape, Standard_False, Standard_False)) {
             ShapeFix_ShapeTolerance aSFT;
-            aSFT.LimitTolerance(shape, Precision::Confusion(), Precision::Confusion(), TopAbs_SHAPE);
+            aSFT.LimitTolerance(shape, Precision::Confusion(), Precision::Confusion(),
+                                TopAbs_SHAPE);
             Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(shape);
             aSfs->Perform();
             shape = aSfs->Shape();
@@ -130,30 +131,29 @@ App::DocumentObjectExecReturn *Fillet::execute()
 
         int solidCount = countSolids(shape);
         if (solidCount > 1) {
-            return new App::DocumentObjectExecReturn("Fillet: Result has multiple solids. This is not supported at this time.");
+            return new App::DocumentObjectExecReturn(
+                "Fillet: Result has multiple solids. This is not supported at this time.");
         }
 
         shape = refineShapeIfActive(shape);
         this->Shape.setValue(getSolid(shape));
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
 }
 
-void Fillet::Restore(Base::XMLReader &reader)
-{
-    DressUp::Restore(reader);
-}
+void Fillet::Restore(Base::XMLReader &reader) { DressUp::Restore(reader); }
 
-void Fillet::handleChangedPropertyType(Base::XMLReader &reader, const char * TypeName, App::Property * prop)
+void Fillet::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                       App::Property *prop)
 {
-    if (prop && strcmp(TypeName,"App::PropertyFloatConstraint") == 0 &&
-        strcmp(prop->getTypeId().getName(), "App::PropertyQuantityConstraint") == 0) {
+    if (prop && strcmp(TypeName, "App::PropertyFloatConstraint") == 0
+        && strcmp(prop->getTypeId().getName(), "App::PropertyQuantityConstraint") == 0) {
         App::PropertyFloatConstraint p;
         p.Restore(reader);
-        static_cast<App::PropertyQuantityConstraint*>(prop)->setValue(p.getValue());
+        static_cast<App::PropertyQuantityConstraint *>(prop)->setValue(p.getValue());
     }
     else {
         DressUp::handleChangedPropertyType(reader, TypeName, prop);

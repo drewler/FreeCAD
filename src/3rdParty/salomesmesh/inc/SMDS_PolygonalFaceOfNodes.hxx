@@ -35,40 +35,39 @@
 #include <iostream>
 
 //class SMDS_PolygonalFaceOfNodes:public SMDS_FaceOfNodes
-class SMDS_EXPORT SMDS_PolygonalFaceOfNodes:public SMDS_MeshFace
+class SMDS_EXPORT SMDS_PolygonalFaceOfNodes: public SMDS_MeshFace
 {
- public:
-  SMDS_PolygonalFaceOfNodes (const std::vector<const SMDS_MeshNode *>& nodes);
+public:
+    SMDS_PolygonalFaceOfNodes(const std::vector<const SMDS_MeshNode *> &nodes);
 
-  virtual SMDSAbs_ElementType GetType() const;
-  virtual SMDSAbs_EntityType  GetEntityType() const { return SMDSEntity_Polygon; }
-  virtual SMDSAbs_GeometryType GetGeomType()  const { return SMDSGeom_POLYGON; }
-  virtual bool IsPoly() const { return true; };
+    virtual SMDSAbs_ElementType GetType() const;
+    virtual SMDSAbs_EntityType GetEntityType() const { return SMDSEntity_Polygon; }
+    virtual SMDSAbs_GeometryType GetGeomType() const { return SMDSGeom_POLYGON; }
+    virtual bool IsPoly() const { return true; };
 
-  bool ChangeNodes (std::vector<const SMDS_MeshNode *> nodes);
+    bool ChangeNodes(std::vector<const SMDS_MeshNode *> nodes);
 
-  bool ChangeNodes (const SMDS_MeshNode* nodes[],
-                    const int            nbNodes);
-  // to support the same interface, as SMDS_FaceOfNodes
+    bool ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes);
+    // to support the same interface, as SMDS_FaceOfNodes
 
-  virtual int NbNodes() const;
-  virtual int NbEdges() const;
-  virtual int NbFaces() const;
+    virtual int NbNodes() const;
+    virtual int NbEdges() const;
+    virtual int NbFaces() const;
 
-  virtual void Print (std::ostream & OS) const;
+    virtual void Print(std::ostream &OS) const;
 
-  /*!
+    /*!
    * \brief Return node by its index
     * \param ind - node index
     * \retval const SMDS_MeshNode* - the node
    */
-  virtual const SMDS_MeshNode* GetNode(const int ind) const;
+    virtual const SMDS_MeshNode *GetNode(const int ind) const;
 
- protected:
-  virtual SMDS_ElemIteratorPtr elementsIterator (SMDSAbs_ElementType type) const;
+protected:
+    virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
 
- private:
-  std::vector<const SMDS_MeshNode *> myNodes;
+private:
+    std::vector<const SMDS_MeshNode *> myNodes;
 };
 
 #endif

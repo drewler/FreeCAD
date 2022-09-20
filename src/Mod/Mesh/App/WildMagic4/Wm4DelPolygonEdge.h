@@ -24,22 +24,20 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM DelPolygonEdge : public VEManifoldMesh::Edge
+template<class Real> class WM4_FOUNDATION_ITEM DelPolygonEdge: public VEManifoldMesh::Edge
 {
 public:
-    DelPolygonEdge (int iV0 = -1, int iV1 = -1, int iNullIndex = -1,
-            DelTriangle<Real>* pkTri = 0);
+    DelPolygonEdge(int iV0 = -1, int iV1 = -1, int iNullIndex = -1, DelTriangle<Real> *pkTri = 0);
 
-    static VEManifoldMesh::EPtr ECreator (int iV0, int iV1);
+    static VEManifoldMesh::EPtr ECreator(int iV0, int iV1);
 
     int NullIndex;
-    DelTriangle<Real>* Tri;
+    DelTriangle<Real> *Tri;
 };
 
 typedef DelPolygonEdge<float> DelPolygonEdgef;
 typedef DelPolygonEdge<double> DelPolygonEdged;
 
-}
+} // namespace Wm4
 
 #endif

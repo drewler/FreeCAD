@@ -29,7 +29,8 @@
 
 #include "PropertyStandard.h"
 
-namespace Base {
+namespace Base
+{
 class Writer;
 }
 
@@ -40,7 +41,7 @@ namespace App
 /** Float with Unit property
  * This is a property for float with a predefined Unit associated.
  */
-class AppExport PropertyQuantity : public PropertyFloat
+class AppExport PropertyQuantity: public PropertyFloat
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -50,13 +51,13 @@ public:
 
     Base::Quantity getQuantityValue() const;
 
-    const char* getEditorName() const override;
+    const char *getEditorName() const override;
 
     PyObject *getPyObject() override;
     void setPyObject(PyObject *) override;
 
-    void setUnit(const Base::Unit &u) {_Unit = u;}
-    const Base::Unit &getUnit() const {return _Unit;}
+    void setUnit(const Base::Unit &u) { _Unit = u; }
+    const Base::Unit &getUnit() const { return _Unit; }
 
     void setValue(double lValue) { PropertyFloat::setValue(lValue); }
     double getValue() const { return PropertyFloat::getValue(); }
@@ -64,9 +65,9 @@ public:
     void setPathValue(const App::ObjectIdentifier &path, const boost::any &value) override;
     const boost::any getPathValue(const App::ObjectIdentifier &path) const override;
 
-    bool isSame(const Property &other) const override {
-        if (&other == this)
-            return true;
+    bool isSame(const Property &other) const override
+    {
+        if (&other == this) return true;
         return getTypeId() == other.getTypeId()
             && getValue() == static_cast<decltype(this)>(&other)->getValue()
             && _Unit == static_cast<decltype(this)>(&other)->_Unit;
@@ -80,12 +81,12 @@ protected:
 /** Float with Unit property
  * This is a property for float with a predefined Unit associated.
  */
-class AppExport PropertyQuantityConstraint : public PropertyQuantity
+class AppExport PropertyQuantityConstraint: public PropertyQuantity
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-    PropertyQuantityConstraint():_ConstStruct(nullptr){}
+    PropertyQuantityConstraint() : _ConstStruct(nullptr) {}
     ~PropertyQuantityConstraint() override = default;
 
     /// Constraint methods
@@ -102,21 +103,21 @@ public:
      * const Constraints percent = {0.0,100.0,1.0}
      * \endcode
      */
-    void setConstraints(const Constraints* sConstrain);
+    void setConstraints(const Constraints *sConstrain);
     /// get the constraint struct
-    const Constraints*  getConstraints() const;
+    const Constraints *getConstraints() const;
     //@}
 
     double getMinimum() const;
     double getMaximum() const;
     double getStepSize() const;
 
-    const char* getEditorName() const override;
+    const char *getEditorName() const override;
     void setPyObject(PyObject *) override;
 
 
 protected:
-    const Constraints* _ConstStruct;
+    const Constraints *_ConstStruct;
 };
 
 /** Acceleration property
@@ -289,6 +290,6 @@ public:
     ~PropertyVolume() override = default;
 };
 
-}// namespace App
+} // namespace App
 
-#endif// APP_PROPERTYUNITS_H
+#endif // APP_PROPERTYUNITS_H

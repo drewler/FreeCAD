@@ -31,7 +31,7 @@
 
 class SMDS_EXPORT SMDS_MeshObject
 {
- public:
-  virtual ~SMDS_MeshObject() {}
+public:
+    virtual ~SMDS_MeshObject() {}
 };
 #endif

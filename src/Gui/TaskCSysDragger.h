@@ -29,30 +29,33 @@
 
 namespace Gui
 {
-  class QuantitySpinBox;
-  class SoFCCSysDragger;
-  class ViewProviderDragger;
+class QuantitySpinBox;
+class SoFCCSysDragger;
+class ViewProviderDragger;
 
-  class TaskCSysDragger : public Gui::TaskView::TaskDialog
-  {
-      Q_OBJECT
-    public:
-      TaskCSysDragger(ViewProviderDocumentObject *vpObjectIn, SoFCCSysDragger *draggerIn);
-      ~TaskCSysDragger() override;
-      QDialogButtonBox::StandardButtons getStandardButtons() const override
-        { return QDialogButtonBox::Ok;}
-      void open() override;
-      bool accept() override;
-    private Q_SLOTS:
-      void onTIncrementSlot(double freshValue);
-      void onRIncrementSlot(double freshValue);
-    private:
-      void setupGui();
-      App::DocumentObjectT vpObject;
-      SoFCCSysDragger *dragger;
-      QuantitySpinBox *tSpinBox;
-      QuantitySpinBox *rSpinBox;
-  };
-}
+class TaskCSysDragger: public Gui::TaskView::TaskDialog
+{
+    Q_OBJECT
+public:
+    TaskCSysDragger(ViewProviderDocumentObject *vpObjectIn, SoFCCSysDragger *draggerIn);
+    ~TaskCSysDragger() override;
+    QDialogButtonBox::StandardButtons getStandardButtons() const override
+    {
+        return QDialogButtonBox::Ok;
+    }
+    void open() override;
+    bool accept() override;
+private Q_SLOTS:
+    void onTIncrementSlot(double freshValue);
+    void onRIncrementSlot(double freshValue);
+
+private:
+    void setupGui();
+    App::DocumentObjectT vpObject;
+    SoFCCSysDragger *dragger;
+    QuantitySpinBox *tSpinBox;
+    QuantitySpinBox *rSpinBox;
+};
+} // namespace Gui
 
 #endif // TASKCSYSDRAGGER_H

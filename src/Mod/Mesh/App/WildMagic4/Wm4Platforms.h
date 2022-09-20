@@ -74,7 +74,7 @@ typedef long long Integer64;
 
 // Disable the warning about truncating the debug names to 255 characters.
 // This warning shows up often with STL code in MSVC6, but not MSVC7.
-#pragma warning( disable : 4786 )
+#pragma warning(disable : 4786)
 
 // This warning is disabled because MSVC6 warns about not finding
 // implementations for the pure virtual functions that occur in the template
@@ -82,7 +82,7 @@ typedef long long Integer64;
 // NOTE:  If you create your own template classes that will be explicitly
 // instantiated, you should re-enable the warning to make sure that in fact
 // all your member data and functions have been defined and implemented.
-#pragma warning( disable : 4661 )
+#pragma warning(disable : 4661)
 
 #endif
 
@@ -90,7 +90,7 @@ typedef long long Integer64;
 // when member data and functions involving templates or inlines occur.  To
 // avoid the warning, WM4_FOUNDATION_ITEM can be applied only to those items
 // that really need to be exported.
-#pragma warning( disable : 4251 ) 
+#pragma warning(disable : 4251)
 
 typedef __int64 Integer64;
 

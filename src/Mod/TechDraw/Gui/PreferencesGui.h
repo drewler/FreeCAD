@@ -36,40 +36,40 @@ namespace TechDrawGui
 {
 
 //getters for parameters used in multiple places.
-class TechDrawGuiExport PreferencesGui {
+class TechDrawGuiExport PreferencesGui
+{
 
 public:
-static QFont       labelFontQFont();
-static int         labelFontSizePX();
-static int         dimFontSizePX();
+    static QFont labelFontQFont();
+    static int labelFontSizePX();
+    static int dimFontSizePX();
 
-static QColor      normalQColor();
-static QColor      selectQColor();
-static QColor      preselectQColor();
-static App::Color  sectionLineColor();
-static QColor      sectionLineQColor();
-static App::Color  centerColor();
-static QColor      centerQColor();
-static QColor      vertexQColor();
-static App::Color  leaderColor();
-static QColor      leaderQColor();
-static App::Color  dimColor();
-static QColor      dimQColor();
+    static QColor normalQColor();
+    static QColor selectQColor();
+    static QColor preselectQColor();
+    static App::Color sectionLineColor();
+    static QColor sectionLineQColor();
+    static App::Color centerColor();
+    static QColor centerQColor();
+    static QColor vertexQColor();
+    static App::Color leaderColor();
+    static QColor leaderQColor();
+    static App::Color dimColor();
+    static QColor dimQColor();
 
-static int         dimArrowStyle();
-static double      dimArrowSize();
+    static int dimArrowStyle();
+    static double dimArrowSize();
 
-static double      edgeFuzz();
+    static double edgeFuzz();
 
-static Qt::PenStyle  sectionLineStyle();
+    static Qt::PenStyle sectionLineStyle();
 
-static QString     weldingDirectory();
+    static QString weldingDirectory();
 
-static bool showGrid();
-static App::Color gridColor();
-static QColor gridQColor();
-static double gridSpacing();
-
+    static bool showGrid();
+    static App::Color gridColor();
+    static QColor gridQColor();
+    static double gridSpacing();
 };
 
 } //end namespace TechDrawGui

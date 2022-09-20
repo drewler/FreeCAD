@@ -43,12 +43,6 @@ std::string DrawTileWeldPy::representation(void) const
     return std::string("<DrawTileWeld object>");
 }
 
-PyObject *DrawTileWeldPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *DrawTileWeldPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int DrawTileWeldPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int DrawTileWeldPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

@@ -31,35 +31,26 @@ using namespace Part;
 PROPERTY_SOURCE(Part::CustomFeature, Part::Feature)
 
 
-CustomFeature::CustomFeature()
-{
-}
+CustomFeature::CustomFeature() {}
 
-CustomFeature::~CustomFeature()
-{
-}
+CustomFeature::~CustomFeature() {}
 
-short CustomFeature::mustExecute() const
-{
-    return Part::Feature::mustExecute();
-}
+short CustomFeature::mustExecute() const { return Part::Feature::mustExecute(); }
 
-App::DocumentObjectExecReturn *CustomFeature::execute()
-{
-    return App::DocumentObject::StdReturn;
-}
+App::DocumentObjectExecReturn *CustomFeature::execute() { return App::DocumentObject::StdReturn; }
 
 // ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(Part::CustomFeaturePython, Part::CustomFeature)
-template<> const char* Part::CustomFeaturePython::getViewProviderName() const {
+template<> const char *Part::CustomFeaturePython::getViewProviderName() const
+{
     return "PartGui::ViewProviderCustomPython";
 }
 /// @endcond
 
 // explicit template instantiation
 template class PartExport FeaturePythonT<Part::CustomFeature>;
-}
-
+} // namespace App

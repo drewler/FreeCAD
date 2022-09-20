@@ -22,9 +22,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QIcon>
-# include <QImage>
-# include <QFileInfo>
+#include <QIcon>
+#include <QImage>
+#include <QFileInfo>
 #endif
 
 #include <CXX/Extensions.hxx>
@@ -40,28 +40,26 @@
 #include <Gui/MainWindow.h>
 #include <Gui/BitmapFactory.h>
 
-namespace ImageGui {
-class Module : public Py::ExtensionModule<Module>
+namespace ImageGui
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("ImageGui")
     {
-        add_varargs_method("open",&Module::open
-        );
-        add_varargs_method("insert",&Module::open
-        );
+        add_varargs_method("open", &Module::open);
+        add_varargs_method("insert", &Module::open);
         initialize("This module is the ImageGui module."); // register with Python
     }
 
     ~Module() override {}
 
 private:
-    Py::Object open(const Py::Tuple& args)
+    Py::Object open(const Py::Tuple &args)
     {
-        char* Name;
-        const char* DocName=nullptr;
-        if (!PyArg_ParseTuple(args.ptr(), "et|s","utf-8",&Name,&DocName))
-            throw Py::Exception();
+        char *Name;
+        const char *DocName = nullptr;
+        if (!PyArg_ParseTuple(args.ptr(), "et|s", "utf-8", &Name, &DocName)) throw Py::Exception();
 
         std::string EncodedName = std::string(Name);
         PyMem_Free(Name);
@@ -76,11 +74,12 @@ private:
         int format = IB_CF_RGB24;
         unsigned char *pPixelData = nullptr;
         if (!imageq.isNull()) {
-            pPixelData = new unsigned char[3 * (unsigned long)imageq.width() * (unsigned long)imageq.height()];
+            pPixelData = new unsigned char[3 * (unsigned long)imageq.width()
+                                           * (unsigned long)imageq.height()];
             unsigned char *pPix = pPixelData;
             for (int r = 0; r < imageq.height(); r++) {
                 for (int c = 0; c < imageq.width(); c++) {
-                    QRgb rgb = imageq.pixel(c,r);
+                    QRgb rgb = imageq.pixel(c, r);
                     *pPix = (unsigned char)qRed(rgb);
                     *(pPix + 1) = (unsigned char)qGreen(rgb);
                     *(pPix + 2) = (unsigned char)qBlue(rgb);
@@ -94,20 +93,18 @@ private:
 
         // Displaying the image in a view.
         // This ImageView object takes ownership of the pixel data (in 'pointImageTo') so we don't need to delete it here
-        ImageView* iView = new ImageView(Gui::getMainWindow());
-        iView->setWindowIcon( Gui::BitmapFactory().pixmap("colors") );
+        ImageView *iView = new ImageView(Gui::getMainWindow());
+        iView->setWindowIcon(Gui::BitmapFactory().pixmap("colors"));
         iView->setWindowTitle(file.fileName());
-        iView->resize( 400, 300 );
-        Gui::getMainWindow()->addWindow( iView );
-        iView->pointImageTo((void *)pPixelData, (unsigned long)imageq.width(), (unsigned long)imageq.height(), format, 0, true);
+        iView->resize(400, 300);
+        Gui::getMainWindow()->addWindow(iView);
+        iView->pointImageTo((void *)pPixelData, (unsigned long)imageq.width(),
+                            (unsigned long)imageq.height(), format, 0, true);
 
         return Py::None();
     }
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace ImageGui

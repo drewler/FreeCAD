@@ -43,16 +43,20 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGIDecoration : public QGraphicsItemGroup
+class TechDrawGuiExport QGIDecoration: public QGraphicsItemGroup
 {
 public:
     explicit QGIDecoration(void);
     ~QGIDecoration() {}
-    enum {Type = QGraphicsItem::UserType + 173};
-    int type() const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 173
+    };
+    int type() const { return Type; }
 
     virtual QRectF boundingRect() const;
-    virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr );
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr);
     virtual void draw();
     void setWidth(double w);
     void setStyle(Qt::PenStyle s);
@@ -80,5 +84,5 @@ protected:
 private:
 };
 
-}
+} // namespace TechDrawGui
 #endif

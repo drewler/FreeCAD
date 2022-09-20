@@ -38,76 +38,74 @@ class MeshRefFacetToFacets;
 class MeshExport AbstractSmoothing
 {
 public:
-    enum Component { 
-        Tangential,         ///< Smooth tangential direction
-        Normal,             ///< Smooth normal direction
-        TangentialNormal    ///< Smooth tangential and normal direction
+    enum Component
+    {
+        Tangential,      ///< Smooth tangential direction
+        Normal,          ///< Smooth normal direction
+        TangentialNormal ///< Smooth tangential and normal direction
     };
 
-    enum Continuity { 
-        C0, 
-        C1, 
-        C2 
+    enum Continuity
+    {
+        C0,
+        C1,
+        C2
     };
 
-    explicit AbstractSmoothing(MeshKernel&);
+    explicit AbstractSmoothing(MeshKernel &);
     virtual ~AbstractSmoothing();
     void initialize(Component comp, Continuity cont);
 
     /** Smooth the triangle mesh. */
     virtual void Smooth(unsigned int) = 0;
-    virtual void SmoothPoints(unsigned int, const std::vector<PointIndex>&) = 0;
+    virtual void SmoothPoints(unsigned int, const std::vector<PointIndex> &) = 0;
 
 protected:
-    MeshKernel& kernel;
+    MeshKernel &kernel;
 
-    Component   component;
-    Continuity  continuity;
+    Component component;
+    Continuity continuity;
 };
 
-class MeshExport PlaneFitSmoothing : public AbstractSmoothing
+class MeshExport PlaneFitSmoothing: public AbstractSmoothing
 {
 public:
-    explicit PlaneFitSmoothing(MeshKernel&);
+    explicit PlaneFitSmoothing(MeshKernel &);
     ~PlaneFitSmoothing() override;
-    void SetMaximum(float max) {
-        maximum = max;
-    }
+    void SetMaximum(float max) { maximum = max; }
     void Smooth(unsigned int) override;
-    void SmoothPoints(unsigned int, const std::vector<PointIndex>&) override;
+    void SmoothPoints(unsigned int, const std::vector<PointIndex> &) override;
 
 private:
     float maximum;
 };
 
-class MeshExport LaplaceSmoothing : public AbstractSmoothing
+class MeshExport LaplaceSmoothing: public AbstractSmoothing
 {
 public:
-    explicit LaplaceSmoothing(MeshKernel&);
+    explicit LaplaceSmoothing(MeshKernel &);
     ~LaplaceSmoothing() override;
     void Smooth(unsigned int) override;
-    void SmoothPoints(unsigned int, const std::vector<PointIndex>&) override;
-    void SetLambda(double l) { lambda = l;}
+    void SmoothPoints(unsigned int, const std::vector<PointIndex> &) override;
+    void SetLambda(double l) { lambda = l; }
 
 protected:
-    void Umbrella(const MeshRefPointToPoints&,
-                  const MeshRefPointToFacets&, double);
-    void Umbrella(const MeshRefPointToPoints&,
-                  const MeshRefPointToFacets&, double,
-                  const std::vector<PointIndex>&);
+    void Umbrella(const MeshRefPointToPoints &, const MeshRefPointToFacets &, double);
+    void Umbrella(const MeshRefPointToPoints &, const MeshRefPointToFacets &, double,
+                  const std::vector<PointIndex> &);
 
 protected:
     double lambda;
 };
 
-class MeshExport TaubinSmoothing : public LaplaceSmoothing
+class MeshExport TaubinSmoothing: public LaplaceSmoothing
 {
 public:
-    explicit TaubinSmoothing(MeshKernel&);
+    explicit TaubinSmoothing(MeshKernel &);
     ~TaubinSmoothing() override;
     void Smooth(unsigned int) override;
-    void SmoothPoints(unsigned int, const std::vector<PointIndex>&) override;
-    void SetMicro(double m) { micro = m;}
+    void SmoothPoints(unsigned int, const std::vector<PointIndex> &) override;
+    void SetMicro(double m) { micro = m; }
 
 protected:
     double micro;
@@ -118,21 +116,18 @@ protected:
  * Smoothing based on median filter from the paper:
  * Mesh Median Filter for Smoothing 3-D Polygonal Surfaces
  */
-class MeshExport MedianFilterSmoothing : public AbstractSmoothing
+class MeshExport MedianFilterSmoothing: public AbstractSmoothing
 {
 public:
-    explicit MedianFilterSmoothing(MeshKernel&);
+    explicit MedianFilterSmoothing(MeshKernel &);
     ~MedianFilterSmoothing() override;
-    void SetWeight(int w) {
-        weights = w;
-    }
+    void SetWeight(int w) { weights = w; }
     void Smooth(unsigned int) override;
-    void SmoothPoints(unsigned int, const std::vector<PointIndex>&) override;
+    void SmoothPoints(unsigned int, const std::vector<PointIndex> &) override;
 
 private:
-    void UpdatePoints(const MeshRefFacetToFacets&,
-                      const MeshRefPointToFacets&,
-                      const std::vector<PointIndex>&);
+    void UpdatePoints(const MeshRefFacetToFacets &, const MeshRefPointToFacets &,
+                      const std::vector<PointIndex> &);
 
 private:
     int weights;
@@ -141,4 +136,4 @@ private:
 } // namespace MeshCore
 
 
-#endif  // MESH_SMOOTHING_H 
+#endif // MESH_SMOOTHING_H

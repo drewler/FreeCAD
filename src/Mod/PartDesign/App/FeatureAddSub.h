@@ -30,16 +30,17 @@
 namespace PartDesign
 {
 
-class PartDesignExport FeatureAddSub : public PartDesign::Feature
+class PartDesignExport FeatureAddSub: public PartDesign::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::FeatureAddSub);
 
 public:
-    enum Type {
+    enum Type
+    {
         Additive = 0,
-        Subtractive 
+        Subtractive
     };
-    
+
     FeatureAddSub();
 
     Type getAddSubType();
@@ -48,18 +49,18 @@ public:
 
     virtual void getAddSubShape(Part::TopoShape &addShape, Part::TopoShape &subShape);
 
-    Part::PropertyPartShape   AddSubShape;
+    Part::PropertyPartShape AddSubShape;
     App::PropertyBool Refine;
 
 protected:
     Type addSubType;
 
-    TopoDS_Shape refineShapeIfActive(const TopoDS_Shape&) const;
+    TopoDS_Shape refineShapeIfActive(const TopoDS_Shape &) const;
 };
 
 using FeatureAddSubPython = App::FeaturePythonT<FeatureAddSub>;
 
-class FeatureAdditivePython : public FeatureAddSubPython
+class FeatureAdditivePython: public FeatureAddSubPython
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::FeatureAdditivePython);
 
@@ -68,7 +69,7 @@ public:
     ~FeatureAdditivePython() override;
 };
 
-class FeatureSubtractivePython : public FeatureAddSubPython
+class FeatureSubtractivePython: public FeatureAddSubPython
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::FeatureSubtractivePython);
 

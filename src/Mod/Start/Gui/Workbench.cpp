@@ -23,7 +23,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QCoreApplication>
+#include <QCoreApplication>
 #endif
 
 #include "Workbench.h"
@@ -45,13 +45,9 @@ using namespace StartGui;
 
 TYPESYSTEM_SOURCE(StartGui::Workbench, Gui::StdWorkbench)
 
-StartGui::Workbench::Workbench()
-{
-}
+StartGui::Workbench::Workbench() {}
 
-StartGui::Workbench::~Workbench()
-{
-}
+StartGui::Workbench::~Workbench() {}
 
 void StartGui::Workbench::activated()
 {
@@ -67,53 +63,51 @@ void StartGui::Workbench::loadStartPage()
 {
     // Ensure that we don't open the Start page multiple times
     QString title = QCoreApplication::translate("Workbench", "Start page");
-    QList<QWidget*> ch = Gui::getMainWindow()->windows();
-    for (QList<QWidget*>::const_iterator c = ch.cbegin(); c != ch.cend(); ++c) {
+    QList<QWidget *> ch = Gui::getMainWindow()->windows();
+    for (QList<QWidget *>::const_iterator c = ch.cbegin(); c != ch.cend(); ++c) {
         if ((*c)->windowTitle() == title) {
-            Gui::MDIView* mdi = qobject_cast<Gui::MDIView*>((*c));
-            if (mdi)
-                Gui::getMainWindow()->setActiveWindow(mdi);
+            Gui::MDIView *mdi = qobject_cast<Gui::MDIView *>((*c));
+            if (mdi) Gui::getMainWindow()->setActiveWindow(mdi);
             return;
         }
     }
 }
 
-void StartGui::Workbench::setupContextMenu(const char* recipient, Gui::MenuItem* item) const
+void StartGui::Workbench::setupContextMenu(const char *recipient, Gui::MenuItem *item) const
 {
     Q_UNUSED(recipient);
     Q_UNUSED(item);
 }
 
-Gui::MenuItem* StartGui::Workbench::setupMenuBar() const
+Gui::MenuItem *StartGui::Workbench::setupMenuBar() const
 {
     return Gui::StdWorkbench::setupMenuBar();
 }
 
-Gui::ToolBarItem* StartGui::Workbench::setupToolBars() const
+Gui::ToolBarItem *StartGui::Workbench::setupToolBars() const
 {
-    Gui::ToolBarItem* root = StdWorkbench::setupToolBars();
+    Gui::ToolBarItem *root = StdWorkbench::setupToolBars();
 
     // web navigation toolbar
-    Gui::ToolBarItem* navigation = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *navigation = new Gui::ToolBarItem(root);
     navigation->setCommand("Navigation");
     *navigation << "Separator"
                 << "Start_StartPage"
                 << "Separator";
 
     return root;
-
 }
 
-Gui::ToolBarItem* StartGui::Workbench::setupCommandBars() const
+Gui::ToolBarItem *StartGui::Workbench::setupCommandBars() const
 {
-    Gui::ToolBarItem* root = new Gui::ToolBarItem;
+    Gui::ToolBarItem *root = new Gui::ToolBarItem;
     return root;
 }
 
-Gui::DockWindowItems* StartGui::Workbench::setupDockWindows() const
+Gui::DockWindowItems *StartGui::Workbench::setupDockWindows() const
 {
-    Gui::DockWindowItems* root = Gui::StdWorkbench::setupDockWindows();
-    root->setVisibility(false); // hide all dock windows by default
-    root->setVisibility("Std_ComboView",true); // except of the combo view
+    Gui::DockWindowItems *root = Gui::StdWorkbench::setupDockWindows();
+    root->setVisibility(false);                 // hide all dock windows by default
+    root->setVisibility("Std_ComboView", true); // except of the combo view
     return root;
 }

@@ -27,7 +27,8 @@
 #include <Gui/ViewProviderPythonFeature.h>
 #include <Mod/Mesh/Gui/ViewProviderMeshFaceSet.h>
 
-namespace MeshGui {
+namespace MeshGui
+{
 
 using ViewProviderPython = Gui::ViewProviderPythonFeatureT<ViewProviderMeshFaceSet>;
 
@@ -35,4 +36,3 @@ using ViewProviderPython = Gui::ViewProviderPythonFeatureT<ViewProviderMeshFaceS
 
 
 #endif // MESHGUI_VIEWPROVIDERPYTHON_H
-

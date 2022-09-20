@@ -32,15 +32,20 @@
 #endif
 
 // forward declarations
-namespace Mesh { class Feature; }
+namespace Mesh
+{
+class Feature;
+}
 
-namespace MeshGui {
+namespace MeshGui
+{
 class Ui_Segmentation;
 
-class MeshGuiExport Segmentation : public QWidget
+class MeshGuiExport Segmentation: public QWidget
 {
 public:
-    explicit Segmentation(Mesh::Feature* mesh, QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit Segmentation(Mesh::Feature *mesh, QWidget *parent = nullptr,
+                          Qt::WindowFlags fl = Qt::WindowFlags());
     ~Segmentation() override;
     void accept();
 
@@ -48,30 +53,32 @@ protected:
     void changeEvent(QEvent *e) override;
 
 private:
-    Ui_Segmentation* ui;
-    Mesh::Feature* myMesh;
+    Ui_Segmentation *ui;
+    Mesh::Feature *myMesh;
 };
 
 /**
  * Embed the panel into a task dialog.
  */
-class TaskSegmentation : public Gui::TaskView::TaskDialog
+class TaskSegmentation: public Gui::TaskView::TaskDialog
 {
 public:
-    explicit TaskSegmentation(Mesh::Feature* mesh);
+    explicit TaskSegmentation(Mesh::Feature *mesh);
     ~TaskSegmentation() override;
 
 public:
     bool accept() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 private:
-    Segmentation* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    Segmentation *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
-}
+} // namespace MeshGui
 
 #endif // MESHGUI_SEGMENTATION_H

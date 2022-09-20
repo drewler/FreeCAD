@@ -32,17 +32,8 @@
 using namespace App;
 
 // returns a string which represent the object e.g. when printed in python
-std::string ExtensionPy::representation() const
-{
-    return std::string("<extension>");
-}
+std::string ExtensionPy::representation() const { return std::string("<extension>"); }
 
-PyObject *ExtensionPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *ExtensionPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int ExtensionPy::setCustomAttributes(const char* /*attr*/, PyObject * /*obj*/)
-{
-    return 0;
-}
+int ExtensionPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

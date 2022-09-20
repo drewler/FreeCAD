@@ -24,13 +24,16 @@
 #ifndef GUI_TOOLBOXMANAGER_H
 #define GUI_TOOLBOXMANAGER_H
 
-namespace Gui {
+namespace Gui
+{
 
 class ToolBarItem;
 
 
 namespace DockWnd
-{ class ToolBox;}
+{
+class ToolBox;
+}
 
 /**
  * The ToolBoxManager class is responsible for the creation of command bars and appending them
@@ -43,11 +46,11 @@ class GuiExport ToolBoxManager
 {
 public:
     /// The one and only instance.
-    static ToolBoxManager* getInstance();
+    static ToolBoxManager *getInstance();
     static void destruct();
     /** Sets up the command bars of a given workbench. */
-    void setup(ToolBarItem*) const;
-    void setToolBox(DockWnd::ToolBox*);
+    void setup(ToolBarItem *) const;
+    void setToolBox(DockWnd::ToolBox *);
     void retranslate() const;
 
 protected:
@@ -55,8 +58,8 @@ protected:
     ~ToolBoxManager();
 
 private:
-    DockWnd::ToolBox* _toolBox;
-    static ToolBoxManager* _instance;
+    DockWnd::ToolBox *_toolBox;
+    static ToolBoxManager *_instance;
 };
 
 } // namespace Gui

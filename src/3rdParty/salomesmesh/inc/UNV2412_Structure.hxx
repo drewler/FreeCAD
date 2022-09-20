@@ -28,44 +28,39 @@
 #include <vector>
 #include <fstream>
 
-namespace UNV2412{
-  
-  typedef std::vector<int> TNodeLabels; // Nodal connectivities
-  typedef int TElementLab; // type of element label
+namespace UNV2412
+{
 
-  struct MESHDRIVERUNV_EXPORT TRecord
-  {
+typedef std::vector<int> TNodeLabels; // Nodal connectivities
+typedef int TElementLab;              // type of element label
+
+struct MESHDRIVERUNV_EXPORT TRecord {
     TRecord();
 
     TElementLab label;
-    int fe_descriptor_id;  // FE descriptor id
-    int phys_prop_tab_num;  // physical property table number
-    int mat_prop_tab_num;  // material property table number
-    int color;  // color
-    TNodeLabels node_labels;  // node labels defining element
+    int fe_descriptor_id;    // FE descriptor id
+    int phys_prop_tab_num;   // physical property table number
+    int mat_prop_tab_num;    // material property table number
+    int color;               // color
+    TNodeLabels node_labels; // node labels defining element
 
     //FOR BEAM ELEMENTS ONLY
-    int beam_orientation;  // beam orientation node number
-    int beam_fore_end;  // beam fore-end cross section number
-    int beam_aft_end;  // beam  aft-end cross section number
-  };
-  
-  typedef std::vector<TRecord> TDataSet;
-
-  MESHDRIVERUNV_EXPORT void
-    Read(std::ifstream& in_stream, TDataSet& theDataSet);
-
-  MESHDRIVERUNV_EXPORT void
-    Write(std::ofstream& out_stream, const TDataSet& theDataSet);
-
-  MESHDRIVERUNV_EXPORT bool
-    IsBeam(int theFeDescriptorId);
-  MESHDRIVERUNV_EXPORT bool
-    IsFace(int theFeDescriptorId);
-  MESHDRIVERUNV_EXPORT bool
-    IsVolume(int theFeDescriptorId);
-
+    int beam_orientation; // beam orientation node number
+    int beam_fore_end;    // beam fore-end cross section number
+    int beam_aft_end;     // beam  aft-end cross section number
 };
+
+typedef std::vector<TRecord> TDataSet;
+
+MESHDRIVERUNV_EXPORT void Read(std::ifstream &in_stream, TDataSet &theDataSet);
+
+MESHDRIVERUNV_EXPORT void Write(std::ofstream &out_stream, const TDataSet &theDataSet);
+
+MESHDRIVERUNV_EXPORT bool IsBeam(int theFeDescriptorId);
+MESHDRIVERUNV_EXPORT bool IsFace(int theFeDescriptorId);
+MESHDRIVERUNV_EXPORT bool IsVolume(int theFeDescriptorId);
+
+}; // namespace UNV2412
 
 
 #endif

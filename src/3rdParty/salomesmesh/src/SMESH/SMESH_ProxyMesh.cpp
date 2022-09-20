@@ -36,59 +36,51 @@
  */
 //================================================================================
 
-SMESH_ProxyMesh::SMESH_ProxyMesh():_mesh(0)
-{
-}
+SMESH_ProxyMesh::SMESH_ProxyMesh() : _mesh(0) {}
 //================================================================================
 /*!
  * \brief Make a proxy mesh from components. Components become empty
  */
 //================================================================================
 
-SMESH_ProxyMesh::SMESH_ProxyMesh(std::vector<SMESH_ProxyMesh::Ptr>& components):
-  _mesh(0)
+SMESH_ProxyMesh::SMESH_ProxyMesh(std::vector<SMESH_ProxyMesh::Ptr> &components) : _mesh(0)
 {
-  if ( components.empty() ) return;
+    if (components.empty()) return;
 
-  for ( unsigned i = 0; i < components.size(); ++i )
-  {
-    SMESH_ProxyMesh* m = components[i].get();
-    if ( !m ) continue;
+    for (unsigned i = 0; i < components.size(); ++i) {
+        SMESH_ProxyMesh *m = components[i].get();
+        if (!m) continue;
 
-    takeTmpElemsInMesh( m );
+        takeTmpElemsInMesh(m);
 
-    if ( !_mesh ) _mesh = m->_mesh;
-    if ( _allowedTypes.empty() ) _allowedTypes = m->_allowedTypes;
+        if (!_mesh) _mesh = m->_mesh;
+        if (_allowedTypes.empty()) _allowedTypes = m->_allowedTypes;
 
-    if ( _subMeshes.size() < m->_subMeshes.size() )
-      _subMeshes.resize( m->_subMeshes.size(), 0 );
-    for ( unsigned j = 0; j < m->_subMeshes.size(); ++j )
-    {
-      if ( !m->_subMeshes[j] ) continue;
-      if ( _subMeshes[j] )
-      {
-        // unite 2 sub-meshes
-        std::set < const SMDS_MeshElement* > elems( _subMeshes[j]->_elements.begin(),
-                                               _subMeshes[j]->_elements.end());
-        elems.insert( m->_subMeshes[j]->_elements.begin(),
-                      m->_subMeshes[j]->_elements.end());
-        _subMeshes[j]->_elements.assign( elems.begin(), elems.end() );
-        m->_subMeshes[j]->_elements.clear();
+        if (_subMeshes.size() < m->_subMeshes.size()) _subMeshes.resize(m->_subMeshes.size(), 0);
+        for (unsigned j = 0; j < m->_subMeshes.size(); ++j) {
+            if (!m->_subMeshes[j]) continue;
+            if (_subMeshes[j]) {
+                // unite 2 sub-meshes
+                std::set<const SMDS_MeshElement *> elems(_subMeshes[j]->_elements.begin(),
+                                                         _subMeshes[j]->_elements.end());
+                elems.insert(m->_subMeshes[j]->_elements.begin(),
+                             m->_subMeshes[j]->_elements.end());
+                _subMeshes[j]->_elements.assign(elems.begin(), elems.end());
+                m->_subMeshes[j]->_elements.clear();
 
-        if ( !_subMeshes[j]->_n2n )
-          _subMeshes[j]->_n2n = m->_subMeshes[j]->_n2n, m->_subMeshes[j]->_n2n = 0;
+                if (!_subMeshes[j]->_n2n)
+                    _subMeshes[j]->_n2n = m->_subMeshes[j]->_n2n, m->_subMeshes[j]->_n2n = 0;
 
-        else if ( _subMeshes[j]->_n2n && m->_subMeshes[j]->_n2n )
-          _subMeshes[j]->_n2n->insert( m->_subMeshes[j]->_n2n->begin(),
-                                       m->_subMeshes[j]->_n2n->end());
-      }
-      else
-      {
-        _subMeshes[j] = m->_subMeshes[j];
-        m->_subMeshes[j] = 0;
-      }
+                else if (_subMeshes[j]->_n2n && m->_subMeshes[j]->_n2n)
+                    _subMeshes[j]->_n2n->insert(m->_subMeshes[j]->_n2n->begin(),
+                                                m->_subMeshes[j]->_n2n->end());
+            }
+            else {
+                _subMeshes[j] = m->_subMeshes[j];
+                m->_subMeshes[j] = 0;
+            }
+        }
     }
-  }
 }
 
 //================================================================================
@@ -99,14 +91,12 @@ SMESH_ProxyMesh::SMESH_ProxyMesh(std::vector<SMESH_ProxyMesh::Ptr>& components):
 
 SMESH_ProxyMesh::~SMESH_ProxyMesh()
 {
-  for ( unsigned i = 0; i < _subMeshes.size(); ++i )
-    delete _subMeshes[i];
-  _subMeshes.clear();
+    for (unsigned i = 0; i < _subMeshes.size(); ++i) delete _subMeshes[i];
+    _subMeshes.clear();
 
-  std::set < const SMDS_MeshElement* >::iterator i = _elemsInMesh.begin();
-  for ( ; i != _elemsInMesh.end(); ++i )
-    GetMeshDS()->RemoveFreeElement( *i, 0 );
-  _elemsInMesh.clear();
+    std::set<const SMDS_MeshElement *>::iterator i = _elemsInMesh.begin();
+    for (; i != _elemsInMesh.end(); ++i) GetMeshDS()->RemoveFreeElement(*i, 0);
+    _elemsInMesh.clear();
 }
 
 //================================================================================
@@ -115,9 +105,9 @@ SMESH_ProxyMesh::~SMESH_ProxyMesh()
  */
 //================================================================================
 
-int SMESH_ProxyMesh::shapeIndex(const TopoDS_Shape& shape) const
+int SMESH_ProxyMesh::shapeIndex(const TopoDS_Shape &shape) const
 {
-  return ( shape.IsNull() || !_mesh->HasShapeToMesh() ? 0 : GetMeshDS()->ShapeToIndex(shape));
+    return (shape.IsNull() || !_mesh->HasShapeToMesh() ? 0 : GetMeshDS()->ShapeToIndex(shape));
 }
 
 //================================================================================
@@ -126,17 +116,15 @@ int SMESH_ProxyMesh::shapeIndex(const TopoDS_Shape& shape) const
  */
 //================================================================================
 
-const SMESHDS_SubMesh* SMESH_ProxyMesh::GetSubMesh(const TopoDS_Shape& shape) const
+const SMESHDS_SubMesh *SMESH_ProxyMesh::GetSubMesh(const TopoDS_Shape &shape) const
 {
-  const SMESHDS_SubMesh* sm = 0;
+    const SMESHDS_SubMesh *sm = 0;
 
-  int i = shapeIndex(shape);
-  if ( i < _subMeshes.size() )
-    sm = _subMeshes[i];
-  if ( !sm )
-    sm = GetMeshDS()->MeshElements( i );
+    int i = shapeIndex(shape);
+    if (i < _subMeshes.size()) sm = _subMeshes[i];
+    if (!sm) sm = GetMeshDS()->MeshElements(i);
 
-  return sm;
+    return sm;
 }
 
 //================================================================================
@@ -145,11 +133,10 @@ const SMESHDS_SubMesh* SMESH_ProxyMesh::GetSubMesh(const TopoDS_Shape& shape) co
  */
 //================================================================================
 
-const SMESH_ProxyMesh::SubMesh*
-SMESH_ProxyMesh::GetProxySubMesh(const TopoDS_Shape& shape) const
+const SMESH_ProxyMesh::SubMesh *SMESH_ProxyMesh::GetProxySubMesh(const TopoDS_Shape &shape) const
 {
-  int i = shapeIndex(shape);
-  return i < _subMeshes.size() ? _subMeshes[i] : 0;
+    int i = shapeIndex(shape);
+    return i < _subMeshes.size() ? _subMeshes[i] : 0;
 }
 
 //================================================================================
@@ -158,24 +145,22 @@ SMESH_ProxyMesh::GetProxySubMesh(const TopoDS_Shape& shape) const
  */
 //================================================================================
 
-const SMDS_MeshNode* SMESH_ProxyMesh::GetProxyNode( const SMDS_MeshNode* node ) const
+const SMDS_MeshNode *SMESH_ProxyMesh::GetProxyNode(const SMDS_MeshNode *node) const
 {
-  const SMDS_MeshNode* proxy = node;
-  if ( node->GetPosition()->GetTypeOfPosition() == SMDS_TOP_FACE )
-  {
-    if ( const SubMesh* proxySM = findProxySubMesh( node->getshapeId() ))
-      proxy = proxySM->GetProxyNode( node );
-  }
-  else
-  {
-    TopoDS_Shape shape = SMESH_MesherHelper::GetSubShapeByNode( node, GetMeshDS());
-    TopTools_ListIteratorOfListOfShape ancIt;
-    if ( !shape.IsNull() ) ancIt.Initialize( _mesh->GetAncestors( shape ));
-    for ( ; ancIt.More() && proxy == node; ancIt.Next() )
-      if ( const SubMesh* proxySM = findProxySubMesh( shapeIndex(ancIt.Value())))
-        proxy = proxySM->GetProxyNode( node );
-  }
-  return proxy;
+    const SMDS_MeshNode *proxy = node;
+    if (node->GetPosition()->GetTypeOfPosition() == SMDS_TOP_FACE) {
+        if (const SubMesh *proxySM = findProxySubMesh(node->getshapeId()))
+            proxy = proxySM->GetProxyNode(node);
+    }
+    else {
+        TopoDS_Shape shape = SMESH_MesherHelper::GetSubShapeByNode(node, GetMeshDS());
+        TopTools_ListIteratorOfListOfShape ancIt;
+        if (!shape.IsNull()) ancIt.Initialize(_mesh->GetAncestors(shape));
+        for (; ancIt.More() && proxy == node; ancIt.Next())
+            if (const SubMesh *proxySM = findProxySubMesh(shapeIndex(ancIt.Value())))
+                proxy = proxySM->GetProxyNode(node);
+    }
+    return proxy;
 }
 
 //================================================================================
@@ -186,51 +171,47 @@ const SMDS_MeshNode* SMESH_ProxyMesh::GetProxyNode( const SMDS_MeshNode* node ) 
 
 int SMESH_ProxyMesh::NbProxySubMeshes() const
 {
-  int nb = 0;
-  for ( size_t i = 0; i < _subMeshes.size(); ++i )
-    nb += bool( _subMeshes[i] );
+    int nb = 0;
+    for (size_t i = 0; i < _subMeshes.size(); ++i) nb += bool(_subMeshes[i]);
 
-  return nb;
+    return nb;
 }
 
 namespace
 {
-  //================================================================================
-  /*!
+//================================================================================
+/*!
    * \brief Iterator filtering elements by type
    */
-  //================================================================================
+//================================================================================
 
-  class TFilteringIterator : public SMDS_ElemIterator
-  {
-    SMDS_ElemIteratorPtr        _iter;
-    const SMDS_MeshElement *    _curElem;
-    std::vector< SMDSAbs_EntityType> _okTypes;
-  public:
-    TFilteringIterator( const std::vector< SMDSAbs_EntityType>& okTypes,
-                        const SMDS_ElemIteratorPtr&        elemIterator)
-      :_iter(elemIterator), _curElem(0), _okTypes(okTypes)
+class TFilteringIterator: public SMDS_ElemIterator
+{
+    SMDS_ElemIteratorPtr _iter;
+    const SMDS_MeshElement *_curElem;
+    std::vector<SMDSAbs_EntityType> _okTypes;
+
+public:
+    TFilteringIterator(const std::vector<SMDSAbs_EntityType> &okTypes,
+                       const SMDS_ElemIteratorPtr &elemIterator)
+        : _iter(elemIterator), _curElem(0), _okTypes(okTypes)
     {
-      next();
+        next();
     }
-    virtual bool more()
+    virtual bool more() { return _curElem; }
+    virtual const SMDS_MeshElement *next()
     {
-      return _curElem;
+        const SMDS_MeshElement *res = _curElem;
+        _curElem = 0;
+        while (_iter->more() && !_curElem) {
+            _curElem = _iter->next();
+            if (find(_okTypes.begin(), _okTypes.end(), _curElem->GetEntityType()) == _okTypes.end())
+                _curElem = 0;
+        }
+        return res;
     }
-    virtual const SMDS_MeshElement* next()
-    {
-      const SMDS_MeshElement* res = _curElem;
-      _curElem = 0;
-      while ( _iter->more() && !_curElem )
-      {
-        _curElem = _iter->next();
-        if ( find( _okTypes.begin(), _okTypes.end(), _curElem->GetEntityType()) == _okTypes.end())
-          _curElem = 0;
-      }
-      return res;
-    }
-  };
-}
+};
+} // namespace
 
 //================================================================================
 /*!
@@ -238,20 +219,18 @@ namespace
  */
 //================================================================================
 
-SMDS_ElemIteratorPtr SMESH_ProxyMesh::GetFaces(const TopoDS_Shape& shape) const
+SMDS_ElemIteratorPtr SMESH_ProxyMesh::GetFaces(const TopoDS_Shape &shape) const
 {
-  if ( !_mesh->HasShapeToMesh() )
-    return SMDS_ElemIteratorPtr();
+    if (!_mesh->HasShapeToMesh()) return SMDS_ElemIteratorPtr();
 
-  _subContainer.RemoveAllSubmeshes();
+    _subContainer.RemoveAllSubmeshes();
 
-  TopTools_IndexedMapOfShape FF;
-  TopExp::MapShapes( shape, TopAbs_FACE, FF );
-  for ( int i = 1; i <= FF.Extent(); ++i )
-    if ( const SMESHDS_SubMesh* sm = GetSubMesh( FF(i)))
-      _subContainer.AddSubMesh( sm );
+    TopTools_IndexedMapOfShape FF;
+    TopExp::MapShapes(shape, TopAbs_FACE, FF);
+    for (int i = 1; i <= FF.Extent(); ++i)
+        if (const SMESHDS_SubMesh *sm = GetSubMesh(FF(i))) _subContainer.AddSubMesh(sm);
 
-  return _subContainer.SMESHDS_SubMesh::GetElements();
+    return _subContainer.SMESHDS_SubMesh::GetElements();
 }
 
 //================================================================================
@@ -263,32 +242,29 @@ SMDS_ElemIteratorPtr SMESH_ProxyMesh::GetFaces(const TopoDS_Shape& shape) const
 
 SMDS_ElemIteratorPtr SMESH_ProxyMesh::GetFaces() const
 {
-  if ( _mesh->HasShapeToMesh() )
-    return SMDS_ElemIteratorPtr();
+    if (_mesh->HasShapeToMesh()) return SMDS_ElemIteratorPtr();
 
-  _subContainer.RemoveAllSubmeshes();
-  for ( unsigned i = 0; i < _subMeshes.size(); ++i )
-    if ( _subMeshes[i] )
-      _subContainer.AddSubMesh( _subMeshes[i] );
+    _subContainer.RemoveAllSubmeshes();
+    for (unsigned i = 0; i < _subMeshes.size(); ++i)
+        if (_subMeshes[i]) _subContainer.AddSubMesh(_subMeshes[i]);
 
-  if ( _subContainer.NbSubMeshes() == 0 ) // no elements substituted
-    return GetMeshDS()->elementsIterator(SMDSAbs_Face);
+    if (_subContainer.NbSubMeshes() == 0) // no elements substituted
+        return GetMeshDS()->elementsIterator(SMDSAbs_Face);
 
-  // if _allowedTypes is empty, only elements from _subMeshes are returned,...
-  SMDS_ElemIteratorPtr proxyIter = _subContainer.SMESHDS_SubMesh::GetElements();
-  if ( _allowedTypes.empty() || NbFaces() == _mesh->NbFaces() )
-    return proxyIter;
+    // if _allowedTypes is empty, only elements from _subMeshes are returned,...
+    SMDS_ElemIteratorPtr proxyIter = _subContainer.SMESHDS_SubMesh::GetElements();
+    if (_allowedTypes.empty() || NbFaces() == _mesh->NbFaces()) return proxyIter;
 
-  // ... else elements filtered using allowedTypes are additionally returned
-  SMDS_ElemIteratorPtr facesIter = GetMeshDS()->elementsIterator(SMDSAbs_Face);
-  SMDS_ElemIteratorPtr filterIter( new TFilteringIterator( _allowedTypes, facesIter ));
-  std::vector< SMDS_ElemIteratorPtr > iters(2);
-  iters[0] = proxyIter;
-  iters[1] = filterIter;
-    
-  typedef std::vector< SMDS_ElemIteratorPtr > TElemIterVector;
-  typedef SMDS_IteratorOnIterators<const SMDS_MeshElement *, TElemIterVector> TItersIter;
-  return SMDS_ElemIteratorPtr( new TItersIter( iters ));
+    // ... else elements filtered using allowedTypes are additionally returned
+    SMDS_ElemIteratorPtr facesIter = GetMeshDS()->elementsIterator(SMDSAbs_Face);
+    SMDS_ElemIteratorPtr filterIter(new TFilteringIterator(_allowedTypes, facesIter));
+    std::vector<SMDS_ElemIteratorPtr> iters(2);
+    iters[0] = proxyIter;
+    iters[1] = filterIter;
+
+    typedef std::vector<SMDS_ElemIteratorPtr> TElemIterVector;
+    typedef SMDS_IteratorOnIterators<const SMDS_MeshElement *, TElemIterVector> TItersIter;
+    return SMDS_ElemIteratorPtr(new TItersIter(iters));
 }
 
 //================================================================================
@@ -299,38 +275,30 @@ SMDS_ElemIteratorPtr SMESH_ProxyMesh::GetFaces() const
 
 int SMESH_ProxyMesh::NbFaces() const
 {
-  int nb = 0;
-  if ( _mesh->HasShapeToMesh() )
-  {
-    TopTools_IndexedMapOfShape FF;
-    TopExp::MapShapes( _mesh->GetShapeToMesh(), TopAbs_FACE, FF );
-    for ( int i = 1; i <= FF.Extent(); ++i )
-      if ( const SMESHDS_SubMesh* sm = GetSubMesh( FF(i)))
-        nb += sm->NbElements();
-  }
-  else
-  {
-    if ( _subMeshes.empty() )
-      return GetMeshDS()->NbFaces();
-
-    for ( unsigned i = 0; i < _subMeshes.size(); ++i )
-      if ( _subMeshes[i] )
-        nb += _subMeshes[i]->NbElements();
-
-    // if _allowedTypes is empty, only elements from _subMeshes are returned,
-    // else elements filtered using allowedTypes are additionally returned
-    if ( !_allowedTypes.empty() )
-    {
-      for ( int t = SMDSEntity_Triangle; t <= SMDSEntity_Quad_Quadrangle; ++t )
-      {
-        bool allowed =
-          ( find( _allowedTypes.begin(), _allowedTypes.end(), t ) != _allowedTypes.end() );
-        if ( allowed )
-          nb += GetMeshDS()->GetMeshInfo().NbEntities( SMDSAbs_EntityType( t ));
-      }
+    int nb = 0;
+    if (_mesh->HasShapeToMesh()) {
+        TopTools_IndexedMapOfShape FF;
+        TopExp::MapShapes(_mesh->GetShapeToMesh(), TopAbs_FACE, FF);
+        for (int i = 1; i <= FF.Extent(); ++i)
+            if (const SMESHDS_SubMesh *sm = GetSubMesh(FF(i))) nb += sm->NbElements();
     }
-  }
-  return nb;
+    else {
+        if (_subMeshes.empty()) return GetMeshDS()->NbFaces();
+
+        for (unsigned i = 0; i < _subMeshes.size(); ++i)
+            if (_subMeshes[i]) nb += _subMeshes[i]->NbElements();
+
+        // if _allowedTypes is empty, only elements from _subMeshes are returned,
+        // else elements filtered using allowedTypes are additionally returned
+        if (!_allowedTypes.empty()) {
+            for (int t = SMDSEntity_Triangle; t <= SMDSEntity_Quad_Quadrangle; ++t) {
+                bool allowed =
+                    (find(_allowedTypes.begin(), _allowedTypes.end(), t) != _allowedTypes.end());
+                if (allowed) nb += GetMeshDS()->GetMeshInfo().NbEntities(SMDSAbs_EntityType(t));
+            }
+        }
+    }
+    return nb;
 }
 
 //================================================================================
@@ -339,13 +307,11 @@ int SMESH_ProxyMesh::NbFaces() const
  */
 //================================================================================
 
-SMESH_ProxyMesh::SubMesh* SMESH_ProxyMesh::getProxySubMesh(int index)
+SMESH_ProxyMesh::SubMesh *SMESH_ProxyMesh::getProxySubMesh(int index)
 {
-  if ( int(_subMeshes.size()) <= index )
-    _subMeshes.resize( index+1, 0 );
-  if ( !_subMeshes[index] )
-    _subMeshes[index] = newSubmesh( index );
-  return _subMeshes[index];
+    if (int(_subMeshes.size()) <= index) _subMeshes.resize(index + 1, 0);
+    if (!_subMeshes[index]) _subMeshes[index] = newSubmesh(index);
+    return _subMeshes[index];
 }
 
 //================================================================================
@@ -354,9 +320,9 @@ SMESH_ProxyMesh::SubMesh* SMESH_ProxyMesh::getProxySubMesh(int index)
  */
 //================================================================================
 
-SMESH_ProxyMesh::SubMesh* SMESH_ProxyMesh::getProxySubMesh(const TopoDS_Shape& shape)
+SMESH_ProxyMesh::SubMesh *SMESH_ProxyMesh::getProxySubMesh(const TopoDS_Shape &shape)
 {
-  return getProxySubMesh( shapeIndex( shape ));
+    return getProxySubMesh(shapeIndex(shape));
 }
 
 //================================================================================
@@ -365,9 +331,9 @@ SMESH_ProxyMesh::SubMesh* SMESH_ProxyMesh::getProxySubMesh(const TopoDS_Shape& s
  */
 //================================================================================
 
-SMESH_ProxyMesh::SubMesh* SMESH_ProxyMesh::findProxySubMesh(int shapeIndex) const
+SMESH_ProxyMesh::SubMesh *SMESH_ProxyMesh::findProxySubMesh(int shapeIndex) const
 {
-  return shapeIndex < int(_subMeshes.size()) ? _subMeshes[shapeIndex] : 0;
+    return shapeIndex < int(_subMeshes.size()) ? _subMeshes[shapeIndex] : 0;
 }
 
 //================================================================================
@@ -376,9 +342,9 @@ SMESH_ProxyMesh::SubMesh* SMESH_ProxyMesh::findProxySubMesh(int shapeIndex) cons
  */
 //================================================================================
 
-SMESHDS_Mesh* SMESH_ProxyMesh::GetMeshDS() const
+SMESHDS_Mesh *SMESH_ProxyMesh::GetMeshDS() const
 {
-  return (SMESHDS_Mesh*)( _mesh ? _mesh->GetMeshDS() : 0 );
+    return (SMESHDS_Mesh *)(_mesh ? _mesh->GetMeshDS() : 0);
 }
 
 //================================================================================
@@ -387,22 +353,18 @@ SMESHDS_Mesh* SMESH_ProxyMesh::GetMeshDS() const
  */
 //================================================================================
 
-bool SMESH_ProxyMesh::takeProxySubMesh( const TopoDS_Shape&   shape,
-                                             SMESH_ProxyMesh* proxyMesh )
+bool SMESH_ProxyMesh::takeProxySubMesh(const TopoDS_Shape &shape, SMESH_ProxyMesh *proxyMesh)
 {
-  if ( proxyMesh && proxyMesh->_mesh == _mesh )
-  {
-    int iS = shapeIndex( shape );
-    if ( SubMesh* sm = proxyMesh->findProxySubMesh( iS ))
-    {
-      if ( iS >= int(_subMeshes.size()) )
-        _subMeshes.resize( iS + 1, 0 );
-      _subMeshes[iS] = sm;
-      proxyMesh->_subMeshes[iS] = 0;
-      return true;
+    if (proxyMesh && proxyMesh->_mesh == _mesh) {
+        int iS = shapeIndex(shape);
+        if (SubMesh *sm = proxyMesh->findProxySubMesh(iS)) {
+            if (iS >= int(_subMeshes.size())) _subMeshes.resize(iS + 1, 0);
+            _subMeshes[iS] = sm;
+            proxyMesh->_subMeshes[iS] = 0;
+            return true;
+        }
     }
-  }
-  return false;
+    return false;
 }
 
 //================================================================================
@@ -411,14 +373,12 @@ bool SMESH_ProxyMesh::takeProxySubMesh( const TopoDS_Shape&   shape,
  */
 //================================================================================
 
-void SMESH_ProxyMesh::takeTmpElemsInMesh( SMESH_ProxyMesh* proxyMesh )
+void SMESH_ProxyMesh::takeTmpElemsInMesh(SMESH_ProxyMesh *proxyMesh)
 {
-  if ( proxyMesh )
-  {
-    _elemsInMesh.insert( proxyMesh->_elemsInMesh.begin(),
-                         proxyMesh->_elemsInMesh.end());
-    proxyMesh->_elemsInMesh.clear();
-  }
+    if (proxyMesh) {
+        _elemsInMesh.insert(proxyMesh->_elemsInMesh.begin(), proxyMesh->_elemsInMesh.end());
+        proxyMesh->_elemsInMesh.clear();
+    }
 }
 
 //================================================================================
@@ -427,21 +387,18 @@ void SMESH_ProxyMesh::takeTmpElemsInMesh( SMESH_ProxyMesh* proxyMesh )
  */
 //================================================================================
 
-void SMESH_ProxyMesh::removeTmpElement( const SMDS_MeshElement* elem )
+void SMESH_ProxyMesh::removeTmpElement(const SMDS_MeshElement *elem)
 {
-  if ( elem && elem->GetID() > 0 )
-  {
-    std::set < const SMDS_MeshElement* >::iterator i =  _elemsInMesh.find( elem );
-    if ( i != _elemsInMesh.end() )
-    {
-      GetMeshDS()->RemoveFreeElement( elem, 0 );
-      _elemsInMesh.erase( i );
+    if (elem && elem->GetID() > 0) {
+        std::set<const SMDS_MeshElement *>::iterator i = _elemsInMesh.find(elem);
+        if (i != _elemsInMesh.end()) {
+            GetMeshDS()->RemoveFreeElement(elem, 0);
+            _elemsInMesh.erase(i);
+        }
     }
-  }
-  else
-  {
-    delete elem;
-  }
+    else {
+        delete elem;
+    }
 }
 
 //================================================================================
@@ -450,10 +407,7 @@ void SMESH_ProxyMesh::removeTmpElement( const SMDS_MeshElement* elem )
  */
 //================================================================================
 
-void SMESH_ProxyMesh::storeTmpElement( const SMDS_MeshElement* elem )
-{
-  _elemsInMesh.insert( elem );
-}
+void SMESH_ProxyMesh::storeTmpElement(const SMDS_MeshElement *elem) { _elemsInMesh.insert(elem); }
 
 //================================================================================
 /*!
@@ -461,14 +415,12 @@ void SMESH_ProxyMesh::storeTmpElement( const SMDS_MeshElement* elem )
  */
 //================================================================================
 
-void SMESH_ProxyMesh::setNode2Node(const SMDS_MeshNode* srcNode,
-                                   const SMDS_MeshNode* proxyNode,
-                                   const SubMesh*       subMesh)
+void SMESH_ProxyMesh::setNode2Node(const SMDS_MeshNode *srcNode, const SMDS_MeshNode *proxyNode,
+                                   const SubMesh *subMesh)
 {
-  SubMesh* sm = const_cast<SubMesh*>( subMesh );
-  if ( !subMesh->_n2n )
-    sm->_n2n = new TN2NMap;
-  sm->_n2n->insert( std::make_pair( srcNode, proxyNode ));
+    SubMesh *sm = const_cast<SubMesh *>(subMesh);
+    if (!subMesh->_n2n) sm->_n2n = new TN2NMap;
+    sm->_n2n->insert(std::make_pair(srcNode, proxyNode));
 }
 
 //================================================================================
@@ -477,9 +429,9 @@ void SMESH_ProxyMesh::setNode2Node(const SMDS_MeshNode* srcNode,
  */
 //================================================================================
 
-bool SMESH_ProxyMesh::IsTemporary(const SMDS_MeshElement* elem ) const
+bool SMESH_ProxyMesh::IsTemporary(const SMDS_MeshElement *elem) const
 {
-  return ( elem->GetID() < 1 ) || _elemsInMesh.count( elem );
+    return (elem->GetID() < 1) || _elemsInMesh.count(elem);
 }
 
 //================================================================================
@@ -488,12 +440,11 @@ bool SMESH_ProxyMesh::IsTemporary(const SMDS_MeshElement* elem ) const
  */
 //================================================================================
 
-const SMDS_MeshNode* SMESH_ProxyMesh::SubMesh::GetProxyNode( const SMDS_MeshNode* n ) const
+const SMDS_MeshNode *SMESH_ProxyMesh::SubMesh::GetProxyNode(const SMDS_MeshNode *n) const
 {
-  TN2NMap::iterator n2n;
-  if ( _n2n && ( n2n = _n2n->find( n )) != _n2n->end())
-    return n2n->second;
-  return n;
+    TN2NMap::iterator n2n;
+    if (_n2n && (n2n = _n2n->find(n)) != _n2n->end()) return n2n->second;
+    return n;
 }
 
 //================================================================================
@@ -504,12 +455,10 @@ const SMDS_MeshNode* SMESH_ProxyMesh::SubMesh::GetProxyNode( const SMDS_MeshNode
 
 void SMESH_ProxyMesh::SubMesh::Clear()
 {
-  for ( unsigned i = 0; i < _elements.size(); ++i )
-    if ( _elements[i]->GetID() < 0 )
-      delete _elements[i];
-  _elements.clear();
-  if ( _n2n )
-    delete _n2n, _n2n = 0;
+    for (unsigned i = 0; i < _elements.size(); ++i)
+        if (_elements[i]->GetID() < 0) delete _elements[i];
+    _elements.clear();
+    if (_n2n) delete _n2n, _n2n = 0;
 }
 
 //================================================================================
@@ -521,7 +470,7 @@ void SMESH_ProxyMesh::SubMesh::Clear()
 
 int SMESH_ProxyMesh::SubMesh::NbElements() const
 {
-  return _uvPtStructVec.empty() ? _elements.size() : _uvPtStructVec.size() - 1;
+    return _uvPtStructVec.empty() ? _elements.size() : _uvPtStructVec.size() - 1;
 }
 
 //================================================================================
@@ -533,8 +482,7 @@ int SMESH_ProxyMesh::SubMesh::NbElements() const
 
 SMDS_ElemIteratorPtr SMESH_ProxyMesh::SubMesh::GetElements() const
 {
-  return SMDS_ElemIteratorPtr
-    ( new SMDS_ElementVectorIterator( _elements.begin(), _elements.end() ));
+    return SMDS_ElemIteratorPtr(new SMDS_ElementVectorIterator(_elements.begin(), _elements.end()));
 }
 
 //================================================================================
@@ -544,10 +492,7 @@ SMDS_ElemIteratorPtr SMESH_ProxyMesh::SubMesh::GetElements() const
  */
 //================================================================================
 
-int SMESH_ProxyMesh::SubMesh::NbNodes() const
-{
-  return _uvPtStructVec.size();
-}
+int SMESH_ProxyMesh::SubMesh::NbNodes() const { return _uvPtStructVec.size(); }
 
 //================================================================================
 /*!
@@ -558,16 +503,14 @@ int SMESH_ProxyMesh::SubMesh::NbNodes() const
 
 SMDS_NodeIteratorPtr SMESH_ProxyMesh::SubMesh::GetNodes() const
 {
-  if ( !_uvPtStructVec.empty() )
-    return SMDS_NodeIteratorPtr ( new SMDS_SetIterator
-                                  < SMDS_pNode,
-                                  UVPtStructVec::const_iterator,
-                                  UVPtStruct::NodeAccessor >
-                                  ( _uvPtStructVec.begin(), _uvPtStructVec.end() ));
+    if (!_uvPtStructVec.empty())
+        return SMDS_NodeIteratorPtr(new SMDS_SetIterator<SMDS_pNode, UVPtStructVec::const_iterator,
+                                                         UVPtStruct::NodeAccessor>(
+            _uvPtStructVec.begin(), _uvPtStructVec.end()));
 
-  return SMDS_NodeIteratorPtr
-    ( new SMDS_SetIterator< SMDS_pNode, std::vector< SMDS_pElement >::const_iterator>
-      ( _elements.begin(), _elements.end() ));
+    return SMDS_NodeIteratorPtr(
+        new SMDS_SetIterator<SMDS_pNode, std::vector<SMDS_pElement>::const_iterator>(
+            _elements.begin(), _elements.end()));
 }
 
 //================================================================================
@@ -576,10 +519,7 @@ SMDS_NodeIteratorPtr SMESH_ProxyMesh::SubMesh::GetNodes() const
  */
 //================================================================================
 
-void SMESH_ProxyMesh::SubMesh::AddElement(const SMDS_MeshElement * e)
-{
-  _elements.push_back( e );
-}
+void SMESH_ProxyMesh::SubMesh::AddElement(const SMDS_MeshElement *e) { _elements.push_back(e); }
 
 //================================================================================
 /*!
@@ -587,9 +527,9 @@ void SMESH_ProxyMesh::SubMesh::AddElement(const SMDS_MeshElement * e)
  */
 //================================================================================
 
-bool SMESH_ProxyMesh::SubMesh::Contains(const SMDS_MeshElement * ME) const
+bool SMESH_ProxyMesh::SubMesh::Contains(const SMDS_MeshElement *ME) const
 {
-  if ( ME->GetType() != SMDSAbs_Node )
-    return find( _elements.begin(), _elements.end(), ME ) != _elements.end();
-  return false;
+    if (ME->GetType() != SMDSAbs_Node)
+        return find(_elements.begin(), _elements.end(), ME) != _elements.end();
+    return false;
 }

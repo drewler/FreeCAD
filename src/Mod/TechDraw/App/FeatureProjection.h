@@ -36,7 +36,7 @@ namespace TechDraw
 
 /** Base class of all View Features in the drawing module
  */
-class TechDrawExport FeatureProjection : public Part::Feature
+class TechDrawExport FeatureProjection: public Part::Feature
 {
     PROPERTY_HEADER(TechDraw::FeatureProjection);
 
@@ -45,18 +45,18 @@ public:
     FeatureProjection();
     virtual ~FeatureProjection();
 
-    App::PropertyLink   Source;
+    App::PropertyLink Source;
     App::PropertyVector Direction;
-    App::PropertyBool   VCompound;
-    App::PropertyBool   Rg1LineVCompound;
-    App::PropertyBool   RgNLineVCompound;
-    App::PropertyBool   OutLineVCompound;
-    App::PropertyBool   IsoLineVCompound;
-    App::PropertyBool   HCompound;
-    App::PropertyBool   Rg1LineHCompound;
-    App::PropertyBool   RgNLineHCompound;
-    App::PropertyBool   OutLineHCompound;
-    App::PropertyBool   IsoLineHCompound;
+    App::PropertyBool VCompound;
+    App::PropertyBool Rg1LineVCompound;
+    App::PropertyBool RgNLineVCompound;
+    App::PropertyBool OutLineVCompound;
+    App::PropertyBool IsoLineVCompound;
+    App::PropertyBool HCompound;
+    App::PropertyBool Rg1LineHCompound;
+    App::PropertyBool RgNLineHCompound;
+    App::PropertyBool OutLineHCompound;
+    App::PropertyBool IsoLineHCompound;
 
     /** @name methods override feature */
     //@{
@@ -66,7 +66,6 @@ public:
 };
 
 } //namespace TechDraw
-
 
 
 #endif // TECHDRAW_FEATUREPROJECTION

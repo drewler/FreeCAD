@@ -29,21 +29,22 @@
 
 class QTreeWidgetItem;
 
-namespace PartGui { 
+namespace PartGui
+{
 
-class LoftWidget : public QWidget
+class LoftWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit LoftWidget(QWidget* parent = nullptr);
+    explicit LoftWidget(QWidget *parent = nullptr);
     ~LoftWidget() override;
 
     bool accept();
     bool reject();
 
 private Q_SLOTS:
-    void onCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
+    void onCurrentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *);
 
 private:
     void changeEvent(QEvent *e) override;
@@ -51,10 +52,10 @@ private:
 
 private:
     class Private;
-    Private* d;
+    Private *d;
 };
 
-class TaskLoft : public Gui::TaskView::TaskDialog
+class TaskLoft: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -69,11 +70,13 @@ public:
     void clicked(int) override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok|QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 private:
-    LoftWidget* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    LoftWidget *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace PartGui

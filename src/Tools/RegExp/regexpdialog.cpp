@@ -30,20 +30,15 @@
 #include <qmessagebox.h>
 #include <qtextedit.h>
 
-RegExpDialog::RegExpDialog(QWidget* parent)
-  : QDialog(parent), ui(new Ui_RegExpDialog())
+RegExpDialog::RegExpDialog(QWidget *parent) : QDialog(parent), ui(new Ui_RegExpDialog())
 {
     ui->setupUi(this);
     rxhilighter = new RegExpSyntaxHighlighter(ui->textEdit1);
 
-    connect(ui->lineEdit1, SIGNAL(textChanged(const QString &)),
-            this, SLOT(performRegExp()));
+    connect(ui->lineEdit1, SIGNAL(textChanged(const QString &)), this, SLOT(performRegExp()));
 }
 
-RegExpDialog::~RegExpDialog()
-{
-    delete ui;
-}
+RegExpDialog::~RegExpDialog() { delete ui; }
 
 void RegExpDialog::performRegExp()
 {
@@ -76,24 +71,19 @@ void RegExpDialog::about()
 
 // -------------------------------------------------------------
 
-RegExpSyntaxHighlighter::RegExpSyntaxHighlighter (QTextEdit * textEdit)
-  : QSyntaxHighlighter(textEdit)
-{
-}
+RegExpSyntaxHighlighter::RegExpSyntaxHighlighter(QTextEdit *textEdit) : QSyntaxHighlighter(textEdit)
+{}
 
-RegExpSyntaxHighlighter::~RegExpSyntaxHighlighter()
-{
-}
+RegExpSyntaxHighlighter::~RegExpSyntaxHighlighter() {}
 
-void RegExpSyntaxHighlighter::highlightBlock (const QString & text)
+void RegExpSyntaxHighlighter::highlightBlock(const QString &text)
 {
     QTextCharFormat regFormat;
     regFormat.setForeground(Qt::black);
     regFormat.setFontWeight(QFont::Normal);
     setFormat(0, text.length(), regFormat);
 
-    if (regexp.isEmpty())
-        return; // empty regular expression
+    if (regexp.isEmpty()) return; // empty regular expression
 
     int pos = 0;
     int last = -1;
@@ -101,15 +91,12 @@ void RegExpSyntaxHighlighter::highlightBlock (const QString & text)
     regFormat.setForeground(Qt::blue);
 
     while ((pos = regexp.indexIn(text, pos)) != -1) {
-        if (last == pos)
-            break;
+        if (last == pos) break;
         QString sub = text.mid(pos, regexp.matchedLength());
-        if (!sub.isEmpty()) {
-            setFormat(pos, sub.length(), regFormat);
-        }
+        if (!sub.isEmpty()) { setFormat(pos, sub.length(), regFormat); }
 
         pos += regexp.matchedLength();
-        last=pos;
+        last = pos;
     }
 }
 #if 0
@@ -142,7 +129,7 @@ int RegExpSyntaxHighlighter::highlightParagraph ( const QString & text, int /*en
     return 0;
 }
 #endif
-void RegExpSyntaxHighlighter::highlightMatchedText(const QRegExp& rx)
+void RegExpSyntaxHighlighter::highlightMatchedText(const QRegExp &rx)
 {
     regexp = rx;
     rehighlight();

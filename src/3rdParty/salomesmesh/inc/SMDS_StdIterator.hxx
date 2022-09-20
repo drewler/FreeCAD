@@ -33,48 +33,46 @@
  */
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename VALUE, class PtrSMDSIterator, class EqualVALUE = std::equal_to<VALUE> >
-class SMDS_StdIterator : public std::iterator< std::input_iterator_tag, VALUE >
+template<typename VALUE, class PtrSMDSIterator, class EqualVALUE = std::equal_to<VALUE>>
+class SMDS_StdIterator: public std::iterator<std::input_iterator_tag, VALUE>
 {
-  VALUE           _value;
-  PtrSMDSIterator _piterator;
-  EqualVALUE      _EqualVALUE;
+    VALUE _value;
+    PtrSMDSIterator _piterator;
+    EqualVALUE _EqualVALUE;
 
 public:
-  typedef SMDS_StdIterator<VALUE, PtrSMDSIterator> _Self;
+    typedef SMDS_StdIterator<VALUE, PtrSMDSIterator> _Self;
 
-  // constructor to use as return from begin()
-  SMDS_StdIterator( PtrSMDSIterator pItr )
-    : _value( pItr->more() ? (VALUE)(pItr->next()) : 0 ), _piterator(pItr)
-  {}
-  // constructor to use as return from end()
-  SMDS_StdIterator(): _value( 0 )
-  {}
+    // constructor to use as return from begin()
+    SMDS_StdIterator(PtrSMDSIterator pItr)
+        : _value(pItr->more() ? (VALUE)(pItr->next()) : 0), _piterator(pItr)
+    {}
+    // constructor to use as return from end()
+    SMDS_StdIterator() : _value(0) {}
 
-  /// Return the current object
-  VALUE operator*() const
-  { return _value; }
+    /// Return the current object
+    VALUE operator*() const { return _value; }
 
-  //  Step to the next one
-  _Self&
-  operator++()
-  { _value = _piterator->more() ? VALUE( _piterator->next()) : 0; return *this; }
+    //  Step to the next one
+    _Self &operator++()
+    {
+        _value = _piterator->more() ? VALUE(_piterator->next()) : 0;
+        return *this;
+    }
 
-  //  Step to the next one
-  _Self
-  operator++(int)
-  { _Self res = *this; _value = _piterator->more() ? VALUE( _piterator->next()) : 0; return res; }
+    //  Step to the next one
+    _Self operator++(int)
+    {
+        _Self res = *this;
+        _value = _piterator->more() ? VALUE(_piterator->next()) : 0;
+        return res;
+    }
 
-  // Test of end
-  bool
-  operator!=(const _Self& __x) const
-  { return !_EqualVALUE( _value, __x._value); }
+    // Test of end
+    bool operator!=(const _Self &__x) const { return !_EqualVALUE(_value, __x._value); }
 
-  // Test of equality
-  bool
-  operator==(const _Self& __x) const
-  { return _EqualVALUE( _value, __x._value); }
-
+    // Test of equality
+    bool operator==(const _Self &__x) const { return _EqualVALUE(_value, __x._value); }
 };
 
 #endif

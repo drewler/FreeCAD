@@ -23,9 +23,9 @@
 //
 #include "DriverSTL_W_SMDS_Mesh.h"
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-//  DriverSTL_R_SMDS_Mesh aR;
-  DriverSTL_W_SMDS_Mesh aW;
-  return 1;
+    //  DriverSTL_R_SMDS_Mesh aR;
+    DriverSTL_W_SMDS_Mesh aW;
+    return 1;
 }

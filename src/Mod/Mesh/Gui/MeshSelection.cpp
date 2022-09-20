@@ -22,15 +22,15 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <algorithm>
-# include <climits>
-# include <Inventor/SbBox2s.h>
-# include <Inventor/SoPickedPoint.h>
-# include <Inventor/details/SoFaceDetail.h>
-# include <Inventor/events/SoLocation2Event.h>
-# include <Inventor/events/SoMouseButtonEvent.h>
-# include <Inventor/nodes/SoCamera.h>
-# include <QBitmap>
+#include <algorithm>
+#include <climits>
+#include <Inventor/SbBox2s.h>
+#include <Inventor/SoPickedPoint.h>
+#include <Inventor/details/SoFaceDetail.h>
+#include <Inventor/events/SoLocation2Event.h>
+#include <Inventor/events/SoMouseButtonEvent.h>
+#include <Inventor/nodes/SoCamera.h>
+#include <QBitmap>
 #endif
 
 #include "MeshSelection.h"
@@ -62,28 +62,17 @@ using namespace MeshGui;
 #define CROSS_HOT_Y 7
 
 unsigned char MeshSelection::cross_bitmap[] = {
-  0xc0, 0x03, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02,
-  0x40, 0x02, 0x40, 0x02, 0x7f, 0xfe, 0x01, 0x80,
-  0x01, 0x80, 0x7f, 0xfe, 0x40, 0x02, 0x40, 0x02,
-  0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0xc0, 0x03
-};
+    0xc0, 0x03, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x7f, 0xfe, 0x01, 0x80,
+    0x01, 0x80, 0x7f, 0xfe, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0xc0, 0x03};
 
 unsigned char MeshSelection::cross_mask_bitmap[] = {
-  0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03,
-  0xc0, 0x03, 0xc0, 0x03, 0xff, 0xff, 0xff, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xc0, 0x03, 0xc0, 0x03,
-  0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03
-};
+    0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03, 0xc0, 0x03};
 
 MeshSelection::MeshSelection()
-  : onlyPointToUserTriangles(false)
-  , onlyVisibleTriangles(false)
-  , addToSelection(false)
-  , addComponent(false)
-  , removeComponent(false)
-  , activeCB(nullptr)
-  , selectionCB(nullptr)
-  , ivViewer(nullptr)
+    : onlyPointToUserTriangles(false), onlyVisibleTriangles(false), addToSelection(false),
+      addComponent(false), removeComponent(false), activeCB(nullptr), selectionCB(nullptr),
+      ivViewer(nullptr)
 {
     setCallback(selectGLCallback);
 }
@@ -91,111 +80,93 @@ MeshSelection::MeshSelection()
 MeshSelection::~MeshSelection()
 {
     if (this->activeCB) {
-        Gui::View3DInventorViewer* viewer = this->getViewer();
-        if (viewer)
-            stopInteractiveCallback(viewer);
+        Gui::View3DInventorViewer *viewer = this->getViewer();
+        if (viewer) stopInteractiveCallback(viewer);
     }
 }
 
 void MeshSelection::setEnabledViewerSelection(bool on)
 {
-    Gui::View3DInventorViewer* viewer = this->getViewer();
-    if (viewer) {
-        viewer->setSelectionEnabled(on);
-    }
+    Gui::View3DInventorViewer *viewer = this->getViewer();
+    if (viewer) { viewer->setSelectionEnabled(on); }
 }
 
-void MeshSelection::setCallback(SoEventCallbackCB *cb)
-{
-    selectionCB = cb;
-}
+void MeshSelection::setCallback(SoEventCallbackCB *cb) { selectionCB = cb; }
 
-void MeshSelection::setObjects(const std::vector<Gui::SelectionObject>& obj)
-{
-    meshObjects = obj;
-}
+void MeshSelection::setObjects(const std::vector<Gui::SelectionObject> &obj) { meshObjects = obj; }
 
-std::vector<App::DocumentObject*> MeshSelection::getObjects() const
+std::vector<App::DocumentObject *> MeshSelection::getObjects() const
 {
-    std::vector<App::DocumentObject*> objs;
+    std::vector<App::DocumentObject *> objs;
     if (!meshObjects.empty()) {
-        for (std::vector<Gui::SelectionObject>::iterator it = meshObjects.begin(); it != meshObjects.end(); ++it) {
-            App::DocumentObject* obj = it->getObject();
-            if (obj) {
-                objs.push_back(obj);
-            }
+        for (std::vector<Gui::SelectionObject>::iterator it = meshObjects.begin();
+             it != meshObjects.end(); ++it) {
+            App::DocumentObject *obj = it->getObject();
+            if (obj) { objs.push_back(obj); }
         }
     }
     // get all objects of the active document
     else {
-        App::Document* doc = App::GetApplication().getActiveDocument();
-        if (doc)
-            objs = doc->getObjectsOfType(Mesh::Feature::getClassTypeId());
+        App::Document *doc = App::GetApplication().getActiveDocument();
+        if (doc) objs = doc->getObjectsOfType(Mesh::Feature::getClassTypeId());
     }
 
     return objs;
 }
 
-std::list<ViewProviderMesh*> MeshSelection::getViewProviders() const
+std::list<ViewProviderMesh *> MeshSelection::getViewProviders() const
 {
-    std::vector<App::DocumentObject*> objs = getObjects();
-    std::list<ViewProviderMesh*> vps;
-    for (std::vector<App::DocumentObject*>::iterator it = objs.begin(); it != objs.end(); ++it) {
+    std::vector<App::DocumentObject *> objs = getObjects();
+    std::list<ViewProviderMesh *> vps;
+    for (std::vector<App::DocumentObject *>::iterator it = objs.begin(); it != objs.end(); ++it) {
         if ((*it)->isDerivedFrom(Mesh::Feature::getClassTypeId())) {
-            Gui::ViewProvider* vp = Gui::Application::Instance->getViewProvider(*it);
-            if (vp->isVisible())
-                vps.push_back(static_cast<ViewProviderMesh*>(vp));
+            Gui::ViewProvider *vp = Gui::Application::Instance->getViewProvider(*it);
+            if (vp->isVisible()) vps.push_back(static_cast<ViewProviderMesh *>(vp));
         }
     }
 
     return vps;
 }
 
-void MeshSelection::setViewer(Gui::View3DInventorViewer* v)
-{
-    ivViewer = v;
-}
+void MeshSelection::setViewer(Gui::View3DInventorViewer *v) { ivViewer = v; }
 
-Gui::View3DInventorViewer* MeshSelection::getViewer() const
+Gui::View3DInventorViewer *MeshSelection::getViewer() const
 {
     // if a special viewer was set from outside then use this
-    if (ivViewer)
-        return ivViewer;
+    if (ivViewer) return ivViewer;
 
-    Gui::Document* doc = Gui::Application::Instance->activeDocument();
-    if (!doc)
-        return nullptr;
-    Gui::MDIView* view = doc->getActiveView();
+    Gui::Document *doc = Gui::Application::Instance->activeDocument();
+    if (!doc) return nullptr;
+    Gui::MDIView *view = doc->getActiveView();
     if (view && view->getTypeId().isDerivedFrom(Gui::View3DInventor::getClassTypeId())) {
-        Gui::View3DInventorViewer* viewer = static_cast<Gui::View3DInventor*>(view)->getViewer();
+        Gui::View3DInventorViewer *viewer = static_cast<Gui::View3DInventor *>(view)->getViewer();
         return viewer;
     }
 
     return nullptr;
 }
 
-void MeshSelection::startInteractiveCallback(Gui::View3DInventorViewer* viewer,SoEventCallbackCB *cb)
+void MeshSelection::startInteractiveCallback(Gui::View3DInventorViewer *viewer,
+                                             SoEventCallbackCB *cb)
 {
-    if (this->activeCB)
-        return;
+    if (this->activeCB) return;
     viewer->setEditing(true);
     viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(), cb, this);
     this->activeCB = cb;
 }
 
-void MeshSelection::stopInteractiveCallback(Gui::View3DInventorViewer* viewer)
+void MeshSelection::stopInteractiveCallback(Gui::View3DInventorViewer *viewer)
 {
-    if (!this->activeCB)
-        return;
+    if (!this->activeCB) return;
     viewer->setEditing(false);
     viewer->removeEventCallback(SoMouseButtonEvent::getClassTypeId(), this->activeCB, this);
     this->activeCB = nullptr;
 }
 
-void MeshSelection::prepareFreehandSelection(bool add,SoEventCallbackCB *cb)
+void MeshSelection::prepareFreehandSelection(bool add, SoEventCallbackCB *cb)
 {
     // a rubberband to select a rectangle area of the meshes
-    Gui::View3DInventorViewer* viewer = this->getViewer();
+    Gui::View3DInventorViewer *viewer = this->getViewer();
     if (viewer) {
         // Note: It is possible that the mouse selection mode can be stopped
         // but then the callback function is still active.
@@ -204,7 +175,7 @@ void MeshSelection::prepareFreehandSelection(bool add,SoEventCallbackCB *cb)
         viewer->navigationStyle()->stopSelection();
 
         // set cross cursor
-        Gui::FreehandSelection* freehand = new Gui::FreehandSelection();
+        Gui::FreehandSelection *freehand = new Gui::FreehandSelection();
         freehand->setClosed(true);
         freehand->setColor(1.0f, 0.0f, 0.0f);
         freehand->setLineWidth(3.0f);
@@ -222,25 +193,20 @@ void MeshSelection::prepareFreehandSelection(bool add,SoEventCallbackCB *cb)
             viewer->setComponentCursor(custom);
         };
 
-        QObject::connect(viewer, &Gui::View3DInventorViewer::devicePixelRatioChanged, setComponentCursor);
+        QObject::connect(viewer, &Gui::View3DInventorViewer::devicePixelRatioChanged,
+                         setComponentCursor);
         setComponentCursor();
         this->addToSelection = add;
     }
 }
 
-void MeshSelection::startSelection()
-{
-    prepareFreehandSelection(true, selectionCB);
-}
+void MeshSelection::startSelection() { prepareFreehandSelection(true, selectionCB); }
 
-void MeshSelection::startDeselection()
-{
-    prepareFreehandSelection(false, selectionCB);
-}
+void MeshSelection::startDeselection() { prepareFreehandSelection(false, selectionCB); }
 
 void MeshSelection::stopSelection()
 {
-    Gui::View3DInventorViewer* viewer = getViewer();
+    Gui::View3DInventorViewer *viewer = getViewer();
     if (viewer) {
         stopInteractiveCallback(viewer);
         viewer->navigationStyle()->stopSelection();
@@ -250,10 +216,10 @@ void MeshSelection::stopSelection()
 void MeshSelection::fullSelection()
 {
     // select the complete meshes
-    std::list<ViewProviderMesh*> views = getViewProviders();
-    for (std::list<ViewProviderMesh*>::iterator it = views.begin(); it != views.end(); ++it) {
-        Mesh::Feature* mf = static_cast<Mesh::Feature*>((*it)->getObject());
-        const Mesh::MeshObject* mo = mf->Mesh.getValuePtr();
+    std::list<ViewProviderMesh *> views = getViewProviders();
+    for (std::list<ViewProviderMesh *>::iterator it = views.begin(); it != views.end(); ++it) {
+        Mesh::Feature *mf = static_cast<Mesh::Feature *>((*it)->getObject());
+        const Mesh::MeshObject *mo = mf->Mesh.getValuePtr();
         std::vector<Mesh::FacetIndex> faces(mo->countFacets());
         std::generate(faces.begin(), faces.end(), Base::iotaGen<Mesh::FacetIndex>(0));
         (*it)->addSelection(faces);
@@ -262,8 +228,8 @@ void MeshSelection::fullSelection()
 
 void MeshSelection::clearSelection()
 {
-    std::list<ViewProviderMesh*> views = getViewProviders();
-    for (std::list<ViewProviderMesh*>::iterator it = views.begin(); it != views.end(); ++it) {
+    std::list<ViewProviderMesh *> views = getViewProviders();
+    for (std::list<ViewProviderMesh *>::iterator it = views.begin(); it != views.end(); ++it) {
         (*it)->clearSelection();
     }
 }
@@ -272,20 +238,19 @@ bool MeshSelection::deleteSelection()
 {
     // delete all selected faces
     bool selected = false;
-    std::list<ViewProviderMesh*> views = getViewProviders();
-    for (std::list<ViewProviderMesh*>::iterator it = views.begin(); it != views.end(); ++it) {
-        Mesh::Feature* mf = static_cast<Mesh::Feature*>((*it)->getObject());
-        unsigned long ct = MeshCore::MeshAlgorithm(mf->Mesh.getValue().getKernel()).
-            CountFacetFlag(MeshCore::MeshFacet::SELECTED);
+    std::list<ViewProviderMesh *> views = getViewProviders();
+    for (std::list<ViewProviderMesh *>::iterator it = views.begin(); it != views.end(); ++it) {
+        Mesh::Feature *mf = static_cast<Mesh::Feature *>((*it)->getObject());
+        unsigned long ct = MeshCore::MeshAlgorithm(mf->Mesh.getValue().getKernel())
+                               .CountFacetFlag(MeshCore::MeshFacet::SELECTED);
         if (ct > 0) {
             selected = true;
             break;
         }
     }
-    if (!selected)
-        return false; // nothing todo
+    if (!selected) return false; // nothing todo
 
-    for (std::list<ViewProviderMesh*>::iterator it = views.begin(); it != views.end(); ++it) {
+    for (std::list<ViewProviderMesh *>::iterator it = views.begin(); it != views.end(); ++it) {
         (*it)->deleteSelection();
     }
 
@@ -296,9 +261,9 @@ bool MeshSelection::deleteSelectionBorder()
 {
     // delete all selected faces
     bool deletion = false;
-    std::list<ViewProviderMesh*> views = getViewProviders();
-    for (std::list<ViewProviderMesh*>::iterator it = views.begin(); it != views.end(); ++it) {
-        Mesh::Feature* mf = static_cast<Mesh::Feature*>((*it)->getObject());
+    std::list<ViewProviderMesh *> views = getViewProviders();
+    for (std::list<ViewProviderMesh *>::iterator it = views.begin(); it != views.end(); ++it) {
+        Mesh::Feature *mf = static_cast<Mesh::Feature *>((*it)->getObject());
 
         // mark the selected facet as visited
         std::vector<Mesh::FacetIndex> selection, remove;
@@ -315,13 +280,13 @@ bool MeshSelection::deleteSelectionBorder()
         meshAlg.SetPointsFlag(border, MeshCore::MeshPoint::VISIT);
 
         // collect neighbour facets that are not selected and that share a border point
-        const MeshCore::MeshPointArray& points = mf->Mesh.getValue().getKernel().GetPoints();
-        const MeshCore::MeshFacetArray& faces = mf->Mesh.getValue().getKernel().GetFacets();
+        const MeshCore::MeshPointArray &points = mf->Mesh.getValue().getKernel().GetPoints();
+        const MeshCore::MeshFacetArray &faces = mf->Mesh.getValue().getKernel().GetFacets();
         unsigned long numFaces = faces.size();
         for (unsigned long i = 0; i < numFaces; i++) {
-            const MeshCore::MeshFacet& face = faces[i];
+            const MeshCore::MeshFacet &face = faces[i];
             if (!face.IsFlag(MeshCore::MeshFacet::VISIT)) {
-                for (int j=0; j<3; j++) {
+                for (int j = 0; j < 3; j++) {
                     if (points[face._aulPoints[j]].IsFlag(MeshCore::MeshPoint::VISIT)) {
                         remove.push_back(i);
                         break;
@@ -346,25 +311,26 @@ bool MeshSelection::deleteSelectionBorder()
 
 void MeshSelection::invertSelection()
 {
-    std::list<ViewProviderMesh*> views = getViewProviders();
-    for (std::list<ViewProviderMesh*>::iterator it = views.begin(); it != views.end(); ++it) {
+    std::list<ViewProviderMesh *> views = getViewProviders();
+    for (std::list<ViewProviderMesh *>::iterator it = views.begin(); it != views.end(); ++it) {
         (*it)->invertSelection();
     }
 }
 
 void MeshSelection::selectComponent(int size)
 {
-    std::list<ViewProviderMesh*> views = getViewProviders();
-    for (std::list<ViewProviderMesh*>::iterator it = views.begin(); it != views.end(); ++it) {
-        Mesh::Feature* mf = static_cast<Mesh::Feature*>((*it)->getObject());
-        const Mesh::MeshObject* mo = mf->Mesh.getValuePtr();
+    std::list<ViewProviderMesh *> views = getViewProviders();
+    for (std::list<ViewProviderMesh *>::iterator it = views.begin(); it != views.end(); ++it) {
+        Mesh::Feature *mf = static_cast<Mesh::Feature *>((*it)->getObject());
+        const Mesh::MeshObject *mo = mf->Mesh.getValuePtr();
 
-        std::vector<std::vector<Mesh::FacetIndex> > segm;
+        std::vector<std::vector<Mesh::FacetIndex>> segm;
         MeshCore::MeshComponents comp(mo->getKernel());
-        comp.SearchForComponents(MeshCore::MeshComponents::OverEdge,segm);
+        comp.SearchForComponents(MeshCore::MeshComponents::OverEdge, segm);
 
         std::vector<Mesh::FacetIndex> faces;
-        for (std::vector<std::vector<Mesh::FacetIndex> >::iterator jt = segm.begin(); jt != segm.end(); ++jt) {
+        for (std::vector<std::vector<Mesh::FacetIndex>>::iterator jt = segm.begin();
+             jt != segm.end(); ++jt) {
             if (jt->size() < (Mesh::FacetIndex)size)
                 faces.insert(faces.end(), jt->begin(), jt->end());
         }
@@ -375,17 +341,18 @@ void MeshSelection::selectComponent(int size)
 
 void MeshSelection::deselectComponent(int size)
 {
-    std::list<ViewProviderMesh*> views = getViewProviders();
-    for (std::list<ViewProviderMesh*>::iterator it = views.begin(); it != views.end(); ++it) {
-        Mesh::Feature* mf = static_cast<Mesh::Feature*>((*it)->getObject());
-        const Mesh::MeshObject* mo = mf->Mesh.getValuePtr();
+    std::list<ViewProviderMesh *> views = getViewProviders();
+    for (std::list<ViewProviderMesh *>::iterator it = views.begin(); it != views.end(); ++it) {
+        Mesh::Feature *mf = static_cast<Mesh::Feature *>((*it)->getObject());
+        const Mesh::MeshObject *mo = mf->Mesh.getValuePtr();
 
-        std::vector<std::vector<Mesh::FacetIndex> > segm;
+        std::vector<std::vector<Mesh::FacetIndex>> segm;
         MeshCore::MeshComponents comp(mo->getKernel());
-        comp.SearchForComponents(MeshCore::MeshComponents::OverEdge,segm);
+        comp.SearchForComponents(MeshCore::MeshComponents::OverEdge, segm);
 
         std::vector<Mesh::FacetIndex> faces;
-        for (std::vector<std::vector<Mesh::FacetIndex> >::iterator jt = segm.begin(); jt != segm.end(); ++jt) {
+        for (std::vector<std::vector<Mesh::FacetIndex>>::iterator jt = segm.begin();
+             jt != segm.end(); ++jt) {
             if (jt->size() > (Mesh::FacetIndex)size)
                 faces.insert(faces.end(), jt->begin(), jt->end());
         }
@@ -398,7 +365,7 @@ void MeshSelection::selectTriangle()
 {
     this->addToSelection = true;
 
-    Gui::View3DInventorViewer* viewer = this->getViewer();
+    Gui::View3DInventorViewer *viewer = this->getViewer();
     if (viewer) {
         stopInteractiveCallback(viewer);
         viewer->navigationStyle()->stopSelection();
@@ -411,7 +378,7 @@ void MeshSelection::deselectTriangle()
 {
     this->addToSelection = false;
 
-    Gui::View3DInventorViewer* viewer = this->getViewer();
+    Gui::View3DInventorViewer *viewer = this->getViewer();
     if (viewer) {
         stopInteractiveCallback(viewer);
         viewer->navigationStyle()->stopSelection();
@@ -420,88 +387,73 @@ void MeshSelection::deselectTriangle()
     }
 }
 
-void MeshSelection::setCheckOnlyPointToUserTriangles(bool on)
-{
-    onlyPointToUserTriangles = on;
-}
+void MeshSelection::setCheckOnlyPointToUserTriangles(bool on) { onlyPointToUserTriangles = on; }
 
-bool MeshSelection::isCheckedOnlyPointToUserTriangles() const
-{
-    return onlyPointToUserTriangles;
-}
+bool MeshSelection::isCheckedOnlyPointToUserTriangles() const { return onlyPointToUserTriangles; }
 
-void MeshSelection::setCheckOnlyVisibleTriangles(bool on)
-{
-    onlyVisibleTriangles = on;
-}
+void MeshSelection::setCheckOnlyVisibleTriangles(bool on) { onlyVisibleTriangles = on; }
 
-bool MeshSelection::isCheckedOnlyVisibleTriangles() const
-{
-    return onlyVisibleTriangles;
-}
+bool MeshSelection::isCheckedOnlyVisibleTriangles() const { return onlyVisibleTriangles; }
 
-void MeshSelection::setAddComponentOnClick(bool on)
-{
-    addComponent = on;
-}
+void MeshSelection::setAddComponentOnClick(bool on) { addComponent = on; }
 
-void MeshSelection::setRemoveComponentOnClick(bool on)
-{
-    removeComponent = on;
-}
+void MeshSelection::setRemoveComponentOnClick(bool on) { removeComponent = on; }
 
-void MeshSelection::selectGLCallback(void * ud, SoEventCallback * n)
+void MeshSelection::selectGLCallback(void *ud, SoEventCallback *n)
 {
     // When this callback function is invoked we must leave the edit mode
-    Gui::View3DInventorViewer* view  = static_cast<Gui::View3DInventorViewer*>(n->getUserData());
-    MeshSelection* self = static_cast<MeshSelection*>(ud);
+    Gui::View3DInventorViewer *view = static_cast<Gui::View3DInventorViewer *>(n->getUserData());
+    MeshSelection *self = static_cast<MeshSelection *>(ud);
     self->stopInteractiveCallback(view);
     n->setHandled();
     std::vector<SbVec2f> polygon = view->getGLPolygon();
-    if (polygon.size() < 3)
-        return;
-    if (polygon.front() != polygon.back())
-        polygon.push_back(polygon.front());
+    if (polygon.size() < 3) return;
+    if (polygon.front() != polygon.back()) polygon.push_back(polygon.front());
 
     SbVec3f pnt, dir;
     view->getNearPlane(pnt, dir);
-    Base::Vector3f point (pnt[0],pnt[1],pnt[2]);
-    Base::Vector3f normal(dir[0],dir[1],dir[2]);
+    Base::Vector3f point(pnt[0], pnt[1], pnt[2]);
+    Base::Vector3f normal(dir[0], dir[1], dir[2]);
 
-    std::list<ViewProviderMesh*> views = self->getViewProviders();
-    for (std::list<ViewProviderMesh*>::iterator it = views.begin(); it != views.end(); ++it) {
-        ViewProviderMesh* vp = *it;
+    std::list<ViewProviderMesh *> views = self->getViewProviders();
+    for (std::list<ViewProviderMesh *>::iterator it = views.begin(); it != views.end(); ++it) {
+        ViewProviderMesh *vp = *it;
 
         std::vector<Mesh::FacetIndex> faces;
-        const Mesh::MeshObject& mesh = static_cast<Mesh::Feature*>((*it)->getObject())->Mesh.getValue();
-        const MeshCore::MeshKernel& kernel = mesh.getKernel();
+        const Mesh::MeshObject &mesh =
+            static_cast<Mesh::Feature *>((*it)->getObject())->Mesh.getValue();
+        const MeshCore::MeshKernel &kernel = mesh.getKernel();
 
         // simply get all triangles under the polygon
-        SoCamera* cam = view->getSoRenderManager()->getCamera();
+        SoCamera *cam = view->getSoRenderManager()->getCamera();
         SbViewVolume vv = cam->getViewVolume();
         Gui::ViewVolumeProjection proj(vv);
 
-        Base::Placement plm = static_cast<Mesh::Feature*>(vp->getObject())->Placement.getValue();
+        Base::Placement plm = static_cast<Mesh::Feature *>(vp->getObject())->Placement.getValue();
         proj.setTransform(plm.toMatrix());
         vp->getFacetsFromPolygon(polygon, proj, true, faces);
 
         if (self->onlyVisibleTriangles) {
-            const SbVec2s& sz = view->getSoRenderManager()->getViewportRegion().getWindowSize();
-            short width,height; sz.getValue(width,height);
+            const SbVec2s &sz = view->getSoRenderManager()->getViewportRegion().getWindowSize();
+            short width, height;
+            sz.getValue(width, height);
             std::vector<SbVec2s> pixelPoly = view->getPolygon();
             SbBox2s rect;
-            for (std::vector<SbVec2s>::iterator it = pixelPoly.begin(); it != pixelPoly.end(); ++it) {
-                const SbVec2s& p = *it;
-                rect.extendBy(SbVec2s(p[0],height-p[1]));
+            for (std::vector<SbVec2s>::iterator it = pixelPoly.begin(); it != pixelPoly.end();
+                 ++it) {
+                const SbVec2s &p = *it;
+                rect.extendBy(SbVec2s(p[0], height - p[1]));
             }
-            std::vector<Mesh::FacetIndex> rf; rf.swap(faces);
-            std::vector<Mesh::FacetIndex> vf = vp->getVisibleFacetsAfterZoom
-                (rect, view->getSoRenderManager()->getViewportRegion(), view->getSoRenderManager()->getCamera());
+            std::vector<Mesh::FacetIndex> rf;
+            rf.swap(faces);
+            std::vector<Mesh::FacetIndex> vf =
+                vp->getVisibleFacetsAfterZoom(rect, view->getSoRenderManager()->getViewportRegion(),
+                                              view->getSoRenderManager()->getCamera());
 
             // get common facets of the viewport and the visible one
             std::sort(vf.begin(), vf.end());
             std::sort(rf.begin(), rf.end());
-            std::back_insert_iterator<std::vector<Mesh::FacetIndex> > biit(faces);
+            std::back_insert_iterator<std::vector<Mesh::FacetIndex>> biit(faces);
             std::set_intersection(vf.begin(), vf.end(), rf.begin(), rf.end(), biit);
         }
 
@@ -510,18 +462,16 @@ void MeshSelection::selectGLCallback(void * ud, SoEventCallback * n)
             std::vector<Mesh::FacetIndex> screen;
             screen.reserve(faces.size());
             MeshCore::MeshFacetIterator it_f(kernel);
-            for (std::vector<Mesh::FacetIndex>::iterator it = faces.begin(); it != faces.end(); ++it) {
+            for (std::vector<Mesh::FacetIndex>::iterator it = faces.begin(); it != faces.end();
+                 ++it) {
                 it_f.Set(*it);
-                if (it_f->GetNormal() * normal > 0.0f) {
-                    screen.push_back(*it);
-                }
+                if (it_f->GetNormal() * normal > 0.0f) { screen.push_back(*it); }
             }
 
             faces.swap(screen);
         }
 
-        if (self->addToSelection)
-            vp->addSelection(faces);
+        if (self->addToSelection) vp->addSelection(faces);
         else
             vp->removeSelection(faces);
     }
@@ -529,17 +479,19 @@ void MeshSelection::selectGLCallback(void * ud, SoEventCallback * n)
     view->redraw();
 }
 
-void MeshSelection::pickFaceCallback(void * ud, SoEventCallback * n)
+void MeshSelection::pickFaceCallback(void *ud, SoEventCallback *n)
 {
     // handle only mouse button events
     if (n->getEvent()->isOfType(SoMouseButtonEvent::getClassTypeId())) {
-        const SoMouseButtonEvent * mbe = static_cast<const SoMouseButtonEvent*>(n->getEvent());
-        Gui::View3DInventorViewer* view  = static_cast<Gui::View3DInventorViewer*>(n->getUserData());
+        const SoMouseButtonEvent *mbe = static_cast<const SoMouseButtonEvent *>(n->getEvent());
+        Gui::View3DInventorViewer *view =
+            static_cast<Gui::View3DInventorViewer *>(n->getUserData());
 
         // Mark all incoming mouse button events as handled, especially, to deactivate the selection node
         n->getAction()->setHandled();
-        if (mbe->getButton() == SoMouseButtonEvent::BUTTON1 && mbe->getState() == SoButtonEvent::DOWN) {
-            const SoPickedPoint * point = n->getPickedPoint();
+        if (mbe->getButton() == SoMouseButtonEvent::BUTTON1
+            && mbe->getState() == SoButtonEvent::DOWN) {
+            const SoPickedPoint *point = n->getPickedPoint();
             if (!point) {
                 Base::Console().Message("No facet picked.\n");
                 return;
@@ -549,27 +501,24 @@ void MeshSelection::pickFaceCallback(void * ud, SoEventCallback * n)
 
             // By specifying the indexed mesh node 'pcFaceSet' we make sure that the picked point is
             // really from the mesh we render and not from any other geometry
-            Gui::ViewProvider* vp = view->getDocument()->getViewProviderByPathFromTail(point->getPath());
-            if (!vp || !vp->getTypeId().isDerivedFrom(ViewProviderMesh::getClassTypeId()))
-                return;
-            ViewProviderMesh* mesh = static_cast<ViewProviderMesh*>(vp);
-            MeshSelection* self = static_cast<MeshSelection*>(ud);
-            std::list<ViewProviderMesh*> views = self->getViewProviders();
-            if (std::find(views.begin(), views.end(), mesh) == views.end())
-                return;
-            const SoDetail* detail = point->getDetail(/*mesh->getShapeNode()*/);
+            Gui::ViewProvider *vp =
+                view->getDocument()->getViewProviderByPathFromTail(point->getPath());
+            if (!vp || !vp->getTypeId().isDerivedFrom(ViewProviderMesh::getClassTypeId())) return;
+            ViewProviderMesh *mesh = static_cast<ViewProviderMesh *>(vp);
+            MeshSelection *self = static_cast<MeshSelection *>(ud);
+            std::list<ViewProviderMesh *> views = self->getViewProviders();
+            if (std::find(views.begin(), views.end(), mesh) == views.end()) return;
+            const SoDetail *detail = point->getDetail(/*mesh->getShapeNode()*/);
             if (detail && detail->getTypeId() == SoFaceDetail::getClassTypeId()) {
                 // get the boundary to the picked facet
-                Mesh::FacetIndex uFacet = static_cast<const SoFaceDetail*>(detail)->getFaceIndex();
+                Mesh::FacetIndex uFacet = static_cast<const SoFaceDetail *>(detail)->getFaceIndex();
                 if (self->addToSelection) {
-                    if (self->addComponent)
-                        mesh->selectComponent(uFacet);
+                    if (self->addComponent) mesh->selectComponent(uFacet);
                     else
                         mesh->selectFacet(uFacet);
                 }
                 else {
-                    if (self->removeComponent)
-                        mesh->deselectComponent(uFacet);
+                    if (self->removeComponent) mesh->deselectComponent(uFacet);
                     else
                         mesh->deselectFacet(uFacet);
                 }

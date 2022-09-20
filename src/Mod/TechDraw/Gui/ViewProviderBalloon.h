@@ -33,10 +33,11 @@
 #include "ViewProviderDrawingView.h"
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 
-class TechDrawGuiExport ViewProviderBalloon : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderBalloon: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderBalloon);
 
@@ -46,24 +47,25 @@ public:
     /// destructor
     ~ViewProviderBalloon() override;
 
-    App::PropertyFont   Font;
+    App::PropertyFont Font;
     App::PropertyLength Fontsize;
     App::PropertyLength LineWidth;
-    App::PropertyBool   LineVisible;
-    App::PropertyColor  Color;
+    App::PropertyBool LineVisible;
+    App::PropertyColor Color;
 
-    bool useNewSelectionModel() const override {return false;}
-    void updateData(const App::Property*) override;
-    void onChanged(const App::Property* p) override;
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    bool useNewSelectionModel() const override { return false; }
+    void updateData(const App::Property *) override;
+    void onChanged(const App::Property *p) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
     bool setEdit(int ModNum) override;
     bool doubleClicked() override;
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
 
-    TechDraw::DrawViewBalloon* getViewObject() const override;
+    TechDraw::DrawViewBalloon *getViewObject() const override;
 
 protected:
-    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 };
 
 } // namespace TechDrawGui

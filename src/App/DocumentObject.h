@@ -46,7 +46,8 @@ class DocumentObjectGroup;
 class DocumentObjectPy;
 class Expression;
 
-enum ObjectStatus {
+enum ObjectStatus
+{
     Touch = 0,
     Error = 1,
     New = 2,
@@ -59,12 +60,13 @@ enum ObjectStatus {
     Recompute2 = 9, // set when the object is being recomputed in the second pass
     PartialObject = 10,
     PendingRecompute = 11, // set by Document, indicating the object is in recomputation queue
-    ObjImporting = 13, // Mark the object as importing
-    NoTouch = 14, // no touch on any property change
-    GeoExcluded = 15, // mark as a member but not claimed by GeoFeatureGroup
-    Expand = 16, // indicate the object's tree item expansion status
-    NoAutoExpand = 17, // disable tree item auto expand on selection for this object
-    PendingTransactionUpdate = 18, // mark that the object expects a call to onUndoRedoFinished() after transaction is finished.
+    ObjImporting = 13,     // Mark the object as importing
+    NoTouch = 14,          // no touch on any property change
+    GeoExcluded = 15,      // mark as a member but not claimed by GeoFeatureGroup
+    Expand = 16,           // indicate the object's tree item expansion status
+    NoAutoExpand = 17,     // disable tree item auto expand on selection for this object
+    PendingTransactionUpdate =
+        18, // mark that the object expects a call to onUndoRedoFinished() after transaction is finished.
     RecomputeExtension = 19, // mark the object to recompute its extensions
     TouchOnColorChange = 20, // inform view provider touch object on color change
 };
@@ -74,21 +76,19 @@ enum ObjectStatus {
 class AppExport DocumentObjectExecReturn
 {
 public:
-    explicit DocumentObjectExecReturn(const std::string& sWhy, DocumentObject* WhichObject=nullptr)
+    explicit DocumentObjectExecReturn(const std::string &sWhy,
+                                      DocumentObject *WhichObject = nullptr)
         : Why(sWhy), Which(WhichObject)
-    {
-    }
-    explicit DocumentObjectExecReturn(const char* sWhy, DocumentObject* WhichObject=nullptr)
+    {}
+    explicit DocumentObjectExecReturn(const char *sWhy, DocumentObject *WhichObject = nullptr)
         : Which(WhichObject)
     {
-        if (sWhy)
-            Why = sWhy;
+        if (sWhy) Why = sWhy;
     }
 
     std::string Why;
-    DocumentObject* Which;
+    DocumentObject *Which;
 };
-
 
 
 /** Base class of all Classes handled in the Document
@@ -98,7 +98,6 @@ class AppExport DocumentObject: public App::TransactionalObject
     PROPERTY_HEADER_WITH_OVERRIDE(App::DocumentObject);
 
 public:
-
     PropertyString Label;
     PropertyString Label2;
     PropertyExpressionEngine ExpressionEngine;
@@ -107,14 +106,13 @@ public:
     PropertyBool Visibility;
 
     /// signal before changing a property of this object
-    boost::signals2::signal<void (const App::DocumentObject&, const App::Property&)> signalBeforeChange;
+    boost::signals2::signal<void(const App::DocumentObject &, const App::Property &)>
+        signalBeforeChange;
     /// signal on changed  property of this object
-    boost::signals2::signal<void (const App::DocumentObject&, const App::Property&)> signalChanged;
+    boost::signals2::signal<void(const App::DocumentObject &, const App::Property &)> signalChanged;
 
     /// returns the type name of the ViewProvider
-    virtual const char* getViewProviderName() const {
-        return "";
-    }
+    virtual const char *getViewProviderName() const { return ""; }
     /**
      * This function is introduced to allow Python feature override its view provider.
      * The default implementation just returns \ref getViewProviderName().
@@ -124,9 +122,7 @@ public:
      * If not, the view provider will be reverted to the one returned from \ref
      * getViewProviderName().
      */
-    virtual const char *getViewProviderNameOverride() const {
-        return getViewProviderName();
-    }
+    virtual const char *getViewProviderNameOverride() const { return getViewProviderName(); }
 
     /// Constructor
     DocumentObject();
@@ -135,13 +131,13 @@ public:
     /// returns the name which is set in the document for this object (not the name property!)
     const char *getNameInDocument() const;
     /// Return the object ID that is unique within its owner document
-    long getID() const {return _Id;}
+    long getID() const { return _Id; }
     /// returns the name that is safe to be exported to other document
-    std::string getExportName(bool forced=false) const;
+    std::string getExportName(bool forced = false) const;
     /// Return the object full name of the form DocName#ObjName
     std::string getFullName() const override;
     bool isAttachedToDocument() const override;
-    const char* detachFromDocument() override;
+    const char *detachFromDocument() override;
     /// gets the document in which this Object is handled
     App::Document *getDocument() const;
 
@@ -149,7 +145,7 @@ public:
      */
     //@{
     /// set this document object touched (cause recomputation on dependent features)
-    void touch(bool noRecompute=false);
+    void touch(bool noRecompute = false);
     /// test if this document object is touched
     bool isTouched() const;
     /// Enforce this document object to be recomputed
@@ -157,26 +153,27 @@ public:
     /// Test if this document object must be recomputed
     bool mustRecompute() const;
     /// reset this document object touched
-    void purgeTouched() {
+    void purgeTouched()
+    {
         StatusBits.reset(ObjectStatus::Touch);
         StatusBits.reset(ObjectStatus::Enforce);
-        setPropertyStatus(0,false);
+        setPropertyStatus(0, false);
     }
     /// set this feature to error
-    bool isError() const {return  StatusBits.test(ObjectStatus::Error);}
-    bool isValid() const {return !StatusBits.test(ObjectStatus::Error);}
+    bool isError() const { return StatusBits.test(ObjectStatus::Error); }
+    bool isValid() const { return !StatusBits.test(ObjectStatus::Error); }
     /// remove the error from the object
-    void purgeError(){StatusBits.reset(ObjectStatus::Error);}
+    void purgeError() { StatusBits.reset(ObjectStatus::Error); }
     /// returns true if this objects is currently recomputing
-    bool isRecomputing() const {return StatusBits.test(ObjectStatus::Recompute);}
+    bool isRecomputing() const { return StatusBits.test(ObjectStatus::Recompute); }
     /// returns true if this objects is currently restoring from file
-    bool isRestoring() const {return StatusBits.test(ObjectStatus::Restore);}
+    bool isRestoring() const { return StatusBits.test(ObjectStatus::Restore); }
     /// returns true if this objects is currently removed from the document
-    bool isRemoving() const {return StatusBits.test(ObjectStatus::Remove);}
+    bool isRemoving() const { return StatusBits.test(ObjectStatus::Remove); }
     /// return the status bits
-    unsigned long getStatus() const {return StatusBits.to_ulong();}
-    bool testStatus(ObjectStatus pos) const {return StatusBits.test(size_t(pos));}
-    void setStatus(ObjectStatus pos, bool on) {StatusBits.set(size_t(pos), on);}
+    unsigned long getStatus() const { return StatusBits.to_ulong(); }
+    bool testStatus(ObjectStatus pos) const { return StatusBits.test(size_t(pos)); }
+    void setStatus(ObjectStatus pos, bool on) { StatusBits.set(size_t(pos), on); }
     //@}
 
     int isExporting() const;
@@ -212,7 +209,8 @@ public:
     */
     //@{
     /// OutList options
-    enum OutListOption {
+    enum OutListOption
+    {
         /// Do not include link from expression engine
         OutListNoExpression = 1,
         /// Do not hide any link (i.e. include links with LinkScopeHidden)
@@ -221,26 +219,26 @@ public:
         OutListNoXLinked = 4,
     };
     /// returns a list of objects this object is pointing to by Links
-    const std::vector<App::DocumentObject*> &getOutList() const;
-    std::vector<App::DocumentObject*> getOutList(int option) const;
-    void getOutList(int option, std::vector<App::DocumentObject*> &res) const;
+    const std::vector<App::DocumentObject *> &getOutList() const;
+    std::vector<App::DocumentObject *> getOutList(int option) const;
+    void getOutList(int option, std::vector<App::DocumentObject *> &res) const;
 
     /// returns a list of objects linked by the property
-    std::vector<App::DocumentObject*> getOutListOfProperty(App::Property*) const;
+    std::vector<App::DocumentObject *> getOutListOfProperty(App::Property *) const;
     /// returns a list of objects this object is pointing to by Links and all further descended
-    std::vector<App::DocumentObject*> getOutListRecursive() const;
+    std::vector<App::DocumentObject *> getOutListRecursive() const;
     /// clear internal out list cache
     void clearOutListCache() const;
     /// get all possible paths from this to another object following the OutList
-    std::vector<std::list<App::DocumentObject*> > getPathsByOutList(App::DocumentObject* to) const;
+    std::vector<std::list<App::DocumentObject *>> getPathsByOutList(App::DocumentObject *to) const;
 #ifdef USE_OLD_DAG
     /// get all objects link to this object
-    std::vector<App::DocumentObject*> getInList(void) const
+    std::vector<App::DocumentObject *> getInList(void) const
 #else
-    const std::vector<App::DocumentObject*> &getInList() const;
+    const std::vector<App::DocumentObject *> &getInList() const;
 #endif
-    /// get all objects link directly or indirectly to this object
-    std::vector<App::DocumentObject*> getInListRecursive() const;
+        /// get all objects link directly or indirectly to this object
+        std::vector<App::DocumentObject *> getInListRecursive() const;
     /** Get a set of all objects linking to this object, including possible external parent objects
      *
      * @param inSet [out]: a set containing all objects linking to this object.
@@ -248,28 +246,28 @@ public:
      * @param inList [in, out]: optional pointer to a vector holding the output
      * objects, with the furthest linking object ordered last.
      */
-    void getInListEx(std::set<App::DocumentObject*> &inSet,
-            bool recursive, std::vector<App::DocumentObject*> *inList=nullptr) const;
+    void getInListEx(std::set<App::DocumentObject *> &inSet, bool recursive,
+                     std::vector<App::DocumentObject *> *inList = nullptr) const;
     /** Return a set of all objects linking to this object, including possible external parent objects
      * @param recursive [in]: whether to obtain recursive in list
      */
-    std::set<App::DocumentObject*> getInListEx(bool recursive) const;
+    std::set<App::DocumentObject *> getInListEx(bool recursive) const;
 
     /// get group if object is part of a group, otherwise 0 is returned
-    DocumentObjectGroup* getGroup() const;
+    DocumentObjectGroup *getGroup() const;
 
     /// test if this object is in the InList and recursive further down
-    bool isInInListRecursive(DocumentObject* objToTest) const;
+    bool isInInListRecursive(DocumentObject *objToTest) const;
     /// test if this object is directly (non recursive) in the InList
-    bool isInInList(DocumentObject* objToTest) const;
+    bool isInInList(DocumentObject *objToTest) const;
     /// test if the given object is in the OutList and recursive further down
-    bool isInOutListRecursive(DocumentObject* objToTest) const;
+    bool isInOutListRecursive(DocumentObject *objToTest) const;
     /// test if this object is directly (non recursive) in the OutList
-    bool isInOutList(DocumentObject* objToTest) const;
+    bool isInOutList(DocumentObject *objToTest) const;
     /// internal, used by PropertyLink to maintain DAG back links
-    void _removeBackLink(DocumentObject*);
+    void _removeBackLink(DocumentObject *);
     /// internal, used by PropertyLink to maintain DAG back links
-    void _addBackLink(DocumentObject*);
+    void _addBackLink(DocumentObject *);
     //@}
 
     /**
@@ -282,7 +280,7 @@ public:
      * error if the document already has a circular dependency.
      * That is, if the return is true, the link is allowed.
      */
-    bool testIfLinkDAGCompatible(DocumentObject* linkTo) const;
+    bool testIfLinkDAGCompatible(DocumentObject *linkTo) const;
     bool testIfLinkDAGCompatible(const std::vector<DocumentObject *> &linksTo) const;
     bool testIfLinkDAGCompatible(App::PropertyLinkSubList &linksTo) const;
     bool testIfLinkDAGCompatible(App::PropertyLinkSub &linkTo) const;
@@ -305,7 +303,7 @@ public:
      *
      * @param recursive: set to true to recompute any dependent objects as well
      */
-    bool recomputeFeature(bool recursive=false);
+    bool recomputeFeature(bool recursive = false);
 
     /// get the status Message
     const char *getStatusString() const;
@@ -316,7 +314,7 @@ public:
      * is to reset the links to nothing. You may override this method to implement
      * additional or different behavior.
      */
-    virtual void onLostLinkToObject(DocumentObject*);
+    virtual void onLostLinkToObject(DocumentObject *);
     PyObject *getPyObject() override;
 
     /** Get the sub element/object by name
@@ -347,14 +345,16 @@ public:
      * then it shall return itself. If subname is invalid, then it shall return
      * zero.
      */
-    virtual DocumentObject *getSubObject(const char *subname, PyObject **pyObj=nullptr,
-            Base::Matrix4D *mat=nullptr, bool transform=true, int depth=0) const;
+    virtual DocumentObject *getSubObject(const char *subname, PyObject **pyObj = nullptr,
+                                         Base::Matrix4D *mat = nullptr, bool transform = true,
+                                         int depth = 0) const;
 
     /// Return a list of objects referenced by a given subname including this object
-    std::vector<DocumentObject*> getSubObjectList(const char *subname) const;
+    std::vector<DocumentObject *> getSubObjectList(const char *subname) const;
 
     /// reason of calling getSubObjects()
-    enum GSReason {
+    enum GSReason
+    {
         /// default, mostly for exporting shape objects
         GS_DEFAULT,
         /// for element selection
@@ -376,10 +376,10 @@ public:
      * need special transformation. For example, sub objects of an array type
      * of object.
      */
-    virtual std::vector<std::string> getSubObjects(int reason=0) const;
+    virtual std::vector<std::string> getSubObjects(int reason = 0) const;
 
     ///Obtain top parents and subnames of this object using its InList
-    std::vector<std::pair<App::DocumentObject*,std::string> > getParents(int depth=0) const;
+    std::vector<std::pair<App::DocumentObject *, std::string>> getParents(int depth = 0) const;
 
     /** Return the linked object with optional transformation
      *
@@ -396,14 +396,14 @@ public:
      * @return Return the linked object. This function must return itself if the
      * it is not a link or the link is invalid.
      */
-    virtual DocumentObject *getLinkedObject(bool recurse=true,
-            Base::Matrix4D *mat=nullptr, bool transform=false, int depth=0) const;
+    virtual DocumentObject *getLinkedObject(bool recurse = true, Base::Matrix4D *mat = nullptr,
+                                            bool transform = false, int depth = 0) const;
 
     /* Return true to cause PropertyView to show linked object's property */
-    virtual bool canLinkProperties() const {return true;}
+    virtual bool canLinkProperties() const { return true; }
 
     /* Return true to bypass duplicate label checking */
-    virtual bool allowDuplicateLabel() const {return false;}
+    virtual bool allowDuplicateLabel() const { return false; }
 
     /*** Called to let object itself control relabeling
      *
@@ -411,7 +411,7 @@ public:
      *
      * This function is called before onBeforeChange()
      */
-    virtual void onBeforeChangeLabel(std::string &newLabel) {(void)newLabel;}
+    virtual void onBeforeChangeLabel(std::string &newLabel) { (void)newLabel; }
 
     friend class Document;
     friend class Transaction;
@@ -419,30 +419,30 @@ public:
 
     static DocumentObjectExecReturn *StdReturn;
 
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
 
     /* Expression support */
 
-    virtual void setExpression(const ObjectIdentifier & path, std::shared_ptr<App::Expression> expr);
+    virtual void setExpression(const ObjectIdentifier &path, std::shared_ptr<App::Expression> expr);
 
-    void clearExpression(const ObjectIdentifier & path);
+    void clearExpression(const ObjectIdentifier &path);
 
-    virtual const PropertyExpressionEngine::ExpressionInfo getExpression(const ObjectIdentifier &path) const;
+    virtual const PropertyExpressionEngine::ExpressionInfo
+    getExpression(const ObjectIdentifier &path) const;
 
-    virtual void renameObjectIdentifiers(const std::map<App::ObjectIdentifier, App::ObjectIdentifier> & paths);
+    virtual void
+    renameObjectIdentifiers(const std::map<App::ObjectIdentifier, App::ObjectIdentifier> &paths);
 
-    const std::string & getOldLabel() const { return oldLabel; }
+    const std::string &getOldLabel() const { return oldLabel; }
 
-    const char *getViewProviderNameStored() const {
-        return _pcViewProviderName.c_str();
-    }
+    const char *getViewProviderNameStored() const { return _pcViewProviderName.c_str(); }
 
-    bool removeDynamicProperty(const char* prop) override;
+    bool removeDynamicProperty(const char *prop) override;
 
-    App::Property* addDynamicProperty(
-            const char* type, const char* name=nullptr,
-            const char* group=nullptr, const char* doc=nullptr,
-            short attr=0, bool ro=false, bool hidden=false) override;
+    App::Property *addDynamicProperty(const char *type, const char *name = nullptr,
+                                      const char *group = nullptr, const char *doc = nullptr,
+                                      short attr = 0, bool ro = false,
+                                      bool hidden = false) override;
 
     /** Resolve the last document object referenced in the subname
      *
@@ -456,9 +456,11 @@ public:
      * @return Returns the last referenced document object in the subname. If no
      * such object in subname, return pObject.
      */
-    App::DocumentObject *resolve(const char *subname, App::DocumentObject **parent=nullptr,
-        std::string *childName=nullptr, const char **subElement=nullptr,
-        PyObject **pyObj=nullptr, Base::Matrix4D *mat=nullptr, bool transform=true, int depth=0) const;
+    App::DocumentObject *resolve(const char *subname, App::DocumentObject **parent = nullptr,
+                                 std::string *childName = nullptr,
+                                 const char **subElement = nullptr, PyObject **pyObj = nullptr,
+                                 Base::Matrix4D *mat = nullptr, bool transform = true,
+                                 int depth = 0) const;
 
     /** Resolve a link reference that is relative to this object reference
      *
@@ -504,8 +506,8 @@ public:
      *
      * The common parent 'Group' is removed.
      */
-    App::DocumentObject *resolveRelativeLink(std::string &subname,
-            App::DocumentObject *&link, std::string &linkSub) const;
+    App::DocumentObject *resolveRelativeLink(std::string &subname, App::DocumentObject *&link,
+                                             std::string &linkSub) const;
 
     /** Called to adjust link properties to avoid cyclic links
      *
@@ -521,8 +523,8 @@ public:
      * properties that can hold subnames) to avoid cyclic when added to the
      * future parent.
      */
-    virtual bool adjustRelativeLinks(const std::set<App::DocumentObject*> &inList,
-            std::set<App::DocumentObject*> *visited=nullptr);
+    virtual bool adjustRelativeLinks(const std::set<App::DocumentObject *> &inList,
+                                     std::set<App::DocumentObject *> *visited = nullptr);
 
     /** allow partial loading of dependent objects
      *
@@ -530,7 +532,7 @@ public:
      * dependent objects to be partially loaded, i.e. only create, but not
      * restored. 2 means this object itself can be partially loaded.
      */
-    virtual int canLoadPartial() const {return 0;}
+    virtual int canLoadPartial() const { return 0; }
 
     virtual void onUpdateElementReference(const Property *) {}
 
@@ -547,8 +549,8 @@ public:
      * item is selected in the tree. Document object can use this function to
      * redirect the selection to some other objects.
      */
-    virtual bool redirectSubName(std::ostringstream &ss,
-            DocumentObject *topParent, DocumentObject *child) const;
+    virtual bool redirectSubName(std::ostringstream &ss, DocumentObject *topParent,
+                                 DocumentObject *child) const;
 
     /** Special marker to mark the object as hidden
      *
@@ -592,14 +594,14 @@ protected:
      */
     std::bitset<32> StatusBits;
 
-    void setError(){StatusBits.set(ObjectStatus::Error);}
-    void resetError(){StatusBits.reset(ObjectStatus::Error);}
-    void setDocument(App::Document* doc);
+    void setError() { StatusBits.set(ObjectStatus::Error); }
+    void resetError() { StatusBits.reset(ObjectStatus::Error); }
+    void setDocument(App::Document *doc);
 
     /// get called before the value is changed
-    void onBeforeChange(const Property* prop) override;
+    void onBeforeChange(const Property *prop) override;
     /// get called by the container when a property was changed
-    void onChanged(const Property* prop) override;
+    void onChanged(const Property *prop) override;
     /// get called after a document has been fully restored
     virtual void onDocumentRestored();
     /// get called after an undo/redo transaction is finished
@@ -614,11 +616,11 @@ protected:
     /// get called when a property status has changed
     void onPropertyStatusChanged(const Property &prop, unsigned long oldStatus) override;
 
-     /// python object of this class and all descendent
+    /// python object of this class and all descendent
 protected: // attributes
     Py::SmartPtr PythonObject;
     /// pointer to the document this object belongs to
-    App::Document* _pDoc;
+    App::Document *_pDoc;
 
     /// Old label; used for renaming expressions
     std::string oldLabel;
@@ -636,9 +638,10 @@ private:
 private:
     // Back pointer to all the fathers in a DAG of the document
     // this is used by the document (via friend) to have a effective DAG handling
-    std::vector<App::DocumentObject*> _inList;
+    std::vector<App::DocumentObject *> _inList;
     mutable std::vector<App::DocumentObject *> _outList;
-    mutable std::unordered_map<const char *, App::DocumentObject*, CStringHasher, CStringHasher> _outListMap;
+    mutable std::unordered_map<const char *, App::DocumentObject *, CStringHasher, CStringHasher>
+        _outListMap;
     mutable bool _outListCached = false;
 };
 

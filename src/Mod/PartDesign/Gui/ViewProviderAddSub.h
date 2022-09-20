@@ -27,9 +27,10 @@
 #include "ViewProvider.h"
 #include <Mod/Part/Gui/SoBrepFaceSet.h>
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderAddSub : public ViewProvider
+class PartDesignGuiExport ViewProviderAddSub: public ViewProvider
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderAddSub);
 
@@ -38,22 +39,22 @@ public:
     ViewProviderAddSub();
     /// destructor
     ~ViewProviderAddSub() override;
-    
-    void attach(App::DocumentObject*) override;
-    void updateData(const App::Property*) override;
-    
-protected: 
+
+    void attach(App::DocumentObject *) override;
+    void updateData(const App::Property *) override;
+
+protected:
     void updateAddSubShapeIndicator();
     void setPreviewDisplayMode(bool);
-    
-    SoSeparator*                previewShape;
-    PartGui::SoBrepFaceSet*     previewFaceSet;
-    SoCoordinate3*              previewCoords;
-    SoNormal*                   previewNorm;
+
+    SoSeparator *previewShape;
+    PartGui::SoBrepFaceSet *previewFaceSet;
+    SoCoordinate3 *previewCoords;
+    SoNormal *previewNorm;
 
 private:
-    int                         whichChild;
-    std::string                 displayMode;
+    int whichChild;
+    std::string displayMode;
 };
 
 } // namespace PartDesignGui

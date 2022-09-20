@@ -27,30 +27,31 @@
 #include <Gui/PropertyPage.h>
 #include <memory>
 
-namespace PartGui {
+namespace PartGui
+{
 class Ui_DlgSettingsMeasure;
 
 /**
  * The DlgSettingsMeasure class implements a preference page to change color
  *   and font settings for Measure Dimensions
  */
-class DlgSettingsMeasure : public Gui::Dialog::PreferencePage
+class DlgSettingsMeasure: public Gui::Dialog::PreferencePage
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit DlgSettingsMeasure(QWidget* parent = nullptr);
-  ~DlgSettingsMeasure() override;
+    explicit DlgSettingsMeasure(QWidget *parent = nullptr);
+    ~DlgSettingsMeasure() override;
 
-  void saveSettings() override;
-  void loadSettings() override;
+    void saveSettings() override;
+    void loadSettings() override;
 
 protected:
-  void changeEvent(QEvent *e) override;
+    void changeEvent(QEvent *e) override;
 
 private:
-  std::unique_ptr<Ui_DlgSettingsMeasure> ui;
-  void onMeasureRefresh();
+    std::unique_ptr<Ui_DlgSettingsMeasure> ui;
+    void onMeasureRefresh();
 };
 
 } // namespace PartGui

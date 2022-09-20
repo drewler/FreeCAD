@@ -34,11 +34,13 @@
 #include <Mod/Mesh/MeshGlobal.h>
 #endif
 
-namespace Gui {
-    class View3DInventorViewer;
+namespace Gui
+{
+class View3DInventorViewer;
 }
 
-namespace MeshGui {
+namespace MeshGui
+{
 
 class ViewProviderMesh;
 
@@ -70,34 +72,34 @@ public:
     bool isCheckedOnlyVisibleTriangles() const;
     void setAddComponentOnClick(bool);
     void setRemoveComponentOnClick(bool);
-    void setObjects(const std::vector<Gui::SelectionObject>&);
-    std::vector<App::DocumentObject*> getObjects() const;
-    void setViewer(Gui::View3DInventorViewer* v);
+    void setObjects(const std::vector<Gui::SelectionObject> &);
+    std::vector<App::DocumentObject *> getObjects() const;
+    void setViewer(Gui::View3DInventorViewer *v);
 
 protected:
     void setCallback(SoEventCallbackCB *cb);
-    std::list<ViewProviderMesh*> getViewProviders() const;
-    Gui::View3DInventorViewer* getViewer() const;
-    void prepareFreehandSelection(bool,SoEventCallbackCB *cb);
-    void startInteractiveCallback(Gui::View3DInventorViewer* viewer,SoEventCallbackCB *cb);
-    void stopInteractiveCallback(Gui::View3DInventorViewer* viewer);
+    std::list<ViewProviderMesh *> getViewProviders() const;
+    Gui::View3DInventorViewer *getViewer() const;
+    void prepareFreehandSelection(bool, SoEventCallbackCB *cb);
+    void startInteractiveCallback(Gui::View3DInventorViewer *viewer, SoEventCallbackCB *cb);
+    void stopInteractiveCallback(Gui::View3DInventorViewer *viewer);
 
 private:
-    static void selectGLCallback(void * ud, SoEventCallback * n);
-    static void pickFaceCallback(void * ud, SoEventCallback * n);
+    static void selectGLCallback(void *ud, SoEventCallback *n);
+    static void pickFaceCallback(void *ud, SoEventCallback *n);
 
 private:
     bool onlyPointToUserTriangles, onlyVisibleTriangles;
     bool addToSelection, addComponent, removeComponent;
     SoEventCallbackCB *activeCB;
     SoEventCallbackCB *selectionCB;
-    Gui::View3DInventorViewer* ivViewer;
+    Gui::View3DInventorViewer *ivViewer;
     mutable std::vector<Gui::SelectionObject> meshObjects;
 
     static unsigned char cross_bitmap[];
     static unsigned char cross_mask_bitmap[];
 };
 
-}
+} // namespace MeshGui
 
 #endif // MESHGUI_MESHSELECTION_H

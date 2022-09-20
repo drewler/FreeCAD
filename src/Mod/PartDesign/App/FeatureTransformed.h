@@ -37,7 +37,7 @@ namespace PartDesign
  * Abstract superclass of all features that are created by transformation of another feature
  * Transformations are translation, rotation and mirroring
  */
-class PartDesignExport Transformed : public PartDesign::Feature
+class PartDesignExport Transformed: public PartDesign::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Transformed);
 
@@ -58,18 +58,20 @@ public:
      *               silently return a nullptr, otherwise throw Base::Exception.
      *               Default is false.
      */
-    Part::Feature* getBaseObject(bool silent=false) const override;
+    Part::Feature *getBaseObject(bool silent = false) const override;
 
     /// Return the sketch of the first original
-    App::DocumentObject* getSketchObject() const;
+    App::DocumentObject *getSketchObject() const;
 
     /// Get the list of transformations describing the members of the pattern
     // Note: Only the Scaled feature requires the originals
-    virtual const std::list<gp_Trsf> getTransformations(const std::vector<App::DocumentObject*> /*originals*/) {
+    virtual const std::list<gp_Trsf>
+    getTransformations(const std::vector<App::DocumentObject *> /*originals*/)
+    {
         return std::list<gp_Trsf>(); // Default method
     }
 
-   /** @name methods override feature */
+    /** @name methods override feature */
     //@{
     /** Recalculate the feature
       * Gets the transformations from the virtual getTransformations() method of the sub class
@@ -89,12 +91,13 @@ public:
 
 protected:
     void Restore(Base::XMLReader &reader) override;
-    void handleChangedPropertyType(Base::XMLReader &reader, const char * TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
     virtual void positionBySupport();
-    TopoDS_Shape refineShapeIfActive(const TopoDS_Shape&) const;
-    void divideTools(const std::vector<TopoDS_Shape> &toolsIn, std::vector<TopoDS_Shape> &individualsOut,
-                     TopoDS_Compound &compoundOut) const;
-    static TopoDS_Shape getRemainingSolids(const TopoDS_Shape&);
+    TopoDS_Shape refineShapeIfActive(const TopoDS_Shape &) const;
+    void divideTools(const std::vector<TopoDS_Shape> &toolsIn,
+                     std::vector<TopoDS_Shape> &individualsOut, TopoDS_Compound &compoundOut) const;
+    static TopoDS_Shape getRemainingSolids(const TopoDS_Shape &);
 
 private:
 };

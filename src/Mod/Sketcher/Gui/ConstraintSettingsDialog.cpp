@@ -23,8 +23,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QPixmap>
-# include <QDialog>
+#include <QPixmap>
+#include <QDialog>
 #endif
 
 #include <Gui/BitmapFactory.h>
@@ -39,7 +39,7 @@
 using namespace SketcherGui;
 
 ConstraintSettingsDialog::ConstraintSettingsDialog()
-  : QDialog(Gui::getMainWindow()), ui(new Ui_ConstraintSettingsDialog)
+    : QDialog(Gui::getMainWindow()), ui(new Ui_ConstraintSettingsDialog)
 {
     ui->setupUi(this);
 
@@ -49,18 +49,12 @@ ConstraintSettingsDialog::ConstraintSettingsDialog()
         snapshotInitialSettings();
     }
 
-    QObject::connect(
-        ui->filterInternalAlignment, SIGNAL(stateChanged(int)),
-        this                     , SLOT  (on_filterInternalAlignment_stateChanged(int))
-        );
-    QObject::connect(
-        ui->extendedInformation, SIGNAL(stateChanged(int)),
-                     this                     , SLOT  (on_extendedInformation_stateChanged(int))
-        );
-    QObject::connect(
-        ui->visualisationTrackingFilter, SIGNAL(stateChanged(int)),
-        this                     , SLOT  (on_visualisationTrackingFilter_stateChanged(int))
-        );
+    QObject::connect(ui->filterInternalAlignment, SIGNAL(stateChanged(int)), this,
+                     SLOT(on_filterInternalAlignment_stateChanged(int)));
+    QObject::connect(ui->extendedInformation, SIGNAL(stateChanged(int)), this,
+                     SLOT(on_extendedInformation_stateChanged(int)));
+    QObject::connect(ui->visualisationTrackingFilter, SIGNAL(stateChanged(int)), this,
+                     SLOT(on_visualisationTrackingFilter_stateChanged(int)));
 }
 
 void ConstraintSettingsDialog::saveSettings()
@@ -79,7 +73,7 @@ void ConstraintSettingsDialog::loadSettings()
 
 void ConstraintSettingsDialog::snapshotInitialSettings()
 {
-    auto isChecked = [] (auto prefwidget) {return prefwidget->checkState() == Qt::Checked;};
+    auto isChecked = [](auto prefwidget) { return prefwidget->checkState() == Qt::Checked; };
 
     extendedInformation = isChecked(ui->extendedInformation);
     filterInternalAlignment = isChecked(ui->filterInternalAlignment);
@@ -88,9 +82,11 @@ void ConstraintSettingsDialog::snapshotInitialSettings()
 
 void ConstraintSettingsDialog::restoreInitialSettings()
 {
-    auto restoreCheck = [] (auto prefwidget, bool initialvalue) {
-        if( initialvalue != (prefwidget->checkState() == Qt::Checked)) // if the state really changed
-            initialvalue ? prefwidget->setCheckState(Qt::Checked) : prefwidget->setCheckState(Qt::Unchecked);
+    auto restoreCheck = [](auto prefwidget, bool initialvalue) {
+        if (initialvalue
+            != (prefwidget->checkState() == Qt::Checked)) // if the state really changed
+            initialvalue ? prefwidget->setCheckState(Qt::Checked)
+                         : prefwidget->setCheckState(Qt::Unchecked);
     };
 
     restoreCheck(ui->extendedInformation, extendedInformation);
@@ -129,8 +125,6 @@ void ConstraintSettingsDialog::on_extendedInformation_stateChanged(int state)
     Q_EMIT emit_extendedInformation_stateChanged(state);
 }
 
-ConstraintSettingsDialog::~ConstraintSettingsDialog()
-{
-}
+ConstraintSettingsDialog::~ConstraintSettingsDialog() {}
 
 #include "moc_ConstraintSettingsDialog.cpp"

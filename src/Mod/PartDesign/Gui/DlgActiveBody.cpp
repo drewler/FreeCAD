@@ -1,4 +1,4 @@
- /**************************************************************************
+/**************************************************************************
  *   Copyright (c) 2021 FreeCAD Developers                                 *
  *   Author: Ajinkya Dahale                                                *
  *   Based on src/Gui/DlgAddProperty.cpp                                   *
@@ -25,7 +25,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QMessageBox>
+#include <QMessageBox>
 #endif
 
 #include <App/Application.h>
@@ -36,20 +36,16 @@
 #include "ReferenceSelection.h"
 #include "Utils.h"
 
-Q_DECLARE_METATYPE(App::DocumentObject*)
+Q_DECLARE_METATYPE(App::DocumentObject *)
 
 using namespace PartDesignGui;
 
-DlgActiveBody::DlgActiveBody(QWidget *parent, App::Document*& doc, const QString& infoText)
-    : QDialog(parent)
-    , ui(new Ui_DlgActiveBody)
-    , _doc(doc)
-    , activeBody(nullptr)
+DlgActiveBody::DlgActiveBody(QWidget *parent, App::Document *&doc, const QString &infoText)
+    : QDialog(parent), ui(new Ui_DlgActiveBody), _doc(doc), activeBody(nullptr)
 {
     ui->setupUi(this);
 
-    connect(ui->bodySelect, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
-            this, SLOT(accept()));
+    connect(ui->bodySelect, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
 
     if (!infoText.isEmpty()) {
         ui->label->setText(infoText + QString::fromUtf8("\n\n") + tr("Please select"));
@@ -57,8 +53,8 @@ DlgActiveBody::DlgActiveBody(QWidget *parent, App::Document*& doc, const QString
 
     auto bodies = _doc->getObjectsOfType(PartDesign::Body::getClassTypeId());
 
-    PartDesign::Body* bodyOfActiveObject = nullptr;
-    for (const auto &obj :  Gui::Selection().getSelection()) {
+    PartDesign::Body *bodyOfActiveObject = nullptr;
+    for (const auto &obj : Gui::Selection().getSelection()) {
         bodyOfActiveObject = PartDesign::Body::findBodyOf(obj.pObject);
         break; // Just get the body for first selected object
     }
@@ -68,9 +64,7 @@ DlgActiveBody::DlgActiveBody(QWidget *parent, App::Document*& doc, const QString
         item->setData(Qt::UserRole, QVariant::fromValue(body));
         ui->bodySelect->addItem(item);
 
-        if (body == bodyOfActiveObject) {
-            item->setSelected(true);
-        }
+        if (body == bodyOfActiveObject) { item->setSelected(true); }
 
         // TODO: Any other logic (hover, select effects on view etc.)
     }
@@ -78,30 +72,25 @@ DlgActiveBody::DlgActiveBody(QWidget *parent, App::Document*& doc, const QString
     if (!bodyOfActiveObject) {
         // by default select the first item so that the user
         // can continue by clicking Ok without further action
-        QListWidgetItem* first = ui->bodySelect->item(0);
-        if (first)
-            first->setSelected(true);
+        QListWidgetItem *first = ui->bodySelect->item(0);
+        if (first) first->setSelected(true);
     }
 }
 
-DlgActiveBody::~DlgActiveBody()
-{
-}
+DlgActiveBody::~DlgActiveBody() {}
 
 void DlgActiveBody::accept()
 {
     auto selectedItems = ui->bodySelect->selectedItems();
-    if (selectedItems.empty())
-        return;
+    if (selectedItems.empty()) return;
 
-    App::DocumentObject* selectedBody =
-        selectedItems[0]->data(Qt::UserRole).value<App::DocumentObject*>();
-    if (selectedBody) {
-        activeBody = makeBodyActive(selectedBody, _doc);
-    }
+    App::DocumentObject *selectedBody =
+        selectedItems[0]->data(Qt::UserRole).value<App::DocumentObject *>();
+    if (selectedBody) { activeBody = makeBodyActive(selectedBody, _doc); }
     else {
         // A transaction must be created as otherwise the undo/redo is broken
-        App::GetApplication().setActiveTransaction(QT_TRANSLATE_NOOP("Command", "Add a Body"), true);
+        App::GetApplication().setActiveTransaction(QT_TRANSLATE_NOOP("Command", "Add a Body"),
+                                                   true);
         activeBody = makeBody(_doc);
         App::GetApplication().closeActiveTransaction();
     }

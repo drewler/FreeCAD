@@ -29,9 +29,9 @@
 // Draft
 #ifndef DraftUtilsExport
 #ifdef DraftUtils_EXPORTS
-#       define DraftUtilsExport   FREECAD_DECL_EXPORT
+#define DraftUtilsExport FREECAD_DECL_EXPORT
 #else
-#       define DraftUtilsExport   FREECAD_DECL_IMPORT
+#define DraftUtilsExport FREECAD_DECL_IMPORT
 #endif
 #endif
 

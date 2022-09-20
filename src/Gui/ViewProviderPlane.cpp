@@ -24,12 +24,12 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Inventor/nodes/SoAsciiText.h>
-# include <Inventor/nodes/SoCoordinate3.h>
-# include <Inventor/nodes/SoIndexedLineSet.h>
-# include <Inventor/nodes/SoPickStyle.h>
-# include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoPickStyle.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoTranslation.h>
 #endif
 
 #include "ViewProviderPlane.h"
@@ -41,45 +41,44 @@ using namespace Gui;
 PROPERTY_SOURCE(Gui::ViewProviderPlane, Gui::ViewProviderOriginFeature)
 
 
-ViewProviderPlane::ViewProviderPlane()
+ViewProviderPlane::ViewProviderPlane() { sPixmap = "Std_Plane"; }
+
+ViewProviderPlane::~ViewProviderPlane() {}
+
+void ViewProviderPlane::attach(App::DocumentObject *obj)
 {
-    sPixmap = "Std_Plane";
-}
-
-ViewProviderPlane::~ViewProviderPlane()
-{ }
-
-void ViewProviderPlane::attach ( App::DocumentObject *obj ) {
-    ViewProviderOriginFeature::attach ( obj );
-    static const float size = ViewProviderOrigin::defaultSize ();
+    ViewProviderOriginFeature::attach(obj);
+    static const float size = ViewProviderOrigin::defaultSize();
 
     static const SbVec3f verts[4] = {
-        SbVec3f(size,size,0),   SbVec3f(size,-size,0),
-        SbVec3f(-size,-size,0), SbVec3f(-size,size,0),
+        SbVec3f(size, size, 0),
+        SbVec3f(size, -size, 0),
+        SbVec3f(-size, -size, 0),
+        SbVec3f(-size, size, 0),
     };
 
     // indexes used to create the edges
-    static const int32_t lines[6] = { 0, 1, 2, 3, 0, -1 };
+    static const int32_t lines[6] = {0, 1, 2, 3, 0, -1};
 
-    SoSeparator *sep = getOriginFeatureRoot ();
+    SoSeparator *sep = getOriginFeatureRoot();
 
-    auto pCoords = new SoCoordinate3 ();
-    pCoords->point.setNum (4);
-    pCoords->point.setValues ( 0, 4, verts );
-    sep->addChild ( pCoords );
+    auto pCoords = new SoCoordinate3();
+    pCoords->point.setNum(4);
+    pCoords->point.setValues(0, 4, verts);
+    sep->addChild(pCoords);
 
-    auto pLines  = new SoIndexedLineSet ();
+    auto pLines = new SoIndexedLineSet();
     pLines->coordIndex.setNum(6);
     pLines->coordIndex.setValues(0, 6, lines);
-    sep->addChild ( pLines );
+    sep->addChild(pLines);
 
-    auto textTranslation = new SoTranslation ();
-    textTranslation->translation.setValue ( SbVec3f ( -size * 49. / 50., size * 9./10., 0 ) );
-    sep->addChild ( textTranslation );
+    auto textTranslation = new SoTranslation();
+    textTranslation->translation.setValue(SbVec3f(-size * 49. / 50., size * 9. / 10., 0));
+    sep->addChild(textTranslation);
 
     auto ps = new SoPickStyle();
     ps->style.setValue(SoPickStyle::BOUNDING_BOX);
     sep->addChild(ps);
 
-    sep->addChild ( getLabel () );
+    sep->addChild(getLabel());
 }

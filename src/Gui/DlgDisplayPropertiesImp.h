@@ -35,28 +35,30 @@
 
 namespace App
 {
-  class Property;
+class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 
-  class ViewProvider;
-  class Command;
+class ViewProvider;
+class Command;
 
-namespace Dialog {
+namespace Dialog
+{
 
 /**
  * The DlgDisplayPropertiesImp class implements a dialog containing all available document
  * templates to create a new document.
  * \author Jürgen Riegel
  */
-class DlgDisplayPropertiesImp : public QDialog,
-                                public Gui::SelectionSingleton::ObserverType
+class DlgDisplayPropertiesImp: public QDialog, public Gui::SelectionSingleton::ObserverType
 {
     Q_OBJECT
 
 public:
-    explicit DlgDisplayPropertiesImp(bool floating, QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgDisplayPropertiesImp(bool floating, QWidget *parent = nullptr,
+                                     Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgDisplayPropertiesImp() override;
     /// Observer message from the Selection
     void OnChange(Gui::SelectionSingleton::SubjectType &rCaller,
@@ -66,8 +68,8 @@ public:
 
 private Q_SLOTS:
     void on_changeMaterial_activated(int);
-    void on_changeMode_activated(const QString&);
-    void on_changePlot_activated(const QString&);
+    void on_changeMode_activated(const QString &);
+    void on_changePlot_activated(const QString &);
     void on_buttonColor_changed();
     void on_spinTransparency_valueChanged(int);
     void on_spinPointSize_valueChanged(int);
@@ -81,25 +83,25 @@ protected:
     void changeEvent(QEvent *e) override;
 
 private:
-    void slotChangedObject(const Gui::ViewProvider&, const App::Property& Prop);
-    void setDisplayModes(const std::vector<ViewProvider*>&);
-    void setMaterial(const std::vector<ViewProvider*>&);
-    void setColorPlot(const std::vector<ViewProvider*>&);
+    void slotChangedObject(const Gui::ViewProvider &, const App::Property &Prop);
+    void setDisplayModes(const std::vector<ViewProvider *> &);
+    void setMaterial(const std::vector<ViewProvider *> &);
+    void setColorPlot(const std::vector<ViewProvider *> &);
     void fillupMaterials();
-    void setShapeColor(const std::vector<ViewProvider*>&);
-    void setLineColor(const std::vector<ViewProvider*>&);
-    void setPointSize(const std::vector<ViewProvider*>&);
-    void setLineWidth(const std::vector<ViewProvider*>&);
-    void setTransparency(const std::vector<ViewProvider*>&);
-    void setLineTransparency(const std::vector<ViewProvider*>&);
-    std::vector<ViewProvider*> getSelection() const;
+    void setShapeColor(const std::vector<ViewProvider *> &);
+    void setLineColor(const std::vector<ViewProvider *> &);
+    void setPointSize(const std::vector<ViewProvider *> &);
+    void setLineWidth(const std::vector<ViewProvider *> &);
+    void setTransparency(const std::vector<ViewProvider *> &);
+    void setLineTransparency(const std::vector<ViewProvider *> &);
+    std::vector<ViewProvider *> getSelection() const;
 
 private:
     class Private;
     std::unique_ptr<Private> d;
 };
 
-class TaskDisplayProperties : public Gui::TaskView::TaskDialog
+class TaskDisplayProperties: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -110,17 +112,14 @@ public:
 public:
     bool reject() override;
 
-    bool isAllowedAlterDocument() const override
-    { return true; }
-    bool isAllowedAlterView() const override
-    { return true; }
-    bool isAllowedAlterSelection() const override
-    { return true; }
+    bool isAllowedAlterDocument() const override { return true; }
+    bool isAllowedAlterView() const override { return true; }
+    bool isAllowedAlterSelection() const override { return true; }
     QDialogButtonBox::StandardButtons getStandardButtons() const override;
 
 private:
-    DlgDisplayPropertiesImp* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    DlgDisplayPropertiesImp *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } // namespace Dialog

@@ -42,30 +42,24 @@ using namespace std;
 //purpose  : Constructor tetrahedron of 10 nodes
 //=======================================================================
 
-SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes
-                                               (const SMDS_MeshNode * n1,
-                                                const SMDS_MeshNode * n2,
-                                                const SMDS_MeshNode * n3,
-                                                const SMDS_MeshNode * n4,
-                                                const SMDS_MeshNode * n12,
-                                                const SMDS_MeshNode * n23,
-                                                const SMDS_MeshNode * n31,
-                                                const SMDS_MeshNode * n14, 
-                                                const SMDS_MeshNode * n24,
-                                                const SMDS_MeshNode * n34)
+SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes(
+    const SMDS_MeshNode *n1, const SMDS_MeshNode *n2, const SMDS_MeshNode *n3,
+    const SMDS_MeshNode *n4, const SMDS_MeshNode *n12, const SMDS_MeshNode *n23,
+    const SMDS_MeshNode *n31, const SMDS_MeshNode *n14, const SMDS_MeshNode *n24,
+    const SMDS_MeshNode *n34)
 {
-  //MESSAGE("*********************************************** SMDS_QuadraticVolumeOfNodes");
-  myNodes.resize( 10 );
-  myNodes[ 0 ] = n1;
-  myNodes[ 1 ] = n2;
-  myNodes[ 2 ] = n3;
-  myNodes[ 3 ] = n4;
-  myNodes[ 4 ] = n12;
-  myNodes[ 5 ] = n23;
-  myNodes[ 6 ] = n31;
-  myNodes[ 7 ] = n14;
-  myNodes[ 8 ] = n24;
-  myNodes[ 9 ] = n34;
+    //MESSAGE("*********************************************** SMDS_QuadraticVolumeOfNodes");
+    myNodes.resize(10);
+    myNodes[0] = n1;
+    myNodes[1] = n2;
+    myNodes[2] = n3;
+    myNodes[3] = n4;
+    myNodes[4] = n12;
+    myNodes[5] = n23;
+    myNodes[6] = n31;
+    myNodes[7] = n14;
+    myNodes[8] = n24;
+    myNodes[9] = n34;
 }
 
 
@@ -74,36 +68,28 @@ SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes
 //purpose  : Constructor pyramid of 13 nodes
 //=======================================================================
 
-SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes
-                                               (const SMDS_MeshNode * n1,
-                                                const SMDS_MeshNode * n2,
-                                                const SMDS_MeshNode * n3,
-                                                const SMDS_MeshNode * n4,
-                                                const SMDS_MeshNode * n5,
-                                                const SMDS_MeshNode * n12,
-                                                const SMDS_MeshNode * n23,
-                                                const SMDS_MeshNode * n34,
-                                                const SMDS_MeshNode * n41, 
-                                                const SMDS_MeshNode * n15,
-                                                const SMDS_MeshNode * n25,
-                                                const SMDS_MeshNode * n35,
-                                                const SMDS_MeshNode * n45)
+SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes(
+    const SMDS_MeshNode *n1, const SMDS_MeshNode *n2, const SMDS_MeshNode *n3,
+    const SMDS_MeshNode *n4, const SMDS_MeshNode *n5, const SMDS_MeshNode *n12,
+    const SMDS_MeshNode *n23, const SMDS_MeshNode *n34, const SMDS_MeshNode *n41,
+    const SMDS_MeshNode *n15, const SMDS_MeshNode *n25, const SMDS_MeshNode *n35,
+    const SMDS_MeshNode *n45)
 {
-  //MESSAGE("*********************************************** SMDS_QuadraticVolumeOfNodes");
-  myNodes.resize( 13 );
-  myNodes[ 0 ] = n1;
-  myNodes[ 1 ] = n2;
-  myNodes[ 2 ] = n3;
-  myNodes[ 3 ] = n4;
-  myNodes[ 4 ] = n5;
-  myNodes[ 5 ] = n12;
-  myNodes[ 6 ] = n23;
-  myNodes[ 7 ] = n34;
-  myNodes[ 8 ] = n41;
-  myNodes[ 9 ] = n15;
-  myNodes[ 10 ] = n25;
-  myNodes[ 11 ] = n35;
-  myNodes[ 12 ] = n45;
+    //MESSAGE("*********************************************** SMDS_QuadraticVolumeOfNodes");
+    myNodes.resize(13);
+    myNodes[0] = n1;
+    myNodes[1] = n2;
+    myNodes[2] = n3;
+    myNodes[3] = n4;
+    myNodes[4] = n5;
+    myNodes[5] = n12;
+    myNodes[6] = n23;
+    myNodes[7] = n34;
+    myNodes[8] = n41;
+    myNodes[9] = n15;
+    myNodes[10] = n25;
+    myNodes[11] = n35;
+    myNodes[12] = n45;
 }
 
 
@@ -112,40 +98,30 @@ SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes
 //purpose  : Constructor Pentahedron with 15 nodes
 //=======================================================================
 
-SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes
-                                               (const SMDS_MeshNode * n1,
-                                                const SMDS_MeshNode * n2,
-                                                const SMDS_MeshNode * n3,
-                                                const SMDS_MeshNode * n4,
-                                                const SMDS_MeshNode * n5,
-                                                const SMDS_MeshNode * n6, 
-                                                const SMDS_MeshNode * n12,
-                                                const SMDS_MeshNode * n23,
-                                                const SMDS_MeshNode * n31, 
-                                                const SMDS_MeshNode * n45,
-                                                const SMDS_MeshNode * n56,
-                                                const SMDS_MeshNode * n64, 
-                                                const SMDS_MeshNode * n14,
-                                                const SMDS_MeshNode * n25,
-                                                const SMDS_MeshNode * n36)
+SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes(
+    const SMDS_MeshNode *n1, const SMDS_MeshNode *n2, const SMDS_MeshNode *n3,
+    const SMDS_MeshNode *n4, const SMDS_MeshNode *n5, const SMDS_MeshNode *n6,
+    const SMDS_MeshNode *n12, const SMDS_MeshNode *n23, const SMDS_MeshNode *n31,
+    const SMDS_MeshNode *n45, const SMDS_MeshNode *n56, const SMDS_MeshNode *n64,
+    const SMDS_MeshNode *n14, const SMDS_MeshNode *n25, const SMDS_MeshNode *n36)
 {
-  //MESSAGE("*********************************************** SMDS_QuadraticVolumeOfNodes");
-  myNodes.resize( 15 );
-  myNodes[ 0 ] = n1;
-  myNodes[ 1 ] = n2;
-  myNodes[ 2 ] = n3;
-  myNodes[ 3 ] = n4;
-  myNodes[ 4 ] = n5;
-  myNodes[ 5 ] = n6;
-  myNodes[ 6 ] = n12;
-  myNodes[ 7 ] = n23;
-  myNodes[ 8 ] = n31;
-  myNodes[ 9 ] = n45;
-  myNodes[ 10 ] = n56;
-  myNodes[ 11 ] = n64;
-  myNodes[ 12 ] = n14;
-  myNodes[ 13 ] = n25;
-  myNodes[ 14 ] = n36;
+    //MESSAGE("*********************************************** SMDS_QuadraticVolumeOfNodes");
+    myNodes.resize(15);
+    myNodes[0] = n1;
+    myNodes[1] = n2;
+    myNodes[2] = n3;
+    myNodes[3] = n4;
+    myNodes[4] = n5;
+    myNodes[5] = n6;
+    myNodes[6] = n12;
+    myNodes[7] = n23;
+    myNodes[8] = n31;
+    myNodes[9] = n45;
+    myNodes[10] = n56;
+    myNodes[11] = n64;
+    myNodes[12] = n14;
+    myNodes[13] = n25;
+    myNodes[14] = n36;
 }
 
 
@@ -154,159 +130,138 @@ SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes
 //purpose  : Constructor Hexahedrons with 20 nodes
 //=======================================================================
 
-SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes
-                                               (const SMDS_MeshNode * n1,
-                                                const SMDS_MeshNode * n2,
-                                                const SMDS_MeshNode * n3,
-                                                const SMDS_MeshNode * n4,
-                                                const SMDS_MeshNode * n5,
-                                                const SMDS_MeshNode * n6,
-                                                const SMDS_MeshNode * n7,
-                                                const SMDS_MeshNode * n8, 
-                                                const SMDS_MeshNode * n12,
-                                                const SMDS_MeshNode * n23,
-                                                const SMDS_MeshNode * n34,
-                                                const SMDS_MeshNode * n41, 
-                                                const SMDS_MeshNode * n56,
-                                                const SMDS_MeshNode * n67,
-                                                const SMDS_MeshNode * n78,
-                                                const SMDS_MeshNode * n85, 
-                                                const SMDS_MeshNode * n15,
-                                                const SMDS_MeshNode * n26,
-                                                const SMDS_MeshNode * n37,
-                                                const SMDS_MeshNode * n48)
+SMDS_QuadraticVolumeOfNodes::SMDS_QuadraticVolumeOfNodes(
+    const SMDS_MeshNode *n1, const SMDS_MeshNode *n2, const SMDS_MeshNode *n3,
+    const SMDS_MeshNode *n4, const SMDS_MeshNode *n5, const SMDS_MeshNode *n6,
+    const SMDS_MeshNode *n7, const SMDS_MeshNode *n8, const SMDS_MeshNode *n12,
+    const SMDS_MeshNode *n23, const SMDS_MeshNode *n34, const SMDS_MeshNode *n41,
+    const SMDS_MeshNode *n56, const SMDS_MeshNode *n67, const SMDS_MeshNode *n78,
+    const SMDS_MeshNode *n85, const SMDS_MeshNode *n15, const SMDS_MeshNode *n26,
+    const SMDS_MeshNode *n37, const SMDS_MeshNode *n48)
 {
-  //MESSAGE("*********************************************** SMDS_QuadraticVolumeOfNodes");
-  myNodes.resize( 20 );
-  myNodes[ 0 ] = n1;
-  myNodes[ 1 ] = n2;
-  myNodes[ 2 ] = n3;
-  myNodes[ 3 ] = n4;
-  myNodes[ 4 ] = n5;
-  myNodes[ 5 ] = n6;
-  myNodes[ 6 ] = n7;
-  myNodes[ 7 ] = n8;
-  myNodes[ 8 ] = n12;
-  myNodes[ 9 ] = n23;
-  myNodes[ 10 ] = n34;
-  myNodes[ 11 ] = n41;
-  myNodes[ 12 ] = n56;
-  myNodes[ 13 ] = n67;
-  myNodes[ 14 ] = n78;
-  myNodes[ 15 ] = n85;
-  myNodes[ 16 ] = n15;
-  myNodes[ 17 ] = n26;
-  myNodes[ 18 ] = n37;
-  myNodes[ 19 ] = n48;
+    //MESSAGE("*********************************************** SMDS_QuadraticVolumeOfNodes");
+    myNodes.resize(20);
+    myNodes[0] = n1;
+    myNodes[1] = n2;
+    myNodes[2] = n3;
+    myNodes[3] = n4;
+    myNodes[4] = n5;
+    myNodes[5] = n6;
+    myNodes[6] = n7;
+    myNodes[7] = n8;
+    myNodes[8] = n12;
+    myNodes[9] = n23;
+    myNodes[10] = n34;
+    myNodes[11] = n41;
+    myNodes[12] = n56;
+    myNodes[13] = n67;
+    myNodes[14] = n78;
+    myNodes[15] = n85;
+    myNodes[16] = n15;
+    myNodes[17] = n26;
+    myNodes[18] = n37;
+    myNodes[19] = n48;
 }
 
 
 //=======================================================================
 //function : IsMediumNode
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_QuadraticVolumeOfNodes::IsMediumNode(const SMDS_MeshNode* node) const
+bool SMDS_QuadraticVolumeOfNodes::IsMediumNode(const SMDS_MeshNode *node) const
 {
-  int nbCorners = 0;
-  switch (myNodes.size()) {
-  case 10: nbCorners = 4; break;
-  case 13: nbCorners = 5; break;
-  case 15: nbCorners = 6; break;
-  default: nbCorners = 8;
-  }
-  for ( int i = nbCorners; i<myNodes.size(); i++) {
-    if(myNodes[i]==node) return true;
-  }
-  return false;
+    int nbCorners = 0;
+    switch (myNodes.size()) {
+        case 10: nbCorners = 4; break;
+        case 13: nbCorners = 5; break;
+        case 15: nbCorners = 6; break;
+        default: nbCorners = 8;
+    }
+    for (int i = nbCorners; i < myNodes.size(); i++) {
+        if (myNodes[i] == node) return true;
+    }
+    return false;
 }
 
 
 //=======================================================================
 //function : ChangeNodes
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_QuadraticVolumeOfNodes::ChangeNodes(const SMDS_MeshNode* nodes[],
-                                              const int            nbNodes)
+bool SMDS_QuadraticVolumeOfNodes::ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes)
 {
-  if( nbNodes==10 || nbNodes==13 || nbNodes==15 || nbNodes==20 ) {
-    myNodes.resize(nbNodes);
-    int i=0;
-    for(; i<nbNodes; i++) {
-      myNodes[i] = nodes[i];
+    if (nbNodes == 10 || nbNodes == 13 || nbNodes == 15 || nbNodes == 20) {
+        myNodes.resize(nbNodes);
+        int i = 0;
+        for (; i < nbNodes; i++) { myNodes[i] = nodes[i]; }
+        return true;
     }
-    return true;
-  }
-  return false;
+    return false;
 }
 
 
 //=======================================================================
 //function : NbNodes
-//purpose  : 
+//purpose  :
 //=======================================================================
-int SMDS_QuadraticVolumeOfNodes::NbNodes() const
-{
-  return myNodes.size();
-}
+int SMDS_QuadraticVolumeOfNodes::NbNodes() const { return myNodes.size(); }
 
 
 //=======================================================================
 //function : NbEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
 int SMDS_QuadraticVolumeOfNodes::NbEdges() const
 {
-  if(myNodes.size()==10)
-    return 6;
-  else if(myNodes.size()==13)
-    return 8;
-  else if(myNodes.size()==15)
-    return 9;
-  else
-    return 12;
+    if (myNodes.size() == 10) return 6;
+    else if (myNodes.size() == 13)
+        return 8;
+    else if (myNodes.size() == 15)
+        return 9;
+    else
+        return 12;
 }
 
 
 //=======================================================================
 //function : NbFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
 int SMDS_QuadraticVolumeOfNodes::NbFaces() const
 {
-  if(myNodes.size()==10)
-    return 4;
-  else if(myNodes.size()==20)
-    return 6;
-  else
-    return 5;
+    if (myNodes.size() == 10) return 4;
+    else if (myNodes.size() == 20)
+        return 6;
+    else
+        return 5;
 }
 
 //=======================================================================
 //function : Print
-//purpose  : 
+//purpose  :
 //=======================================================================
-void SMDS_QuadraticVolumeOfNodes::Print(ostream & OS) const
+void SMDS_QuadraticVolumeOfNodes::Print(ostream &OS) const
 {
-  OS << "quadratic volume <" << GetID() << " > : ";
-  int i, nbNodes = myNodes.size();
-  for (i = 0; i < nbNodes - 1; i++)
-    OS << myNodes[i] << ",";
-  OS << myNodes[i] << ") " << endl;
+    OS << "quadratic volume <" << GetID() << " > : ";
+    int i, nbNodes = myNodes.size();
+    for (i = 0; i < nbNodes - 1; i++) OS << myNodes[i] << ",";
+    OS << myNodes[i] << ") " << endl;
 }
 
 
 //=======================================================================
 //private class : SMDS_QuadraticVolumeOfNodes_MyIterator
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-class SMDS_QuadraticVolumeOfNodes_MyIterator : public SMDS_NodeVectorElemIterator
+class SMDS_QuadraticVolumeOfNodes_MyIterator: public SMDS_NodeVectorElemIterator
 {
 public:
-  SMDS_QuadraticVolumeOfNodes_MyIterator(const vector<const SMDS_MeshNode *>& s):
-    SMDS_NodeVectorElemIterator( s.begin(), s.end() ) {}
+    SMDS_QuadraticVolumeOfNodes_MyIterator(const vector<const SMDS_MeshNode *> &s)
+        : SMDS_NodeVectorElemIterator(s.begin(), s.end())
+    {}
 };
 
 /// ===================================================================
@@ -315,52 +270,49 @@ public:
  */
 /// ===================================================================
 
-class _MySubIterator : public SMDS_ElemIterator
+class _MySubIterator: public SMDS_ElemIterator
 {
-  vector< const SMDS_MeshElement* > myElems;
-  int myIndex;
-public:
-  _MySubIterator(const SMDS_MeshVolume* vol, SMDSAbs_ElementType type):myIndex(0) {
-    SMDS_VolumeTool vTool(vol);
-    if (type == SMDSAbs_Face)
-      vTool.GetAllExistingFaces( myElems );
-    else
-      vTool.GetAllExistingFaces( myElems );
-  }
-  /// Return true if and only if there are other object in this iterator
-  virtual bool more() { return myIndex < myElems.size(); }
+    vector<const SMDS_MeshElement *> myElems;
+    int myIndex;
 
-  /// Return the current object and step to the next one
-  virtual const SMDS_MeshElement* next() { return myElems[ myIndex++ ]; }
+public:
+    _MySubIterator(const SMDS_MeshVolume *vol, SMDSAbs_ElementType type) : myIndex(0)
+    {
+        SMDS_VolumeTool vTool(vol);
+        if (type == SMDSAbs_Face) vTool.GetAllExistingFaces(myElems);
+        else
+            vTool.GetAllExistingFaces(myElems);
+    }
+    /// Return true if and only if there are other object in this iterator
+    virtual bool more() { return myIndex < myElems.size(); }
+
+    /// Return the current object and step to the next one
+    virtual const SMDS_MeshElement *next() { return myElems[myIndex++]; }
 };
 
 //=======================================================================
 //function : elementsIterator
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-SMDS_ElemIteratorPtr SMDS_QuadraticVolumeOfNodes::elementsIterator
-                                         (SMDSAbs_ElementType type) const
+SMDS_ElemIteratorPtr SMDS_QuadraticVolumeOfNodes::elementsIterator(SMDSAbs_ElementType type) const
 {
-  switch(type)
-  {
-  case SMDSAbs_Volume:
-    return SMDS_MeshElement::elementsIterator(SMDSAbs_Volume);
-  case SMDSAbs_Node:
-    return SMDS_ElemIteratorPtr(new SMDS_QuadraticVolumeOfNodes_MyIterator(myNodes));
-  case SMDSAbs_Edge:
-    return SMDS_ElemIteratorPtr(new _MySubIterator(this,SMDSAbs_Edge));
-    break;
-  case SMDSAbs_Face:
-    return SMDS_ElemIteratorPtr(new _MySubIterator(this,SMDSAbs_Face));
-    break;
-  default:
-    return SMDS_ElemIteratorPtr
-      (new SMDS_IteratorOfElements
-       (this,type,SMDS_ElemIteratorPtr
-        (new SMDS_QuadraticVolumeOfNodes_MyIterator(myNodes))));
-  }
-  return SMDS_ElemIteratorPtr();
+    switch (type) {
+        case SMDSAbs_Volume: return SMDS_MeshElement::elementsIterator(SMDSAbs_Volume);
+        case SMDSAbs_Node:
+            return SMDS_ElemIteratorPtr(new SMDS_QuadraticVolumeOfNodes_MyIterator(myNodes));
+        case SMDSAbs_Edge:
+            return SMDS_ElemIteratorPtr(new _MySubIterator(this, SMDSAbs_Edge));
+            break;
+        case SMDSAbs_Face:
+            return SMDS_ElemIteratorPtr(new _MySubIterator(this, SMDSAbs_Face));
+            break;
+        default:
+            return SMDS_ElemIteratorPtr(new SMDS_IteratorOfElements(
+                this, type,
+                SMDS_ElemIteratorPtr(new SMDS_QuadraticVolumeOfNodes_MyIterator(myNodes))));
+    }
+    return SMDS_ElemIteratorPtr();
 }
 
 /*!
@@ -368,21 +320,20 @@ SMDS_ElemIteratorPtr SMDS_QuadraticVolumeOfNodes::elementsIterator
  * \param ind - node index
  * \retval const SMDS_MeshNode* - the node
  */
-const SMDS_MeshNode* SMDS_QuadraticVolumeOfNodes::GetNode(const int ind) const
+const SMDS_MeshNode *SMDS_QuadraticVolumeOfNodes::GetNode(const int ind) const
 {
-  return myNodes[ ind ];
+    return myNodes[ind];
 }
 
 SMDSAbs_EntityType SMDS_QuadraticVolumeOfNodes::GetEntityType() const
 {
-  SMDSAbs_EntityType aType = SMDSEntity_Quad_Tetra;
-  switch(NbNodes())
-  {
-  case 10: aType = SMDSEntity_Quad_Tetra;   break;
-  case 13: aType = SMDSEntity_Quad_Pyramid; break;
-  case 15: aType = SMDSEntity_Quad_Penta;   break;
-  case 20:
-  default: aType = SMDSEntity_Quad_Hexa;    break;
-  }
-  return aType;
+    SMDSAbs_EntityType aType = SMDSEntity_Quad_Tetra;
+    switch (NbNodes()) {
+        case 10: aType = SMDSEntity_Quad_Tetra; break;
+        case 13: aType = SMDSEntity_Quad_Pyramid; break;
+        case 15: aType = SMDSEntity_Quad_Penta; break;
+        case 20:
+        default: aType = SMDSEntity_Quad_Hexa; break;
+    }
+    return aType;
 }

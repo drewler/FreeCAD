@@ -27,20 +27,24 @@
 #include <Gui/TaskView/TaskView.h>
 #include <Gui/TaskView/TaskDialog.h>
 
-namespace Part { class Thickness; }
-namespace PartGui { 
+namespace Part
+{
+class Thickness;
+}
+namespace PartGui
+{
 
-class ThicknessWidget : public QWidget
+class ThicknessWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ThicknessWidget(Part::Thickness*, QWidget* parent = nullptr);
+    explicit ThicknessWidget(Part::Thickness *, QWidget *parent = nullptr);
     ~ThicknessWidget() override;
 
     bool accept();
     bool reject();
-    Part::Thickness* getObject() const;
+    Part::Thickness *getObject() const;
 
 private Q_SLOTS:
     void on_spinOffset_valueChanged(double);
@@ -56,15 +60,15 @@ private:
 
 private:
     class Private;
-    Private* d;
+    Private *d;
 };
 
-class TaskThickness : public Gui::TaskView::TaskDialog
+class TaskThickness: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskThickness(Part::Thickness*);
+    explicit TaskThickness(Part::Thickness *);
     ~TaskThickness() override;
 
 public:
@@ -72,14 +76,16 @@ public:
     bool accept() override;
     bool reject() override;
     void clicked(int) override;
-    Part::Thickness* getObject() const;
+    Part::Thickness *getObject() const;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok|QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 private:
-    ThicknessWidget* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    ThicknessWidget *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace PartGui

@@ -25,8 +25,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoCoordinate3.h>
 #endif
 
 #include <Mod/Part/Gui/SoBrepEdgeSet.h>
@@ -37,29 +37,27 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderDatumPlane,PartDesignGui::ViewProviderDatum)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderDatumPlane, PartDesignGui::ViewProviderDatum)
 
 ViewProviderDatumPlane::ViewProviderDatumPlane()
 {
     sPixmap = "PartDesign_Plane.svg";
 
     pCoords = new SoCoordinate3();
-    pCoords->ref ();
+    pCoords->ref();
 }
 
-ViewProviderDatumPlane::~ViewProviderDatumPlane()
+ViewProviderDatumPlane::~ViewProviderDatumPlane() { pCoords->unref(); }
+
+void ViewProviderDatumPlane::attach(App::DocumentObject *obj)
 {
-    pCoords->unref ();
-}
 
-void ViewProviderDatumPlane::attach ( App::DocumentObject *obj ) {
+    ViewProviderDatum::attach(obj);
 
-    ViewProviderDatum::attach ( obj );
+    ViewProviderDatum::setExtents(defaultBoundBox());
+    getShapeRoot()->addChild(pCoords);
 
-    ViewProviderDatum::setExtents ( defaultBoundBox () );
-    getShapeRoot ()->addChild(pCoords);
-
-    PartGui::SoBrepEdgeSet* lineSet = new PartGui::SoBrepEdgeSet();
+    PartGui::SoBrepEdgeSet *lineSet = new PartGui::SoBrepEdgeSet();
     lineSet->coordIndex.setNum(6);
     lineSet->coordIndex.set1Value(0, 0);
     lineSet->coordIndex.set1Value(1, 1);
@@ -67,7 +65,7 @@ void ViewProviderDatumPlane::attach ( App::DocumentObject *obj ) {
     lineSet->coordIndex.set1Value(3, 3);
     lineSet->coordIndex.set1Value(4, 0);
     lineSet->coordIndex.set1Value(5, SO_END_LINE_INDEX);
-    getShapeRoot ()->addChild(lineSet);
+    getShapeRoot()->addChild(lineSet);
 
     PartGui::SoBrepFaceSet *faceSet = new PartGui::SoBrepFaceSet();
     // SoBrepFaceSet supports only triangles (otherwise we receive incorrect highlighting)
@@ -84,18 +82,15 @@ void ViewProviderDatumPlane::attach ( App::DocumentObject *obj ) {
     faceSet->coordIndex.set1Value(6, 0);
     faceSet->coordIndex.set1Value(7, SO_END_FACE_INDEX);
 
-    getShapeRoot ()->addChild(faceSet);
+    getShapeRoot()->addChild(faceSet);
 }
 
-void ViewProviderDatumPlane::updateData(const App::Property* prop)
+void ViewProviderDatumPlane::updateData(const App::Property *prop)
 {
     // Gets called whenever a property of the attached object changes
-    if (strcmp(prop->getName(),"Placement") == 0) {
-        updateExtents ();
-    }
-    else if (strcmp(prop->getName(),"Length") == 0 ||
-             strcmp(prop->getName(),"Width") == 0) {
-        PartDesign::Plane* pcDatum = static_cast<PartDesign::Plane*>(this->getObject());
+    if (strcmp(prop->getName(), "Placement") == 0) { updateExtents(); }
+    else if (strcmp(prop->getName(), "Length") == 0 || strcmp(prop->getName(), "Width") == 0) {
+        PartDesign::Plane *pcDatum = static_cast<PartDesign::Plane *>(this->getObject());
         if (pcDatum->ResizeMode.getValue() != 0)
             setExtents(pcDatum->Length.getValue(), pcDatum->Width.getValue());
     }
@@ -104,39 +99,40 @@ void ViewProviderDatumPlane::updateData(const App::Property* prop)
 }
 
 
-void ViewProviderDatumPlane::setExtents (Base::BoundBox3d bbox) {
-    PartDesign::Plane* pcDatum = static_cast<PartDesign::Plane*>(this->getObject());
+void ViewProviderDatumPlane::setExtents(Base::BoundBox3d bbox)
+{
+    PartDesign::Plane *pcDatum = static_cast<PartDesign::Plane *>(this->getObject());
     if (pcDatum->ResizeMode.getValue() != 0) {
         setExtents(pcDatum->Length.getValue(), pcDatum->Width.getValue());
         return;
     }
 
-    Base::Placement plm = pcDatum->Placement.getValue ().inverse ();
+    Base::Placement plm = pcDatum->Placement.getValue().inverse();
 
     // Transform the box to the line's coordinates, the result line will be larger than the bbox
-    bbox = bbox.Transformed ( plm.toMatrix() );
+    bbox = bbox.Transformed(plm.toMatrix());
     // Add origin of the plane to the box if it's not
-    bbox.Add ( Base::Vector3d (0, 0, 0) );
+    bbox.Add(Base::Vector3d(0, 0, 0));
 
-    double margin = sqrt(bbox.LengthX ()*bbox.LengthY ()) * marginFactor ();
+    double margin = sqrt(bbox.LengthX() * bbox.LengthY()) * marginFactor();
 
-    pcDatum->Length.setValue(bbox.LengthX() + 2*margin);
-    pcDatum->Width.setValue(bbox.LengthY() + 2*margin);
+    pcDatum->Length.setValue(bbox.LengthX() + 2 * margin);
+    pcDatum->Width.setValue(bbox.LengthY() + 2 * margin);
 
     // Change the coordinates of the line
-    pCoords->point.setNum (4);
-    pCoords->point.set1Value(0, bbox.MaxX + margin, bbox.MaxY + margin, 0 );
-    pCoords->point.set1Value(1, bbox.MinX - margin, bbox.MaxY + margin, 0 );
-    pCoords->point.set1Value(2, bbox.MinX - margin, bbox.MinY - margin, 0 );
-    pCoords->point.set1Value(3, bbox.MaxX + margin, bbox.MinY - margin, 0 );
+    pCoords->point.setNum(4);
+    pCoords->point.set1Value(0, bbox.MaxX + margin, bbox.MaxY + margin, 0);
+    pCoords->point.set1Value(1, bbox.MinX - margin, bbox.MaxY + margin, 0);
+    pCoords->point.set1Value(2, bbox.MinX - margin, bbox.MinY - margin, 0);
+    pCoords->point.set1Value(3, bbox.MaxX + margin, bbox.MinY - margin, 0);
 }
 
 void ViewProviderDatumPlane::setExtents(double l, double w)
 {
     // Change the coordinates of the line
-    pCoords->point.setNum (4);
-    pCoords->point.set1Value(0, l/2, w/2, 0);
-    pCoords->point.set1Value(1, -l/2, w/2, 0);
-    pCoords->point.set1Value(2, -l/2, -w/2, 0);
-    pCoords->point.set1Value(3, l/2, -w/2, 0);
+    pCoords->point.setNum(4);
+    pCoords->point.set1Value(0, l / 2, w / 2, 0);
+    pCoords->point.set1Value(1, -l / 2, w / 2, 0);
+    pCoords->point.set1Value(2, -l / 2, -w / 2, 0);
+    pCoords->point.set1Value(3, l / 2, -w / 2, 0);
 }

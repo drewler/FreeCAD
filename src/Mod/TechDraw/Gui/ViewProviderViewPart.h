@@ -32,9 +32,10 @@
 #include "ViewProviderDrawingView.h"
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderViewPart : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderViewPart: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderViewPart);
 
@@ -48,39 +49,40 @@ public:
     App::PropertyLength HiddenWidth;
     App::PropertyLength IsoWidth;
     App::PropertyLength ExtraWidth;
-    App::PropertyBool   ArcCenterMarks;
-    App::PropertyFloat  CenterScale;
-    App::PropertyBool   HorizCenterLine;
-    App::PropertyBool   VertCenterLine;
-    App::PropertyBool   ShowSectionLine;
-    App::PropertyEnumeration   SectionLineStyle;
-    App::PropertyColor  SectionLineColor;
-    App::PropertyEnumeration   HighlightLineStyle;
-    App::PropertyColor  HighlightLineColor;
-    App::PropertyFloat  HighlightAdjust;
-    App::PropertyBool   ShowAllEdges;
+    App::PropertyBool ArcCenterMarks;
+    App::PropertyFloat CenterScale;
+    App::PropertyBool HorizCenterLine;
+    App::PropertyBool VertCenterLine;
+    App::PropertyBool ShowSectionLine;
+    App::PropertyEnumeration SectionLineStyle;
+    App::PropertyColor SectionLineColor;
+    App::PropertyEnumeration HighlightLineStyle;
+    App::PropertyColor HighlightLineColor;
+    App::PropertyFloat HighlightAdjust;
+    App::PropertyBool ShowAllEdges;
 
-    static const char* LineStyleEnums[];
+    static const char *LineStyleEnums[];
 
     void attach(App::DocumentObject *) override;
-    bool useNewSelectionModel(void) const override {return false;}
+    bool useNewSelectionModel(void) const override { return false; }
     bool onDelete(const std::vector<std::string> &) override;
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
     bool setEdit(int ModNum) override;
     bool doubleClicked(void) override;
 
 public:
     void onChanged(const App::Property *prop) override;
-    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
     App::Color prefSectionColor(void);
     App::Color prefHighlightColor(void);
     int prefHighlightStyle(void);
 
 
-    std::vector<App::DocumentObject*> claimChildren(void) const override;
+    std::vector<App::DocumentObject *> claimChildren(void) const override;
 
-    TechDraw::DrawViewPart* getViewObject() const override;
-    TechDraw::DrawViewPart* getViewPart() const;
+    TechDraw::DrawViewPart *getViewObject() const override;
+    TechDraw::DrawViewPart *getViewPart() const;
 };
 
 } // namespace TechDrawGui

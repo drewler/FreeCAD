@@ -33,11 +33,13 @@
 #include "PropertyPointKernel.h"
 
 
-namespace Base{
+namespace Base
+{
 class Writer;
 }
 
-namespace App{
+namespace App
+{
 class Color;
 }
 
@@ -49,7 +51,7 @@ class PointsFeaturePy;
 /** Base class of all Points feature classes in FreeCAD.
  * This class holds an PointsKernel object.
  */
-class PointsExport Feature : public App::GeoFeature
+class PointsExport Feature: public App::GeoFeature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Points::Feature);
 
@@ -66,15 +68,12 @@ public:
     /// recalculate the Feature
     App::DocumentObjectExecReturn *execute() override;
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "PointsGui::ViewProviderScattered";
-    }
+    const char *getViewProviderName() const override { return "PointsGui::ViewProviderScattered"; }
 
-    const App::PropertyComplexGeoData* getPropertyOfGeometry() const override {
-        return &Points;
-    }
+    const App::PropertyComplexGeoData *getPropertyOfGeometry() const override { return &Points; }
+
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     //@}
 
 public:

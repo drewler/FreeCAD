@@ -23,8 +23,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QApplication>
-# include <QMessageBox>
+#include <QApplication>
+#include <QMessageBox>
 #endif
 
 #include <App/Application.h>
@@ -46,9 +46,8 @@ bool DlgSettings3DViewImp::showMsg = true;
  *  Constructs a DlgSettings3DViewImp which is a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'
  */
-DlgSettings3DViewImp::DlgSettings3DViewImp(QWidget* parent)
-    : PreferencePage( parent )
-    , ui(new Ui_DlgSettings3DView)
+DlgSettings3DViewImp::DlgSettings3DViewImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettings3DView)
 {
     ui->setupUi(this);
 }
@@ -65,8 +64,8 @@ void DlgSettings3DViewImp::saveSettings()
 {
     // must be done as very first because we create a new instance of NavigatorStyle
     // where we set some attributes afterwards
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View");
+    ParameterGrp::handle hGrp =
+        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
 
     int index = ui->comboAliasing->currentIndex();
     hGrp->SetInt("AntiAliasing", index);
@@ -112,15 +111,15 @@ void DlgSettings3DViewImp::loadSettings()
     ui->radioPerspective->onRestore();
     ui->radioOrthographic->onRestore();
 
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/View");
+    ParameterGrp::handle hGrp =
+        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
 
     int index = hGrp->GetInt("AntiAliasing", int(Gui::View3DInventorViewer::None));
-    index = Base::clamp(index, 0, ui->comboAliasing->count()-1);
+    index = Base::clamp(index, 0, ui->comboAliasing->count() - 1);
     ui->comboAliasing->setCurrentIndex(index);
     // connect after setting current item of the combo box
-    connect(ui->comboAliasing, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(onAliasingChanged(int)));
+    connect(ui->comboAliasing, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(onAliasingChanged(int)));
 
     index = hGrp->GetInt("RenderCache", 0);
     ui->renderCache->setCurrentIndex(index);
@@ -158,16 +157,16 @@ void DlgSettings3DViewImp::changeEvent(QEvent *e)
 
 void DlgSettings3DViewImp::onAliasingChanged(int index)
 {
-    if (index < 0 || !isVisible())
-        return;
+    if (index < 0 || !isVisible()) return;
     // Show this message only once per application session to reduce
     // annoyance when showing it too often.
     if (showMsg) {
         showMsg = false;
-        QMessageBox::information(this, tr("Anti-aliasing"),
-            tr("Open a new viewer or restart %1 to apply anti-aliasing changes.").arg(qApp->applicationName()));
+        QMessageBox::information(
+            this, tr("Anti-aliasing"),
+            tr("Open a new viewer or restart %1 to apply anti-aliasing changes.")
+                .arg(qApp->applicationName()));
     }
 }
 
 #include "moc_DlgSettings3DViewImp.cpp"
-

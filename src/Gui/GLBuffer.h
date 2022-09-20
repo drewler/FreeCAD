@@ -27,7 +27,8 @@
 #include <map>
 #include <Inventor/C/glue/gl.h>
 
-namespace Gui {
+namespace Gui
+{
 
 class GuiExport OpenGLBuffer
 {
@@ -50,14 +51,14 @@ public:
     int size() const;
 
 private:
-    static void context_destruction_cb(uint32_t context, void * userdata);
-    static void buffer_delete(void * closure, uint32_t contextid);
+    static void context_destruction_cb(uint32_t context, void *userdata);
+    static void buffer_delete(void *closure, uint32_t contextid);
 
     GLenum target;
     GLuint bufferId;
     uint32_t context;
     uint32_t currentContext;
-    const cc_glglue* glue;
+    const cc_glglue *glue;
 };
 
 class GuiExport OpenGLMultiBuffer
@@ -78,17 +79,17 @@ public:
     int size() const;
 
 private:
-    static void context_destruction_cb(uint32_t context, void * userdata);
-    static void buffer_delete(void * closure, uint32_t contextid);
+    static void context_destruction_cb(uint32_t context, void *userdata);
+    static void buffer_delete(void *closure, uint32_t contextid);
 
     GLenum target;
     // map context to buffer id
     std::map<uint32_t, GLuint> bufs;
     GLuint *currentBuf;
     uint32_t currentContext;
-    const cc_glglue* glue;
+    const cc_glglue *glue;
 };
 
 } // namespace Gui
 
-#endif  // GUI_GLBUFFER_H
+#endif // GUI_GLBUFFER_H

@@ -29,25 +29,29 @@
 
 class Ui_TaskScaledParameters;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 class TaskMultiTransformParameters;
 
-class TaskScaledParameters : public TaskTransformedParameters
+class TaskScaledParameters: public TaskTransformedParameters
 {
     Q_OBJECT
 
 public:
     /// Constructor for task with ViewProvider
-    explicit TaskScaledParameters(ViewProviderTransformed *TransformedView, QWidget *parent = nullptr);
+    explicit TaskScaledParameters(ViewProviderTransformed *TransformedView,
+                                  QWidget *parent = nullptr);
     /// Constructor for task with parent task (MultiTransform mode)
     TaskScaledParameters(TaskMultiTransformParameters *parentTask, QLayout *layout);
     ~TaskScaledParameters() override;
@@ -62,7 +66,7 @@ private Q_SLOTS:
 
 protected:
     void changeEvent(QEvent *e) override;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     void clearButtons() override;
     double getFactor() const;
     unsigned getOccurrences() const;
@@ -77,7 +81,7 @@ private:
 
 
 /// simulation dialog for the TaskView
-class TaskDlgScaledParameters : public TaskDlgTransformedParameters
+class TaskDlgScaledParameters: public TaskDlgTransformedParameters
 {
     Q_OBJECT
 

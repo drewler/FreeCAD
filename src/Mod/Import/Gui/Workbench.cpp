@@ -31,23 +31,18 @@ using namespace ImportGui;
 /// @namespace ImportGui @class Workbench
 TYPESYSTEM_SOURCE(ImportGui::Workbench, Gui::StdWorkbench)
 
-Workbench::Workbench()
-{
-}
+Workbench::Workbench() {}
 
-Workbench::~Workbench()
-{
-}
+Workbench::~Workbench() {}
 
-Gui::ToolBarItem* Workbench::setupToolBars() const
+Gui::ToolBarItem *Workbench::setupToolBars() const
 {
-    Gui::ToolBarItem* root = StdWorkbench::setupToolBars();
+    Gui::ToolBarItem *root = StdWorkbench::setupToolBars();
     return root;
 }
 
-Gui::ToolBarItem* Workbench::setupCommandBars() const
+Gui::ToolBarItem *Workbench::setupCommandBars() const
 {
-    Gui::ToolBarItem* root = new Gui::ToolBarItem;
+    Gui::ToolBarItem *root = new Gui::ToolBarItem;
     return root;
 }
-

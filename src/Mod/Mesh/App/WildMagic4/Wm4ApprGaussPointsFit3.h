@@ -20,9 +20,9 @@ namespace Wm4
 // extents are the eigenvalues of the covariance matrix and are returned in
 // increasing order.  The quantites are stored in a Box3<Real> just to have a
 // single container.
-template <class Real> WM4_FOUNDATION_ITEM
-Box3<Real> GaussPointsFit3 (int iQuantity, const Vector3<Real>* akPoint);
+template<class Real>
+WM4_FOUNDATION_ITEM Box3<Real> GaussPointsFit3(int iQuantity, const Vector3<Real> *akPoint);
 
-}
+} // namespace Wm4
 
 #endif

@@ -32,8 +32,7 @@ using namespace MeshGui;
 
 /* TRANSLATOR MeshGui::Selection */
 
-Selection::Selection(QWidget* parent)
-    : QWidget(parent), ui(new Ui_Selection())
+Selection::Selection(QWidget *parent) : QWidget(parent), ui(new Ui_Selection())
 {
     ui->setupUi(this);
     ui->addSelection->installEventFilter(this);
@@ -55,17 +54,11 @@ Selection::~Selection()
     meshSel.setEnabledViewerSelection(true);
 }
 
-void Selection::setObjects(const std::vector<Gui::SelectionObject>& o)
-{
-    meshSel.setObjects(o);
-}
+void Selection::setObjects(const std::vector<Gui::SelectionObject> &o) { meshSel.setObjects(o); }
 
-std::vector<App::DocumentObject*> Selection::getObjects() const
-{
-    return meshSel.getObjects();
-}
+std::vector<App::DocumentObject *> Selection::getObjects() const { return meshSel.getObjects(); }
 
-bool Selection::eventFilter(QObject* o, QEvent* e)
+bool Selection::eventFilter(QObject *o, QEvent *e)
 {
     if (e->type() == QEvent::HoverEnter) {
         if (o == ui->addSelection) {
@@ -76,9 +69,7 @@ bool Selection::eventFilter(QObject* o, QEvent* e)
         }
     }
     else if (e->type() == QEvent::HoverLeave) {
-        if (o == ui->addSelection) {
-            ui->label->clear();
-        }
+        if (o == ui->addSelection) { ui->label->clear(); }
         else if (o == ui->clearSelection) {
             ui->label->clear();
         }
@@ -87,20 +78,11 @@ bool Selection::eventFilter(QObject* o, QEvent* e)
     return false;
 }
 
-void Selection::on_addSelection_clicked()
-{
-    meshSel.startSelection();
-}
+void Selection::on_addSelection_clicked() { meshSel.startSelection(); }
 
-void Selection::on_clearSelection_clicked()
-{
-    meshSel.clearSelection();
-}
+void Selection::on_clearSelection_clicked() { meshSel.clearSelection(); }
 
-void Selection::on_visibleTriangles_toggled(bool on)
-{
-    meshSel.setCheckOnlyVisibleTriangles(on);
-}
+void Selection::on_visibleTriangles_toggled(bool on) { meshSel.setCheckOnlyVisibleTriangles(on); }
 
 void Selection::on_screenTriangles_toggled(bool on)
 {

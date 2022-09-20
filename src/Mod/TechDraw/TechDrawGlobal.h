@@ -29,18 +29,18 @@
 // TechDraw
 #ifndef TechDrawExport
 #ifdef TechDraw_EXPORTS
-#  define TechDrawExport      FREECAD_DECL_EXPORT
+#define TechDrawExport FREECAD_DECL_EXPORT
 #else
-#  define TechDrawExport      FREECAD_DECL_IMPORT
+#define TechDrawExport FREECAD_DECL_IMPORT
 #endif
 #endif
 
 // TechDrawGui
 #ifndef TechDrawGuiExport
 #ifdef TechDrawGui_EXPORTS
-#  define TechDrawGuiExport   FREECAD_DECL_EXPORT
+#define TechDrawGuiExport FREECAD_DECL_EXPORT
 #else
-#  define TechDrawGuiExport   FREECAD_DECL_IMPORT
+#define TechDrawGuiExport FREECAD_DECL_IMPORT
 #endif
 #endif
 

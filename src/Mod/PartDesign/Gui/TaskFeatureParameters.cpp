@@ -45,18 +45,17 @@ using namespace Gui;
  *********************************************************************/
 
 TaskFeatureParameters::TaskFeatureParameters(PartDesignGui::ViewProvider *vp, QWidget *parent,
-                                                     const std::string& pixmapname, const QString& parname)
-    : TaskBox(Gui::BitmapFactory().pixmap(pixmapname.c_str()),parname,true, parent),
-      vp(vp), blockUpdate(false)
+                                             const std::string &pixmapname, const QString &parname)
+    : TaskBox(Gui::BitmapFactory().pixmap(pixmapname.c_str()), parname, true, parent), vp(vp),
+      blockUpdate(false)
 {
-    Gui::Document* doc = vp->getDocument();
+    Gui::Document *doc = vp->getDocument();
     this->attachDocument(doc);
 }
 
-void TaskFeatureParameters::slotDeletedObject(const Gui::ViewProviderDocumentObject& Obj)
+void TaskFeatureParameters::slotDeletedObject(const Gui::ViewProviderDocumentObject &Obj)
 {
-    if (this->vp == &Obj)
-        this->vp = nullptr;
+    if (this->vp == &Obj) this->vp = nullptr;
 }
 
 void TaskFeatureParameters::onUpdateView(bool on)
@@ -68,9 +67,9 @@ void TaskFeatureParameters::onUpdateView(bool on)
 void TaskFeatureParameters::recomputeFeature()
 {
     if (!blockUpdate) {
-        App::DocumentObject* obj = vp->getObject ();
-        assert (obj);
-        obj->getDocument()->recomputeFeature ( obj );
+        App::DocumentObject *obj = vp->getObject();
+        assert(obj);
+        obj->getDocument()->recomputeFeature(obj);
     }
 }
 
@@ -78,56 +77,52 @@ void TaskFeatureParameters::recomputeFeature()
  *                            Task Dialog                            *
  *********************************************************************/
 TaskDlgFeatureParameters::TaskDlgFeatureParameters(PartDesignGui::ViewProvider *vp)
-    : TaskDialog(),vp(vp)
+    : TaskDialog(), vp(vp)
 {
     assert(vp);
 }
 
-TaskDlgFeatureParameters::~TaskDlgFeatureParameters()
+TaskDlgFeatureParameters::~TaskDlgFeatureParameters() {}
+
+bool TaskDlgFeatureParameters::accept()
 {
-
-}
-
-bool TaskDlgFeatureParameters::accept() {
-    App::DocumentObject* feature = vp->getObject();
+    App::DocumentObject *feature = vp->getObject();
 
     try {
         // Iterate over parameter dialogs and apply all parameters from them
-        for ( QWidget *wgt : Content ) {
-            TaskFeatureParameters *param = qobject_cast<TaskFeatureParameters *> (wgt);
-            if(!param)
-                continue;
-            
-            param->saveHistory ();
-            param->apply ();
+        for (QWidget *wgt : Content) {
+            TaskFeatureParameters *param = qobject_cast<TaskFeatureParameters *>(wgt);
+            if (!param) continue;
+
+            param->saveHistory();
+            param->apply();
         }
         // Make sure the feature is what we are expecting
         // Should be fine but you never know...
-        if ( !feature->getTypeId().isDerivedFrom(PartDesign::Feature::getClassTypeId()) ) {
+        if (!feature->getTypeId().isDerivedFrom(PartDesign::Feature::getClassTypeId())) {
             throw Base::TypeError("Bad object processed in the feature dialog.");
         }
 
         Gui::cmdAppDocument(feature, "recompute()");
 
-        if (!feature->isValid()) {
-            throw Base::RuntimeError(vp->getObject()->getStatusString());
-        }
+        if (!feature->isValid()) { throw Base::RuntimeError(vp->getObject()->getStatusString()); }
 
-        App::DocumentObject* previous = static_cast<PartDesign::Feature*>(feature)->getBaseObject(/* silent = */ true );
+        App::DocumentObject *previous =
+            static_cast<PartDesign::Feature *>(feature)->getBaseObject(/* silent = */ true);
         Gui::cmdAppObjectHide(previous);
 
         // detach the task panel from the selection to avoid to invoke
         // eventually onAddSelection when the selection changes
-        std::vector<QWidget*> subwidgets = getDialogContent();
+        std::vector<QWidget *> subwidgets = getDialogContent();
         for (auto it : subwidgets) {
-            TaskSketchBasedParameters* param = qobject_cast<TaskSketchBasedParameters*>(it);
-            if (param)
-                param->detachSelection();
+            TaskSketchBasedParameters *param = qobject_cast<TaskSketchBasedParameters *>(it);
+            if (param) param->detachSelection();
         }
 
         Gui::cmdGuiDocument(feature, "resetEdit()");
         Gui::Command::commitCommand();
-    } catch (const Base::Exception& e) {
+    }
+    catch (const Base::Exception &e) {
         // Generally the only thing that should fail is feature->isValid() others should be fine
         QString errorText = QApplication::translate(feature->getTypeId().getName(), e.what());
         QMessageBox::warning(Gui::getMainWindow(), tr("Input error"), errorText);
@@ -139,23 +134,22 @@ bool TaskDlgFeatureParameters::accept() {
 
 bool TaskDlgFeatureParameters::reject()
 {
-    PartDesign::Feature* feature = static_cast<PartDesign::Feature*>(vp->getObject());
+    PartDesign::Feature *feature = static_cast<PartDesign::Feature *>(vp->getObject());
     App::DocumentObjectWeakPtrT weakptr(feature);
-    App::Document* document = feature->getDocument();
+    App::Document *document = feature->getDocument();
 
-    PartDesign::Body* body = PartDesign::Body::findBodyOf(feature);
+    PartDesign::Body *body = PartDesign::Body::findBodyOf(feature);
 
     // Find out previous feature we won't be able to do it after abort
     // (at least in the body case)
-    App::DocumentObject* previous = feature->getBaseObject(/* silent = */ true );
+    App::DocumentObject *previous = feature->getBaseObject(/* silent = */ true);
 
     // detach the task panel from the selection to avoid to invoke
     // eventually onAddSelection when the selection changes
-    std::vector<QWidget*> subwidgets = getDialogContent();
+    std::vector<QWidget *> subwidgets = getDialogContent();
     for (auto it : subwidgets) {
-        TaskSketchBasedParameters* param = qobject_cast<TaskSketchBasedParameters*>(it);
-        if (param)
-            param->detachSelection();
+        TaskSketchBasedParameters *param = qobject_cast<TaskSketchBasedParameters *>(it);
+        if (param) param->detachSelection();
     }
 
     // roll back the done things which may delete the feature
@@ -169,7 +163,7 @@ bool TaskDlgFeatureParameters::reject()
             Gui::Application::Instance->getViewProvider(previous)->show();
         }
         else if (body) {
-            App::DocumentObject* tip = body->Tip.getValue();
+            App::DocumentObject *tip = body->Tip.getValue();
             if (tip && Gui::Application::Instance->getViewProvider(tip)) {
                 Gui::Application::Instance->getViewProvider(tip)->show();
             }

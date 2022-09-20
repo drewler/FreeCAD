@@ -36,60 +36,59 @@
 namespace Wm4
 {
 
-template <class TKEY>
-class THashSet
+template<class TKEY> class THashSet
 {
 public:
     // construction and destruction
-    THashSet (int iTableSize);
-    ~THashSet ();
+    THashSet(int iTableSize);
+    ~THashSet();
 
     // element access
-    int GetQuantity () const;
+    int GetQuantity() const;
 
     // A pointer to the actual storage is returned so that the caller has
     // direct access to it.  This allows a subset of TKEY members to be used
     // in key comparison.
-    TKEY* Insert (const TKEY& rtKey);
+    TKEY *Insert(const TKEY &rtKey);
 
     // If the input key exists, a pointer to the actual storage is returned.
     // This allows a subset of TKEY members to be used in key comparison,
     // but gives the caller a chance to modify other TKEY members.
-    TKEY* Get (const TKEY& rtKey) const;
+    TKEY *Get(const TKEY &rtKey) const;
 
-    bool Remove (const TKEY& rtKey);
-    void RemoveAll ();
+    bool Remove(const TKEY &rtKey);
+    void RemoveAll();
 
     // linear traversal of map
-    TKEY* GetFirst () const;
-    TKEY* GetNext () const;
+    TKEY *GetFirst() const;
+    TKEY *GetNext() const;
 
     // user-specified key-to-index construction
-    int (*UserHashFunction)(const TKEY&);
+    int (*UserHashFunction)(const TKEY &);
 
 private:
     class HashItem
     {
     public:
         TKEY m_tKey;
-        HashItem* m_pkNext;
+        HashItem *m_pkNext;
     };
 
     // Default key-to-index construction (override by user-specified when
     // requested).
-    int HashFunction (const TKEY& rtKey) const;
+    int HashFunction(const TKEY &rtKey) const;
 
     // hash table
     int m_iTableSize;
     int m_iQuantity;
-    HashItem** m_apkTable;
+    HashItem **m_apkTable;
 
     // iterator for traversal
     mutable int m_iIndex;
-    mutable HashItem* m_pkItem;
+    mutable HashItem *m_pkItem;
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4THashSet.inl"
 

@@ -30,16 +30,13 @@ using namespace Gui::Dialog;
 
 /* TRANSLATOR Gui::Dialog::DlgSettingsPythonConsole */
 
-DlgSettingsPythonConsole::DlgSettingsPythonConsole(QWidget* parent)
-  : PreferencePage(parent)
-  , ui(new Ui_DlgSettingsPythonConsole)
+DlgSettingsPythonConsole::DlgSettingsPythonConsole(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsPythonConsole)
 {
     ui->setupUi(this);
 }
 
-DlgSettingsPythonConsole::~DlgSettingsPythonConsole()
-{
-}
+DlgSettingsPythonConsole::~DlgSettingsPythonConsole() {}
 
 void DlgSettingsPythonConsole::saveSettings()
 {
@@ -57,9 +54,7 @@ void DlgSettingsPythonConsole::loadSettings()
 
 void DlgSettingsPythonConsole::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     QWidget::changeEvent(e);
 }
 

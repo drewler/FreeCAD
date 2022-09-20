@@ -72,22 +72,21 @@ LandmarkDimension::LandmarkDimension()
 {
     static const char *group = "Landmark";
     //this leaves a blank entry in position 1.
-    ADD_PROPERTY_TYPE(ReferenceTags, ("") , group, App::Prop_Output, "Tags of Dimension Endpoints");
+    ADD_PROPERTY_TYPE(ReferenceTags, (""), group, App::Prop_Output, "Tags of Dimension Endpoints");
     std::vector<std::string> noTags;
     ReferenceTags.setValues(noTags);
 }
 
-LandmarkDimension::~LandmarkDimension()
-{
-}
+LandmarkDimension::~LandmarkDimension() {}
 
-void LandmarkDimension::onChanged(const App::Property* prop)
+void LandmarkDimension::onChanged(const App::Property *prop)
 {
     if (!isRestoring()) {
         //this is only good for new RD creation, not restore from disk?
         if (prop == &References3D) {
             //handled in base class
-        } else if (prop == &ReferenceTags) {
+        }
+        else if (prop == &ReferenceTags) {
             //???
         }
     }
@@ -95,37 +94,28 @@ void LandmarkDimension::onChanged(const App::Property* prop)
     DrawViewDimension::onChanged(prop);
 }
 
-short LandmarkDimension::mustExecute() const
-{
-    return DrawViewDimension::mustExecute();
-}
+short LandmarkDimension::mustExecute() const { return DrawViewDimension::mustExecute(); }
 
 App::DocumentObjectExecReturn *LandmarkDimension::execute()
 {
-//    Base::Console().Message("LD::execute() - %s\n", getNameInDocument());
-    if (!keepUpdated()) {
-        return App::DocumentObject::StdReturn;
-    }
+    //    Base::Console().Message("LD::execute() - %s\n", getNameInDocument());
+    if (!keepUpdated()) { return App::DocumentObject::StdReturn; }
 
-    DrawViewPart* dvp = getViewPart();
-    if (!dvp) {
-        return App::DocumentObject::StdReturn;
-    }
+    DrawViewPart *dvp = getViewPart();
+    if (!dvp) { return App::DocumentObject::StdReturn; }
     References2D.setValue(dvp);
 
-    std::vector<DocumentObject*> features = References3D.getValues();
+    std::vector<DocumentObject *> features = References3D.getValues();
     //if distance, required size = 2
     //if angle, required size = 3;    //not implemented yet
     unsigned int requiredSize = 2;
-    if (features.size() < requiredSize) {
-        return App::DocumentObject::StdReturn;
-    }
+    if (features.size() < requiredSize) { return App::DocumentObject::StdReturn; }
 
     std::vector<Base::Vector3d> points;
     std::vector<std::string> reprs = ReferenceTags.getValues();
     if (reprs.empty()) {
         //add verts to dvp & vert tags to RD
-        for (auto& f: features) {
+        for (auto &f : features) {
             Base::Vector3d loc3d = ShapeExtractor::getLocation3dFromFeat(f);
             Base::Vector3d loc2d = projectPoint(loc3d, dvp) * dvp->getScale();
             points.push_back(loc2d);
@@ -133,14 +123,15 @@ App::DocumentObjectExecReturn *LandmarkDimension::execute()
             reprs.push_back(tag);
         }
         ReferenceTags.setValues(reprs);
-    } else {
+    }
+    else {
         //update dvp referenceverts locations
         int index = 0;
-        for (auto& f: features) {
+        for (auto &f : features) {
             Base::Vector3d loc3d = ShapeExtractor::getLocation3dFromFeat(f);
             Base::Vector3d loc2d = projectPoint(loc3d, dvp) * dvp->getScale();
             points.push_back(loc2d);
-            dvp->updateReferenceVert(reprs.at(index), loc2d);  //sb by tag
+            dvp->updateReferenceVert(reprs.at(index), loc2d); //sb by tag
             index++;
         }
     }
@@ -149,9 +140,9 @@ App::DocumentObjectExecReturn *LandmarkDimension::execute()
 
     //m_anglePoints.first =                  //not implemented yet
 
-    App::DocumentObjectExecReturn* dvdResult = DrawViewDimension::execute();
+    App::DocumentObjectExecReturn *dvdResult = DrawViewDimension::execute();
 
-//    dvp->resetReferenceVerts();
+    //    dvp->resetReferenceVerts();
     dvp->addReferencesToGeom();
     dvp->requestPaint();
 
@@ -159,14 +150,14 @@ App::DocumentObjectExecReturn *LandmarkDimension::execute()
     return dvdResult;
 }
 
-Base::Vector3d LandmarkDimension::projectPoint(const Base::Vector3d& pt, DrawViewPart* dvp) const
+Base::Vector3d LandmarkDimension::projectPoint(const Base::Vector3d &pt, DrawViewPart *dvp) const
 {
     Base::Vector3d stdOrg(0.0, 0.0, 0.0);
     gp_Ax2 viewAxis = dvp->getProjectionCS(stdOrg);
     Base::Vector3d alignedPt = pt - dvp->getOriginalCentroid();
     gp_Pnt gPt(alignedPt.x, alignedPt.y, alignedPt.z);
 
-    HLRAlgo_Projector projector( viewAxis );
+    HLRAlgo_Projector projector(viewAxis);
     gp_Pnt2d prjPnt;
     projector.Project(gPt, prjPnt);
     Base::Vector3d result(prjPnt.X(), prjPnt.Y(), 0.0);
@@ -176,11 +167,11 @@ Base::Vector3d LandmarkDimension::projectPoint(const Base::Vector3d& pt, DrawVie
 
 std::vector<Base::Vector3d> LandmarkDimension::get2DPoints() const
 {
-//    Base::Console().Message("LD::get2DPoints()\n");
+    //    Base::Console().Message("LD::get2DPoints()\n");
     std::vector<Base::Vector3d> result;
-    std::vector<App::DocumentObject*> refs3 = References3D.getValues();
-    TechDraw::DrawViewPart* dvp = getViewPart();
-    for (auto& r: refs3) {
+    std::vector<App::DocumentObject *> refs3 = References3D.getValues();
+    TechDraw::DrawViewPart *dvp = getViewPart();
+    for (auto &r : refs3) {
         Base::Vector3d loc3d = ShapeExtractor::getLocation3dFromFeat(r);
         Base::Vector3d loc2d = projectPoint(loc3d, dvp);
         result.push_back(loc2d);
@@ -192,28 +183,23 @@ std::vector<Base::Vector3d> LandmarkDimension::get2DPoints() const
 bool LandmarkDimension::has2DReferences() const
 {
     bool result = false;
-    const std::vector<App::DocumentObject*> &objects = References2D.getValues();
-    if (!objects.empty()) {
-        result = true;
-    }
+    const std::vector<App::DocumentObject *> &objects = References2D.getValues();
+    if (!objects.empty()) { result = true; }
     return result;
 }
 
 //! References2D are only used to store ParentView
-bool LandmarkDimension::checkReferences2D() const
-{
-    return true;
-}
+bool LandmarkDimension::checkReferences2D() const { return true; }
 
 pointPair LandmarkDimension::getPointsTwoVerts()
 {
-//    Base::Console().Message("LD::getPointsTwoVerts() - %s\n", getNameInDocument());
+    //    Base::Console().Message("LD::getPointsTwoVerts() - %s\n", getNameInDocument());
     pointPair result;
 
-    TechDraw::DrawViewPart* dvp = getViewPart();
+    TechDraw::DrawViewPart *dvp = getViewPart();
     if (dvp) {
         std::vector<Base::Vector3d> points = get2DPoints();
-        result.first  = points.at(0) * dvp->getScale();
+        result.first = points.at(0) * dvp->getScale();
         result.second = points.at(1) * dvp->getScale();
     }
     return result;
@@ -225,27 +211,25 @@ int LandmarkDimension::getRefType() const
     return DrawViewDimension::RefType::twoVertex;
 }
 
-DrawViewPart* LandmarkDimension::getViewPart() const
+DrawViewPart *LandmarkDimension::getViewPart() const
 {
-    DrawViewPart* result = nullptr;
-    std::vector<App::DocumentObject*> refs2d = References2D.getValues();
-    App::DocumentObject* obj = refs2d.front();
-    DrawViewPart* dvp = dynamic_cast<DrawViewPart*>(obj);
-    if (dvp) {
-        result = dvp;
-    }
+    DrawViewPart *result = nullptr;
+    std::vector<App::DocumentObject *> refs2d = References2D.getValues();
+    App::DocumentObject *obj = refs2d.front();
+    DrawViewPart *dvp = dynamic_cast<DrawViewPart *>(obj);
+    if (dvp) { result = dvp; }
     return result;
 }
 
 void LandmarkDimension::onDocumentRestored()
 {
-    DrawViewPart* dvp = getViewPart();
+    DrawViewPart *dvp = getViewPart();
 
-    std::vector<DocumentObject*> features = References3D.getValues();
+    std::vector<DocumentObject *> features = References3D.getValues();
     std::vector<Base::Vector3d> points;
     std::vector<std::string> tags;
     //add verts to dvp & vert tags to RD
-    for (auto& f: features) {
+    for (auto &f : features) {
         Base::Vector3d loc3d = ShapeExtractor::getLocation3dFromFeat(f);
         Base::Vector3d loc2d = projectPoint(loc3d, dvp) * dvp->getScale();
         points.push_back(loc2d);
@@ -263,15 +247,13 @@ void LandmarkDimension::onDocumentRestored()
 void LandmarkDimension::unsetupObject()
 {
 
-//    bool isRemoving = testStatus(App::ObjectStatus::Remove);
-//    Base::Console().Message("LD::unsetupObject - isRemove: %d status: %X\n",
-//                            isRemoving, getStatus());
-    TechDraw::DrawViewPart* dvp = getViewPart();
+    //    bool isRemoving = testStatus(App::ObjectStatus::Remove);
+    //    Base::Console().Message("LD::unsetupObject - isRemove: %d status: %X\n",
+    //                            isRemoving, getStatus());
+    TechDraw::DrawViewPart *dvp = getViewPart();
 
     std::vector<std::string> tags = ReferenceTags.getValues();
-    for (auto& t: tags) {
-        dvp->removeReferenceVertex(t);
-    }
+    for (auto &t : tags) { dvp->removeReferenceVertex(t); }
     dvp->resetReferenceVerts();
     dvp->requestPaint();
 }
@@ -286,4 +268,3 @@ void LandmarkDimension::unsetupObject()
 //    }
 //    return Py::new_reference_to(PythonObject);
 //}
-

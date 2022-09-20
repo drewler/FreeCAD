@@ -54,9 +54,7 @@
 
 using namespace TechDrawGui;
 
-QGISVGTemplate::QGISVGTemplate(QGSPage* scene)
-    : QGITemplate(scene),
-      firstTime(true)
+QGISVGTemplate::QGISVGTemplate(QGSPage *scene) : QGITemplate(scene), firstTime(true)
 {
 
     m_svgItem = new QGraphicsSvgItem(this);
@@ -71,29 +69,18 @@ QGISVGTemplate::QGISVGTemplate(QGSPage* scene)
 
     m_svgItem->setZValue(ZVALUE::SVGTEMPLATE);
     setZValue(ZVALUE::SVGTEMPLATE);
-
 }
 
-QGISVGTemplate::~QGISVGTemplate()
-{
-    delete m_svgRender;
-}
+QGISVGTemplate::~QGISVGTemplate() { delete m_svgRender; }
 
-void QGISVGTemplate::openFile(const QFile &file)
-{
-    Q_UNUSED(file);
-}
+void QGISVGTemplate::openFile(const QFile &file) { Q_UNUSED(file); }
 
 void QGISVGTemplate::load(const QString &fileName)
 {
-    if (fileName.isEmpty()){
-        return;
-    }
+    if (fileName.isEmpty()) { return; }
 
     QFile file(fileName);
-    if (!file.exists()) {
-        return;
-    }
+    if (!file.exists()) { return; }
     m_svgRender->load(file.fileName());
 
     QSize size = m_svgRender->defaultSize();
@@ -107,18 +94,18 @@ void QGISVGTemplate::load(const QString &fileName)
     //convert from pixels or mm or inches in svg file to mm page size
     TechDraw::DrawSVGTemplate *tmplte = getSVGTemplate();
     double xaspect, yaspect;
-    xaspect = tmplte->getWidth() / (double) size.width();
-    yaspect = tmplte->getHeight() / (double) size.height();
+    xaspect = tmplte->getWidth() / (double)size.width();
+    yaspect = tmplte->getHeight() / (double)size.height();
 
     QTransform qtrans;
     qtrans.translate(0.f, Rez::guiX(-tmplte->getHeight()));
-    qtrans.scale(Rez::guiX(xaspect) , Rez::guiX(yaspect));
+    qtrans.scale(Rez::guiX(xaspect), Rez::guiX(yaspect));
     m_svgItem->setTransform(qtrans);
 }
 
-TechDraw::DrawSVGTemplate * QGISVGTemplate::getSVGTemplate()
+TechDraw::DrawSVGTemplate *QGISVGTemplate::getSVGTemplate()
 {
-    if(pageTemplate && pageTemplate->isDerivedFrom(TechDraw::DrawSVGTemplate::getClassTypeId()))
+    if (pageTemplate && pageTemplate->isDerivedFrom(TechDraw::DrawSVGTemplate::getClassTypeId()))
         return static_cast<TechDraw::DrawSVGTemplate *>(pageTemplate);
     else
         return nullptr;
@@ -127,8 +114,7 @@ TechDraw::DrawSVGTemplate * QGISVGTemplate::getSVGTemplate()
 void QGISVGTemplate::draw()
 {
     TechDraw::DrawSVGTemplate *tmplte = getSVGTemplate();
-    if(!tmplte)
-        throw Base::RuntimeError("Template Feature not set for QGISVGTemplate");
+    if (!tmplte) throw Base::RuntimeError("Template Feature not set for QGISVGTemplate");
     load(QString::fromUtf8(tmplte->PageResult.getValue()));
 }
 
@@ -143,14 +129,13 @@ void QGISVGTemplate::createClickHandles()
     TechDraw::DrawSVGTemplate *svgTemplate = getSVGTemplate();
     QString templateFilename(QString::fromUtf8(svgTemplate->PageResult.getValue()));
 
-    if (templateFilename.isEmpty()) {
-        return;
-    }
+    if (templateFilename.isEmpty()) { return; }
 
     QFile file(templateFilename);
     if (!file.open(QIODevice::ReadOnly)) {
-        Base::Console().Error("QGISVGTemplate::createClickHandles - error opening template file %s\n",
-                              svgTemplate->PageResult.getValue());
+        Base::Console().Error(
+            "QGISVGTemplate::createClickHandles - error opening template file %s\n",
+            svgTemplate->PageResult.getValue());
         return;
     }
 
@@ -168,37 +153,41 @@ void QGISVGTemplate::createClickHandles()
     query.setFocus(QXmlItem(model.fromDomNode(templateDocElem)));
 
     // XPath query to select all <text> nodes with "freecad:editable" attribute
-    query.setQuery(QString::fromUtf8(
-        "declare default element namespace \"" SVG_NS_URI "\"; "
-        "declare namespace freecad=\"" FREECAD_SVG_NS_URI "\"; "
-        "//text[@freecad:editable]"));
+    query.setQuery(QString::fromUtf8("declare default element namespace \"" SVG_NS_URI "\"; "
+                                     "declare namespace freecad=\"" FREECAD_SVG_NS_URI "\"; "
+                                     "//text[@freecad:editable]"));
 
     QXmlResultItems queryResult;
     query.evaluateTo(&queryResult);
 
     //TODO: Find location of special fields (first/third angle) and make graphics items for them
 
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/General");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/General");
     double editClickBoxSize = Rez::guiX(hGrp->GetFloat("TemplateDotSize", 3.0));
 
     QColor editClickBoxColor = Qt::green;
-    editClickBoxColor.setAlpha(128);              //semi-transparent
+    editClickBoxColor.setAlpha(128); //semi-transparent
 
     double width = editClickBoxSize;
     double height = editClickBoxSize;
 
-    while (!queryResult.next().isNull())
-    {
-        QDomElement textElement = model.toDomNode(queryResult.current().toNodeModelIndex()).toElement();
+    while (!queryResult.next().isNull()) {
+        QDomElement textElement =
+            model.toDomNode(queryResult.current().toNodeModelIndex()).toElement();
 
         QString name = textElement.attribute(QString::fromUtf8("freecad:editable"));
-        double x = Rez::guiX(textElement.attribute(QString::fromUtf8("x"), QString::fromUtf8("0.0")).toDouble());
-        double y = Rez::guiX(textElement.attribute(QString::fromUtf8("y"), QString::fromUtf8("0.0")).toDouble());
+        double x = Rez::guiX(
+            textElement.attribute(QString::fromUtf8("x"), QString::fromUtf8("0.0")).toDouble());
+        double y = Rez::guiX(
+            textElement.attribute(QString::fromUtf8("y"), QString::fromUtf8("0.0")).toDouble());
 
         if (name.isEmpty()) {
-            Base::Console().Warning("QGISVGTemplate::createClickHandles - no name for editable text at %f, %f\n",
-                                    x, y);
+            Base::Console().Warning(
+                "QGISVGTemplate::createClickHandles - no name for editable text at %f, %f\n", x, y);
             continue;
         }
 
@@ -206,12 +195,12 @@ void QGISVGTemplate::createClickHandles()
 
         double pad = 1.0;
         item->setRect(x - pad, Rez::guiX(-svgTemplate->getHeight()) + y - height - pad,
-                      width + 2.0*pad, height + 2.0*pad);
+                      width + 2.0 * pad, height + 2.0 * pad);
 
         QPen myPen;
         myPen.setStyle(Qt::SolidLine);
         myPen.setColor(editClickBoxColor);
-        myPen.setWidth(0);  // 0 means "cosmetic pen" - always 1px
+        myPen.setWidth(0); // 0 means "cosmetic pen" - always 1px
         item->setPen(myPen);
 
         QBrush myBrush(editClickBoxColor, Qt::SolidPattern);

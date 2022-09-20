@@ -31,82 +31,72 @@
 #include <FCGlobal.h>
 
 
-namespace App {
+namespace App
+{
 
 }
 
-namespace Gui {
-namespace TaskView {
+namespace Gui
+{
+namespace TaskView
+{
 
 class TaskContent;
 
 /// Father class of content with header and Icon
-class GuiExport TaskDialog : public QObject
+class GuiExport TaskDialog: public QObject
 {
     Q_OBJECT
 
 public:
-    enum ButtonPosition {
-        North, South
+    enum ButtonPosition
+    {
+        North,
+        South
     };
 
     TaskDialog();
     ~TaskDialog() override;
 
-    void setButtonPosition(ButtonPosition p)
-    { pos = p; }
-    ButtonPosition buttonPosition() const
-    { return pos; }
-    const std::vector<QWidget*> &getDialogContent() const;
+    void setButtonPosition(ButtonPosition p) { pos = p; }
+    ButtonPosition buttonPosition() const { return pos; }
+    const std::vector<QWidget *> &getDialogContent() const;
     bool canClose() const;
 
     /// tells the framework which buttons are wished for the dialog
     virtual QDialogButtonBox::StandardButtons getStandardButtons() const
-    { return QDialogButtonBox::Ok|QDialogButtonBox::Cancel; }
-    virtual void modifyStandardButtons(QDialogButtonBox*)
-    {}
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
+    virtual void modifyStandardButtons(QDialogButtonBox *) {}
 
     /// Defines whether a task dialog can be rejected by pressing Esc
-    void setEscapeButtonEnabled(bool on) {
-        escapeButton = on;
-    }
-    bool isEscapeButtonEnabled() const {
-        return escapeButton;
-    }
+    void setEscapeButtonEnabled(bool on) { escapeButton = on; }
+    bool isEscapeButtonEnabled() const { return escapeButton; }
 
     /// Defines whether a task dialog must be closed if the document changed the
     /// active transaction.
-    void setAutoCloseOnTransactionChange(bool on) {
-        autoCloseTransaction = on;
-    }
-    bool isAutoCloseOnTransactionChange() const {
-        return autoCloseTransaction;
-    }
+    void setAutoCloseOnTransactionChange(bool on) { autoCloseTransaction = on; }
+    bool isAutoCloseOnTransactionChange() const { return autoCloseTransaction; }
 
-    const std::string& getDocumentName() const
-    { return documentName; }
-    void setDocumentName(const std::string& doc)
-    { documentName = doc; }
+    const std::string &getDocumentName() const { return documentName; }
+    void setDocumentName(const std::string &doc) { documentName = doc; }
     /*!
       Indicates whether this task dialog allows other commands to modify
       the document while it is open.
     */
-    virtual bool isAllowedAlterDocument() const
-    { return false; }
+    virtual bool isAllowedAlterDocument() const { return false; }
     /*!
       Indicates whether this task dialog allows other commands to modify
       the 3d view while it is open.
     */
-    virtual bool isAllowedAlterView() const
-    { return true; }
+    virtual bool isAllowedAlterView() const { return true; }
     /*!
       Indicates whether this task dialog allows other commands to modify
       the selection while it is open.
     */
-    virtual bool isAllowedAlterSelection() const
-    { return true; }
-    virtual bool needsFullSpace() const
-    { return false; }
+    virtual bool isAllowedAlterSelection() const { return true; }
+    virtual bool needsFullSpace() const { return false; }
 
 public:
     /// is called by the framework when the dialog is opened
@@ -122,19 +112,17 @@ public:
     virtual bool accept();
     /// is called by the framework if the dialog is rejected (Cancel)
     virtual bool reject();
-    /// is called by the framework if the user press the help button 
+    /// is called by the framework if the user press the help button
     virtual void helpRequested();
 
-    void emitDestructionSignal() {
-        Q_EMIT aboutToBeDestroyed();
-    }
-    
+    void emitDestructionSignal() { Q_EMIT aboutToBeDestroyed(); }
+
 Q_SIGNALS:
     void aboutToBeDestroyed();
-    
+
 protected:
     /// List of TaskBoxes of that dialog
-    std::vector<QWidget*> Content;
+    std::vector<QWidget *> Content;
     ButtonPosition pos;
 
 private:

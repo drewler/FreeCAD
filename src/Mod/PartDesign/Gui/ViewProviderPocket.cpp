@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMenu>
+#include <QMenu>
 #endif
 
 #include "TaskPocketParameters.h"
@@ -33,19 +33,14 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderPocket,PartDesignGui::ViewProviderSketchBased)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderPocket, PartDesignGui::ViewProviderSketchBased)
 
-ViewProviderPocket::ViewProviderPocket()
-{
-    sPixmap = "PartDesign_Pocket.svg";
-}
+ViewProviderPocket::ViewProviderPocket() { sPixmap = "PartDesign_Pocket.svg"; }
 
-ViewProviderPocket::~ViewProviderPocket()
-{
-}
+ViewProviderPocket::~ViewProviderPocket() {}
 
 
-void ViewProviderPocket::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderPocket::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     addDefaultAction(menu, QObject::tr("Edit pocket"));
     PartDesignGui::ViewProviderSketchBased::setupContextMenu(menu, receiver, member);
@@ -54,5 +49,5 @@ void ViewProviderPocket::setupContextMenu(QMenu* menu, QObject* receiver, const 
 
 TaskDlgFeatureParameters *ViewProviderPocket::getEditDialog()
 {
-    return new TaskDlgPocketParameters( this );
+    return new TaskDlgPocketParameters(this);
 }

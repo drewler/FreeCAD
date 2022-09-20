@@ -26,7 +26,7 @@
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
 #include <string>
-# include <QRectF>
+#include <QRectF>
 
 #include <App/DocumentObject.h>
 #include <App/PropertyLinks.h>
@@ -49,7 +49,7 @@ class DrawProjGroupItem;
  * Class super-container for managing a collection of DrawProjGroupItem
  * Page Features
  */
-class TechDrawExport DrawProjGroup : public TechDraw::DrawViewCollection
+class TechDrawExport DrawProjGroup: public TechDraw::DrawViewCollection
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawProjGroup);
 
@@ -58,8 +58,8 @@ public:
     DrawProjGroup();
     ~DrawProjGroup() = default;
 
-    App::PropertyLinkList   Source;
-    App::PropertyXLinkList  XSource;
+    App::PropertyLinkList Source;
+    App::PropertyXLinkList XSource;
 
     App::PropertyEnumeration ProjectionType;
 
@@ -75,19 +75,19 @@ public:
     double autoScale() const override;
     double autoScale(double w, double h) const override;
     QRectF getRect() const override;   //always scaled
-    QRectF getRect(bool scaled) const;     //scaled or unscaled
+    QRectF getRect(bool scaled) const; //scaled or unscaled
 
     /// Check if container has a view of a specific type
     bool hasProjection(const char *viewProjType) const;
 
-    App::DocumentObject * getProjObj(const char *viewProjType) const;
-    DrawProjGroupItem* getProjItem(const char *viewProjType) const;
+    App::DocumentObject *getProjObj(const char *viewProjType) const;
+    DrawProjGroupItem *getProjItem(const char *viewProjType) const;
 
     //! Adds a projection to the group
     /*!
      * \return pointer to the new view
      */
-    App::DocumentObject * addProjection(const char *viewProjType);
+    App::DocumentObject *addProjection(const char *viewProjType);
 
     //! Removes a projection from the group
     /*!
@@ -106,7 +106,8 @@ public:
     //@}
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "TechDrawGui::ViewProviderProjGroup";
     }
     //return PyObject as DrawProjGroupPy
@@ -116,13 +117,13 @@ public:
     App::Enumeration usedProjectionType();
 
     /// Allowed projection types - either Document, First Angle or Third Angle
-    static const char* ProjectionTypeEnums[];
+    static const char *ProjectionTypeEnums[];
 
     bool hasAnchor();
     void setAnchorDirection(Base::Vector3d dir);
     Base::Vector3d getAnchorDirection();
-    TechDraw::DrawProjGroupItem* getAnchor();
-    std::pair<Base::Vector3d, Base::Vector3d> getDirsFromFront(DrawProjGroupItem* view);
+    TechDraw::DrawProjGroupItem *getAnchor();
+    std::pair<Base::Vector3d, Base::Vector3d> getDirsFromFront(DrawProjGroupItem *view);
     std::pair<Base::Vector3d, Base::Vector3d> getDirsFromFront(std::string viewType);
 
     void updateSecondaryDirs();
@@ -130,17 +131,17 @@ public:
     void rotate(const std::string &rotationdirection);
     void spin(const std::string &spindirection);
 
-    void dumpISO(const char * title);
-    std::vector<DrawProjGroupItem*> getViewsAsDPGI();
+    void dumpISO(const char *title);
+    std::vector<DrawProjGroupItem *> getViewsAsDPGI();
 
     void recomputeChildren();
     void updateChildrenScale();
     void autoPositionChildren();
     void updateChildrenEnforce();
 
-    std::vector<App::DocumentObject*> getAllSources() const;
+    std::vector<App::DocumentObject *> getAllSources() const;
     bool checkFit() const override;
-    bool checkFit(DrawPage* p) const override;
+    bool checkFit(DrawPage *p) const override;
 
     bool waitingForChildren() const;
     void reportReady();
@@ -148,7 +149,7 @@ public:
     void dumpTouchedProps();
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
 
     /// Annoying helper - keep in sync with DrawProjGroupItem::TypeEnums
     /*!
@@ -157,15 +158,15 @@ protected:
      */
     bool checkViewProjType(const char *in);
 
-    void arrangeViewPointers(std::array<DrawProjGroupItem*, MAXPROJECTIONCOUNT>& viewPtrs) const;
+    void arrangeViewPointers(std::array<DrawProjGroupItem *, MAXPROJECTIONCOUNT> &viewPtrs) const;
 
     /// Populates array of 10 BoundBox3d's given DrawProjGroupItem *s
     /*!
      * If documentScale is set, then returned bounding boxes are scaled as in
      * the Drawing.  Otherwise, the dimensions are as in object space.
      */
-    void makeViewBbs(std::array<DrawProjGroupItem*, MAXPROJECTIONCOUNT>& viewPtrs,
-                     std::array<Base::BoundBox3d, MAXPROJECTIONCOUNT>& bboxes,
+    void makeViewBbs(std::array<DrawProjGroupItem *, MAXPROJECTIONCOUNT> &viewPtrs,
+                     std::array<Base::BoundBox3d, MAXPROJECTIONCOUNT> &bboxes,
                      bool scaled = true) const;
 
     /// Helper for calculateAutomaticScale
@@ -173,12 +174,11 @@ protected:
      * Returns a width and height in object-space scale, for the enabled views
      * without accounting for their actual X and Y positions or borders.
      */
-    void getViewArea(std::array<TechDraw::DrawProjGroupItem *, MAXPROJECTIONCOUNT>& viewPtrs,
-                        double &width, double &height,
-                        bool scaled = true) const;
+    void getViewArea(std::array<TechDraw::DrawProjGroupItem *, MAXPROJECTIONCOUNT> &viewPtrs,
+                     double &width, double &height, bool scaled = true) const;
 
     /// Returns pointer to our page, or NULL if it couldn't be located
-    TechDraw::DrawPage * getPage() const;
+    TechDraw::DrawPage *getPage() const;
 
     void updateChildrenSource();
     void updateChildrenLock();
@@ -188,7 +188,8 @@ protected:
     Base::Vector3d dir2vec(gp_Dir d);
     gp_Dir vec2dir(Base::Vector3d v);
 
-    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
     double getMaxRowHeight(std::array<int, 3> list,
                            std::array<Base::BoundBox3d, MAXPROJECTIONCOUNT> bboxes);

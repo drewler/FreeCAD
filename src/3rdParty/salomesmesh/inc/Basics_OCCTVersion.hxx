@@ -39,13 +39,17 @@
 //
 
 #ifdef OCC_VERSION_SERVICEPACK
-#  define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#define OCC_VERSION_LARGE                                                                          \
+    (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8              \
+     | OCC_VERSION_SERVICEPACK)
 #else
-#  ifdef OCC_VERSION_DEVELOPMENT
-#    define OCC_VERSION_LARGE ((OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)-1)
-#  else
-#    define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
-#  endif
+#ifdef OCC_VERSION_DEVELOPMENT
+#define OCC_VERSION_LARGE                                                                          \
+    ((OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8) - 1)
+#else
+#define OCC_VERSION_LARGE                                                                          \
+    (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
+#endif
 #endif
 
 #endif // BASICS_OCCTVERSION_HXX

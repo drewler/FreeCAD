@@ -28,8 +28,8 @@
 
 using namespace TechDrawGui;
 
-DlgTemplateField::DlgTemplateField( QWidget *parent /* = nullptr */ ) :
-    QDialog(parent), ui(new Ui_dlgTemplateField)
+DlgTemplateField::DlgTemplateField(QWidget *parent /* = nullptr */)
+    : QDialog(parent), ui(new Ui_dlgTemplateField)
 {
     ui->setupUi(this);
     ui->leInput->setFocus();
@@ -37,9 +37,7 @@ DlgTemplateField::DlgTemplateField( QWidget *parent /* = nullptr */ ) :
 
 void DlgTemplateField::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }
@@ -63,14 +61,8 @@ QString DlgTemplateField::getFieldContent()
     return result;
 }
 
-void DlgTemplateField::accept()
-{
-    QDialog::accept();
-}
+void DlgTemplateField::accept() { QDialog::accept(); }
 
-void DlgTemplateField::reject()
-{
-    QDialog::reject();
-}
+void DlgTemplateField::reject() { QDialog::reject(); }
 
 #include <Mod/TechDraw/Gui/moc_DlgTemplateField.cpp>

@@ -27,8 +27,8 @@
 #include <QMutex>
 #include <FCGlobal.h>
 
-#if QT_VERSION < QT_VERSION_CHECK(5,14,0)
-class BaseExport QRecursiveMutex : public QMutex
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+class BaseExport QRecursiveMutex: public QMutex
 {
 public:
     QRecursiveMutex();

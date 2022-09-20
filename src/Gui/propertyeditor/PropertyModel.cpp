@@ -23,7 +23,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #endif
 
 #include "PropertyItem.h"
@@ -37,50 +37,43 @@ using namespace Gui::PropertyEditor;
 
 /* TRANSLATOR Gui::PropertyEditor::PropertyModel */
 
-PropertyModel::PropertyModel(QObject* parent)
-    : QAbstractItemModel(parent)
+PropertyModel::PropertyModel(QObject *parent) : QAbstractItemModel(parent)
 {
-    rootItem = static_cast<PropertyItem*>(PropertyItem::create());
+    rootItem = static_cast<PropertyItem *>(PropertyItem::create());
 }
 
-PropertyModel::~PropertyModel()
-{
-    delete rootItem;
-}
+PropertyModel::~PropertyModel() { delete rootItem; }
 
-QModelIndex PropertyModel::buddy ( const QModelIndex & index ) const
+QModelIndex PropertyModel::buddy(const QModelIndex &index) const
 {
-    if (index.column() == 1)
-        return index;
+    if (index.column() == 1) return index;
     return index.sibling(index.row(), 1);
 }
 
-int PropertyModel::columnCount ( const QModelIndex & parent ) const
+int PropertyModel::columnCount(const QModelIndex &parent) const
 {
     // <property, value>, hence always 2
     if (parent.isValid())
-        return static_cast<PropertyItem*>(parent.internalPointer())->columnCount();
+        return static_cast<PropertyItem *>(parent.internalPointer())->columnCount();
     else
         return rootItem->columnCount();
 }
 
-QVariant PropertyModel::data ( const QModelIndex & index, int role ) const
+QVariant PropertyModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
-        return QVariant();
+    if (!index.isValid()) return QVariant();
 
-    auto item = static_cast<PropertyItem*>(index.internalPointer());
+    auto item = static_cast<PropertyItem *>(index.internalPointer());
     return item->data(index.column(), role);
 }
 
-bool PropertyModel::setData(const QModelIndex& index, const QVariant & value, int role)
+bool PropertyModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!index.isValid())
-        return false;
+    if (!index.isValid()) return false;
 
     // we check whether the data has really changed, otherwise we ignore it
     if (role == Qt::EditRole) {
-        auto item = static_cast<PropertyItem*>(index.internalPointer());
+        auto item = static_cast<PropertyItem *>(index.internalPointer());
         QVariant data = item->data(index.column(), role);
         if (data.type() == QVariant::Double && value.type() == QVariant::Double) {
             // since we store some properties as floats we get some round-off
@@ -88,15 +81,13 @@ bool PropertyModel::setData(const QModelIndex& index, const QVariant & value, in
             // NOTE: Since 0.14 PropertyFloat uses double precision, so this is maybe unnecessary now?
             double d = data.toDouble();
             double v = value.toDouble();
-            if (fabs(d-v) > DBL_EPSILON)
-                return item->setData(value);
+            if (fabs(d - v) > DBL_EPSILON) return item->setData(value);
         }
         // Special case handling for quantities
         else if (data.canConvert<Base::Quantity>() && value.canConvert<Base::Quantity>()) {
-            const Base::Quantity& val1 = data.value<Base::Quantity>();
-            const Base::Quantity& val2 = value.value<Base::Quantity>();
-            if (!(val1 == val2))
-                return item->setData(value);
+            const Base::Quantity &val1 = data.value<Base::Quantity>();
+            const Base::Quantity &val2 = value.value<Base::Quantity>();
+            if (!(val1 == val2)) return item->setData(value);
         }
         else if (data != value)
             return item->setData(value);
@@ -107,76 +98,65 @@ bool PropertyModel::setData(const QModelIndex& index, const QVariant & value, in
 
 Qt::ItemFlags PropertyModel::flags(const QModelIndex &index) const
 {
-    auto item = static_cast<PropertyItem*>(index.internalPointer());
+    auto item = static_cast<PropertyItem *>(index.internalPointer());
     return item->flags(index.column());
 }
 
-QModelIndex PropertyModel::index ( int row, int column, const QModelIndex & parent ) const
+QModelIndex PropertyModel::index(int row, int column, const QModelIndex &parent) const
 {
     PropertyItem *parentItem;
 
-    if (!parent.isValid())
-        parentItem = rootItem;
+    if (!parent.isValid()) parentItem = rootItem;
     else
-        parentItem = static_cast<PropertyItem*>(parent.internalPointer());
+        parentItem = static_cast<PropertyItem *>(parent.internalPointer());
 
     PropertyItem *childItem = parentItem->child(row);
-    if (childItem)
-        return createIndex(row, column, childItem);
+    if (childItem) return createIndex(row, column, childItem);
     else
         return QModelIndex();
 }
 
-QModelIndex PropertyModel::parent ( const QModelIndex & index ) const
+QModelIndex PropertyModel::parent(const QModelIndex &index) const
 {
-    if (!index.isValid())
-        return QModelIndex();
+    if (!index.isValid()) return QModelIndex();
 
-    auto childItem = static_cast<PropertyItem*>(index.internalPointer());
+    auto childItem = static_cast<PropertyItem *>(index.internalPointer());
     PropertyItem *parentItem = childItem->parent();
 
-    if (parentItem == rootItem)
-        return QModelIndex();
+    if (parentItem == rootItem) return QModelIndex();
 
     return createIndex(parentItem->row(), 0, parentItem);
 }
 
-int PropertyModel::rowCount ( const QModelIndex & parent ) const
+int PropertyModel::rowCount(const QModelIndex &parent) const
 {
     PropertyItem *parentItem;
 
-    if (!parent.isValid())
-        parentItem = rootItem;
+    if (!parent.isValid()) parentItem = rootItem;
     else
-        parentItem = static_cast<PropertyItem*>(parent.internalPointer());
+        parentItem = static_cast<PropertyItem *>(parent.internalPointer());
 
     return parentItem->childCount();
 }
 
-QVariant PropertyModel::headerData (int section, Qt::Orientation orientation, int role) const
+QVariant PropertyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal) {
-        if (role != Qt::DisplayRole)
-            return QVariant();
-        if (section == 0)
-            return tr("Property");
-        if (section == 1)
-            return tr("Value");
+        if (role != Qt::DisplayRole) return QVariant();
+        if (section == 0) return tr("Property");
+        if (section == 1) return tr("Value");
     }
 
     return QVariant();
 }
 
-bool PropertyModel::setHeaderData (int, Qt::Orientation, const QVariant &, int)
-{
-    return false;
-}
+bool PropertyModel::setHeaderData(int, Qt::Orientation, const QVariant &, int) { return false; }
 
-QStringList PropertyModel::propertyPathFromIndex(const QModelIndex& index) const
+QStringList PropertyModel::propertyPathFromIndex(const QModelIndex &index) const
 {
     QStringList path;
     if (index.isValid()) {
-        auto item = static_cast<PropertyItem*>(index.internalPointer());
+        auto item = static_cast<PropertyItem *>(index.internalPointer());
         while (item && item != this->rootItem) {
             path.push_front(item->propertyName());
             item = item->parent();
@@ -186,21 +166,19 @@ QStringList PropertyModel::propertyPathFromIndex(const QModelIndex& index) const
     return path;
 }
 
-QModelIndex PropertyModel::propertyIndexFromPath(const QStringList& path) const
+QModelIndex PropertyModel::propertyIndexFromPath(const QStringList &path) const
 {
-    if (path.size() < 2)
-        return QModelIndex();
+    if (path.size() < 2) return QModelIndex();
 
     auto it = groupItems.find(path.front());
-    if (it == groupItems.end())
-        return QModelIndex();
+    if (it == groupItems.end()) return QModelIndex();
 
     PropertyItem *item = it->second.groupItem;
     QModelIndex index = this->index(item->row(), 0, QModelIndex());
 
-    for (int j=1; j<path.size(); ++j) {
+    for (int j = 1; j < path.size(); ++j) {
         bool found = false;
-        for (int i=0, c = item->childCount(); i<c; ++i) {
+        for (int i = 0, c = item->childCount(); i < c; ++i) {
             auto child = item->child(i);
             if (child->propertyName() == path[j]) {
                 index = this->index(i, 1, index);
@@ -209,18 +187,17 @@ QModelIndex PropertyModel::propertyIndexFromPath(const QStringList& path) const
                 break;
             }
         }
-        if (!found)
-            return j==1?QModelIndex():index;
+        if (!found) return j == 1 ? QModelIndex() : index;
     }
     return index;
 }
 
-static void setPropertyItemName(PropertyItem *item, const char *propName, QString groupName) {
+static void setPropertyItemName(PropertyItem *item, const char *propName, QString groupName)
+{
     QString name = QString::fromLatin1(propName);
     QString realName = name;
-    if(name.size()>groupName.size()+1 
-            && name.startsWith(groupName + QLatin1Char('_')))
-        name = name.right(name.size()-groupName.size()-1);
+    if (name.size() > groupName.size() + 1 && name.startsWith(groupName + QLatin1Char('_')))
+        name = name.right(name.size() - groupName.size() - 1);
 
     item->setPropertyName(name, realName);
 }
@@ -229,30 +206,27 @@ static PropertyItem *createPropertyItem(App::Property *prop)
 {
     const char *editor = prop->getEditorName();
     if (!editor || !editor[0]) {
-        if (PropertyView::showAll())
-            editor = "Gui::PropertyEditor::PropertyItem";
+        if (PropertyView::showAll()) editor = "Gui::PropertyEditor::PropertyItem";
         else
             return nullptr;
     }
-    auto item = static_cast<PropertyItem*>(
-            PropertyItemFactory::instance().createPropertyItem(editor));
-    if (!item) {
-        qWarning("No property item for type %s found\n", editor);
-    }
+    auto item =
+        static_cast<PropertyItem *>(PropertyItemFactory::instance().createPropertyItem(editor));
+    if (!item) { qWarning("No property item for type %s found\n", editor); }
     return item;
 }
 
 PropertyModel::GroupInfo &PropertyModel::getGroupInfo(App::Property *prop)
 {
-    const char* group = prop->getGroup();
+    const char *group = prop->getGroup();
     bool isEmpty = (group == nullptr || group[0] == '\0');
-    QString groupName = QString::fromLatin1(
-            isEmpty ? QT_TRANSLATE_NOOP("App::Property", "Base") : group);
+    QString groupName =
+        QString::fromLatin1(isEmpty ? QT_TRANSLATE_NOOP("App::Property", "Base") : group);
 
     auto res = groupItems.insert(std::make_pair(groupName, GroupInfo()));
     if (res.second) {
         auto &groupInfo = res.first->second;
-        groupInfo.groupItem = static_cast<PropertySeparatorItem*>(PropertySeparatorItem::create());
+        groupInfo.groupItem = static_cast<PropertySeparatorItem *>(PropertySeparatorItem::create());
         groupInfo.groupItem->setReadOnly(true);
         groupInfo.groupItem->setExpanded(true);
         groupInfo.groupItem->setParent(rootItem);
@@ -269,21 +243,20 @@ PropertyModel::GroupInfo &PropertyModel::getGroupInfo(App::Property *prop)
         beginInsertRows(QModelIndex(), row, row);
         rootItem->insertChild(row, groupInfo.groupItem);
         // update row index for all group items behind
-        for (++it; it!=groupItems.end(); ++it)
-            ++it->second.groupItem->_row;
+        for (++it; it != groupItems.end(); ++it) ++it->second.groupItem->_row;
         endInsertRows();
     }
 
     return res.first->second;
 }
 
-void PropertyModel::buildUp(const PropertyModel::PropertyList& props)
+void PropertyModel::buildUp(const PropertyModel::PropertyList &props)
 {
     // If props empty, then simply reset all property items, but keep the group
     // items.
     if (props.empty()) {
         beginResetModel();
-        for(auto &v : groupItems) {
+        for (auto &v : groupItems) {
             auto &groupInfo = v.second;
             groupInfo.groupItem->reset();
             groupInfo.children.clear();
@@ -302,35 +275,31 @@ void PropertyModel::buildUp(const PropertyModel::PropertyList& props)
     // Second step, either find existing items or create new items for the given
     // properties. There is no signaling of model change at this stage. The
     // change information is kept pending in GroupInfo::children
-    for (const auto & jt : props) {
-        App::Property* prop = jt.second.front();
+    for (const auto &jt : props) {
+        App::Property *prop = jt.second.front();
 
         PropertyItem *item = nullptr;
         for (auto prop : jt.second) {
             auto it = itemMap.find(prop);
-            if (it == itemMap.end() || !it->second)
-                continue;
+            if (it == itemMap.end() || !it->second) continue;
             item = it->second;
             break;
         }
 
         if (!item) {
             item = createPropertyItem(prop);
-            if (!item)
-                continue;
+            if (!item) continue;
         }
 
         GroupInfo &groupInfo = getGroupInfo(prop);
         groupInfo.children.push_back(item);
 
-        item->setLinked(boost::ends_with(jt.first,"*"));
+        item->setLinked(boost::ends_with(jt.first, "*"));
         setPropertyItemName(item, prop->getName(), groupInfo.groupItem->propertyName());
 
         if (jt.second != item->getPropertyData()) {
-            for (auto prop : item->getPropertyData())
-                itemMap.erase(prop);
-            for (auto prop : jt.second)
-                itemMap[prop] = item;
+            for (auto prop : item->getPropertyData()) itemMap.erase(prop);
+            for (auto prop : jt.second) itemMap[prop] = item;
             // TODO: is it necessary to make sure the item has no pending commit?
             item->setPropertyData(jt.second);
         }
@@ -349,18 +318,16 @@ void PropertyModel::buildUp(const PropertyModel::PropertyList& props)
         QModelIndex midx = this->index(groupInfo.groupItem->_row, 0, QModelIndex());
 
         auto flushInserts = [&]() {
-            if (beginInsert < 0)
-                return;
+            if (beginInsert < 0) return;
             beginInsertRows(midx, beginInsert, endInsert);
-            for (int i=beginInsert; i<=endInsert; ++i)
+            for (int i = beginInsert; i <= endInsert; ++i)
                 groupInfo.groupItem->insertChild(i, groupInfo.children[i]);
             endInsertRows();
             beginInsert = -1;
         };
 
         auto flushChanges = [&]() {
-            if (beginChange < 0)
-                return;
+            if (beginChange < 0) return;
             (void)endChange;
             // There is no need to signal dataChange(), because PropertyEditor
             // will call PropertyModel::updateProperty() on any property
@@ -375,23 +342,23 @@ void PropertyModel::buildUp(const PropertyModel::PropertyList& props)
             if (!item->parent()) {
                 flushChanges();
                 item->setParent(groupInfo.groupItem);
-                if (beginInsert < 0)
-                    beginInsert = row;
+                if (beginInsert < 0) beginInsert = row;
                 endInsert = row;
-            } else {
+            }
+            else {
                 flushInserts();
                 int oldRow = item->row();
                 // Dynamic property can rename group, so must check
                 auto groupItem = item->parent();
                 assert(groupItem);
                 if (oldRow == row && groupItem == groupInfo.groupItem) {
-                    if (beginChange < 0)
-                        beginChange = row;
+                    if (beginChange < 0) beginChange = row;
                     endChange = row;
-                } else {
+                }
+                else {
                     flushChanges();
-                    beginMoveRows(createIndex(groupItem->row(),0,groupItem),
-                            oldRow, oldRow, midx, row);
+                    beginMoveRows(createIndex(groupItem->row(), 0, groupItem), oldRow, oldRow, midx,
+                                  row);
                     if (groupItem == groupInfo.groupItem)
                         groupInfo.groupItem->moveChild(oldRow, row);
                     else {
@@ -414,21 +381,21 @@ void PropertyModel::buildUp(const PropertyModel::PropertyList& props)
         int last = groupInfo.groupItem->childCount();
         int first = static_cast<int>(groupInfo.children.size());
         if (last > first) {
-            QModelIndex midx = this->index(groupInfo.groupItem->_row,0,QModelIndex());
-            beginRemoveRows(midx, first, last-1);
-            groupInfo.groupItem->removeChildren(first, last-1);
+            QModelIndex midx = this->index(groupInfo.groupItem->_row, 0, QModelIndex());
+            beginRemoveRows(midx, first, last - 1);
+            groupInfo.groupItem->removeChildren(first, last - 1);
             endRemoveRows();
-        } else {
+        }
+        else {
             assert(last == first);
         }
     }
 }
 
-void PropertyModel::updateProperty(const App::Property& prop)
+void PropertyModel::updateProperty(const App::Property &prop)
 {
-    auto it = itemMap.find(const_cast<App::Property*>(&prop));
-    if (it == itemMap.end() || !it->second || !it->second->parent())
-        return;
+    auto it = itemMap.find(const_cast<App::Property *>(&prop));
+    if (it == itemMap.end() || !it->second || !it->second->parent()) return;
 
     int column = 1;
     PropertyItem *item = it->second;
@@ -440,28 +407,26 @@ void PropertyModel::updateProperty(const App::Property& prop)
     updateChildren(item, column, data);
 }
 
-void PropertyModel::appendProperty(const App::Property& _prop)
+void PropertyModel::appendProperty(const App::Property &_prop)
 {
-    auto prop = const_cast<App::Property*>(&_prop);
-    if (!prop->getName())
-        return;
+    auto prop = const_cast<App::Property *>(&_prop);
+    if (!prop->getName()) return;
     auto it = itemMap.find(prop);
-    if (it == itemMap.end() || !it->second)
-        return;
+    if (it == itemMap.end() || !it->second) return;
 
     PropertyItem *item = createPropertyItem(prop);
     GroupInfo &groupInfo = getGroupInfo(prop);
 
     int row = 0;
-    for (int c=groupInfo.groupItem->childCount(); row<c; ++row) {
+    for (int c = groupInfo.groupItem->childCount(); row < c; ++row) {
         PropertyItem *child = groupInfo.groupItem->child(row);
         App::Property *firstProp = item->getFirstProperty();
         if (firstProp && firstProp->testStatus(App::Property::PropDynamic)
-                      && item->propertyName() >= child->propertyName())
+            && item->propertyName() >= child->propertyName())
             break;
     }
 
-    QModelIndex midx = this->index(groupInfo.groupItem->_row,0,QModelIndex());
+    QModelIndex midx = this->index(groupInfo.groupItem->_row, 0, QModelIndex());
     beginInsertRows(midx, row, row);
     groupInfo.groupItem->insertChild(row, item);
     setPropertyItemName(item, prop->getName(), groupInfo.groupItem->propertyName());
@@ -469,24 +434,23 @@ void PropertyModel::appendProperty(const App::Property& _prop)
     endInsertRows();
 }
 
-void PropertyModel::removeProperty(const App::Property& _prop)
+void PropertyModel::removeProperty(const App::Property &_prop)
 {
-    auto prop = const_cast<App::Property*>(&_prop);
+    auto prop = const_cast<App::Property *>(&_prop);
     auto it = itemMap.find(prop);
-    if (it == itemMap.end() || !it->second)
-        return;
+    if (it == itemMap.end() || !it->second) return;
 
     PropertyItem *item = it->second;
     if (item->removeProperty(prop)) {
         PropertyItem *parent = item->parent();
         int row = item->row();
         beginRemoveRows(this->index(parent->row(), 0, QModelIndex()), row, row);
-        parent->removeChildren(row,row);
+        parent->removeChildren(row, row);
         endRemoveRows();
     }
 }
 
-void PropertyModel::updateChildren(PropertyItem* item, int column, const QModelIndex& parent)
+void PropertyModel::updateChildren(PropertyItem *item, int column, const QModelIndex &parent)
 {
     int numChild = item->childCount();
     if (numChild > 0) {
@@ -496,16 +460,15 @@ void PropertyModel::updateChildren(PropertyItem* item, int column, const QModelI
     }
 }
 
-bool PropertyModel::removeRows(int row, int count, const QModelIndex& parent)
+bool PropertyModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    PropertyItem* item;
-    if (!parent.isValid())
-        item = rootItem;
+    PropertyItem *item;
+    if (!parent.isValid()) item = rootItem;
     else
-        item = static_cast<PropertyItem*>(parent.internalPointer());
+        item = static_cast<PropertyItem *>(parent.internalPointer());
 
     int start = row;
-    int end = row+count-1;
+    int end = row + count - 1;
     beginRemoveRows(parent, start, end);
     item->removeChildren(start, end);
     endRemoveRows();

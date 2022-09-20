@@ -33,32 +33,31 @@ static int MYDEBUG = 0;
 
 int MED::PrefixPrinter::myCounter = 0;
 
-MED::PrefixPrinter::PrefixPrinter(bool theIsActive):
-  myIsActive(theIsActive)
+MED::PrefixPrinter::PrefixPrinter(bool theIsActive) : myIsActive(theIsActive)
 {
-  if(myIsActive)
-    myCounter++;
-  MSG(MYDEBUG,"MED::PrefixPrinter::PrefixPrinter(...)- "<<myCounter);
+    if (myIsActive) myCounter++;
+    MSG(MYDEBUG, "MED::PrefixPrinter::PrefixPrinter(...)- " << myCounter);
 }
 
 MED::PrefixPrinter::~PrefixPrinter()
 {
-  if(myIsActive){
-    myCounter--;
-    //Do not throw exceptions from inside destructors
-    //if(myCounter < 0)
-    //  EXCEPTION(runtime_error,"PrefixPrinter::~PrefixPrinter() - myCounter("<<myCounter<<") < 0");
-  }
+    if (myIsActive) {
+        myCounter--;
+        //Do not throw exceptions from inside destructors
+        //if(myCounter < 0)
+        //  EXCEPTION(runtime_error,"PrefixPrinter::~PrefixPrinter() - myCounter("<<myCounter<<") < 0");
+    }
 }
 
 string MED::PrefixPrinter::GetPrefix()
 {
-  if(myCounter){
-    if(myCounter < 0)
-      EXCEPTION(runtime_error,"PrefixPrinter::~PrefixPrinter() - myCounter("<<myCounter<<") < 0");
-    return string(myCounter*2,' ');
-  }
-  return "";
+    if (myCounter) {
+        if (myCounter < 0)
+            EXCEPTION(runtime_error,
+                      "PrefixPrinter::~PrefixPrinter() - myCounter(" << myCounter << ") < 0");
+        return string(myCounter * 2, ' ');
+    }
+    return "";
 }
 
 
@@ -66,49 +65,44 @@ static MED::TEntity2GeomSet Entity2GeomSet;
 
 bool InitEntity2GeomSet()
 {
-  using namespace MED;
+    using namespace MED;
 
-  TGeomSet& aGeomARETESet = Entity2GeomSet[eARETE];
-  aGeomARETESet.insert(eSEG2);
-  aGeomARETESet.insert(eSEG3);
+    TGeomSet &aGeomARETESet = Entity2GeomSet[eARETE];
+    aGeomARETESet.insert(eSEG2);
+    aGeomARETESet.insert(eSEG3);
 
-  TGeomSet& aGeomFACESet = Entity2GeomSet[eFACE];
-  aGeomFACESet.insert(eTRIA3);
-  aGeomFACESet.insert(eQUAD4);
-  aGeomFACESet.insert(eTRIA6);
-  aGeomFACESet.insert(eTRIA7);
-  aGeomFACESet.insert(eQUAD8);
-  aGeomFACESet.insert(eQUAD9);
-  aGeomFACESet.insert(ePOLYGONE);
-  aGeomFACESet.insert(ePOLYGON2);
+    TGeomSet &aGeomFACESet = Entity2GeomSet[eFACE];
+    aGeomFACESet.insert(eTRIA3);
+    aGeomFACESet.insert(eQUAD4);
+    aGeomFACESet.insert(eTRIA6);
+    aGeomFACESet.insert(eTRIA7);
+    aGeomFACESet.insert(eQUAD8);
+    aGeomFACESet.insert(eQUAD9);
+    aGeomFACESet.insert(ePOLYGONE);
+    aGeomFACESet.insert(ePOLYGON2);
 
-  TGeomSet& aGeomMAILLESet = Entity2GeomSet[eMAILLE];
-  aGeomMAILLESet.insert(ePOINT1);
-  aGeomMAILLESet.insert(aGeomARETESet.begin(),aGeomARETESet.end());
-  aGeomMAILLESet.insert(aGeomFACESet.begin(),aGeomFACESet.end());
-  aGeomMAILLESet.insert(eTETRA4);
-  aGeomMAILLESet.insert(ePYRA5);
-  aGeomMAILLESet.insert(ePENTA6);
-  aGeomMAILLESet.insert(eHEXA8);
-  aGeomMAILLESet.insert(eOCTA12);
-  aGeomMAILLESet.insert(eTETRA10);
-  aGeomMAILLESet.insert(ePYRA13);
-  aGeomMAILLESet.insert(ePENTA15);
-  aGeomMAILLESet.insert(eHEXA20);
-  aGeomMAILLESet.insert(eHEXA27);
-  aGeomMAILLESet.insert(ePOLYEDRE);
+    TGeomSet &aGeomMAILLESet = Entity2GeomSet[eMAILLE];
+    aGeomMAILLESet.insert(ePOINT1);
+    aGeomMAILLESet.insert(aGeomARETESet.begin(), aGeomARETESet.end());
+    aGeomMAILLESet.insert(aGeomFACESet.begin(), aGeomFACESet.end());
+    aGeomMAILLESet.insert(eTETRA4);
+    aGeomMAILLESet.insert(ePYRA5);
+    aGeomMAILLESet.insert(ePENTA6);
+    aGeomMAILLESet.insert(eHEXA8);
+    aGeomMAILLESet.insert(eOCTA12);
+    aGeomMAILLESet.insert(eTETRA10);
+    aGeomMAILLESet.insert(ePYRA13);
+    aGeomMAILLESet.insert(ePENTA15);
+    aGeomMAILLESet.insert(eHEXA20);
+    aGeomMAILLESet.insert(eHEXA27);
+    aGeomMAILLESet.insert(ePOLYEDRE);
 
-  /* This combination allows reading nb of models of structure elements */
-  Entity2GeomSet[eSTRUCT_ELEMENT].insert(eAllGeoType); 
+    /* This combination allows reading nb of models of structure elements */
+    Entity2GeomSet[eSTRUCT_ELEMENT].insert(eAllGeoType);
 
-  return true;
+    return true;
 }
 
 static bool anIsInited = InitEntity2GeomSet();
 
-const MED::TEntity2GeomSet& MED::GetEntity2GeomSet()
-{
-  return Entity2GeomSet;
-}
-
-
+const MED::TEntity2GeomSet &MED::GetEntity2GeomSet() { return Entity2GeomSet; }

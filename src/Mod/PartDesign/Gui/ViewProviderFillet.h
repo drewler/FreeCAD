@@ -27,9 +27,10 @@
 #include "ViewProviderDressUp.h"
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderFillet : public ViewProviderDressUp
+class PartDesignGuiExport ViewProviderFillet: public ViewProviderDressUp
 {
     Q_DECLARE_TR_FUNCTIONS(PartDesignGui::ViewProviderFillet)
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderFillet);
@@ -37,11 +38,13 @@ class PartDesignGuiExport ViewProviderFillet : public ViewProviderDressUp
 public:
     /// constructor
     ViewProviderFillet()
-        { sPixmap = "PartDesign_Fillet.svg";
-          menuName = tr("Fillet parameters"); }
+    {
+        sPixmap = "PartDesign_Fillet.svg";
+        menuName = tr("Fillet parameters");
+    }
 
     /// return "Fillet"
-    const std::string & featureName() const override;
+    const std::string &featureName() const override;
 
 protected:
     /// Returns a newly create dialog for the part to be placed in the task view

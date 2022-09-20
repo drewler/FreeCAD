@@ -40,8 +40,8 @@ public:
     ~LineGroup();
     double getWeight(std::string s);
     void setWeight(std::string s, double weight);
-//    void setWeight(const char* s, double weight);
-    void dump(const char* title);
+    //    void setWeight(const char* s, double weight);
+    void dump(const char *title);
     std::string getName(void) { return m_name; }
     void setName(std::string s) { m_name = s; }
 
@@ -52,7 +52,7 @@ public:
     static std::string getRecordFromFile(std::string parmFile, int groupNumber);
 
     //static LineGroup maker
-    static LineGroup* lineGroupFactory(int groupNumber);
+    static LineGroup *lineGroupFactory(int groupNumber);
 
     static double getDefaultWidth(std::string weightName, int groupNumber = -1);
 
@@ -63,11 +63,11 @@ protected:
     void init(void);
 
     std::string m_name;
-    double      m_thin;
-    double      m_graphic;
-    double      m_thick;
-    double      m_extra;
+    double m_thin;
+    double m_graphic;
+    double m_thick;
+    double m_extra;
 };
 
-}
+} // namespace TechDraw
 #endif

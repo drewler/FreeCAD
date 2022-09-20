@@ -22,12 +22,12 @@ namespace QSint
 
     \image html ActionPanel4.png Example of the scheme
 */
-class QSINT_EXPORT WinVistaPanelScheme : public ActionPanelScheme
+class QSINT_EXPORT WinVistaPanelScheme: public ActionPanelScheme
 {
 public:
     WinVistaPanelScheme();
 
-    static ActionPanelScheme* defaultScheme()
+    static ActionPanelScheme *defaultScheme()
     {
         static WinVistaPanelScheme scheme;
         return &scheme;
@@ -35,7 +35,7 @@ public:
 };
 
 
-}
+} // namespace QSint
 
 
 #endif // WINVISTAPANELSCHEME_H

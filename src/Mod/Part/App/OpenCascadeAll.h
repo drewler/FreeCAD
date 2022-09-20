@@ -501,14 +501,13 @@
 #include <ShapeAnalysis_FreeBoundsProperties.hxx>
 #include <ShapeAnalysis_FreeBoundData.hxx>
 
-# include <BOPAlgo_ArgumentAnalyzer.hxx>
-# include <BOPAlgo_ListOfCheckResult.hxx>
+#include <BOPAlgo_ArgumentAnalyzer.hxx>
+#include <BOPAlgo_ListOfCheckResult.hxx>
 
 #if OCC_VERSION_HEX >= 0x070300
-# include <BRepAlgoAPI_Defeaturing.hxx>
+#include <BRepAlgoAPI_Defeaturing.hxx>
 #endif
 
 #include <OSD_OpenFile.hxx>
 
 #endif // __OpenCascadeAll__
-

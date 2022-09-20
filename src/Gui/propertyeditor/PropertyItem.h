@@ -56,27 +56,32 @@ Q_DECLARE_METATYPE(QList<Base::Quantity>)
 #endif
 
 
-#define PROPERTYITEM_HEADER \
-public: \
-    static void *create(void); \
+#define PROPERTYITEM_HEADER                                                                        \
+public:                                                                                            \
+    static void *create(void);                                                                     \
     static void init(void);
 
-#define PROPERTYITEM_SOURCE(_class_) \
-void * _class_::create(void) { \
-   return new _class_ ();\
-} \
-void _class_::init(void) { \
-    (void)new Gui::PropertyEditor::PropertyItemProducer<_class_>(#_class_); \
-}
+#define PROPERTYITEM_SOURCE(_class_)                                                               \
+    void *_class_::create(void)                                                                    \
+    {                                                                                              \
+        return new _class_();                                                                      \
+    }                                                                                              \
+    void _class_::init(void)                                                                       \
+    {                                                                                              \
+        (void)new Gui::PropertyEditor::PropertyItemProducer<_class_>(#_class_);                    \
+    }
 
-namespace Gui {
+namespace Gui
+{
 
-namespace Dialog { 
-class TaskPlacement; 
+namespace Dialog
+{
+class TaskPlacement;
 class DlgPropertyLink;
-}
+} // namespace Dialog
 
-namespace PropertyEditor {
+namespace PropertyEditor
+{
 
 class PropertyItem;
 class PropertyModel;
@@ -86,41 +91,39 @@ class PropertyEditorWidget;
  * The PropertyItemFactory provides methods for the dynamic creation of property items.
  * \author Werner Mayer
  */
-class GuiExport PropertyItemFactory : public Base::Factory
+class GuiExport PropertyItemFactory: public Base::Factory
 {
 public:
-    static PropertyItemFactory& instance();
-    static void destruct ();
+    static PropertyItemFactory &instance();
+    static void destruct();
 
-    PropertyItem* createPropertyItem (const char* sName) const;
+    PropertyItem *createPropertyItem(const char *sName) const;
 
 private:
-    static PropertyItemFactory* _singleton;
+    static PropertyItemFactory *_singleton;
 
-    PropertyItemFactory(){}
-    ~PropertyItemFactory() override{}
+    PropertyItemFactory() {}
+    ~PropertyItemFactory() override {}
 };
 
-template <class CLASS>
-class PropertyItemProducer : public Base::AbstractProducer
+template<class CLASS> class PropertyItemProducer: public Base::AbstractProducer
 {
 public:
-    explicit PropertyItemProducer(const char* className) {
+    explicit PropertyItemProducer(const char *className)
+    {
         PropertyItemFactory::instance().AddProducer(className, this);
     }
-    ~PropertyItemProducer() override {
-    }
-    void* Produce () const override {
-        return CLASS::create();
-    }
+    ~PropertyItemProducer() override {}
+    void *Produce() const override { return CLASS::create(); }
 };
 
-class PropertyItemAttorney {
+class PropertyItemAttorney
+{
 public:
-    static QVariant toString(PropertyItem* item, const QVariant& v);
+    static QVariant toString(PropertyItem *item, const QVariant &v);
 };
 
-class GuiExport PropertyItem : public QObject, public ExpressionBinding
+class GuiExport PropertyItem: public QObject, public ExpressionBinding
 {
     Q_OBJECT
     PROPERTYITEM_HEADER
@@ -129,35 +132,37 @@ public:
     ~PropertyItem() override;
 
     /** Sets the current property objects. */
-    void setPropertyData( const std::vector<App::Property*>& );
+    void setPropertyData(const std::vector<App::Property *> &);
     void updateData();
-    const std::vector<App::Property*>& getPropertyData() const;
-    bool hasProperty(const App::Property*) const;
-    virtual void assignProperty(const App::Property*);
-    bool removeProperty(const App::Property*);
-    App::Property* getFirstProperty();
-    const App::Property* getFirstProperty() const;
+    const std::vector<App::Property *> &getPropertyData() const;
+    bool hasProperty(const App::Property *) const;
+    virtual void assignProperty(const App::Property *);
+    bool removeProperty(const App::Property *);
+    App::Property *getFirstProperty();
+    const App::Property *getFirstProperty() const;
 
     /** Creates the appropriate editor for this item and sets the editor to the value of overrideValue(). */
-    virtual QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const;
-    virtual void setEditorData(QWidget *editor, const QVariant& data) const;
+    virtual QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                                  const char *method) const;
+    virtual void setEditorData(QWidget *editor, const QVariant &data) const;
     virtual QVariant editorData(QWidget *editor) const;
     virtual bool isSeparator() const { return false; }
 
-    QWidget* createExpressionEditor(QWidget* parent, const QObject* receiver, const char* method) const;
-    void setExpressionEditorData(QWidget *editor, const QVariant& data) const;
+    QWidget *createExpressionEditor(QWidget *parent, const QObject *receiver,
+                                    const char *method) const;
+    void setExpressionEditorData(QWidget *editor, const QVariant &data) const;
     QVariant expressionEditorData(QWidget *editor) const;
 
-    PropertyEditorWidget* createPropertyEditorWidget(QWidget* parent) const;
+    PropertyEditorWidget *createPropertyEditorWidget(QWidget *parent) const;
 
     /**override the bind functions to ensure we issue the propertyBound() call, which is then overloaded by 
        childs which like to be informed of a binding*/
-    void bind(const App::Property& prop) override;
-    void bind(const App::ObjectIdentifier& _path) override;
-    virtual void propertyBound()  {}
+    void bind(const App::Property &prop) override;
+    void bind(const App::ObjectIdentifier &_path) override;
+    virtual void propertyBound() {}
     QString expressionAsString() const;
 
-    void setParent(PropertyItem* parent);
+    void setParent(PropertyItem *parent);
     PropertyItem *parent() const;
     void appendChild(PropertyItem *child);
     void insertChild(int, PropertyItem *child);
@@ -181,10 +186,10 @@ public:
     int childCount() const;
     int columnCount() const;
     QString propertyName() const;
-    void setPropertyName(QString name, QString realName=QString());
-    void setPropertyValue(const QString&);
+    void setPropertyName(QString name, QString realName = QString());
+    void setPropertyValue(const QString &);
     virtual QVariant data(int column, int role) const;
-    bool setData (const QVariant& value);
+    bool setData(const QVariant &value);
     Qt::ItemFlags flags(int column) const;
     virtual int row() const;
     void reset();
@@ -195,11 +200,11 @@ protected:
     PropertyItem();
 
     virtual QVariant displayName() const;
-    virtual QVariant decoration(const QVariant&) const;
-    virtual QVariant toolTip(const App::Property*) const;
-    virtual QVariant toString(const QVariant&) const;
-    virtual QVariant value(const App::Property*) const;
-    virtual void setValue(const QVariant&);
+    virtual QVariant decoration(const QVariant &) const;
+    virtual QVariant toolTip(const App::Property *) const;
+    virtual QVariant toString(const QVariant &) const;
+    virtual QVariant value(const App::Property *) const;
+    virtual void setValue(const QVariant &);
     virtual void initialize();
 
     //gets called when the bound expression is changed
@@ -208,9 +213,9 @@ protected:
 protected:
     QString propName;
     QString displayText;
-    std::vector<App::Property*> propertyItems;
+    std::vector<App::Property *> propertyItems;
     PropertyItem *parentItem;
-    QList<PropertyItem*> childItems;
+    QList<PropertyItem *> childItems;
     bool readonly;
     int precision;
     bool linked;
@@ -228,13 +233,14 @@ class GuiExport PropertyStringItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyStringItem();
@@ -249,13 +255,14 @@ class GuiExport PropertyFontItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyFontItem();
@@ -265,17 +272,16 @@ protected:
  * Dummy property to separate groups of properties.
  * \author Werner Mayer
  */
-class GuiExport PropertySeparatorItem : public PropertyItem
+class GuiExport PropertySeparatorItem: public PropertyItem
 {
     Q_OBJECT
     PROPERTYITEM_HEADER
 
     bool isSeparator() const override { return true; }
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
 
-    int row() const override {
-        return _row<0?PropertyItem::row():_row;
-    }
+    int row() const override { return _row < 0 ? PropertyItem::row() : _row; }
 
 private:
     friend PropertyModel;
@@ -291,14 +297,15 @@ class GuiExport PropertyIntegerItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyIntegerItem();
@@ -313,14 +320,15 @@ class GuiExport PropertyIntegerConstraintItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyIntegerConstraintItem();
@@ -335,14 +343,15 @@ class GuiExport PropertyFloatItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyFloatItem();
@@ -357,14 +366,15 @@ class GuiExport PropertyUnitItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
     PropertyUnitItem();
 };
@@ -378,7 +388,7 @@ class GuiExport PropertyUnitConstraintItem: public PropertyUnitItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
 
 protected:
     PropertyUnitConstraintItem();
@@ -393,14 +403,15 @@ class GuiExport PropertyFloatConstraintItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyFloatConstraintItem();
@@ -421,14 +432,14 @@ protected:
  * Change a floating point number.
  * \author Werner Mayer
  */
-class GuiExport PropertyAngleItem : public PropertyUnitConstraintItem
+class GuiExport PropertyAngleItem: public PropertyUnitConstraintItem
 {
     Q_OBJECT
     PROPERTYITEM_HEADER
 
 protected:
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
-    QVariant toString(const QVariant&) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
+    QVariant toString(const QVariant &) const override;
 
 protected:
     PropertyAngleItem();
@@ -443,13 +454,14 @@ class GuiExport PropertyBoolItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyBoolItem();
@@ -463,13 +475,17 @@ class PropertyFloatItem;
 class GuiExport PropertyVectorItem: public PropertyItem
 {
     Q_OBJECT
-    Q_PROPERTY(double x READ x WRITE setX DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double y READ y WRITE setY DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double z READ z WRITE setZ DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double x READ x WRITE setX
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double y READ y WRITE setY
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double z READ z WRITE setZ
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
     double x() const;
@@ -480,36 +496,36 @@ class GuiExport PropertyVectorItem: public PropertyItem
     void setZ(double z);
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyVectorItem();
     void propertyBound() override;
 
 private:
-    PropertyFloatItem* m_x;
-    PropertyFloatItem* m_y;
-    PropertyFloatItem* m_z;
+    PropertyFloatItem *m_x;
+    PropertyFloatItem *m_y;
+    PropertyFloatItem *m_z;
 };
 
-class PropertyEditorWidget : public QWidget
+class PropertyEditorWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PropertyEditorWidget (QWidget * parent = nullptr);
+    explicit PropertyEditorWidget(QWidget *parent = nullptr);
     ~PropertyEditorWidget() override;
 
     QVariant value() const;
 
 public Q_SLOTS:
-    void setValue(const QVariant&);
+    void setValue(const QVariant &);
 
 protected:
-    virtual void showValue(const QVariant& data);
-    void resizeEvent(QResizeEvent*) override;
+    virtual void showValue(const QVariant &data);
+    void resizeEvent(QResizeEvent *) override;
 
 Q_SIGNALS:
     void buttonClick();
@@ -521,15 +537,15 @@ protected:
     QPushButton *button;
 };
 
-class VectorListWidget : public PropertyEditorWidget
+class VectorListWidget: public PropertyEditorWidget
 {
     Q_OBJECT
 
 public:
-    explicit VectorListWidget (int decimals, QWidget * parent = nullptr);
+    explicit VectorListWidget(int decimals, QWidget *parent = nullptr);
 
 protected:
-    void showValue(const QVariant& data) override;
+    void showValue(const QVariant &data) override;
 
 private Q_SLOTS:
     void buttonClicked();
@@ -542,19 +558,20 @@ private:
  * Edit properties of vector list type.
  * \author Werner Mayer
  */
-class GuiExport PropertyVectorListItem : public PropertyItem
+class GuiExport PropertyVectorListItem: public PropertyItem
 {
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyVectorListItem();
@@ -568,13 +585,17 @@ class PropertyUnitItem;
 class GuiExport PropertyVectorDistanceItem: public PropertyItem
 {
     Q_OBJECT
-    Q_PROPERTY(Base::Quantity x READ x WRITE setX DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(Base::Quantity y READ y WRITE setY DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(Base::Quantity z READ z WRITE setZ DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(Base::Quantity x READ x WRITE setX
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(Base::Quantity y READ y WRITE setY
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(Base::Quantity z READ z WRITE setZ
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
     void propertyBound() override;
@@ -587,23 +608,22 @@ class GuiExport PropertyVectorDistanceItem: public PropertyItem
     void setZ(Base::Quantity z);
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
     PropertyVectorDistanceItem();
 
 private:
-    PropertyUnitItem* m_x;
-    PropertyUnitItem* m_y;
-    PropertyUnitItem* m_z;
+    PropertyUnitItem *m_x;
+    PropertyUnitItem *m_y;
+    PropertyUnitItem *m_z;
 };
 
 class GuiExport PropertyPositionItem: public PropertyVectorDistanceItem
 {
     Q_OBJECT
     PROPERTYITEM_HEADER
-
 };
 
 class GuiExport PropertyDirectionItem: public PropertyVectorDistanceItem
@@ -615,26 +635,43 @@ class GuiExport PropertyDirectionItem: public PropertyVectorDistanceItem
 class GuiExport PropertyMatrixItem: public PropertyItem
 {
     Q_OBJECT
-    Q_PROPERTY(double A11 READ getA11 WRITE setA11 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A12 READ getA12 WRITE setA12 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A13 READ getA13 WRITE setA13 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A14 READ getA14 WRITE setA14 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A21 READ getA21 WRITE setA21 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A22 READ getA22 WRITE setA22 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A23 READ getA23 WRITE setA23 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A24 READ getA24 WRITE setA24 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A31 READ getA31 WRITE setA31 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A32 READ getA32 WRITE setA32 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A33 READ getA33 WRITE setA33 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A34 READ getA34 WRITE setA34 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A41 READ getA41 WRITE setA41 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A42 READ getA42 WRITE setA42 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A43 READ getA43 WRITE setA43 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(double A44 READ getA44 WRITE setA44 DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A11 READ getA11 WRITE setA11
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A12 READ getA12 WRITE setA12
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A13 READ getA13 WRITE setA13
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A14 READ getA14 WRITE setA14
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A21 READ getA21 WRITE setA21
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A22 READ getA22 WRITE setA22
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A23 READ getA23 WRITE setA23
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A24 READ getA24 WRITE setA24
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A31 READ getA31 WRITE setA31
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A32 READ getA32 WRITE setA32
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A33 READ getA33 WRITE setA33
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A34 READ getA34 WRITE setA34
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A41 READ getA41 WRITE setA41
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A42 READ getA42 WRITE setA42
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A43 READ getA43 WRITE setA43
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(double A44 READ getA44 WRITE setA44
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
     double getA11() const;
@@ -669,33 +706,33 @@ class GuiExport PropertyMatrixItem: public PropertyItem
     void setA43(double A43);
     double getA44() const;
     void setA44(double A44);
-    
+
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyMatrixItem();
-    QVariant toolTip(const App::Property*) const override;
+    QVariant toolTip(const App::Property *) const override;
 
 private:
-    PropertyFloatItem* m_a11;
-    PropertyFloatItem* m_a12;
-    PropertyFloatItem* m_a13;
-    PropertyFloatItem* m_a14;
-    PropertyFloatItem* m_a21;
-    PropertyFloatItem* m_a22;
-    PropertyFloatItem* m_a23;
-    PropertyFloatItem* m_a24;
-    PropertyFloatItem* m_a31;
-    PropertyFloatItem* m_a32;
-    PropertyFloatItem* m_a33;
-    PropertyFloatItem* m_a34;
-    PropertyFloatItem* m_a41;
-    PropertyFloatItem* m_a42;
-    PropertyFloatItem* m_a43;
-    PropertyFloatItem* m_a44; 
+    PropertyFloatItem *m_a11;
+    PropertyFloatItem *m_a12;
+    PropertyFloatItem *m_a13;
+    PropertyFloatItem *m_a14;
+    PropertyFloatItem *m_a21;
+    PropertyFloatItem *m_a22;
+    PropertyFloatItem *m_a23;
+    PropertyFloatItem *m_a24;
+    PropertyFloatItem *m_a31;
+    PropertyFloatItem *m_a32;
+    PropertyFloatItem *m_a33;
+    PropertyFloatItem *m_a34;
+    PropertyFloatItem *m_a41;
+    PropertyFloatItem *m_a42;
+    PropertyFloatItem *m_a43;
+    PropertyFloatItem *m_a44;
 };
 
 class RotationHelper
@@ -705,13 +742,13 @@ public:
     void setChanged(bool);
     bool hasChangedAndReset();
     bool isAxisInitialized() const;
-    void setValue(const Base::Vector3d& axis, double angle);
-    void getValue(Base::Vector3d& axis, double& angle) const;
-    double getAngle(const Base::Rotation& val) const;
+    void setValue(const Base::Vector3d &axis, double angle);
+    void getValue(Base::Vector3d &axis, double &angle) const;
+    double getAngle(const Base::Rotation &val) const;
     Base::Rotation setAngle(double);
     Base::Vector3d getAxis() const;
-    Base::Rotation setAxis(const Base::Rotation& value, const Base::Vector3d& axis);
-    void assignProperty(const Base::Rotation& value, double eps);
+    Base::Rotation setAxis(const Base::Rotation &value, const Base::Vector3d &axis);
+    void assignProperty(const Base::Rotation &value, double eps);
 
 private:
     bool init_axis;
@@ -727,50 +764,53 @@ private:
 class GuiExport PropertyRotationItem: public PropertyItem
 {
     Q_OBJECT
-    Q_PROPERTY(Base::Quantity Angle READ getAngle WRITE setAngle DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(Base::Vector3d Axis READ getAxis WRITE setAxis DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(Base::Quantity Angle READ getAngle WRITE setAngle
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(Base::Vector3d Axis READ getAxis WRITE setAxis
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
     void propertyBound() override;
-    void assignProperty(const App::Property*) override;
+    void assignProperty(const App::Property *) override;
 
     Base::Quantity getAngle() const;
     void setAngle(Base::Quantity);
     Base::Vector3d getAxis() const;
-    void setAxis(const Base::Vector3d&);
+    void setAxis(const Base::Vector3d &);
 
 protected:
     PropertyRotationItem();
     ~PropertyRotationItem() override;
-    QVariant toolTip(const App::Property*) const override;
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toolTip(const App::Property *) const override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 private:
     mutable RotationHelper h;
-    PropertyUnitItem * m_a;
-    PropertyVectorItem* m_d;
+    PropertyUnitItem *m_a;
+    PropertyVectorItem *m_d;
 };
 
-class PlacementEditor : public Gui::LabelButton
+class PlacementEditor: public Gui::LabelButton
 {
     Q_OBJECT
 
 public:
-    explicit PlacementEditor(const QString& name, QWidget * parent = nullptr);
+    explicit PlacementEditor(const QString &name, QWidget *parent = nullptr);
     ~PlacementEditor() override;
 
 private Q_SLOTS:
-    void updateValue(const QVariant& v, bool, bool);
+    void updateValue(const QVariant &v, bool, bool);
 
 private:
     void browse() override;
-    void showValue(const QVariant& d) override;
+    void showValue(const QVariant &d) override;
 
 private:
     QPointer<Gui::Dialog::TaskPlacement> _task;
@@ -784,38 +824,42 @@ private:
 class GuiExport PropertyPlacementItem: public PropertyItem
 {
     Q_OBJECT
-    Q_PROPERTY(Base::Quantity Angle READ getAngle WRITE setAngle DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(Base::Vector3d Axis READ getAxis WRITE setAxis DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(Base::Vector3d Position READ getPosition WRITE setPosition DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(Base::Quantity Angle READ getAngle WRITE setAngle
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(Base::Vector3d Axis READ getAxis WRITE setAxis
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(Base::Vector3d Position READ getPosition WRITE setPosition
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
     void propertyBound() override;
-    void assignProperty(const App::Property*) override;
+    void assignProperty(const App::Property *) override;
 
     Base::Quantity getAngle() const;
     void setAngle(Base::Quantity);
     Base::Vector3d getAxis() const;
-    void setAxis(const Base::Vector3d&);
+    void setAxis(const Base::Vector3d &);
     Base::Vector3d getPosition() const;
-    void setPosition(const Base::Vector3d&);
+    void setPosition(const Base::Vector3d &);
 
 protected:
     PropertyPlacementItem();
     ~PropertyPlacementItem() override;
-    QVariant toolTip(const App::Property*) const override;
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toolTip(const App::Property *) const override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 private:
     mutable RotationHelper h;
-    PropertyUnitItem * m_a;
-    PropertyVectorItem* m_d;
-    PropertyVectorDistanceItem* m_p;
+    PropertyUnitItem *m_a;
+    PropertyVectorItem *m_d;
+    PropertyVectorDistanceItem *m_p;
 };
 
 class PropertyStringListItem;
@@ -827,35 +871,35 @@ class PropertyStringListItem;
 class GuiExport PropertyEnumItem: public PropertyItem
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList Enum READ getEnum WRITE setEnum DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QStringList Enum READ getEnum WRITE setEnum
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
     QStringList getEnum() const;
     void setEnum(QStringList);
 
 protected:
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
     void propertyBound() override;
 
 protected:
     PropertyEnumItem();
 
 private:
-    PropertyStringListItem* m_enum;
+    PropertyStringListItem *m_enum;
 };
 
-class PropertyEnumButton : public QPushButton
+class PropertyEnumButton: public QPushButton
 {
     Q_OBJECT
 public:
-    explicit PropertyEnumButton(QWidget *parent = nullptr)
-        :QPushButton(parent)
-    {}
+    explicit PropertyEnumButton(QWidget *parent = nullptr) : QPushButton(parent) {}
 
 Q_SIGNALS:
     void picked();
@@ -870,14 +914,15 @@ class GuiExport PropertyStringListItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyStringListItem();
@@ -892,14 +937,15 @@ class GuiExport PropertyFloatListItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyFloatListItem();
@@ -914,14 +960,15 @@ class GuiExport PropertyIntegerListItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyIntegerListItem();
@@ -936,15 +983,16 @@ class GuiExport PropertyColorItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant decoration(const QVariant&) const override;
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant decoration(const QVariant &) const override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyColorItem();
@@ -954,31 +1002,38 @@ protected:
 * Change a material property.
 * \author Werner Mayer
 */
-class GuiExport PropertyMaterialItem : public PropertyItem
+class GuiExport PropertyMaterialItem: public PropertyItem
 {
     Q_OBJECT
-    Q_PROPERTY(QColor AmbientColor READ getAmbientColor WRITE setAmbientColor DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(QColor DiffuseColor READ getDiffuseColor WRITE setDiffuseColor DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(QColor SpecularColor READ getSpecularColor WRITE setSpecularColor DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(QColor EmissiveColor READ getEmissiveColor WRITE setEmissiveColor DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(float Shininess READ getShininess WRITE setShininess DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(float Transparency READ getTransparency WRITE setTransparency DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QColor AmbientColor READ getAmbientColor WRITE setAmbientColor
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QColor DiffuseColor READ getDiffuseColor WRITE setDiffuseColor
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QColor SpecularColor READ getSpecularColor WRITE setSpecularColor
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QColor EmissiveColor READ getEmissiveColor WRITE setEmissiveColor
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(float Shininess READ getShininess WRITE setShininess
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(float Transparency READ getTransparency WRITE setTransparency
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
     void propertyBound() override;
 
     QColor getAmbientColor() const;
-    void setAmbientColor(const QColor&);
+    void setAmbientColor(const QColor &);
     QColor getDiffuseColor() const;
-    void setDiffuseColor(const QColor&);
+    void setDiffuseColor(const QColor &);
     QColor getSpecularColor() const;
-    void setSpecularColor(const QColor&);
+    void setSpecularColor(const QColor &);
     QColor getEmissiveColor() const;
-    void setEmissiveColor(const QColor&);
+    void setEmissiveColor(const QColor &);
     float getShininess() const;
     void setShininess(float);
     float getTransparency() const;
@@ -988,46 +1043,53 @@ protected:
     PropertyMaterialItem();
     ~PropertyMaterialItem() override;
 
-    QVariant decoration(const QVariant&) const override;
-    QVariant toolTip(const App::Property*) const override;
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant decoration(const QVariant &) const override;
+    QVariant toolTip(const App::Property *) const override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 private:
-    PropertyColorItem* ambient;
-    PropertyColorItem* diffuse;
-    PropertyColorItem* specular;
-    PropertyColorItem* emissive;
-    PropertyFloatItem* shininess;
-    PropertyFloatItem* transparency;
+    PropertyColorItem *ambient;
+    PropertyColorItem *diffuse;
+    PropertyColorItem *specular;
+    PropertyColorItem *emissive;
+    PropertyFloatItem *shininess;
+    PropertyFloatItem *transparency;
 };
 
-class GuiExport PropertyMaterialListItem : public PropertyItem
+class GuiExport PropertyMaterialListItem: public PropertyItem
 {
     Q_OBJECT
-    Q_PROPERTY(QColor AmbientColor READ getAmbientColor WRITE setAmbientColor DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(QColor DiffuseColor READ getDiffuseColor WRITE setDiffuseColor DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(QColor SpecularColor READ getSpecularColor WRITE setSpecularColor DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(QColor EmissiveColor READ getEmissiveColor WRITE setEmissiveColor DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(float Shininess READ getShininess WRITE setShininess DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
-    Q_PROPERTY(float Transparency READ getTransparency WRITE setTransparency DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QColor AmbientColor READ getAmbientColor WRITE setAmbientColor
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QColor DiffuseColor READ getDiffuseColor WRITE setDiffuseColor
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QColor SpecularColor READ getSpecularColor WRITE setSpecularColor
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(QColor EmissiveColor READ getEmissiveColor WRITE setEmissiveColor
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(float Shininess READ getShininess WRITE setShininess
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(float Transparency READ getTransparency WRITE setTransparency
+                   DESIGNABLE true USER true) // clazy:exclude=qproperty-without-notify
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
     void propertyBound() override;
 
     QColor getAmbientColor() const;
-    void setAmbientColor(const QColor&);
+    void setAmbientColor(const QColor &);
     QColor getDiffuseColor() const;
-    void setDiffuseColor(const QColor&);
+    void setDiffuseColor(const QColor &);
     QColor getSpecularColor() const;
-    void setSpecularColor(const QColor&);
+    void setSpecularColor(const QColor &);
     QColor getEmissiveColor() const;
-    void setEmissiveColor(const QColor&);
+    void setEmissiveColor(const QColor &);
     float getShininess() const;
     void setShininess(float);
     float getTransparency() const;
@@ -1037,19 +1099,19 @@ protected:
     PropertyMaterialListItem();
     ~PropertyMaterialListItem() override;
 
-    QVariant decoration(const QVariant&) const override;
-    QVariant toolTip(const App::Property*) const override;
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant decoration(const QVariant &) const override;
+    QVariant toolTip(const App::Property *) const override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 private:
-    PropertyColorItem* ambient;
-    PropertyColorItem* diffuse;
-    PropertyColorItem* specular;
-    PropertyColorItem* emissive;
-    PropertyFloatItem* shininess;
-    PropertyFloatItem* transparency;
+    PropertyColorItem *ambient;
+    PropertyColorItem *diffuse;
+    PropertyColorItem *specular;
+    PropertyColorItem *emissive;
+    PropertyFloatItem *shininess;
+    PropertyFloatItem *transparency;
 };
 
 /**
@@ -1061,17 +1123,18 @@ class GuiExport PropertyFileItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyFileItem();
-    QVariant toolTip(const App::Property*) const override;
+    QVariant toolTip(const App::Property *) const override;
 };
 
 /**
@@ -1083,17 +1146,18 @@ class GuiExport PropertyPathItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyPathItem();
-    QVariant toolTip(const App::Property*) const override;
+    QVariant toolTip(const App::Property *) const override;
 };
 
 /**
@@ -1105,20 +1169,21 @@ class GuiExport PropertyTransientFileItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
 
 protected:
     PropertyTransientFileItem();
-    QVariant toolTip(const App::Property*) const override;
+    QVariant toolTip(const App::Property *) const override;
 };
 
-class LinkSelection : public QObject
+class LinkSelection: public QObject
 {
     Q_OBJECT
 
@@ -1134,34 +1199,34 @@ private:
 };
 
 
-class LinkLabel : public QWidget
+class LinkLabel: public QWidget
 {
     Q_OBJECT
 
 public:
-    LinkLabel (QWidget * parent, const App::Property *prop);
+    LinkLabel(QWidget *parent, const App::Property *prop);
     ~LinkLabel() override;
     void updatePropertyLink();
     QVariant propertyLink() const;
 
 protected:
-    void resizeEvent(QResizeEvent*) override;
+    void resizeEvent(QResizeEvent *) override;
 
 protected Q_SLOTS:
-    void onLinkActivated(const QString&);
+    void onLinkActivated(const QString &);
     void onEditClicked();
     void onLinkChanged();
 
 Q_SIGNALS:
-    void linkChanged(const QVariant&);
+    void linkChanged(const QVariant &);
 
 private:
-    QLabel* label;
-    QPushButton* editButton;
+    QLabel *label;
+    QPushButton *editButton;
     QVariant link;
     App::DocumentObjectT objProp;
 
-    Gui::Dialog::DlgPropertyLink* dlg;
+    Gui::Dialog::DlgPropertyLink *dlg;
 };
 
 /**
@@ -1173,14 +1238,15 @@ class GuiExport PropertyLinkItem: public PropertyItem
     Q_OBJECT
     PROPERTYITEM_HEADER
 
-    QWidget* createEditor(QWidget* parent, const QObject* receiver, const char* method) const override;
-    void setEditorData(QWidget *editor, const QVariant& data) const override;
+    QWidget *createEditor(QWidget *parent, const QObject *receiver,
+                          const char *method) const override;
+    void setEditorData(QWidget *editor, const QVariant &data) const override;
     QVariant editorData(QWidget *editor) const override;
 
 protected:
-    QVariant toString(const QVariant&) const override;
-    QVariant value(const App::Property*) const override;
-    void setValue(const QVariant&) override;
+    QVariant toString(const QVariant &) const override;
+    QVariant value(const App::Property *) const override;
+    void setValue(const QVariant &) override;
     QVariant data(int column, int role) const override;
 
 protected:
@@ -1200,7 +1266,7 @@ protected:
     PropertyLinkListItem();
 };
 
-class PropertyItemEditorFactory : public QItemEditorFactory
+class PropertyItemEditorFactory: public QItemEditorFactory
 {
 public:
     PropertyItemEditorFactory();

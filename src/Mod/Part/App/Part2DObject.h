@@ -48,7 +48,7 @@ class Geometry;
   * geometry as its descend Sketcher::SketchObject .
   */
 
-class PartExport Part2DObject : public Part::Feature, public Part::AttachExtension
+class PartExport Part2DObject: public Part::Feature, public Part::AttachExtension
 {
     PROPERTY_HEADER_WITH_EXTENSIONS(Part::Part2DObject);
 
@@ -73,10 +73,10 @@ public:
       *
       * If intersection is found, the associated geometryIndex1 or geometryIndex2 returns -1.
       */
-    static bool seekTrimPoints(const std::vector<Geometry *> &geomlist,
-                               int geometryIndex, const Base::Vector3d &point,
-                               int &geometryIndex1, Base::Vector3d &intersect1,
-                               int &geometryIndex2, Base::Vector3d &intersect2);
+    static bool seekTrimPoints(const std::vector<Geometry *> &geomlist, int geometryIndex,
+                               const Base::Vector3d &point, int &geometryIndex1,
+                               Base::Vector3d &intersect1, int &geometryIndex2,
+                               Base::Vector3d &intersect2);
 
     static const int H_Axis;
     static const int V_Axis;
@@ -88,16 +88,16 @@ public:
     App::DocumentObjectExecReturn *execute() override;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProvider2DObject";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProvider2DObject"; }
     //@}
 
     void Restore(Base::XMLReader &reader) override;
 
 protected:
-    void handleChangedPropertyType(Base::XMLReader &reader, const char * TypeName, App::Property * prop) override;
-    void handleChangedPropertyName(Base::XMLReader &reader, const char * TypeName, const char *PropName) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
+    void handleChangedPropertyName(Base::XMLReader &reader, const char *TypeName,
+                                   const char *PropName) override;
 };
 
 using Part2DObjectPython = App::FeaturePythonT<Part2DObject>;

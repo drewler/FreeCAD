@@ -33,56 +33,39 @@
 
 using namespace Base;
 
-Rotation::Rotation()
-    : quat{0.0,0.0,0.0,1.0}
-    , _axis{0.0,0.0,1.0}
-    , _angle{0.0}
-{
-}
+Rotation::Rotation() : quat {0.0, 0.0, 0.0, 1.0}, _axis {0.0, 0.0, 1.0}, _angle {0.0} {}
 
 /** Construct a rotation by rotation axis and angle */
-Rotation::Rotation(const Vector3d& axis, const double fAngle)
-    : Rotation()
+Rotation::Rotation(const Vector3d &axis, const double fAngle) : Rotation()
 {
     // set to (0,0,1) as fallback in case the passed axis is the null vector
     _axis.Set(0.0, 0.0, 1.0);
     this->setValue(axis, fAngle);
 }
 
-Rotation::Rotation(const Matrix4D& matrix)
-    : Rotation()
-{
-    this->setValue(matrix);
-}
+Rotation::Rotation(const Matrix4D &matrix) : Rotation() { this->setValue(matrix); }
 
 /** Construct a rotation initialized with the given quaternion components:
  * q[0] = x, q[1] = y, q[2] = z and q[3] = w,
  * where the quaternion is specified by q=w+xi+yj+zk.
  */
-Rotation::Rotation(const double q[4])
-    : Rotation()
-{
-    this->setValue(q);
-}
+Rotation::Rotation(const double q[4]) : Rotation() { this->setValue(q); }
 
 /** Construct a rotation initialized with the given quaternion components:
  * q0 = x, q1 = y, q2 = z and q3 = w,
  * where the quaternion is specified by q=w+xi+yj+zk.
  */
-Rotation::Rotation(const double q0, const double q1, const double q2, const double q3)
-    : Rotation()
+Rotation::Rotation(const double q0, const double q1, const double q2, const double q3) : Rotation()
 {
     this->setValue(q0, q1, q2, q3);
 }
 
-Rotation::Rotation(const Vector3d & rotateFrom, const Vector3d & rotateTo)
-    : Rotation()
+Rotation::Rotation(const Vector3d &rotateFrom, const Vector3d &rotateTo) : Rotation()
 {
     this->setValue(rotateFrom, rotateTo);
 }
 
-Rotation::Rotation(const Rotation& rot)
-    : Rotation()
+Rotation::Rotation(const Rotation &rot) : Rotation()
 {
     this->quat[0] = rot.quat[0];
     this->quat[1] = rot.quat[1];
@@ -92,10 +75,10 @@ Rotation::Rotation(const Rotation& rot)
     this->_axis[0] = rot._axis[0];
     this->_axis[1] = rot._axis[1];
     this->_axis[2] = rot._axis[2];
-    this->_angle   = rot._angle;
+    this->_angle = rot._angle;
 }
 
-void Rotation::operator = (const Rotation& rot)
+void Rotation::operator=(const Rotation &rot)
 {
     this->quat[0] = rot.quat[0];
     this->quat[1] = rot.quat[1];
@@ -105,15 +88,12 @@ void Rotation::operator = (const Rotation& rot)
     this->_axis[0] = rot._axis[0];
     this->_axis[1] = rot._axis[1];
     this->_axis[2] = rot._axis[2];
-    this->_angle   = rot._angle;
+    this->_angle = rot._angle;
 }
 
-const double * Rotation::getValue() const
-{
-    return &this->quat[0];
-}
+const double *Rotation::getValue() const { return &this->quat[0]; }
 
-void Rotation::getValue(double & q0, double & q1, double & q2, double & q3) const
+void Rotation::getValue(double &q0, double &q1, double &q2, double &q3) const
 {
     q0 = this->quat[0];
     q1 = this->quat[1];
@@ -154,7 +134,7 @@ void Rotation::setValue(const double q0, const double q1, const double q2, const
     this->evaluateVector();
 }
 
-void Rotation::getValue(Vector3d & axis, double & rfAngle) const
+void Rotation::getValue(Vector3d &axis, double &rfAngle) const
 {
     rfAngle = _angle;
     axis.x = _axis.x;
@@ -163,7 +143,7 @@ void Rotation::getValue(Vector3d & axis, double & rfAngle) const
     axis.Normalize();
 }
 
-void Rotation::getRawValue(Vector3d & axis, double & rfAngle) const
+void Rotation::getRawValue(Vector3d &axis, double &rfAngle) const
 {
     rfAngle = _angle;
     axis.x = _axis.x;
@@ -174,32 +154,30 @@ void Rotation::getRawValue(Vector3d & axis, double & rfAngle) const
 /**
  * Returns this rotation in form of a matrix.
  */
-void Rotation::getValue(Matrix4D & matrix) const
+void Rotation::getValue(Matrix4D &matrix) const
 {
     // Taken from <http://de.wikipedia.org/wiki/Quaternionen>
     //
-    const double l = sqrt(this->quat[0] * this->quat[0] +
-                          this->quat[1] * this->quat[1] +
-                          this->quat[2] * this->quat[2] +
-                          this->quat[3] * this->quat[3]);
+    const double l = sqrt(this->quat[0] * this->quat[0] + this->quat[1] * this->quat[1]
+                          + this->quat[2] * this->quat[2] + this->quat[3] * this->quat[3]);
     const double x = this->quat[0] / l;
     const double y = this->quat[1] / l;
     const double z = this->quat[2] / l;
     const double w = this->quat[3] / l;
 
-    matrix[0][0] = 1.0-2.0*(y*y+z*z);
-    matrix[0][1] = 2.0*(x*y-z*w);
-    matrix[0][2] = 2.0*(x*z+y*w);
+    matrix[0][0] = 1.0 - 2.0 * (y * y + z * z);
+    matrix[0][1] = 2.0 * (x * y - z * w);
+    matrix[0][2] = 2.0 * (x * z + y * w);
     matrix[0][3] = 0.0;
 
-    matrix[1][0] = 2.0*(x*y+z*w);
-    matrix[1][1] = 1.0-2.0*(x*x+z*z);
-    matrix[1][2] = 2.0*(y*z-x*w);
+    matrix[1][0] = 2.0 * (x * y + z * w);
+    matrix[1][1] = 1.0 - 2.0 * (x * x + z * z);
+    matrix[1][2] = 2.0 * (y * z - x * w);
     matrix[1][3] = 0.0;
 
-    matrix[2][0] = 2.0*(x*z-y*w);
-    matrix[2][1] = 2.0*(y*z+x*w);
-    matrix[2][2] = 1.0-2.0*(x*x+y*y);
+    matrix[2][0] = 2.0 * (x * z - y * w);
+    matrix[2][1] = 2.0 * (y * z + x * w);
+    matrix[2][2] = 1.0 - 2.0 * (x * x + y * y);
     matrix[2][3] = 0.0;
 
     matrix[3][0] = 0.0;
@@ -218,11 +196,11 @@ void Rotation::setValue(const double q[4])
     this->evaluateVector();
 }
 
-void Rotation::setValue(const Matrix4D & m)
+void Rotation::setValue(const Matrix4D &m)
 {
     double trace = (m[0][0] + m[1][1] + m[2][2]);
     if (trace > 0.0) {
-        double s = sqrt(1.0+trace);
+        double s = sqrt(1.0 + trace);
         this->quat[3] = 0.5 * s;
         s = 0.5 / s;
         this->quat[0] = ((m[2][1] - m[1][2]) * s);
@@ -237,8 +215,8 @@ void Rotation::setValue(const Matrix4D & m)
         if (m[1][1] > m[0][0]) i = 1;
         if (m[2][2] > m[i][i]) i = 2;
 
-        unsigned short j = (i+1)%3;
-        unsigned short k = (i+2)%3;
+        unsigned short j = (i + 1) % 3;
+        unsigned short k = (i + 2) % 3;
 
         double s = sqrt((m[i][i] - (m[j][j] + m[k][k])) + 1.0);
         this->quat[i] = s * 0.5;
@@ -251,37 +229,37 @@ void Rotation::setValue(const Matrix4D & m)
     this->evaluateVector();
 }
 
-void Rotation::setValue(const Vector3d & axis, const double fAngle)
+void Rotation::setValue(const Vector3d &axis, const double fAngle)
 {
     // Taken from <http://de.wikipedia.org/wiki/Quaternionen>
     //
     // normalization of the angle to be in [0, 2pi[
     _angle = fAngle;
-    double theAngle = fAngle - floor(fAngle / (2.0 * D_PI))*(2.0 * D_PI);
-    this->quat[3] = cos(theAngle/2.0);
+    double theAngle = fAngle - floor(fAngle / (2.0 * D_PI)) * (2.0 * D_PI);
+    this->quat[3] = cos(theAngle / 2.0);
 
     Vector3d norm = axis;
     norm.Normalize();
     double l = norm.Length();
     // Keep old axis in case the new axis is the null vector
-    if (l > 0.5) {
-        this->_axis = axis;
-    }
+    if (l > 0.5) { this->_axis = axis; }
     else {
         norm = _axis;
         norm.Normalize();
     }
 
-    double scale = sin(theAngle/2.0);
+    double scale = sin(theAngle / 2.0);
     this->quat[0] = norm.x * scale;
     this->quat[1] = norm.y * scale;
     this->quat[2] = norm.z * scale;
 }
 
-void Rotation::setValue(const Vector3d & rotateFrom, const Vector3d & rotateTo)
+void Rotation::setValue(const Vector3d &rotateFrom, const Vector3d &rotateTo)
 {
-    Vector3d u(rotateFrom); u.Normalize();
-    Vector3d v(rotateTo); v.Normalize();
+    Vector3d u(rotateFrom);
+    u.Normalize();
+    Vector3d v(rotateTo);
+    v.Normalize();
 
     // The vector from x to is the rotation axis because it's the normal of the plane defined by (0,u,v)
     const double dot = u * v;
@@ -290,14 +268,11 @@ void Rotation::setValue(const Vector3d & rotateFrom, const Vector3d & rotateTo)
 
     if (wlen == 0.0) { // Parallel vectors
         // Check if they are pointing in the same direction.
-        if (dot > 0.0) {
-            this->setValue(0.0, 0.0, 0.0, 1.0);
-        }
+        if (dot > 0.0) { this->setValue(0.0, 0.0, 0.0, 1.0); }
         else {
             // We can use any axis perpendicular to u (and v)
             Vector3d t = u % Vector3d(1.0, 0.0, 0.0);
-            if (t.Length() < Base::Vector3d::epsilon())
-                t = u % Vector3d(0.0, 1.0, 0.0);
+            if (t.Length() < Base::Vector3d::epsilon()) t = u % Vector3d(0.0, 1.0, 0.0);
             this->setValue(t.x, t.y, t.z, 0.0);
         }
     }
@@ -311,10 +286,8 @@ void Rotation::setValue(const Vector3d & rotateFrom, const Vector3d & rotateTo)
 
 void Rotation::normalize()
 {
-    double len = sqrt(this->quat[0]*this->quat[0]+
-                      this->quat[1]*this->quat[1]+
-                      this->quat[2]*this->quat[2]+
-                      this->quat[3]*this->quat[3]);
+    double len = sqrt(this->quat[0] * this->quat[0] + this->quat[1] * this->quat[1]
+                      + this->quat[2] * this->quat[2] + this->quat[3] * this->quat[3]);
     if (len > 0.0) {
         this->quat[0] /= len;
         this->quat[1] /= len;
@@ -323,7 +296,7 @@ void Rotation::normalize()
     }
 }
 
-Rotation & Rotation::invert()
+Rotation &Rotation::invert()
 {
     this->quat[0] = -this->quat[0];
     this->quat[1] = -this->quat[1];
@@ -342,7 +315,7 @@ Rotation Rotation::inverse() const
     rot.quat[0] = -this->quat[0];
     rot.quat[1] = -this->quat[1];
     rot.quat[2] = -this->quat[2];
-    rot.quat[3] =  this->quat[3];
+    rot.quat[3] = this->quat[3];
 
     rot._axis[0] = -this->_axis[0];
     rot._axis[1] = -this->_axis[1];
@@ -357,12 +330,9 @@ Rotation Rotation::inverse() const
 
   \sa multRight()
 */
-Rotation & Rotation::operator*=(const Rotation & q)
-{
-    return multRight(q);
-}
+Rotation &Rotation::operator*=(const Rotation &q) { return multRight(q); }
 
-Rotation Rotation::operator*(const Rotation & q) const
+Rotation Rotation::operator*(const Rotation &q) const
 {
     Rotation quat(*this);
     quat *= q;
@@ -375,7 +345,7 @@ Rotation Rotation::operator*(const Rotation & q) const
 
   \sa multLeft()
 */
-Rotation& Rotation::multRight(const Base::Rotation& q)
+Rotation &Rotation::multRight(const Base::Rotation &q)
 {
     // Taken from <http://de.wikipedia.org/wiki/Quaternionen>
     double x0, y0, z0, w0;
@@ -383,10 +353,8 @@ Rotation& Rotation::multRight(const Base::Rotation& q)
     double x1, y1, z1, w1;
     q.getValue(x1, y1, z1, w1);
 
-    this->setValue(w0*x1 + x0*w1 + y0*z1 - z0*y1,
-                   w0*y1 - x0*z1 + y0*w1 + z0*x1,
-                   w0*z1 + x0*y1 - y0*x1 + z0*w1,
-                   w0*w1 - x0*x1 - y0*y1 - z0*z1);
+    this->setValue(w0 * x1 + x0 * w1 + y0 * z1 - z0 * y1, w0 * y1 - x0 * z1 + y0 * w1 + z0 * x1,
+                   w0 * z1 + x0 * y1 - y0 * x1 + z0 * w1, w0 * w1 - x0 * x1 - y0 * y1 - z0 * z1);
     return *this;
 }
 
@@ -396,7 +364,7 @@ Rotation& Rotation::multRight(const Base::Rotation& q)
 
   \sa multRight()
 */
-Rotation& Rotation::multLeft(const Base::Rotation& q)
+Rotation &Rotation::multLeft(const Base::Rotation &q)
 {
     // Taken from <http://de.wikipedia.org/wiki/Quaternionen>
     double x0, y0, z0, w0;
@@ -404,47 +372,34 @@ Rotation& Rotation::multLeft(const Base::Rotation& q)
     double x1, y1, z1, w1;
     this->getValue(x1, y1, z1, w1);
 
-    this->setValue(w0*x1 + x0*w1 + y0*z1 - z0*y1,
-                   w0*y1 - x0*z1 + y0*w1 + z0*x1,
-                   w0*z1 + x0*y1 - y0*x1 + z0*w1,
-                   w0*w1 - x0*x1 - y0*y1 - z0*z1);
+    this->setValue(w0 * x1 + x0 * w1 + y0 * z1 - z0 * y1, w0 * y1 - x0 * z1 + y0 * w1 + z0 * x1,
+                   w0 * z1 + x0 * y1 - y0 * x1 + z0 * w1, w0 * w1 - x0 * x1 - y0 * y1 - z0 * z1);
     return *this;
 }
 
-bool Rotation::operator==(const Rotation & q) const
+bool Rotation::operator==(const Rotation &q) const
 {
-    if ((this->quat[0] == q.quat[0] &&
-         this->quat[1] == q.quat[1] &&
-         this->quat[2] == q.quat[2] &&
-         this->quat[3] == q.quat[3]) ||
-        (this->quat[0] == -q.quat[0] &&
-         this->quat[1] == -q.quat[1] &&
-         this->quat[2] == -q.quat[2] &&
-         this->quat[3] == -q.quat[3]))
+    if ((this->quat[0] == q.quat[0] && this->quat[1] == q.quat[1] && this->quat[2] == q.quat[2]
+         && this->quat[3] == q.quat[3])
+        || (this->quat[0] == -q.quat[0] && this->quat[1] == -q.quat[1]
+            && this->quat[2] == -q.quat[2] && this->quat[3] == -q.quat[3]))
         return true;
     return false;
 }
 
-bool Rotation::operator!=(const Rotation & q) const
-{
-    return !(*this == q);
-}
+bool Rotation::operator!=(const Rotation &q) const { return !(*this == q); }
 
-bool Rotation::isSame(const Rotation& q) const
+bool Rotation::isSame(const Rotation &q) const
 {
-    if ((this->quat[0] == q.quat[0] &&
-         this->quat[1] == q.quat[1] &&
-         this->quat[2] == q.quat[2] &&
-         this->quat[3] == q.quat[3]) ||
-        (this->quat[0] == -q.quat[0] &&
-         this->quat[1] == -q.quat[1] &&
-         this->quat[2] == -q.quat[2] &&
-         this->quat[3] == -q.quat[3]))
+    if ((this->quat[0] == q.quat[0] && this->quat[1] == q.quat[1] && this->quat[2] == q.quat[2]
+         && this->quat[3] == q.quat[3])
+        || (this->quat[0] == -q.quat[0] && this->quat[1] == -q.quat[1]
+            && this->quat[2] == -q.quat[2] && this->quat[3] == -q.quat[3]))
         return true;
     return false;
 }
 
-bool Rotation::isSame(const Rotation& q, double tol) const
+bool Rotation::isSame(const Rotation &q, double tol) const
 {
     // This follows the implementation of Coin3d where the norm
     // (x1-y1)**2 + ... + (x4-y4)**2 is computed.
@@ -453,18 +408,19 @@ bool Rotation::isSame(const Rotation& q, double tol) const
     // 1 - tol/2 <= x1*y1 + ... + x4*y4
     // Because a quaternion (x1,x2,x3,x4) is equal to (-x1,-x2,-x3,-x4) we use the
     // absolute value of the scalar product
-    double dot = q.quat[0]*quat[0]+q.quat[1]*quat[1]+q.quat[2]*quat[2]+q.quat[3]*quat[3];
-    return fabs(dot) >= 1.0 - tol/2;
+    double dot =
+        q.quat[0] * quat[0] + q.quat[1] * quat[1] + q.quat[2] * quat[2] + q.quat[3] * quat[3];
+    return fabs(dot) >= 1.0 - tol / 2;
 }
 
-Vector3d Rotation::multVec(const Vector3d & src) const
+Vector3d Rotation::multVec(const Vector3d &src) const
 {
     Vector3d dst;
-    multVec(src,dst);
+    multVec(src, dst);
     return dst;
 }
 
-void Rotation::multVec(const Vector3d & src, Vector3d & dst) const
+void Rotation::multVec(const Vector3d &src, Vector3d &dst) const
 {
     double x = this->quat[0];
     double y = this->quat[1];
@@ -475,25 +431,28 @@ void Rotation::multVec(const Vector3d & src, Vector3d & dst) const
     double z2 = z * z;
     double w2 = w * w;
 
-    double dx = (x2+w2-y2-z2)*src.x + 2.0*(x*y-z*w)*src.y + 2.0*(x*z+y*w)*src.z;
-    double dy = 2.0*(x*y+z*w)*src.x + (w2-x2+y2-z2)*src.y + 2.0*(y*z-x*w)*src.z;
-    double dz = 2.0*(x*z-y*w)*src.x + 2.0*(x*w+y*z)*src.y + (w2-x2-y2+z2)*src.z;
+    double dx =
+        (x2 + w2 - y2 - z2) * src.x + 2.0 * (x * y - z * w) * src.y + 2.0 * (x * z + y * w) * src.z;
+    double dy =
+        2.0 * (x * y + z * w) * src.x + (w2 - x2 + y2 - z2) * src.y + 2.0 * (y * z - x * w) * src.z;
+    double dz =
+        2.0 * (x * z - y * w) * src.x + 2.0 * (x * w + y * z) * src.y + (w2 - x2 - y2 + z2) * src.z;
     dst.x = dx;
     dst.y = dy;
     dst.z = dz;
 }
 
-void Rotation::multVec(const Vector3f & src, Vector3f & dst) const
+void Rotation::multVec(const Vector3f &src, Vector3f &dst) const
 {
     Base::Vector3d srcd = Base::toVector<double>(src);
     multVec(srcd, srcd);
     dst = Base::toVector<float>(srcd);
 }
 
-Vector3f Rotation::multVec(const Vector3f & src) const
+Vector3f Rotation::multVec(const Vector3f &src) const
 {
     Vector3f dst;
-    multVec(src,dst);
+    multVec(src, dst);
     return dst;
 }
 
@@ -505,18 +464,20 @@ void Rotation::scaleAngle(const double scaleFactor)
     this->setValue(axis, fAngle * scaleFactor);
 }
 
-Rotation Rotation::slerp(const Rotation & q0, const Rotation & q1, double t)
+Rotation Rotation::slerp(const Rotation &q0, const Rotation &q1, double t)
 {
     // Taken from <http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/>
     // q = [q0*sin((1-t)*theta)+q1*sin(t*theta)]/sin(theta), 0<=t<=1
-    if (t<0.0) t=0.0;
-    else if (t>1.0) t=1.0;
+    if (t < 0.0) t = 0.0;
+    else if (t > 1.0)
+        t = 1.0;
     //return q0;
 
     double scale0 = 1.0 - t;
     double scale1 = t;
-    double dot = q0.quat[0]*q1.quat[0]+q0.quat[1]*q1.quat[1]+q0.quat[2]*q1.quat[2]+q0.quat[3]*q1.quat[3];
-    bool neg=false;
+    double dot = q0.quat[0] * q1.quat[0] + q0.quat[1] * q1.quat[1] + q0.quat[2] * q1.quat[2]
+        + q0.quat[3] * q1.quat[3];
+    bool neg = false;
     if (dot < 0.0) {
         dot = -dot;
         neg = true;
@@ -532,8 +493,7 @@ Rotation Rotation::slerp(const Rotation & q0, const Rotation & q1, double t)
         }
     }
 
-    if (neg)
-        scale1 = -scale1;
+    if (neg) scale1 = -scale1;
 
     double x = scale0 * q0.quat[0] + scale1 * q1.quat[0];
     double y = scale0 * q0.quat[1] + scale1 * q1.quat[1];
@@ -542,49 +502,49 @@ Rotation Rotation::slerp(const Rotation & q0, const Rotation & q1, double t)
     return Rotation(x, y, z, w);
 }
 
-Rotation Rotation::identity()
-{
-    return Rotation(0.0, 0.0, 0.0, 1.0);
-}
+Rotation Rotation::identity() { return Rotation(0.0, 0.0, 0.0, 1.0); }
 
-Rotation Rotation::makeRotationByAxes(Vector3d xdir, Vector3d ydir, Vector3d zdir, const char* priorityOrder)
+Rotation Rotation::makeRotationByAxes(Vector3d xdir, Vector3d ydir, Vector3d zdir,
+                                      const char *priorityOrder)
 {
     const double tol = Precision::Confusion();
-    enum dirIndex {
+    enum dirIndex
+    {
         X,
         Y,
         Z
     };
 
     //convert priorityOrder string into a sequence of ints.
-    if (strlen(priorityOrder)!=3)
+    if (strlen(priorityOrder) != 3)
         THROWM(ValueError, "makeRotationByAxes: length of priorityOrder is not 3");
     int order[3];
-    for (int i = 0; i < 3; ++i){
+    for (int i = 0; i < 3; ++i) {
         order[i] = priorityOrder[i] - 'X';
         if (order[i] < 0 || order[i] > 2)
-            THROWM(ValueError, "makeRotationByAxes: characters in priorityOrder must be uppercase X, Y, or Z. Some other character encountered.")
+            THROWM(ValueError,
+                   "makeRotationByAxes: characters in priorityOrder must be uppercase X, Y, or Z. "
+                   "Some other character encountered.")
     }
 
     //ensure every axis is listed in priority list
-    if( order[0] == order[1] ||
-        order[1] == order[2] ||
-        order[2] == order[0])
-        THROWM(ValueError,"makeRotationByAxes: not all axes are listed in priorityOrder");
+    if (order[0] == order[1] || order[1] == order[2] || order[2] == order[0])
+        THROWM(ValueError, "makeRotationByAxes: not all axes are listed in priorityOrder");
 
 
     //group up dirs into an array, to access them by indexes stored in @order.
-    std::vector<Vector3d*> dirs = {&xdir, &ydir, &zdir};
+    std::vector<Vector3d *> dirs = {&xdir, &ydir, &zdir};
 
 
-    auto dropPriority = [&order](int index){
+    auto dropPriority = [&order](int index) {
         int tmp;
-        if (index == 0){
+        if (index == 0) {
             tmp = order[0];
             order[0] = order[1];
             order[1] = order[2];
             order[2] = tmp;
-        } else if (index == 1) {
+        }
+        else if (index == 1) {
             tmp = order[1];
             order[1] = order[2];
             order[2] = tmp;
@@ -593,67 +553,65 @@ Rotation Rotation::makeRotationByAxes(Vector3d xdir, Vector3d ydir, Vector3d zdi
 
     //pick up the strict direction
     Vector3d mainDir;
-    for (int i = 0; i < 3; ++i){
+    for (int i = 0; i < 3; ++i) {
         mainDir = *(dirs[size_t(order[0])]);
-        if (mainDir.Length() > tol)
-            break;
+        if (mainDir.Length() > tol) break;
         else
             dropPriority(0);
-        if (i == 2)
-            THROWM(ValueError, "makeRotationByAxes: all directions supplied are zero");
+        if (i == 2) THROWM(ValueError, "makeRotationByAxes: all directions supplied are zero");
     }
     mainDir.Normalize();
 
     //pick up the 2nd priority direction, "hint" direction.
     Vector3d hintDir;
-    for (int i = 0; i < 2; ++i){
+    for (int i = 0; i < 2; ++i) {
         hintDir = *(dirs[size_t(order[1])]);
-        if ((hintDir.Cross(mainDir)).Length() > tol)
-            break;
+        if ((hintDir.Cross(mainDir)).Length() > tol) break;
         else
             dropPriority(1);
         if (i == 1)
-            hintDir = Vector3d(); //no vector can be used as hint direction. Zero it out, to indicate that a guess is needed.
+            hintDir =
+                Vector3d(); //no vector can be used as hint direction. Zero it out, to indicate that a guess is needed.
     }
-    if (hintDir.Length() == 0.0){
-        switch (order[0]){
-        case X: { //xdir is main
-            //align zdir to OZ
-            order[1] = Z;
-            order[2] = Y;
-            hintDir = Vector3d(0,0,1);
-            if ((hintDir.Cross(mainDir)).Length() <= tol){
-                //aligning to OZ is impossible, align to ydir to OY. Why so? I don't know, just feels right =)
-                hintDir = Vector3d(0,1,0);
-                order[1] = Y;
-                order[2] = Z;
-            }
-        } break;
-        case Y: { //ydir is main
-            //align zdir to OZ
-            order[1] = Z;
-            order[2] = X;
-            hintDir = mainDir.z > -tol ? Vector3d(0,0,1) : Vector3d(0,0,-1);
-            if ((hintDir.Cross(mainDir)).Length() <= tol){
-                //aligning zdir to OZ is impossible, align xdir to OX then.
-                hintDir = Vector3d(1,0,0);
-                order[1] = X;
-                order[2] = Z;
-            }
-        } break;
-        case Z: { //zdir is main
-            //align ydir to OZ
-            order[1] = Y;
-            order[2] = X;
-            hintDir =  Vector3d(0,0,1);
-            if ((hintDir.Cross(mainDir)).Length() <= tol){
-                //aligning ydir to OZ is impossible, align xdir to OX then.
-                hintDir = Vector3d(1,0,0);
-                order[1] = X;
+    if (hintDir.Length() == 0.0) {
+        switch (order[0]) {
+            case X: { //xdir is main
+                //align zdir to OZ
+                order[1] = Z;
                 order[2] = Y;
-            }
-        } break;
-        }//switch ordet[0]
+                hintDir = Vector3d(0, 0, 1);
+                if ((hintDir.Cross(mainDir)).Length() <= tol) {
+                    //aligning to OZ is impossible, align to ydir to OY. Why so? I don't know, just feels right =)
+                    hintDir = Vector3d(0, 1, 0);
+                    order[1] = Y;
+                    order[2] = Z;
+                }
+            } break;
+            case Y: { //ydir is main
+                //align zdir to OZ
+                order[1] = Z;
+                order[2] = X;
+                hintDir = mainDir.z > -tol ? Vector3d(0, 0, 1) : Vector3d(0, 0, -1);
+                if ((hintDir.Cross(mainDir)).Length() <= tol) {
+                    //aligning zdir to OZ is impossible, align xdir to OX then.
+                    hintDir = Vector3d(1, 0, 0);
+                    order[1] = X;
+                    order[2] = Z;
+                }
+            } break;
+            case Z: { //zdir is main
+                //align ydir to OZ
+                order[1] = Y;
+                order[2] = X;
+                hintDir = Vector3d(0, 0, 1);
+                if ((hintDir.Cross(mainDir)).Length() <= tol) {
+                    //aligning ydir to OZ is impossible, align xdir to OX then.
+                    hintDir = Vector3d(1, 0, 0);
+                    order[1] = X;
+                    order[2] = Y;
+                }
+            } break;
+        } //switch ordet[0]
     }
 
     //ensure every axis is listed in priority list
@@ -681,7 +639,7 @@ Rotation Rotation::makeRotationByAxes(Vector3d xdir, Vector3d ydir, Vector3d zdi
     //build the rotation, by constructing a matrix first.
     Matrix4D m;
     m.setToUnity();
-    for (int i = 0; i < 3; ++i){
+    for (int i = 0; i < 3; ++i) {
         //matrix indexing: [row][col]
         m[0][i] = finaldirs[i].x;
         m[1][i] = finaldirs[i].y;
@@ -695,178 +653,158 @@ void Rotation::setYawPitchRoll(double y, double p, double r)
 {
     // The Euler angles (yaw,pitch,roll) are in XY'Z''-notation
     // convert to radians
-    y = (y/180.0)*D_PI;
-    p = (p/180.0)*D_PI;
-    r = (r/180.0)*D_PI;
+    y = (y / 180.0) * D_PI;
+    p = (p / 180.0) * D_PI;
+    r = (r / 180.0) * D_PI;
 
-    double c1 = cos(y/2.0);
-    double s1 = sin(y/2.0);
-    double c2 = cos(p/2.0);
-    double s2 = sin(p/2.0);
-    double c3 = cos(r/2.0);
-    double s3 = sin(r/2.0);
+    double c1 = cos(y / 2.0);
+    double s1 = sin(y / 2.0);
+    double c2 = cos(p / 2.0);
+    double s2 = sin(p / 2.0);
+    double c3 = cos(r / 2.0);
+    double s3 = sin(r / 2.0);
 
     // quat[0] = c1*c2*s3 - s1*s2*c3;
     // quat[1] = c1*s2*c3 + s1*c2*s3;
     // quat[2] = s1*c2*c3 - c1*s2*s3;
     // quat[3] = c1*c2*c3 + s1*s2*s3;
 
-    this->setValue (
-      c1*c2*s3 - s1*s2*c3,
-      c1*s2*c3 + s1*c2*s3,
-      s1*c2*c3 - c1*s2*s3,
-      c1*c2*c3 + s1*s2*s3
-    );
+    this->setValue(c1 * c2 * s3 - s1 * s2 * c3, c1 * s2 * c3 + s1 * c2 * s3,
+                   s1 * c2 * c3 - c1 * s2 * s3, c1 * c2 * c3 + s1 * s2 * s3);
 }
 
-void Rotation::getYawPitchRoll(double& y, double& p, double& r) const
+void Rotation::getYawPitchRoll(double &y, double &p, double &r) const
 {
-    double q00 = quat[0]*quat[0];
-    double q11 = quat[1]*quat[1];
-    double q22 = quat[2]*quat[2];
-    double q33 = quat[3]*quat[3];
-    double q01 = quat[0]*quat[1];
-    double q02 = quat[0]*quat[2];
-    double q03 = quat[0]*quat[3];
-    double q12 = quat[1]*quat[2];
-    double q13 = quat[1]*quat[3];
-    double q23 = quat[2]*quat[3];
-    double qd2 = 2.0*(q13-q02);
+    double q00 = quat[0] * quat[0];
+    double q11 = quat[1] * quat[1];
+    double q22 = quat[2] * quat[2];
+    double q33 = quat[3] * quat[3];
+    double q01 = quat[0] * quat[1];
+    double q02 = quat[0] * quat[2];
+    double q03 = quat[0] * quat[3];
+    double q12 = quat[1] * quat[2];
+    double q13 = quat[1] * quat[3];
+    double q23 = quat[2] * quat[3];
+    double qd2 = 2.0 * (q13 - q02);
 
     // handle gimbal lock
-    if (fabs(qd2-1.0) <= 16 * DBL_EPSILON) { // Tolerance copied from OCC "gp_Quaternion.cxx"
+    if (fabs(qd2 - 1.0) <= 16 * DBL_EPSILON) { // Tolerance copied from OCC "gp_Quaternion.cxx"
         // north pole
         y = 0.0;
-        p = D_PI/2.0;
-        r = 2.0 * atan2(quat[0],quat[3]);
+        p = D_PI / 2.0;
+        r = 2.0 * atan2(quat[0], quat[3]);
     }
-    else if (fabs(qd2+1.0) <= 16 * DBL_EPSILON) { // Tolerance copied from OCC "gp_Quaternion.cxx"
+    else if (fabs(qd2 + 1.0) <= 16 * DBL_EPSILON) { // Tolerance copied from OCC "gp_Quaternion.cxx"
         // south pole
         y = 0.0;
-        p = -D_PI/2.0;
-        r = 2.0 * atan2(quat[0],quat[3]);
+        p = -D_PI / 2.0;
+        r = 2.0 * atan2(quat[0], quat[3]);
     }
     else {
-        y = atan2(2.0*(q01+q23),(q00+q33)-(q11+q22));
-        p = qd2 > 1.0 ? D_PI/2.0 : (qd2 < -1.0 ? -D_PI/2.0 : asin (qd2));
-        r = atan2(2.0*(q12+q03),(q22+q33)-(q00+q11));
+        y = atan2(2.0 * (q01 + q23), (q00 + q33) - (q11 + q22));
+        p = qd2 > 1.0 ? D_PI / 2.0 : (qd2 < -1.0 ? -D_PI / 2.0 : asin(qd2));
+        r = atan2(2.0 * (q12 + q03), (q22 + q33) - (q00 + q11));
     }
 
     // convert to degree
-    y = (y/D_PI)*180;
-    p = (p/D_PI)*180;
-    r = (r/D_PI)*180;
+    y = (y / D_PI) * 180;
+    p = (p / D_PI) * 180;
+    r = (r / D_PI) * 180;
 }
 
 bool Rotation::isIdentity() const
 {
-    return ((this->quat[0] == 0.0  &&
-             this->quat[1] == 0.0  &&
-             this->quat[2] == 0.0) &&
-            (this->quat[3] == 1.0 ||
-             this->quat[3] == -1.0));
+    return ((this->quat[0] == 0.0 && this->quat[1] == 0.0 && this->quat[2] == 0.0)
+            && (this->quat[3] == 1.0 || this->quat[3] == -1.0));
 }
 
 bool Rotation::isNull() const
 {
-    return (this->quat[0] == 0.0 &&
-            this->quat[1] == 0.0 &&
-            this->quat[2] == 0.0 &&
-            this->quat[3] == 0.0);
+    return (this->quat[0] == 0.0 && this->quat[1] == 0.0 && this->quat[2] == 0.0
+            && this->quat[3] == 0.0);
 }
 
 //=======================================================================
 // The following code is borrowed from OCCT gp/gp_Quaternion.cxx
 
-namespace { // anonymous namespace
+namespace
+{ // anonymous namespace
 //=======================================================================
 //function : translateEulerSequence
-//purpose  : 
-// Code supporting conversion between quaternion and generalized 
+//purpose  :
+// Code supporting conversion between quaternion and generalized
 // Euler angles (sequence of three rotations) is based on
 // algorithm by Ken Shoemake, published in Graphics Gems IV, p. 222-22
 // http://tog.acm.org/resources/GraphicsGems/gemsiv/euler_angle/EulerAngles.c
 //=======================================================================
 
-struct EulerSequence_Parameters
-{
-    int i;           // first rotation axis
-    int j;           // next axis of rotation
-    int k;           // third axis
+struct EulerSequence_Parameters {
+    int i;            // first rotation axis
+    int j;            // next axis of rotation
+    int k;            // third axis
     bool isOdd;       // true if order of two first rotation axes is odd permutation, e.g. XZ
-    bool isTwoAxes;   // true if third rotation is about the same axis as first 
+    bool isTwoAxes;   // true if third rotation is about the same axis as first
     bool isExtrinsic; // true if rotations are made around fixed axes
 
-    EulerSequence_Parameters (int theAx1, 
-                              bool theisOdd, 
-                              bool theisTwoAxes,
-                              bool theisExtrinsic)
-        : i(theAx1), 
-        j(1 + (theAx1 + (theisOdd ? 1 : 0)) % 3), 
-        k(1 + (theAx1 + (theisOdd ? 0 : 1)) % 3), 
-        isOdd(theisOdd), 
-        isTwoAxes(theisTwoAxes), 
-        isExtrinsic(theisExtrinsic)
-        {}
+    EulerSequence_Parameters(int theAx1, bool theisOdd, bool theisTwoAxes, bool theisExtrinsic)
+        : i(theAx1), j(1 + (theAx1 + (theisOdd ? 1 : 0)) % 3),
+          k(1 + (theAx1 + (theisOdd ? 0 : 1)) % 3), isOdd(theisOdd), isTwoAxes(theisTwoAxes),
+          isExtrinsic(theisExtrinsic)
+    {}
 };
 
-EulerSequence_Parameters translateEulerSequence (const Rotation::EulerSequence theSeq)
+EulerSequence_Parameters translateEulerSequence(const Rotation::EulerSequence theSeq)
 {
     using Params = EulerSequence_Parameters;
     const bool F = false;
     const bool T = true;
 
-    switch (theSeq)
-    {
-    case Rotation::Extrinsic_XYZ: return Params (1, F, F, T);
-    case Rotation::Extrinsic_XZY: return Params (1, T, F, T);
-    case Rotation::Extrinsic_YZX: return Params (2, F, F, T);
-    case Rotation::Extrinsic_YXZ: return Params (2, T, F, T);
-    case Rotation::Extrinsic_ZXY: return Params (3, F, F, T);
-    case Rotation::Extrinsic_ZYX: return Params (3, T, F, T);
+    switch (theSeq) {
+        case Rotation::Extrinsic_XYZ: return Params(1, F, F, T);
+        case Rotation::Extrinsic_XZY: return Params(1, T, F, T);
+        case Rotation::Extrinsic_YZX: return Params(2, F, F, T);
+        case Rotation::Extrinsic_YXZ: return Params(2, T, F, T);
+        case Rotation::Extrinsic_ZXY: return Params(3, F, F, T);
+        case Rotation::Extrinsic_ZYX: return Params(3, T, F, T);
 
-    // Conversion of intrinsic angles is made by the same code as for extrinsic,
-    // using equivalence rule: intrinsic rotation is equivalent to extrinsic
-    // rotation by the same angles but with inverted order of elemental rotations.
-    // Swapping of angles (Alpha <-> Gamma) is done inside conversion procedure;
-    // sequence of axes is inverted by setting appropriate parameters here.
-    // Note that proper Euler angles (last block below) are symmetric for sequence of axes.
-    case Rotation::Intrinsic_XYZ: return Params (3, T, F, F);
-    case Rotation::Intrinsic_XZY: return Params (2, F, F, F);
-    case Rotation::Intrinsic_YZX: return Params (1, T, F, F);
-    case Rotation::Intrinsic_YXZ: return Params (3, F, F, F);
-    case Rotation::Intrinsic_ZXY: return Params (2, T, F, F);
-    case Rotation::Intrinsic_ZYX: return Params (1, F, F, F);
+        // Conversion of intrinsic angles is made by the same code as for extrinsic,
+        // using equivalence rule: intrinsic rotation is equivalent to extrinsic
+        // rotation by the same angles but with inverted order of elemental rotations.
+        // Swapping of angles (Alpha <-> Gamma) is done inside conversion procedure;
+        // sequence of axes is inverted by setting appropriate parameters here.
+        // Note that proper Euler angles (last block below) are symmetric for sequence of axes.
+        case Rotation::Intrinsic_XYZ: return Params(3, T, F, F);
+        case Rotation::Intrinsic_XZY: return Params(2, F, F, F);
+        case Rotation::Intrinsic_YZX: return Params(1, T, F, F);
+        case Rotation::Intrinsic_YXZ: return Params(3, F, F, F);
+        case Rotation::Intrinsic_ZXY: return Params(2, T, F, F);
+        case Rotation::Intrinsic_ZYX: return Params(1, F, F, F);
 
-    case Rotation::Extrinsic_XYX: return Params (1, F, T, T);
-    case Rotation::Extrinsic_XZX: return Params (1, T, T, T);
-    case Rotation::Extrinsic_YZY: return Params (2, F, T, T);
-    case Rotation::Extrinsic_YXY: return Params (2, T, T, T);
-    case Rotation::Extrinsic_ZXZ: return Params (3, F, T, T);
-    case Rotation::Extrinsic_ZYZ: return Params (3, T, T, T);
+        case Rotation::Extrinsic_XYX: return Params(1, F, T, T);
+        case Rotation::Extrinsic_XZX: return Params(1, T, T, T);
+        case Rotation::Extrinsic_YZY: return Params(2, F, T, T);
+        case Rotation::Extrinsic_YXY: return Params(2, T, T, T);
+        case Rotation::Extrinsic_ZXZ: return Params(3, F, T, T);
+        case Rotation::Extrinsic_ZYZ: return Params(3, T, T, T);
 
-    case Rotation::Intrinsic_XYX: return Params (1, F, T, F);
-    case Rotation::Intrinsic_XZX: return Params (1, T, T, F);
-    case Rotation::Intrinsic_YZY: return Params (2, F, T, F);
-    case Rotation::Intrinsic_YXY: return Params (2, T, T, F);
-    case Rotation::Intrinsic_ZXZ: return Params (3, F, T, F);
-    case Rotation::Intrinsic_ZYZ: return Params (3, T, T, F);
+        case Rotation::Intrinsic_XYX: return Params(1, F, T, F);
+        case Rotation::Intrinsic_XZX: return Params(1, T, T, F);
+        case Rotation::Intrinsic_YZY: return Params(2, F, T, F);
+        case Rotation::Intrinsic_YXY: return Params(2, T, T, F);
+        case Rotation::Intrinsic_ZXZ: return Params(3, F, T, F);
+        case Rotation::Intrinsic_ZYZ: return Params(3, T, T, F);
 
-    default:
-    case Rotation::EulerAngles : return Params (3, F, T, F); // = Intrinsic_ZXZ
-    case Rotation::YawPitchRoll: return Params (1, F, F, F); // = Intrinsic_ZYX
+        default:
+        case Rotation::EulerAngles: return Params(3, F, T, F);  // = Intrinsic_ZXZ
+        case Rotation::YawPitchRoll: return Params(1, F, F, F); // = Intrinsic_ZYX
     };
 }
 
-class Mat : public Base::Matrix4D
+class Mat: public Base::Matrix4D
 {
 public:
-    double operator()(int i, int j) const {
-        return this->operator[](i-1)[j-1];
-    }
-    double & operator()(int i, int j) {
-        return this->operator[](i-1)[j-1];
-    }
+    double operator()(int i, int j) const { return this->operator[](i - 1)[j - 1]; }
+    double &operator()(int i, int j) { return this->operator[](i - 1)[j - 1]; }
 };
 
 const char *EulerSequenceNames[] = {
@@ -909,76 +847,67 @@ const char *EulerSequenceNames[] = {
 
 } // anonymous namespace
 
-const char * Rotation::eulerSequenceName(EulerSequence seq)
+const char *Rotation::eulerSequenceName(EulerSequence seq)
 {
-    if (seq == Invalid || seq >= EulerSequenceLast)
-        return nullptr;
-    return EulerSequenceNames[seq-1];
+    if (seq == Invalid || seq >= EulerSequenceLast) return nullptr;
+    return EulerSequenceNames[seq - 1];
 }
 
 Rotation::EulerSequence Rotation::eulerSequenceFromName(const char *name)
 {
     if (name) {
-        for (unsigned i=0; i<sizeof(EulerSequenceNames)/sizeof(EulerSequenceNames[0]); ++i) {
-            if (boost::iequals(name, EulerSequenceNames[i]))
-                return (EulerSequence)(i+1);
+        for (unsigned i = 0; i < sizeof(EulerSequenceNames) / sizeof(EulerSequenceNames[0]); ++i) {
+            if (boost::iequals(name, EulerSequenceNames[i])) return (EulerSequence)(i + 1);
         }
     }
     return Invalid;
 }
 
-void Rotation::setEulerAngles(EulerSequence theOrder,
-                              double theAlpha,
-                              double theBeta,
+void Rotation::setEulerAngles(EulerSequence theOrder, double theAlpha, double theBeta,
                               double theGamma)
 {
     if (theOrder == Invalid || theOrder >= EulerSequenceLast)
         throw Base::ValueError("invalid euler sequence");
 
-    EulerSequence_Parameters o = translateEulerSequence (theOrder);
+    EulerSequence_Parameters o = translateEulerSequence(theOrder);
 
-    theAlpha *= D_PI/180.0;
-    theBeta *= D_PI/180.0;
-    theGamma *= D_PI/180.0;
+    theAlpha *= D_PI / 180.0;
+    theBeta *= D_PI / 180.0;
+    theGamma *= D_PI / 180.0;
 
     double a = theAlpha, b = theBeta, c = theGamma;
-    if ( ! o.isExtrinsic )
-        std::swap(a, c);
+    if (!o.isExtrinsic) std::swap(a, c);
 
-    if ( o.isOdd )
-        b = -b;
+    if (o.isOdd) b = -b;
 
-    double ti = 0.5 * a; 
-    double tj = 0.5 * b; 
+    double ti = 0.5 * a;
+    double tj = 0.5 * b;
     double th = 0.5 * c;
-    double ci = cos (ti);  
-    double cj = cos (tj);  
-    double ch = cos (th);
-    double si = sin (ti);
-    double sj = sin (tj);
-    double sh = sin (th);
-    double cc = ci * ch; 
-    double cs = ci * sh; 
-    double sc = si * ch; 
+    double ci = cos(ti);
+    double cj = cos(tj);
+    double ch = cos(th);
+    double si = sin(ti);
+    double sj = sin(tj);
+    double sh = sin(th);
+    double cc = ci * ch;
+    double cs = ci * sh;
+    double sc = si * ch;
     double ss = si * sh;
 
     double values[4]; // w, x, y, z
-    if ( o.isTwoAxes ) 
-    {
+    if (o.isTwoAxes) {
         values[o.i] = cj * (cs + sc);
         values[o.j] = sj * (cc + ss);
         values[o.k] = sj * (cs - sc);
-        values[0]   = cj * (cc - ss);
-    } 
-    else 
-    {
+        values[0] = cj * (cc - ss);
+    }
+    else {
         values[o.i] = cj * sc - sj * cs;
         values[o.j] = cj * ss + sj * cc;
         values[o.k] = cj * cs - sj * sc;
-        values[0]   = cj * cc + sj * ss;
+        values[0] = cj * cc + sj * ss;
     }
-    if ( o.isOdd ) 
-        values[o.j] = -values[o.j];
+    if (o.isOdd) values[o.j] = -values[o.j];
 
     quat[0] = values[1];
     quat[1] = values[2];
@@ -986,59 +915,49 @@ void Rotation::setEulerAngles(EulerSequence theOrder,
     quat[3] = values[0];
 }
 
-void Rotation::getEulerAngles(EulerSequence theOrder,
-                              double& theAlpha,
-                              double& theBeta,
-                              double& theGamma) const
+void Rotation::getEulerAngles(EulerSequence theOrder, double &theAlpha, double &theBeta,
+                              double &theGamma) const
 {
     Mat M;
     getValue(M);
 
-    EulerSequence_Parameters o = translateEulerSequence (theOrder);
-    if ( o.isTwoAxes ) 
-    {
-        double sy = sqrt (M(o.i, o.j) * M(o.i, o.j) + M(o.i, o.k) * M(o.i, o.k));
-        if (sy > 16 * DBL_EPSILON) 
-        {
-            theAlpha = atan2 (M(o.i, o.j),  M(o.i, o.k));
-            theGamma = atan2 (M(o.j, o.i), -M(o.k, o.i));
-        } 
-        else 
-        {
-            theAlpha = atan2 (-M(o.j, o.k), M(o.j, o.j));
+    EulerSequence_Parameters o = translateEulerSequence(theOrder);
+    if (o.isTwoAxes) {
+        double sy = sqrt(M(o.i, o.j) * M(o.i, o.j) + M(o.i, o.k) * M(o.i, o.k));
+        if (sy > 16 * DBL_EPSILON) {
+            theAlpha = atan2(M(o.i, o.j), M(o.i, o.k));
+            theGamma = atan2(M(o.j, o.i), -M(o.k, o.i));
+        }
+        else {
+            theAlpha = atan2(-M(o.j, o.k), M(o.j, o.j));
             theGamma = 0.;
         }
-        theBeta = atan2 (sy, M(o.i, o.i));
-    } 
-    else 
-    {
-        double cy = sqrt (M(o.i, o.i) * M(o.i, o.i) + M(o.j, o.i) * M(o.j, o.i));
-        if (cy > 16 * DBL_EPSILON) 
-        {
-            theAlpha = atan2 (M(o.k, o.j), M(o.k, o.k));
-            theGamma = atan2 (M(o.j, o.i), M(o.i, o.i));
-        } 
-        else 
-        {
-            theAlpha = atan2 (-M(o.j, o.k), M(o.j, o.j));
-            theGamma = 0.;
-        }
-        theBeta = atan2 (-M(o.k, o.i), cy);
+        theBeta = atan2(sy, M(o.i, o.i));
     }
-    if ( o.isOdd ) 
-    {
+    else {
+        double cy = sqrt(M(o.i, o.i) * M(o.i, o.i) + M(o.j, o.i) * M(o.j, o.i));
+        if (cy > 16 * DBL_EPSILON) {
+            theAlpha = atan2(M(o.k, o.j), M(o.k, o.k));
+            theGamma = atan2(M(o.j, o.i), M(o.i, o.i));
+        }
+        else {
+            theAlpha = atan2(-M(o.j, o.k), M(o.j, o.j));
+            theGamma = 0.;
+        }
+        theBeta = atan2(-M(o.k, o.i), cy);
+    }
+    if (o.isOdd) {
         theAlpha = -theAlpha;
-        theBeta  = -theBeta;
+        theBeta = -theBeta;
         theGamma = -theGamma;
     }
-    if ( ! o.isExtrinsic ) 
-    { 
-        double aFirst = theAlpha; 
+    if (!o.isExtrinsic) {
+        double aFirst = theAlpha;
         theAlpha = theGamma;
         theGamma = aFirst;
     }
 
-    theAlpha *= 180.0/D_PI;
-    theBeta *= 180.0/D_PI;
-    theGamma *= 180.0/D_PI;
+    theAlpha *= 180.0 / D_PI;
+    theBeta *= 180.0 / D_PI;
+    theGamma *= 180.0 / D_PI;
 }

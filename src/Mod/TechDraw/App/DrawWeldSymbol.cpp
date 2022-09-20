@@ -34,7 +34,7 @@
 
 #include "DrawUtil.h"
 
-#include <Mod/TechDraw/App/DrawWeldSymbolPy.h>  // generated from DrawWeldSymbolPy.xml
+#include <Mod/TechDraw/App/DrawWeldSymbolPy.h> // generated from DrawWeldSymbolPy.xml
 
 #include "DrawLeaderLine.h"
 #include "DrawTile.h"
@@ -53,10 +53,12 @@ DrawWeldSymbol::DrawWeldSymbol()
 {
     static const char *group = "Weld Symbol";
 
-    ADD_PROPERTY_TYPE(Leader, (nullptr), group, (App::PropertyType)(App::Prop_None), "Parent Leader");
+    ADD_PROPERTY_TYPE(Leader, (nullptr), group, (App::PropertyType)(App::Prop_None),
+                      "Parent Leader");
     ADD_PROPERTY_TYPE(AllAround, (false), group, App::Prop_None, "All Around Symbol on/off");
     ADD_PROPERTY_TYPE(FieldWeld, (false), group, App::Prop_None, "Field Weld Symbol on/off");
-    ADD_PROPERTY_TYPE(AlternatingWeld, (false), group, App::Prop_None, "Alternating Weld true/false");
+    ADD_PROPERTY_TYPE(AlternatingWeld, (false), group, App::Prop_None,
+                      "Alternating Weld true/false");
     ADD_PROPERTY_TYPE(TailText, (""), group, App::Prop_None, "Text at tail of symbol");
 
     Caption.setStatus(App::Property::Hidden, true);
@@ -71,72 +73,58 @@ DrawWeldSymbol::DrawWeldSymbol()
 //but if this is a restore of an existing DWS, the tiles will loaded elsewhere
 void DrawWeldSymbol::onSettingDocument()
 {
-//    Base::Console().Message("DWS::onSettingDocument() - doc: %s\n", getDocument()->getName());
-    App::Document* doc = getDocument();
+    //    Base::Console().Message("DWS::onSettingDocument() - doc: %s\n", getDocument()->getName());
+    App::Document *doc = getDocument();
 
     if (doc->testStatus(App::Document::Status::Restoring)) {
-//        Base::Console().Message("DWS::onSettingDocument() - restoring!\n");
+        //        Base::Console().Message("DWS::onSettingDocument() - restoring!\n");
         return;
     }
 
-    std::vector<DrawTileWeld*> existingTiles = getTiles();
-    if (!existingTiles.empty()) {
-        return;
-    }
+    std::vector<DrawTileWeld *> existingTiles = getTiles();
+    if (!existingTiles.empty()) { return; }
 
     std::string tileName1 = doc->getUniqueObjectName("TileWeld");
-    auto tile1Obj( doc->addObject( "TechDraw::DrawTileWeld", tileName1.c_str() ) );
-    DrawTileWeld* tile1 = dynamic_cast<DrawTileWeld*>(tile1Obj);
-    if (tile1) {
-        tile1->TileParent.setValue(this);
-    }
+    auto tile1Obj(doc->addObject("TechDraw::DrawTileWeld", tileName1.c_str()));
+    DrawTileWeld *tile1 = dynamic_cast<DrawTileWeld *>(tile1Obj);
+    if (tile1) { tile1->TileParent.setValue(this); }
 
     std::string tileName2 = doc->getUniqueObjectName("TileWeld");
-    auto tile2Obj( doc->addObject( "TechDraw::DrawTileWeld", tileName2.c_str() ) );
-    DrawTileWeld* tile2 = dynamic_cast<DrawTileWeld*>(tile2Obj);
+    auto tile2Obj(doc->addObject("TechDraw::DrawTileWeld", tileName2.c_str()));
+    DrawTileWeld *tile2 = dynamic_cast<DrawTileWeld *>(tile2Obj);
     if (tile2) {
         tile2->TileParent.setValue(this);
-        tile2->TileRow.setValue(-1);   //other side is row -1
+        tile2->TileRow.setValue(-1); //other side is row -1
     }
 
     DrawView::onSettingDocument();
 }
 
-void DrawWeldSymbol::onChanged(const App::Property* prop)
-{
-    DrawView::onChanged(prop);
-}
+void DrawWeldSymbol::onChanged(const App::Property *prop) { DrawView::onChanged(prop); }
 
-short DrawWeldSymbol::mustExecute() const
-{
-    return DrawView::mustExecute();
-}
+short DrawWeldSymbol::mustExecute() const { return DrawView::mustExecute(); }
 
 App::DocumentObjectExecReturn *DrawWeldSymbol::execute()
 {
-//    Base::Console().Message("DWS::execute()\n");
-    if (!keepUpdated()) {
-        return DrawView::execute();
-    }
+    //    Base::Console().Message("DWS::execute()\n");
+    if (!keepUpdated()) { return DrawView::execute(); }
 
     overrideKeepUpdated(false);
     return DrawView::execute();
 }
 
-std::vector<DrawTileWeld*> DrawWeldSymbol::getTiles() const
+std::vector<DrawTileWeld *> DrawWeldSymbol::getTiles() const
 {
-//    Base::Console().Message("DWS::getTiles()\n");
-    std::vector<DrawTileWeld*> result;
+    //    Base::Console().Message("DWS::getTiles()\n");
+    std::vector<DrawTileWeld *> result;
 
-    std::vector<App::DocumentObject*> tiles = getInList();
-    if (tiles.empty()) {
-        return result;
-    }
+    std::vector<App::DocumentObject *> tiles = getInList();
+    if (tiles.empty()) { return result; }
 
-    for(std::vector<App::DocumentObject *>::iterator it = tiles.begin(); it != tiles.end(); it++) {
+    for (std::vector<App::DocumentObject *>::iterator it = tiles.begin(); it != tiles.end(); it++) {
         if ((*it)->getTypeId().isDerivedFrom(TechDraw::DrawTileWeld::getClassTypeId())) {
-            App::DocumentObject* doTemp = (*it);
-            DrawTileWeld* temp = static_cast<DrawTileWeld*>(doTemp);
+            App::DocumentObject *doTemp = (*it);
+            DrawTileWeld *temp = static_cast<DrawTileWeld *>(doTemp);
             result.push_back(temp);
         }
     }
@@ -145,12 +133,12 @@ std::vector<DrawTileWeld*> DrawWeldSymbol::getTiles() const
 
 bool DrawWeldSymbol::isTailRightSide()
 {
-    App::DocumentObject* obj = Leader.getValue();
-    TechDraw::DrawLeaderLine* realLeader = dynamic_cast<TechDraw::DrawLeaderLine*>(obj);
+    App::DocumentObject *obj = Leader.getValue();
+    TechDraw::DrawLeaderLine *realLeader = dynamic_cast<TechDraw::DrawLeaderLine *>(obj);
     if (realLeader) {
         Base::Vector3d tail = realLeader->getTailPoint();
         Base::Vector3d kink = realLeader->getKinkPoint();
-        if (tail.x < kink.x)  {   //tail is to left
+        if (tail.x < kink.x) { //tail is to left
             return false;
         }
     }
@@ -169,15 +157,16 @@ PyObject *DrawWeldSymbol::getPyObject()
 
 // Python Drawing feature ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(TechDraw::DrawWeldSymbolPython, TechDraw::DrawWeldSymbol)
-template<> const char* TechDraw::DrawWeldSymbolPython::getViewProviderName() const {
+template<> const char *TechDraw::DrawWeldSymbolPython::getViewProviderName() const
+{
     return "TechDrawGui::ViewProviderWeld";
 }
 /// @endcond
 
 // explicit template instantiation
 template class TechDrawExport FeaturePythonT<TechDraw::DrawWeldSymbol>;
-}
-
+} // namespace App

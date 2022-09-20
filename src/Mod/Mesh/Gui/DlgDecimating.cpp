@@ -33,10 +33,8 @@ using namespace MeshGui;
 
 /* TRANSLATOR MeshGui::DlgDecimating */
 
-DlgDecimating::DlgDecimating(QWidget* parent, Qt::WindowFlags fl)
-    : QWidget(parent, fl)
-    , numberOfTriangles(0)
-    , ui(new Ui_DlgDecimating)
+DlgDecimating::DlgDecimating(QWidget *parent, Qt::WindowFlags fl)
+    : QWidget(parent, fl), numberOfTriangles(0), ui(new Ui_DlgDecimating)
 {
     ui->setupUi(this);
     ui->spinBoxReduction->setMinimumWidth(60);
@@ -44,20 +42,13 @@ DlgDecimating::DlgDecimating(QWidget* parent, Qt::WindowFlags fl)
     on_checkAbsolueNumber_toggled(false);
 }
 
-DlgDecimating::~DlgDecimating()
-{
-}
+DlgDecimating::~DlgDecimating() {}
 
-bool DlgDecimating::isAbsoluteNumber() const
-{
-    return ui->checkAbsolueNumber->isChecked();
-}
+bool DlgDecimating::isAbsoluteNumber() const { return ui->checkAbsolueNumber->isChecked(); }
 
 int DlgDecimating::targetNumberOfTriangles() const
 {
-    if (ui->checkAbsolueNumber->isChecked()) {
-        return ui->spinBoxReduction->value();
-    }
+    if (ui->checkAbsolueNumber->isChecked()) { return ui->spinBoxReduction->value(); }
     else {
         return numberOfTriangles * (1.0 - reduction());
     }
@@ -67,8 +58,7 @@ void DlgDecimating::setNumberOfTriangles(int num)
 {
     numberOfTriangles = num;
     ui->checkAbsolueNumber->setEnabled(num > 0);
-    if (num <= 0)
-        ui->checkAbsolueNumber->setChecked(false);
+    if (num <= 0) ui->checkAbsolueNumber->setChecked(false);
 }
 
 void DlgDecimating::on_checkAbsolueNumber_toggled(bool on)
@@ -77,8 +67,10 @@ void DlgDecimating::on_checkAbsolueNumber_toggled(bool on)
     ui->groupBoxTolerance->setDisabled(on);
 
     if (on) {
-        disconnect(ui->sliderReduction, SIGNAL(valueChanged(int)), ui->spinBoxReduction, SLOT(setValue(int)));
-        disconnect(ui->spinBoxReduction, SIGNAL(valueChanged(int)), ui->sliderReduction, SLOT(setValue(int)));
+        disconnect(ui->sliderReduction, SIGNAL(valueChanged(int)), ui->spinBoxReduction,
+                   SLOT(setValue(int)));
+        disconnect(ui->spinBoxReduction, SIGNAL(valueChanged(int)), ui->sliderReduction,
+                   SLOT(setValue(int)));
         ui->spinBoxReduction->setRange(1, numberOfTriangles);
         ui->spinBoxReduction->setValue(numberOfTriangles * (1.0 - reduction()));
         ui->spinBoxReduction->setSuffix(QString());
@@ -89,15 +81,14 @@ void DlgDecimating::on_checkAbsolueNumber_toggled(bool on)
         ui->spinBoxReduction->setValue(ui->sliderReduction->value());
         ui->spinBoxReduction->setSuffix(QString::fromLatin1("%"));
         ui->checkAbsolueNumber->setText(tr("Absolute number"));
-        connect(ui->sliderReduction, SIGNAL(valueChanged(int)), ui->spinBoxReduction, SLOT(setValue(int)));
-        connect(ui->spinBoxReduction, SIGNAL(valueChanged(int)), ui->sliderReduction, SLOT(setValue(int)));
+        connect(ui->sliderReduction, SIGNAL(valueChanged(int)), ui->spinBoxReduction,
+                SLOT(setValue(int)));
+        connect(ui->spinBoxReduction, SIGNAL(valueChanged(int)), ui->sliderReduction,
+                SLOT(setValue(int)));
     }
 }
 
-double DlgDecimating::tolerance() const
-{
-    return ui->spinBoxTolerance->value();
-}
+double DlgDecimating::tolerance() const { return ui->spinBoxTolerance->value(); }
 
 /**
  * Returns the level of reduction in the range [0, 1]. 0 means no reduction, 1 means full
@@ -108,7 +99,7 @@ double DlgDecimating::reduction() const
     double max = static_cast<double>(ui->sliderReduction->maximum());
     double min = static_cast<double>(ui->sliderReduction->minimum());
     double val = static_cast<double>(ui->sliderReduction->value());
-    return (val - min)/(max - min);
+    return (val - min) / (max - min);
 }
 
 // ---------------------------------------
@@ -118,15 +109,15 @@ double DlgDecimating::reduction() const
 TaskDecimating::TaskDecimating()
 {
     widget = new DlgDecimating();
-    Gui::TaskView::TaskBox* taskbox = new Gui::TaskView::TaskBox(
-        QPixmap(), widget->windowTitle(), false, nullptr);
+    Gui::TaskView::TaskBox *taskbox =
+        new Gui::TaskView::TaskBox(QPixmap(), widget->windowTitle(), false, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 
-    std::vector<Mesh::Feature*> meshes = Gui::Selection().getObjectsOfType<Mesh::Feature>();
+    std::vector<Mesh::Feature *> meshes = Gui::Selection().getObjectsOfType<Mesh::Feature>();
     if (meshes.size() == 1) {
-        Mesh::Feature* mesh = meshes.front();
-        const Mesh::MeshObject& mm = mesh->Mesh.getValue();
+        Mesh::Feature *mesh = meshes.front();
+        const Mesh::MeshObject &mm = mesh->Mesh.getValue();
         widget->setNumberOfTriangles(static_cast<int>(mm.countFacets()));
     }
 }
@@ -138,9 +129,8 @@ TaskDecimating::~TaskDecimating()
 
 bool TaskDecimating::accept()
 {
-    std::vector<Mesh::Feature*> meshes = Gui::Selection().getObjectsOfType<Mesh::Feature>();
-    if (meshes.empty())
-        return true;
+    std::vector<Mesh::Feature *> meshes = Gui::Selection().getObjectsOfType<Mesh::Feature>();
+    if (meshes.empty()) return true;
     Gui::Selection().clearSelection();
 
     Gui::WaitCursor wc;
@@ -150,13 +140,12 @@ bool TaskDecimating::accept()
     float reduction = widget->reduction();
     bool absolute = widget->isAbsoluteNumber();
     int targetSize = 0;
-    if (absolute)
-        targetSize = widget->targetNumberOfTriangles();
-    for (std::vector<Mesh::Feature*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
-        Mesh::Feature* mesh = *it;
-        Mesh::MeshObject* mm = mesh->Mesh.startEditing();
-        if (absolute)
-            mm->decimate(targetSize);
+    if (absolute) targetSize = widget->targetNumberOfTriangles();
+    for (std::vector<Mesh::Feature *>::const_iterator it = meshes.begin(); it != meshes.end();
+         ++it) {
+        Mesh::Feature *mesh = *it;
+        Mesh::MeshObject *mm = mesh->Mesh.startEditing();
+        if (absolute) mm->decimate(targetSize);
         else
             mm->decimate(tolerance, reduction);
         mesh->Mesh.finishEditing();

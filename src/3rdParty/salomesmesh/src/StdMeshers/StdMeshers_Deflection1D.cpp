@@ -49,14 +49,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_Deflection1D::StdMeshers_Deflection1D(int         hypId,
-                                                 int         studyId,
-                                                 SMESH_Gen * gen)
-     :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_Deflection1D::StdMeshers_Deflection1D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _value = 1.;
-  _name = "Deflection1D";
-  _param_algo_dim = 1; // is used by SMESH_Regular_1D
+    _value = 1.;
+    _name = "Deflection1D";
+    _param_algo_dim = 1; // is used by SMESH_Regular_1D
 }
 
 //=============================================================================
@@ -65,9 +63,7 @@ StdMeshers_Deflection1D::StdMeshers_Deflection1D(int         hypId,
  */
 //=============================================================================
 
-StdMeshers_Deflection1D::~StdMeshers_Deflection1D()
-{
-}
+StdMeshers_Deflection1D::~StdMeshers_Deflection1D() {}
 
 //=============================================================================
 /*!
@@ -77,14 +73,13 @@ StdMeshers_Deflection1D::~StdMeshers_Deflection1D()
 
 void StdMeshers_Deflection1D::SetDeflection(double value)
 {
-  if (_value != value) {
-    if (value <= 0.)
-      throw SALOME_Exception(LOCALIZED("Value must be positive"));
+    if (_value != value) {
+        if (value <= 0.) throw SALOME_Exception(LOCALIZED("Value must be positive"));
 
-    NotifySubMeshesHypothesisModification();
+        NotifySubMeshesHypothesisModification();
 
-    _value = value;
-  }
+        _value = value;
+    }
 }
 
 //=============================================================================
@@ -93,9 +88,18 @@ void StdMeshers_Deflection1D::SetDeflection(double value)
  */
 //=============================================================================
 
-double StdMeshers_Deflection1D::GetDeflection() const
+double StdMeshers_Deflection1D::GetDeflection() const { return _value; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &StdMeshers_Deflection1D::SaveTo(ostream &save)
 {
-  return _value;
+    save << _value;
+    return save;
 }
 
 //=============================================================================
@@ -104,10 +108,11 @@ double StdMeshers_Deflection1D::GetDeflection() const
  */
 //=============================================================================
 
-ostream & StdMeshers_Deflection1D::SaveTo(ostream & save)
+istream &StdMeshers_Deflection1D::LoadFrom(istream &load)
 {
-  save << _value;
-  return save;
+    bool isOK = (bool)(load >> _value);
+    if (!isOK) load.clear(ios::badbit | load.rdstate());
+    return load;
 }
 
 //=============================================================================
@@ -116,13 +121,7 @@ ostream & StdMeshers_Deflection1D::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_Deflection1D::LoadFrom(istream & load)
-{
-  bool isOK = (bool)(load >> _value);
-  if (!isOK)
-    load.clear(ios::badbit | load.rdstate());
-  return load;
-}
+ostream &operator<<(ostream &save, StdMeshers_Deflection1D &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -130,21 +129,7 @@ istream & StdMeshers_Deflection1D::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_Deflection1D & hyp)
-{
-  return hyp.SaveTo( save );
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-istream & operator >>(istream & load, StdMeshers_Deflection1D & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+istream &operator>>(istream &load, StdMeshers_Deflection1D &hyp) { return hyp.LoadFrom(load); }
 //================================================================================
 /*!
  * \brief Evaluate curve deflection between two points
@@ -155,24 +140,21 @@ istream & operator >>(istream & load, StdMeshers_Deflection1D & hyp)
  */
 //================================================================================
 
-static double deflection(const GeomAdaptor_Curve & theCurve,
-                         double                    theU1,
-                         double                    theU2)
+static double deflection(const GeomAdaptor_Curve &theCurve, double theU1, double theU2)
 {
-  if ( theCurve.GetType() == GeomAbs_Line )
-    return 0;
-  // line between theU1 and theU2
-  gp_Pnt p1 = theCurve.Value( theU1 ), p2 = theCurve.Value( theU2 );
-  gp_Lin segment( p1, gp_Vec( p1, p2 ));
+    if (theCurve.GetType() == GeomAbs_Line) return 0;
+    // line between theU1 and theU2
+    gp_Pnt p1 = theCurve.Value(theU1), p2 = theCurve.Value(theU2);
+    gp_Lin segment(p1, gp_Vec(p1, p2));
 
-  // evaluate square distance of theCurve from the segment
-  Standard_Real dist2 = 0;
-  const int nbPnt = 7;
-  const double step = ( theU2 - theU1 ) / nbPnt;
-  while (( theU1 += step ) < theU2 )
-    dist2 = Max( dist2, segment.SquareDistance( theCurve.Value( theU1 )));
+    // evaluate square distance of theCurve from the segment
+    Standard_Real dist2 = 0;
+    const int nbPnt = 7;
+    const double step = (theU2 - theU1) / nbPnt;
+    while ((theU1 += step) < theU2)
+        dist2 = Max(dist2, segment.SquareDistance(theCurve.Value(theU1)));
 
-  return sqrt( dist2 );
+    return sqrt(dist2);
 }
 
 //================================================================================
@@ -184,41 +166,37 @@ static double deflection(const GeomAdaptor_Curve & theCurve,
  */
 //================================================================================
 
-bool StdMeshers_Deflection1D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                  const TopoDS_Shape& theShape)
+bool StdMeshers_Deflection1D::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                  const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _value = 0.;
+    _value = 0.;
 
-  Standard_Real UMin, UMax;
-  TopLoc_Location L;
+    Standard_Real UMin, UMax;
+    TopLoc_Location L;
 
-  int nbEdges = 0;
-  TopTools_IndexedMapOfShape edgeMap;
-  TopExp::MapShapes( theShape, TopAbs_EDGE, edgeMap );
+    int nbEdges = 0;
+    TopTools_IndexedMapOfShape edgeMap;
+    TopExp::MapShapes(theShape, TopAbs_EDGE, edgeMap);
 
-  for ( int iE = 1; iE <= edgeMap.Extent(); ++iE )
-  {
-    const TopoDS_Edge& edge = TopoDS::Edge( edgeMap( iE ));
-    Handle(Geom_Curve) C = BRep_Tool::Curve( edge, L, UMin, UMax );
-    GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
-    if ( AdaptCurve.GetType() != GeomAbs_Line )
-    {
-      vector< double > params;
-      SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* >( theMesh )->GetMeshDS();
-      if ( SMESH_Algo::GetNodeParamOnEdge( aMeshDS, edge, params ))
-      {
-        nbEdges++;
-        for ( int i = 1; i < params.size(); ++i )
-          _value = Max( _value, deflection( AdaptCurve, params[ i-1 ], params[ i ]));
-      }
+    for (int iE = 1; iE <= edgeMap.Extent(); ++iE) {
+        const TopoDS_Edge &edge = TopoDS::Edge(edgeMap(iE));
+        Handle(Geom_Curve) C = BRep_Tool::Curve(edge, L, UMin, UMax);
+        GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
+        if (AdaptCurve.GetType() != GeomAbs_Line) {
+            vector<double> params;
+            SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
+            if (SMESH_Algo::GetNodeParamOnEdge(aMeshDS, edge, params)) {
+                nbEdges++;
+                for (int i = 1; i < params.size(); ++i)
+                    _value = Max(_value, deflection(AdaptCurve, params[i - 1], params[i]));
+            }
+        }
+        else
+            nbEdges++;
     }
-    else
-      nbEdges++;
-  }
-  return nbEdges;
+    return nbEdges;
 }
 
 //================================================================================
@@ -228,8 +206,8 @@ bool StdMeshers_Deflection1D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
  */
 //================================================================================
 
-bool StdMeshers_Deflection1D::SetParametersByDefaults(const TDefaults&  /*dflts*/,
-                                                      const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_Deflection1D::SetParametersByDefaults(const TDefaults & /*dflts*/,
+                                                      const SMESH_Mesh * /*theMesh*/)
 {
-  return false;
+    return false;
 }

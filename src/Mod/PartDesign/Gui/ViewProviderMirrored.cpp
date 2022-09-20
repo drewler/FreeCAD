@@ -28,8 +28,9 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderMirrored,PartDesignGui::ViewProviderTransformed)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderMirrored, PartDesignGui::ViewProviderTransformed)
 
-TaskDlgFeatureParameters *ViewProviderMirrored::getEditDialog() {
-    return new TaskDlgMirroredParameters (this);
+TaskDlgFeatureParameters *ViewProviderMirrored::getEditDialog()
+{
+    return new TaskDlgMirroredParameters(this);
 }

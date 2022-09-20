@@ -27,10 +27,10 @@
 
 // here get the warnings of too long specifiers disabled (needed for VC6)
 #ifdef _MSC_VER
-# pragma warning(disable : 4005)
-# pragma warning(disable : 4251)
-# pragma warning(disable : 4503)
-# pragma warning(disable : 4786)  // specifier longer then 255 chars
+#pragma warning(disable : 4005)
+#pragma warning(disable : 4251)
+#pragma warning(disable : 4503)
+#pragma warning(disable : 4786) // specifier longer then 255 chars
 #endif
 
 #ifdef _PreComp_
@@ -53,20 +53,20 @@
 #include <vector>
 
 #ifdef FC_OS_WIN32
-# include <windows.h>
+#include <windows.h>
 #endif
 
 // Inventor
-# include <Inventor/nodes/SoCoordinate3.h>
-# include <Inventor/nodes/SoFaceSet.h>
-# include <Inventor/nodes/SoMaterial.h>
-# include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/nodes/SoTexture2.h>
-# include <Inventor/nodes/SoTextureCoordinate2.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoFaceSet.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoTexture2.h>
+#include <Inventor/nodes/SoTextureCoordinate2.h>
 
 // Qt Toolkit
 #ifndef __QtAll__
-# include <Gui/QtAll.h>
+#include <Gui/QtAll.h>
 #endif
 
 #endif //_PreComp_

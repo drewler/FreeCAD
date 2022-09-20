@@ -32,7 +32,8 @@
 #include <string>
 #include <FCGlobal.h>
 
-namespace Py {
+namespace Py
+{
 class Object;
 }
 
@@ -51,32 +52,33 @@ class ObjectIdentifier;
  * possible properties. It is also possible to define user properties
  * and use them in the framework...
  */
-class AppExport Property : public Base::Persistence
+class AppExport Property: public Base::Persistence
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
     enum Status
     {
-        Touched = 0, // touched property
-        Immutable = 1, // can't modify property
-        ReadOnly = 2, // for property editor
-        Hidden = 3, // for property editor
-        Transient = 4, // for property container save
-        MaterialEdit = 5, // to turn ON PropertyMaterial edit
+        Touched = 0,            // touched property
+        Immutable = 1,          // can't modify property
+        ReadOnly = 2,           // for property editor
+        Hidden = 3,             // for property editor
+        Transient = 4,          // for property container save
+        MaterialEdit = 5,       // to turn ON PropertyMaterial edit
         NoMaterialListEdit = 6, // to turn OFF PropertyMaterialList edit
-        Output = 7, // same effect as Prop_Output
-        LockDynamic = 8, // prevent being removed from dynamic property
-        NoModify = 9, // prevent causing Gui::Document::setModified()
-        PartialTrigger = 10, // allow change in partial doc
-        NoRecompute = 11, // touch owner for recompute on property change
-        Single = 12, // for save/load of floating point numbers
-        Ordered = 13, // for PropertyLists whether the order of the elements is
-                      // relevant for the container using it
-        EvalOnRestore = 14, // In case of expression binding, evaluate the
-                            // expression on restore and touch the object on value change.
-        Busy = 15, // internal use to avoid recursive signaling
-        CopyOnChange = 16, // for Link to copy the linked object on change of the property with this flag
+        Output = 7,             // same effect as Prop_Output
+        LockDynamic = 8,        // prevent being removed from dynamic property
+        NoModify = 9,           // prevent causing Gui::Document::setModified()
+        PartialTrigger = 10,    // allow change in partial doc
+        NoRecompute = 11,       // touch owner for recompute on property change
+        Single = 12,            // for save/load of floating point numbers
+        Ordered = 13,           // for PropertyLists whether the order of the elements is
+                                // relevant for the container using it
+        EvalOnRestore = 14,     // In case of expression binding, evaluate the
+                                // expression on restore and touch the object on value change.
+        Busy = 15,              // internal use to avoid recursive signaling
+        CopyOnChange =
+            16, // for Link to copy the linked object on change of the property with this flag
         UserEdit = 17, // cause property editor to create button for user defined editing
 
         // The following bits are corresponding to PropertyType set when the
@@ -85,13 +87,13 @@ public:
         // required in PropertyContainer::getPropertyType()
         //
         PropStaticBegin = 21,
-        PropDynamic = 21, // indicating the property is dynamically added
-        PropNoPersist = 22, // corresponding to Prop_NoPersist
+        PropDynamic = 21,     // indicating the property is dynamically added
+        PropNoPersist = 22,   // corresponding to Prop_NoPersist
         PropNoRecompute = 23, // corresponding to Prop_NoRecompute
-        PropReadOnly = 24, // corresponding to Prop_ReadOnly
-        PropTransient= 25, // corresponding to Prop_Transient
-        PropHidden   = 26, // corresponding to Prop_Hidden
-        PropOutput   = 27, // corresponding to Prop_Output
+        PropReadOnly = 24,    // corresponding to Prop_ReadOnly
+        PropTransient = 25,   // corresponding to Prop_Transient
+        PropHidden = 26,      // corresponding to Prop_Hidden
+        PropOutput = 27,      // corresponding to Prop_Output
         PropStaticEnd = 28,
 
         User1 = 28, // user-defined status
@@ -112,7 +114,8 @@ public:
      * This method is defined in Base::Persistence
      * @see Base::Persistence
      */
-    unsigned int getMemSize () const override {
+    unsigned int getMemSize() const override
+    {
         // you have to implement this method in all property classes!
         return sizeof(father) + sizeof(StatusBits);
     }
@@ -121,7 +124,7 @@ public:
      * With \ref hasName() it can be checked beforehand if a valid name is set.
      * @note If no name is set this function returns an empty string, i.e. "".
      */
-    const char* getName() const;
+    const char *getName() const;
     /** Check if the property has a name set.
      * If no name is set then \ref getName() will return an empty string
      */
@@ -130,44 +133,42 @@ public:
      * If \a name is null or an empty string it's considered invalid,
      * and valid otherwise.
      */
-    static bool isValidName(const char* name);
+    static bool isValidName(const char *name);
 
     std::string getFullName() const;
 
     /// Get the class name of the associated property editor item
-    virtual const char* getEditorName() const { return ""; }
+    virtual const char *getEditorName() const { return ""; }
 
     /// Get the type of the property in the container
     short getType() const;
 
     /// Get the group of this property
-    const char* getGroup() const;
+    const char *getGroup() const;
 
     /// Get the documentation of this property
-    const char* getDocumentation() const;
+    const char *getDocumentation() const;
 
     /// Is called by the framework to set the father (container)
     void setContainer(PropertyContainer *Father);
 
     /// Get a pointer to the PropertyContainer derived class the property belongs to
-    PropertyContainer *getContainer() const {return father;}
+    PropertyContainer *getContainer() const { return father; }
 
     /// Set value of property
-    virtual void setPathValue(const App::ObjectIdentifier & path, const boost::any & value);
+    virtual void setPathValue(const App::ObjectIdentifier &path, const boost::any &value);
 
     /// Get value of property
-    virtual const boost::any getPathValue(const App::ObjectIdentifier & path) const;
+    virtual const boost::any getPathValue(const App::ObjectIdentifier &path) const;
 
     /// Get Python value of property
-    virtual bool getPyPathValue(const App::ObjectIdentifier &, Py::Object &) const {
-        return false;
-    }
+    virtual bool getPyPathValue(const App::ObjectIdentifier &, Py::Object &) const { return false; }
 
     /// Convert p to a canonical representation of it
-    virtual App::ObjectIdentifier canonicalPath(const App::ObjectIdentifier & p) const;
+    virtual App::ObjectIdentifier canonicalPath(const App::ObjectIdentifier &p) const;
 
     /// Get valid paths for this property; used by auto completer
-    virtual void getPaths(std::vector<App::ObjectIdentifier> & paths) const;
+    virtual void getPaths(std::vector<App::ObjectIdentifier> &paths) const;
 
     /** Called at the beginning of Document::afterRestore()
      *
@@ -206,36 +207,22 @@ public:
     /// Set the property touched
     void touch();
     /// Test if this property is touched
-    inline bool isTouched() const {
-        return StatusBits.test(Touched);
-    }
+    inline bool isTouched() const { return StatusBits.test(Touched); }
     /// Reset this property touched
-    inline void purgeTouched() {
-        StatusBits.reset(Touched);
-    }
+    inline void purgeTouched() { StatusBits.reset(Touched); }
     /// return the status bits
-    inline unsigned long getStatus() const {
-        return StatusBits.to_ulong();
-    }
-    inline bool testStatus(Status pos) const {
-        return StatusBits.test(static_cast<size_t>(pos));
-    }
+    inline unsigned long getStatus() const { return StatusBits.to_ulong(); }
+    inline bool testStatus(Status pos) const { return StatusBits.test(static_cast<size_t>(pos)); }
     void setStatus(Status pos, bool on);
     void setStatusValue(unsigned long status);
     ///Sets property editable/grayed out in property editor
     void setReadOnly(bool readOnly);
-    inline bool isReadOnly() const {
-        return testStatus(App::Property::ReadOnly);
-    }
+    inline bool isReadOnly() const { return testStatus(App::Property::ReadOnly); }
     /// Sets precision of properties using floating point
     /// numbers to single, the default is double.
-    void setSinglePrecision(bool single) {
-        setStatus(App::Property::Single, single);
-    }
+    void setSinglePrecision(bool single) { setStatus(App::Property::Single, single); }
     /// Gets precision of properties using floating point numbers
-    inline bool isSinglePrecision() const {
-        return testStatus(App::Property::Single);
-    }
+    inline bool isSinglePrecision() const { return testStatus(App::Property::Single); }
     //@}
 
     /// Returns a new copy of the property (mainly for Undo/Redo and transactions)
@@ -259,7 +246,7 @@ public:
      * the runtime memory allocator to reuse just deleted memory, which will
      * cause hard to debug problem if use pointer as key. 
      */
-    int64_t getID() const {return _id;}
+    int64_t getID() const { return _id; }
 
     friend class PropertyContainer;
     friend struct PropertyData;
@@ -284,12 +271,12 @@ protected:
     virtual void aboutToSetValue();
 
     /// Verify a path for the current property
-    virtual void verifyPath(const App::ObjectIdentifier & p) const;
+    virtual void verifyPath(const App::ObjectIdentifier &p) const;
 
 private:
     // forbidden
-    Property(const Property&);
-    Property& operator = (const Property&);
+    Property(const Property &);
+    Property &operator=(const Property &);
 
     // Sync status with Property_Type
     void syncType(unsigned type);
@@ -300,7 +287,7 @@ private:
     int64_t _id;
 
 public:
-    boost::signals2::signal<void (const App::Property&)> signalChanged;
+    boost::signals2::signal<void(const App::Property &)> signalChanged;
 };
 
 
@@ -331,12 +318,14 @@ public:
  * you can manually call AtomicPropertyChange::tryInvoke(). If the condition is
  * satisfied, it will call hasSetValue() that allows exception propagation.
  */
-template<class P> class AtomicPropertyChangeInterface {
+template<class P> class AtomicPropertyChangeInterface
+{
 protected:
-    AtomicPropertyChangeInterface() : signalCounter(0), hasChanged(false) { }
+    AtomicPropertyChangeInterface() : signalCounter(0), hasChanged(false) {}
 
 public:
-    class AtomicPropertyChange {
+    class AtomicPropertyChange
+    {
     public:
         /** Constructor
          *
@@ -345,10 +334,10 @@ public:
          *                    hasn't been marked before, and calls its
          *                    aboutToSetValue().
          */
-        explicit AtomicPropertyChange(P & prop, bool markChange=true) : mProp(prop) {
+        explicit AtomicPropertyChange(P &prop, bool markChange = true) : mProp(prop)
+        {
             mProp.signalCounter++;
-            if (markChange)
-                aboutToChange();
+            if (markChange) aboutToChange();
         }
 
         /** Mark the property as changed
@@ -356,7 +345,8 @@ public:
          * It will mark the property as changed only if it has been marked
          * before, and only then will it call the property's aboutToSetValue().
          */
-        void aboutToChange() {
+        void aboutToChange()
+        {
             if (!mProp.hasChanged) {
                 mProp.hasChanged = true;
                 mProp.aboutToSetValue();
@@ -369,7 +359,8 @@ public:
          * of the class in current call stack, it will call property's
          * hasSetValue()
          */
-        ~AtomicPropertyChange() {
+        ~AtomicPropertyChange()
+        {
             // Signal counter == 1? meaning we are the last one. Invoke
             // hasSetValue() before decrease counter to prevent recursive call
             // triggered by another AtomicPropertyChange created inside
@@ -378,13 +369,15 @@ public:
                 // Must make sure to not throw in a destructor
                 try {
                     mProp.hasSetValue();
-                } catch(Base::Exception &e) {
+                }
+                catch (Base::Exception &e) {
                     e.ReportException();
-                } catch(...) {}
+                }
+                catch (...) {
+                }
                 mProp.hasChanged = false;
             }
-            if (mProp.signalCounter>0)
-                mProp.signalCounter--;
+            if (mProp.signalCounter > 0) mProp.signalCounter--;
         }
 
         /** Check and invoke property's hasSetValue()
@@ -394,17 +387,17 @@ public:
          */
         // Destructor cannot throw. So we provide this function to allow error
         // propagation.
-        void tryInvoke() {
-            if (mProp.signalCounter==1 && mProp.hasChanged) {
+        void tryInvoke()
+        {
+            if (mProp.signalCounter == 1 && mProp.hasChanged) {
                 mProp.hasSetValue();
-                if (mProp.signalCounter>0)
-                    --mProp.signalCounter;
+                if (mProp.signalCounter > 0) --mProp.signalCounter;
                 mProp.hasChanged = false;
             }
         }
 
     private:
-        P & mProp; /**< Referenced to property we work on */
+        P &mProp; /**< Referenced to property we work on */
     };
 
 protected:
@@ -422,19 +415,16 @@ protected:
 class AppExport PropertyListsBase
 {
 public:
-    virtual void setSize(int newSize)=0;   
-    virtual int getSize() const =0;
+    virtual void setSize(int newSize) = 0;
+    virtual int getSize() const = 0;
 
-    const std::set<int> &getTouchList() const {
-        return _touchList;
-    }
+    const std::set<int> &getTouchList() const { return _touchList; }
 
-    void clearTouchList() {
-        _touchList.clear();
-    }
+    void clearTouchList() { _touchList.clear(); }
 
 protected:
-    virtual void setPyValues(const std::vector<PyObject*> &vals, const std::vector<int> &indices) {
+    virtual void setPyValues(const std::vector<PyObject *> &vals, const std::vector<int> &indices)
+    {
         (void)vals;
         (void)indices;
         throw Base::NotImplementedError("not implemented");
@@ -451,119 +441,114 @@ protected:
  * multiple values, not only a single value.
  * All property types which may contain more than one value inherits this class.
  */
-class AppExport PropertyLists : public Property, public PropertyListsBase
+class AppExport PropertyLists: public Property, public PropertyListsBase
 
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
+
 public:
-    void setPyObject(PyObject *obj) override {
-        _setPyObject(obj);
-    }
+    void setPyObject(PyObject *obj) override { _setPyObject(obj); }
 
     // if the order of the elements in the list relevant?
     // if yes, certain operations, like restoring must make sure that the
     // order is kept despite errors.
-    inline void setOrderRelevant(bool on) { this->setStatus(Status::Ordered,on); }
-    inline bool isOrderRelevant() const { return this->testStatus(Status::Ordered);}
-
+    inline void setOrderRelevant(bool on) { this->setStatus(Status::Ordered, on); }
+    inline bool isOrderRelevant() const { return this->testStatus(Status::Ordered); }
 };
 
 /** Helper class to implement PropertyLists */
-template<class T, class ListT = std::vector<T>, class ParentT = PropertyLists >
-class PropertyListsT: public ParentT
-                    , public AtomicPropertyChangeInterface<PropertyListsT<T,ListT,ParentT> >
+template<class T, class ListT = std::vector<T>, class ParentT = PropertyLists>
+class PropertyListsT: public ParentT,
+                      public AtomicPropertyChangeInterface<PropertyListsT<T, ListT, ParentT>>
 {
 public:
     using const_reference = typename ListT::const_reference;
     using list_type = ListT;
     using parent_type = ParentT;
     using atomic_change = typename AtomicPropertyChangeInterface<
-        PropertyListsT<T,ListT,ParentT> >::AtomicPropertyChange;
+        PropertyListsT<T, ListT, ParentT>>::AtomicPropertyChange;
 
     friend atomic_change;
 
-    virtual void setSize(int newSize, const_reference def) {
-        _lValueList.resize(newSize,def);
-    }
+    virtual void setSize(int newSize, const_reference def) { _lValueList.resize(newSize, def); }
 
-    void setSize(int newSize) override {
-        _lValueList.resize(newSize);
-    }
+    void setSize(int newSize) override { _lValueList.resize(newSize); }
 
-    int getSize() const override {
-        return static_cast<int>(_lValueList.size());
-    }
+    int getSize() const override { return static_cast<int>(_lValueList.size()); }
 
-    void setValue(const_reference value) {
+    void setValue(const_reference value)
+    {
         ListT vals;
-        vals.resize(1,value);
+        vals.resize(1, value);
         setValues(vals);
     }
 
-    virtual void setValues(const ListT &newValues = ListT()) {
+    virtual void setValues(const ListT &newValues = ListT())
+    {
         atomic_change guard(*this);
         this->_touchList.clear();
         this->_lValueList = newValues;
         guard.tryInvoke();
     }
 
-    void setValue(const ListT &newValues = ListT()) {
-        setValues(newValues);
-    }
+    void setValue(const ListT &newValues = ListT()) { setValues(newValues); }
 
-    const ListT &getValues() const{return _lValueList;}
+    const ListT &getValues() const { return _lValueList; }
 
     // alias to getValues
-    const ListT &getValue() const{return getValues();}
+    const ListT &getValue() const { return getValues(); }
 
-    const_reference operator[] (int idx) const {return _lValueList[idx];} 
+    const_reference operator[](int idx) const { return _lValueList[idx]; }
 
-    bool isSame(const Property &other) const override {
-        if (&other == this)
-            return true;
+    bool isSame(const Property &other) const override
+    {
+        if (&other == this) return true;
         return this->getTypeId() == other.getTypeId()
             && this->getValue() == static_cast<decltype(this)>(&other)->getValue();
     }
 
-    void setPyObject(PyObject *value) override {
+    void setPyObject(PyObject *value) override
+    {
         try {
             setValue(getPyValue(value));
             return;
-        }catch(...){}
+        }
+        catch (...) {
+        }
         parent_type::setPyObject(value);
     }
 
-    virtual void set1Value(int index, const_reference value) {
+    virtual void set1Value(int index, const_reference value)
+    {
         int size = getSize();
-        if (index<-1 || index>size)
-            throw Base::RuntimeError("index out of bound");
+        if (index < -1 || index > size) throw Base::RuntimeError("index out of bound");
 
         atomic_change guard(*this);
-        if (index==-1 || index == size) {
+        if (index == -1 || index == size) {
             index = size;
-            setSize(index+1,value);
-        } else
+            setSize(index + 1, value);
+        }
+        else
             _lValueList[index] = value;
         this->_touchList.insert(index);
         guard.tryInvoke();
     }
 
 protected:
-
-    void setPyValues(const std::vector<PyObject*> &vals, const std::vector<int> &indices) override 
+    void setPyValues(const std::vector<PyObject *> &vals, const std::vector<int> &indices) override
     {
         if (indices.empty()) {
             ListT values;
             values.resize(vals.size());
-            for (std::size_t i=0,count=vals.size();i<count;++i)
+            for (std::size_t i = 0, count = vals.size(); i < count; ++i)
                 values[i] = getPyValue(vals[i]);
             setValues(std::move(values));
             return;
         }
-        assert(vals.size()==indices.size());
+        assert(vals.size() == indices.size());
         atomic_change guard(*this);
-        for (int i=0,count=indices.size();i<count;++i)
-            set1Value(indices[i],getPyValue(vals[i]));
+        for (int i = 0, count = indices.size(); i < count; ++i)
+            set1Value(indices[i], getPyValue(vals[i]));
         guard.tryInvoke();
     }
 

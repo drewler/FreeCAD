@@ -26,39 +26,41 @@
 
 #include <QMenu>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 
 /** This class implements the undo dialog.
  * \author Werner Mayer
  */
-class UndoDialog : public QMenu
+class UndoDialog: public QMenu
 {
     Q_OBJECT
 
 public:
-  explicit UndoDialog( QWidget* parent = nullptr );
-  ~UndoDialog() override;
+    explicit UndoDialog(QWidget *parent = nullptr);
+    ~UndoDialog() override;
 
 protected Q_SLOTS:
-  void onSelected();
-  void onFetchInfo();
+    void onSelected();
+    void onFetchInfo();
 };
 
 /** This class implements the redo dialog.
  * \author Werner Mayer
  */
-class RedoDialog : public QMenu
+class RedoDialog: public QMenu
 {
     Q_OBJECT
 
 public:
-  explicit RedoDialog( QWidget* parent = nullptr );
-  ~RedoDialog() override;
+    explicit RedoDialog(QWidget *parent = nullptr);
+    ~RedoDialog() override;
 
 protected Q_SLOTS:
-  void onSelected();
-  void onFetchInfo();
+    void onSelected();
+    void onFetchInfo();
 };
 
 } // namespace Dialog

@@ -26,21 +26,21 @@
 #define _MED_WrapperFactory_HXX_
 
 #ifdef WIN32
- #if defined MEDWRAPPER_FACTORY_EXPORTS || defined MEDWrapper_EXPORTS
-  #if defined WIN32
-   #define MEDWRAPPER_FACTORY_EXPORT __declspec( dllexport )
-  #else
-   #define MEDWRAPPER_FACTORY_EXPORT
-  #endif
- #else
-  #if defined WIN32
-   #define MEDWRAPPER_FACTORY_EXPORT __declspec( dllimport )
-  #else
-   #define MEDWRAPPER_FACTORY_EXPORT
-  #endif
- #endif
+#if defined MEDWRAPPER_FACTORY_EXPORTS || defined MEDWrapper_EXPORTS
+#if defined WIN32
+#define MEDWRAPPER_FACTORY_EXPORT __declspec(dllexport)
 #else
- #define MEDWRAPPER_FACTORY_EXPORT
+#define MEDWRAPPER_FACTORY_EXPORT
+#endif
+#else
+#if defined WIN32
+#define MEDWRAPPER_FACTORY_EXPORT __declspec(dllimport)
+#else
+#define MEDWRAPPER_FACTORY_EXPORT
+#endif
+#endif
+#else
+#define MEDWRAPPER_FACTORY_EXPORT
 #endif
 
 #endif

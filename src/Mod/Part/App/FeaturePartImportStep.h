@@ -31,7 +31,7 @@
 namespace Part
 {
 
-class ImportStep :public Part::Feature
+class ImportStep: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::FeaturePartImportStep);
 
@@ -46,13 +46,11 @@ public:
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderImport";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderImport"; }
     //@}
 };
 
-}
+} // namespace Part
 
 
 #endif // PART_FEATUREPARTIMPORTSTEP_H

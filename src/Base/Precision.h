@@ -26,10 +26,12 @@
 
 #include <cmath>
 
-namespace Base {
+namespace Base
+{
 
 // The methods are copied from OCC's Precision class
-class Precision {
+class Precision
+{
 public:
     /*!
      * \brief Angular
@@ -75,7 +77,7 @@ public:
      * \param T
      * \return
      */
-    static double Parametric (const double P, const double T) { return P / T; }
+    static double Parametric(const double P, const double T) { return P / T; }
 
     /*!
      * \brief PConfusion
@@ -83,14 +85,14 @@ public:
      * \param T
      * \return
      */
-    static double PConfusion (const double T) { return Parametric (Confusion(), T); }
+    static double PConfusion(const double T) { return Parametric(Confusion(), T); }
 
     /*!
      * \brief PConfusion
      * Used  to test distances  in parametric  space on a default curve.
      * \return
      */
-    static double PConfusion() { return Parametric (Confusion()); }
+    static double PConfusion() { return Parametric(Confusion()); }
 
     /*!
      * \brief SquarePConfusion
@@ -106,7 +108,7 @@ public:
      * \param T
      * \return
      */
-    static double PIntersection (const double T) { return Parametric(Intersection(),T); }
+    static double PIntersection(const double T) { return Parametric(Intersection(), T); }
 
     /*!
      * \brief PApproximation
@@ -114,7 +116,7 @@ public:
      * \param T
      * \return
      */
-    static double PApproximation (const double T) { return Parametric(Approximation(),T); }
+    static double PApproximation(const double T) { return Parametric(Approximation(), T); }
 
     /*!
      * \brief Parametric
@@ -122,21 +124,21 @@ public:
      * \param P
      * \return
      */
-    static double Parametric (const double P) { return Parametric (P, 100.0); }
+    static double Parametric(const double P) { return Parametric(P, 100.0); }
 
     /*!
      * \brief PIntersection
      * Used for Intersections  in parametric  space  on a default curve.
      * \return
      */
-    static double PIntersection() { return Parametric (Intersection()); }
+    static double PIntersection() { return Parametric(Intersection()); }
 
     /*!
      * \brief PApproximation
      * Used for  Approximations  in parametric space on a default curve.
      * \return
      */
-    static double PApproximation() { return Parametric (Approximation()); }
+    static double PApproximation() { return Parametric(Approximation()); }
 
     /*!
      * \brief IsInfinite
@@ -144,7 +146,10 @@ public:
      * \param R
      * \return
      */
-    static double IsInfinite (const double R) { return std::fabs (R) >= (0.5 * Precision::Infinite()); }
+    static double IsInfinite(const double R)
+    {
+        return std::fabs(R) >= (0.5 * Precision::Infinite());
+    }
 
     /*!
      * \brief IsPositiveInfinite
@@ -152,7 +157,7 @@ public:
      * \param R
      * \return
      */
-    static double IsPositiveInfinite (const double R) { return R >= (0.5 * Precision::Infinite()); }
+    static double IsPositiveInfinite(const double R) { return R >= (0.5 * Precision::Infinite()); }
 
     /*!
      * \brief IsNegativeInfinite
@@ -160,7 +165,7 @@ public:
      * \param R
      * \return
      */
-    static bool IsNegativeInfinite (const double R) { return R <= -(0.5 * Precision::Infinite()); }
+    static bool IsNegativeInfinite(const double R) { return R <= -(0.5 * Precision::Infinite()); }
 
     /*!
      * \brief Infinite
@@ -170,6 +175,6 @@ public:
     static double Infinite() { return 2.e+100; }
 };
 
-}
+} // namespace Base
 
 #endif // BASE_PRECISION_H

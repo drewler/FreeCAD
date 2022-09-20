@@ -37,19 +37,17 @@ class StdMeshers_ProjectionSource2D;
 class STDMESHERS_EXPORT StdMeshers_Projection_2D: public SMESH_2D_Algo
 {
 public:
-  StdMeshers_Projection_2D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_Projection_2D();
+    StdMeshers_Projection_2D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_Projection_2D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh&                          aMesh,
-                               const TopoDS_Shape&                  aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
-  /*!
+    /*!
    * \brief Sets a default event listener to submesh of the source face
    *  \param whenSetToSubMesh - submesh where algo is set
    *
@@ -58,15 +56,13 @@ public:
    * Arranges that CLEAN event is translated from source submesh to
    * the whenSetToSubMesh submesh.
    */
-  virtual void SetEventListener(SMESH_subMesh* whenSetToSubMesh);
-  
+    virtual void SetEventListener(SMESH_subMesh *whenSetToSubMesh);
 
- protected:
 
-  const StdMeshers_ProjectionSource2D*     _sourceHypo;
+protected:
+    const StdMeshers_ProjectionSource2D *_sourceHypo;
 
-  StdMeshers_ProjectionUtils::TNodeNodeMap _src2tgtNodes;
-
+    StdMeshers_ProjectionUtils::TNodeNodeMap _src2tgtNodes;
 };
 
 #endif

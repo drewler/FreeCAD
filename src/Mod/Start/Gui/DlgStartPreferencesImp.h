@@ -28,23 +28,24 @@
 #include <memory>
 
 class Ui_DlgStartPreferences;
-namespace StartGui {
-    class DlgStartPreferencesImp : public Gui::Dialog::PreferencePage
-    {
-        Q_OBJECT
+namespace StartGui
+{
+class DlgStartPreferencesImp: public Gui::Dialog::PreferencePage
+{
+    Q_OBJECT
 
-    public:
-        explicit DlgStartPreferencesImp( QWidget* parent = nullptr );
-        ~DlgStartPreferencesImp() override;
+public:
+    explicit DlgStartPreferencesImp(QWidget *parent = nullptr);
+    ~DlgStartPreferencesImp() override;
 
-    protected:
-        void saveSettings() override;
-        void loadSettings() override;
-        void changeEvent(QEvent *e) override;
+protected:
+    void saveSettings() override;
+    void loadSettings() override;
+    void changeEvent(QEvent *e) override;
 
-    private:
-        std::unique_ptr<Ui_DlgStartPreferences> ui;
-    };
+private:
+    std::unique_ptr<Ui_DlgStartPreferences> ui;
+};
 
 } // namespace StartGui
 

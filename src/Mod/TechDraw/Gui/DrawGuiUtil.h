@@ -34,18 +34,22 @@ class QComboBox;
 class QPointF;
 class QRectF;
 
-namespace App {
+namespace App
+{
 class DocumentObject;
 }
 
-namespace Part {
+namespace Part
+{
 class Feature;
 }
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawPage;
 }
-namespace Gui {
+namespace Gui
+{
 class Command;
 }
 
@@ -53,25 +57,24 @@ namespace TechDrawGui
 {
 
 /// Convenient utility functions for TechDraw Gui Module
-class TechDrawGuiExport DrawGuiUtil {
+class TechDrawGuiExport DrawGuiUtil
+{
     Q_DECLARE_TR_FUNCTIONS(TechDrawGui::DrawGuiUtil)
-    public:
-    static TechDraw::DrawPage* findPage(Gui::Command* cmd);
+public:
+    static TechDraw::DrawPage *findPage(Gui::Command *cmd);
 
-    static bool isDraftObject(App::DocumentObject* obj);
-    static bool isArchObject(App::DocumentObject* obj);
-    static bool isArchSection(App::DocumentObject* obj);
+    static bool isDraftObject(App::DocumentObject *obj);
+    static bool isArchObject(App::DocumentObject *obj);
+    static bool isArchSection(App::DocumentObject *obj);
 
-    static bool needPage(Gui::Command* cmd);
-    static bool needView(Gui::Command* cmd, bool partOnly = true);
-    static void dumpRectF(const char* text, const QRectF& r);
-    static void dumpPointF(const char* text, const QPointF& p);
+    static bool needPage(Gui::Command *cmd);
+    static bool needView(Gui::Command *cmd, bool partOnly = true);
+    static void dumpRectF(const char *text, const QRectF &r);
+    static void dumpPointF(const char *text, const QPointF &p);
     static std::pair<Base::Vector3d, Base::Vector3d> get3DDirAndRot();
-    static std::pair<Base::Vector3d, Base::Vector3d> getProjDirFromFace(App::DocumentObject* obj,
-                                                                       std::string faceName);
-    static void loadArrowBox(QComboBox* qcb);
-
-
+    static std::pair<Base::Vector3d, Base::Vector3d> getProjDirFromFace(App::DocumentObject *obj,
+                                                                        std::string faceName);
+    static void loadArrowBox(QComboBox *qcb);
 };
 
 } //end namespace TechDrawGui

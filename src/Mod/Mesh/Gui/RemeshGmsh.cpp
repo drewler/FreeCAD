@@ -24,10 +24,10 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMessageBox>
-# include <QPushButton>
-# include <QTextCursor>
-# include <QElapsedTimer>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTextCursor>
+#include <QElapsedTimer>
 #endif
 
 #include "RemeshGmsh.h"
@@ -48,15 +48,16 @@
 
 using namespace MeshGui;
 
-class GmshWidget::Private {
+class GmshWidget::Private
+{
 public:
-    explicit Private(QWidget* parent)
-      : gmsh(parent)
+    explicit Private(QWidget *parent) : gmsh(parent)
     {
         /* coverity[uninit_ctor] Members of ui are set in setupUI() */
     }
 
-    void appendText(const QString& text, bool error) {
+    void appendText(const QString &text, bool error)
+    {
         syntax->setParagraphType(error ? Gui::DockWnd::ReportHighlighter::Error
                                        : Gui::DockWnd::ReportHighlighter::Message);
         QTextCursor cursor(ui.outputWindow->document());
@@ -75,19 +76,16 @@ public:
     QElapsedTimer time;
 };
 
-GmshWidget::GmshWidget(QWidget* parent, Qt::WindowFlags fl)
-  : QWidget(parent, fl)
-  , d(new Private(parent))
+GmshWidget::GmshWidget(QWidget *parent, Qt::WindowFlags fl)
+    : QWidget(parent, fl), d(new Private(parent))
 {
     connect(&d->gmsh, SIGNAL(started()), this, SLOT(started()));
-    connect(&d->gmsh, SIGNAL(finished(int, QProcess::ExitStatus)),
-            this, SLOT(finished(int, QProcess::ExitStatus)));
-    connect(&d->gmsh, SIGNAL(errorOccurred(QProcess::ProcessError)),
-            this, SLOT(errorOccurred(QProcess::ProcessError)));
-    connect(&d->gmsh, SIGNAL(readyReadStandardError()),
-            this, SLOT(readyReadStandardError()));
-    connect(&d->gmsh, SIGNAL(readyReadStandardOutput()),
-            this, SLOT(readyReadStandardOutput()));
+    connect(&d->gmsh, SIGNAL(finished(int, QProcess::ExitStatus)), this,
+            SLOT(finished(int, QProcess::ExitStatus)));
+    connect(&d->gmsh, SIGNAL(errorOccurred(QProcess::ProcessError)), this,
+            SLOT(errorOccurred(QProcess::ProcessError)));
+    connect(&d->gmsh, SIGNAL(readyReadStandardError()), this, SLOT(readyReadStandardError()));
+    connect(&d->gmsh, SIGNAL(readyReadStandardOutput()), this, SLOT(readyReadStandardOutput()));
 
     d->ui.setupUi(this);
     d->ui.fileChooser->onRestore();
@@ -96,7 +94,8 @@ GmshWidget::GmshWidget(QWidget* parent, Qt::WindowFlags fl)
 
     // 2D Meshing algorithms
     // https://gmsh.info/doc/texinfo/gmsh.html#index-Mesh_002eAlgorithm
-    enum {
+    enum
+    {
         MeshAdapt = 1,
         Automatic = 2,
         Delaunay = 5,
@@ -115,20 +114,15 @@ GmshWidget::GmshWidget(QWidget* parent, Qt::WindowFlags fl)
     d->ui.method->addItem(tr("Parallelograms"), static_cast<int>(PackingOfParallelograms));
 }
 
-GmshWidget::~GmshWidget()
-{
-    d->ui.fileChooser->onSave();
-}
+GmshWidget::~GmshWidget() { d->ui.fileChooser->onSave(); }
 
 void GmshWidget::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        d->ui.retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { d->ui.retranslateUi(this); }
     QWidget::changeEvent(e);
 }
 
-bool GmshWidget::writeProject(QString& inpFile, QString& outFile)
+bool GmshWidget::writeProject(QString &inpFile, QString &outFile)
 {
     Q_UNUSED(inpFile)
     Q_UNUSED(outFile)
@@ -136,30 +130,18 @@ bool GmshWidget::writeProject(QString& inpFile, QString& outFile)
     return false;
 }
 
-bool GmshWidget::loadOutput()
-{
-    return false;
-}
+bool GmshWidget::loadOutput() { return false; }
 
 int GmshWidget::meshingAlgorithm() const
 {
     return d->ui.method->itemData(d->ui.method->currentIndex()).toInt();
 }
 
-double GmshWidget::getAngle() const
-{
-    return d->ui.angle->value().getValue();
-}
+double GmshWidget::getAngle() const { return d->ui.angle->value().getValue(); }
 
-double GmshWidget::getMaxSize() const
-{
-    return d->ui.maxSize->value().getValue();
-}
+double GmshWidget::getMaxSize() const { return d->ui.maxSize->value().getValue(); }
 
-double GmshWidget::getMinSize() const
-{
-    return d->ui.minSize->value().getValue();
-}
+double GmshWidget::getMinSize() const { return d->ui.minSize->value().getValue(); }
 
 void GmshWidget::accept()
 {
@@ -174,12 +156,8 @@ void GmshWidget::accept()
         // ./gmsh - -bin -2 /tmp/mesh.geo -o /tmp/best.stl
         QString proc = d->ui.fileChooser->fileName();
         QStringList args;
-        args << QLatin1String("-")
-             << QLatin1String("-bin")
-             << QLatin1String("-2")
-             << inpFile
-             << QLatin1String("-o")
-             << outFile;
+        args << QLatin1String("-") << QLatin1String("-bin") << QLatin1String("-2") << inpFile
+             << QLatin1String("-o") << outFile;
         d->gmsh.start(proc, args);
 
         d->time.start();
@@ -190,12 +168,8 @@ void GmshWidget::accept()
 void GmshWidget::readyReadStandardError()
 {
     QByteArray msg = d->gmsh.readAllStandardError();
-    if (msg.startsWith("\0[1m\0[31m")) {
-        msg = msg.mid(9);
-    }
-    if (msg.endsWith("\0[0m")) {
-        msg.chop(5);
-    }
+    if (msg.startsWith("\0[1m\0[31m")) { msg = msg.mid(9); }
+    if (msg.endsWith("\0[0m")) { msg.chop(5); }
 
     QString text = QString::fromUtf8(msg.data());
     d->appendText(text, true);
@@ -217,10 +191,7 @@ void GmshWidget::on_killButton_clicked()
     }
 }
 
-void GmshWidget::on_clearButton_clicked()
-{
-    d->ui.outputWindow->clear();
-}
+void GmshWidget::on_clearButton_clicked() { d->ui.outputWindow->clear(); }
 
 void GmshWidget::started()
 {
@@ -236,44 +207,32 @@ void GmshWidget::started()
 void GmshWidget::finished(int /*exitCode*/, QProcess::ExitStatus exitStatus)
 {
     d->ui.killButton->setDisabled(true);
-    if (d->label)
-        d->label->close();
+    if (d->label) d->label->close();
 
-    d->ui.labelTime->setText(QString::fromLatin1("%1 %2 ms").arg(tr("Time:")).arg(d->time.elapsed()));
-    if (exitStatus == QProcess::NormalExit) {
-        loadOutput();
-    }
+    d->ui.labelTime->setText(
+        QString::fromLatin1("%1 %2 ms").arg(tr("Time:")).arg(d->time.elapsed()));
+    if (exitStatus == QProcess::NormalExit) { loadOutput(); }
 }
 
 void GmshWidget::errorOccurred(QProcess::ProcessError error)
 {
     QString msg;
     switch (error) {
-    case QProcess::FailedToStart:
-        msg = tr("Failed to start");
-        break;
-    default:
-        break;
+        case QProcess::FailedToStart: msg = tr("Failed to start"); break;
+        default: break;
     }
 
-    if (!msg.isEmpty()) {
-        QMessageBox::warning(this, tr("Error"), msg);
-    }
+    if (!msg.isEmpty()) { QMessageBox::warning(this, tr("Error"), msg); }
 }
 
-void GmshWidget::reject()
-{
-    on_killButton_clicked();
-}
+void GmshWidget::reject() { on_killButton_clicked(); }
 
 // -------------------------------------------------
 
-class RemeshGmsh::Private {
+class RemeshGmsh::Private
+{
 public:
-    explicit Private(Mesh::Feature* mesh)
-      : mesh(mesh)
-    {
-    }
+    explicit Private(Mesh::Feature *mesh) : mesh(mesh) {}
 
 public:
     App::DocumentObjectWeakPtrT mesh;
@@ -282,9 +241,8 @@ public:
     std::string geoFile;
 };
 
-RemeshGmsh::RemeshGmsh(Mesh::Feature* mesh, QWidget* parent, Qt::WindowFlags fl)
-  : GmshWidget(parent, fl)
-  , d(new Private(mesh))
+RemeshGmsh::RemeshGmsh(Mesh::Feature *mesh, QWidget *parent, Qt::WindowFlags fl)
+    : GmshWidget(parent, fl), d(new Private(mesh))
 {
     // Copy mesh that is used each time when applying Gmsh's remeshing function
     d->copy = mesh->Mesh.getValue().getKernel();
@@ -292,11 +250,9 @@ RemeshGmsh::RemeshGmsh(Mesh::Feature* mesh, QWidget* parent, Qt::WindowFlags fl)
     d->geoFile = App::Application::getTempFileName() + "mesh.geo";
 }
 
-RemeshGmsh::~RemeshGmsh()
-{
-}
+RemeshGmsh::~RemeshGmsh() {}
 
-bool RemeshGmsh::writeProject(QString& inpFile, QString& outFile)
+bool RemeshGmsh::writeProject(QString &inpFile, QString &outFile)
 {
     if (!d->mesh.expired()) {
         Base::FileInfo stl(d->stlFile);
@@ -308,8 +264,7 @@ bool RemeshGmsh::writeProject(QString& inpFile, QString& outFile)
         // Parameters
         int algorithm = meshingAlgorithm();
         double maxSize = getMaxSize();
-        if (maxSize == 0.0)
-            maxSize = 1.0e22;
+        if (maxSize == 0.0) maxSize = 1.0e22;
         double minSize = getMinSize();
         double angle = getAngle();
         int maxAngle = 120;
@@ -321,22 +276,27 @@ bool RemeshGmsh::writeProject(QString& inpFile, QString& outFile)
         // Examples on how to use Gmsh: https://sfepy.org/doc-devel/preprocessing.html
         // https://gmsh.info//doc/texinfo/gmsh.html
         // https://docs.salome-platform.org/latest/gui/GMSHPLUGIN/gmsh_2d_3d_hypo_page.html
-        geoOut << "// geo file for meshing with Gmsh meshing software created by FreeCAD\n"
+        geoOut
+            << "// geo file for meshing with Gmsh meshing software created by FreeCAD\n"
             << "If(GMSH_MAJOR_VERSION < 4)\n"
-            << "   Error(\"Too old Gmsh version %g.%g. At least 4.x is required\", GMSH_MAJOR_VERSION, GMSH_MINOR_VERSION);\n"
+            << "   Error(\"Too old Gmsh version %g.%g. At least 4.x is required\", "
+               "GMSH_MAJOR_VERSION, GMSH_MINOR_VERSION);\n"
             << "   Exit;\n"
             << "EndIf\n"
             << "Merge \"" << stl.filePath() << "\";\n\n"
-            << "// 2D mesh algorithm (1=MeshAdapt, 2=Automatic, 5=Delaunay, 6=Frontal, 7=BAMG, 8=Frontal Quad, 9=Packing of Parallelograms)\n"
+            << "// 2D mesh algorithm (1=MeshAdapt, 2=Automatic, 5=Delaunay, 6=Frontal, 7=BAMG, "
+               "8=Frontal Quad, 9=Packing of Parallelograms)\n"
             << "Mesh.Algorithm = " << algorithm << ";\n\n"
-            << "// 3D mesh algorithm (1=Delaunay, 2=New Delaunay, 4=Frontal, 7=MMG3D, 9=R-tree, 10=HTX)\n"
+            << "// 3D mesh algorithm (1=Delaunay, 2=New Delaunay, 4=Frontal, 7=MMG3D, 9=R-tree, "
+               "10=HTX)\n"
             << "// Mesh.Algorithm3D = 1;\n\n"
             << "Mesh.CharacteristicLengthMax = " << maxSize << ";\n"
             << "Mesh.CharacteristicLengthMin = " << minSize << ";\n\n"
             << "// We first classify (\"color\") the surfaces by splitting the original surface\n"
             << "// along sharp geometrical features. This will create new discrete surfaces,\n"
             << "// curves and points.\n"
-            << "angle = DefineNumber[" << angle << ", Min " << minAngle << ", Max " << maxAngle << ", Step 1,\n"
+            << "angle = DefineNumber[" << angle << ", Min " << minAngle << ", Max " << maxAngle
+            << ", Step 1,\n"
             << "  Name \"Parameters/Angle for surface detection\" ];\n\n"
             << "forceParametrizablePatches = DefineNumber[0, Choices{0,1},\n"
             << "  Name \"Parameters/Create surfaces guaranteed to be parametrizable\"];\n\n"
@@ -361,8 +321,7 @@ bool RemeshGmsh::writeProject(QString& inpFile, QString& outFile)
 
 bool RemeshGmsh::loadOutput()
 {
-    if (d->mesh.expired())
-        return false;
+    if (d->mesh.expired()) return false;
 
     // Now read-in modified mesh
     Base::FileInfo stl(d->stlFile);
@@ -375,8 +334,8 @@ bool RemeshGmsh::loadOutput()
     stlIn.close();
     kernel.harmonizeNormals();
 
-    Mesh::Feature* fea = d->mesh.get<Mesh::Feature>();
-    App::Document* doc = fea->getDocument();
+    Mesh::Feature *fea = d->mesh.get<Mesh::Feature>();
+    App::Document *doc = fea->getDocument();
     doc->openTransaction("Remesh");
     fea->Mesh.setValue(kernel.getKernel());
     doc->commitTransaction();
@@ -390,11 +349,10 @@ bool RemeshGmsh::loadOutput()
 
 /* TRANSLATOR MeshGui::TaskRemeshGmsh */
 
-TaskRemeshGmsh::TaskRemeshGmsh(Mesh::Feature* mesh)
+TaskRemeshGmsh::TaskRemeshGmsh(Mesh::Feature *mesh)
 {
     widget = new RemeshGmsh(mesh);
-    taskbox = new Gui::TaskView::TaskBox(
-        QPixmap(), widget->windowTitle(), false, nullptr);
+    taskbox = new Gui::TaskView::TaskBox(QPixmap(), widget->windowTitle(), false, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
@@ -406,9 +364,7 @@ TaskRemeshGmsh::~TaskRemeshGmsh()
 
 void TaskRemeshGmsh::clicked(int id)
 {
-    if (id == QDialogButtonBox::Apply) {
-        widget->accept();
-    }
+    if (id == QDialogButtonBox::Apply) { widget->accept(); }
     else if (id == QDialogButtonBox::Close) {
         widget->reject();
     }

@@ -39,46 +39,44 @@ class GuiExport DocumentObserverPython
 
 public:
     /// Constructor
-    DocumentObserverPython(const Py::Object& obj);
+    DocumentObserverPython(const Py::Object &obj);
     virtual ~DocumentObserverPython();
 
-    static void addObserver(const Py::Object& obj);
-    static void removeObserver(const Py::Object& obj);
+    static void addObserver(const Py::Object &obj);
+    static void removeObserver(const Py::Object &obj);
 
 private:
     /** Checks if a new document was created */
-    void slotCreatedDocument(const Gui::Document& Doc);
+    void slotCreatedDocument(const Gui::Document &Doc);
     /** Checks if the given document is about to be closed */
-    void slotDeletedDocument(const Gui::Document& Doc);
+    void slotDeletedDocument(const Gui::Document &Doc);
     /** Checks if the given document is relabeled */
-    void slotRelabelDocument(const Gui::Document& Doc);
+    void slotRelabelDocument(const Gui::Document &Doc);
     /** Checks if the given document is renamed */
-    void slotRenameDocument(const Gui::Document& Doc);
+    void slotRenameDocument(const Gui::Document &Doc);
     /** Checks if the given document is activated */
-    void slotActivateDocument(const Gui::Document& Doc);
+    void slotActivateDocument(const Gui::Document &Doc);
     /** Checks if a new object was added. */
-    void slotCreatedObject(const Gui::ViewProvider& Obj);
+    void slotCreatedObject(const Gui::ViewProvider &Obj);
     /** Checks if the given object is about to be removed. */
-    void slotDeletedObject(const Gui::ViewProvider& Obj);
+    void slotDeletedObject(const Gui::ViewProvider &Obj);
     /** The property of an observed object has changed */
-    void slotBeforeChangeObject(const Gui::ViewProvider& Obj, const App::Property& Prop);
+    void slotBeforeChangeObject(const Gui::ViewProvider &Obj, const App::Property &Prop);
     /** The property of an observed object has changed */
-    void slotChangedObject(const Gui::ViewProvider& Obj, const App::Property& Prop);
+    void slotChangedObject(const Gui::ViewProvider &Obj, const App::Property &Prop);
     /** The object was set into edit mode */
-    void slotInEdit(const Gui::ViewProviderDocumentObject& Obj);
+    void slotInEdit(const Gui::ViewProviderDocumentObject &Obj);
     /** The has left edit mode */
-    void slotResetEdit(const Gui::ViewProviderDocumentObject& Obj);
+    void slotResetEdit(const Gui::ViewProviderDocumentObject &Obj);
 
 private:
     Py::Object inst;
-    static std::vector<DocumentObserverPython*> _instances;
+    static std::vector<DocumentObserverPython *> _instances;
 
     typedef struct PythonObject {
-       boost::signals2::scoped_connection slot;
-       Py::Object py;
-       PyObject* ptr() {
-           return py.ptr();
-       }
+        boost::signals2::scoped_connection slot;
+        Py::Object py;
+        PyObject *ptr() { return py.ptr(); }
     } Connection;
 
     Connection pyCreatedDocument;

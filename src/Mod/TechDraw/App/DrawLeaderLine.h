@@ -25,9 +25,9 @@
 
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
-# include <App/DocumentObject.h>
-# include <App/FeaturePython.h>
-# include <App/PropertyLinks.h>
+#include <App/DocumentObject.h>
+#include <App/FeaturePython.h>
+#include <App/PropertyLinks.h>
 
 #include "DrawView.h"
 
@@ -35,7 +35,7 @@
 namespace TechDraw
 {
 
-class TechDrawExport DrawLeaderLine : public TechDraw::DrawView
+class TechDrawExport DrawLeaderLine: public TechDraw::DrawView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawLeaderLine);
 
@@ -43,29 +43,27 @@ public:
     DrawLeaderLine();
     ~DrawLeaderLine() = default;
 
-    App::PropertyLink         LeaderParent;
-    App::PropertyVectorList   WayPoints;
-    App::PropertyEnumeration  StartSymbol;
-    App::PropertyEnumeration  EndSymbol;
+    App::PropertyLink LeaderParent;
+    App::PropertyVectorList WayPoints;
+    App::PropertyEnumeration StartSymbol;
+    App::PropertyEnumeration EndSymbol;
 
-/*    App::PropertyInteger      StartSymbol;          //see Gui/QGIArrow for values*/
-/*    App::PropertyInteger      EndSymbol;*/
+    /*    App::PropertyInteger      StartSymbol;          //see Gui/QGIArrow for values*/
+    /*    App::PropertyInteger      EndSymbol;*/
 
-    App::PropertyBool         Scalable;
-    App::PropertyBool         AutoHorizontal;
+    App::PropertyBool Scalable;
+    App::PropertyBool AutoHorizontal;
 
     short mustExecute() const override;
     App::DocumentObjectExecReturn *execute() override;
 
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderLeader";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderLeader"; }
     PyObject *getPyObject() override;
-    QRectF getRect() const override { return { 0, 0,1, 1}; }
+    QRectF getRect() const override { return {0, 0, 1, 1}; }
 
     Base::Vector3d getAttachPoint();
-    DrawView* getBaseView() const;
-    virtual App::DocumentObject* getBaseObject() const;
+    DrawView *getBaseView() const;
+    virtual App::DocumentObject *getBaseObject() const;
     bool keepUpdated() override;
     double getScale() const override;
     double getBaseScale() const;
@@ -77,11 +75,9 @@ public:
     Base::Vector3d getTailPoint() const;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
 
 private:
-
-
 };
 
 using DrawLeaderLinePython = App::FeaturePythonT<DrawLeaderLine>;

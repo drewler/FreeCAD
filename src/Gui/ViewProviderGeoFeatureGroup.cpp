@@ -36,18 +36,17 @@ ViewProviderGeoFeatureGroup::ViewProviderGeoFeatureGroup()
     ViewProviderGeoFeatureGroupExtension::initExtension(this);
 }
 
-ViewProviderGeoFeatureGroup::~ViewProviderGeoFeatureGroup()
-{
-}
+ViewProviderGeoFeatureGroup::~ViewProviderGeoFeatureGroup() {}
 
 
 // Python feature -----------------------------------------------------------------------
 
-namespace Gui {
+namespace Gui
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(Gui::ViewProviderGeoFeatureGroupPython, Gui::ViewProviderGeoFeatureGroup)
 /// @endcond
 
 // explicit template instantiation
 template class GuiExport ViewProviderPythonFeatureT<ViewProviderGeoFeatureGroup>;
-}
+} // namespace Gui

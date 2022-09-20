@@ -28,14 +28,15 @@
 #include <Eigen/Eigenvalues>
 
 // -------------------------------------------------------------------------------
-namespace MeshCoreFit {
+namespace MeshCoreFit
+{
 
-using Matrix4x4 = Eigen::Matrix<double,4,4,Eigen::RowMajor>;
+using Matrix4x4 = Eigen::Matrix<double, 4, 4, Eigen::RowMajor>;
 
 /**
  * Best-fit sphere for a given set of points. 
  */
-class MeshExport SphereFit : public MeshCore::Approximation
+class MeshExport SphereFit: public MeshCore::Approximation
 {
 public:
     /**
@@ -55,7 +56,7 @@ public:
 	 * Set iteration convergence criteria for the fit if special values are needed.
 	 * The default values set in the constructor are suitable for most uses
      */
-	void SetConvergenceCriteria(double posConvLimit, double vConvLimit, int maxIter);
+    void SetConvergenceCriteria(double posConvLimit, double vConvLimit, int maxIter);
     /**
      * Returns the radius of the fitted sphere. If Fit() has not been called then zero is returned.
      */
@@ -67,11 +68,11 @@ public:
     /**
      * Returns the number of iterations that Fit() needed to converge. If Fit() has not been called then zero is returned.
      */
-	int GetNumIterations() const;
+    int GetNumIterations() const;
     /**
 	 * Compute approximations for the parameters using all points
      */
-	void ComputeApproximations();
+    void ComputeApproximations();
     /**
      * Fit a sphere onto the given points. If the fit fails FLOAT_MAX is returned.
      */
@@ -92,39 +93,42 @@ public:
     void ProjectToSphere();
 
 protected:
-   /**
+    /**
 	 * Set up the normal equations
      */
-	void setupNormalEquationMatrices(const std::vector< Base::Vector3d > &residuals, Matrix4x4 &atpa, Eigen::VectorXd &atpl) const;
-	/**
+    void setupNormalEquationMatrices(const std::vector<Base::Vector3d> &residuals, Matrix4x4 &atpa,
+                                     Eigen::VectorXd &atpl) const;
+    /**
 	 * Sets up contributions of given observation to the normal equation matrices.
      */
-	void setupObservation(const Base::Vector3f &point, const Base::Vector3d &residual, double a[4], double &f0, double &qw, double b[3]) const;
-   /**
+    void setupObservation(const Base::Vector3f &point, const Base::Vector3d &residual, double a[4],
+                          double &f0, double &qw, double b[3]) const;
+    /**
 	 * Computes contribution of the given observation equation on the normal equation matrices
      */
-	void addObservationU(double a[4], double li, double pi, Matrix4x4 &atpa, Eigen::VectorXd &atpl) const;
-   /**
+    void addObservationU(double a[4], double li, double pi, Matrix4x4 &atpa,
+                         Eigen::VectorXd &atpl) const;
+    /**
 	 * Set the lower part of the normal matrix equal to the upper part
      */
-	void setLowerPart(Matrix4x4 &atpa) const;
+    void setLowerPart(Matrix4x4 &atpa) const;
 
-   /**
+    /**
 	 * Compute the residuals and sigma0 and check the residual convergence
      */
-	bool computeResiduals(const Eigen::VectorXd &x, std::vector< Base::Vector3d > &residuals, double &sigma0, double vConvLimit, bool &vConverged) const;
+    bool computeResiduals(const Eigen::VectorXd &x, std::vector<Base::Vector3d> &residuals,
+                          double &sigma0, double vConvLimit, bool &vConverged) const;
 
 protected:
-    Base::Vector3d _vCenter;/**< Center of sphere. */
-    double _dRadius;		/**< Radius of the sphere. */
-	int _numIter;			/**< Number of iterations for solution to converge. */
-	double _posConvLimit;	/**< Position and radius parameter convergence threshold. */
-	double _vConvLimit;		/**< Residual convergence threshold. */
-	int _maxIter;			/**< Maximum number of iterations. */
-
+    Base::Vector3d _vCenter; /**< Center of sphere. */
+    double _dRadius;         /**< Radius of the sphere. */
+    int _numIter;            /**< Number of iterations for solution to converge. */
+    double _posConvLimit;    /**< Position and radius parameter convergence threshold. */
+    double _vConvLimit;      /**< Residual convergence threshold. */
+    int _maxIter;            /**< Maximum number of iterations. */
 };
 
 
-} // namespace MeshCore
+} // namespace MeshCoreFit
 
 #endif // MESH_SPHERE_FIT_H

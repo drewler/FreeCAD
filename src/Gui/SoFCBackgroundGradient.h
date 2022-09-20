@@ -31,9 +31,11 @@
 class SbColor;
 class SoGLRenderAction;
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport SoFCBackgroundGradient : public SoNode {
+class GuiExport SoFCBackgroundGradient: public SoNode
+{
     using inherited = SoNode;
 
     SO_NODE_HEADER(Gui::SoFCBackgroundGradient);
@@ -43,9 +45,10 @@ public:
     static void finish();
     SoFCBackgroundGradient();
 
-    void GLRender (SoGLRenderAction *action);
-    void setColorGradient(const SbColor& fromColor, const SbColor& toColor);
-    void setColorGradient(const SbColor& fromColor, const SbColor& toColor, const SbColor& midColor);
+    void GLRender(SoGLRenderAction *action);
+    void setColorGradient(const SbColor &fromColor, const SbColor &toColor);
+    void setColorGradient(const SbColor &fromColor, const SbColor &toColor,
+                          const SbColor &midColor);
 
 protected:
     virtual ~SoFCBackgroundGradient();
@@ -57,4 +60,3 @@ protected:
 
 
 #endif // GUI_SOFCBACKGROUNDGRADIENT_H
-

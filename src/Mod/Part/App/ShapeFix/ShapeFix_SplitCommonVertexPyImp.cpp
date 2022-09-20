@@ -35,61 +35,60 @@ std::string ShapeFix_SplitCommonVertexPy::representation() const
     return "<ShapeFix_SplitCommonVertex object>";
 }
 
-PyObject *ShapeFix_SplitCommonVertexPy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *ShapeFix_SplitCommonVertexPy::PyMake(struct _typeobject *, PyObject *,
+                                               PyObject *) // Python wrapper
 {
     // create a new instance of ShapeFix_ShapePy
     return new ShapeFix_SplitCommonVertexPy(nullptr);
 }
 
 // constructor method
-int ShapeFix_SplitCommonVertexPy::PyInit(PyObject* args, PyObject* /*kwds*/)
+int ShapeFix_SplitCommonVertexPy::PyInit(PyObject *args, PyObject * /*kwds*/)
 {
-    PyObject* shape = nullptr;
-    if (!PyArg_ParseTuple(args, "|O!", &TopoShapePy::Type, &shape))
-        return -1;
+    PyObject *shape = nullptr;
+    if (!PyArg_ParseTuple(args, "|O!", &TopoShapePy::Type, &shape)) return -1;
 
     setHandle(new ShapeFix_SplitCommonVertex);
     if (shape) {
-        getShapeFix_SplitCommonVertexPtr()->Init(static_cast<TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+        getShapeFix_SplitCommonVertexPtr()->Init(
+            static_cast<TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
     }
 
     return 0;
 }
 
-PyObject* ShapeFix_SplitCommonVertexPy::init(PyObject *args)
+PyObject *ShapeFix_SplitCommonVertexPy::init(PyObject *args)
 {
-    PyObject* shape;
-    if (!PyArg_ParseTuple(args, "O!", &TopoShapePy::Type, &shape))
-        return nullptr;
+    PyObject *shape;
+    if (!PyArg_ParseTuple(args, "O!", &TopoShapePy::Type, &shape)) return nullptr;
 
-    getShapeFix_SplitCommonVertexPtr()->Init(static_cast<TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+    getShapeFix_SplitCommonVertexPtr()->Init(
+        static_cast<TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
     Py_Return;
 }
 
-PyObject* ShapeFix_SplitCommonVertexPy::perform(PyObject *args)
+PyObject *ShapeFix_SplitCommonVertexPy::perform(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     getShapeFix_SplitCommonVertexPtr()->Perform();
     Py_Return;
 }
 
-PyObject* ShapeFix_SplitCommonVertexPy::shape(PyObject *args)
+PyObject *ShapeFix_SplitCommonVertexPy::shape(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     TopoShape shape = getShapeFix_SplitCommonVertexPtr()->Shape();
     return shape.getPyObject();
 }
 
-PyObject *ShapeFix_SplitCommonVertexPy::getCustomAttributes(const char* /*attr*/) const
+PyObject *ShapeFix_SplitCommonVertexPy::getCustomAttributes(const char * /*attr*/) const
 {
     return nullptr;
 }
 
-int ShapeFix_SplitCommonVertexPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
+int ShapeFix_SplitCommonVertexPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
 {
     return 0;
 }

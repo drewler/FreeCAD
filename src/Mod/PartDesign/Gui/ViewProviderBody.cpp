@@ -24,10 +24,10 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Inventor/actions/SoGetBoundingBoxAction.h>
-# include <Inventor/nodes/SoSeparator.h>
-# include <Precision.hxx>
-# include <QMenu>
+#include <Inventor/actions/SoGetBoundingBoxAction.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Precision.hxx>
+#include <QMenu>
 #endif
 
 #include <App/Document.h>
@@ -57,13 +57,13 @@
 using namespace PartDesignGui;
 namespace bp = boost::placeholders;
 
-const char* PartDesignGui::ViewProviderBody::BodyModeEnum[] = {"Through","Tip",nullptr};
+const char *PartDesignGui::ViewProviderBody::BodyModeEnum[] = {"Through", "Tip", nullptr};
 
-PROPERTY_SOURCE_WITH_EXTENSIONS(PartDesignGui::ViewProviderBody,PartGui::ViewProviderPart)
+PROPERTY_SOURCE_WITH_EXTENSIONS(PartDesignGui::ViewProviderBody, PartGui::ViewProviderPart)
 
 ViewProviderBody::ViewProviderBody()
 {
-    ADD_PROPERTY(DisplayModeBody,((long)0));
+    ADD_PROPERTY(DisplayModeBody, ((long)0));
     DisplayModeBody.setEnums(BodyModeEnum);
 
     sPixmap = "PartDesign_Body_Tree.svg";
@@ -85,17 +85,17 @@ void ViewProviderBody::attach(App::DocumentObject *pcFeat)
     //set default display mode
     onChanged(&DisplayModeBody);
 
-    App::Document *adoc  = pcObject->getDocument ();
-    Gui::Document *gdoc = Gui::Application::Instance->getDocument ( adoc ) ;
+    App::Document *adoc = pcObject->getDocument();
+    Gui::Document *gdoc = Gui::Application::Instance->getDocument(adoc);
 
-    assert ( adoc );
-    assert ( gdoc );
+    assert(adoc);
+    assert(gdoc);
 
-    connectChangedObjectApp = adoc->signalChangedObject.connect (
-            boost::bind ( &ViewProviderBody::slotChangedObjectApp, this, bp::_1, bp::_2) );
+    connectChangedObjectApp = adoc->signalChangedObject.connect(
+        boost::bind(&ViewProviderBody::slotChangedObjectApp, this, bp::_1, bp::_2));
 
-    connectChangedObjectGui = gdoc->signalChangedObject.connect (
-            boost::bind ( &ViewProviderBody::slotChangedObjectGui, this, bp::_1, bp::_2) );
+    connectChangedObjectGui = gdoc->signalChangedObject.connect(
+        boost::bind(&ViewProviderBody::slotChangedObjectGui, this, bp::_1, bp::_2));
 }
 
 // TODO on activating the body switch to the "Through" mode (2015-09-05, Fat-Zer)
@@ -103,70 +103,76 @@ void ViewProviderBody::attach(App::DocumentObject *pcFeat)
 // TODO drag&drop (2015-09-05, Fat-Zer)
 // TODO Add activate () call (2015-09-08, Fat-Zer)
 
-void ViewProviderBody::setDisplayMode(const char* ModeName) {
+void ViewProviderBody::setDisplayMode(const char *ModeName)
+{
 
     //if we show "Through" we must avoid to set the display mask modes, as this would result
     //in going into "tip" mode. When through is chosen the child features are displayed, and all
     //we need to ensure is that the display mode change is propagated to them from within the
     //onChanged() method.
-    if(DisplayModeBody.getValue() == 1)
-        PartGui::ViewProviderPartExt::setDisplayMode(ModeName);
+    if (DisplayModeBody.getValue() == 1) PartGui::ViewProviderPartExt::setDisplayMode(ModeName);
 }
 
-void ViewProviderBody::setOverrideMode(const std::string& mode) {
+void ViewProviderBody::setOverrideMode(const std::string &mode)
+{
 
     //if we are in through mode, we need to ensure that the override mode is not set for the body
     //(as this would result in "tip" mode), it is enough when the children are set to the correct
     //override mode.
 
-    if(DisplayModeBody.getValue() != 0)
-        Gui::ViewProvider::setOverrideMode(mode);
+    if (DisplayModeBody.getValue() != 0) Gui::ViewProvider::setOverrideMode(mode);
     else
         overrideMode = mode;
 }
 
-void ViewProviderBody::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderBody::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     Q_UNUSED(receiver);
     Q_UNUSED(member);
-    Gui::ActionFunction* func = new Gui::ActionFunction(menu);
-    QAction* act = menu->addAction(tr("Toggle active body"));
+    Gui::ActionFunction *func = new Gui::ActionFunction(menu);
+    QAction *act = menu->addAction(tr("Toggle active body"));
     func->trigger(act, std::bind(&ViewProviderBody::doubleClicked, this));
 
-    Gui::ViewProviderGeometryObject::setupContextMenu(menu, receiver, member); // clazy:exclude=skipped-base-method
+    Gui::ViewProviderGeometryObject::setupContextMenu(menu, receiver,
+                                                      member); // clazy:exclude=skipped-base-method
 }
 
 bool ViewProviderBody::doubleClicked()
 {
     //first, check if the body is already active.
     auto activeDoc = Gui::Application::Instance->activeDocument();
-    if(!activeDoc)
-        activeDoc = getDocument();
+    if (!activeDoc) activeDoc = getDocument();
     auto activeView = activeDoc->setActiveView(this);
-    if(!activeView) 
-        return false;
+    if (!activeView) return false;
 
-    if (activeView->isActiveObject(getObject(),PDBODYKEY)) {
+    if (activeView->isActiveObject(getObject(), PDBODYKEY)) {
         //active body double-clicked. Deactivate.
         Gui::Command::doCommand(Gui::Command::Gui,
-                "Gui.ActiveDocument.ActiveView.setActiveObject('%s', None)", PDBODYKEY);
-    } else {
+                                "Gui.ActiveDocument.ActiveView.setActiveObject('%s', None)",
+                                PDBODYKEY);
+    }
+    else {
 
         // assure the PartDesign workbench
-        if(App::GetApplication().GetUserParameter().GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/PartDesign")->GetBool("SwitchToWB", true))
+        if (App::GetApplication()
+                .GetUserParameter()
+                .GetGroup("BaseApp")
+                ->GetGroup("Preferences")
+                ->GetGroup("Mod/PartDesign")
+                ->GetBool("SwitchToWB", true))
             Gui::Command::assureWorkbench("PartDesignWorkbench");
 
         // and set correct active objects
-        auto* part = App::Part::getPartOfObject ( getObject() );
-        if ( part && part != activeView->getActiveObject<App::Part*> ( PARTKEY ) ) {
+        auto *part = App::Part::getPartOfObject(getObject());
+        if (part && part != activeView->getActiveObject<App::Part *>(PARTKEY)) {
             Gui::Command::doCommand(Gui::Command::Gui,
-                    "Gui.ActiveDocument.ActiveView.setActiveObject('%s',%s)",
-                    PARTKEY, Gui::Command::getObjectCmd(part).c_str());
+                                    "Gui.ActiveDocument.ActiveView.setActiveObject('%s',%s)",
+                                    PARTKEY, Gui::Command::getObjectCmd(part).c_str());
         }
 
         Gui::Command::doCommand(Gui::Command::Gui,
-                "Gui.ActiveDocument.ActiveView.setActiveObject('%s',%s)",
-                PDBODYKEY, Gui::Command::getObjectCmd(getObject()).c_str());
+                                "Gui.ActiveDocument.ActiveView.setActiveObject('%s',%s)", PDBODYKEY,
+                                Gui::Command::getObjectCmd(getObject()).c_str());
     }
 
     return true;
@@ -197,130 +203,130 @@ bool ViewProviderBody::doubleClicked()
 //    }
 //}
 
-bool ViewProviderBody::onDelete ( const std::vector<std::string> &) {
+bool ViewProviderBody::onDelete(const std::vector<std::string> &)
+{
     // TODO May be do it conditionally? (2015-09-05, Fat-Zer)
-    FCMD_OBJ_CMD(getObject(),"removeObjectsFromDocument()");
+    FCMD_OBJ_CMD(getObject(), "removeObjectsFromDocument()");
     return true;
 }
 
-void ViewProviderBody::updateData(const App::Property* prop)
+void ViewProviderBody::updateData(const App::Property *prop)
 {
-    PartDesign::Body* body = static_cast<PartDesign::Body*>(getObject());
+    PartDesign::Body *body = static_cast<PartDesign::Body *>(getObject());
 
     if (prop == &body->Group || prop == &body->BaseFeature) {
         // update sizes of origins and datums
-        updateOriginDatumSize ();
+        updateOriginDatumSize();
         //ensure all model features are in visual body mode
         setVisualBodyMode(true);
     }
 
     if (prop == &body->Tip) {
         // We changed Tip
-        App::DocumentObject* tip = body->Tip.getValue();
+        App::DocumentObject *tip = body->Tip.getValue();
 
         auto features = body->Group.getValues();
 
         // restore icons
         for (auto feature : features) {
-            Gui::ViewProvider* vp = Gui::Application::Instance->getViewProvider(feature);
+            Gui::ViewProvider *vp = Gui::Application::Instance->getViewProvider(feature);
             if (vp && vp->isDerivedFrom(PartDesignGui::ViewProvider::getClassTypeId())) {
-                static_cast<PartDesignGui::ViewProvider*>(vp)->setTipIcon(feature == tip);
+                static_cast<PartDesignGui::ViewProvider *>(vp)->setTipIcon(feature == tip);
             }
         }
 
-        if (tip)
-            copyColorsfromTip(tip);
+        if (tip) copyColorsfromTip(tip);
     }
 
     PartGui::ViewProviderPart::updateData(prop);
 }
 
-void ViewProviderBody::copyColorsfromTip(App::DocumentObject* tip) {
+void ViewProviderBody::copyColorsfromTip(App::DocumentObject *tip)
+{
     // update DiffuseColor
-    Gui::ViewProvider* vptip = Gui::Application::Instance->getViewProvider(tip);
+    Gui::ViewProvider *vptip = Gui::Application::Instance->getViewProvider(tip);
     if (vptip && vptip->isDerivedFrom(PartGui::ViewProviderPartExt::getClassTypeId())) {
-        auto colors = static_cast<PartGui::ViewProviderPartExt*>(vptip)->DiffuseColor.getValues();
+        auto colors = static_cast<PartGui::ViewProviderPartExt *>(vptip)->DiffuseColor.getValues();
         this->DiffuseColor.setValues(colors);
     }
 }
 
-void ViewProviderBody::slotChangedObjectApp ( const App::DocumentObject& obj, const App::Property& prop ) {
+void ViewProviderBody::slotChangedObjectApp(const App::DocumentObject &obj,
+                                            const App::Property &prop)
+{
 
-    if(App::GetApplication().isRestoring())
-        return;
-    
-    if (!obj.isDerivedFrom ( Part::Feature::getClassTypeId () ) ||
-        obj.isDerivedFrom ( Part::BodyBase::getClassTypeId () )    ) { // we are interested only in Part::Features, not in bodies
-        return;
-    }
+    if (App::GetApplication().isRestoring()) return;
 
-    const Part::Feature *feat = static_cast <const Part::Feature *>(&obj);
-
-    if ( &feat->Shape != &prop && &feat->Placement != &prop) { // react only on changes in shapes and placement
+    if (!obj.isDerivedFrom(Part::Feature::getClassTypeId())
+        || obj.isDerivedFrom(
+            Part::BodyBase::
+                getClassTypeId())) { // we are interested only in Part::Features, not in bodies
         return;
     }
 
-    PartDesign::Body *body = static_cast<PartDesign::Body*> ( getObject() );
-    if ( body && body->hasObject (&obj ) ) {
-        updateOriginDatumSize ();
+    const Part::Feature *feat = static_cast<const Part::Feature *>(&obj);
+
+    if (&feat->Shape != &prop
+        && &feat->Placement != &prop) { // react only on changes in shapes and placement
+        return;
     }
+
+    PartDesign::Body *body = static_cast<PartDesign::Body *>(getObject());
+    if (body && body->hasObject(&obj)) { updateOriginDatumSize(); }
 }
 
-void ViewProviderBody::slotChangedObjectGui (
-        const Gui::ViewProviderDocumentObject& vp, const App::Property& prop )
+void ViewProviderBody::slotChangedObjectGui(const Gui::ViewProviderDocumentObject &vp,
+                                            const App::Property &prop)
 {
     if (&vp.Visibility != &prop) { // react only on visibility changes
         return;
     }
 
-    if ( !vp.isDerivedFrom ( Gui::ViewProviderOrigin::getClassTypeId () ) &&
-         !vp.isDerivedFrom ( Gui::ViewProviderOriginFeature::getClassTypeId () ) ) {
+    if (!vp.isDerivedFrom(Gui::ViewProviderOrigin::getClassTypeId())
+        && !vp.isDerivedFrom(Gui::ViewProviderOriginFeature::getClassTypeId())) {
         // Ignore origins to avoid infinite recursion (not likely in a well-formed document,
         //          but may happen in documents designed in old versions of assembly branch )
         return;
     }
 
-    PartDesign::Body *body = static_cast<PartDesign::Body*> ( getObject() );
-    App::DocumentObject *obj = vp.getObject ();
+    PartDesign::Body *body = static_cast<PartDesign::Body *>(getObject());
+    App::DocumentObject *obj = vp.getObject();
 
-    if ( body && obj && body->hasObject ( obj ) ) {
-        updateOriginDatumSize ();
-    }
+    if (body && obj && body->hasObject(obj)) { updateOriginDatumSize(); }
 }
 
-void ViewProviderBody::updateOriginDatumSize () {
-    PartDesign::Body *body = static_cast<PartDesign::Body *> ( getObject() );
+void ViewProviderBody::updateOriginDatumSize()
+{
+    PartDesign::Body *body = static_cast<PartDesign::Body *>(getObject());
 
     // Use different bounding boxes for datums and for origins:
-    Gui::Document* gdoc = Gui::Application::Instance->getDocument(getObject()->getDocument());
-    if(!gdoc)
-        return;
+    Gui::Document *gdoc = Gui::Application::Instance->getDocument(getObject()->getDocument());
+    if (!gdoc) return;
 
-    Gui::MDIView* view = gdoc->getViewOfViewProvider(this);
-    if(!view)
-        return;
+    Gui::MDIView *view = gdoc->getViewOfViewProvider(this);
+    if (!view) return;
 
-    Gui::View3DInventorViewer* viewer = static_cast<Gui::View3DInventor*>(view)->getViewer();
+    Gui::View3DInventorViewer *viewer = static_cast<Gui::View3DInventor *>(view)->getViewer();
     SoGetBoundingBoxAction bboxAction(viewer->getSoRenderManager()->getViewportRegion());
 
-    const auto & model = body->getFullModel ();
+    const auto &model = body->getFullModel();
 
     // BBox for Datums is calculated from all visible objects but treating datums as their basepoints only
-    SbBox3f bboxDatums = ViewProviderDatum::getRelevantBoundBox ( bboxAction, model );
+    SbBox3f bboxDatums = ViewProviderDatum::getRelevantBoundBox(bboxAction, model);
     // BBox for origin should take into account datums size also
     SbBox3f bboxOrigins = bboxDatums;
 
-    for(App::DocumentObject* obj : model) {
-        if ( obj->isDerivedFrom ( Part::Datum::getClassTypeId () ) ) {
+    for (App::DocumentObject *obj : model) {
+        if (obj->isDerivedFrom(Part::Datum::getClassTypeId())) {
             ViewProvider *vp = Gui::Application::Instance->getViewProvider(obj);
             if (!vp) { continue; }
 
-            ViewProviderDatum *vpDatum = static_cast <ViewProviderDatum *> (vp) ;
+            ViewProviderDatum *vpDatum = static_cast<ViewProviderDatum *>(vp);
 
-            vpDatum->setExtents ( bboxDatums );
+            vpDatum->setExtents(bboxDatums);
 
-            bboxAction.apply ( vp->getRoot () );
-            bboxOrigins.extendBy ( bboxAction.getBoundingBox () );
+            bboxAction.apply(vp->getRoot());
+            bboxOrigins.extendBy(bboxAction.getBoundingBox());
         }
     }
 
@@ -329,59 +335,55 @@ void ViewProviderBody::updateOriginDatumSize () {
     SbVec3f min = bboxOrigins.getMin();
 
     // obtain an Origin and it's ViewProvider
-    App::Origin* origin = nullptr;
-    Gui::ViewProviderOrigin* vpOrigin = nullptr;
+    App::Origin *origin = nullptr;
+    Gui::ViewProviderOrigin *vpOrigin = nullptr;
     try {
-        origin = body->getOrigin ();
-        assert (origin);
+        origin = body->getOrigin();
+        assert(origin);
 
         Gui::ViewProvider *vp = Gui::Application::Instance->getViewProvider(origin);
-        if (!vp) {
-            throw Base::ValueError ("No view provider linked to the Origin");
-        }
-        assert ( vp->isDerivedFrom ( Gui::ViewProviderOrigin::getClassTypeId () ) );
-        vpOrigin = static_cast <Gui::ViewProviderOrigin *> ( vp );
-    } catch (const Base::Exception &ex) {
-        if(!getExtendedViewProvider()->getDocument()->getDocument()->testStatus(App::Document::Restoring))
-            Base::Console().Error ("%s\n", ex.what() );
+        if (!vp) { throw Base::ValueError("No view provider linked to the Origin"); }
+        assert(vp->isDerivedFrom(Gui::ViewProviderOrigin::getClassTypeId()));
+        vpOrigin = static_cast<Gui::ViewProviderOrigin *>(vp);
+    }
+    catch (const Base::Exception &ex) {
+        if (!getExtendedViewProvider()->getDocument()->getDocument()->testStatus(
+                App::Document::Restoring))
+            Base::Console().Error("%s\n", ex.what());
         return;
     }
 
     // calculate the desired origin size
     Base::Vector3d size;
 
-    for (uint_fast8_t i=0; i<3; i++) {
-        size[i] = std::max ( fabs ( max[i] ), fabs ( min[i] ) );
-        if (size[i] < Precision::Confusion() ) {
-            size[i] = Gui::ViewProviderOrigin::defaultSize();
-        }
+    for (uint_fast8_t i = 0; i < 3; i++) {
+        size[i] = std::max(fabs(max[i]), fabs(min[i]));
+        if (size[i] < Precision::Confusion()) { size[i] = Gui::ViewProviderOrigin::defaultSize(); }
     }
 
-    vpOrigin->Size.setValue ( size*1.2 );
+    vpOrigin->Size.setValue(size * 1.2);
 }
 
-void ViewProviderBody::onChanged(const App::Property* prop) {
+void ViewProviderBody::onChanged(const App::Property *prop)
+{
 
-    if(prop == &DisplayModeBody) {
-        auto body = dynamic_cast<PartDesign::Body*>(getObject());
-    
-        if ( DisplayModeBody.getValue() == 0 )  {
+    if (prop == &DisplayModeBody) {
+        auto body = dynamic_cast<PartDesign::Body *>(getObject());
+
+        if (DisplayModeBody.getValue() == 0) {
             //if we are in an override mode we need to make sure to come out, because
             //otherwise the maskmode is blocked and won't go into "through"
-            if(getOverrideMode() != "As Is") {
+            if (getOverrideMode() != "As Is") {
                 auto mode = getOverrideMode();
                 ViewProvider::setOverrideMode("As Is");
                 overrideMode = mode;
             }
             setDisplayMaskMode("Group");
-            if(body)
-                body->setShowTip(false);
+            if (body) body->setShowTip(false);
         }
         else {
-            if(body)
-                body->setShowTip(true);
-            if(getOverrideMode() == "As Is")
-                setDisplayMaskMode(DisplayMode.getValueAsString());
+            if (body) body->setShowTip(true);
+            if (getOverrideMode() == "As Is") setDisplayMaskMode(DisplayMode.getValueAsString());
             else {
                 Base::Console().Message("Set override mode: %s\n", getOverrideMode().c_str());
                 setDisplayMaskMode(getOverrideMode().c_str());
@@ -398,27 +400,22 @@ void ViewProviderBody::onChanged(const App::Property* prop) {
 }
 
 
-void ViewProviderBody::unifyVisualProperty(const App::Property* prop) {
+void ViewProviderBody::unifyVisualProperty(const App::Property *prop)
+{
 
-    if(!pcObject || isRestoring())
+    if (!pcObject || isRestoring()) return;
+
+    if (prop == &Visibility || prop == &Selectable || prop == &DisplayModeBody
+        || prop == &DiffuseColor || prop == &PointColorArray || prop == &LineColorArray)
         return;
 
-    if(prop == &Visibility ||
-       prop == &Selectable ||
-       prop == &DisplayModeBody ||
-       prop == &DiffuseColor ||
-       prop == &PointColorArray ||
-       prop == &LineColorArray)
-        return;
+    Gui::Document *gdoc = Gui::Application::Instance->getDocument(pcObject->getDocument());
 
-    Gui::Document *gdoc = Gui::Application::Instance->getDocument ( pcObject->getDocument() ) ;
-
-    PartDesign::Body *body = static_cast<PartDesign::Body *> ( getObject() );
+    PartDesign::Body *body = static_cast<PartDesign::Body *>(getObject());
     auto features = body->Group.getValues();
-    for(auto feature : features) {
+    for (auto feature : features) {
 
-        if(!feature->isDerivedFrom(PartDesign::Feature::getClassTypeId()))
-            continue;
+        if (!feature->isDerivedFrom(PartDesign::Feature::getClassTypeId())) continue;
 
         //copy over the properties data
         auto p = gdoc->getViewProvider(feature)->getPropertyByName(prop->getName());
@@ -426,27 +423,28 @@ void ViewProviderBody::unifyVisualProperty(const App::Property* prop) {
     }
 }
 
-void ViewProviderBody::setVisualBodyMode(bool bodymode) {
+void ViewProviderBody::setVisualBodyMode(bool bodymode)
+{
 
-    Gui::Document *gdoc = Gui::Application::Instance->getDocument ( pcObject->getDocument() ) ;
+    Gui::Document *gdoc = Gui::Application::Instance->getDocument(pcObject->getDocument());
 
-    PartDesign::Body *body = static_cast<PartDesign::Body *> ( getObject() );
+    PartDesign::Body *body = static_cast<PartDesign::Body *>(getObject());
     auto features = body->Group.getValues();
-    for(auto feature : features) {
+    for (auto feature : features) {
 
-        if(!feature->isDerivedFrom(PartDesign::Feature::getClassTypeId()))
-            continue;
+        if (!feature->isDerivedFrom(PartDesign::Feature::getClassTypeId())) continue;
 
-        auto* vp = static_cast<PartDesignGui::ViewProvider*>(gdoc->getViewProvider(feature));
+        auto *vp = static_cast<PartDesignGui::ViewProvider *>(gdoc->getViewProvider(feature));
         if (vp) vp->setBodyMode(bodymode);
     }
 }
 
-std::vector< std::string > ViewProviderBody::getDisplayModes() const {
+std::vector<std::string> ViewProviderBody::getDisplayModes() const
+{
 
     //we get all display modes and remove the "Group" mode, as this is what we use for "Through"
     //body display mode
-    std::vector< std::string > modes = ViewProviderPart::getDisplayModes();
+    std::vector<std::string> modes = ViewProviderPart::getDisplayModes();
     modes.erase(modes.begin());
     return modes;
 }
@@ -455,53 +453,47 @@ bool ViewProviderBody::canDropObjects() const
 {
     // if the BaseFeature property is marked as hidden or read-only then
     // it's not allowed to modify it.
-    PartDesign::Body* body = static_cast<PartDesign::Body*>(getObject());
-    if (body->BaseFeature.testStatus(App::Property::Status::Hidden))
-        return false;
-    if (body->BaseFeature.testStatus(App::Property::Status::ReadOnly))
-        return false;
+    PartDesign::Body *body = static_cast<PartDesign::Body *>(getObject());
+    if (body->BaseFeature.testStatus(App::Property::Status::Hidden)) return false;
+    if (body->BaseFeature.testStatus(App::Property::Status::ReadOnly)) return false;
     return true;
 }
 
-bool ViewProviderBody::canDropObject(App::DocumentObject* obj) const
+bool ViewProviderBody::canDropObject(App::DocumentObject *obj) const
 {
-    if (!obj->isDerivedFrom(Part::Feature::getClassTypeId())) {
-        return false;
-    }
+    if (!obj->isDerivedFrom(Part::Feature::getClassTypeId())) { return false; }
     else if (PartDesign::Body::findBodyOf(obj)) {
         return false;
     }
-    else if (obj->isDerivedFrom (Part::BodyBase::getClassTypeId())) {
+    else if (obj->isDerivedFrom(Part::BodyBase::getClassTypeId())) {
         return false;
     }
 
     App::Part *actPart = PartDesignGui::getActivePart();
-    App::Part* partOfBaseFeature = App::Part::getPartOfObject(obj);
-    if (partOfBaseFeature && partOfBaseFeature != actPart)
-        return false;
+    App::Part *partOfBaseFeature = App::Part::getPartOfObject(obj);
+    if (partOfBaseFeature && partOfBaseFeature != actPart) return false;
 
     return true;
 }
 
-void ViewProviderBody::dropObject(App::DocumentObject* obj)
+void ViewProviderBody::dropObject(App::DocumentObject *obj)
 {
-    PartDesign::Body* body = static_cast<PartDesign::Body*>(getObject());
+    PartDesign::Body *body = static_cast<PartDesign::Body *>(getObject());
     if (obj->getTypeId().isDerivedFrom(Part::Part2DObject::getClassTypeId())) {
         body->addObject(obj);
     }
     else if (PartDesign::Body::isAllowed(obj) && PartDesignGui::isFeatureMovable(obj)) {
-        std::vector<App::DocumentObject*> move;
+        std::vector<App::DocumentObject *> move;
         move.push_back(obj);
-        std::vector<App::DocumentObject*> deps = PartDesignGui::collectMovableDependencies(move);
+        std::vector<App::DocumentObject *> deps = PartDesignGui::collectMovableDependencies(move);
         move.insert(std::end(move), std::begin(deps), std::end(deps));
 
-        PartDesign::Body* source = PartDesign::Body::findBodyOf(obj);
-        if (source)
-            source->removeObjects(move);
+        PartDesign::Body *source = PartDesign::Body::findBodyOf(obj);
+        if (source) source->removeObjects(move);
         try {
             body->addObjects(move);
         }
-        catch (const Base::Exception& e) {
+        catch (const Base::Exception &e) {
             e.ReportException();
         }
     }
@@ -509,14 +501,14 @@ void ViewProviderBody::dropObject(App::DocumentObject* obj)
         body->BaseFeature.setValue(obj);
     }
 
-    App::Document* doc  = body->getDocument();
+    App::Document *doc = body->getDocument();
     doc->recompute();
 
     // check if a proxy object has been created for the base feature
-    std::vector<App::DocumentObject*> links = body->Group.getValues();
+    std::vector<App::DocumentObject *> links = body->Group.getValues();
     for (auto it : links) {
         if (it->getTypeId().isDerivedFrom(PartDesign::FeatureBase::getClassTypeId())) {
-            PartDesign::FeatureBase* base = static_cast<PartDesign::FeatureBase*>(it);
+            PartDesign::FeatureBase *base = static_cast<PartDesign::FeatureBase *>(it);
             if (base && base->BaseFeature.getValue() == obj) {
                 Gui::Application::Instance->hideViewProvider(obj);
                 break;

@@ -47,79 +47,74 @@
 //class TranslateRadialDragger;
 class SoRotateCylindricalDragger;
 
-class RotTransDragger : public SoDragger
+class RotTransDragger: public SoDragger
 {
-   SO_KIT_HEADER(RotTransDragger);
+    SO_KIT_HEADER(RotTransDragger);
 
-   // Makes the dragger surround other objects
-   SO_KIT_CATALOG_ENTRY_HEADER(surroundScale);
-// Keeps the dragger evenly sized in all 3 dimensions
-   SO_KIT_CATALOG_ENTRY_HEADER(antiSquish);
+    // Makes the dragger surround other objects
+    SO_KIT_CATALOG_ENTRY_HEADER(surroundScale);
+    // Keeps the dragger evenly sized in all 3 dimensions
+    SO_KIT_CATALOG_ENTRY_HEADER(antiSquish);
 
-   // The translating dragger...
-   SO_KIT_CATALOG_ENTRY_HEADER(translator);
+    // The translating dragger...
+    SO_KIT_CATALOG_ENTRY_HEADER(translator);
 
-   // The X and Z rotators need to be turned so as to orient
-   // correctly. So create a separator part and put an
-   // SoRotation node and the dragger underneath.
-   SO_KIT_CATALOG_ENTRY_HEADER(XRotatorSep);
-   SO_KIT_CATALOG_ENTRY_HEADER(XRotatorRot);
-   SO_KIT_CATALOG_ENTRY_HEADER(XRotator);
+    // The X and Z rotators need to be turned so as to orient
+    // correctly. So create a separator part and put an
+    // SoRotation node and the dragger underneath.
+    SO_KIT_CATALOG_ENTRY_HEADER(XRotatorSep);
+    SO_KIT_CATALOG_ENTRY_HEADER(XRotatorRot);
+    SO_KIT_CATALOG_ENTRY_HEADER(XRotator);
 
-   SO_KIT_CATALOG_ENTRY_HEADER(YRotator);
+    SO_KIT_CATALOG_ENTRY_HEADER(YRotator);
 
-   SO_KIT_CATALOG_ENTRY_HEADER(ZRotatorSep);
-   SO_KIT_CATALOG_ENTRY_HEADER(ZRotatorRot);
-   SO_KIT_CATALOG_ENTRY_HEADER(ZRotator);
+    SO_KIT_CATALOG_ENTRY_HEADER(ZRotatorSep);
+    SO_KIT_CATALOG_ENTRY_HEADER(ZRotatorRot);
+    SO_KIT_CATALOG_ENTRY_HEADER(ZRotator);
 
-  public:
+public:
+    // Constructor
+    RotTransDragger();
 
-   // Constructor
-   RotTransDragger();
+    // These fields reflect state of the dragger at all times.
+    SoSFRotation rotation;
+    SoSFVec3f translation;
 
-   // These fields reflect state of the dragger at all times.
-   SoSFRotation rotation;
-   SoSFVec3f   translation;
+    // This should be called once after SoInteraction::init().
+    static void initClass();
 
-   // This should be called once after SoInteraction::init().
-   static void initClass();
+protected:
+    // These sensors ensure that the motionMatrix is updated
+    // when the fields are changed from outside.
+    SoFieldSensor *rotFieldSensor;
+    SoFieldSensor *translFieldSensor;
+    static void fieldSensorCB(void *, SoSensor *);
 
-  protected:
+    // This function is invoked by the child draggers when they
+    // change their value.
+    static void valueChangedCB(void *, SoDragger *);
 
-   // These sensors ensure that the motionMatrix is updated
-   // when the fields are changed from outside.
-   SoFieldSensor *rotFieldSensor;
-   SoFieldSensor *translFieldSensor;
-   static void fieldSensorCB(void *, SoSensor *);
+    // Called at the beginning and end of each dragging motion.
+    // Tells the "surroundScale" part to recalculate.
+    static void invalidateSurroundScaleCB(void *, SoDragger *);
 
-   // This function is invoked by the child draggers when they
-   // change their value.
-   static void valueChangedCB(void *, SoDragger *);
+    // This will detach/attach the fieldSensor.
+    // It is called at the end of the constructor (to attach).
+    // and at the start/end of SoBaseKit::readInstance()
+    // and on the new copy at the start/end of SoBaseKit::copy()
+    // Returns the state of the node when this was called.
+    SbBool setUpConnections(SbBool onOff, SbBool doItAlways = false) override;
 
-   // Called at the beginning and end of each dragging motion.
-   // Tells the "surroundScale" part to recalculate.
-   static void invalidateSurroundScaleCB(void *, SoDragger *);
+    // This allows us to specify that certain parts do not
+    // write out. We'll use this on the antiSquish and
+    // surroundScale parts.
+    void setDefaultOnNonWritingFields() override;
 
-   // This will detach/attach the fieldSensor.
-   // It is called at the end of the constructor (to attach).
-   // and at the start/end of SoBaseKit::readInstance()
-   // and on the new copy at the start/end of SoBaseKit::copy()
-   // Returns the state of the node when this was called.
-   SbBool setUpConnections( SbBool onOff,
-                        SbBool doItAlways = false) override;
+private:
+    static const char NavigationDraggerLayout[];
 
-   // This allows us to specify that certain parts do not
-   // write out. We'll use this on the antiSquish and
-   // surroundScale parts.
-   void setDefaultOnNonWritingFields() override;
-
-  private:
-
-   static const char NavigationDraggerLayout[];
-
-   // Destructor.
-   ~RotTransDragger() override;
+    // Destructor.
+    ~RotTransDragger() override;
 };
 
 #endif //SONAVIGATIONDRAGGER_H
-

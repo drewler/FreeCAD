@@ -22,23 +22,23 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <fcntl.h>
-# include <sstream>
-# include <BRep_Builder.hxx>
-# include <Interface_Static.hxx>
-# include <Quantity_Color.hxx>
-# include <STEPControl_Reader.hxx>
-# include <StepData_StepModel.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Shape.hxx>
-# include <TopoDS_Shell.hxx>
-# include <TopoDS_Solid.hxx>
-# include <TopoDS_Compound.hxx>
-# include <TopExp_Explorer.hxx>
-# include <Standard_Version.hxx>
-# include <Transfer_TransientProcess.hxx>
-# include <XSControl_TransferReader.hxx>
-# include <XSControl_WorkSession.hxx>
+#include <fcntl.h>
+#include <sstream>
+#include <BRep_Builder.hxx>
+#include <Interface_Static.hxx>
+#include <Quantity_Color.hxx>
+#include <STEPControl_Reader.hxx>
+#include <StepData_StepModel.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Shell.hxx>
+#include <TopoDS_Solid.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopExp_Explorer.hxx>
+#include <Standard_Version.hxx>
+#include <Transfer_TransientProcess.hxx>
+#include <XSControl_TransferReader.hxx>
+#include <XSControl_WorkSession.hxx>
 #endif
 
 #include <StepElement_AnalysisItemWithinRepresentation.hxx>
@@ -60,8 +60,11 @@ using namespace Part;
 void ImportExportSettings::initialize()
 {
     // set the user-defined settings
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/Part");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/Part");
     initGeneral(hGrp);
     initSTEP(hGrp);
     initIGES(hGrp);
@@ -102,23 +105,18 @@ void ImportExportSettings::initIGES(Base::Reference<ParameterGrp> hGrp)
     Base::Reference<ParameterGrp> hIgesGrp = hGrp->GetGroup("IGES");
     int value = Interface_Static::IVal("write.iges.brep.mode");
     bool brep = hIgesGrp->GetBool("BrepMode", value > 0);
-    Interface_Static::SetIVal("write.iges.brep.mode",brep ? 1 : 0);
+    Interface_Static::SetIVal("write.iges.brep.mode", brep ? 1 : 0);
     Interface_Static::SetCVal("write.iges.header.company", hIgesGrp->GetASCII("Company").c_str());
     Interface_Static::SetCVal("write.iges.header.author", hIgesGrp->GetASCII("Author").c_str());
-    Interface_Static::SetCVal("write.iges.header.product", hIgesGrp->GetASCII("Product",
-       Interface_Static::CVal("write.iges.header.product")).c_str());
+    Interface_Static::SetCVal(
+        "write.iges.header.product",
+        hIgesGrp->GetASCII("Product", Interface_Static::CVal("write.iges.header.product")).c_str());
 
     int unitIges = hIgesGrp->GetInt("Unit", 0);
     switch (unitIges) {
-        case 1:
-            Interface_Static::SetCVal("write.iges.unit","M");
-            break;
-        case 2:
-            Interface_Static::SetCVal("write.iges.unit","INCH");
-            break;
-        default:
-            Interface_Static::SetCVal("write.iges.unit","MM");
-            break;
+        case 1: Interface_Static::SetCVal("write.iges.unit", "M"); break;
+        case 2: Interface_Static::SetCVal("write.iges.unit", "INCH"); break;
+        default: Interface_Static::SetCVal("write.iges.unit", "MM"); break;
     }
 }
 
@@ -128,26 +126,22 @@ void ImportExportSettings::initSTEP(Base::Reference<ParameterGrp> hGrp)
     Base::Reference<ParameterGrp> hStepGrp = hGrp->GetGroup("STEP");
     int unitStep = hStepGrp->GetInt("Unit", 0);
     switch (unitStep) {
-        case 1:
-            Interface_Static::SetCVal("write.step.unit","M");
-            break;
-        case 2:
-            Interface_Static::SetCVal("write.step.unit","INCH");
-            break;
-        default:
-            Interface_Static::SetCVal("write.step.unit","MM");
-            break;
+        case 1: Interface_Static::SetCVal("write.step.unit", "M"); break;
+        case 2: Interface_Static::SetCVal("write.step.unit", "INCH"); break;
+        default: Interface_Static::SetCVal("write.step.unit", "MM"); break;
     }
 
     std::string ap = hStepGrp->GetASCII("Scheme", Interface_Static::CVal("write.step.schema"));
     Interface_Static::SetCVal("write.step.schema", ap.c_str());
-    Interface_Static::SetCVal("write.step.product.name", hStepGrp->GetASCII("Product",
-       Interface_Static::CVal("write.step.product.name")).c_str());
+    Interface_Static::SetCVal(
+        "write.step.product.name",
+        hStepGrp->GetASCII("Product", Interface_Static::CVal("write.step.product.name")).c_str());
 }
 
 ImportExportSettings::ImportExportSettings()
 {
-    pGroup = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Import");
+    pGroup = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Mod/Import");
 }
 
 void ImportExportSettings::setReadShapeCompoundMode(bool on)
@@ -182,10 +176,7 @@ bool ImportExportSettings::getImportHiddenObject() const
     return pGroup->GetBool("ImportHiddenObject", false);
 }
 
-void ImportExportSettings::setExportLegacy(bool on)
-{
-    pGroup->SetBool("ExportLegacy", on);
-}
+void ImportExportSettings::setExportLegacy(bool on) { pGroup->SetBool("ExportLegacy", on); }
 
 bool ImportExportSettings::getExportLegacy() const
 {
@@ -202,50 +193,32 @@ bool ImportExportSettings::getExportKeepPlacement() const
     return pGroup->GetBool("ExportKeepPlacement", false);
 }
 
-void ImportExportSettings::setUseLinkGroup(bool on)
-{
-    pGroup->SetBool("UseLinkGroup", on);
-}
+void ImportExportSettings::setUseLinkGroup(bool on) { pGroup->SetBool("UseLinkGroup", on); }
 
 bool ImportExportSettings::getUseLinkGroup() const
 {
     return pGroup->GetBool("UseLinkGroup", false);
 }
 
-void ImportExportSettings::setUseBaseName(bool on)
-{
-    pGroup->SetBool("UseBaseName", on);
-}
+void ImportExportSettings::setUseBaseName(bool on) { pGroup->SetBool("UseBaseName", on); }
 
-bool ImportExportSettings::getUseBaseName() const
-{
-    return pGroup->GetBool("UseBaseName", false);
-}
+bool ImportExportSettings::getUseBaseName() const { return pGroup->GetBool("UseBaseName", false); }
 
-void ImportExportSettings::setReduceObjects(bool on)
-{
-    pGroup->SetBool("ReduceObjects", on);
-}
+void ImportExportSettings::setReduceObjects(bool on) { pGroup->SetBool("ReduceObjects", on); }
 
 bool ImportExportSettings::getReduceObjects() const
 {
     return pGroup->GetBool("ReduceObjects", false);
 }
 
-void ImportExportSettings::setExpandCompound(bool on)
-{
-    pGroup->SetBool("ExpandCompound", on);
-}
+void ImportExportSettings::setExpandCompound(bool on) { pGroup->SetBool("ExpandCompound", on); }
 
 bool ImportExportSettings::getExpandCompound() const
 {
     return pGroup->GetBool("ExpandCompound", false);
 }
 
-void ImportExportSettings::setShowProgress(bool on)
-{
-    pGroup->SetBool("ShowProgress", on);
-}
+void ImportExportSettings::setShowProgress(bool on) { pGroup->SetBool("ShowProgress", on); }
 
 bool ImportExportSettings::getShowProgress() const
 {
@@ -263,12 +236,13 @@ ImportExportSettings::ImportMode ImportExportSettings::getImportMode() const
 }
 
 
-namespace Part {
-bool ReadColors (const Handle(XSControl_WorkSession) &WS, std::map<int, Quantity_Color>& hash_col);
-bool ReadNames (const Handle(XSControl_WorkSession) &WS);
-}
+namespace Part
+{
+bool ReadColors(const Handle(XSControl_WorkSession) & WS, std::map<int, Quantity_Color> &hash_col);
+bool ReadNames(const Handle(XSControl_WorkSession) & WS);
+} // namespace Part
 
-int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
+int Part::ImportStepParts(App::Document *pcDoc, const char *Name)
 {
     // Use this to force to link against TKSTEPBase, TKSTEPAttr and TKStep209
     // in order to make RUNPATH working on Linux
@@ -285,10 +259,9 @@ int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
         throw Base::FileException(str.str().c_str());
     }
     std::string encodednamestr = encodeFilename(std::string(Name));
-    const char * encodedname = encodednamestr.c_str();
+    const char *encodedname = encodednamestr.c_str();
 
-    if (aReader.ReadFile((Standard_CString)encodedname) !=
-            IFSelect_RetDone) {
+    if (aReader.ReadFile((Standard_CString)encodedname) != IFSelect_RetDone) {
         throw Base::FileException("Cannot open STEP file");
     }
 
@@ -302,8 +275,8 @@ int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
     // Root transfers
     Standard_Integer nbr = aReader.NbRootsForTransfer();
     //aReader.PrintCheckTransfer (failsonly, IFSelect_ItemsByEntity);
-    for (Standard_Integer n = 1; n<= nbr; n++) {
-        Base::Console().Log("STEP: Transferring Root %d\n",n);
+    for (Standard_Integer n = 1; n <= nbr; n++) {
+        Base::Console().Log("STEP: Transferring Root %d\n", n);
         aReader.TransferRoot(n);
     }
 #if OCC_VERSION_HEX < 0x070500
@@ -312,9 +285,7 @@ int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
 
     // Collecting resulting entities
     Standard_Integer nbs = aReader.NbShapes();
-    if (nbs == 0) {
-        throw Base::FileException("No shapes found in file ");
-    }
+    if (nbs == 0) { throw Base::FileException("No shapes found in file "); }
     else {
         //Handle(StepData_StepModel) Model = aReader.StepModel();
         //Handle(XSControl_WorkSession) ws = aReader.WS();
@@ -324,16 +295,15 @@ int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
         //ReadColors(aReader.WS(), hash_col);
         //ReadNames(aReader.WS());
 
-        for (Standard_Integer i=1; i<=nbs; i++) {
-            Base::Console().Log("STEP:   Transferring Shape %d\n",i);
+        for (Standard_Integer i = 1; i <= nbs; i++) {
+            Base::Console().Log("STEP:   Transferring Shape %d\n", i);
             aShape = aReader.Shape(i);
 
             // load each solid as an own object
             TopExp_Explorer ex;
-            for (ex.Init(aShape, TopAbs_SOLID); ex.More(); ex.Next())
-            {
+            for (ex.Init(aShape, TopAbs_SOLID); ex.More(); ex.Next()) {
                 // get the shape
-                const TopoDS_Solid& aSolid = TopoDS::Solid(ex.Current());
+                const TopoDS_Solid &aSolid = TopoDS::Solid(ex.Current());
 
                 std::string name = fi.fileNamePure();
                 //Handle(Standard_Transient) ent = tr->EntityFromShapeResult(aSolid, 3);
@@ -342,13 +312,15 @@ int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
                 //}
 
                 Part::Feature *pcFeature;
-                pcFeature = static_cast<Part::Feature*>(pcDoc->addObject("Part::Feature", name.c_str()));
+                pcFeature =
+                    static_cast<Part::Feature *>(pcDoc->addObject("Part::Feature", name.c_str()));
                 pcFeature->Shape.setValue(aSolid);
 
                 // This is a trick to access the GUI via Python and set the color property
                 // of the associated view provider. If no GUI is up an exception is thrown
                 // and cleared immediately
-                std::map<int, Quantity_Color>::iterator it = hash_col.find(aSolid.HashCode(INT_MAX));
+                std::map<int, Quantity_Color>::iterator it =
+                    hash_col.find(aSolid.HashCode(INT_MAX));
                 if (it != hash_col.end()) {
                     try {
                         Py::Object obj(pcFeature->getPyObject(), true);
@@ -360,16 +332,15 @@ int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
                         vp.setAttr("ShapeColor", col);
                         //Base::Console().Message("Set color to shape\n");
                     }
-                    catch (Py::Exception& e) {
+                    catch (Py::Exception &e) {
                         e.clear();
                     }
                 }
             }
             // load all non-solids now
-            for (ex.Init(aShape, TopAbs_SHELL, TopAbs_SOLID); ex.More(); ex.Next())
-            {
+            for (ex.Init(aShape, TopAbs_SHELL, TopAbs_SOLID); ex.More(); ex.Next()) {
                 // get the shape
-                const TopoDS_Shell& aShell = TopoDS::Shell(ex.Current());
+                const TopoDS_Shell &aShell = TopoDS::Shell(ex.Current());
 
                 std::string name = fi.fileNamePure();
                 //Handle(Standard_Transient) ent = tr->EntityFromShapeResult(aShell, 3);
@@ -377,7 +348,8 @@ int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
                 //    name += ws->Model()->StringLabel(ent)->ToCString();
                 //}
 
-                Part::Feature *pcFeature = static_cast<Part::Feature*>(pcDoc->addObject("Part::Feature", name.c_str()));
+                Part::Feature *pcFeature =
+                    static_cast<Part::Feature *>(pcDoc->addObject("Part::Feature", name.c_str()));
                 pcFeature->Shape.setValue(aShell);
             }
 
@@ -414,8 +386,8 @@ int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
 
             if (!emptyComp) {
                 std::string name = fi.fileNamePure();
-                Part::Feature *pcFeature = static_cast<Part::Feature*>(pcDoc->addObject
-                    ("Part::Feature", name.c_str()));
+                Part::Feature *pcFeature =
+                    static_cast<Part::Feature *>(pcDoc->addObject("Part::Feature", name.c_str()));
                 pcFeature->Shape.setValue(comp);
             }
         }
@@ -425,14 +397,15 @@ int Part::ImportStepParts(App::Document *pcDoc, const char* Name)
 }
 
 
-bool Part::ReadColors (const Handle(XSControl_WorkSession) &WS, std::map<int, Quantity_Color>& hash_col)
+bool Part::ReadColors(const Handle(XSControl_WorkSession) & WS,
+                      std::map<int, Quantity_Color> &hash_col)
 {
     (void)WS;
     (void)hash_col;
     return Standard_False;
 }
 
-bool Part::ReadNames (const Handle(XSControl_WorkSession) &WS)
+bool Part::ReadNames(const Handle(XSControl_WorkSession) & WS)
 {
     (void)WS;
     return Standard_False;

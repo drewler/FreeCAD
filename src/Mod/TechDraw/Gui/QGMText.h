@@ -41,19 +41,21 @@ namespace TechDrawGui
 {
 
 //
-class TechDrawGuiExport QGMText : public QGCustomText
+class TechDrawGuiExport QGMText: public QGCustomText
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit QGMText(void);
     ~QGMText() {}
 
-    enum {Type = QGraphicsItem::UserType + 300};
-    int type() const override { return Type;}
-    virtual void paint( QPainter * painter,
-                        const QStyleOptionGraphicsItem * option,
-                        QWidget * widget = nullptr ) override;
+    enum
+    {
+        Type = QGraphicsItem::UserType + 300
+    };
+    int type() const override { return Type; }
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr) override;
 
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void showBox(bool b) { m_showBox = b; }
@@ -76,11 +78,10 @@ protected:
 
 private:
     bool m_showBox;
-    std::string  m_prettyState;
+    std::string m_prettyState;
     QPointF m_lastClick;
-
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // TECHDRAWGUI_MOVABLETEXT_H

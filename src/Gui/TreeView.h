@@ -26,23 +26,23 @@
 
 #include <QTreeView>
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport TreeView : public QTreeView
+class GuiExport TreeView: public QTreeView
 {
     Q_OBJECT
 
 public:
-    TreeView(QWidget* parent=nullptr);
+    TreeView(QWidget *parent = nullptr);
     virtual ~TreeView();
 
 protected:
-    void mouseDoubleClickEvent (QMouseEvent * );
-    void rowsInserted (const QModelIndex & parent, int start, int end);
+    void mouseDoubleClickEvent(QMouseEvent *);
+    void rowsInserted(const QModelIndex &parent, int start, int end);
 };
 
-}
+} // namespace Gui
 
 
 #endif // GUI_TREEVIEW_H
-

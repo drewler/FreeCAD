@@ -34,9 +34,11 @@
 #include <Mod/Mesh/MeshGlobal.h>
 #endif
 
-namespace MeshGui {
+namespace MeshGui
+{
 
-class MeshGuiExport SoPolygon : public SoShape {
+class MeshGuiExport SoPolygon: public SoShape
+{
     using inherited = SoShape;
 
     SO_NODE_HEADER(SoPolygon);
@@ -47,22 +49,21 @@ public:
 
     SoSFInt32 startIndex;
     SoSFInt32 numVertices;
-    SoSFBool  highlight;
-    SoSFBool  render;
+    SoSFBool highlight;
+    SoSFBool render;
 
 protected:
     ~SoPolygon() override {}
     void GLRender(SoGLRenderAction *action) override;
     void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center) override;
-    void rayPick (SoRayPickAction *action) override;
+    void rayPick(SoRayPickAction *action) override;
     void generatePrimitives(SoAction *action) override;
 
 private:
-    void drawPolygon(const SbVec3f *,int32_t) const;
+    void drawPolygon(const SbVec3f *, int32_t) const;
 };
 
 } // namespace MeshGui
 
 
 #endif // MESHGUI_SOPOLYGON_H
-

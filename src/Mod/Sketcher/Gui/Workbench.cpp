@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <qobject.h>
+#include <qobject.h>
 #endif
 
 #include "Workbench.h"
@@ -48,21 +48,17 @@ using namespace SketcherGui;
 /// @namespace SketcherGui @class Workbench
 TYPESYSTEM_SOURCE(SketcherGui::Workbench, Gui::StdWorkbench)
 
-Workbench::Workbench()
-{
-}
+Workbench::Workbench() {}
 
-Workbench::~Workbench()
-{
-}
+Workbench::~Workbench() {}
 
-Gui::MenuItem* Workbench::setupMenuBar() const
+Gui::MenuItem *Workbench::setupMenuBar() const
 {
-    Gui::MenuItem* root = StdWorkbench::setupMenuBar();
-    Gui::MenuItem* item = root->findItem("&Windows");
+    Gui::MenuItem *root = StdWorkbench::setupMenuBar();
+    Gui::MenuItem *item = root->findItem("&Windows");
 
-// == Profile menu ==========================================
-/* TODO: implement profile menu with different profiles
+    // == Profile menu ==========================================
+    /* TODO: implement profile menu with different profiles
     Gui::MenuItem* profile = new Gui::MenuItem;
     root->insertItem(item, profile);
     profile->setCommand("P&rofiles");
@@ -70,336 +66,307 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     *profile << "Sketcher_ProfilesHexagon1";
 */
 
-// == Sketcher menu ==========================================
+    // == Sketcher menu ==========================================
 
-    Gui::MenuItem* geom = new Gui::MenuItem();
+    Gui::MenuItem *geom = new Gui::MenuItem();
     geom->setCommand("Sketcher geometries");
     addSketcherWorkbenchGeometries(*geom);
 
-    Gui::MenuItem* cons = new Gui::MenuItem();
+    Gui::MenuItem *cons = new Gui::MenuItem();
     cons->setCommand("Sketcher constraints");
     addSketcherWorkbenchConstraints(*cons);
 
-    Gui::MenuItem* consaccel = new Gui::MenuItem();
+    Gui::MenuItem *consaccel = new Gui::MenuItem();
     consaccel->setCommand("Sketcher tools");
     addSketcherWorkbenchTools(*consaccel);
 
-    Gui::MenuItem* bsplines = new Gui::MenuItem();
+    Gui::MenuItem *bsplines = new Gui::MenuItem();
     bsplines->setCommand("Sketcher B-spline tools");
     addSketcherWorkbenchBSplines(*bsplines);
 
-    Gui::MenuItem* virtualspace = new Gui::MenuItem();
+    Gui::MenuItem *virtualspace = new Gui::MenuItem();
     virtualspace->setCommand("Sketcher virtual space");
     addSketcherWorkbenchVirtualSpace(*virtualspace);
 
-    Gui::MenuItem* sketch = new Gui::MenuItem;
+    Gui::MenuItem *sketch = new Gui::MenuItem;
     root->insertItem(item, sketch);
     sketch->setCommand("S&ketch");
     addSketcherWorkbenchSketchActions(*sketch);
-    *sketch << geom
-            << cons
-            << consaccel
-            << bsplines
-            << virtualspace;
+    *sketch << geom << cons << consaccel << bsplines << virtualspace;
 
     return root;
 }
 
-Gui::ToolBarItem* Workbench::setupToolBars() const
+Gui::ToolBarItem *Workbench::setupToolBars() const
 {
-    Gui::ToolBarItem* root = StdWorkbench::setupToolBars();
+    Gui::ToolBarItem *root = StdWorkbench::setupToolBars();
 
-    Gui::ToolBarItem* sketcher = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *sketcher = new Gui::ToolBarItem(root);
     sketcher->setCommand("Sketcher");
     addSketcherWorkbenchSketchActions(*sketcher);
 
-    Gui::ToolBarItem* geom = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *geom = new Gui::ToolBarItem(root);
     geom->setCommand("Sketcher geometries");
     addSketcherWorkbenchGeometries(*geom);
 
-    Gui::ToolBarItem* cons = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *cons = new Gui::ToolBarItem(root);
     cons->setCommand("Sketcher constraints");
     addSketcherWorkbenchConstraints(*cons);
 
-    Gui::ToolBarItem* consaccel = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *consaccel = new Gui::ToolBarItem(root);
     consaccel->setCommand("Sketcher tools");
     addSketcherWorkbenchTools(*consaccel);
 
-    Gui::ToolBarItem* bspline = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *bspline = new Gui::ToolBarItem(root);
     bspline->setCommand("Sketcher B-spline tools");
     addSketcherWorkbenchBSplines(*bspline);
 
-    Gui::ToolBarItem* virtualspace = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *virtualspace = new Gui::ToolBarItem(root);
     virtualspace->setCommand("Sketcher virtual space");
     addSketcherWorkbenchVirtualSpace(*virtualspace);
 
-     return root;
+    return root;
 }
 
-Gui::ToolBarItem* Workbench::setupCommandBars() const
+Gui::ToolBarItem *Workbench::setupCommandBars() const
 {
     // Sketcher tools
-    Gui::ToolBarItem* root = new Gui::ToolBarItem;
+    Gui::ToolBarItem *root = new Gui::ToolBarItem;
     return root;
 }
 
 
-namespace SketcherGui {
-
-template <typename T>
-inline void SketcherAddWorkspaceSketchExtra(T& /*sketch*/) { }
-
-template <>
-inline void SketcherAddWorkspaceSketchExtra<Gui::MenuItem>(Gui::MenuItem& sketch)
+namespace SketcherGui
 {
-    sketch  << "Sketcher_ReorientSketch"
-            << "Sketcher_ValidateSketch"
-            << "Sketcher_MergeSketches"
-            << "Sketcher_MirrorSketch"
-            << "Sketcher_StopOperation";
+
+template<typename T> inline void SketcherAddWorkspaceSketchExtra(T & /*sketch*/) {}
+
+template<> inline void SketcherAddWorkspaceSketchExtra<Gui::MenuItem>(Gui::MenuItem &sketch)
+{
+    sketch << "Sketcher_ReorientSketch"
+           << "Sketcher_ValidateSketch"
+           << "Sketcher_MergeSketches"
+           << "Sketcher_MirrorSketch"
+           << "Sketcher_StopOperation";
 }
 
-template <>
-inline void SketcherAddWorkspaceSketchExtra<Gui::ToolBarItem>(Gui::ToolBarItem& sketch)
+template<> inline void SketcherAddWorkspaceSketchExtra<Gui::ToolBarItem>(Gui::ToolBarItem &sketch)
 {
-    sketch  << "Sketcher_ReorientSketch"
-            << "Sketcher_ValidateSketch"
-            << "Sketcher_MergeSketches"
-            << "Sketcher_MirrorSketch"
-            << "Sketcher_StopOperation";
+    sketch << "Sketcher_ReorientSketch"
+           << "Sketcher_ValidateSketch"
+           << "Sketcher_MergeSketches"
+           << "Sketcher_MirrorSketch"
+           << "Sketcher_StopOperation";
 }
 
-template <typename T>
-void SketcherAddWorkbenchSketchActions(T& sketch);
+template<typename T> void SketcherAddWorkbenchSketchActions(T &sketch);
 
-template <typename T>
-inline void SketcherAddWorkbenchSketchActions(T& sketch)
+template<typename T> inline void SketcherAddWorkbenchSketchActions(T &sketch)
 {
-    sketch  << "Sketcher_NewSketch"
-            << "Sketcher_EditSketch"
-            << "Sketcher_LeaveSketch"
-            << "Sketcher_ViewSketch"
-            << "Sketcher_ViewSection"
-            << "Sketcher_MapSketch";
+    sketch << "Sketcher_NewSketch"
+           << "Sketcher_EditSketch"
+           << "Sketcher_LeaveSketch"
+           << "Sketcher_ViewSketch"
+           << "Sketcher_ViewSection"
+           << "Sketcher_MapSketch";
     SketcherAddWorkspaceSketchExtra(sketch);
 }
 
-template <typename T>
-void SketcherAddWorkbenchGeometries(T& geom);
+template<typename T> void SketcherAddWorkbenchGeometries(T &geom);
 
-template <typename T>
-void SketcherAddWorkspaceArcs(T& geom);
+template<typename T> void SketcherAddWorkspaceArcs(T &geom);
 
-template <>
-inline void SketcherAddWorkspaceArcs<Gui::MenuItem>(Gui::MenuItem& geom)
+template<> inline void SketcherAddWorkspaceArcs<Gui::MenuItem>(Gui::MenuItem &geom)
 {
-    geom    << "Sketcher_CreateArc"
-            << "Sketcher_Create3PointArc"
-            << "Sketcher_CreateCircle"
-            << "Sketcher_Create3PointCircle"
-            << "Sketcher_CreateEllipseByCenter"
-            << "Sketcher_CreateEllipseBy3Points"
-            << "Sketcher_CreateArcOfEllipse"
-            << "Sketcher_CreateArcOfHyperbola"
-            << "Sketcher_CreateArcOfParabola"
-            << "Sketcher_CreateBSpline"
-            << "Sketcher_CreatePeriodicBSpline";
+    geom << "Sketcher_CreateArc"
+         << "Sketcher_Create3PointArc"
+         << "Sketcher_CreateCircle"
+         << "Sketcher_Create3PointCircle"
+         << "Sketcher_CreateEllipseByCenter"
+         << "Sketcher_CreateEllipseBy3Points"
+         << "Sketcher_CreateArcOfEllipse"
+         << "Sketcher_CreateArcOfHyperbola"
+         << "Sketcher_CreateArcOfParabola"
+         << "Sketcher_CreateBSpline"
+         << "Sketcher_CreatePeriodicBSpline";
 }
 
-template <>
-inline void SketcherAddWorkspaceArcs<Gui::ToolBarItem>(Gui::ToolBarItem& geom)
+template<> inline void SketcherAddWorkspaceArcs<Gui::ToolBarItem>(Gui::ToolBarItem &geom)
 {
-    geom    << "Sketcher_CompCreateArc"
-            << "Sketcher_CompCreateCircle"
-            << "Sketcher_CompCreateConic"
-            << "Sketcher_CompCreateBSpline";
+    geom << "Sketcher_CompCreateArc"
+         << "Sketcher_CompCreateCircle"
+         << "Sketcher_CompCreateConic"
+         << "Sketcher_CompCreateBSpline";
 }
 
-template <typename T>
-void SketcherAddWorkspaceRegularPolygon(T& geom);
+template<typename T> void SketcherAddWorkspaceRegularPolygon(T &geom);
 
-template <>
-inline void SketcherAddWorkspaceRegularPolygon<Gui::MenuItem>(Gui::MenuItem& geom)
+template<> inline void SketcherAddWorkspaceRegularPolygon<Gui::MenuItem>(Gui::MenuItem &geom)
 {
-    geom    << "Sketcher_CreateTriangle"
-            << "Sketcher_CreateSquare"
-            << "Sketcher_CreatePentagon"
-            << "Sketcher_CreateHexagon"
-            << "Sketcher_CreateHeptagon"
-            << "Sketcher_CreateOctagon"
-            << "Sketcher_CreateRegularPolygon";
+    geom << "Sketcher_CreateTriangle"
+         << "Sketcher_CreateSquare"
+         << "Sketcher_CreatePentagon"
+         << "Sketcher_CreateHexagon"
+         << "Sketcher_CreateHeptagon"
+         << "Sketcher_CreateOctagon"
+         << "Sketcher_CreateRegularPolygon";
 }
 
-template <>
-inline void SketcherAddWorkspaceRegularPolygon<Gui::ToolBarItem>(Gui::ToolBarItem& geom)
+template<> inline void SketcherAddWorkspaceRegularPolygon<Gui::ToolBarItem>(Gui::ToolBarItem &geom)
 {
-    geom    << "Sketcher_CompCreateRegularPolygon";
+    geom << "Sketcher_CompCreateRegularPolygon";
 }
 
-template <typename T>
-void SketcherAddWorkspaceRectangles(T& geom);
+template<typename T> void SketcherAddWorkspaceRectangles(T &geom);
 
-template <>
-inline void SketcherAddWorkspaceRectangles<Gui::MenuItem>(Gui::MenuItem& geom)
+template<> inline void SketcherAddWorkspaceRectangles<Gui::MenuItem>(Gui::MenuItem &geom)
 {
-    geom    << "Sketcher_CreateRectangle"
-            << "Sketcher_CreateRectangle_Center"
-            << "Sketcher_CreateOblong";
+    geom << "Sketcher_CreateRectangle"
+         << "Sketcher_CreateRectangle_Center"
+         << "Sketcher_CreateOblong";
 }
 
-template <>
-inline void SketcherAddWorkspaceRectangles<Gui::ToolBarItem>(Gui::ToolBarItem& geom)
+template<> inline void SketcherAddWorkspaceRectangles<Gui::ToolBarItem>(Gui::ToolBarItem &geom)
 {
     geom << "Sketcher_CompCreateRectangles";
 }
 
-template <typename T>
-void SketcherAddWorkspaceFillets(T& geom);
+template<typename T> void SketcherAddWorkspaceFillets(T &geom);
 
-template <>
-inline void SketcherAddWorkspaceFillets<Gui::MenuItem>(Gui::MenuItem& geom)
+template<> inline void SketcherAddWorkspaceFillets<Gui::MenuItem>(Gui::MenuItem &geom)
 {
-    geom    << "Sketcher_CreateFillet"
-            << "Sketcher_CreatePointFillet";
+    geom << "Sketcher_CreateFillet"
+         << "Sketcher_CreatePointFillet";
 }
 
-template <>
-inline void SketcherAddWorkspaceFillets<Gui::ToolBarItem>(Gui::ToolBarItem& geom)
+template<> inline void SketcherAddWorkspaceFillets<Gui::ToolBarItem>(Gui::ToolBarItem &geom)
 {
-    geom    << "Sketcher_CompCreateFillets";
+    geom << "Sketcher_CompCreateFillets";
 }
 
-template <typename T>
-inline void SketcherAddWorkbenchGeometries(T& geom)
+template<typename T> inline void SketcherAddWorkbenchGeometries(T &geom)
 {
-    geom    << "Sketcher_CreatePoint"
-            << "Sketcher_CreateLine";
+    geom << "Sketcher_CreatePoint"
+         << "Sketcher_CreateLine";
     SketcherAddWorkspaceArcs(geom);
-    geom    << "Separator"
-            << "Sketcher_CreatePolyline";
+    geom << "Separator"
+         << "Sketcher_CreatePolyline";
     SketcherAddWorkspaceRectangles(geom);
     SketcherAddWorkspaceRegularPolygon(geom);
-    geom    << "Sketcher_CreateSlot"
-            << "Separator";
+    geom << "Sketcher_CreateSlot"
+         << "Separator";
     SketcherAddWorkspaceFillets(geom);
-    geom    << "Sketcher_Trimming"
-            << "Sketcher_Extend"
-            << "Sketcher_Split"
-            << "Sketcher_External"
-            << "Sketcher_CarbonCopy"
-            << "Sketcher_ToggleConstruction"
-            /*<< "Sketcher_CreateText"*/
-            /*<< "Sketcher_CreateDraftLine"*/;
+    geom << "Sketcher_Trimming"
+         << "Sketcher_Extend"
+         << "Sketcher_Split"
+         << "Sketcher_External"
+         << "Sketcher_CarbonCopy"
+         << "Sketcher_ToggleConstruction"
+        /*<< "Sketcher_CreateText"*/
+        /*<< "Sketcher_CreateDraftLine"*/;
 }
 
-template <typename T>
-inline void SketcherAddWorkbenchConstraints(T& cons);
+template<typename T> inline void SketcherAddWorkbenchConstraints(T &cons);
 
-template <>
-inline void SketcherAddWorkbenchConstraints<Gui::MenuItem>(Gui::MenuItem& cons)
+template<> inline void SketcherAddWorkbenchConstraints<Gui::MenuItem>(Gui::MenuItem &cons)
 {
-    cons    << "Sketcher_ConstrainCoincident"
-            << "Sketcher_ConstrainPointOnObject"
-            << "Sketcher_ConstrainVertical"
-            << "Sketcher_ConstrainHorizontal"
-            << "Sketcher_ConstrainParallel"
-            << "Sketcher_ConstrainPerpendicular"
-            << "Sketcher_ConstrainTangent"
-            << "Sketcher_ConstrainEqual"
-            << "Sketcher_ConstrainSymmetric"
-            << "Sketcher_ConstrainBlock"
-            << "Separator"
-            << "Sketcher_ConstrainLock"
-            << "Sketcher_ConstrainDistanceX"
-            << "Sketcher_ConstrainDistanceY"
-            << "Sketcher_ConstrainDistance"
-            << "Sketcher_ConstrainRadius"
-            << "Sketcher_ConstrainDiameter"
-            << "Sketcher_ConstrainRadiam"
-            << "Sketcher_ConstrainAngle"
-            << "Sketcher_ConstrainSnellsLaw"
-            << "Sketcher_ConstrainInternalAlignment"
-            << "Separator"
-            << "Sketcher_ToggleDrivingConstraint"
-            << "Sketcher_ToggleActiveConstraint";
+    cons << "Sketcher_ConstrainCoincident"
+         << "Sketcher_ConstrainPointOnObject"
+         << "Sketcher_ConstrainVertical"
+         << "Sketcher_ConstrainHorizontal"
+         << "Sketcher_ConstrainParallel"
+         << "Sketcher_ConstrainPerpendicular"
+         << "Sketcher_ConstrainTangent"
+         << "Sketcher_ConstrainEqual"
+         << "Sketcher_ConstrainSymmetric"
+         << "Sketcher_ConstrainBlock"
+         << "Separator"
+         << "Sketcher_ConstrainLock"
+         << "Sketcher_ConstrainDistanceX"
+         << "Sketcher_ConstrainDistanceY"
+         << "Sketcher_ConstrainDistance"
+         << "Sketcher_ConstrainRadius"
+         << "Sketcher_ConstrainDiameter"
+         << "Sketcher_ConstrainRadiam"
+         << "Sketcher_ConstrainAngle"
+         << "Sketcher_ConstrainSnellsLaw"
+         << "Sketcher_ConstrainInternalAlignment"
+         << "Separator"
+         << "Sketcher_ToggleDrivingConstraint"
+         << "Sketcher_ToggleActiveConstraint";
 }
 
-template <>
-inline void SketcherAddWorkbenchConstraints<Gui::ToolBarItem>(Gui::ToolBarItem& cons)
+template<> inline void SketcherAddWorkbenchConstraints<Gui::ToolBarItem>(Gui::ToolBarItem &cons)
 {
-    cons    << "Sketcher_ConstrainCoincident"
-            << "Sketcher_ConstrainPointOnObject"
-            << "Sketcher_ConstrainVertical"
-            << "Sketcher_ConstrainHorizontal"
-            << "Sketcher_ConstrainParallel"
-            << "Sketcher_ConstrainPerpendicular"
-            << "Sketcher_ConstrainTangent"
-            << "Sketcher_ConstrainEqual"
-            << "Sketcher_ConstrainSymmetric"
-            << "Sketcher_ConstrainBlock"
-            << "Separator"
-            << "Sketcher_ConstrainLock"
-            << "Sketcher_ConstrainDistanceX"
-            << "Sketcher_ConstrainDistanceY"
-            << "Sketcher_ConstrainDistance"
-            << "Sketcher_CompConstrainRadDia"
-            << "Sketcher_ConstrainAngle"
-            << "Sketcher_ConstrainSnellsLaw"
-            // << "Sketcher_ConstrainInternalAlignment" // This constrain is never used by the user - Do not use precious toolbar space
-            << "Separator"
-            << "Sketcher_ToggleDrivingConstraint"
-            << "Sketcher_ToggleActiveConstraint";
+    cons
+        << "Sketcher_ConstrainCoincident"
+        << "Sketcher_ConstrainPointOnObject"
+        << "Sketcher_ConstrainVertical"
+        << "Sketcher_ConstrainHorizontal"
+        << "Sketcher_ConstrainParallel"
+        << "Sketcher_ConstrainPerpendicular"
+        << "Sketcher_ConstrainTangent"
+        << "Sketcher_ConstrainEqual"
+        << "Sketcher_ConstrainSymmetric"
+        << "Sketcher_ConstrainBlock"
+        << "Separator"
+        << "Sketcher_ConstrainLock"
+        << "Sketcher_ConstrainDistanceX"
+        << "Sketcher_ConstrainDistanceY"
+        << "Sketcher_ConstrainDistance"
+        << "Sketcher_CompConstrainRadDia"
+        << "Sketcher_ConstrainAngle"
+        << "Sketcher_ConstrainSnellsLaw"
+        // << "Sketcher_ConstrainInternalAlignment" // This constrain is never used by the user - Do not use precious toolbar space
+        << "Separator"
+        << "Sketcher_ToggleDrivingConstraint"
+        << "Sketcher_ToggleActiveConstraint";
 }
 
-template <typename T>
-inline void SketcherAddWorkbenchTools(T& consaccel);
+template<typename T> inline void SketcherAddWorkbenchTools(T &consaccel);
 
-template <>
-inline void SketcherAddWorkbenchTools<Gui::MenuItem>(Gui::MenuItem& consaccel)
+template<> inline void SketcherAddWorkbenchTools<Gui::MenuItem>(Gui::MenuItem &consaccel)
 {
-    consaccel   << "Sketcher_SelectElementsWithDoFs"
-                << "Sketcher_SelectConstraints"
-                << "Sketcher_SelectElementsAssociatedWithConstraints"
-                << "Sketcher_SelectRedundantConstraints"
-                << "Sketcher_SelectConflictingConstraints"
-                << "Sketcher_RestoreInternalAlignmentGeometry"
-                << "Separator"
-                << "Sketcher_SelectOrigin"
-                << "Sketcher_SelectVerticalAxis"
-                << "Sketcher_SelectHorizontalAxis"
-                << "Separator"
-                << "Sketcher_Symmetry"
-                << "Sketcher_Clone"
-                << "Sketcher_Copy"
-                << "Sketcher_Move"
-                << "Sketcher_RectangularArray"
-                << "Sketcher_RemoveAxesAlignment"
-                << "Separator"
-                << "Sketcher_DeleteAllGeometry"
-                << "Sketcher_DeleteAllConstraints";
+    consaccel << "Sketcher_SelectElementsWithDoFs"
+              << "Sketcher_SelectConstraints"
+              << "Sketcher_SelectElementsAssociatedWithConstraints"
+              << "Sketcher_SelectRedundantConstraints"
+              << "Sketcher_SelectConflictingConstraints"
+              << "Sketcher_RestoreInternalAlignmentGeometry"
+              << "Separator"
+              << "Sketcher_SelectOrigin"
+              << "Sketcher_SelectVerticalAxis"
+              << "Sketcher_SelectHorizontalAxis"
+              << "Separator"
+              << "Sketcher_Symmetry"
+              << "Sketcher_Clone"
+              << "Sketcher_Copy"
+              << "Sketcher_Move"
+              << "Sketcher_RectangularArray"
+              << "Sketcher_RemoveAxesAlignment"
+              << "Separator"
+              << "Sketcher_DeleteAllGeometry"
+              << "Sketcher_DeleteAllConstraints";
 }
 
-template <>
-inline void SketcherAddWorkbenchTools<Gui::ToolBarItem>(Gui::ToolBarItem& consaccel)
+template<> inline void SketcherAddWorkbenchTools<Gui::ToolBarItem>(Gui::ToolBarItem &consaccel)
 {
-    consaccel   << "Sketcher_SelectElementsWithDoFs"
-                << "Sketcher_SelectConstraints"
-                << "Sketcher_SelectElementsAssociatedWithConstraints"
-                << "Sketcher_SelectRedundantConstraints"
-                << "Sketcher_SelectConflictingConstraints"
-                << "Sketcher_RestoreInternalAlignmentGeometry"
-                << "Sketcher_Symmetry"
-                << "Sketcher_CompCopy"
-                << "Sketcher_RectangularArray"
-                << "Sketcher_RemoveAxesAlignment"
-                << "Sketcher_DeleteAllConstraints";
+    consaccel << "Sketcher_SelectElementsWithDoFs"
+              << "Sketcher_SelectConstraints"
+              << "Sketcher_SelectElementsAssociatedWithConstraints"
+              << "Sketcher_SelectRedundantConstraints"
+              << "Sketcher_SelectConflictingConstraints"
+              << "Sketcher_RestoreInternalAlignmentGeometry"
+              << "Sketcher_Symmetry"
+              << "Sketcher_CompCopy"
+              << "Sketcher_RectangularArray"
+              << "Sketcher_RemoveAxesAlignment"
+              << "Sketcher_DeleteAllConstraints";
 }
 
-template <typename T>
-inline void SketcherAddWorkbenchBSplines(T& bspline);
+template<typename T> inline void SketcherAddWorkbenchBSplines(T &bspline);
 
-template <>
-inline void SketcherAddWorkbenchBSplines<Gui::MenuItem>(Gui::MenuItem& bspline)
+template<> inline void SketcherAddWorkbenchBSplines<Gui::MenuItem>(Gui::MenuItem &bspline)
 {
     bspline << "Sketcher_BSplineDegree"
             << "Sketcher_BSplinePolygon"
@@ -414,8 +381,7 @@ inline void SketcherAddWorkbenchBSplines<Gui::MenuItem>(Gui::MenuItem& bspline)
             << "Sketcher_BSplineInsertKnot";
 }
 
-template <>
-inline void SketcherAddWorkbenchBSplines<Gui::ToolBarItem>(Gui::ToolBarItem& bspline)
+template<> inline void SketcherAddWorkbenchBSplines<Gui::ToolBarItem>(Gui::ToolBarItem &bspline)
 {
     bspline << "Sketcher_CompBSplineShowHideGeometryInformation"
             << "Sketcher_BSplineConvertToNURBS"
@@ -425,77 +391,63 @@ inline void SketcherAddWorkbenchBSplines<Gui::ToolBarItem>(Gui::ToolBarItem& bsp
             << "Sketcher_BSplineInsertKnot";
 }
 
-template <typename T>
-inline void SketcherAddWorkbenchVirtualSpace(T& virtualspace);
+template<typename T> inline void SketcherAddWorkbenchVirtualSpace(T &virtualspace);
 
-template <>
-inline void SketcherAddWorkbenchVirtualSpace<Gui::MenuItem>(Gui::MenuItem& virtualspace)
+template<> inline void SketcherAddWorkbenchVirtualSpace<Gui::MenuItem>(Gui::MenuItem &virtualspace)
 {
     virtualspace << "Sketcher_SwitchVirtualSpace";
 }
 
-template <>
-inline void SketcherAddWorkbenchVirtualSpace<Gui::ToolBarItem>(Gui::ToolBarItem& virtualspace)
+template<>
+inline void SketcherAddWorkbenchVirtualSpace<Gui::ToolBarItem>(Gui::ToolBarItem &virtualspace)
 {
     virtualspace << "Sketcher_SwitchVirtualSpace";
 }
 
-void addSketcherWorkbenchSketchActions(Gui::MenuItem& sketch)
+void addSketcherWorkbenchSketchActions(Gui::MenuItem &sketch)
 {
     SketcherAddWorkbenchSketchActions(sketch);
 }
 
-void addSketcherWorkbenchGeometries(Gui::MenuItem& geom)
-{
-    SketcherAddWorkbenchGeometries(geom);
-}
+void addSketcherWorkbenchGeometries(Gui::MenuItem &geom) { SketcherAddWorkbenchGeometries(geom); }
 
-void addSketcherWorkbenchConstraints(Gui::MenuItem& cons)
-{
-    SketcherAddWorkbenchConstraints(cons);
-}
+void addSketcherWorkbenchConstraints(Gui::MenuItem &cons) { SketcherAddWorkbenchConstraints(cons); }
 
-void addSketcherWorkbenchTools(Gui::MenuItem& consaccel)
-{
-    SketcherAddWorkbenchTools(consaccel);
-}
+void addSketcherWorkbenchTools(Gui::MenuItem &consaccel) { SketcherAddWorkbenchTools(consaccel); }
 
-void addSketcherWorkbenchBSplines(Gui::MenuItem& bspline)
-{
-    SketcherAddWorkbenchBSplines(bspline);
-}
+void addSketcherWorkbenchBSplines(Gui::MenuItem &bspline) { SketcherAddWorkbenchBSplines(bspline); }
 
-void addSketcherWorkbenchVirtualSpace(Gui::MenuItem& virtualspace)
+void addSketcherWorkbenchVirtualSpace(Gui::MenuItem &virtualspace)
 {
     SketcherAddWorkbenchVirtualSpace(virtualspace);
 }
 
-void addSketcherWorkbenchSketchActions(Gui::ToolBarItem& sketch)
+void addSketcherWorkbenchSketchActions(Gui::ToolBarItem &sketch)
 {
     SketcherAddWorkbenchSketchActions(sketch);
 }
 
-void addSketcherWorkbenchGeometries(Gui::ToolBarItem& geom)
+void addSketcherWorkbenchGeometries(Gui::ToolBarItem &geom)
 {
     SketcherAddWorkbenchGeometries(geom);
 }
 
-void addSketcherWorkbenchConstraints(Gui::ToolBarItem& cons)
+void addSketcherWorkbenchConstraints(Gui::ToolBarItem &cons)
 {
     SketcherAddWorkbenchConstraints(cons);
 }
 
-void addSketcherWorkbenchTools(Gui::ToolBarItem& consaccel)
+void addSketcherWorkbenchTools(Gui::ToolBarItem &consaccel)
 {
     SketcherAddWorkbenchTools(consaccel);
 }
 
-void addSketcherWorkbenchBSplines(Gui::ToolBarItem& bspline)
+void addSketcherWorkbenchBSplines(Gui::ToolBarItem &bspline)
 {
     SketcherAddWorkbenchBSplines(bspline);
 }
 
-void addSketcherWorkbenchVirtualSpace(Gui::ToolBarItem& virtualspace)
+void addSketcherWorkbenchVirtualSpace(Gui::ToolBarItem &virtualspace)
 {
     SketcherAddWorkbenchVirtualSpace(virtualspace);
 }

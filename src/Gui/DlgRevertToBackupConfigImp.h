@@ -27,19 +27,21 @@
 #include <memory>
 #include <QDialog>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgRevertToBackupConfig;
 
 /** The DlgRevertToBackupConfigImp class
  * \author Chris Hennes
  */
-class DlgRevertToBackupConfigImp : public QDialog
+class DlgRevertToBackupConfigImp: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DlgRevertToBackupConfigImp( QWidget* parent = nullptr );
+    explicit DlgRevertToBackupConfigImp(QWidget *parent = nullptr);
     ~DlgRevertToBackupConfigImp() override;
 
 public Q_SLOTS:
@@ -48,7 +50,7 @@ public Q_SLOTS:
 
 protected:
     void changeEvent(QEvent *e) override;
-    void showEvent(QShowEvent* event) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
     std::unique_ptr<Ui_DlgRevertToBackupConfig> ui;

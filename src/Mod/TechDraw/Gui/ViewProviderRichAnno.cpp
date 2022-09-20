@@ -42,13 +42,8 @@ using namespace TechDraw;
 
 PROPERTY_SOURCE(TechDrawGui::ViewProviderRichAnno, TechDrawGui::ViewProviderDrawingView)
 
-const char* ViewProviderRichAnno::LineStyleEnums[] = { "NoLine",
-                                                  "Continuous",
-                                                  "Dash",
-                                                  "Dot",
-                                                  "DashDot",
-                                                  "DashDotDot",
-                                                  nullptr };
+const char *ViewProviderRichAnno::LineStyleEnums[] = {"NoLine",  "Continuous", "Dash", "Dot",
+                                                      "DashDot", "DashDotDot", nullptr};
 
 //**************************************************************************
 // Construction/Destruction
@@ -59,25 +54,25 @@ ViewProviderRichAnno::ViewProviderRichAnno()
 
     static const char *group = "Frame Format";
 
-    ADD_PROPERTY_TYPE(LineWidth, (getDefLineWeight()), group, (App::PropertyType)(App::Prop_None), "Frame line width");
+    ADD_PROPERTY_TYPE(LineWidth, (getDefLineWeight()), group, (App::PropertyType)(App::Prop_None),
+                      "Frame line width");
     LineStyle.setEnums(LineStyleEnums);
-    ADD_PROPERTY_TYPE(LineStyle, (1), group, (App::PropertyType)(App::Prop_None), "Frame line style");
-    ADD_PROPERTY_TYPE(LineColor, (getDefLineColor()), group, App::Prop_None, "The color of the frame");
-
+    ADD_PROPERTY_TYPE(LineStyle, (1), group, (App::PropertyType)(App::Prop_None),
+                      "Frame line style");
+    ADD_PROPERTY_TYPE(LineColor, (getDefLineColor()), group, App::Prop_None,
+                      "The color of the frame");
 }
 
-ViewProviderRichAnno::~ViewProviderRichAnno()
-{
-}
+ViewProviderRichAnno::~ViewProviderRichAnno() {}
 
 bool ViewProviderRichAnno::doubleClicked()
 {
-//    Base::Console().Message("VPRA::doubleClicked()\n");
+    //    Base::Console().Message("VPRA::doubleClicked()\n");
     setEdit(ViewProvider::Default);
     return true;
 }
 
-void ViewProviderRichAnno::updateData(const App::Property* p)
+void ViewProviderRichAnno::updateData(const App::Property *p)
 {
     // only if there is a frame we can enable the frame line parameters
     if (getViewObject()) {
@@ -94,9 +89,8 @@ void ViewProviderRichAnno::updateData(const App::Property* p)
     }
 
     if (p == &(getViewObject()->AnnoParent)) {
-//        Base::Console().Message("VPRA::updateData(AnnoParent) - vpp: %X\n", getViewProviderPage());
-        if (getViewProviderPage() &&
-            getViewProviderPage()->getQGSPage()) {
+        //        Base::Console().Message("VPRA::updateData(AnnoParent) - vpp: %X\n", getViewProviderPage());
+        if (getViewProviderPage() && getViewProviderPage()->getQGSPage()) {
             getViewProviderPage()->getQGSPage()->setRichAnnoGroups();
         }
     }
@@ -104,51 +98,39 @@ void ViewProviderRichAnno::updateData(const App::Property* p)
     ViewProviderDrawingView::updateData(p);
 }
 
-void ViewProviderRichAnno::onChanged(const App::Property* p)
+void ViewProviderRichAnno::onChanged(const App::Property *p)
 {
-    if ((p == &LineColor) ||
-        (p == &LineWidth) ||
-        (p == &LineStyle)) {
-        QGIView* qgiv = getQView();
-        if (qgiv) {
-            qgiv->updateView(true);
-        }
+    if ((p == &LineColor) || (p == &LineWidth) || (p == &LineStyle)) {
+        QGIView *qgiv = getQView();
+        if (qgiv) { qgiv->updateView(true); }
     }
 
     ViewProviderDrawingView::onChanged(p);
 }
 
-TechDraw::DrawRichAnno* ViewProviderRichAnno::getViewObject() const
+TechDraw::DrawRichAnno *ViewProviderRichAnno::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawRichAnno*>(pcObject);
+    return dynamic_cast<TechDraw::DrawRichAnno *>(pcObject);
 }
 
-TechDraw::DrawRichAnno* ViewProviderRichAnno::getFeature() const
+TechDraw::DrawRichAnno *ViewProviderRichAnno::getFeature() const
 {
-    return dynamic_cast<TechDraw::DrawRichAnno*>(pcObject);
+    return dynamic_cast<TechDraw::DrawRichAnno *>(pcObject);
 }
 
-App::Color ViewProviderRichAnno::getDefLineColor()
-{
-    return PreferencesGui::leaderColor();
-}
+App::Color ViewProviderRichAnno::getDefLineColor() { return PreferencesGui::leaderColor(); }
 
-std::string ViewProviderRichAnno::getDefFont()
-{
-    return Preferences::labelFont();
-}
+std::string ViewProviderRichAnno::getDefFont() { return Preferences::labelFont(); }
 
-double ViewProviderRichAnno::getDefFontSize()
-{
-    return Preferences::dimFontSizeMM();
-}
+double ViewProviderRichAnno::getDefFontSize() { return Preferences::dimFontSizeMM(); }
 
 double ViewProviderRichAnno::getDefLineWeight()
 {
     return TechDraw::LineGroup::getDefaultWidth("Graphics");
 }
 
-void ViewProviderRichAnno::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property *prop)
+void ViewProviderRichAnno::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                                     App::Property *prop)
 // transforms properties that had been changed
 {
     // property LineWidth had App::PropertyFloat and was changed to App::PropertyLength

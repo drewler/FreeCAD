@@ -22,8 +22,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepPrimAPI_MakeBox.hxx>
-# include <Precision.hxx>
+#include <BRepPrimAPI_MakeBox.hxx>
+#include <Precision.hxx>
 #endif
 
 #include <Base/Reader.h>
@@ -38,17 +38,14 @@ PROPERTY_SOURCE(Part::Box, Part::Primitive)
 
 Box::Box()
 {
-    ADD_PROPERTY_TYPE(Length,(10.0f),"Box",App::Prop_None,"The length of the box");
-    ADD_PROPERTY_TYPE(Width ,(10.0f),"Box",App::Prop_None,"The width of the box");
-    ADD_PROPERTY_TYPE(Height,(10.0f),"Box",App::Prop_None,"The height of the box");
+    ADD_PROPERTY_TYPE(Length, (10.0f), "Box", App::Prop_None, "The length of the box");
+    ADD_PROPERTY_TYPE(Width, (10.0f), "Box", App::Prop_None, "The width of the box");
+    ADD_PROPERTY_TYPE(Height, (10.0f), "Box", App::Prop_None, "The height of the box");
 }
 
 short Box::mustExecute() const
 {
-    if (Length.isTouched() ||
-        Height.isTouched() ||
-        Width.isTouched() )
-        return 1;
+    if (Length.isTouched() || Height.isTouched() || Width.isTouched()) return 1;
     return Primitive::mustExecute();
 }
 
@@ -74,7 +71,7 @@ App::DocumentObjectExecReturn *Box::execute()
         this->Shape.setValue(ResultShape);
         return Primitive::execute();
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
 }
@@ -89,13 +86,13 @@ void Box::Restore(Base::XMLReader &reader)
     reader.readElement("Properties");
     int Cnt = reader.getAttributeAsInteger("Count");
     int transientCount = 0;
-    if(reader.hasAttribute("TransientCount"))
+    if (reader.hasAttribute("TransientCount"))
         transientCount = reader.getAttributeAsUnsigned("TransientCount");
 
-    for (int i=0;i<transientCount; ++i) {
+    for (int i = 0; i < transientCount; ++i) {
         reader.readElement("_Property");
-        App::Property* prop = getPropertyByName(reader.getAttribute("name"));
-        if(prop && reader.hasAttribute("status"))
+        App::Property *prop = getPropertyByName(reader.getAttribute("name"));
+        if (prop && reader.hasAttribute("status"))
             prop->setStatusValue(reader.getAttributeAsUnsigned("status"));
     }
 
@@ -103,30 +100,27 @@ void Box::Restore(Base::XMLReader &reader)
     bool location_axis = false;
     bool distance_lhw = false;
     Base::Placement plm;
-    App::PropertyDistance x,y,z;
-    App::PropertyDistance l,w,h;
+    App::PropertyDistance x, y, z;
+    App::PropertyDistance l, w, h;
     App::PropertyVector Axis, Location;
-    Axis.setValue(0.0f,0.0f,1.0f);
-    for (int i=0 ;i<Cnt;i++) {
+    Axis.setValue(0.0f, 0.0f, 1.0f);
+    for (int i = 0; i < Cnt; i++) {
         reader.readElement("Property");
-        const char* PropName = reader.getAttribute("name");
-        const char* TypeName = reader.getAttribute("type");
-        auto prop = dynamicProps.restore(*this,PropName,TypeName,reader);
-        if(!prop)
-            prop = getPropertyByName(PropName);
+        const char *PropName = reader.getAttribute("name");
+        const char *TypeName = reader.getAttribute("type");
+        auto prop = dynamicProps.restore(*this, PropName, TypeName, reader);
+        if (!prop) prop = getPropertyByName(PropName);
 
         std::bitset<32> status;
-        if(reader.hasAttribute("status")) {
+        if (reader.hasAttribute("status")) {
             status = reader.getAttributeAsUnsigned("status");
-            if(prop)
-                prop->setStatusValue(status.to_ulong());
+            if (prop) prop->setStatusValue(status.to_ulong());
         }
         if (prop && strcmp(prop->getTypeId().getName(), TypeName) == 0) {
-            if (!prop->testStatus(App::Property::Transient) 
-                    && !status.test(App::Property::Transient)
-                    && !status.test(App::Property::PropTransient)
-                    && !(getPropertyType(prop) & App::Prop_Transient))
-            {
+            if (!prop->testStatus(App::Property::Transient)
+                && !status.test(App::Property::Transient)
+                && !status.test(App::Property::PropTransient)
+                && !(getPropertyType(prop) & App::Prop_Transient)) {
                 prop->Restore(reader);
             }
             reader.readEndElement("Property");
@@ -167,15 +161,15 @@ void Box::Restore(Base::XMLReader &reader)
                 prop = &Location;
             }
         }
-        else if (strcmp(PropName, "Length") == 0 && strcmp(TypeName,"PropertyDistance") == 0) {
+        else if (strcmp(PropName, "Length") == 0 && strcmp(TypeName, "PropertyDistance") == 0) {
             distance_lhw = true;
             prop = &l;
         }
-        else if (strcmp(PropName, "Height") == 0 && strcmp(TypeName,"PropertyDistance") == 0) {
+        else if (strcmp(PropName, "Height") == 0 && strcmp(TypeName, "PropertyDistance") == 0) {
             distance_lhw = true;
             prop = &h;
         }
-        else if (strcmp(PropName, "Width") == 0 && strcmp(TypeName,"PropertyDistance") == 0) {
+        else if (strcmp(PropName, "Width") == 0 && strcmp(TypeName, "PropertyDistance") == 0) {
             distance_lhw = true;
             prop = &w;
         }
@@ -185,10 +179,9 @@ void Box::Restore(Base::XMLReader &reader)
         // In this case we would force to read-in a wrong property type and the behaviour
         // would be undefined.
         std::string tn = TypeName;
-        if (strcmp(TypeName,"PropertyDistance") == 0) // missing prefix App::
+        if (strcmp(TypeName, "PropertyDistance") == 0) // missing prefix App::
             tn = std::string("App::") + tn;
-        if (prop && strcmp(prop->getTypeId().getName(), tn.c_str()) == 0)
-            prop->Restore(reader);
+        if (prop && strcmp(prop->getTypeId().getName(), tn.c_str()) == 0) prop->Restore(reader);
 
         reader.readEndElement("Property");
     }
@@ -201,7 +194,7 @@ void Box::Restore(Base::XMLReader &reader)
 
     // for 0.7 releases or earlier
     if (location_xyz) {
-        plm.setPosition(Base::Vector3d(x.getValue(),y.getValue(),z.getValue()));
+        plm.setPosition(Base::Vector3d(x.getValue(), y.getValue(), z.getValue()));
         this->Placement.setValue(this->Placement.getValue() * plm);
         this->Shape.setStatus(App::Property::User1, true); // override the shape's location later on
     }
@@ -209,10 +202,9 @@ void Box::Restore(Base::XMLReader &reader)
     else if (location_axis) {
         Base::Vector3d d = Axis.getValue();
         Base::Vector3d p = Location.getValue();
-        Base::Rotation rot(Base::Vector3d(0.0,0.0,1.0),
-                           Base::Vector3d(d.x,d.y,d.z));
+        Base::Rotation rot(Base::Vector3d(0.0, 0.0, 1.0), Base::Vector3d(d.x, d.y, d.z));
         plm.setRotation(rot);
-        plm.setPosition(Base::Vector3d(p.x,p.y,p.z));
+        plm.setPosition(Base::Vector3d(p.x, p.y, p.z));
         this->Placement.setValue(this->Placement.getValue() * plm);
         this->Shape.setStatus(App::Property::User1, true); // override the shape's location later on
     }
@@ -220,7 +212,7 @@ void Box::Restore(Base::XMLReader &reader)
     reader.readEndElement("Properties");
 }
 
-void Box::onChanged(const App::Property* prop)
+void Box::onChanged(const App::Property *prop)
 {
     if (prop == &Length || prop == &Width || prop == &Height) {
         if (!isRestoring()) {

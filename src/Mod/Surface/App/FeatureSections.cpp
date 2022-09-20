@@ -45,13 +45,11 @@ PROPERTY_SOURCE(Surface::Sections, Part::Spline)
 
 Sections::Sections()
 {
-    ADD_PROPERTY_TYPE(NSections,(nullptr), "Sections", App::Prop_None, "Section curves");
+    ADD_PROPERTY_TYPE(NSections, (nullptr), "Sections", App::Prop_None, "Section curves");
     NSections.setScope(App::LinkScope::Global);
 }
 
-Sections::~Sections()
-{
-}
+Sections::~Sections() {}
 
 App::DocumentObjectExecReturn *Sections::execute()
 {
@@ -61,21 +59,19 @@ App::DocumentObjectExecReturn *Sections::execute()
     if (edge_obj.size() == edge_sub.size()) {
         for (std::size_t index = 0; index < edge_obj.size(); index++) {
             // get the part object
-            App::DocumentObject* obj = edge_obj[index];
-            const std::string& sub = edge_sub[index];
+            App::DocumentObject *obj = edge_obj[index];
+            const std::string &sub = edge_sub[index];
             if (obj && obj->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId())) {
                 // get the sub-edge of the part's shape
-                const Part::TopoShape& shape = static_cast<Part::Feature*>(obj)->Shape.getShape();
+                const Part::TopoShape &shape = static_cast<Part::Feature *>(obj)->Shape.getShape();
                 TopoDS_Shape edge = shape.getSubShape(sub.c_str());
                 if (!edge.IsNull() && edge.ShapeType() == TopAbs_EDGE) {
                     BRepAdaptor_Curve curve_adapt(TopoDS::Edge(edge));
-                    const TopLoc_Location& loc = edge.Location();
-                    Handle(Geom_TrimmedCurve) hCurve = new Geom_TrimmedCurve(curve_adapt.Curve().Curve(),
-                                                                             curve_adapt.FirstParameter(),
-                                                                             curve_adapt.LastParameter());
-                    if (!loc.IsIdentity()) {
-                        hCurve->Transform(loc.Transformation());
-                    }
+                    const TopLoc_Location &loc = edge.Location();
+                    Handle(Geom_TrimmedCurve) hCurve = new Geom_TrimmedCurve(
+                        curve_adapt.Curve().Curve(), curve_adapt.FirstParameter(),
+                        curve_adapt.LastParameter());
+                    if (!loc.IsIdentity()) { hCurve->Transform(loc.Transformation()); }
                     curveSeq.Append(hCurve);
                 }
             }
@@ -92,7 +88,7 @@ App::DocumentObjectExecReturn *Sections::execute()
     if (aSurf.IsNull())
         return new App::DocumentObjectExecReturn("Failed to create surface from sections.");
 
-    BRepBuilderAPI_MakeFace mkFace(aSurf, Precision::Confusion() );
+    BRepBuilderAPI_MakeFace mkFace(aSurf, Precision::Confusion());
 
     Shape.setValue(mkFace.Face());
     return StdReturn;

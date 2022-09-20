@@ -42,14 +42,13 @@ using namespace std;
  *
  */
 //=============================================================================
-StdMeshers_QuadrangleParams::StdMeshers_QuadrangleParams(int hypId, int studyId,
-                                                         SMESH_Gen * gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_QuadrangleParams::StdMeshers_QuadrangleParams(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "QuadrangleParams";
-  _param_algo_dim = 2;
-  _triaVertexID = -1;
-  _quadType = QUAD_STANDARD;
+    _name = "QuadrangleParams";
+    _param_algo_dim = 2;
+    _triaVertexID = -1;
+    _quadType = QUAD_STANDARD;
 }
 
 //=============================================================================
@@ -57,8 +56,19 @@ StdMeshers_QuadrangleParams::StdMeshers_QuadrangleParams(int hypId, int studyId,
  *
  */
 //=============================================================================
-StdMeshers_QuadrangleParams::~StdMeshers_QuadrangleParams()
+StdMeshers_QuadrangleParams::~StdMeshers_QuadrangleParams() {}
+
+//=============================================================================
+/*!
+ *
+ */
+//=============================================================================
+void StdMeshers_QuadrangleParams::SetTriaVertex(int id)
 {
+    if (id != _triaVertexID) {
+        _triaVertexID = id;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -66,25 +76,12 @@ StdMeshers_QuadrangleParams::~StdMeshers_QuadrangleParams()
  *
  */
 //=============================================================================
-void StdMeshers_QuadrangleParams::SetTriaVertex (int id)
+void StdMeshers_QuadrangleParams::SetQuadType(StdMeshers_QuadType type)
 {
-  if (id != _triaVertexID) {
-    _triaVertexID = id;
-    NotifySubMeshesHypothesisModification();
-  }
-}
-
-//=============================================================================
-/*!
- *
- */
-//=============================================================================
-void StdMeshers_QuadrangleParams::SetQuadType (StdMeshers_QuadType type)
-{
-  if (type != _quadType) {
-    _quadType = type;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (type != _quadType) {
+        _quadType = type;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //================================================================================
@@ -93,21 +90,18 @@ void StdMeshers_QuadrangleParams::SetQuadType (StdMeshers_QuadType type)
  */
 //================================================================================
 
-void StdMeshers_QuadrangleParams::
-SetEnforcedNodes( const std::vector< TopoDS_Shape >& shapes,
-                  const std::vector< gp_Pnt >&       points )
+void StdMeshers_QuadrangleParams::SetEnforcedNodes(const std::vector<TopoDS_Shape> &shapes,
+                                                   const std::vector<gp_Pnt> &points)
 {
-  bool isChanged = ( shapes        != _enforcedVertices ||
-                     points.size() != _enforcedPoints.size() );
-  for ( size_t i = 0; i < points.size() && !isChanged; ++i )
-    isChanged = ( _enforcedPoints[ i ].SquareDistance( points[i] ) > 1e-100 );
-      
-  if ( isChanged )
-  {
-    _enforcedVertices = shapes;
-    _enforcedPoints   = points;
-    NotifySubMeshesHypothesisModification();
-  }
+    bool isChanged = (shapes != _enforcedVertices || points.size() != _enforcedPoints.size());
+    for (size_t i = 0; i < points.size() && !isChanged; ++i)
+        isChanged = (_enforcedPoints[i].SquareDistance(points[i]) > 1e-100);
+
+    if (isChanged) {
+        _enforcedVertices = shapes;
+        _enforcedPoints = points;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //================================================================================
@@ -116,12 +110,11 @@ SetEnforcedNodes( const std::vector< TopoDS_Shape >& shapes,
  */
 //================================================================================
 
-void StdMeshers_QuadrangleParams::
-GetEnforcedNodes( std::vector< TopoDS_Shape >& shapes,
-                  std::vector< gp_Pnt >&       points ) const
+void StdMeshers_QuadrangleParams::GetEnforcedNodes(std::vector<TopoDS_Shape> &shapes,
+                                                   std::vector<gp_Pnt> &points) const
 {
-  shapes = _enforcedVertices;
-  points = _enforcedPoints;
+    shapes = _enforcedVertices;
+    points = _enforcedPoints;
 }
 
 //=============================================================================
@@ -129,20 +122,18 @@ GetEnforcedNodes( std::vector< TopoDS_Shape >& shapes,
  *
  */
 //=============================================================================
-ostream & StdMeshers_QuadrangleParams::SaveTo(ostream & save)
+ostream &StdMeshers_QuadrangleParams::SaveTo(ostream &save)
 {
-  if (_objEntry.size() == 0)
-    save << _triaVertexID << " UNDEFINED " << int(_quadType);
-  else
-    save << _triaVertexID << " " << _objEntry << " " << int(_quadType);
+    if (_objEntry.size() == 0) save << _triaVertexID << " UNDEFINED " << int(_quadType);
+    else
+        save << _triaVertexID << " " << _objEntry << " " << int(_quadType);
 
-  save << " " << _enforcedPoints.size();
-  for ( size_t i = 0; i < _enforcedPoints.size(); ++i )
-    save << " " << _enforcedPoints[i].X()
-         << " " << _enforcedPoints[i].Y()
-         << " " << _enforcedPoints[i].Z();
+    save << " " << _enforcedPoints.size();
+    for (size_t i = 0; i < _enforcedPoints.size(); ++i)
+        save << " " << _enforcedPoints[i].X() << " " << _enforcedPoints[i].Y() << " "
+             << _enforcedPoints[i].Z();
 
-  return save;
+    return save;
 }
 
 //=============================================================================
@@ -150,39 +141,32 @@ ostream & StdMeshers_QuadrangleParams::SaveTo(ostream & save)
  *
  */
 //=============================================================================
-istream & StdMeshers_QuadrangleParams::LoadFrom(istream & load)
+istream &StdMeshers_QuadrangleParams::LoadFrom(istream &load)
 {
-  bool isOK = true;
-  isOK = (bool)(load >> _triaVertexID);
-  if (!isOK)
-    load.clear(ios::badbit | load.rdstate());
+    bool isOK = true;
+    isOK = (bool)(load >> _triaVertexID);
+    if (!isOK) load.clear(ios::badbit | load.rdstate());
 
-  isOK = (bool)(load >> _objEntry);
-  if (!isOK)
-    load.clear(ios::badbit | load.rdstate());
+    isOK = (bool)(load >> _objEntry);
+    if (!isOK) load.clear(ios::badbit | load.rdstate());
 
-  int type;
-  isOK = (bool)(load >> type);
-  if (isOK)
-    _quadType = StdMeshers_QuadType(type);
+    int type;
+    isOK = (bool)(load >> type);
+    if (isOK) _quadType = StdMeshers_QuadType(type);
 
-  // _enforcedVertices are loaded at StdMeshers_I level
-  // because GEOM objects are referred by study entry.
+    // _enforcedVertices are loaded at StdMeshers_I level
+    // because GEOM objects are referred by study entry.
 
-  int nbP = 0;
-  double x,y,z;
-  if ( load >> nbP && nbP > 0 )
-  {
-    _enforcedPoints.reserve( nbP );
-    while ( _enforcedPoints.size() < _enforcedPoints.capacity() )
-      if ( load >> x &&
-           load >> y &&
-           load >> z )
-        _enforcedPoints.push_back( gp_Pnt( x,y,z ));
-      else
-        break;
-  }
-  return load;
+    int nbP = 0;
+    double x, y, z;
+    if (load >> nbP && nbP > 0) {
+        _enforcedPoints.reserve(nbP);
+        while (_enforcedPoints.size() < _enforcedPoints.capacity())
+            if (load >> x && load >> y && load >> z) _enforcedPoints.push_back(gp_Pnt(x, y, z));
+            else
+                break;
+    }
+    return load;
 }
 
 //================================================================================
@@ -193,13 +177,12 @@ istream & StdMeshers_QuadrangleParams::LoadFrom(istream & load)
  * \retval bool - true if parameter values have been successfully defined
  */
 //================================================================================
-bool StdMeshers_QuadrangleParams::SetParametersByMesh(const SMESH_Mesh* theMesh,
-                                                      const TopoDS_Shape& theShape)
+bool StdMeshers_QuadrangleParams::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                      const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  return true;
+    return true;
 }
 
 //================================================================================
@@ -208,8 +191,8 @@ bool StdMeshers_QuadrangleParams::SetParametersByMesh(const SMESH_Mesh* theMesh,
  *  \retval bool - true if parameter values have been successfully defined
  */
 //================================================================================
-bool StdMeshers_QuadrangleParams::SetParametersByDefaults(const TDefaults&  dflts,
-                                                          const SMESH_Mesh* /*mesh*/)
+bool StdMeshers_QuadrangleParams::SetParametersByDefaults(const TDefaults &dflts,
+                                                          const SMESH_Mesh * /*mesh*/)
 {
-  return true;
+    return true;
 }

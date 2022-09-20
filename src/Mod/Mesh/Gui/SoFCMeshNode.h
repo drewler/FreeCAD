@@ -28,13 +28,16 @@
 #include <Inventor/fields/SoMFVec3f.h>
 #include <Inventor/fields/SoMFInt32.h>
 
-namespace Mesh {
+namespace Mesh
+{
 class MeshObject;
 }
 
-namespace MeshGui {
+namespace MeshGui
+{
 
-class MeshGuiExport SoFCMeshNode : public SoShape {
+class MeshGuiExport SoFCMeshNode: public SoShape
+{
     using inherited = SoShape;
 
     SO_NODE_HEADER(SoFCMeshNode);
@@ -42,28 +45,26 @@ class MeshGuiExport SoFCMeshNode : public SoShape {
 public:
     static void initClass();
     SoFCMeshNode();
-    void setMesh(const Mesh::MeshObject* mesh);
+    void setMesh(const Mesh::MeshObject *mesh);
 
-    virtual void write( SoWriteAction* action );
+    virtual void write(SoWriteAction *action);
     unsigned int MaximumTriangles;
 
 protected:
     virtual void GLRender(SoGLRenderAction *action);
     virtual void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center);
-    virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);
+    virtual void getPrimitiveCount(SoGetPrimitiveCountAction *action);
     virtual void generatePrimitives(SoAction *action);
-    virtual SoDetail * createTriangleDetail(SoRayPickAction * action,
-                                            const SoPrimitiveVertex * v1,
-                                            const SoPrimitiveVertex * v2,
-                                            const SoPrimitiveVertex * v3,
-                                            SoPickedPoint * pp);
+    virtual SoDetail *createTriangleDetail(SoRayPickAction *action, const SoPrimitiveVertex *v1,
+                                           const SoPrimitiveVertex *v2, const SoPrimitiveVertex *v3,
+                                           SoPickedPoint *pp);
 
-    virtual SbBool readInstance( SoInput* in, unsigned short  flags );
+    virtual SbBool readInstance(SoInput *in, unsigned short flags);
 
 private:
     // Force using the reference count mechanism.
     virtual ~SoFCMeshNode() {}
-    virtual void notify(SoNotList * list);
+    virtual void notify(SoNotList *list);
     // Draw faces
     void drawFaces(SbBool needNormals) const;
     void drawPoints(SbBool needNormals) const;
@@ -71,7 +72,7 @@ private:
     void createRoughModel(bool simplest);
 
 private:
-    const Mesh::MeshObject*  _mesh;
+    const Mesh::MeshObject *_mesh;
     unsigned int _ctPrimitives;
     SoMFVec3f point;
     SoMFInt32 coordIndex;
@@ -79,32 +80,33 @@ private:
 
 // ------------------------------------------------------------
 
-class MeshGuiExport SoFCMeshOpenEdge : public SoShape {
+class MeshGuiExport SoFCMeshOpenEdge: public SoShape
+{
     using inherited = SoShape;
 
     SO_NODE_HEADER(SoFCMeshOpenEdge);
-    
+
 public:
     static void initClass();
     SoFCMeshOpenEdge();
-    void setMesh(const Mesh::MeshObject* mesh);
+    void setMesh(const Mesh::MeshObject *mesh);
 
 protected:
     virtual void GLRender(SoGLRenderAction *action);
     virtual void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center);
-    virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);
+    virtual void getPrimitiveCount(SoGetPrimitiveCountAction *action);
     virtual void generatePrimitives(SoAction *action);
+
 private:
     // Force using the reference count mechanism.
     virtual ~SoFCMeshOpenEdge() {}
-    void drawLines() const ;
+    void drawLines() const;
 
 private:
-    const Mesh::MeshObject*  _mesh;
+    const Mesh::MeshObject *_mesh;
 };
 
 } // namespace MeshGui
 
 
 #endif // MESHGUI_SOFC_MESH_NODE_H
-

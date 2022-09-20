@@ -22,11 +22,11 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepBuilderAPI_Transform.hxx>
-# include <gp_Ax2.hxx>
-# include <gp_Dir.hxx>
-# include <gp_Pnt.hxx>
-# include <gp_Trsf.hxx>
+#include <BRepBuilderAPI_Transform.hxx>
+#include <gp_Ax2.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Trsf.hxx>
 #endif
 
 #include "FeatureMirroring.h"
@@ -38,23 +38,22 @@ PROPERTY_SOURCE(Part::Mirroring, Part::Feature)
 
 Mirroring::Mirroring()
 {
-    ADD_PROPERTY(Source,(nullptr));
-    ADD_PROPERTY_TYPE(Base,(Base::Vector3d()),"Plane",App::Prop_None,"The base point of the plane");
-    ADD_PROPERTY_TYPE(Normal,(Base::Vector3d(0,0,1)),"Plane",App::Prop_None,"The normal of the plane");
+    ADD_PROPERTY(Source, (nullptr));
+    ADD_PROPERTY_TYPE(Base, (Base::Vector3d()), "Plane", App::Prop_None,
+                      "The base point of the plane");
+    ADD_PROPERTY_TYPE(Normal, (Base::Vector3d(0, 0, 1)), "Plane", App::Prop_None,
+                      "The normal of the plane");
 }
 
 short Mirroring::mustExecute() const
 {
-    if (Source.isTouched())
-        return 1;
-    if (Base.isTouched())
-        return 1;
-    if (Normal.isTouched())
-        return 1;
+    if (Source.isTouched()) return 1;
+    if (Base.isTouched()) return 1;
+    if (Normal.isTouched()) return 1;
     return 0;
 }
 
-void Mirroring::onChanged(const App::Property* prop)
+void Mirroring::onChanged(const App::Property *prop)
 {
     if (!isRestoring()) {
         if (prop == &Base || prop == &Normal) {
@@ -69,7 +68,8 @@ void Mirroring::onChanged(const App::Property* prop)
     Part::Feature::onChanged(prop);
 }
 
-void Mirroring::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property *prop)
+void Mirroring::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                          App::Property *prop)
 {
     if (prop == &Base && strcmp(TypeName, "App::PropertyVector") == 0) {
         App::PropertyVector v;
@@ -92,17 +92,15 @@ void Mirroring::handleChangedPropertyType(Base::XMLReader &reader, const char *T
 
 App::DocumentObjectExecReturn *Mirroring::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No object linked");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No object linked");
     Base::Vector3d base = Base.getValue();
     Base::Vector3d norm = Normal.getValue();
 
     try {
-        const TopoDS_Shape& shape = Feature::getShape(link);
-        if (shape.IsNull())
-            Standard_Failure::Raise("Cannot mirroR empty shape");
-        gp_Ax2 ax2(gp_Pnt(base.x,base.y,base.z), gp_Dir(norm.x,norm.y,norm.z));
+        const TopoDS_Shape &shape = Feature::getShape(link);
+        if (shape.IsNull()) Standard_Failure::Raise("Cannot mirroR empty shape");
+        gp_Ax2 ax2(gp_Pnt(base.x, base.y, base.z), gp_Dir(norm.x, norm.y, norm.z));
         gp_Trsf mat;
         mat.SetMirror(ax2);
         TopLoc_Location loc = shape.Location();
@@ -112,7 +110,7 @@ App::DocumentObjectExecReturn *Mirroring::execute()
         this->Shape.setValue(mkTrf.Shape());
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
 }

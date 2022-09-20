@@ -46,12 +46,9 @@
 using namespace TechDrawGui;
 using namespace TechDraw;
 
-QGIArrow::QGIArrow() :
-    m_fill(Qt::SolidPattern),
-    m_size(getPrefArrowSize()),
-    m_style(0),
-    m_dirMode(false),
-    m_dir(Base::Vector3d(1.0, 0.0, 0.0))
+QGIArrow::QGIArrow()
+    : m_fill(Qt::SolidPattern), m_size(getPrefArrowSize()), m_style(0), m_dirMode(false),
+      m_dir(Base::Vector3d(1.0, 0.0, 0.0))
 {
     setFlipped(false);
     setFillStyle(Qt::SolidPattern);
@@ -65,60 +62,64 @@ QGIArrow::QGIArrow() :
     setFlag(QGraphicsItem::ItemIsMovable, false);
 }
 
-void QGIArrow::draw() {
+void QGIArrow::draw()
+{
     QPainterPath path;
     if (m_style == ArrowType::FILLED_ARROW) {
-        if (m_dirMode) {
-            path = makeFilledTriangle(getDirection(), m_size, m_size/6.0);
-        } else {
-            path = makeFilledTriangle(m_size, m_size/6.0, isFlipped());     //"arrow l/w sb 3/1" ??
+        if (m_dirMode) { path = makeFilledTriangle(getDirection(), m_size, m_size / 6.0); }
+        else {
+            path = makeFilledTriangle(m_size, m_size / 6.0, isFlipped()); //"arrow l/w sb 3/1" ??
         }
-    } else if (m_style == ArrowType::OPEN_ARROW) {
+    }
+    else if (m_style == ArrowType::OPEN_ARROW) {
         if (m_dirMode) {
-            path = makeOpenArrow(getDirection(), m_size, m_size/3.0);          //broad arrow?
-        } else {
-            path = makeOpenArrow(m_size, m_size/3.0, isFlipped());
+            path = makeOpenArrow(getDirection(), m_size, m_size / 3.0); //broad arrow?
         }
-    } else if (m_style == ArrowType::TICK) {
-        if (m_dirMode) {
-            path = makeHashMark(getDirection(), m_size/2.0, m_size/2.0);       //big enough?
-        } else {
-            path = makeHashMark(m_size/2.0, m_size/2.0, isFlipped());       //big enough?
+        else {
+            path = makeOpenArrow(m_size, m_size / 3.0, isFlipped());
         }
-    } else if (m_style == ArrowType::DOT) {
-        path = makeDot(m_size/2.0, m_size/2.0, isFlipped());
-    } else if (m_style == ArrowType::OPEN_CIRCLE) {
-        path = makeOpenDot(m_size/2.0, m_size/2.0, isFlipped());
-    } else if (m_style == ArrowType::FORK) {
+    }
+    else if (m_style == ArrowType::TICK) {
         if (m_dirMode) {
-            path = makeForkArrow(getDirection(), m_size/2.0, m_size/2.0);       //big enough?
-        } else {
-            path = makeForkArrow(m_size/2.0, m_size/2.0, isFlipped());       //big enough?
+            path = makeHashMark(getDirection(), m_size / 2.0, m_size / 2.0); //big enough?
         }
-    } else if (m_style == ArrowType::FILLED_TRIANGLE){
+        else {
+            path = makeHashMark(m_size / 2.0, m_size / 2.0, isFlipped()); //big enough?
+        }
+    }
+    else if (m_style == ArrowType::DOT) {
+        path = makeDot(m_size / 2.0, m_size / 2.0, isFlipped());
+    }
+    else if (m_style == ArrowType::OPEN_CIRCLE) {
+        path = makeOpenDot(m_size / 2.0, m_size / 2.0, isFlipped());
+    }
+    else if (m_style == ArrowType::FORK) {
         if (m_dirMode) {
-            path = makePyramid(getDirection(), m_size);
-        } else {
+            path = makeForkArrow(getDirection(), m_size / 2.0, m_size / 2.0); //big enough?
+        }
+        else {
+            path = makeForkArrow(m_size / 2.0, m_size / 2.0, isFlipped()); //big enough?
+        }
+    }
+    else if (m_style == ArrowType::FILLED_TRIANGLE) {
+        if (m_dirMode) { path = makePyramid(getDirection(), m_size); }
+        else {
             path = makePyramid(m_size, isFlipped());
         }
-    }else {
-        path = makeFilledTriangle(m_size, m_size/6.0, isFlipped());     //sb a question mark or ???
+    }
+    else {
+        path = makeFilledTriangle(m_size, m_size / 6.0, isFlipped()); //sb a question mark or ???
     }
     setPath(path);
 }
 
-void QGIArrow::setSize(double s)
-{
-    m_size = s;
-}
+void QGIArrow::setSize(double s) { m_size = s; }
 
 
 QPainterPath QGIArrow::makeFilledTriangle(double length, double width, bool flipped)
 {
-//(0, 0) is tip of arrow
-    if (!flipped) {
-        length *= -1;
-    }
+    //(0, 0) is tip of arrow
+    if (!flipped) { length *= -1; }
 
     QPainterPath path;
     path.moveTo(QPointF(0., 0.));
@@ -131,8 +132,8 @@ QPainterPath QGIArrow::makeFilledTriangle(double length, double width, bool flip
 
 QPainterPath QGIArrow::makeFilledTriangle(Base::Vector3d dir, double length, double width)
 {
-//(0, 0) is tip of arrow
-// dir is direction arrow points
+    //(0, 0) is tip of arrow
+    // dir is direction arrow points
     Base::Vector3d negDir = -dir;
     negDir.Normalize();
     Base::Vector3d perp(-negDir.y, negDir.x, 0.0);
@@ -150,10 +151,8 @@ QPainterPath QGIArrow::makeFilledTriangle(Base::Vector3d dir, double length, dou
 
 QPainterPath QGIArrow::makeOpenArrow(double length, double width, bool flipped)
 {
-//(0, 0) is tip of arrow
-    if (!flipped) {
-        length *= -1;
-    }
+    //(0, 0) is tip of arrow
+    if (!flipped) { length *= -1; }
 
     QPainterPath path;
     path.moveTo(QPointF(Rez::guiX(length), Rez::guiX(-width)));
@@ -165,7 +164,7 @@ QPainterPath QGIArrow::makeOpenArrow(double length, double width, bool flipped)
 
 QPainterPath QGIArrow::makeOpenArrow(Base::Vector3d dir, double length, double width)
 {
-//(0, 0) is tip of arrow
+    //(0, 0) is tip of arrow
     Base::Vector3d negDir = -dir;
     negDir.Normalize();
     Base::Vector3d perp(-negDir.y, negDir.x, 0.0);
@@ -181,10 +180,10 @@ QPainterPath QGIArrow::makeOpenArrow(Base::Vector3d dir, double length, double w
 }
 
 
-QPainterPath QGIArrow::makeHashMark(double length, double width, bool flipped)   //Arch tick
+QPainterPath QGIArrow::makeHashMark(double length, double width, bool flipped) //Arch tick
 {
     double adjWidth = 1.0;
-//(0, 0) is tip of arrow
+    //(0, 0) is tip of arrow
     if (!flipped) {
         length *= -1;
         adjWidth *= -1;
@@ -196,7 +195,7 @@ QPainterPath QGIArrow::makeHashMark(double length, double width, bool flipped)  
     return path;
 }
 
-QPainterPath QGIArrow::makeHashMark(Base::Vector3d dir, double length, double width)   //Arch tick
+QPainterPath QGIArrow::makeHashMark(Base::Vector3d dir, double length, double width) //Arch tick
 {
     double adjWidth = 1.0;
     Base::Vector3d negDir = -dir;
@@ -214,12 +213,13 @@ QPainterPath QGIArrow::makeHashMark(Base::Vector3d dir, double length, double wi
     return path;
 }
 
-QPainterPath QGIArrow::makeDot(double length, double width, bool flipped)   //closed dot
+QPainterPath QGIArrow::makeDot(double length, double width, bool flipped) //closed dot
 {
     Q_UNUSED(flipped);
     QPainterPath path;
-    path.moveTo(0.0, 0.0);                                  ////(0, 0) is Center of dot
-    path.addEllipse(Rez::guiX(-length/2.0), Rez::guiX(-width/2.0), Rez::guiX(length), Rez::guiX(width));
+    path.moveTo(0.0, 0.0); ////(0, 0) is Center of dot
+    path.addEllipse(Rez::guiX(-length / 2.0), Rez::guiX(-width / 2.0), Rez::guiX(length),
+                    Rez::guiX(width));
     setFillStyle(Qt::SolidPattern);
     return path;
 }
@@ -228,18 +228,17 @@ QPainterPath QGIArrow::makeOpenDot(double length, double width, bool flipped)
 {
     Q_UNUSED(flipped);
     QPainterPath path;
-    path.moveTo(0.0, 0.0);                                  ////(0, 0) is Center of dot
-    path.addEllipse(Rez::guiX(-length/2.0), Rez::guiX(-width/2.0), Rez::guiX(length), Rez::guiX(width));
+    path.moveTo(0.0, 0.0); ////(0, 0) is Center of dot
+    path.addEllipse(Rez::guiX(-length / 2.0), Rez::guiX(-width / 2.0), Rez::guiX(length),
+                    Rez::guiX(width));
     setFillStyle(Qt::NoBrush);
     return path;
 }
 
 QPainterPath QGIArrow::makeForkArrow(double length, double width, bool flipped)
 {
-//(0, 0) is tip of arrow
-    if (flipped) {
-        length *= -1;
-    }
+    //(0, 0) is tip of arrow
+    if (flipped) { length *= -1; }
 
     QPainterPath path;
     path.moveTo(QPointF(Rez::guiX(length), Rez::guiX(-width)));
@@ -251,7 +250,7 @@ QPainterPath QGIArrow::makeForkArrow(double length, double width, bool flipped)
 
 QPainterPath QGIArrow::makeForkArrow(Base::Vector3d dir, double length, double width)
 {
-//(0, 0) is tip of arrow
+    //(0, 0) is tip of arrow
     Base::Vector3d negDir = -dir;
     Base::Vector3d normDir = dir;
     negDir.Normalize();
@@ -270,7 +269,7 @@ QPainterPath QGIArrow::makeForkArrow(Base::Vector3d dir, double length, double w
 
 QPainterPath QGIArrow::makePyramid(double length, bool flipped)
 {
-    double half_width = length/2.;
+    double half_width = length / 2.;
     double top = -length;
     double base = 0.;
     // [(0, -width), (0, width)] is base of arrow
@@ -310,15 +309,9 @@ QPainterPath QGIArrow::makePyramid(Base::Vector3d dir, double length)
     return path;
 }
 
-int QGIArrow::getPrefArrowStyle()
-{
-    return PreferencesGui::dimArrowStyle();
-}
+int QGIArrow::getPrefArrowStyle() { return PreferencesGui::dimArrowStyle(); }
 
-double QGIArrow::getPrefArrowSize()
-{
-    return PreferencesGui::dimArrowSize();
-}
+double QGIArrow::getPrefArrowSize() { return PreferencesGui::dimArrowSize(); }
 
 double QGIArrow::getOverlapAdjust(int style, double size)
 {
@@ -326,35 +319,21 @@ double QGIArrow::getOverlapAdjust(int style, double size)
     // ex for fork and tick, adjustment sb zero. 0.25 is good for filled triangle, 0.1 for open arrow.
     // open circle sb = radius
     // NOTE: this may need to be adjusted to account for line thickness too.
-//    Base::Console().Message("QGIA::getOverlapAdjust(%d, %.3f) \n", style, size);
+    //    Base::Console().Message("QGIA::getOverlapAdjust(%d, %.3f) \n", style, size);
     double result = 1.0;
-    switch(style) {
-        case FILLED_ARROW:
-            result = 0.50 * size;
-            break;
-        case OPEN_ARROW:
-            result = 0.10 * size;
-            break;
-        case TICK:
-            result = 0.0;
-            break;
-        case DOT:
-            result = 0.0;
-            break;
+    switch (style) {
+        case FILLED_ARROW: result = 0.50 * size; break;
+        case OPEN_ARROW: result = 0.10 * size; break;
+        case TICK: result = 0.0; break;
+        case DOT: result = 0.0; break;
         case OPEN_CIRCLE:
-                        //diameter is size/2 so radius is size/4
+            //diameter is size/2 so radius is size/4
             result = 0.25 * size;
             break;
-        case FORK:
-            result = 0.0;
-            break;
-        case FILLED_TRIANGLE:
-            result = size;
-            break;
-        case NONE:
-            result = 0.0;
-            break;
-        default:        //unknown
+        case FORK: result = 0.0; break;
+        case FILLED_TRIANGLE: result = size; break;
+        case NONE: result = 0.0; break;
+        default: //unknown
             result = 1.0;
     }
     return result;

@@ -31,21 +31,9 @@
 using namespace Sketcher;
 
 // returns a string which represents the object e.g. when printed in python
-std::string SketchObjectSFPy::representation() const
-{
-    return "<SketchObjectSF object>";
-}
+std::string SketchObjectSFPy::representation() const { return "<SketchObjectSF object>"; }
 
 
+PyObject *SketchObjectSFPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-PyObject *SketchObjectSFPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
-
-int SketchObjectSFPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0; 
-}
-
-
+int SketchObjectSFPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

@@ -40,13 +40,14 @@
 void CreateSurfaceCommands();
 
 
-namespace SurfaceGui {
-class Module : public Py::ExtensionModule<Module>
+namespace SurfaceGui
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("SurfaceGui")
     {
-        initialize("This module is the SurfaceGui module.");// register with Python
+        initialize("This module is the SurfaceGui module."); // register with Python
     }
 
     ~Module() override {}
@@ -54,11 +55,9 @@ public:
 private:
 };
 
-PyObject *initModule() {
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
-}// namespace SurfaceGui
+} // namespace SurfaceGui
 
 /* Python entry */
 PyMOD_INIT_FUNC(SurfaceGui)
@@ -76,10 +75,10 @@ PyMOD_INIT_FUNC(SurfaceGui)
 
     SurfaceGui::Workbench::init();
     SurfaceGui::ViewProviderGeomFillSurface ::init();
-    SurfaceGui::ViewProviderFilling         ::init();
-    SurfaceGui::ViewProviderSections        ::init();
-    SurfaceGui::ViewProviderExtend          ::init();
-    SurfaceGui::ViewProviderBlendCurve      ::init();
+    SurfaceGui::ViewProviderFilling ::init();
+    SurfaceGui::ViewProviderSections ::init();
+    SurfaceGui::ViewProviderExtend ::init();
+    SurfaceGui::ViewProviderBlendCurve ::init();
     // SurfaceGui::ViewProviderCut::init();
 
     PyObject *mod = SurfaceGui::initModule();

@@ -32,9 +32,10 @@
 
 #include "ViewProviderDrawingView.h"
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderDimension : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderDimension: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderDimension);
 
@@ -44,54 +45,54 @@ public:
     /// destructor
     ~ViewProviderDimension() override;
 
-    App::PropertyFont   Font;
+    App::PropertyFont Font;
     App::PropertyLength Fontsize;
     App::PropertyLength LineWidth;
-    App::PropertyColor  Color;
+    App::PropertyColor Color;
 
-    static const int STD_STYLE_ISO_ORIENTED     = 0;
-    static const int STD_STYLE_ISO_REFERENCING  = 1;
-    static const int STD_STYLE_ASME_INLINED     = 2;
+    static const int STD_STYLE_ISO_ORIENTED = 0;
+    static const int STD_STYLE_ISO_REFERENCING = 1;
+    static const int STD_STYLE_ASME_INLINED = 2;
     static const int STD_STYLE_ASME_REFERENCING = 3;
     App::PropertyEnumeration StandardAndStyle;
 
-    static const int REND_EXTENT_NONE     = 0;
-    static const int REND_EXTENT_MINIMAL  = 1;
+    static const int REND_EXTENT_NONE = 0;
+    static const int REND_EXTENT_MINIMAL = 1;
     static const int REND_EXTENT_CONFINED = 2;
-    static const int REND_EXTENT_REDUCED  = 3;
-    static const int REND_EXTENT_NORMAL   = 4;
+    static const int REND_EXTENT_REDUCED = 3;
+    static const int REND_EXTENT_NORMAL = 4;
     static const int REND_EXTENT_EXPANDED = 5;
     App::PropertyEnumeration RenderingExtent;
 
-    App::PropertyBool        FlipArrowheads;
+    App::PropertyBool FlipArrowheads;
 
     App::PropertyFloat GapFactorISO;
     App::PropertyFloat GapFactorASME;
 
     void attach(App::DocumentObject *) override;
-    bool useNewSelectionModel() const override {return false;}
-    void updateData(const App::Property*) override;
-    void onChanged(const App::Property* p) override;
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    bool useNewSelectionModel() const override { return false; }
+    void updateData(const App::Property *) override;
+    void onChanged(const App::Property *p) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
     bool setEdit(int ModNum) override;
     bool doubleClicked() override;
 
-    TechDraw::DrawViewDimension* getViewObject() const override;
+    TechDraw::DrawViewDimension *getViewObject() const override;
 
     App::Color prefColor() const;
     std::string prefFont() const;
     double prefFontSize() const;
     double prefWeight() const;
     int prefStandardAndStyle() const;
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
 
 protected:
-    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
 private:
     static const char *StandardAndStyleEnums[];
     static const char *RenderingExtentEnums[];
-
 };
 
 } // namespace TechDrawGui

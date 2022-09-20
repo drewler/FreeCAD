@@ -42,7 +42,7 @@ SbBool SoGestureEvent::isSoGestureEvent(const SoEvent *ev) const
 
 SO_EVENT_SOURCE(SoGesturePanEvent);
 
-SoGesturePanEvent::SoGesturePanEvent(QPanGesture* qpan, QWidget *widget)
+SoGesturePanEvent::SoGesturePanEvent(QPanGesture *qpan, QWidget *widget)
 {
     Q_UNUSED(widget);
     totalOffset = SbVec2f(qpan->offset().x(), -qpan->offset().y());
@@ -65,28 +65,30 @@ SbBool SoGesturePanEvent::isSoGesturePanEvent(const SoEvent *ev) const
 
 SO_EVENT_SOURCE(SoGesturePinchEvent);
 
-SoGesturePinchEvent::SoGesturePinchEvent(QPinchGesture* qpinch, QWidget *widget)
+SoGesturePinchEvent::SoGesturePinchEvent(QPinchGesture *qpinch, QWidget *widget)
 {
     int h = widget->height();
-    QPointF widgetCorner = QPointF(widget->mapToGlobal(QPoint(0,0)));
-    qreal scaleToWidget = (widget->mapFromGlobal(QPoint(800,800))-widget->mapFromGlobal(QPoint(0,0))).x()/800.0;
-    QPointF pnt;//temporary
+    QPointF widgetCorner = QPointF(widget->mapToGlobal(QPoint(0, 0)));
+    qreal scaleToWidget =
+        (widget->mapFromGlobal(QPoint(800, 800)) - widget->mapFromGlobal(QPoint(0, 0))).x() / 800.0;
+    QPointF pnt; //temporary
     pnt = qpinch->startCenterPoint();
-    pnt = (pnt-widgetCorner)*scaleToWidget;//translate screen coord. into widget coord.
+    pnt = (pnt - widgetCorner) * scaleToWidget; //translate screen coord. into widget coord.
     startCenter = SbVec2f(pnt.x(), h - pnt.y());
 
     pnt = qpinch->centerPoint();
-    pnt = (pnt-widgetCorner)*scaleToWidget;
+    pnt = (pnt - widgetCorner) * scaleToWidget;
     curCenter = SbVec2f(pnt.x(), h - pnt.y());
 
     pnt = qpinch->lastCenterPoint();
-    pnt = (pnt-widgetCorner)*scaleToWidget;
+    pnt = (pnt - widgetCorner) * scaleToWidget;
     deltaCenter = curCenter - SbVec2f(pnt.x(), h - pnt.y());
 
     deltaZoom = qpinch->scaleFactor();
     totalZoom = qpinch->totalScaleFactor();
 
-    deltaAngle = -unbranchAngle((qpinch->rotationAngle()-qpinch->lastRotationAngle()) / 180.0 * M_PI);
+    deltaAngle =
+        -unbranchAngle((qpinch->rotationAngle() - qpinch->lastRotationAngle()) / 180.0 * M_PI);
     totalAngle = -qpinch->totalRotationAngle() / 180 * M_PI;
 
     state = SbGestureState(qpinch->state());
@@ -123,27 +125,15 @@ SoGestureSwipeEvent::SoGestureSwipeEvent(QSwipeGesture *qwsipe, QWidget *widget)
 {
     Q_UNUSED(widget);
     angle = qwsipe->swipeAngle();
-    switch (qwsipe->verticalDirection()){
-    case QSwipeGesture::Up :
-        vertDir = +1;
-        break;
-    case QSwipeGesture::Down :
-        vertDir = -1;
-        break;
-    default:
-        vertDir = 0;
-        break;
+    switch (qwsipe->verticalDirection()) {
+        case QSwipeGesture::Up: vertDir = +1; break;
+        case QSwipeGesture::Down: vertDir = -1; break;
+        default: vertDir = 0; break;
     }
-    switch (qwsipe->horizontalDirection()){
-    case QSwipeGesture::Right :
-        horzDir = +1;
-        break;
-    case QSwipeGesture::Left :
-        horzDir = -1;
-        break;
-    default:
-        horzDir = 0;
-        break;
+    switch (qwsipe->horizontalDirection()) {
+        case QSwipeGesture::Right: horzDir = +1; break;
+        case QSwipeGesture::Left: horzDir = -1; break;
+        default: horzDir = 0; break;
     }
 
     state = SbGestureState(qwsipe->state());
@@ -163,41 +153,41 @@ SbBool SoGestureSwipeEvent::isSoGestureSwipeEvent(const SoEvent *ev) const
 
 //----------------------------GesturesDevice-------------------------------
 
-GesturesDevice::GesturesDevice(QWidget* widget)
+GesturesDevice::GesturesDevice(QWidget *widget)
 {
-    if (SoGestureEvent::getClassTypeId().isBad()){
+    if (SoGestureEvent::getClassTypeId().isBad()) {
         SoGestureEvent::initClass();
         SoGesturePanEvent::initClass();
         SoGesturePinchEvent::initClass();
         SoGestureSwipeEvent::initClass();
     }
-    if (! widget)
-        throw Base::ValueError("Can't create a gestures quarter input device without widget (null pointer was passed).");
+    if (!widget)
+        throw Base::ValueError("Can't create a gestures quarter input device without widget (null "
+                               "pointer was passed).");
     this->widget = widget;
 }
 
-const SoEvent* GesturesDevice::translateEvent(QEvent* event)
+const SoEvent *GesturesDevice::translateEvent(QEvent *event)
 {
-    if (event->type() == QEvent::Gesture
-            || event->type() == QEvent::GestureOverride) {
-        auto gevent = static_cast<QGestureEvent*>(event);
+    if (event->type() == QEvent::Gesture || event->type() == QEvent::GestureOverride) {
+        auto gevent = static_cast<QGestureEvent *>(event);
 
-        auto zg = static_cast<QPinchGesture*>(gevent->gesture(Qt::PinchGesture));
-        if(zg){
-            gevent->setAccepted(Qt::PinchGesture,true);//prefer it over pan
-            return new SoGesturePinchEvent(zg,this->widget);
+        auto zg = static_cast<QPinchGesture *>(gevent->gesture(Qt::PinchGesture));
+        if (zg) {
+            gevent->setAccepted(Qt::PinchGesture, true); //prefer it over pan
+            return new SoGesturePinchEvent(zg, this->widget);
         }
 
-        auto pg = static_cast<QPanGesture*>(gevent->gesture(Qt::PanGesture));
-        if(pg){
-            gevent->setAccepted(Qt::PanGesture,true);
-            return new SoGesturePanEvent(pg,this->widget);
+        auto pg = static_cast<QPanGesture *>(gevent->gesture(Qt::PanGesture));
+        if (pg) {
+            gevent->setAccepted(Qt::PanGesture, true);
+            return new SoGesturePanEvent(pg, this->widget);
         }
 
-        auto sg = static_cast<QSwipeGesture*>(gevent->gesture(Qt::SwipeGesture));
-        if(sg){
-            gevent->setAccepted(Qt::SwipeGesture,true);
-            return new SoGesturePanEvent(pg,this->widget);
+        auto sg = static_cast<QSwipeGesture *>(gevent->gesture(Qt::SwipeGesture));
+        if (sg) {
+            gevent->setAccepted(Qt::SwipeGesture, true);
+            return new SoGesturePanEvent(pg, this->widget);
         }
     }
     return nullptr;

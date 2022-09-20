@@ -23,7 +23,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QPushButton>
+#include <QPushButton>
 #endif
 
 #include "DlgSettingsViewColor.h"
@@ -38,14 +38,14 @@ using namespace Gui::Dialog;
  *  Constructs a DlgSettingsViewColor which is a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'
  */
-DlgSettingsViewColor::DlgSettingsViewColor(QWidget* parent)
-    : PreferencePage(parent)
-    , ui(new Ui_DlgSettingsViewColor)
+DlgSettingsViewColor::DlgSettingsViewColor(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsViewColor)
 {
     ui->setupUi(this);
     ui->HighlightColor->setEnabled(ui->checkBoxPreselection->isChecked());
     ui->SelectionColor->setEnabled(ui->checkBoxSelection->isChecked());
-    connect(ui->SwitchGradientColors, &QPushButton::pressed, this, &DlgSettingsViewColor::onSwitchGradientColorsPressed);
+    connect(ui->SwitchGradientColors, &QPushButton::pressed, this,
+            &DlgSettingsViewColor::onSwitchGradientColorsPressed);
 }
 
 /**
@@ -95,9 +95,7 @@ void DlgSettingsViewColor::loadSettings()
  */
 void DlgSettingsViewColor::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }
@@ -111,4 +109,3 @@ void DlgSettingsViewColor::onSwitchGradientColorsPressed()
 }
 
 #include "moc_DlgSettingsViewColor.cpp"
-

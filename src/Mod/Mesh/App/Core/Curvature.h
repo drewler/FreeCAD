@@ -27,14 +27,14 @@
 #include <Base/Vector3D.h>
 #include "Definitions.h"
 
-namespace MeshCore {
+namespace MeshCore
+{
 
 class MeshKernel;
 class MeshRefPointToFacets;
 
 /** Curvature information. */
-struct MeshExport CurvatureInfo
-{
+struct MeshExport CurvatureInfo {
     float fMaxCurvature, fMinCurvature;
     Base::Vector3f cMaxCurvDir, cMinCurvDir;
 };
@@ -42,12 +42,13 @@ struct MeshExport CurvatureInfo
 class MeshExport FacetCurvature
 {
 public:
-    FacetCurvature(const MeshKernel& kernel, const MeshRefPointToFacets& search, float, unsigned long);
+    FacetCurvature(const MeshKernel &kernel, const MeshRefPointToFacets &search, float,
+                   unsigned long);
     CurvatureInfo Compute(FacetIndex index) const;
 
 private:
-    const MeshKernel& myKernel;
-    const MeshRefPointToFacets& mySearch;
+    const MeshKernel &myKernel;
+    const MeshRefPointToFacets &mySearch;
     unsigned long myMinPoints;
     float myRadius;
 };
@@ -55,22 +56,22 @@ private:
 class MeshExport MeshCurvature
 {
 public:
-    explicit MeshCurvature(const MeshKernel& kernel);
-    MeshCurvature(const MeshKernel& kernel, const std::vector<FacetIndex>& segm);
+    explicit MeshCurvature(const MeshKernel &kernel);
+    MeshCurvature(const MeshKernel &kernel, const std::vector<FacetIndex> &segm);
     float GetRadius() const { return myRadius; }
     void SetRadius(float r) { myRadius = r; }
     void ComputePerFace(bool parallel);
     void ComputePerVertex();
-    const std::vector<CurvatureInfo>& GetCurvature() const { return myCurvature; }
+    const std::vector<CurvatureInfo> &GetCurvature() const { return myCurvature; }
 
 private:
-    const MeshKernel& myKernel;
+    const MeshKernel &myKernel;
     unsigned long myMinPoints;
     float myRadius;
     std::vector<FacetIndex> mySegment;
     std::vector<CurvatureInfo> myCurvature;
 };
 
-} // MeshCore
+} // namespace MeshCore
 
 #endif // MESHCORE_CURVATURE_H

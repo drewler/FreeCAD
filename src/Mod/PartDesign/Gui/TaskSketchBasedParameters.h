@@ -31,29 +31,31 @@
 #include "TaskFeatureParameters.h"
 #include "EnumFlags.h"
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 
 /// Convenience class to collect common methods for all SketchBased features
-class TaskSketchBasedParameters : public PartDesignGui::TaskFeatureParameters,
-                                  public Gui::SelectionObserver
+class TaskSketchBasedParameters: public PartDesignGui::TaskFeatureParameters,
+                                 public Gui::SelectionObserver
 {
     Q_OBJECT
 
 public:
-    TaskSketchBasedParameters(PartDesignGui::ViewProvider* vp, QWidget *parent,
-                              const std::string& pixmapname, const QString& parname);
+    TaskSketchBasedParameters(PartDesignGui::ViewProvider *vp, QWidget *parent,
+                              const std::string &pixmapname, const QString &parname);
     ~TaskSketchBasedParameters() override;
 
 protected:
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override =0;
-    const QString onAddSelection(const Gui::SelectionChanges& msg);
-    virtual void startReferenceSelection(App::DocumentObject* profile, App::DocumentObject* base);
-    virtual void finishReferenceSelection(App::DocumentObject* profile, App::DocumentObject* base);
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override = 0;
+    const QString onAddSelection(const Gui::SelectionChanges &msg);
+    virtual void startReferenceSelection(App::DocumentObject *profile, App::DocumentObject *base);
+    virtual void finishReferenceSelection(App::DocumentObject *profile, App::DocumentObject *base);
     /*!
      * \brief onSelectReference
      * Start reference selection mode to allow to select objects of the type defined
@@ -62,19 +64,19 @@ protected:
      */
     void onSelectReference(AllowSelectionFlags);
     void exitSelectionMode();
-    QVariant setUpToFace(const QString& text);
+    QVariant setUpToFace(const QString &text);
     /// Try to find the name of a feature with the given label.
     /// For faster access a suggested name can be tested, first.
-    QVariant objectNameByLabel(const QString& label, const QVariant& suggest) const;
+    QVariant objectNameByLabel(const QString &label, const QVariant &suggest) const;
 
-    QString getFaceReference(const QString& obj, const QString& sub) const;
+    QString getFaceReference(const QString &obj, const QString &sub) const;
     /// Create a label for the 2D feature: the objects name if it's already 2D,
     /// or the subelement's name if the object is a solid.
-    QString make2DLabel(const App::DocumentObject* section,
-                        const std::vector<std::string>& subValues);
+    QString make2DLabel(const App::DocumentObject *section,
+                        const std::vector<std::string> &subValues);
 };
 
-class TaskDlgSketchBasedParameters : public PartDesignGui::TaskDlgFeatureParameters
+class TaskDlgSketchBasedParameters: public PartDesignGui::TaskDlgFeatureParameters
 {
     Q_OBJECT
 

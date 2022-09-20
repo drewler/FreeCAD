@@ -29,15 +29,17 @@
 
 class Ui_TaskSketcherSolverAdvanced;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace SketcherGui { 
+namespace SketcherGui
+{
 
 class ViewProviderSketch;
 
-class TaskSketcherSolverAdvanced : public Gui::TaskView::TaskBox
+class TaskSketcherSolverAdvanced: public Gui::TaskView::TaskBox
 {
     Q_OBJECT
 
@@ -46,10 +48,10 @@ public:
     ~TaskSketcherSolverAdvanced() override;
 
 private Q_SLOTS:
-    void on_comboBoxDefaultSolver_currentIndexChanged(int index); 
-    void on_comboBoxDogLegGaussStep_currentIndexChanged(int index);    
+    void on_comboBoxDefaultSolver_currentIndexChanged(int index);
+    void on_comboBoxDogLegGaussStep_currentIndexChanged(int index);
     void on_spinBoxMaxIter_valueChanged(int i);
-    void on_checkBoxSketchSizeMultiplier_stateChanged(int state);    
+    void on_checkBoxSketchSizeMultiplier_stateChanged(int state);
     void on_lineEditConvergence_editingFinished();
     void on_comboBoxQRMethod_currentIndexChanged(int index);
     void on_lineEditQRPivotThreshold_editingFinished();
@@ -71,11 +73,12 @@ protected:
     void updateDefaultMethodParameters();
     void updateRedundantMethodParameters();
     void updateSketchObject();
+
 protected:
     ViewProviderSketch *sketchView;
 
 private:
-    QWidget* proxy;
+    QWidget *proxy;
     std::unique_ptr<Ui_TaskSketcherSolverAdvanced> ui;
 };
 

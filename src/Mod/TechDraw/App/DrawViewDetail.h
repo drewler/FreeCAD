@@ -49,7 +49,7 @@ namespace TechDraw
 {
 
 
-class TechDrawExport DrawViewDetail : public DrawViewPart
+class TechDrawExport DrawViewDetail: public DrawViewPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::DrawViewDetail);
 
@@ -58,37 +58,30 @@ public:
     DrawViewDetail();
     ~DrawViewDetail() override;
 
-    App::PropertyLink   BaseView;
+    App::PropertyLink BaseView;
     App::PropertyVector AnchorPoint;
-    App::PropertyFloat  Radius;
+    App::PropertyFloat Radius;
     App::PropertyString Reference;
 
     short mustExecute() const override;
     App::DocumentObjectExecReturn *execute() override;
-    void onChanged(const App::Property* prop) override;
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderViewPart";
-    }
+    void onChanged(const App::Property *prop) override;
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderViewPart"; }
     void unsetupObject() override;
 
 
-    void detailExec(TopoDS_Shape& s,
-                    DrawViewPart* baseView,
-                    DrawViewSection* sectionAlias);
-    void makeDetailShape(TopoDS_Shape& shape,
-                         DrawViewPart* dvp,
-                         DrawViewSection* dvs);
+    void detailExec(TopoDS_Shape &s, DrawViewPart *baseView, DrawViewSection *sectionAlias);
+    void makeDetailShape(TopoDS_Shape &shape, DrawViewPart *dvp, DrawViewSection *dvs);
     void postHlrTasks(void) override;
     void waitingForDetail(bool s) { m_waitingForDetail = s; }
     bool waitingForDetail(void) const { return m_waitingForDetail; }
     bool waitingForResult() const override;
 
     double getFudgeRadius(void);
-    TopoDS_Shape projectEdgesOntoFace(TopoDS_Shape& edgeShape,
-                                      TopoDS_Face& projFace,
-                                      gp_Dir& projDir);
+    TopoDS_Shape projectEdgesOntoFace(TopoDS_Shape &edgeShape, TopoDS_Face &projFace,
+                                      gp_Dir &projDir);
 
-    std::vector<DrawViewDetail*> getDetailRefs() const override;
+    std::vector<DrawViewDetail *> getDetailRefs() const override;
 
 public Q_SLOTS:
     void onMakeDetailFinished(void);
@@ -106,8 +99,8 @@ protected:
     QFuture<void> m_detailFuture;
     bool m_waitingForDetail;
 
-    DrawViewPart* m_saveDvp;
-    DrawViewSection* m_saveDvs;
+    DrawViewPart *m_saveDvp;
+    DrawViewSection *m_saveDvs;
 };
 
 using DrawViewDetailPython = App::FeaturePythonT<DrawViewDetail>;

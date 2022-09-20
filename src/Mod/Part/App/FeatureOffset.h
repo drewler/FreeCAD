@@ -31,7 +31,7 @@
 namespace Part
 {
 
-class PartExport Offset : public Part::Feature
+class PartExport Offset: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::Offset);
 
@@ -39,7 +39,7 @@ public:
     Offset();
     ~Offset() override;
 
-    App::PropertyLink  Source;
+    App::PropertyLink Source;
     App::PropertyFloat Value;
     App::PropertyEnumeration Mode;
     App::PropertyEnumeration Join;
@@ -52,19 +52,18 @@ public:
     /// recalculate the feature
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderOffset";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderOffset"; }
     //@}
 
 private:
-    static const char* ModeEnums[];
-    static const char* JoinEnums[];
+    static const char *ModeEnums[];
+    static const char *JoinEnums[];
 };
 
-class PartExport Offset2D : public Offset
+class PartExport Offset2D: public Offset
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::Offset2D);
+
 public:
     Offset2D();
     ~Offset2D() override;
@@ -74,11 +73,9 @@ public:
     /// recalculate the feature
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderOffset2D";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderOffset2D"; }
     //@}
 };
 
-}
+} // namespace Part
 #endif // PART_FEATUREOFFSET_H

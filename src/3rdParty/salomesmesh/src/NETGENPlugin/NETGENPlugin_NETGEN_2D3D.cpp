@@ -40,14 +40,15 @@
 
 #include <list>
 
-namespace nglib {
+namespace nglib
+{
 #include <nglib.h>
 }
 
 // DLL_HEADER is re-defined in netgen headers
 #if defined(__clang__)
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wmacro-redefined"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmacro-redefined"
 #endif
 
 #ifdef NETGEN_PYTHON
@@ -61,7 +62,7 @@ namespace nglib {
 #include <meshing.hpp>
 
 #if defined(__clang__)
-# pragma clang diagnostic pop
+#pragma clang diagnostic pop
 #endif
 
 using namespace std;
@@ -72,19 +73,18 @@ using namespace std;
  */
 //=============================================================================
 
-NETGENPlugin_NETGEN_2D3D::NETGENPlugin_NETGEN_2D3D(int hypId, int studyId,
-                                                   SMESH_Gen* gen)
-  : SMESH_3D_Algo(hypId, studyId, gen)
+NETGENPlugin_NETGEN_2D3D::NETGENPlugin_NETGEN_2D3D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_3D_Algo(hypId, studyId, gen)
 {
-  MESSAGE("NETGENPlugin_NETGEN_2D3D::NETGENPlugin_NETGEN_2D3D");
-  _name = "NETGEN_2D3D";
-  _shapeType = (1 << TopAbs_SHELL) | (1 << TopAbs_SOLID);// 1 bit /shape type
-  _compatibleHypothesis.push_back("NETGEN_Parameters");
-  _compatibleHypothesis.push_back("NETGEN_SimpleParameters_3D");
-  _requireDiscreteBoundary = false;
-  _onlyUnaryInput = false;
-  _hypothesis = NULL;
-  _supportSubmeshes = true;
+    MESSAGE("NETGENPlugin_NETGEN_2D3D::NETGENPlugin_NETGEN_2D3D");
+    _name = "NETGEN_2D3D";
+    _shapeType = (1 << TopAbs_SHELL) | (1 << TopAbs_SOLID); // 1 bit /shape type
+    _compatibleHypothesis.push_back("NETGEN_Parameters");
+    _compatibleHypothesis.push_back("NETGEN_SimpleParameters_3D");
+    _requireDiscreteBoundary = false;
+    _onlyUnaryInput = false;
+    _hypothesis = NULL;
+    _supportSubmeshes = true;
 }
 
 //=============================================================================
@@ -95,7 +95,7 @@ NETGENPlugin_NETGEN_2D3D::NETGENPlugin_NETGEN_2D3D(int hypId, int studyId,
 
 NETGENPlugin_NETGEN_2D3D::~NETGENPlugin_NETGEN_2D3D()
 {
-  MESSAGE("NETGENPlugin_NETGEN_2D3D::~NETGENPlugin_NETGEN_2D3D");
+    MESSAGE("NETGENPlugin_NETGEN_2D3D::~NETGENPlugin_NETGEN_2D3D");
 }
 
 //=============================================================================
@@ -104,40 +104,35 @@ NETGENPlugin_NETGEN_2D3D::~NETGENPlugin_NETGEN_2D3D()
  */
 //=============================================================================
 
-bool NETGENPlugin_NETGEN_2D3D::CheckHypothesis
-                         (SMESH_Mesh& aMesh,
-                          const TopoDS_Shape& aShape,
-                          SMESH_Hypothesis::Hypothesis_Status& aStatus)
+bool NETGENPlugin_NETGEN_2D3D::CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                               SMESH_Hypothesis::Hypothesis_Status &aStatus)
 {
-  MESSAGE("NETGENPlugin_NETGEN_2D3D::CheckHypothesis");
+    MESSAGE("NETGENPlugin_NETGEN_2D3D::CheckHypothesis");
 
-  _hypothesis = NULL;
-  _mesher     = NULL;
+    _hypothesis = NULL;
+    _mesher = NULL;
 
-  const list<const SMESHDS_Hypothesis*>& hyps = GetUsedHypothesis(aMesh, aShape);
-  int nbHyp = hyps.size();
-  if (!nbHyp)
-  {
-    aStatus = SMESH_Hypothesis::HYP_OK;
-    return true;  // can work with no hypothesis
-  }
+    const list<const SMESHDS_Hypothesis *> &hyps = GetUsedHypothesis(aMesh, aShape);
+    int nbHyp = hyps.size();
+    if (!nbHyp) {
+        aStatus = SMESH_Hypothesis::HYP_OK;
+        return true; // can work with no hypothesis
+    }
 
-  const SMESHDS_Hypothesis* theHyp = hyps.front(); // use only the first hypothesis
+    const SMESHDS_Hypothesis *theHyp = hyps.front(); // use only the first hypothesis
 
-  string hypName = theHyp->GetName();
+    string hypName = theHyp->GetName();
 
-  if ( find( _compatibleHypothesis.begin(), _compatibleHypothesis.end(),
-             hypName ) != _compatibleHypothesis.end() )
-  {
-    _hypothesis = theHyp;
-    aStatus = SMESH_Hypothesis::HYP_OK;
-  }
-  else
-  {
-    aStatus = SMESH_Hypothesis::HYP_INCOMPATIBLE;
-  }
+    if (find(_compatibleHypothesis.begin(), _compatibleHypothesis.end(), hypName)
+        != _compatibleHypothesis.end()) {
+        _hypothesis = theHyp;
+        aStatus = SMESH_Hypothesis::HYP_OK;
+    }
+    else {
+        aStatus = SMESH_Hypothesis::HYP_INCOMPATIBLE;
+    }
 
-  return aStatus == SMESH_Hypothesis::HYP_OK;
+    return aStatus == SMESH_Hypothesis::HYP_OK;
 }
 
 //=============================================================================
@@ -146,16 +141,15 @@ bool NETGENPlugin_NETGEN_2D3D::CheckHypothesis
  */
 //=============================================================================
 
-bool NETGENPlugin_NETGEN_2D3D::Compute(SMESH_Mesh&         aMesh,
-                                       const TopoDS_Shape& aShape)
+bool NETGENPlugin_NETGEN_2D3D::Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape)
 {
-  netgen::multithread.terminate = 0;
+    netgen::multithread.terminate = 0;
 
-  NETGENPlugin_Mesher mesher(&aMesh, aShape, true);
-  mesher.SetParameters(dynamic_cast<const NETGENPlugin_Hypothesis*>(_hypothesis));
-  mesher.SetParameters(dynamic_cast<const NETGENPlugin_SimpleHypothesis_3D*>(_hypothesis));
-  mesher.SetSelfPointer( &_mesher );
-  return mesher.Compute();
+    NETGENPlugin_Mesher mesher(&aMesh, aShape, true);
+    mesher.SetParameters(dynamic_cast<const NETGENPlugin_Hypothesis *>(_hypothesis));
+    mesher.SetParameters(dynamic_cast<const NETGENPlugin_SimpleHypothesis_3D *>(_hypothesis));
+    mesher.SetSelfPointer(&_mesher);
+    return mesher.Compute();
 }
 
 //=============================================================================
@@ -166,8 +160,8 @@ bool NETGENPlugin_NETGEN_2D3D::Compute(SMESH_Mesh&         aMesh,
 
 void NETGENPlugin_NETGEN_2D3D::CancelCompute()
 {
-  SMESH_Algo::CancelCompute();
-  netgen::multithread.terminate = 1;
+    SMESH_Algo::CancelCompute();
+    netgen::multithread.terminate = 1;
 }
 
 //================================================================================
@@ -178,13 +172,12 @@ void NETGENPlugin_NETGEN_2D3D::CancelCompute()
 
 double NETGENPlugin_NETGEN_2D3D::GetProgress() const
 {
-  double & progress = (double &)_progress;
-  if ( _mesher )
-    progress = _mesher->GetProgress(this, &_progressTic, &_progress);
-  else if ( _progress > 0.001 )
-    progress = 0.99;
+    double &progress = (double &)_progress;
+    if (_mesher) progress = _mesher->GetProgress(this, &_progressTic, &_progress);
+    else if (_progress > 0.001)
+        progress = 0.99;
 
-  return _progress;
+    return _progress;
 }
 
 //=============================================================================
@@ -193,12 +186,11 @@ double NETGENPlugin_NETGEN_2D3D::GetProgress() const
  */
 //=============================================================================
 
-bool NETGENPlugin_NETGEN_2D3D::Evaluate(SMESH_Mesh&         aMesh,
-                                        const TopoDS_Shape& aShape,
-                                        MapShapeNbElems& aResMap)
+bool NETGENPlugin_NETGEN_2D3D::Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                        MapShapeNbElems &aResMap)
 {
-  NETGENPlugin_Mesher mesher(&aMesh, aShape, true);
-  mesher.SetParameters(dynamic_cast<const NETGENPlugin_Hypothesis*>(_hypothesis));
-  mesher.SetParameters(dynamic_cast<const NETGENPlugin_SimpleHypothesis_2D*>(_hypothesis));
-  return mesher.Evaluate(aResMap);
+    NETGENPlugin_Mesher mesher(&aMesh, aShape, true);
+    mesher.SetParameters(dynamic_cast<const NETGENPlugin_Hypothesis *>(_hypothesis));
+    mesher.SetParameters(dynamic_cast<const NETGENPlugin_SimpleHypothesis_2D *>(_hypothesis));
+    return mesher.Evaluate(aResMap);
 }

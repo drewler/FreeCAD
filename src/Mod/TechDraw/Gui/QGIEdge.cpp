@@ -42,11 +42,8 @@
 using namespace TechDrawGui;
 using namespace TechDraw;
 
-QGIEdge::QGIEdge(int index) :
-    projIndex(index),
-    isCosmetic(false),
-    isHiddenEdge(false),
-    isSmoothEdge(false)
+QGIEdge::QGIEdge(int index)
+    : projIndex(index), isCosmetic(false), isHiddenEdge(false), isSmoothEdge(false)
 {
     m_width = 1.0;
     setCosmetic(isCosmetic);
@@ -56,27 +53,25 @@ QGIEdge::QGIEdge(int index) :
 //NOTE this refers to Qt cosmetic lines
 void QGIEdge::setCosmetic(bool state)
 {
-//    Base::Console().Message("QGIE::setCosmetic(%d)\n", state);
+    //    Base::Console().Message("QGIE::setCosmetic(%d)\n", state);
     isCosmetic = state;
-    if (state) {
-        setWidth(0.0);
-    }
+    if (state) { setWidth(0.0); }
 }
 
-void QGIEdge::setHiddenEdge(bool b) {
+void QGIEdge::setHiddenEdge(bool b)
+{
     isHiddenEdge = b;
-    if (b) {
-        m_styleCurrent = getHiddenStyle();
-    } else {
+    if (b) { m_styleCurrent = getHiddenStyle(); }
+    else {
         m_styleCurrent = Qt::SolidLine;
     }
 }
 
-void QGIEdge::setPrettyNormal() {
-//    Base::Console().Message("QGIE::setPrettyNormal()\n");
-    if (isHiddenEdge) {
-        m_colCurrent = getHiddenColor();
-    } else {
+void QGIEdge::setPrettyNormal()
+{
+    //    Base::Console().Message("QGIE::setPrettyNormal()\n");
+    if (isHiddenEdge) { m_colCurrent = getHiddenColor(); }
+    else {
         m_colCurrent = getNormalColor();
     }
     //should call QGIPP::setPrettyNormal()?
@@ -84,32 +79,32 @@ void QGIEdge::setPrettyNormal() {
 
 QColor QGIEdge::getHiddenColor()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/Colors");
-    App::Color fcColor = App::Color((uint32_t) hGrp->GetUnsigned("HiddenColor", 0x000000FF));
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Colors");
+    App::Color fcColor = App::Color((uint32_t)hGrp->GetUnsigned("HiddenColor", 0x000000FF));
     return fcColor.asValue<QColor>();
 }
 
 Qt::PenStyle QGIEdge::getHiddenStyle()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp")->
-                                         GetGroup("Preferences")->GetGroup("Mod/TechDraw/General");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/General");
     //Qt::PenStyle - NoPen, Solid, Dashed, ...
     //Preferences::General - Solid, Dashed
-    Qt::PenStyle hidStyle = static_cast<Qt::PenStyle> (hGrp->GetInt("HiddenLine", 0) + 1);
+    Qt::PenStyle hidStyle = static_cast<Qt::PenStyle>(hGrp->GetInt("HiddenLine", 0) + 1);
     return hidStyle;
 }
 
- double QGIEdge::getEdgeFuzz() const
-{
-    return PreferencesGui::edgeFuzz();
-}
+double QGIEdge::getEdgeFuzz() const { return PreferencesGui::edgeFuzz(); }
 
 
-QRectF QGIEdge::boundingRect() const
-{
-    return shape().controlPointRect();
-}
+QRectF QGIEdge::boundingRect() const { return shape().controlPointRect(); }
 
 QPainterPath QGIEdge::shape() const
 {

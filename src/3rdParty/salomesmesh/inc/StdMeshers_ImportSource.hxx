@@ -45,45 +45,43 @@ class SMESH_subMesh;
  */
 //==============================================================================
 
-class STDMESHERS_EXPORT StdMeshers_ImportSource1D : public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_ImportSource1D: public SMESH_Hypothesis
 {
- public:
-  StdMeshers_ImportSource1D(int hypId, int studyId, SMESH_Gen * gen);
-  virtual ~ StdMeshers_ImportSource1D();
+public:
+    StdMeshers_ImportSource1D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_ImportSource1D();
 
-  void SetGroups(const std::vector<SMESH_Group*>& groups);
-  const std::vector<SMESH_Group*>& GetGroups(bool loaded=false) const;
+    void SetGroups(const std::vector<SMESH_Group *> &groups);
+    const std::vector<SMESH_Group *> &GetGroups(bool loaded = false) const;
 
-  void SetCopySourceMesh(bool toCopyMesh, bool toCopyGroups);
-  void GetCopySourceMesh(bool& toCopyMesh, bool& toCopyGroups) const;
-  
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
-  virtual bool DataDependOnParams() const { return true; }
-  void RestoreGroups(const std::vector<SMESH_Group*>& groups);
+    void SetCopySourceMesh(bool toCopyMesh, bool toCopyGroups);
+    void GetCopySourceMesh(bool &toCopyMesh, bool &toCopyGroups) const;
 
-  void StoreResultGroups(const std::vector<SMESH_Group*>& groups,
-                         const SMESHDS_Mesh&              srcMesh,
-                         const SMESHDS_Mesh&              tgtMesh);
-  std::vector<SMESH_Group*>* GetResultGroups(const SMESHDS_Mesh& srcMesh,
-                                             const SMESHDS_Mesh& tgtMesh);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
+    virtual bool DataDependOnParams() const { return true; }
+    void RestoreGroups(const std::vector<SMESH_Group *> &groups);
 
-  std::vector<SMESH_Mesh*> GetSourceMeshes() const;
-  std::vector<SMESH_subMesh*> GetSourceSubMeshes(const SMESH_Mesh* srcMesh) const;
+    void StoreResultGroups(const std::vector<SMESH_Group *> &groups, const SMESHDS_Mesh &srcMesh,
+                           const SMESHDS_Mesh &tgtMesh);
+    std::vector<SMESH_Group *> *GetResultGroups(const SMESHDS_Mesh &srcMesh,
+                                                const SMESHDS_Mesh &tgtMesh);
+
+    std::vector<SMESH_Mesh *> GetSourceMeshes() const;
+    std::vector<SMESH_subMesh *> GetSourceSubMeshes(const SMESH_Mesh *srcMesh) const;
 
 private:
+    std::vector<SMESH_Group *> _groups;
+    bool _toCopyMesh, _toCopyGroups;
 
-  std::vector<SMESH_Group*> _groups;
-  bool _toCopyMesh, _toCopyGroups;
+    // groups imported using this hypothesis
+    typedef std::map<std::pair<int, int>, std::vector<SMESH_Group *>> TResGroupMap;
+    TResGroupMap _resultGroups;
+    std::vector<int> _resultGroupsStorage; // persistent representation of _resultGroups
 
-  // groups imported using this hypothesis
-  typedef std::map< std::pair<int, int>, std::vector<SMESH_Group*> > TResGroupMap;
-  TResGroupMap      _resultGroups;
-  std::vector<int>  _resultGroupsStorage; // persistent representation of _resultGroups
-
-  void resultGroupsToIntVec();
+    void resultGroupsToIntVec();
 };
 
 //==============================================================================
@@ -92,9 +90,9 @@ private:
  */
 //==============================================================================
 
-class STDMESHERS_EXPORT StdMeshers_ImportSource2D : public StdMeshers_ImportSource1D
+class STDMESHERS_EXPORT StdMeshers_ImportSource2D: public StdMeshers_ImportSource1D
 {
- public:
-  StdMeshers_ImportSource2D(int hypId, int studyId, SMESH_Gen * gen);
+public:
+    StdMeshers_ImportSource2D(int hypId, int studyId, SMESH_Gen *gen);
 };
 #endif

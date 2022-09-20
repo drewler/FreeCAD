@@ -39,7 +39,7 @@ using namespace Gui;
 /* TRANSLATOR Gui::TaskBoxPosition */
 
 TaskBoxPosition::TaskBoxPosition(QWidget *parent)
-    : TaskBox(Gui::BitmapFactory().pixmap("Robot_CreateRobot"),tr("Position"),true, parent)
+    : TaskBox(Gui::BitmapFactory().pixmap("Robot_CreateRobot"), tr("Position"), true, parent)
 {
     // we need a separate container widget to add all controls to
     proxy = new QWidget(this);
@@ -52,10 +52,7 @@ TaskBoxPosition::TaskBoxPosition(QWidget *parent)
     //QObject::connect(ui->horizontalSlider_Axis1,SIGNAL(sliderMoved(int)),this,SLOT(changeSliderA1(int)));
 }
 
-TaskBoxPosition::~TaskBoxPosition()
-{
-    delete ui;
-}
+TaskBoxPosition::~TaskBoxPosition() { delete ui; }
 
 
 //**************************************************************************
@@ -66,7 +63,7 @@ TaskBoxPosition::~TaskBoxPosition()
 /* TRANSLATOR Gui::TaskBoxAngle */
 
 TaskBoxAngle::TaskBoxAngle(QWidget *parent)
-    : TaskBox(Gui::BitmapFactory().pixmap("Robot_CreateRobot"),tr("Angle"),true, parent)
+    : TaskBox(Gui::BitmapFactory().pixmap("Robot_CreateRobot"), tr("Angle"), true, parent)
 {
     // we need a separate container widget to add all controls to
     proxy = new QWidget(this);
@@ -79,10 +76,7 @@ TaskBoxAngle::TaskBoxAngle(QWidget *parent)
     //QObject::connect(ui->horizontalSlider_Axis1,SIGNAL(sliderMoved(int)),this,SLOT(changeSliderA1(int)));
 }
 
-TaskBoxAngle::~TaskBoxAngle()
-{
-    delete ui;
-}
+TaskBoxAngle::~TaskBoxAngle() { delete ui; }
 
 
 //**************************************************************************
@@ -92,10 +86,9 @@ TaskBoxAngle::~TaskBoxAngle()
 
 /* TRANSLATOR Gui::TaskDlgRelocation */
 
-TaskDlgRelocation::TaskDlgRelocation()
-    : TaskDialog()
+TaskDlgRelocation::TaskDlgRelocation() : TaskDialog()
 {
- /*   rob  = new TaskRobot6Axis(pcRobotObject);
+    /*   rob  = new TaskRobot6Axis(pcRobotObject);
     ctr  = new TaskRobotControl(pcRobotObject);
 
     trac = new TaskTrajectory(pcRobotObject,pcTrajectoryObject);
@@ -111,10 +104,7 @@ TaskDlgRelocation::TaskDlgRelocation()
     Content.push_back(msg);*/
 }
 
-TaskDlgRelocation::~TaskDlgRelocation()
-{
-
-}
+TaskDlgRelocation::~TaskDlgRelocation() {}
 
 //==== calls from the TaskView ===============================================================
 
@@ -125,25 +115,13 @@ void TaskDlgRelocation::open()
     //ctr->hideGroupBox();
 }
 
-void TaskDlgRelocation::clicked(int)
-{
+void TaskDlgRelocation::clicked(int) {}
 
-}
+bool TaskDlgRelocation::accept() { return true; }
 
-bool TaskDlgRelocation::accept()
-{
-    return true;
-}
+bool TaskDlgRelocation::reject() { return true; }
 
-bool TaskDlgRelocation::reject()
-{
-    return true;
-}
-
-void TaskDlgRelocation::helpRequested()
-{
-
-}
+void TaskDlgRelocation::helpRequested() {}
 
 
 #include "moc_TaskDlgRelocation.cpp"

@@ -32,7 +32,8 @@ class QGraphicsScene;
 class QGraphicsPathItem;
 QT_END_NAMESPACE
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawParametricTemplate;
 }
 
@@ -40,7 +41,7 @@ namespace TechDrawGui
 {
 class QGSPage;
 
-class TechDrawGuiExport  QGIDrawingTemplate : public QGITemplate
+class TechDrawGuiExport QGIDrawingTemplate: public QGITemplate
 {
     Q_OBJECT
 
@@ -48,20 +49,23 @@ public:
     explicit QGIDrawingTemplate(QGSPage *);
     ~QGIDrawingTemplate();
 
-    enum {Type = QGraphicsItem::UserType + 151};
-    int type() const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 151
+    };
+    int type() const { return Type; }
 
     void clearContents();
     void draw();
     virtual void updateView(bool update = false);
 
 protected:
-  TechDraw::DrawParametricTemplate * getParametricTemplate();
+    TechDraw::DrawParametricTemplate *getParametricTemplate();
 
 protected:
-  QGraphicsPathItem *pathItem;
+    QGraphicsPathItem *pathItem;
 };
 
-} // namespace MDIViewPageGui
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMDRAWINGTEMPLATE_H

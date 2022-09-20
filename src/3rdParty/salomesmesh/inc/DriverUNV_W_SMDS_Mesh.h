@@ -30,17 +30,17 @@
 #include <list>
 
 
-typedef std::list<SMESHDS_GroupBase*> TGroupList;
+typedef std::list<SMESHDS_GroupBase *> TGroupList;
 
 class MESHDRIVERUNV_EXPORT DriverUNV_W_SMDS_Mesh: public Driver_SMDS_Mesh
 {
- public:
-  virtual Status Perform();
+public:
+    virtual Status Perform();
 
-  void AddGroup(SMESHDS_GroupBase* theGroup) { myGroups.push_back(theGroup); }
+    void AddGroup(SMESHDS_GroupBase *theGroup) { myGroups.push_back(theGroup); }
 
- private:
-  TGroupList myGroups;
+private:
+    TGroupList myGroups;
 };
 
 

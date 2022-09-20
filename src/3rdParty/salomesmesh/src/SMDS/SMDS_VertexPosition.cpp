@@ -33,16 +33,16 @@ using namespace std;
 
 //=======================================================================
 //function : SMDS_VertexPosition
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-SMDS_VertexPosition:: SMDS_VertexPosition()
+SMDS_VertexPosition::SMDS_VertexPosition()
 {
-  //MESSAGE("*********************************************** SMDS_VertexPosition " << aVertexId);
+    //MESSAGE("*********************************************** SMDS_VertexPosition " << aVertexId);
 }
 
 SMDS_TypeOfPosition SMDS_VertexPosition::GetTypeOfPosition() const
 {
-  //MESSAGE("################################################# GetTypeOfPosition");
-        return SMDS_TOP_VERTEX;
+    //MESSAGE("################################################# GetTypeOfPosition");
+    return SMDS_TOP_VERTEX;
 }

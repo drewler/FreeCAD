@@ -39,31 +39,35 @@ class SoCoordinate3;
 class SoNormal;
 class SoEventCallback;
 
-namespace App {
-    class PropertyColorList;
+namespace App
+{
+class PropertyColorList;
 }
 
-namespace Gui {
-    class SoFCSelection;
+namespace Gui
+{
+class SoFCSelection;
 }
 
-namespace Points {
-    class PropertyGreyValueList;
-    class PropertyNormalList;
-    class PointKernel;
-    class Feature;
-}
+namespace Points
+{
+class PropertyGreyValueList;
+class PropertyNormalList;
+class PointKernel;
+class Feature;
+} // namespace Points
 
-namespace PointsGui {
+namespace PointsGui
+{
 
-class ViewProviderPointsBuilder : public Gui::ViewProviderBuilder
+class ViewProviderPointsBuilder: public Gui::ViewProviderBuilder
 {
 public:
-    ViewProviderPointsBuilder(){}
-    ~ViewProviderPointsBuilder() override{}
-    void buildNodes(const App::Property*, std::vector<SoNode*>&) const override;
-    void createPoints(const App::Property*, SoCoordinate3*, SoPointSet*) const;
-    void createPoints(const App::Property*, SoCoordinate3*, SoIndexedPointSet*) const;
+    ViewProviderPointsBuilder() {}
+    ~ViewProviderPointsBuilder() override {}
+    void buildNodes(const App::Property *, std::vector<SoNode *> &) const override;
+    void createPoints(const App::Property *, SoCoordinate3 *, SoPointSet *) const;
+    void createPoints(const App::Property *, SoCoordinate3 *, SoIndexedPointSet *) const;
 };
 
 /**
@@ -71,7 +75,7 @@ public:
  * a node representing the point data structure.
  * @author Werner Mayer
  */
-class PointsGuiExport ViewProviderPoints : public Gui::ViewProviderGeometryObject
+class PointsGuiExport ViewProviderPoints: public Gui::ViewProviderGeometryObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PointsGui::ViewProviderPoints);
 
@@ -82,7 +86,7 @@ public:
     App::PropertyFloatConstraint PointSize;
 
     /// set the viewing mode
-    void setDisplayMode(const char* ModeName) override;
+    void setDisplayMode(const char *ModeName) override;
     /// returns a list of all possible modes
     std::vector<std::string> getDisplayModes() const override;
     QIcon getIcon() const override;
@@ -93,21 +97,21 @@ public:
     void unsetEdit(int ModNum) override;
 
 public:
-    static void clipPointsCallback(void * ud, SoEventCallback * n);
+    static void clipPointsCallback(void *ud, SoEventCallback *n);
 
 protected:
-    void onChanged(const App::Property* prop) override;
-    void setVertexColorMode(App::PropertyColorList*);
-    void setVertexGreyvalueMode(Points::PropertyGreyValueList*);
-    void setVertexNormalMode(Points::PropertyNormalList*);
-    virtual void cut(const std::vector<SbVec2f>& picked, Gui::View3DInventorViewer &Viewer) = 0;
+    void onChanged(const App::Property *prop) override;
+    void setVertexColorMode(App::PropertyColorList *);
+    void setVertexGreyvalueMode(Points::PropertyGreyValueList *);
+    void setVertexNormalMode(Points::PropertyNormalList *);
+    virtual void cut(const std::vector<SbVec2f> &picked, Gui::View3DInventorViewer &Viewer) = 0;
 
 protected:
-    Gui::SoFCSelection  * pcHighlight;
-    SoCoordinate3       * pcPointsCoord;
-    SoMaterial          * pcColorMat;
-    SoNormal            * pcPointsNormal;
-    SoDrawStyle         * pcPointStyle;
+    Gui::SoFCSelection *pcHighlight;
+    SoCoordinate3 *pcPointsCoord;
+    SoMaterial *pcColorMat;
+    SoNormal *pcPointsNormal;
+    SoDrawStyle *pcPointStyle;
 
 private:
     static App::PropertyFloatConstraint::Constraints floatRange;
@@ -118,7 +122,7 @@ private:
  * a node representing the scattered point cloud.
  * @author Werner Mayer
  */
-class PointsGuiExport ViewProviderScattered : public ViewProviderPoints
+class PointsGuiExport ViewProviderScattered: public ViewProviderPoints
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PointsGui::ViewProviderScattered);
 
@@ -132,13 +136,13 @@ public:
      */
     void attach(App::DocumentObject *) override;
     /// Update the point representation
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
 
 protected:
-    void cut(const std::vector<SbVec2f>& picked, Gui::View3DInventorViewer &Viewer) override;
+    void cut(const std::vector<SbVec2f> &picked, Gui::View3DInventorViewer &Viewer) override;
 
 protected:
-    SoPointSet          * pcPoints;
+    SoPointSet *pcPoints;
 };
 
 /**
@@ -146,7 +150,7 @@ protected:
  * a node representing the structured points.
  * @author Werner Mayer
  */
-class PointsGuiExport ViewProviderStructured : public ViewProviderPoints
+class PointsGuiExport ViewProviderStructured: public ViewProviderPoints
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PointsGui::ViewProviderStructured);
 
@@ -160,13 +164,13 @@ public:
      */
     void attach(App::DocumentObject *) override;
     /// Update the point representation
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
 
 protected:
-    void cut(const std::vector<SbVec2f>& picked, Gui::View3DInventorViewer &Viewer) override;
+    void cut(const std::vector<SbVec2f> &picked, Gui::View3DInventorViewer &Viewer) override;
 
 protected:
-    SoIndexedPointSet   * pcPoints;
+    SoIndexedPointSet *pcPoints;
 };
 
 using ViewProviderPython = Gui::ViewProviderPythonFeatureT<ViewProviderScattered>;
@@ -175,4 +179,3 @@ using ViewProviderPython = Gui::ViewProviderPythonFeatureT<ViewProviderScattered
 
 
 #endif // POINTSGUI_VIEWPROVIDERPOINTS_H
-

@@ -32,8 +32,10 @@ class QAbstractButton;
 class QListWidgetItem;
 class QTabWidget;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class PreferencePage;
 class Ui_DlgPreferences;
 
@@ -107,33 +109,33 @@ class Ui_DlgPreferences;
  * \see PrefWidget
  * \author Werner Mayer, Jürgen Riegel
  */
-class GuiExport DlgPreferencesImp : public QDialog
+class GuiExport DlgPreferencesImp: public QDialog
 {
     Q_OBJECT
 
 public:
-    static void addPage(const std::string& className, const std::string& group);
-    static void removePage(const std::string& className, const std::string& group);
-    static void setGroupData(const std::string& group, const std::string& icon, const QString& tip);
-    static void getGroupData(const std::string& group, std::string& icon, QString& tip);
+    static void addPage(const std::string &className, const std::string &group);
+    static void removePage(const std::string &className, const std::string &group);
+    static void setGroupData(const std::string &group, const std::string &icon, const QString &tip);
+    static void getGroupData(const std::string &group, std::string &icon, QString &tip);
     static void reloadSettings();
 
-    explicit DlgPreferencesImp(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgPreferencesImp(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgPreferencesImp() override;
 
     void accept() override;
     void reload();
-    void activateGroupPage(const QString& group, int id);
+    void activateGroupPage(const QString &group, int id);
 
 protected:
     void changeEvent(QEvent *e) override;
-    void showEvent(QShowEvent*) override;
-    void resizeEvent(QResizeEvent*) override;
+    void showEvent(QShowEvent *) override;
+    void resizeEvent(QResizeEvent *) override;
 
 
 protected Q_SLOTS:
     void changeGroup(QListWidgetItem *current, QListWidgetItem *previous);
-    void on_buttonBox_clicked(QAbstractButton*);
+    void on_buttonBox_clicked(QAbstractButton *);
     void resizeWindow(int w, int h);
 
 private:
@@ -141,8 +143,8 @@ private:
     //@{
     void setupPages();
     void reloadPages();
-    QTabWidget* createTabForGroup(const std::string& groupName);
-    void createPageInGroup(QTabWidget* tabWidget, const std::string& pageName);
+    QTabWidget *createTabForGroup(const std::string &groupName);
+    void createPageInGroup(QTabWidget *tabWidget, const std::string &pageName);
     void applyChanges();
     void restoreDefaults();
     QString longestGroupName() const;
@@ -160,9 +162,11 @@ private:
     bool invalidParameter;
     bool canEmbedScrollArea;
 
-    static const int GroupNameRole; /**< A name for our Qt::UserRole, used when storing user data in a list item */
+    static const int
+        GroupNameRole; /**< A name for our Qt::UserRole, used when storing user data in a list item */
 
-    static DlgPreferencesImp* _activeDialog; /**< Defaults to the nullptr, points to the current instance if there is one */
+    static DlgPreferencesImp *
+        _activeDialog; /**< Defaults to the nullptr, points to the current instance if there is one */
 };
 
 } // namespace Dialog

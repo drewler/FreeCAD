@@ -24,11 +24,11 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QApplication>
-# include <QMenu>
-# include <QMessageBox>
-# include <TopExp.hxx>
-# include <TopTools_IndexedMapOfShape.hxx>
+#include <QApplication>
+#include <QMenu>
+#include <QMessageBox>
+#include <TopExp.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #endif
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -44,11 +44,11 @@
 #include "ViewProviderShapeBinder.h"
 #include "TaskShapeBinder.h"
 
-FC_LOG_LEVEL_INIT("ShapeBinder",true,true)
+FC_LOG_LEVEL_INIT("ShapeBinder", true, true)
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderShapeBinder,PartGui::ViewProviderPart)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderShapeBinder, PartGui::ViewProviderPart)
 
 ViewProviderShapeBinder::ViewProviderShapeBinder()
 {
@@ -79,20 +79,18 @@ ViewProviderShapeBinder::ViewProviderShapeBinder()
     LineWidth.setValue(1);
 }
 
-ViewProviderShapeBinder::~ViewProviderShapeBinder()
+ViewProviderShapeBinder::~ViewProviderShapeBinder() {}
+
+bool ViewProviderShapeBinder::setEdit(int ModNum)
 {
-
-}
-
-bool ViewProviderShapeBinder::setEdit(int ModNum) {
     // TODO Share code with other view providers (2015-09-11, Fat-Zer)
 
     if (ModNum == ViewProvider::Default || ModNum == 1) {
         // When double-clicking on the item for this pad the
         // object unsets and sets its edit mode without closing
         // the task panel
-        Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
-        TaskDlgShapeBinder* sbDlg = qobject_cast<TaskDlgShapeBinder*>(dlg);
+        Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
+        TaskDlgShapeBinder *sbDlg = qobject_cast<TaskDlgShapeBinder *>(dlg);
         if (dlg && !sbDlg) {
             QMessageBox msgBox;
             msgBox.setText(QObject::tr("A dialog is already open in the task panel"));
@@ -100,8 +98,7 @@ bool ViewProviderShapeBinder::setEdit(int ModNum) {
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
             msgBox.setDefaultButton(QMessageBox::Yes);
             int ret = msgBox.exec();
-            if (ret == QMessageBox::Yes)
-                Gui::Control().reject();
+            if (ret == QMessageBox::Yes) Gui::Control().reject();
             else
                 return false;
         }
@@ -111,8 +108,7 @@ bool ViewProviderShapeBinder::setEdit(int ModNum) {
 
         // start the edit dialog
         // another pad left open its task panel
-        if (sbDlg)
-            Gui::Control().showDialog(sbDlg);
+        if (sbDlg) Gui::Control().showDialog(sbDlg);
         else
             Gui::Control().showDialog(new TaskDlgShapeBinder(this, ModNum == 1));
 
@@ -123,44 +119,46 @@ bool ViewProviderShapeBinder::setEdit(int ModNum) {
     }
 }
 
-void ViewProviderShapeBinder::unsetEdit(int ModNum) {
+void ViewProviderShapeBinder::unsetEdit(int ModNum)
+{
 
     PartGui::ViewProviderPart::unsetEdit(ModNum);
 }
 
 void ViewProviderShapeBinder::highlightReferences(bool on)
 {
-    App::GeoFeature* obj = nullptr;
+    App::GeoFeature *obj = nullptr;
     std::vector<std::string> subs;
 
     if (getObject()->isDerivedFrom(PartDesign::ShapeBinder::getClassTypeId()))
-        PartDesign::ShapeBinder::getFilteredReferences(&static_cast<PartDesign::ShapeBinder*>(getObject())->Support, obj, subs);
+        PartDesign::ShapeBinder::getFilteredReferences(
+            &static_cast<PartDesign::ShapeBinder *>(getObject())->Support, obj, subs);
     else
         return;
 
     // stop if not a Part feature was found
-    if (!obj || !obj->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId()))
-        return;
+    if (!obj || !obj->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId())) return;
 
-    PartGui::ViewProviderPart* svp = dynamic_cast<PartGui::ViewProviderPart*>(
-        Gui::Application::Instance->getViewProvider(obj));
-    if (!svp)
-        return;
+    PartGui::ViewProviderPart *svp =
+        dynamic_cast<PartGui::ViewProviderPart *>(Gui::Application::Instance->getViewProvider(obj));
+    if (!svp) return;
 
     if (on) {
         if (!subs.empty() && originalLineColors.empty()) {
             TopTools_IndexedMapOfShape eMap;
-            TopExp::MapShapes(static_cast<Part::Feature*>(obj)->Shape.getValue(), TopAbs_EDGE, eMap);
+            TopExp::MapShapes(static_cast<Part::Feature *>(obj)->Shape.getValue(), TopAbs_EDGE,
+                              eMap);
             originalLineColors = svp->LineColorArray.getValues();
             std::vector<App::Color> lcolors = originalLineColors;
             lcolors.resize(eMap.Extent(), svp->LineColor.getValue());
 
-            TopExp::MapShapes(static_cast<Part::Feature*>(obj)->Shape.getValue(), TopAbs_FACE, eMap);
+            TopExp::MapShapes(static_cast<Part::Feature *>(obj)->Shape.getValue(), TopAbs_FACE,
+                              eMap);
             originalFaceColors = svp->DiffuseColor.getValues();
             std::vector<App::Color> fcolors = originalFaceColors;
             fcolors.resize(eMap.Extent(), svp->ShapeColor.getValue());
 
-            for (const std::string& e : subs) {
+            for (const std::string &e : subs) {
                 // Note: stoi may throw, but it strictly shouldn't happen
                 if (e.compare(0, 4, "Edge") == 0) {
                     int idx = std::stoi(e.substr(4)) - 1;
@@ -190,24 +188,22 @@ void ViewProviderShapeBinder::highlightReferences(bool on)
     }
 }
 
-void ViewProviderShapeBinder::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderShapeBinder::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     Q_UNUSED(receiver)
     Q_UNUSED(member)
 
-        QAction* act;
+    QAction *act;
     act = menu->addAction(QObject::tr("Edit shape binder"));
     act->setData(QVariant((int)ViewProvider::Default));
 
-    Gui::ActionFunction* func = new Gui::ActionFunction(menu);
+    Gui::ActionFunction *func = new Gui::ActionFunction(menu);
     func->trigger(act, [this]() {
         QString text = QObject::tr("Edit %1").arg(QString::fromUtf8(getObject()->Label.getValue()));
         Gui::Command::openCommand(text.toUtf8());
 
-        Gui::Document* document = this->getDocument();
-        if (document) {
-            document->setEdit(this, ViewProvider::Default);
-        }
+        Gui::Document *document = this->getDocument();
+        if (document) { document->setEdit(this, ViewProvider::Default); }
     });
 }
 
@@ -215,22 +211,23 @@ void ViewProviderShapeBinder::setupContextMenu(QMenu* menu, QObject* receiver, c
 
 PROPERTY_SOURCE(PartDesignGui::ViewProviderSubShapeBinder, PartGui::ViewProviderPart)
 
-ViewProviderSubShapeBinder::ViewProviderSubShapeBinder() {
+ViewProviderSubShapeBinder::ViewProviderSubShapeBinder()
+{
     sPixmap = "PartDesign_SubShapeBinder.svg";
 
     ADD_PROPERTY_TYPE(UseBinderStyle, (false), "", (App::PropertyType)(App::Prop_None), "");
 }
 
-void ViewProviderSubShapeBinder::attach(App::DocumentObject* obj) {
+void ViewProviderSubShapeBinder::attach(App::DocumentObject *obj)
+{
 
     UseBinderStyle.setValue(boost::istarts_with(obj->getNameInDocument(), "binder"));
     ViewProviderPart::attach(obj);
 }
 
-void ViewProviderSubShapeBinder::onChanged(const App::Property* prop) {
-    if (prop == &UseBinderStyle
-        && (!getObject() || !getObject()->isRestoring()))
-    {
+void ViewProviderSubShapeBinder::onChanged(const App::Property *prop)
+{
+    if (prop == &UseBinderStyle && (!getObject() || !getObject()->isRestoring())) {
         App::Color shapeColor, lineColor, pointColor;
         int transparency, linewidth;
         if (UseBinderStyle.getValue()) {
@@ -261,29 +258,29 @@ void ViewProviderSubShapeBinder::onChanged(const App::Property* prop) {
     ViewProviderPart::onChanged(prop);
 }
 
-bool ViewProviderSubShapeBinder::canDropObjectEx(App::DocumentObject*,
-    App::DocumentObject*, const char*, const std::vector<std::string>&) const
+bool ViewProviderSubShapeBinder::canDropObjectEx(App::DocumentObject *, App::DocumentObject *,
+                                                 const char *,
+                                                 const std::vector<std::string> &) const
 {
     return true;
 }
 
-std::string ViewProviderSubShapeBinder::dropObjectEx(App::DocumentObject* obj, App::DocumentObject* owner,
-    const char* subname, const std::vector<std::string>& elements)
+std::string ViewProviderSubShapeBinder::dropObjectEx(App::DocumentObject *obj,
+                                                     App::DocumentObject *owner,
+                                                     const char *subname,
+                                                     const std::vector<std::string> &elements)
 {
-    auto self = dynamic_cast<PartDesign::SubShapeBinder*>(getObject());
-    if (!self)
-        return std::string();
-    std::map<App::DocumentObject*, std::vector<std::string> > values;
+    auto self = dynamic_cast<PartDesign::SubShapeBinder *>(getObject());
+    if (!self) return std::string();
+    std::map<App::DocumentObject *, std::vector<std::string>> values;
     if (!subname) subname = "";
     std::string sub(subname);
-    if (sub.empty())
-        values[owner ? owner : obj] = elements;
+    if (sub.empty()) values[owner ? owner : obj] = elements;
     else {
         std::vector<std::string> subs;
         if (!elements.empty()) {
             subs.reserve(elements.size());
-            for (auto& element : elements)
-                subs.push_back(sub + element);
+            for (auto &element : elements) subs.push_back(sub + element);
         }
         else
             subs.push_back(sub);
@@ -291,20 +288,21 @@ std::string ViewProviderSubShapeBinder::dropObjectEx(App::DocumentObject* obj, A
     }
 
     self->setLinks(std::move(values), QApplication::keyboardModifiers() == Qt::ControlModifier);
-    if (self->Relative.getValue())
-        updatePlacement(false);
+    if (self->Relative.getValue()) updatePlacement(false);
     return std::string();
 }
 
 
-bool ViewProviderSubShapeBinder::doubleClicked() {
+bool ViewProviderSubShapeBinder::doubleClicked()
+{
     updatePlacement(true);
     return true;
 }
 
-void ViewProviderSubShapeBinder::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderSubShapeBinder::setupContextMenu(QMenu *menu, QObject *receiver,
+                                                  const char *member)
 {
-    QAction* act;
+    QAction *act;
     act = menu->addAction(QObject::tr("Synchronize"), receiver, member);
     act->setData(QVariant((int)Synchronize));
     act = menu->addAction(QObject::tr("Select bound object"), receiver, member);
@@ -312,54 +310,49 @@ void ViewProviderSubShapeBinder::setupContextMenu(QMenu* menu, QObject* receiver
     ViewProviderPart::setupContextMenu(menu, receiver, member);
 }
 
-bool ViewProviderSubShapeBinder::setEdit(int ModNum) {
+bool ViewProviderSubShapeBinder::setEdit(int ModNum)
+{
 
     switch (ModNum) {
-    case Synchronize:
-        updatePlacement(true);
-        break;
-    case SelectObject: {
-        auto self = dynamic_cast<PartDesign::SubShapeBinder*>(getObject());
-        if (!self || !self->Support.getValue())
-            break;
+        case Synchronize: updatePlacement(true); break;
+        case SelectObject: {
+            auto self = dynamic_cast<PartDesign::SubShapeBinder *>(getObject());
+            if (!self || !self->Support.getValue()) break;
 
-        Gui::Selection().selStackPush();
-        Gui::Selection().clearSelection();
-        for (auto& link : self->Support.getSubListValues()) {
-            auto obj = link.getValue();
-            if (!obj || !obj->getNameInDocument())
-                continue;
-            const auto& subs = link.getSubValues();
-            if (!subs.empty())
-                Gui::Selection().addSelections(obj->getDocument()->getName(),
-                    obj->getNameInDocument(), subs);
-            else
-                Gui::Selection().addSelection(obj->getDocument()->getName(),
-                    obj->getNameInDocument());
+            Gui::Selection().selStackPush();
+            Gui::Selection().clearSelection();
+            for (auto &link : self->Support.getSubListValues()) {
+                auto obj = link.getValue();
+                if (!obj || !obj->getNameInDocument()) continue;
+                const auto &subs = link.getSubValues();
+                if (!subs.empty())
+                    Gui::Selection().addSelections(obj->getDocument()->getName(),
+                                                   obj->getNameInDocument(), subs);
+                else
+                    Gui::Selection().addSelection(obj->getDocument()->getName(),
+                                                  obj->getNameInDocument());
+            }
+            Gui::Selection().selStackPush();
+            break;
         }
-        Gui::Selection().selStackPush();
-        break;
-    }
-    default:
-        return ViewProviderPart::setEdit(ModNum);
+        default: return ViewProviderPart::setEdit(ModNum);
     }
     return false;
 }
 
-void ViewProviderSubShapeBinder::updatePlacement(bool transaction) {
-    auto self = dynamic_cast<PartDesign::SubShapeBinder*>(getObject());
-    if (!self || !self->Support.getValue())
-        return;
+void ViewProviderSubShapeBinder::updatePlacement(bool transaction)
+{
+    auto self = dynamic_cast<PartDesign::SubShapeBinder *>(getObject());
+    if (!self || !self->Support.getValue()) return;
 
     std::vector<Base::Matrix4D> mats;
     bool relative = self->Relative.getValue();
-    App::DocumentObject* parent = nullptr;
+    App::DocumentObject *parent = nullptr;
     std::string parentSub;
     if (relative && !self->getParents().empty()) {
-        const auto& sel = Gui::Selection().getSelection("", Gui::ResolveMode::NoResolve);
-        if (sel.size() != 1 || !sel[0].pObject ||
-            sel[0].pObject->getSubObject(sel[0].SubName) != self)
-        {
+        const auto &sel = Gui::Selection().getSelection("", Gui::ResolveMode::NoResolve);
+        if (sel.size() != 1 || !sel[0].pObject
+            || sel[0].pObject->getSubObject(sel[0].SubName) != self) {
             FC_WARN("invalid selection");
         }
         else {
@@ -369,12 +362,11 @@ void ViewProviderSubShapeBinder::updatePlacement(bool transaction) {
     }
 
     if (!transaction) {
-        if (relative)
-            self->Context.setValue(parent, parentSub.c_str());
+        if (relative) self->Context.setValue(parent, parentSub.c_str());
         try {
             self->update(PartDesign::SubShapeBinder::UpdateForced);
         }
-        catch (Base::Exception& e) {
+        catch (Base::Exception &e) {
             e.ReportException();
         }
         return;
@@ -382,45 +374,44 @@ void ViewProviderSubShapeBinder::updatePlacement(bool transaction) {
 
     App::GetApplication().setActiveTransaction("Sync binder");
     try {
-        if (relative)
-            self->Context.setValue(parent, parentSub.c_str());
+        if (relative) self->Context.setValue(parent, parentSub.c_str());
         self->update(PartDesign::SubShapeBinder::UpdateForced);
         App::GetApplication().closeActiveTransaction();
         return;
     }
-    catch (Base::Exception& e) {
+    catch (Base::Exception &e) {
         e.ReportException();
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         std::ostringstream str;
         Standard_CString msg = e.GetMessageString();
         str << typeid(e).name() << " ";
         if (msg) { str << msg; }
-        else { str << "No OCCT Exception Message"; }
+        else {
+            str << "No OCCT Exception Message";
+        }
         FC_ERR(str.str());
     }
     App::GetApplication().closeActiveTransaction(true);
 }
 
-std::vector<App::DocumentObject*> ViewProviderSubShapeBinder::claimChildren(void) const {
-    std::vector<App::DocumentObject*> ret;
+std::vector<App::DocumentObject *> ViewProviderSubShapeBinder::claimChildren(void) const
+{
+    std::vector<App::DocumentObject *> ret;
     auto self = Base::freecad_dynamic_cast<PartDesign::SubShapeBinder>(getObject());
     if (self && self->ClaimChildren.getValue() && self->Support.getValue()) {
-        std::set<App::DocumentObject*> objSet;
-        for (auto& l : self->Support.getSubListValues()) {
+        std::set<App::DocumentObject *> objSet;
+        for (auto &l : self->Support.getSubListValues()) {
             auto obj = l.getValue();
-            if (!obj)
-                continue;
-            const auto& subs = l.getSubValues();
+            if (!obj) continue;
+            const auto &subs = l.getSubValues();
             if (subs.empty()) {
-                if (objSet.insert(obj).second)
-                    ret.push_back(obj);
+                if (objSet.insert(obj).second) ret.push_back(obj);
                 continue;
             }
-            for (auto& sub : subs) {
+            for (auto &sub : subs) {
                 auto sobj = obj->getSubObject(sub.c_str());
-                if (sobj && objSet.insert(sobj).second)
-                    ret.push_back(sobj);
+                if (sobj && objSet.insert(sobj).second) ret.push_back(sobj);
             }
         }
     }
@@ -429,8 +420,9 @@ std::vector<App::DocumentObject*> ViewProviderSubShapeBinder::claimChildren(void
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-namespace Gui {
+namespace Gui
+{
 PROPERTY_SOURCE_TEMPLATE(PartDesignGui::ViewProviderSubShapeBinderPython,
                          PartDesignGui::ViewProviderSubShapeBinder)
 template class PartDesignGuiExport ViewProviderPythonFeatureT<ViewProviderSubShapeBinder>;
-}
+} // namespace Gui

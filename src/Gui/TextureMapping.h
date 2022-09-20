@@ -30,22 +30,24 @@ class SoGroup;
 class SoTexture2;
 class SoTextureCoordinateEnvironment;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 
 class Ui_TextureMapping;
-class GuiExport TextureMapping : public QDialog
+class GuiExport TextureMapping: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit TextureMapping(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit TextureMapping(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~TextureMapping();
     void accept();
     void reject();
 
 private Q_SLOTS:
-    void on_fileChooser_fileNameSelected(const QString&);
+    void on_fileChooser_fileNameSelected(const QString &);
     void on_checkEnv_toggled(bool);
 
 protected:
@@ -53,14 +55,14 @@ protected:
     void keyPressEvent(QKeyEvent *e);
 
 private:
-    SoGroup* grp;
-    SoTexture2* tex;
-    SoTextureCoordinateEnvironment* env;
+    SoGroup *grp;
+    SoTexture2 *tex;
+    SoTextureCoordinateEnvironment *env;
     QString fileName;
-    Ui_TextureMapping* ui;
+    Ui_TextureMapping *ui;
 };
 
-class TaskTextureMapping : public Gui::TaskView::TaskDialog
+class TaskTextureMapping: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -73,11 +75,13 @@ public:
     bool reject() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Close; }
+    {
+        return QDialogButtonBox::Close;
+    }
 
 private:
-    TextureMapping* dialog;
-    Gui::TaskView::TaskBox* taskbox;
+    TextureMapping *dialog;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } // namespace Dialog

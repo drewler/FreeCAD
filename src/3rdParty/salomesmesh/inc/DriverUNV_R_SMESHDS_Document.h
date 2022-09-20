@@ -27,6 +27,7 @@
 #include "Driver_Document.h"
 
 class MESHDRIVERUNV_EXPORT DriverUNV_R_SMESHDS_Document: public Driver_Document
-{};
+{
+};
 
 #endif

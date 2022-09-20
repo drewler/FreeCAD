@@ -31,9 +31,8 @@
 
 using namespace TechDrawGui;
 
-DlgPrefsTechDrawAdvancedImp::DlgPrefsTechDrawAdvancedImp( QWidget* parent )
-  : PreferencePage( parent )
-  , ui(new Ui_DlgPrefsTechDrawAdvancedImp)
+DlgPrefsTechDrawAdvancedImp::DlgPrefsTechDrawAdvancedImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgPrefsTechDrawAdvancedImp)
 {
     ui->setupUi(this);
 }

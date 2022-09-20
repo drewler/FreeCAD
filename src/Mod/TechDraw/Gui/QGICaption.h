@@ -30,17 +30,19 @@
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGICaption : public QGCustomText
+class TechDrawGuiExport QGICaption: public QGCustomText
 {
 public:
     explicit QGICaption(void);
     ~QGICaption() {}
 
-    enum {Type = QGraphicsItem::UserType + 180};
-    int type() const { return Type;}
-
+    enum
+    {
+        Type = QGraphicsItem::UserType + 180
+    };
+    int type() const { return Type; }
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGICAPTION_H

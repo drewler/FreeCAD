@@ -25,32 +25,29 @@
 namespace Wm4
 {
 
-template <class Real, class TVector>
-class WM4_FOUNDATION_ITEM Intersector
+template<class Real, class TVector> class WM4_FOUNDATION_ITEM Intersector
 {
 public:
     // abstract base class
-    virtual ~Intersector ();
+    virtual ~Intersector();
 
     // Static intersection queries.  The default implementations return
     // 'false'.  The Find query produces a set of intersection.  The derived
     // class is responsible for providing access to that set, since the nature
     // of the set is dependent on the object types.
-    virtual bool Test ();
-    virtual bool Find ();
+    virtual bool Test();
+    virtual bool Find();
 
     // Dynamic intersection queries.  The default implementations return
     // 'false'.  The Find query produces a set of first contact.  The derived
     // class is responsible for providing access to that set, since the nature
     // of the set is dependent on the object types.
-    virtual bool Test (Real fTMax, const TVector& rkVelocity0,
-        const TVector& rkVelocity1);
-    virtual bool Find (Real fTMax, const TVector& rkVelocity0,
-        const TVector& rkVelocity1);
+    virtual bool Test(Real fTMax, const TVector &rkVelocity0, const TVector &rkVelocity1);
+    virtual bool Find(Real fTMax, const TVector &rkVelocity0, const TVector &rkVelocity1);
 
     // The time at which two objects are in first contact for the dynamic
     // intersection queries.
-    Real GetContactTime () const;
+    Real GetContactTime() const;
 
     // information about the intersection set
     enum
@@ -65,20 +62,20 @@ public:
         IT_POLYHEDRON,
         IT_OTHER
     };
-    int GetIntersectionType () const;
+    int GetIntersectionType() const;
 
 protected:
-    Intersector ();
+    Intersector();
 
     Real m_fContactTime;
     int m_iIntersectionType;
 };
 
-typedef Intersector<float, Vector2<float> > Intersector2f;
-typedef Intersector<float, Vector3<float> > Intersector3f;
-typedef Intersector<double, Vector2<double> > Intersector2d;
-typedef Intersector<double, Vector3<double> > Intersector3d;
+typedef Intersector<float, Vector2<float>> Intersector2f;
+typedef Intersector<float, Vector3<float>> Intersector3f;
+typedef Intersector<double, Vector2<double>> Intersector2d;
+typedef Intersector<double, Vector3<double>> Intersector3d;
 
-}
+} // namespace Wm4
 
 #endif

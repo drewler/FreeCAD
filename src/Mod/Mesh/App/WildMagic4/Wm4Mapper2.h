@@ -23,22 +23,21 @@
 namespace Wm4
 {
 
-template <class Real>
-class Mapper2
+template<class Real> class Mapper2
 {
 public:
     // Construction and destruction.  The value of epsilon is used as a
     // relative error when computing the dimension of the point set.
-    Mapper2 (int iVQuantity, const Vector2<Real>* akVertex, Real fEpsilon);
-    ~Mapper2 ();
+    Mapper2(int iVQuantity, const Vector2<Real> *akVertex, Real fEpsilon);
+    ~Mapper2();
 
     // Axis-aligned bounding box of the input points.
-    const Vector2<Real>& GetMin () const;
-    const Vector2<Real>& GetMax () const;
-    Real GetMaxRange () const;
+    const Vector2<Real> &GetMin() const;
+    const Vector2<Real> &GetMax() const;
+    Real GetMaxRange() const;
 
     // Dimension d of the set (0, 1, or 2).
-    int GetDimension () const;
+    int GetDimension() const;
 
     // Coordinate system.  The origin is valid for any dimension d.  The
     // unit-length direction vector is valid only for 0 <= i < d.  The extreme
@@ -51,14 +50,14 @@ public:
     // line segment.  The next extreme index corresponds to the input point
     // that is farthest from this line segment in the direction perpendicular
     // to the segment.
-    const Vector2<Real>& GetOrigin () const;
-    const Vector2<Real>& GetDirection (int i) const;
-    int GetExtremeIndex (int i) const;
+    const Vector2<Real> &GetOrigin() const;
+    const Vector2<Real> &GetDirection(int i) const;
+    int GetExtremeIndex(int i) const;
 
     // If d = 2, the direction vectors {U0,U1} form a right-handed set.  The
     // three extreme points form a triangle.  This function indicates if that
     // triangle is counterclockwise ordered.
-    bool GetExtremeCCW () const;
+    bool GetExtremeCCW() const;
 
 private:
     // Axis-aligned bounding box of input points.  The maximum range is the
@@ -97,6 +96,6 @@ namespace Wm4
 {
 typedef Mapper2<float> Mapper2f;
 typedef Mapper2<double> Mapper2d;
-}
+} // namespace Wm4
 
 #endif

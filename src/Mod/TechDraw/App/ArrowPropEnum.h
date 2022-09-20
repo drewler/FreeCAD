@@ -34,25 +34,28 @@ namespace TechDraw
 {
 
 //common definitions for line ends / arrows
-enum ArrowType { FILLED_ARROW = 0,
-                 OPEN_ARROW,
-                 TICK,
-                 DOT,
-                 OPEN_CIRCLE,
-                 FORK,
-                 FILLED_TRIANGLE,
-                 NONE};
+enum ArrowType
+{
+    FILLED_ARROW = 0,
+    OPEN_ARROW,
+    TICK,
+    DOT,
+    OPEN_CIRCLE,
+    FORK,
+    FILLED_TRIANGLE,
+    NONE
+};
 
-class TechDrawExport ArrowPropEnum {
+class TechDrawExport ArrowPropEnum
+{
     Q_DECLARE_TR_FUNCTIONS(TechDraw::ArrowPropEnum)
 
-    public:
-        static const char* ArrowTypeEnums[];
-        static const int   ArrowCount;
-        static const std::vector<std::string> ArrowTypeIcons;
+public:
+    static const char *ArrowTypeEnums[];
+    static const int ArrowCount;
+    static const std::vector<std::string> ArrowTypeIcons;
 
 private:
-
 };
 
 } //end namespace TechDraw

@@ -25,9 +25,9 @@ namespace Wm4
 
 // Least-squares fit of a line to (x,y,z) data by using distance measurements
 // orthogonal to the proposed line.
-template <class Real> WM4_FOUNDATION_ITEM
-Line3<Real> OrthogonalLineFit3 (int iQuantity, const Vector3<Real>* akPoint);
+template<class Real>
+WM4_FOUNDATION_ITEM Line3<Real> OrthogonalLineFit3(int iQuantity, const Vector3<Real> *akPoint);
 
-}
+} // namespace Wm4
 
 #endif

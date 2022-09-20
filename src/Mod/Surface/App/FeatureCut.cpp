@@ -43,7 +43,7 @@ PROPERTY_SOURCE(Surface::Cut, Part::Feature)
 
 Cut::Cut()
 {
-    ADD_PROPERTY(ShapeList,(nullptr,"TopoDS_Shape"));
+    ADD_PROPERTY(ShapeList, (nullptr, "TopoDS_Shape"));
     ShapeList.setScope(App::LinkScope::Global);
 }
 
@@ -51,8 +51,7 @@ Cut::Cut()
 
 short Cut::mustExecute() const
 {
-    if (ShapeList.isTouched())
-        return 1;
+    if (ShapeList.isTouched()) return 1;
     return 0;
 }
 
@@ -61,9 +60,10 @@ App::DocumentObjectExecReturn *Cut::execute()
     //Perform error checking
 
     try {
-        std::vector<App::DocumentObject*> shapes = ShapeList.getValues();
-        if (shapes.size() != 2){
-            return new App::DocumentObjectExecReturn("Two shapes must be entered at a time for a cut operation");
+        std::vector<App::DocumentObject *> shapes = ShapeList.getValues();
+        if (shapes.size() != 2) {
+            return new App::DocumentObjectExecReturn(
+                "Two shapes must be entered at a time for a cut operation");
         }
 
         Part::TopoShape ts1;
@@ -71,7 +71,7 @@ App::DocumentObjectExecReturn *Cut::execute()
 
         //Get first toposhape
         if (shapes[0]->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId())) {
-            ts1 = static_cast<Part::Feature*>(shapes[0])->Shape.getShape(); //Part::TopoShape 1
+            ts1 = static_cast<Part::Feature *>(shapes[0])->Shape.getShape(); //Part::TopoShape 1
         }
         else {
             return new App::DocumentObjectExecReturn("Shape1 not from Part::Feature");
@@ -79,7 +79,7 @@ App::DocumentObjectExecReturn *Cut::execute()
 
         //Get second toposhape
         if (shapes[1]->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId())) {
-            ts2 = static_cast<Part::Feature*>(shapes[1])->Shape.getShape();
+            ts2 = static_cast<Part::Feature *>(shapes[1])->Shape.getShape();
         }
         else {
             return new App::DocumentObjectExecReturn("Shape2 not from Part::Feature");
@@ -90,14 +90,14 @@ App::DocumentObjectExecReturn *Cut::execute()
         aCutShape = ts1.cut(ts2.getShape());
 
         //Check if resulting shell is null
-        if (aCutShape.IsNull()){
+        if (aCutShape.IsNull()) {
             return new App::DocumentObjectExecReturn("Resulting shape is null");
         }
 
         this->Shape.setValue(aCutShape);
         return nullptr;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
 
         return new App::DocumentObjectExecReturn(e.GetMessageString());
     }

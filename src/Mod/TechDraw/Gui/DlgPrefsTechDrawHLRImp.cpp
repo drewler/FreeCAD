@@ -31,9 +31,8 @@
 
 using namespace TechDrawGui;
 
-DlgPrefsTechDrawHLRImp::DlgPrefsTechDrawHLRImp( QWidget* parent )
-  : PreferencePage( parent )
-  , ui(new Ui_DlgPrefsTechDrawHLRImp)
+DlgPrefsTechDrawHLRImp::DlgPrefsTechDrawHLRImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgPrefsTechDrawHLRImp)
 {
     ui->setupUi(this);
 }

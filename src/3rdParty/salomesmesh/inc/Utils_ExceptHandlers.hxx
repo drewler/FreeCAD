@@ -35,41 +35,47 @@
 
 typedef void (*PVF)();
 
-class UTILS_EXPORT Unexpect { //save / retrieve unexpected exceptions treatment
-  PVF old;
-  public :
+class UTILS_EXPORT Unexpect
+{ //save / retrieve unexpected exceptions treatment
+    PVF old;
+
+public:
 #ifndef _MSC_VER
-  // std::set_unexpected has been removed in C++17
-    Unexpect( PVF f ) 
-      { /*old = std::set_unexpected(f);*/old = f; }
-  ~Unexpect() { /*std::set_unexpected(old);*/ }
+    // std::set_unexpected has been removed in C++17
+    Unexpect(PVF f)
+    { /*old = std::set_unexpected(f);*/
+        old = f;
+    }
+    ~Unexpect()
+    { /*std::set_unexpected(old);*/
+    }
 #else
-    Unexpect( PVF f ) 
-      { old = ::set_unexpected(f); }
-  ~Unexpect() { ::set_unexpected(old); }
+    Unexpect(PVF f) { old = ::set_unexpected(f); }
+    ~Unexpect() { ::set_unexpected(old); }
 #endif
 };
 
-class UTILS_EXPORT Terminate {//save / retrieve terminate function
-  
-  PVF old;
-  public :
+class UTILS_EXPORT Terminate
+{ //save / retrieve terminate function
+
+    PVF old;
+
+public:
 #ifndef _MSC_VER
-    Terminate( PVF f ) 
-      { old = std::set_terminate(f); }
-  ~Terminate() { std::set_terminate(old); }
+    Terminate(PVF f) { old = std::set_terminate(f); }
+    ~Terminate() { std::set_terminate(old); }
 #else
-    Terminate( PVF f ) 
-      { old = ::set_terminate(f); }
-  ~Terminate() { ::set_terminate(old); }
+    Terminate(PVF f) { old = ::set_terminate(f); }
+    ~Terminate() { ::set_terminate(old); }
 #endif
 };
 
-#define UNEXPECT_CATCH(FuncName, ExceptionConstructor) \
-inline void FuncName () {\
-   throw ExceptionConstructor (); \
-}
-//Example of the usage 
+#define UNEXPECT_CATCH(FuncName, ExceptionConstructor)                                             \
+    inline void FuncName()                                                                         \
+    {                                                                                              \
+        throw ExceptionConstructor();                                                              \
+    }
+//Example of the usage
 
 // void DTC_NotFound () {
 //   throw (SALOME_DataTypeCatalog::NotFound());

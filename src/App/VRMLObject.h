@@ -31,7 +31,7 @@
 namespace App
 {
 
-class AppExport VRMLObject : public GeoFeature
+class AppExport VRMLObject: public GeoFeature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(App::VRMLObject);
 
@@ -41,17 +41,13 @@ public:
     ~VRMLObject() override;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "Gui::ViewProviderVRMLObject";
-    }
-    DocumentObjectExecReturn *execute() override {
-        return DocumentObject::StdReturn;
-    }
+    const char *getViewProviderName() const override { return "Gui::ViewProviderVRMLObject"; }
+    DocumentObjectExecReturn *execute() override { return DocumentObject::StdReturn; }
     short mustExecute() const override;
     PyObject *getPyObject() override;
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
-    void SaveDocFile (Base::Writer &writer) const override;
+    void SaveDocFile(Base::Writer &writer) const override;
     void RestoreDocFile(Base::Reader &reader) override;
 
     PropertyFileIncluded VrmlFile;
@@ -59,10 +55,10 @@ public:
     PropertyStringList Resources;
 
 protected:
-    void onChanged(const App::Property*) override;
-    std::string getRelativePath(const std::string&, const std::string&) const;
-    std::string fixRelativePath(const std::string&, const std::string&) const;
-    void makeDirectories(const std::string&, const std::string&);
+    void onChanged(const App::Property *) override;
+    std::string getRelativePath(const std::string &, const std::string &) const;
+    std::string fixRelativePath(const std::string &, const std::string &) const;
+    void makeDirectories(const std::string &, const std::string &);
 
 private:
     mutable std::string vrmlPath;

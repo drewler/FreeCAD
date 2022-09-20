@@ -24,7 +24,7 @@
 // disk at C+(h/2)*U if Dot(U,X-C) = h/2 and (X-C)^T*(I-U*U^T)*(X-C) <= r^2.
 // A point X is on the end disk at C-(h/2)*U if Dot(U,X-C) = -h/2 and
 // (X-C)^T*(I-U*U^T)*(X-C) <= r^2.
-  
+
 // The inputs are the quantity of points and the point array.  The outputs
 // are the center C, unit-length axis direction U, radius R, and height H.
 // You can supply initial guesses for C and U.  In this case you need to set
@@ -50,26 +50,24 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM CylinderFit3
+template<class Real> class WM4_FOUNDATION_ITEM CylinderFit3
 {
 public:
-    CylinderFit3 (int iQuantity, const Vector3<Real>* akPoint,
-        Vector3<Real>& rkC, Vector3<Real>& rkU, Real& rfR, Real& rfH,
-        bool bInputsAreInitialGuess);
+    CylinderFit3(int iQuantity, const Vector3<Real> *akPoint, Vector3<Real> &rkC,
+                 Vector3<Real> &rkU, Real &rfR, Real &rfH, bool bInputsAreInitialGuess);
 
     // return the error value
-    operator Real ();
+    operator Real();
 
 private:
-    static Real UpdateInvRSqr (int iQuantity, const Vector3<Real>* akPoint,
-        const Vector3<Real>& rkC, const Vector3<Real>& rkU, Real& rfInvRSqr);
+    static Real UpdateInvRSqr(int iQuantity, const Vector3<Real> *akPoint, const Vector3<Real> &rkC,
+                              const Vector3<Real> &rkU, Real &rfInvRSqr);
 
-    static Real UpdateDirection (int iQuantity, const Vector3<Real>* akPoint,
-        const Vector3<Real>& rkC, Vector3<Real>& rkU, Real& rfInvRSqr);
+    static Real UpdateDirection(int iQuantity, const Vector3<Real> *akPoint,
+                                const Vector3<Real> &rkC, Vector3<Real> &rkU, Real &rfInvRSqr);
 
-    static Real UpdateCenter (int iQuantity, const Vector3<Real>* akPoint,
-        Vector3<Real>& rkC, const Vector3<Real>& rkU, const Real& rfInvRSqr);
+    static Real UpdateCenter(int iQuantity, const Vector3<Real> *akPoint, Vector3<Real> &rkC,
+                             const Vector3<Real> &rkU, const Real &rfInvRSqr);
 
     Real m_fError;
 };
@@ -77,6 +75,6 @@ private:
 typedef CylinderFit3<float> CylinderFit3f;
 typedef CylinderFit3<double> CylinderFit3d;
 
-}
+} // namespace Wm4
 
 #endif

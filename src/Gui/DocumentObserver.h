@@ -27,7 +27,10 @@
 #include <boost_signals2.hpp>
 
 
-namespace App { class Property; }
+namespace App
+{
+class Property;
+}
 namespace Gui
 {
 class Document;
@@ -46,22 +49,22 @@ public:
     /*! Constructor */
     DocumentT();
     /*! Constructor */
-    explicit DocumentT(Document*);
+    explicit DocumentT(Document *);
     /*! Constructor */
-    explicit DocumentT(const std::string&);
+    explicit DocumentT(const std::string &);
     /*! Constructor */
-    DocumentT(const DocumentT&);
+    DocumentT(const DocumentT &);
     /*! Destructor */
     ~DocumentT();
     /*! Assignment operator */
-    void operator=(const DocumentT&);
+    void operator=(const DocumentT &);
     /*! Assignment operator */
-    void operator=(const Document*);
+    void operator=(const Document *);
     /*! Assignment operator */
-    void operator=(const std::string&);
+    void operator=(const std::string &);
 
     /*! Get a pointer to the document or 0 if it doesn't exist any more. */
-    Document* getDocument() const;
+    Document *getDocument() const;
     /*! Get the name of the document. */
     std::string getDocumentName() const;
     /*! Get the Gui::Document as Python command. */
@@ -86,24 +89,24 @@ public:
     /*! Constructor */
     ViewProviderT();
     /*! Constructor */
-    ViewProviderT(const ViewProviderT&);
+    ViewProviderT(const ViewProviderT &);
     /*! Constructor */
     ViewProviderT(ViewProviderT &&);
     /*! Constructor */
-    explicit ViewProviderT(const ViewProviderDocumentObject*);
+    explicit ViewProviderT(const ViewProviderDocumentObject *);
     /*! Destructor */
     ~ViewProviderT();
     /*! Assignment operator */
-    ViewProviderT &operator=(const ViewProviderT&);
+    ViewProviderT &operator=(const ViewProviderT &);
     /*! Assignment operator */
     ViewProviderT &operator=(ViewProviderT &&);
     /*! Assignment operator */
-    void operator=(const ViewProviderDocumentObject*);
+    void operator=(const ViewProviderDocumentObject *);
     /*! Equality operator */
-    bool operator==(const ViewProviderT&) const;
+    bool operator==(const ViewProviderT &) const;
 
     /*! Get a pointer to the document or 0 if it doesn't exist any more. */
-    Document* getDocument() const;
+    Document *getDocument() const;
     /*! Get the name of the document. */
     const std::string &getDocumentName() const;
     /*! Get the Gui::Document as Python command. */
@@ -111,14 +114,13 @@ public:
     /*! Get the App::Document as Python command. */
     std::string getAppDocumentPython() const;
     /*! Get a pointer to the document object or 0 if it doesn't exist any more. */
-    ViewProviderDocumentObject* getViewProvider() const;
+    ViewProviderDocumentObject *getViewProvider() const;
     /*! Get the name of the document object. */
     const std::string &getObjectName() const;
     /*! Get the document object as Python command. */
     std::string getObjectPython() const;
     /*! Get a pointer to the document or 0 if it doesn't exist any more or the type doesn't match. */
-    template<typename T>
-    inline T* getObjectAs() const
+    template<typename T> inline T *getObjectAs() const
     {
         return Base::freecad_dynamic_cast<T>(getViewProvider());
     }
@@ -134,7 +136,7 @@ private:
 class GuiExport DocumentWeakPtrT
 {
 public:
-    explicit DocumentWeakPtrT(Gui::Document*) noexcept;
+    explicit DocumentWeakPtrT(Gui::Document *) noexcept;
     ~DocumentWeakPtrT();
 
     /*!
@@ -151,17 +153,17 @@ public:
      * \brief operator *
      * \return pointer to the document
      */
-    Gui::Document* operator*() const noexcept;
+    Gui::Document *operator*() const noexcept;
     /*!
      * \brief operator ->
      * \return pointer to the document
      */
-    Gui::Document* operator->() const noexcept;
+    Gui::Document *operator->() const noexcept;
 
 private:
     // disable
-    DocumentWeakPtrT(const DocumentWeakPtrT&);
-    DocumentWeakPtrT& operator=(const DocumentWeakPtrT&);
+    DocumentWeakPtrT(const DocumentWeakPtrT &);
+    DocumentWeakPtrT &operator=(const DocumentWeakPtrT &);
 
     class Private;
     std::unique_ptr<Private> d;
@@ -173,7 +175,7 @@ private:
 class GuiExport ViewProviderWeakPtrT
 {
 public:
-    explicit ViewProviderWeakPtrT(ViewProviderDocumentObject*);
+    explicit ViewProviderWeakPtrT(ViewProviderDocumentObject *);
     ~ViewProviderWeakPtrT();
 
     /*!
@@ -190,39 +192,38 @@ public:
      * \brief operator =
      * Assignment operator
      */
-    ViewProviderWeakPtrT& operator= (ViewProviderDocumentObject* p);
+    ViewProviderWeakPtrT &operator=(ViewProviderDocumentObject *p);
     /*!
      * \brief operator *
      * \return pointer to the document
      */
-    ViewProviderDocumentObject* operator*() const noexcept;
+    ViewProviderDocumentObject *operator*() const noexcept;
     /*!
      * \brief operator ->
      * \return pointer to the document
      */
-    ViewProviderDocumentObject* operator->() const noexcept;
+    ViewProviderDocumentObject *operator->() const noexcept;
     /*!
      * \brief operator ==
      * \return true if both objects are equal, false otherwise
      */
-    bool operator== (const ViewProviderWeakPtrT& p) const noexcept;
+    bool operator==(const ViewProviderWeakPtrT &p) const noexcept;
     /*!
      * \brief operator !=
      * \return true if both objects are inequal, false otherwise
      */
-    bool operator!= (const ViewProviderWeakPtrT& p) const noexcept;
+    bool operator!=(const ViewProviderWeakPtrT &p) const noexcept;
     /*! Get a pointer to the object or 0 if it doesn't exist any more or the type doesn't match. */
-    template<typename T>
-    inline T* get() const noexcept
+    template<typename T> inline T *get() const noexcept
     {
         return Base::freecad_dynamic_cast<T>(_get());
     }
 
 private:
-    ViewProviderDocumentObject* _get() const noexcept;
+    ViewProviderDocumentObject *_get() const noexcept;
     // disable
-    ViewProviderWeakPtrT(const ViewProviderWeakPtrT&);
-    ViewProviderWeakPtrT& operator=(const ViewProviderWeakPtrT&);
+    ViewProviderWeakPtrT(const ViewProviderWeakPtrT &);
+    ViewProviderWeakPtrT &operator=(const ViewProviderWeakPtrT &);
 
 private:
     class Private;
@@ -232,34 +233,28 @@ private:
 /**
  * @brief The WeakPtrT class
  */
-template <class T>
-class WeakPtrT
+template<class T> class WeakPtrT
 {
 public:
-    explicit WeakPtrT(T* t) : ptr(t) {
-    }
-    ~WeakPtrT() {
-    }
+    explicit WeakPtrT(T *t) : ptr(t) {}
+    ~WeakPtrT() {}
 
     /*!
      * \brief reset
      * Releases the reference to the managed object. After the call *this manages no object.
      */
-    void reset() {
-        ptr.reset();
-    }
+    void reset() { ptr.reset(); }
     /*!
      * \brief expired
      * \return true if the managed object has already been deleted, false otherwise.
      */
-    bool expired() const {
-        return ptr.expired();
-    }
+    bool expired() const { return ptr.expired(); }
     /*!
      * \brief operator =
      * Assignment operator
      */
-    WeakPtrT<T>& operator= (T* p) {
+    WeakPtrT<T> &operator=(T *p)
+    {
         ptr = p;
         return *this;
     }
@@ -267,40 +262,29 @@ public:
      * \brief operator *
      * \return pointer to the view provider
      */
-    T* operator*() const {
-        return ptr.get<T>();
-    }
+    T *operator*() const { return ptr.get<T>(); }
     /*!
      * \brief operator ->
      * \return pointer to the view provider
      */
-    T* operator->() const {
-        return ptr.get<T>();
-    }
+    T *operator->() const { return ptr.get<T>(); }
     /*!
      * \brief operator ==
      * \return true if both objects are equal, false otherwise
      */
-    bool operator== (const WeakPtrT<T>& p) const {
-        return ptr == p.ptr;
-    }
+    bool operator==(const WeakPtrT<T> &p) const { return ptr == p.ptr; }
     /*!
      * \brief operator !=
      * \return true if both objects are inequal, false otherwise
      */
-    bool operator!= (const WeakPtrT<T>& p) const {
-        return ptr != p.ptr;
-    }
+    bool operator!=(const WeakPtrT<T> &p) const { return ptr != p.ptr; }
     /*! Get a pointer to the object or 0 if it doesn't exist any more. */
-    T* get() const noexcept
-    {
-        return ptr.get<T>();
-    }
+    T *get() const noexcept { return ptr.get<T>(); }
 
 private:
     // disable
-    WeakPtrT(const WeakPtrT&);
-    WeakPtrT& operator=(const WeakPtrT&);
+    WeakPtrT(const WeakPtrT &);
+    WeakPtrT &operator=(const WeakPtrT &);
 
 private:
     ViewProviderWeakPtrT ptr;
@@ -319,13 +303,13 @@ class GuiExport DocumentObserver
 public:
     /// Constructor
     DocumentObserver();
-    explicit DocumentObserver(Document*);
+    explicit DocumentObserver(Document *);
     virtual ~DocumentObserver();
 
     /** Attaches to another document, the old document
      * is not longer observed then.
      */
-    void attachDocument(Document*);
+    void attachDocument(Document *);
     /** Detaches from the current document, the document
      * is not longer observed then.
      */
@@ -333,26 +317,26 @@ public:
 
 private:
     /** Notifies when an object has been created. */
-    virtual void slotCreatedObject(const ViewProviderDocumentObject& Obj);
+    virtual void slotCreatedObject(const ViewProviderDocumentObject &Obj);
     /** Notifies when the object is about to be removed. */
-    virtual void slotDeletedObject(const ViewProviderDocumentObject& Obj);
+    virtual void slotDeletedObject(const ViewProviderDocumentObject &Obj);
     /** The property of an observed object has changed */
-    virtual void slotChangedObject(const ViewProviderDocumentObject& Obj,
-                                   const App::Property& Prop);
+    virtual void slotChangedObject(const ViewProviderDocumentObject &Obj,
+                                   const App::Property &Prop);
     /** Notifies when the object has been relabeled. */
-    virtual void slotRelabelObject(const ViewProviderDocumentObject& Obj);
+    virtual void slotRelabelObject(const ViewProviderDocumentObject &Obj);
     /** Notifies when the object has been activated. */
-    virtual void slotActivatedObject(const ViewProviderDocumentObject& Obj);
+    virtual void slotActivatedObject(const ViewProviderDocumentObject &Obj);
     /** Notifies when the object entered edit mode. */
-    virtual void slotEnterEditObject(const ViewProviderDocumentObject& Obj);
+    virtual void slotEnterEditObject(const ViewProviderDocumentObject &Obj);
     /** Notifies when the object resets edit mode. */
-    virtual void slotResetEditObject(const ViewProviderDocumentObject& Obj);
+    virtual void slotResetEditObject(const ViewProviderDocumentObject &Obj);
     /** Notifies on undo */
-    virtual void slotUndoDocument(const Document& Doc);
+    virtual void slotUndoDocument(const Document &Doc);
     /** Notifies on redo */
-    virtual void slotRedoDocument(const Document& Doc);
+    virtual void slotRedoDocument(const Document &Doc);
     /** Notifies on deletion */
-    virtual void slotDeleteDocument(const Document& Doc);
+    virtual void slotDeleteDocument(const Document &Doc);
 
 private:
     using Connection = boost::signals2::scoped_connection;

@@ -43,28 +43,25 @@ using namespace TechDrawGui;
 
 QGCustomClip::QGCustomClip()
 {
-    setHandlesChildEvents(false);                //not sure if needs to handle events for Views in Group???
+    setHandlesChildEvents(false); //not sure if needs to handle events for Views in Group???
     setCacheMode(QGraphicsItem::NoCache);
     setAcceptHoverEvents(false);
     setFlag(QGraphicsItem::ItemIsSelectable, false);
     setFlag(QGraphicsItem::ItemIsMovable, false);
     setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
-//    setFlag(QGraphicsItem::ItemClipsChildrenToShape, false);   //good for debugging
+    //    setFlag(QGraphicsItem::ItemClipsChildrenToShape, false);   //good for debugging
     m_rect = QRectF(0., 0., 10., 10.);
 }
 
-void QGCustomClip::centerAt(QPointF centerPos)
-{
-    centerAt(centerPos.x(), centerPos.y());
-}
+void QGCustomClip::centerAt(QPointF centerPos) { centerAt(centerPos.x(), centerPos.y()); }
 
 void QGCustomClip::centerAt(double cX, double cY)
 {
     QRectF box = boundingRect();
     double width = box.width();
     double height = box.height();
-    double newX = cX - width/2.;
-    double newY = cY - height/2.;
+    double newX = cX - width / 2.;
+    double newY = cY - height / 2.;
     setPos(newX, newY);
 }
 
@@ -76,32 +73,30 @@ void QGCustomClip::setRect(QRectF r)
 
 void QGCustomClip::setRect(double x, double y, double w, double h)
 {
-    QRectF r(x, y,w, h);
+    QRectF r(x, y, w, h);
     setRect(r);
 }
 
-QRectF QGCustomClip::rect()
-{
-    return m_rect;
-}
+QRectF QGCustomClip::rect() { return m_rect; }
 
-void QGCustomClip::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGCustomClip::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
-//    painter->drawRect(boundingRect());          //good for debugging
+    //    painter->drawRect(boundingRect());          //good for debugging
 
-    QGraphicsItemGroup::paint (painter, &myOption, widget);
+    QGraphicsItemGroup::paint(painter, &myOption, widget);
 }
 
-QRectF QGCustomClip::boundingRect() const     //sb shape()?
+QRectF QGCustomClip::boundingRect() const //sb shape()?
 {
     return m_rect;
 }
 
 void QGCustomClip::makeMark(double x, double y)
 {
-    QGICMark* cmItem = new QGICMark(-1);
+    QGICMark *cmItem = new QGICMark(-1);
     cmItem->setParentItem(this);
     cmItem->setPos(x, y);
     cmItem->setThick(1.0);
@@ -109,9 +104,4 @@ void QGCustomClip::makeMark(double x, double y)
     cmItem->setZValue(ZVALUE::VERTEX);
 }
 
-void QGCustomClip::makeMark(Base::Vector3d v)
-{
-    makeMark(v.x, v.y);
-}
-
-
+void QGCustomClip::makeMark(Base::Vector3d v) { makeMark(v.x, v.y); }

@@ -72,16 +72,16 @@ QGISectionLine::QGISectionLine()
     setWidth(Rez::guiX(0.75));
     setStyle(getSectionStyle());
     setColor(getSectionColor());
-
 }
 
 void QGISectionLine::draw()
 {
     prepareGeometryChange();
     int format = getPrefSectionStandard();
-    if (format == ANSISTANDARD) {                           //"ASME"/"ANSI"
+    if (format == ANSISTANDARD) { //"ASME"/"ANSI"
         extensionEndsTrad();
-    } else {
+    }
+    else {
         extensionEndsISO();
     }
 
@@ -109,9 +109,8 @@ void QGISectionLine::makeLine()
 void QGISectionLine::makeArrows()
 {
     int format = getPrefSectionStandard();
-    if (format == ANSISTANDARD) {
-        makeArrowsTrad();
-    } else {
+    if (format == ANSISTANDARD) { makeArrowsTrad(); }
+    else {
         makeArrowsISO();
     }
 }
@@ -122,16 +121,14 @@ void QGISectionLine::makeArrowsISO()
     double arrowRotation = 0.0;
     m_arrowDir.Normalize();
     double angle = atan2f(m_arrowDir.y, m_arrowDir.x);
-    if (angle < 0.0) {
-        angle = 2 * M_PI + angle;
-    }
-    arrowRotation = 360.0 - angle * (180.0/M_PI);   //convert to Qt rotation (clockwise degrees)
+    if (angle < 0.0) { angle = 2 * M_PI + angle; }
+    arrowRotation = 360.0 - angle * (180.0 / M_PI); //convert to Qt rotation (clockwise degrees)
 
     m_arrow1->setStyle(0);
     m_arrow1->setSize(QGIArrow::getPrefArrowSize());
     m_arrow1->setPos(m_start);
     m_arrow1->draw();
-    m_arrow1->setRotation(arrowRotation);                   //rotation = 0  ==>  ->  horizontal, pointing right
+    m_arrow1->setRotation(arrowRotation); //rotation = 0  ==>  ->  horizontal, pointing right
 
     m_arrow2->setStyle(0);
     m_arrow2->setSize(QGIArrow::getPrefArrowSize());
@@ -146,18 +143,14 @@ void QGISectionLine::makeArrowsTrad()
     double arrowRotation = 0.0;
     m_arrowDir.Normalize();
     double angle = atan2f(m_arrowDir.y, m_arrowDir.x);
-    if (angle < 0.0) {
-        angle = 2 * M_PI + angle;
-    }
-    arrowRotation = 360.0 - angle * (180.0/M_PI);   //convert to Qt rotation (clockwise degrees)
+    if (angle < 0.0) { angle = 2 * M_PI + angle; }
+    arrowRotation = 360.0 - angle * (180.0 / M_PI); //convert to Qt rotation (clockwise degrees)
 
     QPointF posArrow1, posArrow2;
-    QPointF offsetDir(m_arrowDir.x, -m_arrowDir.y);              //remember Y dir is flipped
+    QPointF offsetDir(m_arrowDir.x, -m_arrowDir.y); //remember Y dir is flipped
 
     double oblique = 1.0;
-    if ( !DrawUtil::fpCompare((m_arrowDir.x + m_arrowDir.y), 1.0) ) {
-        oblique = 1.25;
-    }
+    if (!DrawUtil::fpCompare((m_arrowDir.x + m_arrowDir.y), 1.0)) { oblique = 1.25; }
     double offsetLength = (m_extLen * oblique) + Rez::guiX(QGIArrow::getPrefArrowSize());
     QPointF offsetVec = offsetLength * offsetDir;
 
@@ -168,7 +161,7 @@ void QGISectionLine::makeArrowsTrad()
     m_arrow1->setSize(QGIArrow::getPrefArrowSize());
     m_arrow1->setPos(posArrow1);
     m_arrow1->draw();
-    m_arrow1->setRotation(arrowRotation);                   //rotation = 0  ==>  ->  horizontal, pointing right
+    m_arrow1->setRotation(arrowRotation); //rotation = 0  ==>  ->  horizontal, pointing right
 
     m_arrow2->setStyle(0);
     m_arrow2->setSize(QGIArrow::getPrefArrowSize());
@@ -180,9 +173,8 @@ void QGISectionLine::makeArrowsTrad()
 void QGISectionLine::makeSymbols()
 {
     int format = getPrefSectionStandard();
-    if (format == ANSISTANDARD) {
-        makeSymbolsTrad();
-    } else {
+    if (format == ANSISTANDARD) { makeSymbolsTrad(); }
+    else {
         makeSymbolsISO();
     }
 }
@@ -190,7 +182,7 @@ void QGISectionLine::makeSymbols()
 void QGISectionLine::makeSymbolsTrad()
 {
     prepareGeometryChange();
-//    m_symFont.setPixelSize(QGIView::calculateFontPixelSize(m_symSize));
+    //    m_symFont.setPixelSize(QGIView::calculateFontPixelSize(m_symSize));
     int fontSize = QGIView::exactFontSize(Base::Tools::toStdString(m_symFont.family()), m_symSize);
     m_symFont.setPixelSize(fontSize);
     m_symbol1->setFont(m_symFont);
@@ -203,9 +195,7 @@ void QGISectionLine::makeSymbolsTrad()
     double symHeight = symRect.height();
     double symbolFudge = 0.75;
     double angle = atan2f(m_arrowDir.y, m_arrowDir.x);
-    if (angle < 0.0) {
-        angle = 2 * M_PI + angle;
-    }
+    if (angle < 0.0) { angle = 2 * M_PI + angle; }
     Base::Vector3d adjustVector(cos(angle) * symWidth, sin(angle) * symHeight, 0.0);
     adjustVector = DrawUtil::invertY(adjustVector) * symbolFudge;
     QPointF qAdjust(adjustVector.x, adjustVector.y);
@@ -225,7 +215,7 @@ void QGISectionLine::makeSymbolsTrad()
 void QGISectionLine::makeSymbolsISO()
 {
     prepareGeometryChange();
-//    m_symFont.setPixelSize(QGIView::calculateFontPixelSize(m_symSize));
+    //    m_symFont.setPixelSize(QGIView::calculateFontPixelSize(m_symSize));
     int fontSize = QGIView::exactFontSize(Base::Tools::toStdString(m_symFont.family()), m_symSize);
     m_symFont.setPixelSize(fontSize);
     m_symbol1->setFont(m_symFont);
@@ -236,7 +226,7 @@ void QGISectionLine::makeSymbolsISO()
     QPointF symPosStart, symPosEnd;
     //no normalize() for QPointF
     QPointF dist = (m_start - m_end);
-    double lenDist = sqrt(dist.x()*dist.x() + dist.y()*dist.y());
+    double lenDist = sqrt(dist.x() * dist.x() + dist.y() * dist.y());
     QPointF offsetDir = dist / lenDist;
 
     QRectF symRect = m_symbol1->boundingRect();
@@ -245,9 +235,7 @@ void QGISectionLine::makeSymbolsISO()
 
     double symbolFudge = 0.75;
     double angle = atan2f(offsetDir.y(), offsetDir.x());
-    if (angle < 0.0) {
-        angle = 2.0 * M_PI + angle;
-    }
+    if (angle < 0.0) { angle = 2.0 * M_PI + angle; }
     Base::Vector3d adjustVector(cos(angle) * symWidth, sin(angle) * symHeight, 0.0);
     adjustVector = adjustVector * symbolFudge;
     QPointF qAdjust(adjustVector.x, adjustVector.y);
@@ -262,7 +250,6 @@ void QGISectionLine::makeSymbolsISO()
     m_symbol1->setRotation(360.0 - rotation());
     m_symbol2->setTransformOriginPoint(m_symbol2->mapFromParent(symPosEnd));
     m_symbol2->setRotation(360.0 - rotation());
-
 }
 
 void QGISectionLine::extensionEndsTrad()
@@ -271,16 +258,14 @@ void QGISectionLine::extensionEndsTrad()
 
     //extensions for oblique section line needs to be a bit longer
     double oblique = 1.0;
-    if ( !DrawUtil::fpCompare((m_arrowDir.x + m_arrowDir.y), 1.0) ) {
-        oblique = 1.25;
-    }
+    if (!DrawUtil::fpCompare((m_arrowDir.x + m_arrowDir.y), 1.0)) { oblique = 1.25; }
 
     //draw from section line endpoint
     QPointF offsetEnd = oblique * m_extLen * offsetDir;
     m_beginExt1 = m_start;
-    m_endExt1   = m_start + offsetEnd;
+    m_endExt1 = m_start + offsetEnd;
     m_beginExt2 = m_end;
-    m_endExt2   = m_end + offsetEnd;
+    m_endExt2 = m_end + offsetEnd;
 }
 
 void QGISectionLine::extensionEndsISO()
@@ -292,18 +277,16 @@ void QGISectionLine::extensionEndsISO()
     //extensions for oblique section line needs to be a bit longer?
     //this is just esthetics
     double oblique = 1.0;
-    if ( !DrawUtil::fpCompare((m_arrowDir.x + m_arrowDir.y), 1.0) ) {
-        oblique = 1.10;
-    }
+    if (!DrawUtil::fpCompare((m_arrowDir.x + m_arrowDir.y), 1.0)) { oblique = 1.10; }
 
     //draw from section line endpoint less arrow length
-    QPointF offsetStart =  offsetDir * Rez::guiX(QGIArrow::getPrefArrowSize());
+    QPointF offsetStart = offsetDir * Rez::guiX(QGIArrow::getPrefArrowSize());
     QPointF offsetEnd = oblique * m_extLen * offsetDir;
 
     m_beginExt1 = m_start + offsetStart;
-    m_endExt1   = m_start + offsetStart + offsetEnd;
+    m_endExt1 = m_start + offsetStart + offsetEnd;
     m_beginExt2 = m_end + offsetStart;
-    m_endExt2   = m_end + offsetStart + offsetEnd;
+    m_endExt2 = m_end + offsetStart + offsetEnd;
 }
 
 void QGISectionLine::setEnds(Base::Vector3d l1, Base::Vector3d l2)
@@ -320,10 +303,7 @@ void QGISectionLine::setBounds(double x1, double y1, double x2, double y2)
     m_end = QPointF(x2, y2);
 }
 
-void QGISectionLine::setSymbol(char* sym)
-{
-    m_symbol = sym;
-}
+void QGISectionLine::setSymbol(char *sym) { m_symbol = sym; }
 
 void QGISectionLine::setDirection(double xDir, double yDir)
 {
@@ -343,44 +323,40 @@ void QGISectionLine::setFont(QFont f, double fsize)
     m_symSize = fsize;
 }
 
-void QGISectionLine::setSectionColor(QColor c)
-{
-    setColor(c);
-}
+void QGISectionLine::setSectionColor(QColor c) { setColor(c); }
 
-QColor QGISectionLine::getSectionColor()
-{
-    return PreferencesGui::sectionLineQColor();
-}
+QColor QGISectionLine::getSectionColor() { return PreferencesGui::sectionLineQColor(); }
 
 //SectionLineStyle
 void QGISectionLine::setSectionStyle(int style)
 {
-    Qt::PenStyle sectStyle = static_cast<Qt::PenStyle> (style);
+    Qt::PenStyle sectStyle = static_cast<Qt::PenStyle>(style);
     setStyle(sectStyle);
 }
 
-Qt::PenStyle QGISectionLine::getSectionStyle()
-{
-    return PreferencesGui::sectionLineStyle();
-}
+Qt::PenStyle QGISectionLine::getSectionStyle() { return PreferencesGui::sectionLineStyle(); }
 
 //ASME("traditional") vs ISO("reference arrow method") arrows
 int QGISectionLine::getPrefSectionStandard()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().
-                                         GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/Standards");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Standards");
     int format = hGrp->GetInt("SectionLineStandard", ISOSTANDARD);
     return format;
 }
 
 
-void QGISectionLine::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGISectionLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                           QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
     setTools();
-    QGIDecoration::paint (painter, &myOption, widget);
+    QGIDecoration::paint(painter, &myOption, widget);
 }
 
 void QGISectionLine::setTools()
@@ -390,7 +366,7 @@ void QGISectionLine::setTools()
         QVector<qreal> dashes;
         // the stroke width is double the one of center lines, but we like to
         // have the same spacing. thus these values must be half as large
-        qreal space = 2;  // in unit r_width
+        qreal space = 2; // in unit r_width
         qreal dash = 8;
         // dot must be really small when using CapStyle RoundCap but > 0
         // for CapStyle FlatCap you would need to set it to 1
@@ -416,10 +392,10 @@ void QGISectionLine::setTools()
 
     m_line->setPen(m_pen);
 
-//    m_arrow1->setPen(m_pen);
-//    m_arrow2->setPen(m_pen);
-//    m_arrow1->setBrush(m_brush);
-//    m_arrow2->setBrush(m_brush);
+    //    m_arrow1->setPen(m_pen);
+    //    m_arrow2->setPen(m_pen);
+    //    m_arrow1->setBrush(m_brush);
+    //    m_arrow2->setBrush(m_brush);
 
     m_arrow1->setNormalColor(m_colCurrent);
     m_arrow1->setFillColor(m_colCurrent);

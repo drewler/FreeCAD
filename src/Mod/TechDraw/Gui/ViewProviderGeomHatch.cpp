@@ -58,17 +58,15 @@ ViewProviderGeomHatch::ViewProviderGeomHatch()
 
     static const char *vgroup = "GeomHatch";
 
-    ADD_PROPERTY_TYPE(ColorPattern, (TechDraw::DrawGeomHatch::prefGeomHatchColor()),
-                        vgroup, App::Prop_None, "Color of the pattern");
-    ADD_PROPERTY_TYPE(WeightPattern, (0), vgroup, App::Prop_None, "GeometricHatch pattern line thickness");
+    ADD_PROPERTY_TYPE(ColorPattern, (TechDraw::DrawGeomHatch::prefGeomHatchColor()), vgroup,
+                      App::Prop_None, "Color of the pattern");
+    ADD_PROPERTY_TYPE(WeightPattern, (0), vgroup, App::Prop_None,
+                      "GeometricHatch pattern line thickness");
 
     getParameters();
-
 }
 
-ViewProviderGeomHatch::~ViewProviderGeomHatch()
-{
-}
+ViewProviderGeomHatch::~ViewProviderGeomHatch() {}
 
 bool ViewProviderGeomHatch::setEdit(int ModNum)
 {
@@ -85,7 +83,8 @@ bool ViewProviderGeomHatch::setEdit(int ModNum)
     if (projDlg) {
         projDlg->setCreateMode(false);
         Gui::Control().showDialog(projDlg);
-    } else {
+    }
+    else {
         Gui::Control().showDialog(new TaskDlgGeomHatch(getViewObject(), this, false));
     }
 
@@ -99,16 +98,13 @@ bool ViewProviderGeomHatch::doubleClicked()
 }
 
 //for VP properties - but each letter/digit in property editor triggers this!
-void ViewProviderGeomHatch::onChanged(const App::Property* p)
+void ViewProviderGeomHatch::onChanged(const App::Property *p)
 {
-    if ((p == &WeightPattern)  ||
-        (p == &ColorPattern) ) {
+    if ((p == &WeightPattern) || (p == &ColorPattern)) {
         auto gHatch = getViewObject();
         if (gHatch) {
-            TechDraw::DrawViewPart* parent = gHatch->getSourceView();
-            if (parent) {
-                parent->requestPaint();
-            }
+            TechDraw::DrawViewPart *parent = gHatch->getSourceView();
+            if (parent) { parent->requestPaint(); }
         }
     }
 
@@ -116,34 +112,28 @@ void ViewProviderGeomHatch::onChanged(const App::Property* p)
 }
 
 //for feature properties - but each letter/digit in property editor triggers this!
-void ViewProviderGeomHatch::updateData(const App::Property* prop)
+void ViewProviderGeomHatch::updateData(const App::Property *prop)
 {
     Gui::ViewProviderDocumentObject::updateData(prop);
 }
 
 void ViewProviderGeomHatch::updateGraphic()
 {
-    TechDraw::DrawGeomHatch* dc = getViewObject();
-    if (!dc) {
-        return;
-    }
+    TechDraw::DrawGeomHatch *dc = getViewObject();
+    if (!dc) { return; }
 
-    TechDraw::DrawViewPart* dvp = dc->getSourceView();
-    if (!dvp) {
-        return;
-    }
+    TechDraw::DrawViewPart *dvp = dc->getSourceView();
+    if (!dvp) { return; }
 
-    Gui::ViewProvider* view = Gui::Application::Instance->getDocument(dvp->getDocument())->getViewProvider(dvp);
-    TechDrawGui::ViewProviderDrawingView* vpDV = dynamic_cast<TechDrawGui::ViewProviderDrawingView*>(view);
-    if (!vpDV) {
-        return;
-    }
+    Gui::ViewProvider *view =
+        Gui::Application::Instance->getDocument(dvp->getDocument())->getViewProvider(dvp);
+    TechDrawGui::ViewProviderDrawingView *vpDV =
+        dynamic_cast<TechDrawGui::ViewProviderDrawingView *>(view);
+    if (!vpDV) { return; }
     vpDV->show();
 
-    QGIView* qgiv = vpDV->getQView();
-    if (!qgiv) {
-        return;
-    }
+    QGIView *qgiv = vpDV->getQView();
+    if (!qgiv) { return; }
     qgiv->updateView(true);
 }
 
@@ -161,18 +151,16 @@ bool ViewProviderGeomHatch::canDelete(App::DocumentObject *obj) const
     return true;
 }
 
-TechDraw::DrawGeomHatch* ViewProviderGeomHatch::getViewObject() const
+TechDraw::DrawGeomHatch *ViewProviderGeomHatch::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawGeomHatch*>(pcObject);
+    return dynamic_cast<TechDraw::DrawGeomHatch *>(pcObject);
 }
 
 Gui::MDIView *ViewProviderGeomHatch::getMDIView() const
 {
     auto obj = getViewObject();
-    if(!obj)
-        return nullptr;
+    if (!obj) return nullptr;
     auto vp = Gui::Application::Instance->getViewProvider(obj->getSourceView());
-    if(!vp)
-        return nullptr;
+    if (!vp) return nullptr;
     return vp->getMDIView();
 }

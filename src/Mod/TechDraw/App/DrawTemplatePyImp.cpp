@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #endif
 
 #include "DrawTemplate.h"
@@ -34,23 +34,17 @@
 using namespace TechDraw;
 
 // returns a string which represents the object e.g. when printed in python
-std::string DrawTemplatePy::representation() const
-{
-    return "<TechDraw::DrawTemplate>";
-}
+std::string DrawTemplatePy::representation() const { return "<TechDraw::DrawTemplate>"; }
 
-PyObject *DrawTemplatePy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *DrawTemplatePy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int DrawTemplatePy::setCustomAttributes(const char* attr, PyObject* obj)
+int DrawTemplatePy::setCustomAttributes(const char *attr, PyObject *obj)
 {
     // search in PropertyList
     App::Property *prop = getDrawTemplatePtr()->getPropertyByName(attr);
     if (prop) {
         // Read-only attributes must not be set over its Python interface
-        short Type =  getDrawTemplatePtr()->getPropertyType(prop);
+        short Type = getDrawTemplatePtr()->getPropertyType(prop);
         if (Type & App::Prop_ReadOnly) {
             std::stringstream s;
             s << "Object attribute '" << attr << "' is read-only";

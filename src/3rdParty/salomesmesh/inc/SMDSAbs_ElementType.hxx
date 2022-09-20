@@ -31,7 +31,7 @@
 /// Type (node, edge, face or volume) of elements
 ///////////////////////////////////////////////////////////////////////////////
 enum SMDSAbs_ElementType
-  {
+{
     SMDSAbs_All,
     SMDSAbs_Node,
     SMDSAbs_Edge,
@@ -40,11 +40,11 @@ enum SMDSAbs_ElementType
     SMDSAbs_0DElement,
     SMDSAbs_Ball,
     SMDSAbs_NbElementTypes
-  };
+};
 
 /*! enumeration for element geometry type */
 enum SMDSAbs_GeometryType
-  {
+{
     // 0D element
     SMDSGeom_POINT,
     // 1D element
@@ -64,14 +64,14 @@ enum SMDSAbs_GeometryType
     SMDSGeom_BALL,
     //
     SMDSGeom_NONE
-  };
+};
 
 
 enum SMDSAbs_ElementOrder
 {
-  ORDER_ANY,          /*! entities of any order */
-  ORDER_LINEAR,       /*! entities of 1st order */
-  ORDER_QUADRATIC     /*! entities of 2nd order */
+    ORDER_ANY,      /*! entities of any order */
+    ORDER_LINEAR,   /*! entities of 1st order */
+    ORDER_QUADRATIC /*! entities of 2nd order */
 };
 
 /*!
@@ -79,34 +79,34 @@ enum SMDSAbs_ElementOrder
  */
 enum SMDSAbs_EntityType
 {
-  SMDSEntity_Node,
-  SMDSEntity_0D,
-  SMDSEntity_Edge,
-  SMDSEntity_Quad_Edge,
-  SMDSEntity_Triangle,
-  SMDSEntity_Quad_Triangle,
-  SMDSEntity_BiQuad_Triangle,
-  SMDSEntity_Quadrangle,
-  SMDSEntity_Quad_Quadrangle,
-  SMDSEntity_BiQuad_Quadrangle,
-  SMDSEntity_Polygon,
+    SMDSEntity_Node,
+    SMDSEntity_0D,
+    SMDSEntity_Edge,
+    SMDSEntity_Quad_Edge,
+    SMDSEntity_Triangle,
+    SMDSEntity_Quad_Triangle,
+    SMDSEntity_BiQuad_Triangle,
+    SMDSEntity_Quadrangle,
+    SMDSEntity_Quad_Quadrangle,
+    SMDSEntity_BiQuad_Quadrangle,
+    SMDSEntity_Polygon,
 #ifndef VTK_NO_QUAD_POLY
-  SMDSEntity_Quad_Polygon,
+    SMDSEntity_Quad_Polygon,
 #endif
-  SMDSEntity_Tetra,
-  SMDSEntity_Quad_Tetra,
-  SMDSEntity_Pyramid,
-  SMDSEntity_Quad_Pyramid,
-  SMDSEntity_Hexa,
-  SMDSEntity_Quad_Hexa,
-  SMDSEntity_TriQuad_Hexa,
-  SMDSEntity_Penta,
-  SMDSEntity_Quad_Penta,
-  SMDSEntity_Hexagonal_Prism,
-  SMDSEntity_Polyhedra,
-  SMDSEntity_Quad_Polyhedra,
-  SMDSEntity_Ball,
-  SMDSEntity_Last
+    SMDSEntity_Tetra,
+    SMDSEntity_Quad_Tetra,
+    SMDSEntity_Pyramid,
+    SMDSEntity_Quad_Pyramid,
+    SMDSEntity_Hexa,
+    SMDSEntity_Quad_Hexa,
+    SMDSEntity_TriQuad_Hexa,
+    SMDSEntity_Penta,
+    SMDSEntity_Quad_Penta,
+    SMDSEntity_Hexagonal_Prism,
+    SMDSEntity_Polyhedra,
+    SMDSEntity_Quad_Polyhedra,
+    SMDSEntity_Ball,
+    SMDSEntity_Last
 };
 
 #endif

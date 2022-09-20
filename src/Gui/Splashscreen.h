@@ -28,7 +28,8 @@
 #include <QTextBrowser>
 #include <Gui/MDIView.h>
 
-namespace Gui {
+namespace Gui
+{
 
 class SplashObserver;
 
@@ -36,22 +37,23 @@ class SplashObserver;
  *
  * \author Werner Mayer
  */
-class SplashScreen : public QSplashScreen
+class SplashScreen: public QSplashScreen
 {
     Q_OBJECT
 
 public:
-    explicit SplashScreen(  const QPixmap & pixmap = QPixmap ( ), Qt::WindowFlags f = Qt::WindowFlags() );
+    explicit SplashScreen(const QPixmap &pixmap = QPixmap(), Qt::WindowFlags f = Qt::WindowFlags());
     ~SplashScreen() override;
 
 protected:
-    void drawContents ( QPainter * painter ) override;
+    void drawContents(QPainter *painter) override;
 
 private:
-    SplashObserver* messages;
+    SplashObserver *messages;
 };
 
-namespace Dialog {
+namespace Dialog
+{
 class Ui_AboutApplication;
 
 class GuiExport AboutDialogFactory
@@ -66,36 +68,34 @@ public:
     static void setDefaultFactory(AboutDialogFactory *factory);
 
 private:
-    static AboutDialogFactory* factory;
+    static AboutDialogFactory *factory;
 };
 
-class GuiExport LicenseView : public Gui::MDIView
+class GuiExport LicenseView: public Gui::MDIView
 {
     Q_OBJECT
 
 public:
-    explicit LicenseView(QWidget* parent=nullptr);
+    explicit LicenseView(QWidget *parent = nullptr);
     ~LicenseView() override;
 
-    void setSource(const QUrl & url);
-    const char *getName() const override {
-        return "LicenseView";
-    }
+    void setSource(const QUrl &url);
+    const char *getName() const override { return "LicenseView"; }
 
 private:
-    QTextBrowser* browser;
+    QTextBrowser *browser;
 };
 
 /** This widget provides the "About dialog" of an application.
  * This shows the current version, the build number and date.
  * \author Werner Mayer
  */
-class GuiExport AboutDialog : public QDialog
+class GuiExport AboutDialog: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit AboutDialog(bool showLic, QWidget* parent = nullptr);
+    explicit AboutDialog(bool showLic, QWidget *parent = nullptr);
     ~AboutDialog() override;
 
 protected:
@@ -105,14 +105,14 @@ protected:
     QString getAdditionalLicenseInformation() const;
     void showLibraryInformation();
     void showCollectionInformation();
-    void showOrHideImage(const QRect& rect);
+    void showOrHideImage(const QRect &rect);
 
 protected Q_SLOTS:
     virtual void on_copyButton_clicked();
-    void linkActivated(const QUrl& link);
+    void linkActivated(const QUrl &link);
 
 private:
-    Ui_AboutApplication* ui;
+    Ui_AboutApplication *ui;
     class LibraryInfo;
 };
 

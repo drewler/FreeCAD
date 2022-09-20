@@ -28,11 +28,11 @@
 
 // Exporting of App classes
 #ifdef FC_OS_WIN32
-# define SandboxAppExport __declspec(dllexport)
-# define MeshExport       __declspec(dllimport)
+#define SandboxAppExport __declspec(dllexport)
+#define MeshExport __declspec(dllimport)
 #else // for Linux
-# define SandboxAppExport
-# define MeshExport
+#define SandboxAppExport
+#define MeshExport
 #endif
 
 #ifdef _PreComp_
@@ -70,4 +70,3 @@
 #endif //_PreComp_
 
 #endif
-

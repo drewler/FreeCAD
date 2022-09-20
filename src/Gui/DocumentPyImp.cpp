@@ -23,7 +23,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #endif
 
 #include <App/Document.h>
@@ -59,51 +59,55 @@ std::string DocumentPy::representation() const
 }
 
 
-PyObject* DocumentPy::show(PyObject *args)
+PyObject *DocumentPy::show(PyObject *args)
 {
     char *psFeatStr;
     if (!PyArg_ParseTuple(args, "s;Name of the Feature to show have to be given!", &psFeatStr))
         return nullptr;
 
-    PY_TRY {
+    PY_TRY
+    {
         getDocumentPtr()->setShow(psFeatStr);
         Py_Return;
     }
     PY_CATCH;
 }
 
-PyObject* DocumentPy::hide(PyObject *args)
+PyObject *DocumentPy::hide(PyObject *args)
 {
     char *psFeatStr;
     if (!PyArg_ParseTuple(args, "s;Name of the Feature to hide have to be given!", &psFeatStr))
         return nullptr;
 
-    PY_TRY {
+    PY_TRY
+    {
         getDocumentPtr()->setHide(psFeatStr);
         Py_Return;
     }
     PY_CATCH;
 }
 
-PyObject* DocumentPy::setPos(PyObject *args)
+PyObject *DocumentPy::setPos(PyObject *args)
 {
     char *psFeatStr;
     Base::Matrix4D mat;
     PyObject *pcMatObj;
-    if (!PyArg_ParseTuple(args, "sO!;Name of the Feature and the transformation matrix have to be given!",
+    if (!PyArg_ParseTuple(args,
+                          "sO!;Name of the Feature and the transformation matrix have to be given!",
                           &psFeatStr, &(Base::MatrixPy::Type), &pcMatObj))
         return nullptr;
 
-    mat = static_cast<Base::MatrixPy*>(pcMatObj)->value();
+    mat = static_cast<Base::MatrixPy *>(pcMatObj)->value();
 
-    PY_TRY {
-        getDocumentPtr()->setPos(psFeatStr,mat);
+    PY_TRY
+    {
+        getDocumentPtr()->setPos(psFeatStr, mat);
         Py_Return;
     }
     PY_CATCH;
 }
 
-PyObject* DocumentPy::setEdit(PyObject *args)
+PyObject *DocumentPy::setEdit(PyObject *args)
 {
     char *psFeatStr;
     int mod = 0;
@@ -112,118 +116,117 @@ PyObject* DocumentPy::setEdit(PyObject *args)
     App::DocumentObject *obj = nullptr;
 
     // by name
-    if (PyArg_ParseTuple(args, "s|is", &psFeatStr,&mod,&subname)) {
+    if (PyArg_ParseTuple(args, "s|is", &psFeatStr, &mod, &subname)) {
         obj = getDocumentPtr()->getDocument()->getObject(psFeatStr);
         if (!obj) {
-            PyErr_Format(Base::PyExc_FC_GeneralError, "No such object found in document: '%s'", psFeatStr);
+            PyErr_Format(Base::PyExc_FC_GeneralError, "No such object found in document: '%s'",
+                         psFeatStr);
             return nullptr;
         }
     }
     else {
         PyErr_Clear();
         PyObject *pyObj;
-        if (!PyArg_ParseTuple(args, "O|is", &pyObj,&mod,&subname))
-            return nullptr;
+        if (!PyArg_ParseTuple(args, "O|is", &pyObj, &mod, &subname)) return nullptr;
 
-        if (PyObject_TypeCheck(pyObj,&App::DocumentObjectPy::Type)) {
-            obj = static_cast<App::DocumentObjectPy*>(pyObj)->getDocumentObjectPtr();
+        if (PyObject_TypeCheck(pyObj, &App::DocumentObjectPy::Type)) {
+            obj = static_cast<App::DocumentObjectPy *>(pyObj)->getDocumentObjectPtr();
         }
-        else if (PyObject_TypeCheck(pyObj,&ViewProviderPy::Type)) {
-            vp = static_cast<ViewProviderPy*>(pyObj)->getViewProviderPtr();
+        else if (PyObject_TypeCheck(pyObj, &ViewProviderPy::Type)) {
+            vp = static_cast<ViewProviderPy *>(pyObj)->getViewProviderPtr();
         }
         else {
-            PyErr_SetString(PyExc_TypeError,"Expect the first argument to be string, DocumentObject or ViewObject");
+            PyErr_SetString(PyExc_TypeError,
+                            "Expect the first argument to be string, DocumentObject or ViewObject");
             return nullptr;
         }
     }
 
     if (!vp) {
-        if (!obj || !obj->getNameInDocument() || !(vp=Application::Instance->getViewProvider(obj))) {
-            PyErr_SetString(PyExc_ValueError,"Invalid document object");
+        if (!obj || !obj->getNameInDocument()
+            || !(vp = Application::Instance->getViewProvider(obj))) {
+            PyErr_SetString(PyExc_ValueError, "Invalid document object");
             return nullptr;
         }
     }
 
-    bool ok = getDocumentPtr()->setEdit(vp,mod,subname);
+    bool ok = getDocumentPtr()->setEdit(vp, mod, subname);
 
     return PyBool_FromLong(ok ? 1 : 0);
 }
 
-PyObject* DocumentPy::getInEdit(PyObject *args)
+PyObject *DocumentPy::getInEdit(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    ViewProvider* vp = getDocumentPtr()->getInEdit();
-    if (vp)
-        return vp->getPyObject();
+    ViewProvider *vp = getDocumentPtr()->getInEdit();
+    if (vp) return vp->getPyObject();
 
     Py_Return;
 }
 
-PyObject* DocumentPy::resetEdit(PyObject *args)
+PyObject *DocumentPy::resetEdit(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     getDocumentPtr()->resetEdit();
 
     Py_Return;
 }
 
-PyObject* DocumentPy::addAnnotation(PyObject *args)
+PyObject *DocumentPy::addAnnotation(PyObject *args)
 {
-    char *psAnnoName,*psFileName,*psModName = nullptr;
+    char *psAnnoName, *psFileName, *psModName = nullptr;
     if (!PyArg_ParseTuple(args, "ss|s;Name of the Annotation and a file name have to be given!",
-                          &psAnnoName,&psFileName,&psModName))
+                          &psAnnoName, &psFileName, &psModName))
         return nullptr;
 
-    PY_TRY {
+    PY_TRY
+    {
         auto pcExt = new ViewProviderExtern();
 
         pcExt->setModeByFile(psModName ? psModName : "Main", psFileName);
         pcExt->adjustDocumentName(getDocumentPtr()->getDocument()->getName());
-        getDocumentPtr()->setAnnotationViewProvider(psAnnoName,pcExt);
+        getDocumentPtr()->setAnnotationViewProvider(psAnnoName, pcExt);
 
         Py_Return;
     }
     PY_CATCH;
 }
 
-PyObject* DocumentPy::update(PyObject *args)
+PyObject *DocumentPy::update(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    PY_TRY {
+    PY_TRY
+    {
         getDocumentPtr()->onUpdate();
         Py_Return;
     }
     PY_CATCH;
 }
 
-PyObject* DocumentPy::getObject(PyObject *args)
+PyObject *DocumentPy::getObject(PyObject *args)
 {
     char *sName;
-    if (!PyArg_ParseTuple(args, "s", &sName))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "s", &sName)) return nullptr;
 
-    PY_TRY {
+    PY_TRY
+    {
         ViewProvider *pcView = getDocumentPtr()->getViewProviderByName(sName);
-        if (pcView)
-            return pcView->getPyObject();
+        if (pcView) return pcView->getPyObject();
         else
             Py_Return;
     }
     PY_CATCH;
 }
 
-PyObject* DocumentPy::activeObject(PyObject *args)
+PyObject *DocumentPy::activeObject(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    PY_TRY {
+    PY_TRY
+    {
         App::DocumentObject *pcFtr = getDocumentPtr()->getDocument()->getActiveObject();
         if (pcFtr) {
             ViewProvider *pcView = getDocumentPtr()->getViewProvider(pcFtr);
@@ -236,14 +239,14 @@ PyObject* DocumentPy::activeObject(PyObject *args)
     PY_CATCH;
 }
 
-PyObject* DocumentPy::activeView(PyObject *args)
+PyObject *DocumentPy::activeView(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    PY_TRY {
-        Gui::MDIView  *pcView = getDocumentPtr()->getActiveView();
-        if (pcView){
+    PY_TRY
+    {
+        Gui::MDIView *pcView = getDocumentPtr()->getActiveView();
+        if (pcView) {
             // already incremented in getPyObject().
             return pcView->getPyObject();
         }
@@ -254,11 +257,10 @@ PyObject* DocumentPy::activeView(PyObject *args)
     PY_CATCH;
 }
 
-PyObject* DocumentPy::mdiViewsOfType(PyObject *args)
+PyObject *DocumentPy::mdiViewsOfType(PyObject *args)
 {
-    char* sType;
-    if (!PyArg_ParseTuple(args, "s", &sType))
-        return nullptr;
+    char *sType;
+    if (!PyArg_ParseTuple(args, "s", &sType)) return nullptr;
 
     Base::Type type = Base::Type::fromName(sType);
     if (type.isBad()) {
@@ -266,8 +268,9 @@ PyObject* DocumentPy::mdiViewsOfType(PyObject *args)
         return nullptr;
     }
 
-    PY_TRY {
-        std::list<Gui::MDIView*> views = getDocumentPtr()->getMDIViewsOfType(type);
+    PY_TRY
+    {
+        std::list<Gui::MDIView *> views = getDocumentPtr()->getMDIViewsOfType(type);
         Py::List list;
         for (auto it = views.begin(); it != views.end(); ++it)
             list.append(Py::asObject((*it)->getPyObject()));
@@ -276,29 +279,29 @@ PyObject* DocumentPy::mdiViewsOfType(PyObject *args)
     PY_CATCH;
 }
 
-PyObject* DocumentPy::sendMsgToViews(PyObject *args)
+PyObject *DocumentPy::sendMsgToViews(PyObject *args)
 {
-    char* msg;
-    if (!PyArg_ParseTuple(args, "s", &msg))
-        return nullptr;
+    char *msg;
+    if (!PyArg_ParseTuple(args, "s", &msg)) return nullptr;
 
-    PY_TRY {
+    PY_TRY
+    {
         getDocumentPtr()->sendMsgToViews(msg);
         Py_Return;
     }
     PY_CATCH;
 }
 
-PyObject* DocumentPy::mergeProject(PyObject *args)
+PyObject *DocumentPy::mergeProject(PyObject *args)
 {
-    char* filename;
-    if (!PyArg_ParseTuple(args, "s", &filename))
-        return nullptr;
+    char *filename;
+    if (!PyArg_ParseTuple(args, "s", &filename)) return nullptr;
 
-    PY_TRY {
+    PY_TRY
+    {
         Base::FileInfo fi(filename);
         Base::ifstream str(fi, std::ios::in | std::ios::binary);
-        App::Document* doc = getDocumentPtr()->getDocument();
+        App::Document *doc = getDocumentPtr()->getDocument();
         MergeDocuments md(doc);
         md.importObjects(str);
 
@@ -307,18 +310,19 @@ PyObject* DocumentPy::mergeProject(PyObject *args)
     PY_CATCH;
 }
 
-PyObject* DocumentPy::toggleTreeItem(PyObject *args)
+PyObject *DocumentPy::toggleTreeItem(PyObject *args)
 {
     PyObject *object;
     const char *subname = nullptr;
     int mod = 0;
-    if (!PyArg_ParseTuple(args,"O!|is",&(App::DocumentObjectPy::Type), &object,&mod,&subname))
+    if (!PyArg_ParseTuple(args, "O!|is", &(App::DocumentObjectPy::Type), &object, &mod, &subname))
         return nullptr;
 
-    App::DocumentObject* Object = static_cast<App::DocumentObjectPy*>(object)->getDocumentObjectPtr();
-    App::DocumentObject* parent = nullptr;
+    App::DocumentObject *Object =
+        static_cast<App::DocumentObjectPy *>(object)->getDocumentObjectPtr();
+    App::DocumentObject *parent = nullptr;
     if (subname) {
-        App::DocumentObject* sobj = Object->getSubObject(subname);
+        App::DocumentObject *sobj = Object->getSubObject(subname);
         if (!sobj) {
             PyErr_SetString(PyExc_ValueError, "Subobject not found");
             return nullptr;
@@ -331,47 +335,50 @@ PyObject* DocumentPy::toggleTreeItem(PyObject *args)
     // get the gui document of the Assembly Item
     //ActiveAppDoc = Item->getDocument();
     //ActiveGuiDoc = Gui::Application::Instance->getDocument(getDocumentPtr());
-    auto ActiveVp = dynamic_cast<Gui::ViewProviderDocumentObject*>(getDocumentPtr()->getViewProvider(Object));
+    auto ActiveVp =
+        dynamic_cast<Gui::ViewProviderDocumentObject *>(getDocumentPtr()->getViewProvider(Object));
     switch (mod) {
         case 0:
-            getDocumentPtr()->signalExpandObject(*ActiveVp, TreeItemMode::ToggleItem, parent, subname);
+            getDocumentPtr()->signalExpandObject(*ActiveVp, TreeItemMode::ToggleItem, parent,
+                                                 subname);
             break;
         case 1:
-            getDocumentPtr()->signalExpandObject(*ActiveVp, TreeItemMode::CollapseItem, parent, subname);
+            getDocumentPtr()->signalExpandObject(*ActiveVp, TreeItemMode::CollapseItem, parent,
+                                                 subname);
             break;
         case 2:
-            getDocumentPtr()->signalExpandObject(*ActiveVp, TreeItemMode::ExpandItem, parent, subname);
+            getDocumentPtr()->signalExpandObject(*ActiveVp, TreeItemMode::ExpandItem, parent,
+                                                 subname);
             break;
         case 3:
-            getDocumentPtr()->signalExpandObject(*ActiveVp, TreeItemMode::ExpandPath, parent, subname);
+            getDocumentPtr()->signalExpandObject(*ActiveVp, TreeItemMode::ExpandPath, parent,
+                                                 subname);
             break;
-        default:
-            PyErr_SetString(PyExc_ValueError, "Item mode out of range");
-            return nullptr;
+        default: PyErr_SetString(PyExc_ValueError, "Item mode out of range"); return nullptr;
     }
 
     Py_Return;
 }
 
-PyObject* DocumentPy::scrollToTreeItem(PyObject *args)
+PyObject *DocumentPy::scrollToTreeItem(PyObject *args)
 {
     PyObject *view;
-    if (!PyArg_ParseTuple(args,"O!",&(Gui::ViewProviderDocumentObjectPy::Type), &view))
+    if (!PyArg_ParseTuple(args, "O!", &(Gui::ViewProviderDocumentObjectPy::Type), &view))
         return nullptr;
 
-    Gui::ViewProviderDocumentObject* vp = static_cast<ViewProviderDocumentObjectPy*>
-            (view)->getViewProviderDocumentObjectPtr();
+    Gui::ViewProviderDocumentObject *vp =
+        static_cast<ViewProviderDocumentObjectPy *>(view)->getViewProviderDocumentObjectPtr();
     getDocumentPtr()->signalScrollToObject(*vp);
 
     Py_Return;
 }
 
-PyObject* DocumentPy::toggleInSceneGraph(PyObject *args) {
+PyObject *DocumentPy::toggleInSceneGraph(PyObject *args)
+{
     PyObject *view;
-    if (!PyArg_ParseTuple(args,"O!",&(Gui::ViewProviderPy::Type), &view))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "O!", &(Gui::ViewProviderPy::Type), &view)) return nullptr;
 
-    Gui::ViewProvider* vp = static_cast<ViewProviderPy*>(view)->getViewProviderPtr();
+    Gui::ViewProvider *vp = static_cast<ViewProviderPy *>(view)->getViewProviderPtr();
     getDocumentPtr()->toggleInSceneGraph(vp);
 
     Py_Return;
@@ -425,47 +432,48 @@ Py::Object DocumentPy::getDocument() const
 
 Py::Object DocumentPy::getEditingTransform() const
 {
-    return Py::asObject(new Base::MatrixPy(new Base::Matrix4D(
-                    getDocumentPtr()->getEditingTransform())));
+    return Py::asObject(
+        new Base::MatrixPy(new Base::Matrix4D(getDocumentPtr()->getEditingTransform())));
 }
 
 void DocumentPy::setEditingTransform(Py::Object arg)
 {
-    if (!PyObject_TypeCheck(arg.ptr(),&Base::MatrixPy::Type))
+    if (!PyObject_TypeCheck(arg.ptr(), &Base::MatrixPy::Type))
         throw Py::TypeError("Expecting type of matrix");
 
     getDocumentPtr()->setEditingTransform(
-            *static_cast<Base::MatrixPy*>(arg.ptr())->getMatrixPtr());
+        *static_cast<Base::MatrixPy *>(arg.ptr())->getMatrixPtr());
 }
 
-Py::Object DocumentPy::getInEditInfo() const {
+Py::Object DocumentPy::getInEditInfo() const
+{
     ViewProviderDocumentObject *vp = nullptr;
-    std::string subname,subelement;
+    std::string subname, subelement;
     int mode = 0;
-    getDocumentPtr()->getInEdit(&vp,&subname,&mode,&subelement);
-    if (!vp || !vp->getObject() || !vp->getObject()->getNameInDocument())
-        return Py::None();
+    getDocumentPtr()->getInEdit(&vp, &subname, &mode, &subelement);
+    if (!vp || !vp->getObject() || !vp->getObject()->getNameInDocument()) return Py::None();
 
-    return Py::TupleN(Py::Object(vp->getObject()->getPyObject(),true),
-            Py::String(subname),Py::String(subelement),Py::Int(mode));
+    return Py::TupleN(Py::Object(vp->getObject()->getPyObject(), true), Py::String(subname),
+                      Py::String(subelement), Py::Int(mode));
 }
 
 void DocumentPy::setInEditInfo(Py::Object arg)
 {
     PyObject *pyobj;
     const char *subname;
-    if (!PyArg_ParseTuple(arg.ptr(), "O!s", &Gui::ViewProviderDocumentObjectPy::Type,
-                          &pyobj, &subname))
+    if (!PyArg_ParseTuple(arg.ptr(), "O!s", &Gui::ViewProviderDocumentObjectPy::Type, &pyobj,
+                          &subname))
         throw Py::Exception();
 
-    getDocumentPtr()->setInEdit(static_cast<ViewProviderDocumentObjectPy*>(
-                pyobj)->getViewProviderDocumentObjectPtr(),subname);
+    getDocumentPtr()->setInEdit(
+        static_cast<ViewProviderDocumentObjectPy *>(pyobj)->getViewProviderDocumentObjectPtr(),
+        subname);
 }
 
 Py::Int DocumentPy::getEditMode() const
 {
     int mode = -1;
-    getDocumentPtr()->getInEdit(nullptr,nullptr,&mode);
+    getDocumentPtr()->getInEdit(nullptr, nullptr, &mode);
 
     return Py::Int(mode);
 }
@@ -475,12 +483,9 @@ Py::Boolean DocumentPy::getTransacting() const
     return Py::Boolean(getDocumentPtr()->isPerformingTransaction());
 }
 
-Py::Boolean DocumentPy::getModified() const
-{
-    return Py::Boolean(getDocumentPtr()->isModified());
-}
+Py::Boolean DocumentPy::getModified() const { return Py::Boolean(getDocumentPtr()->isModified()); }
 
-PyObject *DocumentPy::getCustomAttributes(const char* attr) const
+PyObject *DocumentPy::getCustomAttributes(const char *attr) const
 {
     // Note: Here we want to return only a document object if its
     // name matches 'attr'. However, it is possible to have an object
@@ -488,21 +493,19 @@ PyObject *DocumentPy::getCustomAttributes(const char* attr) const
     // wise it wouldn't be possible to address this attribute any more.
     // The object must then be addressed by the getObject() method directly.
     if (!this->ob_type->tp_dict) {
-        if (PyType_Ready(this->ob_type) < 0)
-            return nullptr;
+        if (PyType_Ready(this->ob_type) < 0) return nullptr;
     }
 
-    PyObject* item = PyDict_GetItemString(this->ob_type->tp_dict, attr);
-    if (item)
-        return nullptr;
+    PyObject *item = PyDict_GetItemString(this->ob_type->tp_dict, attr);
+    if (item) return nullptr;
 
     // search for an object with this name
-    ViewProvider* obj = getDocumentPtr()->getViewProviderByName(attr);
+    ViewProvider *obj = getDocumentPtr()->getViewProviderByName(attr);
 
     return (obj ? obj->getPyObject() : nullptr);
 }
 
-int DocumentPy::setCustomAttributes(const char* attr, PyObject *)
+int DocumentPy::setCustomAttributes(const char *attr, PyObject *)
 {
     // Note: Here we want to return only a document object if its
     // name matches 'attr'. However, it is possible to have an object
@@ -510,19 +513,16 @@ int DocumentPy::setCustomAttributes(const char* attr, PyObject *)
     // wise it wouldn't be possible to address this attribute any more.
     // The object must then be addressed by the getObject() method directly.
     if (!this->ob_type->tp_dict) {
-        if (PyType_Ready(this->ob_type) < 0)
-            return 0;
+        if (PyType_Ready(this->ob_type) < 0) return 0;
     }
 
-    PyObject* item = PyDict_GetItemString(this->ob_type->tp_dict, attr);
-    if (item)
-        return 0;
+    PyObject *item = PyDict_GetItemString(this->ob_type->tp_dict, attr);
+    if (item) return 0;
 
-    ViewProvider* obj = getDocumentPtr()->getViewProviderByName(attr);
+    ViewProvider *obj = getDocumentPtr()->getViewProviderByName(attr);
     if (obj) {
         std::stringstream str;
-        str << "'Document' object attribute '" << attr
-            << "' must not be set this way" << std::ends;
+        str << "'Document' object attribute '" << attr << "' must not be set this way" << std::ends;
         throw Py::AttributeError(str.str());
     }
 

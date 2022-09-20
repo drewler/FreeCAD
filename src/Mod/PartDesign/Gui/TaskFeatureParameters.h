@@ -30,17 +30,17 @@
 
 #include "ViewProvider.h"
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 /// Convenience class to collect common methods for all SketchBased features
-class TaskFeatureParameters : public Gui::TaskView::TaskBox,
-                              public Gui::DocumentObserver
+class TaskFeatureParameters: public Gui::TaskView::TaskBox, public Gui::DocumentObserver
 {
     Q_OBJECT
 
 public:
-    TaskFeatureParameters(PartDesignGui::ViewProvider* vp, QWidget *parent,
-                              const std::string& pixmapname, const QString& parname);
+    TaskFeatureParameters(PartDesignGui::ViewProvider *vp, QWidget *parent,
+                          const std::string &pixmapname, const QString &parname);
     ~TaskFeatureParameters() override {}
 
     /// save field history
@@ -56,7 +56,7 @@ protected Q_SLOTS:
 
 private:
     /** Notifies when the object is about to be removed. */
-    void slotDeletedObject(const Gui::ViewProviderDocumentObject& Obj) override;
+    void slotDeletedObject(const Gui::ViewProviderDocumentObject &Obj) override;
 
 protected:
     PartDesignGui::ViewProvider *vp;
@@ -65,7 +65,7 @@ protected:
 };
 
 /// A common base for sketch based, dressup and other solid parameters dialogs
-class TaskDlgFeatureParameters : public Gui::TaskView::TaskDialog
+class TaskDlgFeatureParameters: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -80,7 +80,7 @@ public:
     bool reject() override;
 
     /// Returns the view provider dialog is runed for
-     PartDesignGui::ViewProvider *viewProvider() const { return vp; }
+    PartDesignGui::ViewProvider *viewProvider() const { return vp; }
 
 protected:
     PartDesignGui::ViewProvider *vp;

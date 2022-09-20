@@ -33,16 +33,20 @@
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGICenterLine : public QGIDecoration
+class TechDrawGuiExport QGICenterLine: public QGIDecoration
 {
 public:
     explicit QGICenterLine();
     ~QGICenterLine() {}
 
-    enum {Type = QGraphicsItem::UserType + 174};
-    int type() const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 174
+    };
+    int type() const { return Type; }
 
-    virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr );
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr);
 
     void setBounds(double x1, double y1, double x2, double y2);
     virtual void draw();
@@ -56,12 +60,12 @@ protected:
     void setTools();
 
 private:
-    QGraphicsPathItem* m_line;           //primpath?
-    QPointF            m_start;
-    QPointF            m_end;
-    bool               m_isintersection;
+    QGraphicsPathItem *m_line; //primpath?
+    QPointF m_start;
+    QPointF m_end;
+    bool m_isintersection;
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // TECHDRAWGUI_QGICENTERLINE_H

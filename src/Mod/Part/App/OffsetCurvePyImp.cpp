@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Geom_OffsetCurve.hxx>
+#include <Geom_OffsetCurve.hxx>
 #endif
 
 #include <Base/GeometryPyCXX.h>
@@ -38,44 +38,39 @@
 using namespace Part;
 
 // returns a string which represents the object e.g. when printed in python
-std::string OffsetCurvePy::representation() const
-{
-    return "<OffsetCurve object>";
-}
+std::string OffsetCurvePy::representation() const { return "<OffsetCurve object>"; }
 
-PyObject *OffsetCurvePy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *OffsetCurvePy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
-    // create a new instance of OffsetCurvePy and the Twin object 
+    // create a new instance of OffsetCurvePy and the Twin object
     return new OffsetCurvePy(new GeomOffsetCurve);
 }
 
 // constructor method
-int OffsetCurvePy::PyInit(PyObject* args, PyObject* /*kwd*/)
+int OffsetCurvePy::PyInit(PyObject *args, PyObject * /*kwd*/)
 {
-    PyObject* pGeom;
-    PyObject* pDir;
+    PyObject *pGeom;
+    PyObject *pDir;
     double offset;
-    if (!PyArg_ParseTuple(args, "O!dO!", 
-                            &(GeometryPy::Type), &pGeom, 
-                            &offset,
-                            &(Base::VectorPy::Type),&pDir))
+    if (!PyArg_ParseTuple(args, "O!dO!", &(GeometryPy::Type), &pGeom, &offset,
+                          &(Base::VectorPy::Type), &pDir))
         return -1;
 
-    GeometryPy* pcGeo = static_cast<GeometryPy*>(pGeom);
-    Handle(Geom_Curve) curve = Handle(Geom_Curve)::DownCast
-        (pcGeo->getGeometryPtr()->handle());
+    GeometryPy *pcGeo = static_cast<GeometryPy *>(pGeom);
+    Handle(Geom_Curve) curve = Handle(Geom_Curve)::DownCast(pcGeo->getGeometryPtr()->handle());
     if (curve.IsNull()) {
         PyErr_SetString(PyExc_TypeError, "geometry is not a curve");
         return -1;
     }
 
     try {
-        Base::Vector3d dir = static_cast<Base::VectorPy*>(pDir)->value();
-        Handle(Geom_OffsetCurve) curve2 = new Geom_OffsetCurve(curve, offset, gp_Dir(dir.x,dir.y,dir.z));
+        Base::Vector3d dir = static_cast<Base::VectorPy *>(pDir)->value();
+        Handle(Geom_OffsetCurve) curve2 =
+            new Geom_OffsetCurve(curve, offset, gp_Dir(dir.x, dir.y, dir.z));
         getGeomOffsetCurvePtr()->setHandle(curve2);
         return 0;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
 
         PyErr_SetString(PartExceptionOCCError, e.GetMessageString());
         return -1;
@@ -97,22 +92,24 @@ void OffsetCurvePy::setOffsetValue(Py::Float arg)
 Py::Object OffsetCurvePy::getOffsetDirection() const
 {
     Handle(Geom_OffsetCurve) curve = Handle(Geom_OffsetCurve)::DownCast(getGeometryPtr()->handle());
-    const gp_Dir& dir = curve->Direction();
-    return Py::Vector(Base::Vector3d(dir.X(),dir.Y(),dir.Z()));
+    const gp_Dir &dir = curve->Direction();
+    return Py::Vector(Base::Vector3d(dir.X(), dir.Y(), dir.Z()));
 }
 
 void OffsetCurvePy::setOffsetDirection(Py::Object arg)
 {
-    PyObject* p = arg.ptr();
+    PyObject *p = arg.ptr();
     if (PyObject_TypeCheck(p, &(Base::VectorPy::Type))) {
-        Base::Vector3d dir = static_cast<Base::VectorPy*>(p)->value();
-        Handle(Geom_OffsetCurve) curve = Handle(Geom_OffsetCurve)::DownCast(getGeometryPtr()->handle());
-        curve->SetDirection(gp_Dir(dir.x,dir.y,dir.z));
+        Base::Vector3d dir = static_cast<Base::VectorPy *>(p)->value();
+        Handle(Geom_OffsetCurve) curve =
+            Handle(Geom_OffsetCurve)::DownCast(getGeometryPtr()->handle());
+        curve->SetDirection(gp_Dir(dir.x, dir.y, dir.z));
     }
     else if (PyObject_TypeCheck(p, &PyTuple_Type)) {
         Base::Vector3d dir = Base::getVectorFromTuple<double>(p);
-        Handle(Geom_OffsetCurve) curve = Handle(Geom_OffsetCurve)::DownCast(getGeometryPtr()->handle());
-        curve->SetDirection(gp_Dir(dir.x,dir.y,dir.z));
+        Handle(Geom_OffsetCurve) curve =
+            Handle(Geom_OffsetCurve)::DownCast(getGeometryPtr()->handle());
+        curve->SetDirection(gp_Dir(dir.x, dir.y, dir.z));
     }
     else {
         std::string error = std::string("type must be 'Vector', not ");
@@ -131,32 +128,23 @@ Py::Object OffsetCurvePy::getBasisCurve() const
 
 void OffsetCurvePy::setBasisCurve(Py::Object arg)
 {
-    PyObject* p = arg.ptr();
+    PyObject *p = arg.ptr();
     if (PyObject_TypeCheck(p, &(GeometryPy::Type))) {
-        GeometryPy* pcGeo = static_cast<GeometryPy*>(p);
-        Handle(Geom_Curve) curve = Handle(Geom_Curve)::DownCast
-            (pcGeo->getGeometryPtr()->handle());
-        if (curve.IsNull()) {
-            throw Py::TypeError("geometry is not a curve");
-        }
+        GeometryPy *pcGeo = static_cast<GeometryPy *>(p);
+        Handle(Geom_Curve) curve = Handle(Geom_Curve)::DownCast(pcGeo->getGeometryPtr()->handle());
+        if (curve.IsNull()) { throw Py::TypeError("geometry is not a curve"); }
 
         try {
-            Handle(Geom_OffsetCurve) curve2 = Handle(Geom_OffsetCurve)::DownCast
-                (getGeometryPtr()->handle());
+            Handle(Geom_OffsetCurve) curve2 =
+                Handle(Geom_OffsetCurve)::DownCast(getGeometryPtr()->handle());
             curve2->SetBasisCurve(curve);
         }
-        catch (Standard_Failure& e) {
-                throw Py::RuntimeError(e.GetMessageString());
+        catch (Standard_Failure &e) {
+            throw Py::RuntimeError(e.GetMessageString());
         }
     }
 }
 
-PyObject *OffsetCurvePy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *OffsetCurvePy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int OffsetCurvePy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0; 
-}
+int OffsetCurvePy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

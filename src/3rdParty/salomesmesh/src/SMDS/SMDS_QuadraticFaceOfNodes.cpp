@@ -42,21 +42,18 @@ using namespace std;
 //purpose  : Constructor
 //=======================================================================
 
-SMDS_QuadraticFaceOfNodes::SMDS_QuadraticFaceOfNodes(const SMDS_MeshNode * n1,
-                                                     const SMDS_MeshNode * n2,
-                                                     const SMDS_MeshNode * n3,
-                                                     const SMDS_MeshNode * n12,
-                                                     const SMDS_MeshNode * n23,
-                                                     const SMDS_MeshNode * n31)
+SMDS_QuadraticFaceOfNodes::SMDS_QuadraticFaceOfNodes(
+    const SMDS_MeshNode *n1, const SMDS_MeshNode *n2, const SMDS_MeshNode *n3,
+    const SMDS_MeshNode *n12, const SMDS_MeshNode *n23, const SMDS_MeshNode *n31)
 {
-  //MESSAGE("********************************************** SMDS_QuadraticFaceOfNodes 1");
-  myNodes.resize( 6 );
-  myNodes[ 0 ] = n1;
-  myNodes[ 1 ] = n2;
-  myNodes[ 2 ] = n3;
-  myNodes[ 3 ] = n12;
-  myNodes[ 4 ] = n23;
-  myNodes[ 5 ] = n31;
+    //MESSAGE("********************************************** SMDS_QuadraticFaceOfNodes 1");
+    myNodes.resize(6);
+    myNodes[0] = n1;
+    myNodes[1] = n2;
+    myNodes[2] = n3;
+    myNodes[3] = n12;
+    myNodes[4] = n23;
+    myNodes[5] = n31;
 }
 
 
@@ -65,158 +62,138 @@ SMDS_QuadraticFaceOfNodes::SMDS_QuadraticFaceOfNodes(const SMDS_MeshNode * n1,
 //purpose  : Constructor
 //=======================================================================
 
-SMDS_QuadraticFaceOfNodes::SMDS_QuadraticFaceOfNodes(const SMDS_MeshNode * n1,
-                                                     const SMDS_MeshNode * n2,
-                                                     const SMDS_MeshNode * n3,
-                                                     const SMDS_MeshNode * n4,
-                                                     const SMDS_MeshNode * n12,
-                                                     const SMDS_MeshNode * n23,
-                                                     const SMDS_MeshNode * n34,
-                                                     const SMDS_MeshNode * n41)
+SMDS_QuadraticFaceOfNodes::SMDS_QuadraticFaceOfNodes(
+    const SMDS_MeshNode *n1, const SMDS_MeshNode *n2, const SMDS_MeshNode *n3,
+    const SMDS_MeshNode *n4, const SMDS_MeshNode *n12, const SMDS_MeshNode *n23,
+    const SMDS_MeshNode *n34, const SMDS_MeshNode *n41)
 {
-  //MESSAGE("********************************************* SMDS_QuadraticFaceOfNodes 2");
-  myNodes.resize( 8 );
-  myNodes[ 0 ] = n1;
-  myNodes[ 1 ] = n2;
-  myNodes[ 2 ] = n3;
-  myNodes[ 3 ] = n4;
-  myNodes[ 4 ] = n12;
-  myNodes[ 5 ] = n23;
-  myNodes[ 6 ] = n34;
-  myNodes[ 7 ] = n41;
+    //MESSAGE("********************************************* SMDS_QuadraticFaceOfNodes 2");
+    myNodes.resize(8);
+    myNodes[0] = n1;
+    myNodes[1] = n2;
+    myNodes[2] = n3;
+    myNodes[3] = n4;
+    myNodes[4] = n12;
+    myNodes[5] = n23;
+    myNodes[6] = n34;
+    myNodes[7] = n41;
 }
 
 
 //=======================================================================
 //function : IsMediumNode
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_QuadraticFaceOfNodes::IsMediumNode(const SMDS_MeshNode * node) const
+bool SMDS_QuadraticFaceOfNodes::IsMediumNode(const SMDS_MeshNode *node) const
 {
-  int i=NbNodes()/2;
-  for(; i<NbNodes(); i++) {
-    if(myNodes[i]==node) return true;
-  }
-  return false;
+    int i = NbNodes() / 2;
+    for (; i < NbNodes(); i++) {
+        if (myNodes[i] == node) return true;
+    }
+    return false;
 }
 
 
 //=======================================================================
 //function : ChangeNodes
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-bool SMDS_QuadraticFaceOfNodes::ChangeNodes(const SMDS_MeshNode* nodes[],
-                                            const int            nbNodes)
+bool SMDS_QuadraticFaceOfNodes::ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes)
 {
-  if( nbNodes==6 || nbNodes==8 ) {
-    myNodes.resize(nbNodes);
-    int i=0;
-    for(; i<nbNodes; i++) {
-      myNodes[i] = nodes[i];
+    if (nbNodes == 6 || nbNodes == 8) {
+        myNodes.resize(nbNodes);
+        int i = 0;
+        for (; i < nbNodes; i++) { myNodes[i] = nodes[i]; }
+        return true;
     }
-    return true;
-  }
-  return false;
+    return false;
 }
 
 
 //=======================================================================
 //function : NbNodes
-//purpose  : 
+//purpose  :
 //=======================================================================
-int SMDS_QuadraticFaceOfNodes::NbNodes() const
-{
-  return myNodes.size();
-}
+int SMDS_QuadraticFaceOfNodes::NbNodes() const { return myNodes.size(); }
 
 
 //=======================================================================
 //function : NbEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
-int SMDS_QuadraticFaceOfNodes::NbEdges() const
-{
-  return NbNodes()/2;
-}
+int SMDS_QuadraticFaceOfNodes::NbEdges() const { return NbNodes() / 2; }
 
 
 //=======================================================================
 //function : NbFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
-int SMDS_QuadraticFaceOfNodes::NbFaces() const
-{
-  return 1;
-}
+int SMDS_QuadraticFaceOfNodes::NbFaces() const { return 1; }
 
 //=======================================================================
 //function : Print
-//purpose  : 
+//purpose  :
 //=======================================================================
-void SMDS_QuadraticFaceOfNodes::Print(ostream & OS) const
+void SMDS_QuadraticFaceOfNodes::Print(ostream &OS) const
 {
-  OS << "quadratic face <" << GetID() << " > : ";
-  int i, nbNodes = myNodes.size();
-  for (i = 0; i < nbNodes - 1; i++)
-    OS << myNodes[i] << ",";
-  OS << myNodes[i] << ") " << endl;
+    OS << "quadratic face <" << GetID() << " > : ";
+    int i, nbNodes = myNodes.size();
+    for (i = 0; i < nbNodes - 1; i++) OS << myNodes[i] << ",";
+    OS << myNodes[i] << ") " << endl;
 }
 
-namespace {
+namespace
+{
 
-  //=======================================================================
-  //class : _MyInterlacedNodeIterator
-  //purpose  : 
-  //=======================================================================
+//=======================================================================
+//class : _MyInterlacedNodeIterator
+//purpose  :
+//=======================================================================
 
-  class _MyInterlacedNodeIterator:public SMDS_NodeIterator
-  {
-    const vector<const SMDS_MeshNode *>& mySet;
+class _MyInterlacedNodeIterator: public SMDS_NodeIterator
+{
+    const vector<const SMDS_MeshNode *> &mySet;
     int myIndex;
-    const int * myInterlace;
-  public:
-    _MyInterlacedNodeIterator(const vector<const SMDS_MeshNode *>& s,
-                              const int * interlace):
-      mySet(s),myIndex(0),myInterlace(interlace) {}
+    const int *myInterlace;
 
-    bool more()
-    {
-      return myIndex < mySet.size();
-    }
+public:
+    _MyInterlacedNodeIterator(const vector<const SMDS_MeshNode *> &s, const int *interlace)
+        : mySet(s), myIndex(0), myInterlace(interlace)
+    {}
 
-    const SMDS_MeshNode* next()
-    {
-      return mySet[ myInterlace[ myIndex++ ]];
-    }
-  };
+    bool more() { return myIndex < mySet.size(); }
 
-  //=======================================================================
-  //class : _MyNodeIterator
-  //purpose  : 
-  //=======================================================================
+    const SMDS_MeshNode *next() { return mySet[myInterlace[myIndex++]]; }
+};
 
-  class _MyNodeIterator : public SMDS_NodeVectorElemIterator
-  {
-  public:
-    _MyNodeIterator(const vector<const SMDS_MeshNode *>& s):
-      SMDS_NodeVectorElemIterator( s.begin(), s.end() ) {}
-  };
-  
-}
+//=======================================================================
+//class : _MyNodeIterator
+//purpose  :
+//=======================================================================
+
+class _MyNodeIterator: public SMDS_NodeVectorElemIterator
+{
+public:
+    _MyNodeIterator(const vector<const SMDS_MeshNode *> &s)
+        : SMDS_NodeVectorElemIterator(s.begin(), s.end())
+    {}
+};
+
+} // namespace
 
 //=======================================================================
 //function : interlacedNodesIterator
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 SMDS_NodeIteratorPtr SMDS_QuadraticFaceOfNodes::interlacedNodesIterator() const
 {
-  static int triaInterlace [] = { 0, 3, 1, 4, 2, 5 };
-  static int quadInterlace [] = { 0, 4, 1, 5, 2, 6, 3, 7 };
-  return SMDS_NodeIteratorPtr
-    (new _MyInterlacedNodeIterator (myNodes, myNodes.size()==6 ? triaInterlace : quadInterlace));
+    static int triaInterlace[] = {0, 3, 1, 4, 2, 5};
+    static int quadInterlace[] = {0, 4, 1, 5, 2, 6, 3, 7};
+    return SMDS_NodeIteratorPtr(new _MyInterlacedNodeIterator(
+        myNodes, myNodes.size() == 6 ? triaInterlace : quadInterlace));
 }
 
 /// ===================================================================
@@ -225,53 +202,47 @@ SMDS_NodeIteratorPtr SMDS_QuadraticFaceOfNodes::interlacedNodesIterator() const
  */
 /// ===================================================================
 
-class _MyEdgeIterator : public SMDS_ElemIterator
+class _MyEdgeIterator: public SMDS_ElemIterator
 {
-  vector< const SMDS_MeshElement* > myElems;
-  int myIndex;
-public:
-  _MyEdgeIterator(const SMDS_QuadraticFaceOfNodes* face):myIndex(0) {
-    myElems.reserve( face->NbNodes() );
-    SMDS_NodeIteratorPtr nIt = face->interlacedNodesIterator();
-    const SMDS_MeshNode* n0 = face->GetNodeWrap( -1 );
-    while ( nIt->more() ) {
-      const SMDS_MeshNode* n1 = nIt->next();
-      const SMDS_MeshElement* edge = SMDS_Mesh::FindEdge( n0, n1 );
-      if ( edge )
-        myElems.push_back( edge );
-      n0 = n1;
-    }
-  }
-  /// Return true if and only if there are other object in this iterator
-  virtual bool more() { return myIndex < myElems.size(); }
+    vector<const SMDS_MeshElement *> myElems;
+    int myIndex;
 
-  /// Return the current object and step to the next one
-  virtual const SMDS_MeshElement* next() { return myElems[ myIndex++ ]; }
+public:
+    _MyEdgeIterator(const SMDS_QuadraticFaceOfNodes *face) : myIndex(0)
+    {
+        myElems.reserve(face->NbNodes());
+        SMDS_NodeIteratorPtr nIt = face->interlacedNodesIterator();
+        const SMDS_MeshNode *n0 = face->GetNodeWrap(-1);
+        while (nIt->more()) {
+            const SMDS_MeshNode *n1 = nIt->next();
+            const SMDS_MeshElement *edge = SMDS_Mesh::FindEdge(n0, n1);
+            if (edge) myElems.push_back(edge);
+            n0 = n1;
+        }
+    }
+    /// Return true if and only if there are other object in this iterator
+    virtual bool more() { return myIndex < myElems.size(); }
+
+    /// Return the current object and step to the next one
+    virtual const SMDS_MeshElement *next() { return myElems[myIndex++]; }
 };
 
 //=======================================================================
 //function : elementsIterator
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-SMDS_ElemIteratorPtr SMDS_QuadraticFaceOfNodes::elementsIterator
-                                         (SMDSAbs_ElementType type) const
+SMDS_ElemIteratorPtr SMDS_QuadraticFaceOfNodes::elementsIterator(SMDSAbs_ElementType type) const
 {
-  switch(type)
-  {
-  case SMDSAbs_Face:
-    return SMDS_MeshElement::elementsIterator(SMDSAbs_Face);
-  case SMDSAbs_Node:
-    return SMDS_ElemIteratorPtr(new _MyNodeIterator(myNodes));
-  case SMDSAbs_Edge:
-    return SMDS_ElemIteratorPtr(new _MyEdgeIterator( this ));
-    break;
-  default:
-    return SMDS_ElemIteratorPtr
-      (new SMDS_IteratorOfElements
-       (this,type,SMDS_ElemIteratorPtr (new _MyNodeIterator(myNodes))));
-  }
-  return SMDS_ElemIteratorPtr();
+    switch (type) {
+        case SMDSAbs_Face: return SMDS_MeshElement::elementsIterator(SMDSAbs_Face);
+        case SMDSAbs_Node: return SMDS_ElemIteratorPtr(new _MyNodeIterator(myNodes));
+        case SMDSAbs_Edge: return SMDS_ElemIteratorPtr(new _MyEdgeIterator(this)); break;
+        default:
+            return SMDS_ElemIteratorPtr(new SMDS_IteratorOfElements(
+                this, type, SMDS_ElemIteratorPtr(new _MyNodeIterator(myNodes))));
+    }
+    return SMDS_ElemIteratorPtr();
 }
 
 /*!
@@ -279,12 +250,12 @@ SMDS_ElemIteratorPtr SMDS_QuadraticFaceOfNodes::elementsIterator
  * \param ind - node index
  * \retval const SMDS_MeshNode* - the node
  */
-const SMDS_MeshNode* SMDS_QuadraticFaceOfNodes::GetNode(const int ind) const
+const SMDS_MeshNode *SMDS_QuadraticFaceOfNodes::GetNode(const int ind) const
 {
-  return myNodes[ ind ];
+    return myNodes[ind];
 }
 
 SMDSAbs_EntityType SMDS_QuadraticFaceOfNodes::GetEntityType() const
 {
-  return NbNodes() == 6 ? SMDSEntity_Quad_Triangle : SMDSEntity_Quad_Quadrangle;
+    return NbNodes() == 6 ? SMDSEntity_Quad_Triangle : SMDSEntity_Quad_Quadrangle;
 }

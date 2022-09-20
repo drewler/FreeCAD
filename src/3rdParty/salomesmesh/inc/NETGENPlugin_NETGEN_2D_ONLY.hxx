@@ -42,30 +42,27 @@ class NETGENPlugin_Hypothesis_2D;
 class NETGENPlugin_NETGEN_2D_ONLY: public SMESH_2D_Algo
 {
 public:
-  NETGENPlugin_NETGEN_2D_ONLY(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~NETGENPlugin_NETGEN_2D_ONLY();
+    NETGENPlugin_NETGEN_2D_ONLY(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~NETGENPlugin_NETGEN_2D_ONLY();
 
-  virtual bool CheckHypothesis(SMESH_Mesh&         aMesh,
-                               const TopoDS_Shape& aShape,
-                               Hypothesis_Status&  aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh&         aMesh,
-                       const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual void CancelCompute();
+    virtual void CancelCompute();
 
-  virtual double GetProgress() const;
+    virtual double GetProgress() const;
 
-  virtual bool Evaluate(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
 protected:
-  const StdMeshers_MaxElementArea*       _hypMaxElementArea;
-  const StdMeshers_LengthFromEdges*      _hypLengthFromEdges;
-  const SMESHDS_Hypothesis*              _hypQuadranglePreference;
-  const NETGENPlugin_Hypothesis_2D*      _hypParameters;
+    const StdMeshers_MaxElementArea *_hypMaxElementArea;
+    const StdMeshers_LengthFromEdges *_hypLengthFromEdges;
+    const SMESHDS_Hypothesis *_hypQuadranglePreference;
+    const NETGENPlugin_Hypothesis_2D *_hypParameters;
 
-  double                                 _progressByTic;
+    double _progressByTic;
 };
 
 #endif

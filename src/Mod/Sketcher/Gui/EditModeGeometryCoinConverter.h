@@ -28,28 +28,31 @@
 
 #include "ViewProviderSketch.h"
 
-namespace Base {
-    template< typename T >
-    class Vector3;
+namespace Base
+{
+template<typename T> class Vector3;
 
-    class Vector2d;
+class Vector2d;
+} // namespace Base
+
+namespace Sketcher
+{
+enum ConstraintType : int;
+enum class PointPos : int;
+} // namespace Sketcher
+
+namespace Part
+{
+class Geometry;
 }
 
-namespace Sketcher {
-    enum ConstraintType : int;
-    enum class PointPos : int;
-}
-
-namespace Part {
-    class Geometry;
-}
-
-namespace SketcherGui {
-    class ViewProviderSketch;
-    struct GeometryLayerNodes;
-    struct DrawingParameters;
-    class GeometryLayerParameters;
-    struct CoinMapping;
+namespace SketcherGui
+{
+class ViewProviderSketch;
+struct GeometryLayerNodes;
+struct DrawingParameters;
+class GeometryLayerParameters;
+struct CoinMapping;
 
 /** @brief      Class for creating the Geometry layer into coin nodes
  *  @details
@@ -65,27 +68,31 @@ namespace SketcherGui {
  *
  * Analysis performs analysis such as maximum boundingbox magnitude of all geometries and maximum curvature of BSplines
  */
-class EditModeGeometryCoinConverter {
-// These internal private classes are used to parametrize the conversion of geometry into points and line sets (see template method convert)
+class EditModeGeometryCoinConverter
+{
+    // These internal private classes are used to parametrize the conversion of geometry into points and line sets (see template method convert)
 private:
-    enum class PointsMode {
+    enum class PointsMode
+    {
         InsertSingle,
         InsertStartEnd,
         InsertStartEndMid,
         InsertMidOnly
-        };
+    };
 
-    enum class CurveMode {
+    enum class CurveMode
+    {
         NoCurve,
         StartEndPointsOnly,
         ClosedCurve,
         OpenCurve
-        };
+    };
 
-    enum class AnalyseMode {
+    enum class AnalyseMode
+    {
         BoundingBoxMagnitude,
         BoundingBoxMagnitudeAndBSplineCurvature
-        };
+    };
 
 public:
     /** Constructs an GeometryCoinConverter responsible for
@@ -98,18 +105,17 @@ public:
      *
      * @param drawingparameters: Parameters for drawing the overlay information
      */
-    EditModeGeometryCoinConverter(  ViewProviderSketch & vp,
-                                    GeometryLayerNodes & geometrylayernodes,
-                                    DrawingParameters & drawingparameters,
-                                    GeometryLayerParameters& geometryLayerParams,
-                                    CoinMapping & coinMap );
+    EditModeGeometryCoinConverter(ViewProviderSketch &vp, GeometryLayerNodes &geometrylayernodes,
+                                  DrawingParameters &drawingparameters,
+                                  GeometryLayerParameters &geometryLayerParams,
+                                  CoinMapping &coinMap);
 
     /**
     * converts the geometry defined by GeometryLayer into the coin nodes.
     *
     * @param geometry: the geometry to be processed
     */
-    void convert(const Sketcher::GeoListFacade & geolistfacade);
+    void convert(const Sketcher::GeoListFacade &geolistfacade);
 
     /**
     * returns the maximum of the vertical and horizontal magnitudes of the
@@ -126,17 +132,17 @@ public:
     /**
     * returns the GeoIds of BSpline geometries
     */
-    auto getBSplineGeoIds(){ return std::move(bsplineGeoIds);}
+    auto getBSplineGeoIds() { return std::move(bsplineGeoIds); }
 
 private:
-    template < typename GeoType, PointsMode pointmode, CurveMode curvemode, AnalyseMode analysemode >
-    void convert(const Sketcher::GeometryFacade * geometryfacade, [[maybe_unused]] int geoId);
+    template<typename GeoType, PointsMode pointmode, CurveMode curvemode, AnalyseMode analysemode>
+    void convert(const Sketcher::GeometryFacade *geometryfacade, [[maybe_unused]] int geoId);
 
 private:
     /// Reference to ViewProviderSketch in order to access the public and the Attorney Interface
-    ViewProviderSketch & viewProvider;
+    ViewProviderSketch &viewProvider;
 
-    GeometryLayerNodes & geometryLayerNodes;
+    GeometryLayerNodes &geometryLayerNodes;
 
     std::vector<std::vector<Base::Vector3d>> Coords;
     std::vector<std::vector<Base::Vector3d>> Points;
@@ -150,16 +156,16 @@ private:
     int vertexCounter = 0;
 
     // Parameters
-    DrawingParameters & drawingParameters;
-    GeometryLayerParameters& geometryLayerParameters;
+    DrawingParameters &drawingParameters;
+    GeometryLayerParameters &geometryLayerParameters;
     // Mappings coin geoId
-    CoinMapping & coinMapping;
+    CoinMapping &coinMapping;
 
     // measurements
     float boundingBoxMaxMagnitude = 100;
-    double combrepscale = 0; // the repscale that would correspond to this comb based only on this calculation.
+    double combrepscale =
+        0; // the repscale that would correspond to this comb based only on this calculation.
     std::vector<int> bsplineGeoIds;
-
 };
 
 
@@ -167,4 +173,3 @@ private:
 
 
 #endif // SKETCHERGUI_GeometryCoinConverter_H
-

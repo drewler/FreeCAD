@@ -26,10 +26,7 @@
 
 namespace Part
 {
-inline std::string encodeFilename(std::string fn)
-{
-    return fn;
-}
+inline std::string encodeFilename(std::string fn) { return fn; }
 
 } //namespace Part
 

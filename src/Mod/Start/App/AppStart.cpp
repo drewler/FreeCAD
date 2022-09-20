@@ -27,8 +27,9 @@
 #include <Base/Interpreter.h>
 
 
-namespace Start {
-class Module : public Py::ExtensionModule<Module>
+namespace Start
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("Start")
@@ -41,17 +42,14 @@ public:
 private:
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace Start
 
 /* Python entry */
 PyMOD_INIT_FUNC(Start)
 {
-    PyObject* mod = Start::initModule();
+    PyObject *mod = Start::initModule();
     Base::Console().Log("Loading Start module... done\n");
     PyMOD_Return(mod);
 }

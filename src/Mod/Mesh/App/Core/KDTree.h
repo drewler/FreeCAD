@@ -33,33 +33,33 @@ class MeshExport MeshKDTree
 {
 public:
     MeshKDTree();
-    explicit MeshKDTree(const std::vector<Base::Vector3f>& points);
-    explicit MeshKDTree(const MeshPointArray& points);
+    explicit MeshKDTree(const std::vector<Base::Vector3f> &points);
+    explicit MeshKDTree(const MeshPointArray &points);
     ~MeshKDTree();
 
-    void AddPoint(Base::Vector3f& point);
-    void AddPoints(const std::vector<Base::Vector3f>& points);
-    void AddPoints(const MeshPointArray& points);
+    void AddPoint(Base::Vector3f &point);
+    void AddPoints(const std::vector<Base::Vector3f> &points);
+    void AddPoints(const MeshPointArray &points);
 
     bool IsEmpty() const;
     void Clear();
     void Optimize();
 
-    PointIndex FindNearest(const Base::Vector3f& p, Base::Vector3f& n, float&) const;
-    PointIndex FindNearest(const Base::Vector3f& p, float max_dist,
-                              Base::Vector3f& n, float&) const;
-    PointIndex FindExact(const Base::Vector3f& p) const;
-    void FindInRange(const Base::Vector3f&, float, std::vector<PointIndex>&) const;
+    PointIndex FindNearest(const Base::Vector3f &p, Base::Vector3f &n, float &) const;
+    PointIndex FindNearest(const Base::Vector3f &p, float max_dist, Base::Vector3f &n,
+                           float &) const;
+    PointIndex FindExact(const Base::Vector3f &p) const;
+    void FindInRange(const Base::Vector3f &, float, std::vector<PointIndex> &) const;
 
 private:
     class Private;
-    Private* d;
+    Private *d;
 
-    MeshKDTree(const MeshKDTree&);
-    void operator= (const MeshKDTree&);
+    MeshKDTree(const MeshKDTree &);
+    void operator=(const MeshKDTree &);
 };
 
 } // namespace MeshCore
 
 
-#endif  // MESH_KDTREE_H 
+#endif // MESH_KDTREE_H

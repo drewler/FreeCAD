@@ -37,7 +37,8 @@ class QCheckBox;
 class QSpacerItem;
 QT_END_NAMESPACE
 
-namespace Gui {
+namespace Gui
+{
 
 class EditorViewP;
 
@@ -46,47 +47,48 @@ class EditorViewP;
  * the editor and embeds it in a window.
  * @author Werner Mayer
  */
-class GuiExport EditorView : public MDIView, public WindowParameter
+class GuiExport EditorView: public MDIView, public WindowParameter
 {
     Q_OBJECT
 
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-    enum DisplayName {
+    enum DisplayName
+    {
         FullName,
         FileName,
         BaseName
     };
 
-    EditorView(QPlainTextEdit* editor, QWidget* parent);
+    EditorView(QPlainTextEdit *editor, QWidget *parent);
     ~EditorView() override;
 
-    QPlainTextEdit* getEditor() const;
+    QPlainTextEdit *getEditor() const;
     void setDisplayName(DisplayName);
-    void OnChange(Base::Subject<const char*> &rCaller,const char* rcReason) override;
+    void OnChange(Base::Subject<const char *> &rCaller, const char *rcReason) override;
 
-    const char *getName() const override {return "EditorView";}
-    void onUpdate() override{}
+    const char *getName() const override { return "EditorView"; }
+    void onUpdate() override {}
 
-    bool onMsg(const char* pMsg,const char** ppReturn) override;
-    bool onHasMsg(const char* pMsg) const override;
+    bool onMsg(const char *pMsg, const char **ppReturn) override;
+    bool onHasMsg(const char *pMsg) const override;
 
     bool canClose() override;
 
     /** @name Standard actions of the editor */
     //@{
-    bool open   (const QString &f);
-    bool saveAs ();
-    void cut    ();
-    void copy   ();
-    void paste  ();
-    void undo   ();
-    void redo   ();
-    void print  () override;
+    bool open(const QString &f);
+    bool saveAs();
+    void cut();
+    void copy();
+    void paste();
+    void undo();
+    void redo();
+    void print() override;
     void printPdf() override;
     void printPreview() override;
-    void print(QPrinter*) override;
+    void print(QPrinter *) override;
     //@}
 
     QStringList undoActions() const override;
@@ -94,10 +96,10 @@ public:
     QString fileName() const;
 
 protected:
-    void focusInEvent(QFocusEvent* e) override;
-    void showEvent(QShowEvent*) override;
-    void hideEvent(QHideEvent*) override;
-    void closeEvent(QCloseEvent*) override;
+    void focusInEvent(QFocusEvent *e) override;
+    void showEvent(QShowEvent *) override;
+    void hideEvent(QHideEvent *) override;
+    void closeEvent(QCloseEvent *) override;
 
 private Q_SLOTS:
     void checkTimestamp();
@@ -106,29 +108,29 @@ private Q_SLOTS:
     void redoAvailable(bool);
 
 Q_SIGNALS:
-    void changeFileName(const QString&);
+    void changeFileName(const QString &);
 
 private:
     void setCurrentFileName(const QString &fileName);
     bool saveFile();
 
 private:
-    EditorViewP* d;
+    EditorViewP *d;
 };
 
 class PythonEditor;
-class GuiExport PythonEditorView : public EditorView
+class GuiExport PythonEditorView: public EditorView
 {
     Q_OBJECT
 
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-    PythonEditorView(PythonEditor* editor, QWidget* parent);
+    PythonEditorView(PythonEditor *editor, QWidget *parent);
     ~PythonEditorView() override;
 
-    bool onMsg(const char* pMsg,const char** ppReturn) override;
-    bool onHasMsg(const char* pMsg) const override;
+    bool onMsg(const char *pMsg, const char **ppReturn) override;
+    bool onHasMsg(const char *pMsg) const override;
 
 public Q_SLOTS:
     void executeScript();
@@ -138,21 +140,21 @@ public Q_SLOTS:
     void hideDebugMarker();
 
 private:
-    PythonEditor* _pye;
+    PythonEditor *_pye;
 };
 
-class SearchBar : public QWidget
+class SearchBar: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SearchBar(QWidget* parent = nullptr);
+    explicit SearchBar(QWidget *parent = nullptr);
 
     void setEditor(QPlainTextEdit *textEdit);
 
 protected:
-    void keyPressEvent(QKeyEvent*) override;
-    void changeEvent(QEvent*) override;
+    void keyPressEvent(QKeyEvent *) override;
+    void changeEvent(QEvent *) override;
 
 public Q_SLOTS:
     void activate();
@@ -163,19 +165,19 @@ public Q_SLOTS:
 
 private:
     void retranslateUi();
-    void findText(bool skip, bool next, const QString& str);
+    void findText(bool skip, bool next, const QString &str);
     void updateButtons();
 
 private:
-    QPlainTextEdit* textEditor;
-    QHBoxLayout* horizontalLayout;
-    QSpacerItem* horizontalSpacer;
-    QToolButton* closeButton;
-    QLineEdit* searchText;
-    QToolButton* prevButton;
-    QToolButton* nextButton;
-    QCheckBox* matchCase;
-    QCheckBox* matchWord;
+    QPlainTextEdit *textEditor;
+    QHBoxLayout *horizontalLayout;
+    QSpacerItem *horizontalSpacer;
+    QToolButton *closeButton;
+    QLineEdit *searchText;
+    QToolButton *prevButton;
+    QToolButton *nextButton;
+    QCheckBox *matchCase;
+    QCheckBox *matchWord;
 };
 
 } // namespace Gui

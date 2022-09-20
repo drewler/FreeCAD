@@ -28,26 +28,24 @@ PyMODINIT_FUNC FreeCAD_init()
 
     App::Application::init(1, argv.data());
     Gui::Application::initApplication();
-    Gui::Application* app = new Gui::Application(true);
+    Gui::Application *app = new Gui::Application(true);
 
-    Gui::MainWindow* mw = new Gui::MainWindow(qApp->activeWindow());
+    Gui::MainWindow *mw = new Gui::MainWindow(qApp->activeWindow());
     mw->show();
-    
+
     app->initOpenInventor();
     app->runInitGuiScript();
 }
 
 /* A test function for the plugin to load a mesh and call "getVal()" */
-PyMODINIT_FUNC FreeCAD_test(const char* path)
+PyMODINIT_FUNC FreeCAD_test(const char *path)
 {
-    try
-    {   // Use FreeCADGui here, not Gui
+    try { // Use FreeCADGui here, not Gui
         Base::Interpreter().runString("FreeCADGui.activateWorkbench(\"MeshWorkbench\")");
         Base::Interpreter().runString("import Mesh");
         Base::Interpreter().runStringArg("Mesh.insert(u\"%s\", \"%s\")", path, "Document");
     }
-    catch (const Base::Exception& e)
-    {
+    catch (const Base::Exception &e) {
         QMessageBox::warning(0, "Exception", e.what());
     }
 }

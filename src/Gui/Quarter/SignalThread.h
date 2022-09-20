@@ -40,28 +40,36 @@
 
 class SoQtP;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
-class SignalThread : public QThread {
-  Q_OBJECT
+class SignalThread: public QThread
+{
+    Q_OBJECT
 public:
-  SignalThread();
-  virtual ~SignalThread();
+    SignalThread();
+    virtual ~SignalThread();
 
-  virtual void run();
-  void trigger();
-  void stopThread();
+    virtual void run();
+    void trigger();
+    void stopThread();
 
 Q_SIGNALS:
 
-  void triggerSignal();
+    void triggerSignal();
 
 private:
-  QWaitCondition waitcond;
-  QMutex mutex;
-  bool isstopped;
+    QWaitCondition waitcond;
+    QMutex mutex;
+    bool isstopped;
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_SIGNALTHREAD_H

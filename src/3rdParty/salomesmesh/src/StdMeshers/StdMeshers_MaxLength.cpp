@@ -47,14 +47,14 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_MaxLength::StdMeshers_MaxLength(int hypId, int studyId, SMESH_Gen * gen)
-  :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_MaxLength::StdMeshers_MaxLength(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _length = 1.;
-  _preestimated = 0.;
-  _preestimation = false;
-  _name = "MaxLength";
-  _param_algo_dim = 1; // is used by SMESH_Regular_1D
+    _length = 1.;
+    _preestimated = 0.;
+    _preestimation = false;
+    _name = "MaxLength";
+    _param_algo_dim = 1; // is used by SMESH_Regular_1D
 }
 
 //=============================================================================
@@ -63,9 +63,7 @@ StdMeshers_MaxLength::StdMeshers_MaxLength(int hypId, int studyId, SMESH_Gen * g
  */
 //=============================================================================
 
-StdMeshers_MaxLength::~StdMeshers_MaxLength()
-{
-}
+StdMeshers_MaxLength::~StdMeshers_MaxLength() {}
 
 //=============================================================================
 /*!
@@ -75,12 +73,11 @@ StdMeshers_MaxLength::~StdMeshers_MaxLength()
 
 void StdMeshers_MaxLength::SetLength(double length)
 {
-  if (length <= 0)
-    throw SALOME_Exception(LOCALIZED("length must be positive"));
-  if ( _length != length ) {
-    _length = length;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (length <= 0) throw SALOME_Exception(LOCALIZED("length must be positive"));
+    if (_length != length) {
+        _length = length;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -91,7 +88,7 @@ void StdMeshers_MaxLength::SetLength(double length)
 
 double StdMeshers_MaxLength::GetLength() const
 {
-  return ( _preestimation && _preestimated > 0. ) ? _preestimated : _length;
+    return (_preestimation && _preestimated > 0.) ? _preestimated : _length;
 }
 
 //================================================================================
@@ -103,12 +100,11 @@ double StdMeshers_MaxLength::GetLength() const
 
 void StdMeshers_MaxLength::SetUsePreestimatedLength(bool toUse)
 {
-  if ( toUse != _preestimation )
-  {
-    _preestimation = toUse;
-    // this parameter is just to help the user
-    //NotifySubMeshesHypothesisModification();
-  }
+    if (toUse != _preestimation) {
+        _preestimation = toUse;
+        // this parameter is just to help the user
+        //NotifySubMeshesHypothesisModification();
+    }
 }
 
 //================================================================================
@@ -119,8 +115,7 @@ void StdMeshers_MaxLength::SetUsePreestimatedLength(bool toUse)
 
 void StdMeshers_MaxLength::SetPreestimatedLength(double length)
 {
-  if ( length > 0 )
-    _preestimated = length;
+    if (length > 0) _preestimated = length;
 }
 
 //================================================================================
@@ -130,9 +125,18 @@ void StdMeshers_MaxLength::SetPreestimatedLength(double length)
  */
 //================================================================================
 
-bool StdMeshers_MaxLength::GetUsePreestimatedLength() const
+bool StdMeshers_MaxLength::GetUsePreestimatedLength() const { return _preestimation; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &StdMeshers_MaxLength::SaveTo(ostream &save)
 {
-  return _preestimation;
+    save << _length << " " << _preestimated << " " << _preestimation;
+    return save;
 }
 
 //=============================================================================
@@ -141,43 +145,28 @@ bool StdMeshers_MaxLength::GetUsePreestimatedLength() const
  */
 //=============================================================================
 
-ostream & StdMeshers_MaxLength::SaveTo(ostream & save)
+istream &StdMeshers_MaxLength::LoadFrom(istream &load)
 {
-  save << _length << " " << _preestimated << " " << _preestimation;
-  return save;
-}
+    bool isOK = true;
+    double a;
 
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
+    isOK = (bool)(load >> a);
+    if (isOK) _length = a;
+    else
+        load.clear(ios::badbit | load.rdstate());
 
-istream & StdMeshers_MaxLength::LoadFrom(istream & load)
-{
-  bool isOK = true;
-  double a;
+    isOK = (bool)(load >> a);
+    if (isOK) _preestimated = a;
+    else
+        load.clear(ios::badbit | load.rdstate());
 
-  isOK = (bool)(load >> a);
-  if (isOK)
-    _length = a;
-  else
-    load.clear(ios::badbit | load.rdstate());
+    bool pre;
+    isOK = (bool)(load >> pre);
+    if (isOK) _preestimation = pre;
+    else
+        load.clear(ios::badbit | load.rdstate());
 
-  isOK = (bool)(load >> a);
-  if (isOK)
-    _preestimated = a;
-  else
-    load.clear(ios::badbit | load.rdstate());
-
-  bool pre;
-  isOK = (bool)(load >> pre);
-  if ( isOK )
-    _preestimation = pre;
-  else
-    load.clear(ios::badbit | load.rdstate());
-
-  return load;
+    return load;
 }
 
 //================================================================================
@@ -189,39 +178,35 @@ istream & StdMeshers_MaxLength::LoadFrom(istream & load)
  */
 //================================================================================
 
-bool StdMeshers_MaxLength::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                               const TopoDS_Shape& theShape)
+bool StdMeshers_MaxLength::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                               const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _length = 0.;
+    _length = 0.;
 
-  Standard_Real UMin, UMax;
-  TopLoc_Location L;
+    Standard_Real UMin, UMax;
+    TopLoc_Location L;
 
-  int nbEdges = 0;
-  TopTools_IndexedMapOfShape edgeMap;
-  TopExp::MapShapes( theShape, TopAbs_EDGE, edgeMap );
-  for ( int iE = 1; iE <= edgeMap.Extent(); ++iE )
-  {
-    const TopoDS_Edge& edge = TopoDS::Edge( edgeMap( iE ));
-    Handle(Geom_Curve) C = BRep_Tool::Curve( edge, L, UMin, UMax );
-    GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
+    int nbEdges = 0;
+    TopTools_IndexedMapOfShape edgeMap;
+    TopExp::MapShapes(theShape, TopAbs_EDGE, edgeMap);
+    for (int iE = 1; iE <= edgeMap.Extent(); ++iE) {
+        const TopoDS_Edge &edge = TopoDS::Edge(edgeMap(iE));
+        Handle(Geom_Curve) C = BRep_Tool::Curve(edge, L, UMin, UMax);
+        GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
 
-    vector< double > params;
-    SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* >( theMesh )->GetMeshDS();
-    if ( SMESH_Algo::GetNodeParamOnEdge( aMeshDS, edge, params ))
-    {
-      for ( int i = 1; i < params.size(); ++i )
-        _length += GCPnts_AbscissaPoint::Length( AdaptCurve, params[ i-1 ], params[ i ]);
-      nbEdges += params.size() - 1;
+        vector<double> params;
+        SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
+        if (SMESH_Algo::GetNodeParamOnEdge(aMeshDS, edge, params)) {
+            for (int i = 1; i < params.size(); ++i)
+                _length += GCPnts_AbscissaPoint::Length(AdaptCurve, params[i - 1], params[i]);
+            nbEdges += params.size() - 1;
+        }
     }
-  }
-  if ( nbEdges )
-    _length /= nbEdges;
+    if (nbEdges) _length /= nbEdges;
 
-  return nbEdges;
+    return nbEdges;
 }
 //================================================================================
 /*!
@@ -230,12 +215,10 @@ bool StdMeshers_MaxLength::SetParametersByMesh(const SMESH_Mesh*   theMesh,
  */
 //================================================================================
 
-bool StdMeshers_MaxLength::SetParametersByDefaults(const TDefaults&  dflts,
-                                                   const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_MaxLength::SetParametersByDefaults(const TDefaults &dflts,
+                                                   const SMESH_Mesh * /*theMesh*/)
 {
-  //_preestimation = ( dflts._elemLength > 0.);
-  if ( dflts._elemLength > 0. )
-    _preestimated = dflts._elemLength;
-  return ( _length = dflts._elemLength );
+    //_preestimation = ( dflts._elemLength > 0.);
+    if (dflts._elemLength > 0.) _preestimated = dflts._elemLength;
+    return (_length = dflts._elemLength);
 }
-

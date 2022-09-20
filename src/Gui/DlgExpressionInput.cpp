@@ -40,16 +40,12 @@
 using namespace App;
 using namespace Gui::Dialog;
 
-DlgExpressionInput::DlgExpressionInput(const App::ObjectIdentifier & _path,
+DlgExpressionInput::DlgExpressionInput(const App::ObjectIdentifier &_path,
                                        std::shared_ptr<const Expression> _expression,
-                                       const Base::Unit & _impliedUnit, QWidget *parent)
-  : QDialog(parent)
-  , ui(new Ui::DlgExpressionInput)
-  , expression(_expression ? _expression->copy() : nullptr)
-  , path(_path)
-  , discarded(false)
-  , impliedUnit(_impliedUnit)
-  , minimumWidth(10)
+                                       const Base::Unit &_impliedUnit, QWidget *parent)
+    : QDialog(parent), ui(new Ui::DlgExpressionInput),
+      expression(_expression ? _expression->copy() : nullptr), path(_path), discarded(false),
+      impliedUnit(_impliedUnit), minimumWidth(10)
 {
     assert(path.getDocumentObject());
 
@@ -60,25 +56,23 @@ DlgExpressionInput::DlgExpressionInput(const App::ObjectIdentifier & _path,
     connect(ui->expression, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
     connect(ui->discardBtn, SIGNAL(clicked()), this, SLOT(setDiscarded()));
 
-    if (expression) {
-        ui->expression->setText(Base::Tools::fromStdString(expression->toString()));
-    }
+    if (expression) { ui->expression->setText(Base::Tools::fromStdString(expression->toString())); }
     else {
         QVariant text = parent->property("text");
-        if (text.canConvert(QMetaType::QString)) {
-            ui->expression->setText(text.toString());
-        }
+        if (text.canConvert(QMetaType::QString)) { ui->expression->setText(text.toString()); }
     }
 
     // Set document object on line edit to create auto completer
-    DocumentObject * docObj = path.getDocumentObject();
+    DocumentObject *docObj = path.getDocumentObject();
     ui->expression->setDocumentObject(docObj);
 
     // There are some platforms where setting no system background causes a black
     // rectangle to appear. To avoid this the 'NoSystemBackground' parameter can be
     // set to false. Then a normal non-modal dialog will be shown instead (#0002440).
-    bool noBackground = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/Expression")->GetBool("NoSystemBackground", false);
+    bool noBackground =
+        App::GetApplication()
+            .GetParameterGroupByPath("User parameter:BaseApp/Preferences/Expression")
+            ->GetBool("NoSystemBackground", false);
 
     if (noBackground) {
 #if defined(Q_OS_MAC)
@@ -99,8 +93,8 @@ DlgExpressionInput::DlgExpressionInput(const App::ObjectIdentifier & _path,
         // It is strange that (at least on Linux) DlgExpressionInput will shrink
         // to be narrower than ui->expression after calling adjustSize() above.
         // Why?
-        if(this->width() < ui->expression->width() + 18)
-            this->resize(ui->expression->width()+18,this->height());
+        if (this->width() < ui->expression->width() + 18)
+            this->resize(ui->expression->width() + 18, this->height());
     }
     ui->expression->setFocus();
 }
@@ -111,10 +105,7 @@ DlgExpressionInput::~DlgExpressionInput()
     delete ui;
 }
 
-QPoint DlgExpressionInput::expressionPosition() const
-{
-    return ui->expression->pos();
-}
+QPoint DlgExpressionInput::expressionPosition() const { return ui->expression->pos(); }
 
 void DlgExpressionInput::textChanged(const QString &text)
 {
@@ -130,22 +121,22 @@ void DlgExpressionInput::textChanged(const QString &text)
         //resize the input field according to text size
         QFontMetrics fm(ui->expression->font());
         int width = QtTools::horizontalAdvance(fm, text) + 15;
-        if (width < minimumWidth)
-            ui->expression->setMinimumWidth(minimumWidth);
+        if (width < minimumWidth) ui->expression->setMinimumWidth(minimumWidth);
         else
             ui->expression->setMinimumWidth(width);
 
-        if(this->width() < ui->expression->minimumWidth())
+        if (this->width() < ui->expression->minimumWidth())
             setMinimumWidth(ui->expression->minimumWidth());
 
         //now handle expression
-        std::shared_ptr<Expression> expr(ExpressionParser::parse(path.getDocumentObject(), text.toUtf8().constData()));
+        std::shared_ptr<Expression> expr(
+            ExpressionParser::parse(path.getDocumentObject(), text.toUtf8().constData()));
 
         if (expr) {
-            std::string error = path.getDocumentObject()->ExpressionEngine.validateExpression(path, expr);
+            std::string error =
+                path.getDocumentObject()->ExpressionEngine.validateExpression(path, expr);
 
-            if (!error.empty())
-                throw Base::RuntimeError(error.c_str());
+            if (!error.empty()) throw Base::RuntimeError(error.c_str());
 
             std::unique_ptr<Expression> result(expr->eval());
 
@@ -156,20 +147,18 @@ void DlgExpressionInput::textChanged(const QString &text)
             //set default palette as we may have read text right now
             ui->msg->setPalette(ui->okBtn->palette());
 
-            auto * n = Base::freecad_dynamic_cast<NumberExpression>(result.get());
+            auto *n = Base::freecad_dynamic_cast<NumberExpression>(result.get());
             if (n) {
                 Base::Quantity value = n->getQuantity();
                 QString msg = value.getUserString();
 
-                if (!value.isValid()) {
-                    throw Base::ValueError("Not a number");
-                }
+                if (!value.isValid()) { throw Base::ValueError("Not a number"); }
                 else if (!impliedUnit.isEmpty()) {
                     if (!value.getUnit().isEmpty() && value.getUnit() != impliedUnit)
-                        throw Base::UnitsMismatchError("Unit mismatch between result and required unit");
+                        throw Base::UnitsMismatchError(
+                            "Unit mismatch between result and required unit");
 
                     value.setUnit(impliedUnit);
-
                 }
                 else if (!value.getUnit().isEmpty()) {
                     msg += QString::fromUtf8(" (Warning: unit discarded)");
@@ -183,10 +172,9 @@ void DlgExpressionInput::textChanged(const QString &text)
             }
             else
                 ui->msg->setText(Base::Tools::fromStdString(result->toString()));
-
         }
     }
-    catch (Base::Exception & e) {
+    catch (Base::Exception &e) {
         ui->msg->setText(QString::fromUtf8(e.what()));
         QPalette p(ui->msg->palette());
         p.setColor(QPalette::WindowText, Qt::red);
@@ -203,21 +191,16 @@ void DlgExpressionInput::setDiscarded()
 
 void DlgExpressionInput::setExpressionInputSize(int width, int height)
 {
-    if (ui->expression->minimumHeight() < height)
-        ui->expression->setMinimumHeight(height);
+    if (ui->expression->minimumHeight() < height) ui->expression->setMinimumHeight(height);
 
-    if (ui->expression->minimumWidth() < width)
-        ui->expression->setMinimumWidth(width);
+    if (ui->expression->minimumWidth() < width) ui->expression->setMinimumWidth(width);
 
     minimumWidth = width;
 }
 
-void DlgExpressionInput::mouseReleaseEvent(QMouseEvent* ev)
-{
-    Q_UNUSED(ev);
-}
+void DlgExpressionInput::mouseReleaseEvent(QMouseEvent *ev) { Q_UNUSED(ev); }
 
-void DlgExpressionInput::mousePressEvent(QMouseEvent* ev)
+void DlgExpressionInput::mousePressEvent(QMouseEvent *ev)
 {
     Q_UNUSED(ev);
 
@@ -226,8 +209,7 @@ void DlgExpressionInput::mousePressEvent(QMouseEvent* ev)
         //we need to reject the dialog when clicked on the background. As the background is transparent
         //this is the expected behaviour for the user
         bool on = ui->expression->completerActive();
-        if (!on)
-            this->reject();
+        if (!on) this->reject();
     }
 }
 
@@ -238,10 +220,7 @@ void DlgExpressionInput::show()
     ui->expression->selectAll();
 }
 
-void DlgExpressionInput::showEvent(QShowEvent* ev)
-{
-    QDialog::showEvent(ev);
-}
+void DlgExpressionInput::showEvent(QShowEvent *ev) { QDialog::showEvent(ev); }
 
 bool DlgExpressionInput::eventFilter(QObject *obj, QEvent *ev)
 {
@@ -252,10 +231,8 @@ bool DlgExpressionInput::eventFilter(QObject *obj, QEvent *ev)
         // cursor is on this or an underlying widget or outside.
         if (!underMouse()) {
             // if the expression fields context-menu is open do not close the dialog
-            auto menu = qobject_cast<QMenu*>(obj);
-            if (menu && menu->parentWidget() == ui->expression) {
-                return false;
-            }
+            auto menu = qobject_cast<QMenu *>(obj);
+            if (menu && menu->parentWidget() == ui->expression) { return false; }
             bool on = ui->expression->completerActive();
             // Do this only if the completer is not shown
             if (!on) {

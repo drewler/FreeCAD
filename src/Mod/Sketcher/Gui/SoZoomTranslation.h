@@ -28,9 +28,11 @@
 #include <Inventor/nodes/SoTransformation.h>
 #include <Mod/Sketcher/SketcherGlobal.h>
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
-class SketcherGuiExport SoZoomTranslation : public SoTranslation {
+class SketcherGuiExport SoZoomTranslation: public SoTranslation
+{
     using inherited = SoTranslation;
 
     SO_NODE_HEADER(SoZoomTranslation);
@@ -42,15 +44,15 @@ public:
 
 protected:
     ~SoZoomTranslation() override {}
-    void doAction(SoAction * action) override;
-    void getPrimitiveCount(SoGetPrimitiveCountAction * action) override;
-    void getMatrix(SoGetMatrixAction * action) override;
+    void doAction(SoAction *action) override;
+    void getPrimitiveCount(SoGetPrimitiveCountAction *action) override;
+    void getMatrix(SoGetMatrixAction *action) override;
     void GLRender(SoGLRenderAction *action) override;
-    void getBoundingBox(SoGetBoundingBoxAction * action) override;
-    void callback(SoCallbackAction * action) override;
-    void pick(SoPickAction * action) override;
-    float getScaleFactor(SoAction * action) const;
+    void getBoundingBox(SoGetBoundingBoxAction *action) override;
+    void callback(SoCallbackAction *action) override;
+    void pick(SoPickAction *action) override;
+    float getScaleFactor(SoAction *action) const;
 };
 
-}
+} // namespace SketcherGui
 #endif // SKETCHERGUI_SOZOOMTRANSLATION_H

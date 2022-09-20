@@ -36,9 +36,10 @@
 #include <SMESH_Algo.hxx>
 #include <SMESH_ProxyMesh.hxx>
 
-#define NETGEN_VERSION_STRING(a,b,c) (a << 16) + (b << 8) + (c)
+#define NETGEN_VERSION_STRING(a, b, c) (a << 16) + (b << 8) + (c)
 
-namespace nglib {
+namespace nglib
+{
 #include <nglib.h>
 }
 
@@ -56,23 +57,23 @@ class TopoDS_Shape;
 class NETGENPlugin_Hypothesis;
 class NETGENPlugin_SimpleHypothesis_2D;
 class NETGENPlugin_Internals;
-namespace netgen {
-  class OCCGeometry;
-  class Mesh;
-}
+namespace netgen
+{
+class OCCGeometry;
+class Mesh;
+} // namespace netgen
 //=============================================================================
 /*!
  * \brief Struct storing nb of entities in netgen mesh
  */
 //=============================================================================
 
-struct NETGENPlugin_ngMeshInfo
-{
-  int _nbNodes, _nbSegments, _nbFaces, _nbVolumes;
-  char* _copyOfLocalH;
-  NETGENPlugin_ngMeshInfo( netgen::Mesh* ngMesh=0);
-  void transferLocalH( netgen::Mesh* fromMesh, netgen::Mesh* toMesh );
-  void restoreLocalH ( netgen::Mesh* ngMesh);
+struct NETGENPlugin_ngMeshInfo {
+    int _nbNodes, _nbSegments, _nbFaces, _nbVolumes;
+    char *_copyOfLocalH;
+    NETGENPlugin_ngMeshInfo(netgen::Mesh *ngMesh = 0);
+    void transferLocalH(netgen::Mesh *fromMesh, netgen::Mesh *toMesh);
+    void restoreLocalH(netgen::Mesh *ngMesh);
 };
 
 //================================================================================
@@ -82,25 +83,24 @@ struct NETGENPlugin_ngMeshInfo
  */
 //================================================================================
 
-struct NETGENPLUGIN_EXPORT NETGENPlugin_NetgenLibWrapper
-{
-  bool             _isComputeOk;
-#if NETGEN_VERSION < NETGEN_VERSION_STRING(6,0,0)
-  nglib::Ng_Mesh * _ngMesh;
+struct NETGENPLUGIN_EXPORT NETGENPlugin_NetgenLibWrapper {
+    bool _isComputeOk;
+#if NETGEN_VERSION < NETGEN_VERSION_STRING(6, 0, 0)
+    nglib::Ng_Mesh *_ngMesh;
 #else
-  std::shared_ptr<nglib::Ng_Mesh> _ngMesh;
+    std::shared_ptr<nglib::Ng_Mesh> _ngMesh;
 #endif
 
-  NETGENPlugin_NetgenLibWrapper();
-  ~NETGENPlugin_NetgenLibWrapper();
-  void setMesh( nglib::Ng_Mesh* mesh );
+    NETGENPlugin_NetgenLibWrapper();
+    ~NETGENPlugin_NetgenLibWrapper();
+    void setMesh(nglib::Ng_Mesh *mesh);
 
- private:
-  std::string getOutputFileName();
-  void        removeOutputFile();
-  std::string _outputFileName;
+private:
+    std::string getOutputFileName();
+    void removeOutputFile();
+    std::string _outputFileName;
 
-  std::streambuf* _coutBuffer;   // to re-/store cout.rdbuf()
+    std::streambuf *_coutBuffer; // to re-/store cout.rdbuf()
 };
 
 //=============================================================================
@@ -109,118 +109,99 @@ struct NETGENPLUGIN_EXPORT NETGENPlugin_NetgenLibWrapper
  */
 //=============================================================================
 
-class NETGENPLUGIN_EXPORT NETGENPlugin_Mesher 
+class NETGENPLUGIN_EXPORT NETGENPlugin_Mesher
 {
- public:
-  // ---------- PUBLIC METHODS ----------
+public:
+    // ---------- PUBLIC METHODS ----------
 
-  NETGENPlugin_Mesher (SMESH_Mesh* mesh, const TopoDS_Shape& aShape,
-                       const bool isVolume);
-  ~NETGENPlugin_Mesher();
-  void SetSelfPointer( NETGENPlugin_Mesher ** ptr );
+    NETGENPlugin_Mesher(SMESH_Mesh *mesh, const TopoDS_Shape &aShape, const bool isVolume);
+    ~NETGENPlugin_Mesher();
+    void SetSelfPointer(NETGENPlugin_Mesher **ptr);
 
-  void SetParameters(const NETGENPlugin_Hypothesis*          hyp);
-  void SetParameters(const NETGENPlugin_SimpleHypothesis_2D* hyp);
-  void SetViscousLayers2DAssigned(bool isAssigned) { _isViscousLayers2D = isAssigned; }
+    void SetParameters(const NETGENPlugin_Hypothesis *hyp);
+    void SetParameters(const NETGENPlugin_SimpleHypothesis_2D *hyp);
+    void SetViscousLayers2DAssigned(bool isAssigned) { _isViscousLayers2D = isAssigned; }
 
-  bool Compute();
+    bool Compute();
 
-  bool Evaluate(MapShapeNbElems& aResMap);
+    bool Evaluate(MapShapeNbElems &aResMap);
 
-  double GetProgress(const SMESH_Algo* holder,
-                     const int *       algoProgressTic,
-                     const double *    algoProgress) const;
+    double GetProgress(const SMESH_Algo *holder, const int *algoProgressTic,
+                       const double *algoProgress) const;
 
-  static void PrepareOCCgeometry(netgen::OCCGeometry&          occgeom,
-                                 const TopoDS_Shape&           shape,
-                                 SMESH_Mesh&                   mesh,
-                                 std::list< SMESH_subMesh* > * meshedSM=0,
-                                 NETGENPlugin_Internals*       internalShapes=0);
+    static void PrepareOCCgeometry(netgen::OCCGeometry &occgeom, const TopoDS_Shape &shape,
+                                   SMESH_Mesh &mesh, std::list<SMESH_subMesh *> *meshedSM = 0,
+                                   NETGENPlugin_Internals *internalShapes = 0);
 
-  static double GetDefaultMinSize(const TopoDS_Shape& shape,
-                                  const double        maxSize);
+    static double GetDefaultMinSize(const TopoDS_Shape &shape, const double maxSize);
 
-  static void RestrictLocalSize(netgen::Mesh& ngMesh,
-                                const gp_XYZ& p,
-                                double        size,
-                                const bool    overrideMinH=true);
+    static void RestrictLocalSize(netgen::Mesh &ngMesh, const gp_XYZ &p, double size,
+                                  const bool overrideMinH = true);
 
-  static int FillSMesh(const netgen::OCCGeometry&          occgeom,
-                       netgen::Mesh&                       ngMesh,
-                       const NETGENPlugin_ngMeshInfo&      initState,
-                       SMESH_Mesh&                         sMesh,
-                       std::vector<const SMDS_MeshNode*>&  nodeVec,
-                       SMESH_Comment&                      comment,
-                       SMESH_MesherHelper*                 quadHelper=0);
+    static int FillSMesh(const netgen::OCCGeometry &occgeom, netgen::Mesh &ngMesh,
+                         const NETGENPlugin_ngMeshInfo &initState, SMESH_Mesh &sMesh,
+                         std::vector<const SMDS_MeshNode *> &nodeVec, SMESH_Comment &comment,
+                         SMESH_MesherHelper *quadHelper = 0);
 
-  bool FillNgMesh(netgen::OCCGeometry&                occgeom,
-                  netgen::Mesh&                       ngMesh,
-                  std::vector<const SMDS_MeshNode*>&  nodeVec,
-                  const std::list< SMESH_subMesh* > & meshedSM,
-                  SMESH_MesherHelper*                 quadHelper=0,
-                  SMESH_ProxyMesh::Ptr                proxyMesh=SMESH_ProxyMesh::Ptr());
+    bool FillNgMesh(netgen::OCCGeometry &occgeom, netgen::Mesh &ngMesh,
+                    std::vector<const SMDS_MeshNode *> &nodeVec,
+                    const std::list<SMESH_subMesh *> &meshedSM, SMESH_MesherHelper *quadHelper = 0,
+                    SMESH_ProxyMesh::Ptr proxyMesh = SMESH_ProxyMesh::Ptr());
 
-  static void FixIntFaces(const netgen::OCCGeometry& occgeom,
-                          netgen::Mesh&              ngMesh,
-                          NETGENPlugin_Internals&    internalShapes);
+    static void FixIntFaces(const netgen::OCCGeometry &occgeom, netgen::Mesh &ngMesh,
+                            NETGENPlugin_Internals &internalShapes);
 
-  static bool FixFaceMesh(const netgen::OCCGeometry& occgeom,
-                          netgen::Mesh&              ngMesh,
-                          const int                  faceID);
+    static bool FixFaceMesh(const netgen::OCCGeometry &occgeom, netgen::Mesh &ngMesh,
+                            const int faceID);
 
-  static void AddIntVerticesInFaces(const netgen::OCCGeometry&          occgeom,
-                                    netgen::Mesh&                       ngMesh,
-                                    std::vector<const SMDS_MeshNode*>&  nodeVec,
-                                    NETGENPlugin_Internals&             internalShapes);
+    static void AddIntVerticesInFaces(const netgen::OCCGeometry &occgeom, netgen::Mesh &ngMesh,
+                                      std::vector<const SMDS_MeshNode *> &nodeVec,
+                                      NETGENPlugin_Internals &internalShapes);
 
-  static void AddIntVerticesInSolids(const netgen::OCCGeometry&         occgeom,
-                                    netgen::Mesh&                       ngMesh,
-                                    std::vector<const SMDS_MeshNode*>&  nodeVec,
-                                    NETGENPlugin_Internals&             internalShapes);
+    static void AddIntVerticesInSolids(const netgen::OCCGeometry &occgeom, netgen::Mesh &ngMesh,
+                                       std::vector<const SMDS_MeshNode *> &nodeVec,
+                                       NETGENPlugin_Internals &internalShapes);
 
-  static SMESH_ComputeErrorPtr
-    AddSegmentsToMesh(netgen::Mesh&                         ngMesh,
-                      netgen::OCCGeometry&                  geom,
-                      const TSideVector&                    wires,
-                      SMESH_MesherHelper&                   helper,
-                      std::vector< const SMDS_MeshNode* > & nodeVec,
-                      const bool                            overrideMinH=true);
+    static SMESH_ComputeErrorPtr AddSegmentsToMesh(netgen::Mesh &ngMesh, netgen::OCCGeometry &geom,
+                                                   const TSideVector &wires,
+                                                   SMESH_MesherHelper &helper,
+                                                   std::vector<const SMDS_MeshNode *> &nodeVec,
+                                                   const bool overrideMinH = true);
 
-  void SetDefaultParameters();
+    void SetDefaultParameters();
 
-  static void RemoveTmpFiles();
+    static void RemoveTmpFiles();
 
-  static SMESH_ComputeErrorPtr ReadErrors(const std::vector< const SMDS_MeshNode* >& nodeVec);
+    static SMESH_ComputeErrorPtr ReadErrors(const std::vector<const SMDS_MeshNode *> &nodeVec);
 
 
-  static void toPython( const netgen::Mesh* ngMesh,
-                        const std::string&  pyFile); // debug
+    static void toPython(const netgen::Mesh *ngMesh,
+                         const std::string &pyFile); // debug
 
- private:
-
-  SMESH_Mesh*          _mesh;
-  const TopoDS_Shape&  _shape;
-  bool                 _isVolume;
-  bool                 _optimize;
-  int                  _fineness;
-  bool                 _isViscousLayers2D;
-#if NETGEN_VERSION < NETGEN_VERSION_STRING(6,0,0)
-  netgen::Mesh*        _ngMesh;
+private:
+    SMESH_Mesh *_mesh;
+    const TopoDS_Shape &_shape;
+    bool _isVolume;
+    bool _optimize;
+    int _fineness;
+    bool _isViscousLayers2D;
+#if NETGEN_VERSION < NETGEN_VERSION_STRING(6, 0, 0)
+    netgen::Mesh *_ngMesh;
 #else
-  std::shared_ptr<netgen::Mesh> _ngMesh;
+    std::shared_ptr<netgen::Mesh> _ngMesh;
 #endif
-  netgen::OCCGeometry* _occgeom;
+    netgen::OCCGeometry *_occgeom;
 
-  int                  _curShapeIndex;
-  volatile int         _progressTic;
-  volatile double      _ticTime; // normalized [0,1] compute time per a SMESH_Algo::_progressTic
-  volatile double      _totalTime;
+    int _curShapeIndex;
+    volatile int _progressTic;
+    volatile double _ticTime; // normalized [0,1] compute time per a SMESH_Algo::_progressTic
+    volatile double _totalTime;
 
-  const NETGENPlugin_SimpleHypothesis_2D * _simpleHyp;
+    const NETGENPlugin_SimpleHypothesis_2D *_simpleHyp;
 
-  // a pointer to NETGENPlugin_Mesher* field of the holder, that will be
-  // nullified at destruction of this
-  NETGENPlugin_Mesher ** _ptrToMe; 
+    // a pointer to NETGENPlugin_Mesher* field of the holder, that will be
+    // nullified at destruction of this
+    NETGENPlugin_Mesher **_ptrToMe;
 };
 
 //=============================================================================
@@ -245,52 +226,48 @@ class NETGENPLUGIN_EXPORT NETGENPlugin_Mesher
 
 class NETGENPLUGIN_EXPORT NETGENPlugin_Internals
 {
-  SMESH_Mesh&       _mesh;
-  bool              _is3D;
-  //2D
-  std::map<int,int> _e2face;//!<edges and their vertices in faces where they are TopAbs_INTERNAL
-  std::map<int,std::list<int> > _f2v;//!<faces with internal vertices
-  // 3D
-  std::set<int>     _intShapes;
-  std::set<int>     _borderFaces; //!< non-internal faces sharing the internal edge
-  std::map<int,std::list<int> > _s2v;//!<solids with internal vertices
+    SMESH_Mesh &_mesh;
+    bool _is3D;
+    //2D
+    std::map<int, int> _e2face; //!<edges and their vertices in faces where they are TopAbs_INTERNAL
+    std::map<int, std::list<int>> _f2v; //!<faces with internal vertices
+    // 3D
+    std::set<int> _intShapes;
+    std::set<int> _borderFaces;         //!< non-internal faces sharing the internal edge
+    std::map<int, std::list<int>> _s2v; //!<solids with internal vertices
 
 public:
-  NETGENPlugin_Internals( SMESH_Mesh& mesh, const TopoDS_Shape& shape, bool is3D );
+    NETGENPlugin_Internals(SMESH_Mesh &mesh, const TopoDS_Shape &shape, bool is3D);
 
-  SMESH_Mesh& getMesh() const;
+    SMESH_Mesh &getMesh() const;
 
-  bool isShapeToPrecompute(const TopoDS_Shape& s);
+    bool isShapeToPrecompute(const TopoDS_Shape &s);
 
-  // 2D meshing
-  // edges 
-  bool hasInternalEdges() const { return !_e2face.empty(); }
-  bool isInternalEdge( int id ) const { return _e2face.count( id ); }
-  const std::map<int,int>& getEdgesAndVerticesWithFaces() const { return _e2face; }
-  void getInternalEdges( TopTools_IndexedMapOfShape&  fmap,
-                         TopTools_IndexedMapOfShape&  emap,
-                         TopTools_IndexedMapOfShape&  vmap,
-                         std::list< SMESH_subMesh* > smToPrecompute[]);
-  // vertices
-  bool hasInternalVertexInFace() const { return !_f2v.empty(); }
-  const std::map<int,std::list<int> >& getFacesWithVertices() const { return _f2v; }
+    // 2D meshing
+    // edges
+    bool hasInternalEdges() const { return !_e2face.empty(); }
+    bool isInternalEdge(int id) const { return _e2face.count(id); }
+    const std::map<int, int> &getEdgesAndVerticesWithFaces() const { return _e2face; }
+    void getInternalEdges(TopTools_IndexedMapOfShape &fmap, TopTools_IndexedMapOfShape &emap,
+                          TopTools_IndexedMapOfShape &vmap,
+                          std::list<SMESH_subMesh *> smToPrecompute[]);
+    // vertices
+    bool hasInternalVertexInFace() const { return !_f2v.empty(); }
+    const std::map<int, std::list<int>> &getFacesWithVertices() const { return _f2v; }
 
-  // 3D meshing
-  // faces
-  bool hasInternalFaces() const { return !_intShapes.empty(); }
-  bool isInternalShape( int id ) const { return _intShapes.count( id ); }
-  void findBorderElements( std::set< const SMDS_MeshElement*, TIDCompare > & borderElems );
-  bool isBorderFace( int faceID ) const { return _borderFaces.count( faceID ); }
-  void getInternalFaces( TopTools_IndexedMapOfShape&  fmap,
-                         TopTools_IndexedMapOfShape&  emap,
-                         std::list< SMESH_subMesh* >& facesSM,
-                         std::list< SMESH_subMesh* >& boundarySM);
-  // vertices
-  bool hasInternalVertexInSolid() const { return !_s2v.empty(); }
-  bool hasInternalVertexInSolid(int soID ) const { return _s2v.count(soID); }
-  const std::map<int,std::list<int> >& getSolidsWithVertices() const { return _s2v; }
-
-
+    // 3D meshing
+    // faces
+    bool hasInternalFaces() const { return !_intShapes.empty(); }
+    bool isInternalShape(int id) const { return _intShapes.count(id); }
+    void findBorderElements(std::set<const SMDS_MeshElement *, TIDCompare> &borderElems);
+    bool isBorderFace(int faceID) const { return _borderFaces.count(faceID); }
+    void getInternalFaces(TopTools_IndexedMapOfShape &fmap, TopTools_IndexedMapOfShape &emap,
+                          std::list<SMESH_subMesh *> &facesSM,
+                          std::list<SMESH_subMesh *> &boundarySM);
+    // vertices
+    bool hasInternalVertexInSolid() const { return !_s2v.empty(); }
+    bool hasInternalVertexInSolid(int soID) const { return _s2v.count(soID); }
+    const std::map<int, std::list<int>> &getSolidsWithVertices() const { return _s2v; }
 };
 
 #endif

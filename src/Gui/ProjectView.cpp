@@ -31,15 +31,12 @@ using namespace Gui;
 
 
 /* TRANSLATOR Gui::ProjectWidget */
-ProjectWidget::ProjectWidget(QWidget* parent)
-    : QTreeView(parent)
+ProjectWidget::ProjectWidget(QWidget *parent) : QTreeView(parent)
 {
     fileModel = new QFileSystemModel(this);
     setModel(fileModel);
 }
 
-ProjectWidget::~ProjectWidget()
-{
-}
+ProjectWidget::~ProjectWidget() {}
 
 #include "moc_ProjectView.cpp"

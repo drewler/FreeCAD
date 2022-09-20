@@ -36,27 +36,27 @@ ImageBase::ImageBase()
 // Destructor
 ImageBase::~ImageBase()
 {
-    try
-    {
+    try {
         clear();
     }
-    catch(...) {}
+    catch (...) {
+    }
 }
 
 // Copy constructor
 ImageBase::ImageBase(const ImageBase &rhs)
 {
-	// Do the copy
-    if (rhs._owner)
-    {
+    // Do the copy
+    if (rhs._owner) {
         // rhs is the owner - do a deep copy
         _pPixelData = nullptr;
         _owner = false; // avoids a superfluous delete
-        if (createCopy((void *)(rhs._pPixelData), rhs._width, rhs._height, rhs._format, rhs._numSigBitsPerSample) != 0)
+        if (createCopy((void *)(rhs._pPixelData), rhs._width, rhs._height, rhs._format,
+                       rhs._numSigBitsPerSample)
+            != 0)
             throw Base::RuntimeError("ImageBase::ImageBase. Error creating copy of image");
     }
-    else
-    {
+    else {
         // rhs is not the owner - do a shallow copy
         _pPixelData = rhs._pPixelData;
         _owner = rhs._owner;
@@ -67,24 +67,23 @@ ImageBase::ImageBase(const ImageBase &rhs)
 }
 
 // = operator
-ImageBase & ImageBase::operator=(const ImageBase &rhs)
+ImageBase &ImageBase::operator=(const ImageBase &rhs)
 {
-	if (this == &rhs)
-		return *this;
+    if (this == &rhs) return *this;
 
-	// Implement any deletion necessary
-	clear();
+    // Implement any deletion necessary
+    clear();
 
-	// Do the copy
-    if (rhs._owner)
-    {
+    // Do the copy
+    if (rhs._owner) {
         // rhs is the owner - do a deep copy
         _owner = false; // avoids a superfluous delete
-        if (createCopy((void *)(rhs._pPixelData), rhs._width, rhs._height, rhs._format, rhs._numSigBitsPerSample) != 0)
+        if (createCopy((void *)(rhs._pPixelData), rhs._width, rhs._height, rhs._format,
+                       rhs._numSigBitsPerSample)
+            != 0)
             throw Base::RuntimeError("ImageBase::operator=. Error creating copy of image");
     }
-    else
-    {
+    else {
         // rhs is not the owner - do a shallow copy
         _pPixelData = rhs._pPixelData;
         _owner = rhs._owner;
@@ -93,7 +92,7 @@ ImageBase & ImageBase::operator=(const ImageBase &rhs)
         _setColorFormat(rhs._format, rhs._numSigBitsPerSample);
     }
 
-	return *this;
+    return *this;
 }
 
 
@@ -102,14 +101,12 @@ ImageBase & ImageBase::operator=(const ImageBase &rhs)
 void ImageBase::clear()
 {
     // If object is the owner of the data then delete the allocated memory
-    if (_owner)
-    {
-        delete [] _pPixelData;
+    if (_owner) {
+        delete[] _pPixelData;
         _pPixelData = nullptr;
     }
     // Else just reset the pointer (the owner of the pixel data must be responsible for deleting it)
-    else
-    {
+    else {
         _pPixelData = nullptr;
     }
 
@@ -124,8 +121,7 @@ void ImageBase::clear()
 // Returns 0 for OK, -1 for invalid color format
 int ImageBase::_setColorFormat(int format, unsigned short numSigBitsPerSample)
 {
-    switch (format)
-    {
+    switch (format) {
         case IB_CF_GREY8:
             _numSamples = 1;
             _numBitsPerSample = 8;
@@ -181,8 +177,7 @@ int ImageBase::_setColorFormat(int format, unsigned short numSigBitsPerSample)
             _numBitsPerSample = 16;
             _numBytesPerPixel = 8;
             break;
-        default:
-            return -1;
+        default: return -1;
     }
 
     if ((numSigBitsPerSample == 0) || (numSigBitsPerSample > _numBitsPerSample))
@@ -201,17 +196,14 @@ int ImageBase::_setColorFormat(int format, unsigned short numSigBitsPerSample)
 int ImageBase::_allocate()
 {
     // Check that pixel data pointer is null
-    if (_pPixelData)
-        return -1;
+    if (_pPixelData) return -1;
 
     // Allocate the space needed to store the pixel data
     _owner = true;
-    try
-    {
-        _pPixelData = new unsigned char [_width * _height * _numBytesPerPixel];
+    try {
+        _pPixelData = new unsigned char[_width * _height * _numBytesPerPixel];
     }
-    catch(...)
-    {
+    catch (...) {
         // memory allocation error
         return -1;
     }
@@ -227,22 +219,21 @@ int ImageBase::_allocate()
 //		 0 for OK
 //		-1 for invalid color format
 //		-2 for memory allocation error
-int ImageBase::createCopy(void* pSrcPixelData, unsigned long width, unsigned long height, int format, unsigned short numSigBitsPerSample)
+int ImageBase::createCopy(void *pSrcPixelData, unsigned long width, unsigned long height,
+                          int format, unsigned short numSigBitsPerSample)
 {
     // Clear any existing data
     clear();
 
     // Set the color format and the dependent parameters
-    if (_setColorFormat(format, numSigBitsPerSample) != 0)
-        return -1;
+    if (_setColorFormat(format, numSigBitsPerSample) != 0) return -1;
 
     // Set the image size
     _width = width;
     _height = height;
 
     // Allocate our own memory for the pixel data
-    if (_allocate() != 0)
-    {
+    if (_allocate() != 0) {
         clear();
         return -2;
     }
@@ -265,14 +256,14 @@ int ImageBase::createCopy(void* pSrcPixelData, unsigned long width, unsigned lon
 // Returns:
 //		 0 for OK
 //		-1 for invalid color format
-int ImageBase::pointTo(void* pSrcPixelData, unsigned long width, unsigned long height, int format, unsigned short numSigBitsPerSample, bool takeOwnership)
+int ImageBase::pointTo(void *pSrcPixelData, unsigned long width, unsigned long height, int format,
+                       unsigned short numSigBitsPerSample, bool takeOwnership)
 {
     // Clear any existing data
     clear();
 
     // Set the color format and the dependent parameters
-    if (_setColorFormat(format, numSigBitsPerSample) != 0)
-        return -1;
+    if (_setColorFormat(format, numSigBitsPerSample) != 0) return -1;
 
     // Set the image size
     _width = width;
@@ -283,8 +274,7 @@ int ImageBase::pointTo(void* pSrcPixelData, unsigned long width, unsigned long h
     _pPixelData = (unsigned char *)pSrcPixelData;
 
     // Flag ownership
-    if (takeOwnership)
-        _owner = true;
+    if (takeOwnership) _owner = true;
     else
         _owner = false;
 
@@ -292,52 +282,39 @@ int ImageBase::pointTo(void* pSrcPixelData, unsigned long width, unsigned long h
 }
 
 // Gets the value of a sample at the given pixel position
-// Returns 0 for valid value or -1 if coordinates or sample index are out of range or 
+// Returns 0 for valid value or -1 if coordinates or sample index are out of range or
 // if there is no image data
 int ImageBase::getSample(int x, int y, unsigned short sampleIndex, double &value)
 {
-    if ((!_pPixelData) || 
-        (sampleIndex >= _numSamples) ||
-        (x < 0) || (x >= (int)_width) || 
-        (y < 0) || (y >= (int)_height))
+    if ((!_pPixelData) || (sampleIndex >= _numSamples) || (x < 0) || (x >= (int)_width) || (y < 0)
+        || (y >= (int)_height))
         return -1;
 
     // Get pointer to sample
-    switch (_format)
-    {
+    switch (_format) {
         case IB_CF_GREY8:
         case IB_CF_RGB24:
         case IB_CF_BGR24:
         case IB_CF_RGBA32:
-        case IB_CF_BGRA32:
-            {
-                unsigned char* pSample = _pPixelData + _numSamples * (y * _width + x) + sampleIndex;
-                value = (double)(*pSample);
-            }
-            break;
+        case IB_CF_BGRA32: {
+            unsigned char *pSample = _pPixelData + _numSamples * (y * _width + x) + sampleIndex;
+            value = (double)(*pSample);
+        } break;
         case IB_CF_GREY16:
         case IB_CF_RGB48:
         case IB_CF_BGR48:
         case IB_CF_RGBA64:
-        case IB_CF_BGRA64:
-            {
-                uint16_t* pPix16 = (uint16_t *)_pPixelData;
-                uint16_t* pSample = pPix16 + _numSamples * (y * _width + x) + sampleIndex;
-                value = (double)(*pSample);
-            }
-            break;
-        case IB_CF_GREY32:
-            {
-                uint32_t* pPix32 = (uint32_t *)_pPixelData;
-                uint32_t* pSample = pPix32 + y * _width + x;
-                value = (double)(*pSample);
-            }
-            break;
-        default:
-            return -1;
+        case IB_CF_BGRA64: {
+            uint16_t *pPix16 = (uint16_t *)_pPixelData;
+            uint16_t *pSample = pPix16 + _numSamples * (y * _width + x) + sampleIndex;
+            value = (double)(*pSample);
+        } break;
+        case IB_CF_GREY32: {
+            uint32_t *pPix32 = (uint32_t *)_pPixelData;
+            uint32_t *pSample = pPix32 + y * _width + x;
+            value = (double)(*pSample);
+        } break;
+        default: return -1;
     }
     return 0;
 }
-
-
-

@@ -32,11 +32,11 @@
 #define BASE_PYEXPORT_H
 
 // (re-)defined in pyconfig.h
-#if defined (_POSIX_C_SOURCE)
-#   undef    _POSIX_C_SOURCE
+#if defined(_POSIX_C_SOURCE)
+#undef _POSIX_C_SOURCE
 #endif
-#if defined (_XOPEN_SOURCE)
-#   undef    _XOPEN_SOURCE
+#if defined(_XOPEN_SOURCE)
+#undef _XOPEN_SOURCE
 #endif
 
 #include <Python.h>
@@ -109,8 +109,7 @@ class PyObjectBase;
  *  references on it!
  *  @see PyObjectBase
  */
-template <class HandledType>
-class PyHandle
+template<class HandledType> class PyHandle
 {
 public:
     //**************************************************************************
@@ -121,17 +120,15 @@ public:
      *  instead using a overwritten new operator in the
      *  HandledType class! But is not easy to enforce!
      */
-    PyHandle(HandledType *ToHandle=0L)
-            :_pHandles(ToHandle) {
-        if (_pHandles)
-            _pHandles->IncRef();
+    PyHandle(HandledType *ToHandle = 0L) : _pHandles(ToHandle)
+    {
+        if (_pHandles) _pHandles->IncRef();
     }
 
     /// Copy constructor
-    PyHandle(const PyHandle <HandledType> &ToHandle)
-            :_pHandles(ToHandle._pHandles) {
-        if (_pHandles)
-            _pHandles->IncRef();
+    PyHandle(const PyHandle<HandledType> &ToHandle) : _pHandles(ToHandle._pHandles)
+    {
+        if (_pHandles) _pHandles->IncRef();
     }
 
     /** destructor
@@ -139,94 +136,82 @@ public:
      *  if was the last one, the referenced object to
      *  destruct!
      */
-    ~PyHandle() {
-        if (_pHandles)
-            _pHandles->DecRef();
+    ~PyHandle()
+    {
+        if (_pHandles) _pHandles->DecRef();
     }
 
     //**************************************************************************
     // operator implementation
 
     // assign operator from a pointer
-    PyHandle <HandledType>  &operator=(/*const*/ HandledType* other) {
-        if (_pHandles)
-            _pHandles->DecRef();
+    PyHandle<HandledType> &operator=(/*const*/ HandledType *other)
+    {
+        if (_pHandles) _pHandles->DecRef();
         // FIXME: Should be without "->_pHandles", shouldn't it? (Werner)
-        _pHandles = other;//_pHandles = other->_pHandles;
-        if (_pHandles)
-            _pHandles->IncRef();
+        _pHandles = other; //_pHandles = other->_pHandles;
+        if (_pHandles) _pHandles->IncRef();
         return *this;
     }
 
     // assign operator from a handle
-    PyHandle <HandledType>  &operator=(const PyHandle <HandledType> &other) {
-        if (_pHandles)
-            _pHandles->DecRef();
+    PyHandle<HandledType> &operator=(const PyHandle<HandledType> &other)
+    {
+        if (_pHandles) _pHandles->DecRef();
         _pHandles = other._pHandles;
-        if (_pHandles)
-            _pHandles->IncRef();
+        if (_pHandles) _pHandles->IncRef();
         return *this;
     }
 
     /// dereference operators
-    HandledType &operator*() {
-        return *_pHandles;
-    }
+    HandledType &operator*() { return *_pHandles; }
 
     /// dereference operators
-    HandledType *operator->() {
-        return _pHandles;
-    }
+    HandledType *operator->() { return _pHandles; }
 
     /// dereference operators
-    const HandledType &operator*() const {
-        return _pHandles;
-    }
+    const HandledType &operator*() const { return _pHandles; }
 
     /// dereference operators
-    const HandledType *operator->() const {
-        return _pHandles;
-    }
+    const HandledType *operator->() const { return _pHandles; }
 
     /** lower operator
      *  needed for sorting in maps and sets
      */
-    bool operator<(const PyHandle<HandledType> &other) const {
+    bool operator<(const PyHandle<HandledType> &other) const
+    {
         //return _pHandles<&other;
         // FIXME: Shouldn't we compare both pointers?. (Werner)
-        return _pHandles<other._pHandles;
+        return _pHandles < other._pHandles;
     }
 
     /// equal operator
-    bool operator==(const PyHandle<HandledType> &other) const {
+    bool operator==(const PyHandle<HandledType> &other) const
+    {
         //return _pHandles==&other;
         // FIXME: Shouldn't we compare both pointers?. (Werner)
-        return _pHandles==other._pHandles;
+        return _pHandles == other._pHandles;
     }
 
     /// returns the type as PyObject
-    PyObject* getPyObject() const {
+    PyObject *getPyObject() const
+    {
         // return (PyObject*) _pHandles;
         // FIXME: Shouldn't we return the pointer's object?. (Werner)
-        return const_cast<HandledType*>(_pHandles)->getPyObject();
+        return const_cast<HandledType *>(_pHandles)->getPyObject();
     }
     //**************************************************************************
     // checking on the state
 
     /// Test if it handles something
-    bool IsValid() const {
-        return _pHandles!=0;
-    }
+    bool IsValid() const { return _pHandles != 0; }
 
     /// Test if it not handles something
-    bool IsNull() const {
-        return _pHandles==0;
-    }
+    bool IsNull() const { return _pHandles == 0; }
 
 private:
     /// the pointer on the handled object
     HandledType *_pHandles;
-
 };
 
 

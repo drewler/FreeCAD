@@ -29,10 +29,12 @@
 
 class QTreeWidgetItem;
 
-namespace Gui {
+namespace Gui
+{
 class PythonSyntaxHighlighter;
 
-namespace Dialog {
+namespace Dialog
+{
 class Ui_DlgEditorSettings;
 
 /** This class implements a preferences page for the editor settings.
@@ -40,12 +42,12 @@ class Ui_DlgEditorSettings;
  *  @author Werner Mayer
  */
 struct DlgSettingsEditorP;
-class DlgSettingsEditorImp : public PreferencePage
+class DlgSettingsEditorImp: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsEditorImp( QWidget* parent = nullptr );
+    explicit DlgSettingsEditorImp(QWidget *parent = nullptr);
     ~DlgSettingsEditorImp() override;
 
 public:
@@ -55,8 +57,8 @@ public:
 protected Q_SLOTS:
     void on_displayItems_currentItemChanged(QTreeWidgetItem *i);
     void on_colorButton_changed();
-    void on_fontFamily_activated(const QString&);
-    void on_fontSize_valueChanged(const QString&);
+    void on_fontFamily_activated(const QString &);
+    void on_fontSize_valueChanged(const QString &);
 
 protected:
     void changeEvent(QEvent *e) override;
@@ -64,11 +66,11 @@ protected:
 
 private:
     std::unique_ptr<Ui_DlgEditorSettings> ui;
-    DlgSettingsEditorP* d;
-    Gui::PythonSyntaxHighlighter* pythonSyntax;
+    DlgSettingsEditorP *d;
+    Gui::PythonSyntaxHighlighter *pythonSyntax;
 
-    DlgSettingsEditorImp( const DlgSettingsEditorImp & );
-    DlgSettingsEditorImp& operator=( const DlgSettingsEditorImp & );
+    DlgSettingsEditorImp(const DlgSettingsEditorImp &);
+    DlgSettingsEditorImp &operator=(const DlgSettingsEditorImp &);
 };
 
 } // namespace Dialog

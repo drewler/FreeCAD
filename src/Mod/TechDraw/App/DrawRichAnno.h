@@ -25,15 +25,15 @@
 
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
-# include <App/DocumentObject.h>
-# include <App/FeaturePython.h>
+#include <App/DocumentObject.h>
+#include <App/FeaturePython.h>
 
 #include "DrawView.h"
 
 namespace TechDraw
 {
 
-class TechDrawExport DrawRichAnno : public TechDraw::DrawView
+class TechDrawExport DrawRichAnno: public TechDraw::DrawView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawRichAnno);
 
@@ -41,25 +41,23 @@ public:
     DrawRichAnno();
     ~DrawRichAnno() = default;
 
-    App::PropertyLink         AnnoParent;
-    App::PropertyString       AnnoText;
-    App::PropertyBool         ShowFrame;
-    App::PropertyFloat        MaxWidth;
+    App::PropertyLink AnnoParent;
+    App::PropertyString AnnoText;
+    App::PropertyBool ShowFrame;
+    App::PropertyFloat MaxWidth;
 
     short mustExecute() const override;
     App::DocumentObjectExecReturn *execute() override;
 
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderRichAnno";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderRichAnno"; }
     PyObject *getPyObject() override;
-    QRectF getRect() const override { return { 0, 0, 1, 1}; }
-    DrawView* getBaseView() const;
+    QRectF getRect() const override { return {0, 0, 1, 1}; }
+    DrawView *getBaseView() const;
 
-    DrawPage* findParentPage() const override;
+    DrawPage *findParentPage() const override;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
 
 private:
 };

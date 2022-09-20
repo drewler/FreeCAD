@@ -27,23 +27,27 @@
 #include "ViewProviderPocket.h"
 
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 
-class TaskPocketParameters : public TaskExtrudeParameters
+class TaskPocketParameters: public TaskExtrudeParameters
 {
     Q_OBJECT
 
 public:
-    explicit TaskPocketParameters(ViewProviderPocket *PocketView, QWidget *parent = nullptr, bool newObj=false);
+    explicit TaskPocketParameters(ViewProviderPocket *PocketView, QWidget *parent = nullptr,
+                                  bool newObj = false);
     ~TaskPocketParameters() override;
 
     void apply() override;
@@ -58,15 +62,14 @@ private:
 };
 
 /// simulation dialog for the TaskView
-class TaskDlgPocketParameters : public TaskDlgSketchBasedParameters
+class TaskDlgPocketParameters: public TaskDlgSketchBasedParameters
 {
     Q_OBJECT
 
 public:
     explicit TaskDlgPocketParameters(ViewProviderPocket *PocketView);
 
-    ViewProviderPocket* getPocketView() const
-    { return static_cast<ViewProviderPocket*>(vp); }
+    ViewProviderPocket *getPocketView() const { return static_cast<ViewProviderPocket *>(vp); }
 };
 
 } //namespace PartDesignGui

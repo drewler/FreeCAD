@@ -29,8 +29,8 @@
 
 class MESHDRIVERDAT_EXPORT DriverDAT_R_SMDS_Mesh: public Driver_SMDS_Mesh
 {
- public:
-  virtual Status Perform();
+public:
+    virtual Status Perform();
 };
 
 #endif

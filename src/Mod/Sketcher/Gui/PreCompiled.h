@@ -27,7 +27,7 @@
 #include <FCConfig.h>
 
 #ifdef _MSC_VER
-#   pragma warning(disable : 4005)
+#pragma warning(disable : 4005)
 #endif
 
 #ifdef _PreComp_
@@ -56,8 +56,8 @@
 #include <boost/scoped_ptr.hpp>
 
 #ifdef FC_OS_WIN32
-# define NOMINMAX
-# include <windows.h>
+#define NOMINMAX
+#include <windows.h>
 #endif
 
 // OCC
@@ -77,17 +77,17 @@
 
 // Qt Toolkit
 #ifndef __QtAll__
-# include <Gui/QtAll.h>
+#include <Gui/QtAll.h>
 #endif
 
-# include <QGuiApplication>
-# include <QMessageBox>
+#include <QGuiApplication>
+#include <QMessageBox>
 #include <qdebug.h>
 #include <QString>
 
 // all of Inventor
 #ifndef __InventorAll__
-# include <Gui/InventorAll.h>
+#include <Gui/InventorAll.h>
 #endif
 
 #include <Inventor/SbImage.h>

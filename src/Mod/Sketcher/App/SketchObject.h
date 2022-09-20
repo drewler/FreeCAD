@@ -51,7 +51,7 @@ namespace Sketcher
 
 class SketchAnalysis;
 
-class SketcherExport SketchObject : public Part::Part2DObject
+class SketcherExport SketchObject: public Part::Part2DObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Sketcher::SketchObject);
 
@@ -68,10 +68,10 @@ public:
      geometry in the Sketch. geoId >= 0 means an index in the Geometry list. geoId < 0 refers to sketch
      axes and external geometry.  posId is a PointPos enum, documented in Constraint.h.
     */
-    Part    ::PropertyGeometryList   Geometry;
+    Part ::PropertyGeometryList Geometry;
     Sketcher::PropertyConstraintList Constraints;
-    App     ::PropertyLinkSubList    ExternalGeometry;
-    App     ::PropertyBool           FullyConstrained;
+    App ::PropertyLinkSubList ExternalGeometry;
+    App ::PropertyBool FullyConstrained;
     /** @name methods override Feature */
     //@{
     short mustExecute() const override;
@@ -79,9 +79,7 @@ public:
     App::DocumentObjectExecReturn *execute() override;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "SketcherGui::ViewProviderSketch";
-    }
+    const char *getViewProviderName() const override { return "SketcherGui::ViewProviderSketch"; }
     //@}
 
     /** SketchObject can work in two modes: Recompute Mode and noRecomputes Mode
@@ -107,14 +105,14 @@ public:
      \param construction - true for construction lines
      \retval int - GeoId of added element
      */
-    int addGeometry(const Part::Geometry *geo, bool construction=false);
+    int addGeometry(const Part::Geometry *geo, bool construction = false);
     /*!
      \brief Add multiple geometry elements to a sketch
      \param geoList - geometry to add
      \param construction - true for construction lines
      \retval int - GeoId of last added element
      */
-    int addGeometry(const std::vector<Part::Geometry *> &geoList, bool construction=false);
+    int addGeometry(const std::vector<Part::Geometry *> &geoList, bool construction = false);
     /*!
      \brief Deletes indicated geometry (by geoid).
      \param GeoId - the geometry to delete
@@ -123,9 +121,9 @@ public:
      */
     int delGeometry(int GeoId, bool deleteinternalgeo = true);
     /// Deletes just the GeoIds indicated, it does not look for internal geometry
-    int delGeometriesExclusiveList(const std::vector<int>& GeoIds);
+    int delGeometriesExclusiveList(const std::vector<int> &GeoIds);
     /// Does the same as \a delGeometry but allows to delete several geometries in one step
-    int delGeometries(const std::vector<int>& GeoIds);
+    int delGeometries(const std::vector<int> &GeoIds);
     /// deletes all the elements/constraints of the sketch except for external geometry
     int deleteAllGeometry();
     /// deletes all the constraints of the sketch
@@ -147,9 +145,9 @@ public:
      * prevents the update. This allows to update the solve status (e.g. dof), without updating the geometry (i.e. make it
      * move to fulfil the constraints).
      */
-    int delConstraints(std::vector<int> ConstrIds, bool updategeometry=true);
-    int delConstraintOnPoint(int GeoId, PointPos PosId, bool onlyCoincident=true);
-    int delConstraintOnPoint(int VertexId, bool onlyCoincident=true);
+    int delConstraints(std::vector<int> ConstrIds, bool updategeometry = true);
+    int delConstraintOnPoint(int GeoId, PointPos PosId, bool onlyCoincident = true);
+    int delConstraintOnPoint(int VertexId, bool onlyCoincident = true);
     /// Deletes all constraints referencing an external geometry
     int delConstraintsToExternal();
     /// transfers all constraints of a point to a new point
@@ -157,9 +155,9 @@ public:
                             bool doNotTransformTangencies = false);
 
     /// Carbon copy another sketch geometry and constraints
-    int carbonCopy(App::DocumentObject * pObj, bool construction = true);
+    int carbonCopy(App::DocumentObject *pObj, bool construction = true);
     /// add an external geometry reference
-    int addExternal(App::DocumentObject *Obj, const char* SubName);
+    int addExternal(App::DocumentObject *Obj, const char *SubName);
     /** delete external
      *  ExtGeoId >= 0 with 0 corresponding to the first user defined
      *  external geometry
@@ -175,17 +173,18 @@ public:
      *  id==-2 for the vertical sketch axis
      *  id<=-3 for user defined projected external geometries,
      */
-    template <  typename GeometryT = Part::Geometry,
-                typename = typename std::enable_if<
-                    std::is_base_of<Part::Geometry, typename std::decay<GeometryT>::type>::value
-             >::type
-    >
-    const GeometryT * getGeometry(int GeoId) const;
+    template<typename GeometryT = Part::Geometry,
+             typename = typename std::enable_if<std::is_base_of<
+                 Part::Geometry, typename std::decay<GeometryT>::type>::value>::type>
+    const GeometryT *getGeometry(int GeoId) const;
 
     std::unique_ptr<const GeometryFacade> getGeometryFacade(int GeoId) const;
 
     /// returns a list of all internal geometries
-    const std::vector<Part::Geometry *> &getInternalGeometry() const { return Geometry.getValues(); }
+    const std::vector<Part::Geometry *> &getInternalGeometry() const
+    {
+        return Geometry.getValues();
+    }
     /// returns a list of projected external geometries
     const std::vector<Part::Geometry *> &getExternalGeometry() const { return ExternalGeo; }
     /// rebuilds external geometry (projection onto the sketch plane)
@@ -194,7 +193,7 @@ public:
     int getExternalGeometryCount() const { return ExternalGeo.size(); }
 
     /// retrieves a vector containing both normal and external Geometry (including the sketch axes)
-    std::vector<Part::Geometry*> getCompleteGeometry() const;
+    std::vector<Part::Geometry *> getCompleteGeometry() const;
 
     GeoListFacade getGeoListFacade() const;
 
@@ -221,7 +220,7 @@ public:
         @return 0 if no error, if error, the following codes in this order of priority: -4 if overconstrained,
                 -3 if conflicting, -1 if solver error, -2 if redundant constraints
     */
-    int solve(bool updateGeoAfterSolving=true);
+    int solve(bool updateGeoAfterSolving = true);
     /// set the datum of a Distance or Angle constraint and solve
     int setDatum(int ConstrId, double Datum);
     /// set the driving status of this constraint and solve
@@ -252,7 +251,8 @@ public:
     /// toggle the driving status of this constraint
     int toggleVirtualSpace(int ConstrId);
     /// move this point to a new location and solve
-    int movePoint(int GeoId, PointPos PosId, const Base::Vector3d& toPoint, bool relative=false, bool updateGeoBeforeMoving=false);
+    int movePoint(int GeoId, PointPos PosId, const Base::Vector3d &toPoint, bool relative = false,
+                  bool updateGeoBeforeMoving = false);
     /// retrieves the coordinates of a point
     Base::Vector3d getPoint(int GeoId, PointPos PosId) const;
 
@@ -268,7 +268,8 @@ public:
      \param createCorner - keep geoId/pos as a Point and keep as many constraints as possible
      \retval - 0 on success, -1 on failure
      */
-    int fillet(int geoId, PointPos pos, double radius, bool trim=true, bool preserveCorner=false);
+    int fillet(int geoId, PointPos pos, double radius, bool trim = true,
+               bool preserveCorner = false);
     /*!
      \brief More general form of fillet
      \param geoId1, geoId2 - geoId for two lines (which don't necessarily have to coincide)
@@ -279,23 +280,25 @@ public:
      of the existing constraints as possible
      \retval - 0 on success, -1 on failure
      */
-    int fillet(int geoId1, int geoId2,
-               const Base::Vector3d& refPnt1, const Base::Vector3d& refPnt2,
-               double radius, bool trim=true, bool createCorner=false);
+    int fillet(int geoId1, int geoId2, const Base::Vector3d &refPnt1, const Base::Vector3d &refPnt2,
+               double radius, bool trim = true, bool createCorner = false);
 
     /// trim a curve
-    int trim(int geoId, const Base::Vector3d& point);
+    int trim(int geoId, const Base::Vector3d &point);
     /// extend a curve
     int extend(int geoId, double increment, PointPos endPoint);
     /// split a curve
     int split(int geoId, const Base::Vector3d &point);
 
     /// adds symmetric geometric elements with respect to the refGeoId (line or point)
-    int addSymmetric(const std::vector<int> &geoIdList, int refGeoId, Sketcher::PointPos refPosId=Sketcher::PointPos::none);
+    int addSymmetric(const std::vector<int> &geoIdList, int refGeoId,
+                     Sketcher::PointPos refPosId = Sketcher::PointPos::none);
     /// with default parameters adds a copy of the geometric elements displaced by the displacement vector.
     /// It creates an array of csize elements in the direction of the displacement vector by rsize elements in the
     /// direction perpendicular to the displacement vector, wherein the modulus of this perpendicular vector is scaled by perpscale.
-    int addCopy(const std::vector<int> &geoIdList, const Base::Vector3d& displacement, bool moveonly = false, bool clone=false, int csize=2, int rsize=1, bool constraindisplacement = false, double perpscale = 1.0);
+    int addCopy(const std::vector<int> &geoIdList, const Base::Vector3d &displacement,
+                bool moveonly = false, bool clone = false, int csize = 2, int rsize = 1,
+                bool constraindisplacement = false, double perpscale = 1.0);
 
     int removeAxesAlignment(const std::vector<int> &geoIdList);
     /// Exposes all internal geometry of an object supporting internal geometry
@@ -309,7 +312,7 @@ public:
      \param delgeoid - if true in addition to the unused internal geometry also deletes the GeoId geometry
      \retval int - returns -1 on error, otherwise the number of deleted elements
      */
-    int deleteUnusedInternalGeometry(int GeoId, bool delgeoid=false);
+    int deleteUnusedInternalGeometry(int GeoId, bool delgeoid = false);
     /*!
      \brief Approximates the given geometry with a B-spline
      \param GeoId - the geometry to approximate
@@ -363,17 +366,19 @@ public:
 
     // retrieves an array of maps, each map containing the points that are coincidence by virtue of
     // any number of direct or indirect coincidence constraints
-    const std::vector< std::map<int, Sketcher::PointPos> > getCoincidenceGroups();
+    const std::vector<std::map<int, Sketcher::PointPos>> getCoincidenceGroups();
     // returns if the given geoId is fixed (coincident) with external geometry on any of the possible relevant points
-    void isCoincidentWithExternalGeometry(int GeoId, bool &start_external, bool &mid_external, bool &end_external);
+    void isCoincidentWithExternalGeometry(int GeoId, bool &start_external, bool &mid_external,
+                                          bool &end_external);
     // returns a map containing all the GeoIds that are coincident with the given point as keys, and the PosIds as values associated
     // with the keys.
     const std::map<int, Sketcher::PointPos> getAllCoincidentPoints(int GeoId, PointPos PosId);
 
     /// retrieves for a Vertex number a list with all coincident points (sharing a single coincidence constraint)
     void getDirectlyCoincidentPoints(int GeoId, PointPos PosId, std::vector<int> &GeoIdList,
-                             std::vector<PointPos> &PosIdList);
-    void getDirectlyCoincidentPoints(int VertexId, std::vector<int> &GeoIdList, std::vector<PointPos> &PosIdList);
+                                     std::vector<PointPos> &PosIdList);
+    void getDirectlyCoincidentPoints(int VertexId, std::vector<int> &GeoIdList,
+                                     std::vector<PointPos> &PosIdList);
     bool arePointsCoincident(int GeoId1, PointPos PosId1, int GeoId2, PointPos PosId2);
 
     /// returns a list of indices of all constraints involving given GeoId
@@ -399,8 +404,8 @@ public:
     // from base class
     PyObject *getPyObject() override;
     unsigned int getMemSize() const override;
-    void Save(Base::Writer &/*writer*/) const override;
-    void Restore(Base::XMLReader &/*reader*/) override;
+    void Save(Base::Writer & /*writer*/) const override;
+    void Restore(Base::XMLReader & /*reader*/) override;
 
     /// returns the number of construction lines (to be used as axes)
     int getAxisCount() const override;
@@ -420,101 +425,112 @@ public:
     void validateExternalLinks();
 
     /// gets DoF of last solver execution
-    inline int getLastDoF() const {return lastDoF;}
+    inline int getLastDoF() const { return lastDoF; }
     /// gets HasConflicts status of last solver execution
-    inline bool getLastHasConflicts() const {return lastHasConflict;}
+    inline bool getLastHasConflicts() const { return lastHasConflict; }
     /// gets HasRedundancies status of last solver execution
-    inline bool getLastHasRedundancies() const {return lastHasRedundancies;}
+    inline bool getLastHasRedundancies() const { return lastHasRedundancies; }
     /// gets HasRedundancies status of last solver execution
-    inline bool getLastHasPartialRedundancies() const {return lastHasPartialRedundancies;}
+    inline bool getLastHasPartialRedundancies() const { return lastHasPartialRedundancies; }
     /// gets HasMalformedConstraints status of last solver execution
-    inline bool getLastHasMalformedConstraints() const {return lastHasMalformedConstraints;}
+    inline bool getLastHasMalformedConstraints() const { return lastHasMalformedConstraints; }
     /// gets solver status of last solver execution
-    inline int getLastSolverStatus() const {return lastSolverStatus;}
+    inline int getLastSolverStatus() const { return lastSolverStatus; }
     /// gets solver SolveTime of last solver execution
-    inline float getLastSolveTime() const {return lastSolveTime;}
+    inline float getLastSolveTime() const { return lastSolveTime; }
     /// gets the conflicting constraints of the last solver execution
     inline const std::vector<int> &getLastConflicting() const { return lastConflicting; }
     /// gets the redundant constraints of last solver execution
     inline const std::vector<int> &getLastRedundant() const { return lastRedundant; }
     /// gets the redundant constraints of last solver execution
-    inline const std::vector<int> &getLastPartiallyRedundant() const { return lastPartiallyRedundant; }
+    inline const std::vector<int> &getLastPartiallyRedundant() const
+    {
+        return lastPartiallyRedundant;
+    }
     /// gets the redundant constraints of last solver execution
-    inline const std::vector<int> &getLastMalformedConstraints() const { return lastMalformedConstraints; }
+    inline const std::vector<int> &getLastMalformedConstraints() const
+    {
+        return lastMalformedConstraints;
+    }
 
 public: /* Solver exposed interface */
     /// gets the solved sketch as a reference
-    inline const Sketch &getSolvedSketch() const {return solvedSketch;}
+    inline const Sketch &getSolvedSketch() const { return solvedSketch; }
     /// enables/disables solver initial solution recalculation when moving point mode (useful for dragging)
-    inline void setRecalculateInitialSolutionWhileMovingPoint(bool recalculateInitialSolutionWhileMovingPoint)
-        {solvedSketch.setRecalculateInitialSolutionWhileMovingPoint(recalculateInitialSolutionWhileMovingPoint);}
+    inline void
+    setRecalculateInitialSolutionWhileMovingPoint(bool recalculateInitialSolutionWhileMovingPoint)
+    {
+        solvedSketch.setRecalculateInitialSolutionWhileMovingPoint(
+            recalculateInitialSolutionWhileMovingPoint);
+    }
     /// Forwards a request for a temporary initMove to the solver using the current sketch state as a reference (enables dragging)
-    inline int initTemporaryMove(int geoId, PointPos pos, bool fine=true);
+    inline int initTemporaryMove(int geoId, PointPos pos, bool fine = true);
     /// Forwards a request for a temporary initBSplinePieceMove to the solver using the current sketch state as a reference (enables dragging)
-    inline int initTemporaryBSplinePieceMove(int geoId, PointPos pos, const Base::Vector3d& firstPoint, bool fine=true);
+    inline int initTemporaryBSplinePieceMove(int geoId, PointPos pos,
+                                             const Base::Vector3d &firstPoint, bool fine = true);
     /** Forwards a request for point or curve temporary movement to the solver using the current state as a reference (enables dragging).
      *  NOTE: A temporary move operation must always be preceded by a initTemporaryMove() operation.
      */
-    inline int moveTemporaryPoint(int geoId, PointPos pos, Base::Vector3d toPoint, bool relative=false);
+    inline int moveTemporaryPoint(int geoId, PointPos pos, Base::Vector3d toPoint,
+                                  bool relative = false);
     /// forwards a request to update an extension of a geometry of the solver to the solver.
-    inline void updateSolverExtension(int geoId, std::unique_ptr<Part::GeometryExtension> && ext)
-        { return solvedSketch.updateExtension(geoId, std::move(ext));}
+    inline void updateSolverExtension(int geoId, std::unique_ptr<Part::GeometryExtension> &&ext)
+    {
+        return solvedSketch.updateExtension(geoId, std::move(ext));
+    }
 
 public:
     /// returns the geometric elements/vertex which the solver detects as having dependent parameters.
     /// these parameters relate to not fully constraint edges/vertices.
-    void getGeometryWithDependentParameters(std::vector<std::pair<int,PointPos>>& geometrymap);
+    void getGeometryWithDependentParameters(std::vector<std::pair<int, PointPos>> &geometrymap);
 
     /// Flag to allow external geometry from other bodies than the one this sketch belongs to
-    bool isAllowedOtherBody() const {
-        return allowOtherBody;
-    }
-    void setAllowOtherBody(bool on) {
-        allowOtherBody = on;
-    }
+    bool isAllowedOtherBody() const { return allowOtherBody; }
+    void setAllowOtherBody(bool on) { allowOtherBody = on; }
 
     /// Flag to allow carbon copy from misaligned geometry
-    bool isAllowedUnaligned() const {
-        return allowUnaligned;
-    }
-    void setAllowUnaligned(bool on) {
-        allowUnaligned = on;
-    }
+    bool isAllowedUnaligned() const { return allowUnaligned; }
+    void setAllowUnaligned(bool on) { allowUnaligned = on; }
 
-    enum eReasonList{
+    enum eReasonList
+    {
         rlAllowed,
         rlOtherDoc,
         rlCircularReference,
         rlOtherPart,
         rlOtherBody,
-        rlOtherBodyWithLinks,   // for carbon copy
-        rlNotASketch,           // for carbon copy
-        rlNonParallel,          // for carbon copy
-        rlAxesMisaligned,       // for carbon copy
-        rlOriginsMisaligned     // for carbon copy
+        rlOtherBodyWithLinks, // for carbon copy
+        rlNotASketch,         // for carbon copy
+        rlNonParallel,        // for carbon copy
+        rlAxesMisaligned,     // for carbon copy
+        rlOriginsMisaligned   // for carbon copy
     };
     /// Return true if this object is allowed as external geometry for the
     /// sketch. rsn argument receives the reason for disallowing.
-    bool isExternalAllowed(App::Document *pDoc, App::DocumentObject *pObj, eReasonList* rsn = nullptr) const;
+    bool isExternalAllowed(App::Document *pDoc, App::DocumentObject *pObj,
+                           eReasonList *rsn = nullptr) const;
 
-    bool isCarbonCopyAllowed(App::Document *pDoc, App::DocumentObject *pObj, bool & xinv, bool & yinv, eReasonList* rsn = nullptr) const;
+    bool isCarbonCopyAllowed(App::Document *pDoc, App::DocumentObject *pObj, bool &xinv, bool &yinv,
+                             eReasonList *rsn = nullptr) const;
 
-    bool isPerformingInternalTransaction() const {return internaltransaction;};
+    bool isPerformingInternalTransaction() const { return internaltransaction; };
 
     /** retrieves intersection points of this curve with the closest two curves around a point of this curve.
      * - it includes internal and external intersecting geometry.
      * - it returns GeoEnum::GeoUndef if no intersection is found.
      */
-    bool seekTrimPoints(int GeoId, const Base::Vector3d &point,
-                                  int &GeoId1, Base::Vector3d &intersect1,
-                                  int &GeoId2, Base::Vector3d &intersect2);
+    bool seekTrimPoints(int GeoId, const Base::Vector3d &point, int &GeoId1,
+                        Base::Vector3d &intersect1, int &GeoId2, Base::Vector3d &intersect2);
+
 public:
     // Analyser functions
-    int autoConstraint(double precision = Precision::Confusion() * 1000, double angleprecision = M_PI/20, bool includeconstruction = true);
+    int autoConstraint(double precision = Precision::Confusion() * 1000,
+                       double angleprecision = M_PI / 20, bool includeconstruction = true);
 
-    int detectMissingPointOnPointConstraints(double precision = Precision::Confusion() * 1000, bool includeconstruction = true);
-    void analyseMissingPointOnPointCoincident(double angleprecision = M_PI/8);
-    int detectMissingVerticalHorizontalConstraints(double angleprecision = M_PI/8);
+    int detectMissingPointOnPointConstraints(double precision = Precision::Confusion() * 1000,
+                                             bool includeconstruction = true);
+    void analyseMissingPointOnPointCoincident(double angleprecision = M_PI / 8);
+    int detectMissingVerticalHorizontalConstraints(double angleprecision = M_PI / 8);
     int detectMissingEqualityConstraints(double precision);
 
     std::vector<ConstraintIds> &getMissingPointOnPointConstraints();
@@ -523,9 +539,9 @@ public:
     std::vector<ConstraintIds> &getMissingRadiusConstraints();
 
     void setMissingRadiusConstraints(std::vector<ConstraintIds> &cl);
-    void setMissingLineEqualityConstraints(std::vector<ConstraintIds>& cl);
-    void setMissingVerticalHorizontalConstraints(std::vector<ConstraintIds>& cl);
-    void setMissingPointOnPointConstraints(std::vector<ConstraintIds>& cl);
+    void setMissingLineEqualityConstraints(std::vector<ConstraintIds> &cl);
+    void setMissingVerticalHorizontalConstraints(std::vector<ConstraintIds> &cl);
+    void setMissingPointOnPointConstraints(std::vector<ConstraintIds> &cl);
 
     void makeMissingPointOnPointCoincident(bool onebyone = false);
     void makeMissingVerticalHorizontal(bool onebyone = false);
@@ -546,13 +562,15 @@ public: // geometry extension functionalities for single element sketch object u
 
 protected:
     /// get called by the container when a property has changed
-    void onChanged(const App::Property* /*prop*/) override;
+    void onChanged(const App::Property * /*prop*/) override;
     void onDocumentRestored() override;
     void restoreFinished() override;
 
-    void setExpression(const App::ObjectIdentifier &path, std::shared_ptr<App::Expression> expr) override;
+    void setExpression(const App::ObjectIdentifier &path,
+                       std::shared_ptr<App::Expression> expr) override;
 
-    std::string validateExpression(const App::ObjectIdentifier &path, std::shared_ptr<const App::Expression> expr);
+    std::string validateExpression(const App::ObjectIdentifier &path,
+                                   std::shared_ptr<const App::Expression> expr);
 
     void constraintsRenamed(const std::map<App::ObjectIdentifier, App::ObjectIdentifier> &renamed);
     void constraintsRemoved(const std::set<App::ObjectIdentifier> &removed);
@@ -561,7 +579,8 @@ protected:
      \param geoList - the geometry list
      \retval list - the supported geometry list
      */
-    std::vector<Part::Geometry *> supportedGeometry(const std::vector<Part::Geometry *> &geoList) const;
+    std::vector<Part::Geometry *>
+    supportedGeometry(const std::vector<Part::Geometry *> &geoList) const;
 
 
     /*!
@@ -586,43 +605,39 @@ protected:
     // migration functions
     void migrateSketch();
 
-    static void appendConstraintsMsg(const std::vector<int> &vector,
-                                     const std::string & singularmsg,
-                                     const std::string & pluralmsg,
-                                     std::string &msg);
+    static void appendConstraintsMsg(const std::vector<int> &vector, const std::string &singularmsg,
+                                     const std::string &pluralmsg, std::string &msg);
 
     // retrieves redundant, conflicting and malformed constraint information from the solver
     void retrieveSolverDiagnostics();
 
     // retrieves whether a geometry blocked state corresponds to this constraint
     // returns true of the constraint is of Block type, false otherwise
-    bool getBlockedState(const Constraint * cstr, bool & blockedstate) const;
+    bool getBlockedState(const Constraint *cstr, bool &blockedstate) const;
 
     // retrieves the geometry blocked state corresponding to this constraint
     // returns true of the constraint is of InternalAlignment type, false otherwise
-    bool getInternalTypeState(const Constraint * cstr, Sketcher::InternalType::InternalType & internaltypestate) const;
+    bool getInternalTypeState(const Constraint *cstr,
+                              Sketcher::InternalType::InternalType &internaltypestate) const;
 
     // Checks whether the geometry state stored in the geometry extension matches the current sketcher situation (e.g. constraints)
     // and corrects the state if not matching.
     void synchroniseGeometryState();
 
     // helper function to create a new constraint and move it to the Constraint Property
-    void addConstraint( Sketcher::ConstraintType constrType,
-                        int firstGeoId,
-                        Sketcher::PointPos firstPos,
-                        int secondGeoId = GeoEnum::GeoUndef,
-                        Sketcher::PointPos secondPos = Sketcher::PointPos::none,
-                        int thirdGeoId = GeoEnum::GeoUndef,
-                        Sketcher::PointPos thirdPos = Sketcher::PointPos::none);
+    void addConstraint(Sketcher::ConstraintType constrType, int firstGeoId,
+                       Sketcher::PointPos firstPos, int secondGeoId = GeoEnum::GeoUndef,
+                       Sketcher::PointPos secondPos = Sketcher::PointPos::none,
+                       int thirdGeoId = GeoEnum::GeoUndef,
+                       Sketcher::PointPos thirdPos = Sketcher::PointPos::none);
 
     // creates a new constraint
-    std::unique_ptr<Constraint> createConstraint(   Sketcher::ConstraintType constrType,
-                                                    int firstGeoId,
-                                                    Sketcher::PointPos firstPos,
-                                                    int secondGeoId = GeoEnum::GeoUndef,
-                                                    Sketcher::PointPos secondPos = Sketcher::PointPos::none,
-                                                    int thirdGeoId = GeoEnum::GeoUndef,
-                                                    Sketcher::PointPos thirdPos = Sketcher::PointPos::none);
+    std::unique_ptr<Constraint>
+    createConstraint(Sketcher::ConstraintType constrType, int firstGeoId,
+                     Sketcher::PointPos firstPos, int secondGeoId = GeoEnum::GeoUndef,
+                     Sketcher::PointPos secondPos = Sketcher::PointPos::none,
+                     int thirdGeoId = GeoEnum::GeoUndef,
+                     Sketcher::PointPos thirdPos = Sketcher::PointPos::none);
 
 private:
     /// Flag to allow external geometry from other bodies than the one this sketch belongs to
@@ -659,7 +674,7 @@ private:
     boost::signals2::scoped_connection constraintsRenamedConn;
     boost::signals2::scoped_connection constraintsRemovedConn;
 
-    bool AutoLockTangencyAndPerpty(Constraint* cstr, bool bForce = false, bool bLock = true);
+    bool AutoLockTangencyAndPerpty(Constraint *cstr, bool bForce = false, bool bLock = true);
 
     // Geometry Extensions is used to store on geometry a state that is enforced by pre-existing constraints
     // Like Block constraint and InternalAlignment constraint. This enables (more) convenient handling in ViewProviderSketch
@@ -673,54 +688,52 @@ private:
     // 2. Functionality adding constraints (of the relevant type) calls addGeometryState to set the status
     // 3. Functionality removing constraints (of the relevant type) calls removeGeometryState to remove the status
     // 4. Save mechanism will ensure persistence.
-    void addGeometryState(const Constraint* cstr) const;
-    void removeGeometryState(const Constraint* cstr) const;
+    void addGeometryState(const Constraint *cstr) const;
+    void removeGeometryState(const Constraint *cstr) const;
 
-    SketchAnalysis * analyser;
+    SketchAnalysis *analyser;
 
     bool internaltransaction;
 
-    bool managedoperation; // indicates whether changes to properties are the deed of SketchObject or not (for input validation)
+    bool
+        managedoperation; // indicates whether changes to properties are the deed of SketchObject or not (for input validation)
 };
 
-inline int SketchObject::initTemporaryMove(int geoId, PointPos pos, bool fine/*=true*/)
+inline int SketchObject::initTemporaryMove(int geoId, PointPos pos, bool fine /*=true*/)
 {
     // if a previous operation did not update the geometry (including geometry extensions)
     // or constraints (including any deleted pointer, as in renameConstraint) of the solver,
     // here we update them before starting a temporary operation.
-    if(solverNeedsUpdate)
-        solve();
+    if (solverNeedsUpdate) solve();
 
-    return solvedSketch.initMove(geoId,pos,fine);
+    return solvedSketch.initMove(geoId, pos, fine);
 }
 
-inline int SketchObject::initTemporaryBSplinePieceMove(int geoId, PointPos pos, const Base::Vector3d& firstPoint, bool fine)
+inline int SketchObject::initTemporaryBSplinePieceMove(int geoId, PointPos pos,
+                                                       const Base::Vector3d &firstPoint, bool fine)
 {
     // if a previous operation did not update the geometry (including geometry extensions)
     // or constraints (including any deleted pointer, as in renameConstraint) of the solver,
     // here we update them before starting a temporary operation.
-    if(solverNeedsUpdate)
-        solve();
+    if (solverNeedsUpdate) solve();
 
-    return solvedSketch.initBSplinePieceMove(geoId,pos,firstPoint,fine);
+    return solvedSketch.initBSplinePieceMove(geoId, pos, firstPoint, fine);
 }
 
-inline int SketchObject::moveTemporaryPoint(int geoId, PointPos pos, Base::Vector3d toPoint, bool relative/*=false*/)
+inline int SketchObject::moveTemporaryPoint(int geoId, PointPos pos, Base::Vector3d toPoint,
+                                            bool relative /*=false*/)
 {
     return solvedSketch.movePoint(geoId, pos, toPoint, relative);
 }
 
-template <  typename GeometryT,
-            typename >
-const GeometryT * SketchObject::getGeometry(int GeoId) const
+template<typename GeometryT, typename> const GeometryT *SketchObject::getGeometry(int GeoId) const
 {
     if (GeoId >= 0) {
         const std::vector<Part::Geometry *> &geomlist = getInternalGeometry();
-        if (GeoId < int(geomlist.size()))
-            return static_cast<GeometryT *>(geomlist[GeoId]);
+        if (GeoId < int(geomlist.size())) return static_cast<GeometryT *>(geomlist[GeoId]);
     }
     else if (-GeoId <= int(ExternalGeo.size()))
-        return static_cast<GeometryT *>(ExternalGeo[-GeoId-1]);
+        return static_cast<GeometryT *>(ExternalGeo[-GeoId - 1]);
 
     return nullptr;
 }

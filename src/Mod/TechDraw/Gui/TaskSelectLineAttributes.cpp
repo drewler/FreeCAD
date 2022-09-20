@@ -69,20 +69,23 @@ using namespace Gui;
 using namespace TechDraw;
 using namespace TechDrawGui;
 
-enum class EdgeStyle {
+enum class EdgeStyle
+{
     solid = 1,
     dashed = 2,
     dotted = 3,
     dashdotted = 4
 };
 
-enum class EdgeWidth {
+enum class EdgeWidth
+{
     small = 1,
     middle = 2,
     thick = 3
 };
 
-enum class EdgeColor {
+enum class EdgeColor
+{
     black = 1,
     grey = 2,
     red = 3,
@@ -104,59 +107,34 @@ lineAttributes::lineAttributes()
     color = int(EdgeColor::black);
 }
 
-void lineAttributes::setStyle(int newStyle)
-{
-    style = newStyle;
-}
+void lineAttributes::setStyle(int newStyle) { style = newStyle; }
 
-void lineAttributes::setWidth(int newWidth)
-{
-    width = newWidth;
-}
+void lineAttributes::setWidth(int newWidth) { width = newWidth; }
 
 float lineAttributes::getWidthValue()
 {
-    switch(EdgeWidth(width)) {
-        case EdgeWidth::small:
-            return 0.18f;
-            break;
-        case EdgeWidth::middle:
-            return 0.35f;
-            break;
-        case EdgeWidth::thick:
-            return 0.5f;
-            break;
-        default:
-            return 0.35f;
+    switch (EdgeWidth(width)) {
+        case EdgeWidth::small: return 0.18f; break;
+        case EdgeWidth::middle: return 0.35f; break;
+        case EdgeWidth::thick: return 0.5f; break;
+        default: return 0.35f;
     }
 }
 
-void lineAttributes::setColor(int newColor)
-{
-    color = newColor;
-}
+void lineAttributes::setColor(int newColor) { color = newColor; }
 
 App::Color lineAttributes::getColorValue()
 {
     switch (EdgeColor(color)) {
-    case EdgeColor::black:
-        return App::Color(0.0f, 0.0f, 0.0f);
-    case EdgeColor::grey:
-        return App::Color(0.7f, 0.7f, 0.7f);
-    case EdgeColor::red:
-        return App::Color(1.0f, 0.0f, 0.0f);
-    case EdgeColor::green:
-        return App::Color(0.0f, 1.0f, 0.0f);
-    case EdgeColor::blue:
-        return App::Color(0.0f, 0.0f, 1.0f);
-    case EdgeColor::magenta:
-        return App::Color(1.0f, 0.0f, 1.0f);
-    case EdgeColor::cyan:
-        return App::Color(0.0f, 1.0f, 1.0f);
-    case EdgeColor::yellow:
-        return App::Color(1.0f, 1.0f, 0.0f);
-    default:
-        return App::Color(0.0f, 0.0f, 0.0f);
+        case EdgeColor::black: return App::Color(0.0f, 0.0f, 0.0f);
+        case EdgeColor::grey: return App::Color(0.7f, 0.7f, 0.7f);
+        case EdgeColor::red: return App::Color(1.0f, 0.0f, 0.0f);
+        case EdgeColor::green: return App::Color(0.0f, 1.0f, 0.0f);
+        case EdgeColor::blue: return App::Color(0.0f, 0.0f, 1.0f);
+        case EdgeColor::magenta: return App::Color(1.0f, 0.0f, 1.0f);
+        case EdgeColor::cyan: return App::Color(0.0f, 1.0f, 1.0f);
+        case EdgeColor::yellow: return App::Color(1.0f, 1.0f, 0.0f);
+        default: return App::Color(0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -170,15 +148,9 @@ dimAttributes::dimAttributes()
     lineStretch = 2.0;
 }
 
-void dimAttributes::setCascadeSpacing(double spacing)
-{
-    cascadeSpacing = spacing;
-}
+void dimAttributes::setCascadeSpacing(double spacing) { cascadeSpacing = spacing; }
 
-void dimAttributes::setLineStretch(double stretch)
-{
-    lineStretch = stretch;
-}
+void dimAttributes::setLineStretch(double stretch) { lineStretch = stretch; }
 
 dimAttributes activeDimAttributes; // container holding dimension attributes
 
@@ -186,9 +158,8 @@ dimAttributes activeDimAttributes; // container holding dimension attributes
 // TaskSelectLineAttributes
 //===========================================================================
 
-TaskSelectLineAttributes::TaskSelectLineAttributes(lineAttributes * ptActiveAttributes) :
-    activeAttributes(ptActiveAttributes),
-    ui(new Ui_TaskSelectLineAttributes)
+TaskSelectLineAttributes::TaskSelectLineAttributes(lineAttributes *ptActiveAttributes)
+    : activeAttributes(ptActiveAttributes), ui(new Ui_TaskSelectLineAttributes)
 {
 
     ui->setupUi(this);
@@ -196,152 +167,107 @@ TaskSelectLineAttributes::TaskSelectLineAttributes(lineAttributes * ptActiveAttr
     setUiEdit();
 }
 
-TaskSelectLineAttributes::~TaskSelectLineAttributes()
-{
-
-}
+TaskSelectLineAttributes::~TaskSelectLineAttributes() {}
 
 void TaskSelectLineAttributes::updateTask()
 {
-//    blockUpdate = true;
+    //    blockUpdate = true;
 
-//    blockUpdate = false;
+    //    blockUpdate = false;
 }
 
 
 void TaskSelectLineAttributes::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
 }
 
 void TaskSelectLineAttributes::setUiEdit()
 {
     setWindowTitle(tr("Select line attributes"));
     int lineStyle = activeAttributes->getStyle();
-    switch(EdgeStyle(lineStyle)) {
-        case EdgeStyle::solid:
-            ui->rbSolid->setChecked(true);
-            break;
-        case EdgeStyle::dashed:
-            ui->rbDashed->setChecked(true);
-            break;
-        case EdgeStyle::dotted:
-            ui->rbDotted->setChecked(true);
-            break;
-        case EdgeStyle::dashdotted:
-            ui->rbDashDotted->setChecked(true);
-            break;
-        default:
-            ui->rbDashDotted->setChecked(true);
+    switch (EdgeStyle(lineStyle)) {
+        case EdgeStyle::solid: ui->rbSolid->setChecked(true); break;
+        case EdgeStyle::dashed: ui->rbDashed->setChecked(true); break;
+        case EdgeStyle::dotted: ui->rbDotted->setChecked(true); break;
+        case EdgeStyle::dashdotted: ui->rbDashDotted->setChecked(true); break;
+        default: ui->rbDashDotted->setChecked(true);
     }
 
     int lineWidth = activeAttributes->getWidth();
-    switch(EdgeWidth(lineWidth)) {
-        case EdgeWidth::small:
-            ui->rbThin->setChecked(true);
-            break;
-        case EdgeWidth::middle:
-            ui->rbMiddle->setChecked(true);
-            break;
-        case EdgeWidth::thick:
-            ui->rbThick->setChecked(true);
-            break;
-        default:
-            ui->rbMiddle->setChecked(true);
+    switch (EdgeWidth(lineWidth)) {
+        case EdgeWidth::small: ui->rbThin->setChecked(true); break;
+        case EdgeWidth::middle: ui->rbMiddle->setChecked(true); break;
+        case EdgeWidth::thick: ui->rbThick->setChecked(true); break;
+        default: ui->rbMiddle->setChecked(true);
     }
 
     int lineColor = activeAttributes->getColor();
-    switch(EdgeColor(lineColor)) {
-        case EdgeColor::black:
-            ui->rbBlack->setChecked(true);
-            break;
-        case EdgeColor::grey:
-            ui->rbGrey->setChecked(true);
-            break;
-        case EdgeColor::red:
-            ui->rbRed->setChecked(true);
-            break;
-        case EdgeColor::green:
-            ui->rbGreen->setChecked(true);
-            break;
-        case EdgeColor::blue:
-            ui->rbBlue->setChecked(true);
-            break;
-        case EdgeColor::magenta:
-            ui->rbMagenta->setChecked(true);
-            break;
-        case EdgeColor::cyan:
-            ui->rbCyan->setChecked(true);
-            break;
-        case EdgeColor::yellow:
-            ui->rbYellow->setChecked(true);
-            break;
-        default:
-            ui->rbBlack->setChecked(true);
+    switch (EdgeColor(lineColor)) {
+        case EdgeColor::black: ui->rbBlack->setChecked(true); break;
+        case EdgeColor::grey: ui->rbGrey->setChecked(true); break;
+        case EdgeColor::red: ui->rbRed->setChecked(true); break;
+        case EdgeColor::green: ui->rbGreen->setChecked(true); break;
+        case EdgeColor::blue: ui->rbBlue->setChecked(true); break;
+        case EdgeColor::magenta: ui->rbMagenta->setChecked(true); break;
+        case EdgeColor::cyan: ui->rbCyan->setChecked(true); break;
+        case EdgeColor::yellow: ui->rbYellow->setChecked(true); break;
+        default: ui->rbBlack->setChecked(true);
     }
 
     double cascadeSpacing = activeDimAttributes.getCascadeSpacing();
     ui->sbSpacing->setValue(cascadeSpacing);
     double lineStretching = activeDimAttributes.getLineStretch();
     ui->sbStretch->setValue(lineStretching);
-
 }
 
 bool TaskSelectLineAttributes::accept()
 {
-    if (ui->rbSolid->isChecked()){
-        activeAttributes->setStyle(int(EdgeStyle::solid));
-    }
-    else if (ui->rbDashed->isChecked()){
+    if (ui->rbSolid->isChecked()) { activeAttributes->setStyle(int(EdgeStyle::solid)); }
+    else if (ui->rbDashed->isChecked()) {
         activeAttributes->setStyle(int(EdgeStyle::dashed));
     }
-    else if (ui->rbDotted->isChecked()){
+    else if (ui->rbDotted->isChecked()) {
         activeAttributes->setStyle(int(EdgeStyle::dotted));
     }
-    else if (ui->rbDashDotted->isChecked()){
+    else if (ui->rbDashDotted->isChecked()) {
         activeAttributes->setStyle(int(EdgeStyle::dashdotted));
     }
     else {
         activeAttributes->setStyle(int(EdgeStyle::dashdotted));
     }
 
-    if (ui->rbThin->isChecked()){
-        activeAttributes->setWidth(int(EdgeWidth::small));
-    }
-    else if (ui->rbMiddle->isChecked()){
+    if (ui->rbThin->isChecked()) { activeAttributes->setWidth(int(EdgeWidth::small)); }
+    else if (ui->rbMiddle->isChecked()) {
         activeAttributes->setWidth(int(EdgeWidth::middle));
     }
-    else if (ui->rbThick->isChecked()){
+    else if (ui->rbThick->isChecked()) {
         activeAttributes->setWidth(int(EdgeWidth::thick));
     }
     else {
         activeAttributes->setWidth(int(EdgeWidth::middle));
     }
 
-    if (ui->rbBlack->isChecked()){
-        activeAttributes->setColor(int(EdgeColor::black));
-    }
-    else if (ui->rbGrey->isChecked()){
+    if (ui->rbBlack->isChecked()) { activeAttributes->setColor(int(EdgeColor::black)); }
+    else if (ui->rbGrey->isChecked()) {
         activeAttributes->setColor(int(EdgeColor::grey));
     }
-    else if (ui->rbRed->isChecked()){
+    else if (ui->rbRed->isChecked()) {
         activeAttributes->setColor(int(EdgeColor::red));
     }
-    else if (ui->rbGreen->isChecked()){
+    else if (ui->rbGreen->isChecked()) {
         activeAttributes->setColor(int(EdgeColor::green));
     }
-    else if (ui->rbBlue->isChecked()){
+    else if (ui->rbBlue->isChecked()) {
         activeAttributes->setColor(int(EdgeColor::blue));
     }
-    else if (ui->rbMagenta->isChecked()){
+    else if (ui->rbMagenta->isChecked()) {
         activeAttributes->setColor(int(EdgeColor::magenta));
     }
-    else if (ui->rbCyan->isChecked()){
+    else if (ui->rbCyan->isChecked()) {
         activeAttributes->setColor(int(EdgeColor::cyan));
     }
-    else if (ui->rbYellow->isChecked()){
+    else if (ui->rbYellow->isChecked()) {
         activeAttributes->setColor(int(EdgeColor::yellow));
     }
     else {
@@ -356,42 +282,34 @@ bool TaskSelectLineAttributes::accept()
     return true;
 }
 
-bool TaskSelectLineAttributes::reject()
-{
-    return true;
-}
+bool TaskSelectLineAttributes::reject() { return true; }
 
 //===========================================================================
 // TaskDlgSelectLineAttributes
 //===========================================================================
 
-TaskDlgSelectLineAttributes::TaskDlgSelectLineAttributes(lineAttributes * ptActiveAttributes)
+TaskDlgSelectLineAttributes::TaskDlgSelectLineAttributes(lineAttributes *ptActiveAttributes)
     : TaskDialog()
 {
-    widget  = new TaskSelectLineAttributes(ptActiveAttributes);
-    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("TechDraw_ExtensionSelectLineAttributes"),
-                                             widget->windowTitle(), true, nullptr);
+    widget = new TaskSelectLineAttributes(ptActiveAttributes);
+    taskbox = new Gui::TaskView::TaskBox(
+        Gui::BitmapFactory().pixmap("TechDraw_ExtensionSelectLineAttributes"),
+        widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
 
-TaskDlgSelectLineAttributes::~TaskDlgSelectLineAttributes()
-{
-}
+TaskDlgSelectLineAttributes::~TaskDlgSelectLineAttributes() {}
 
 void TaskDlgSelectLineAttributes::update()
 {
-//    widget->updateTask();
+    //    widget->updateTask();
 }
 
 //==== calls from the TaskView ===============================================================
-void TaskDlgSelectLineAttributes::open()
-{
-}
+void TaskDlgSelectLineAttributes::open() {}
 
-void TaskDlgSelectLineAttributes::clicked(int)
-{
-}
+void TaskDlgSelectLineAttributes::clicked(int) {}
 
 bool TaskDlgSelectLineAttributes::accept()
 {

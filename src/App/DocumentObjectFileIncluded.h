@@ -31,7 +31,7 @@
 namespace App
 {
 
-class AppExport DocumentObjectFileIncluded : public DocumentObject
+class AppExport DocumentObjectFileIncluded: public DocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(App::DocumentObjectFileIncluded);
 
@@ -42,13 +42,10 @@ public:
 
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "Gui::ViewProviderDocumentObject";
-    }
+    const char *getViewProviderName() const override { return "Gui::ViewProviderDocumentObject"; }
 
     /// Properties
     PropertyFileIncluded File;
-
 };
 
 } //namespace App

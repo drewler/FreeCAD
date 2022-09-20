@@ -48,24 +48,23 @@ class SMESHDS_Document;
 
 typedef SMESH_Hypothesis::Hypothesis_Status TAlgoStateErrorName;
 
-typedef struct studyContextStruct
-{
-  std::map < int, SMESH_Hypothesis * >mapHypothesis;
-  std::map < int, SMESH_Mesh * >mapMesh;
-  SMESHDS_Document * myDocument;
+typedef struct studyContextStruct {
+    std::map<int, SMESH_Hypothesis *> mapHypothesis;
+    std::map<int, SMESH_Mesh *> mapMesh;
+    SMESHDS_Document *myDocument;
 } StudyContextStruct;
 
 typedef std::set<int> TSetOfInt;
 
-class SMESH_EXPORT  SMESH_Gen
+class SMESH_EXPORT SMESH_Gen
 {
 public:
-  SMESH_Gen();
-  ~SMESH_Gen();
+    SMESH_Gen();
+    ~SMESH_Gen();
 
-  SMESH_Mesh* CreateMesh(int theStudyId, bool theIsEmbeddedMode);
+    SMESH_Mesh *CreateMesh(int theStudyId, bool theIsEmbeddedMode);
 
-  /*!
+    /*!
    * \brief Computes aMesh on aShape 
    *  \param aShapeOnly - if true, algo->OnlyUnaryInput() feature is ignored and
    *                      only \a aShape is computed.
@@ -74,109 +73,109 @@ public:
    *  \param aShapesId - list of shapes with computed mesh entities (elements or nodes)
    *  \retval bool - true if none submesh failed to compute
    */
-  bool Compute(::SMESH_Mesh &        aMesh,
-               const TopoDS_Shape &  aShape,
-               const bool            aShapeOnly=false,
-               const bool            anUpward=false,
-               const ::MeshDimension aDim=::MeshDim_3D,
-               TSetOfInt*            aShapesId=0);
+    bool Compute(::SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, const bool aShapeOnly = false,
+                 const bool anUpward = false, const ::MeshDimension aDim = ::MeshDim_3D,
+                 TSetOfInt *aShapesId = 0);
 
-  void PrepareCompute(::SMESH_Mesh &        aMesh,
-                      const TopoDS_Shape &  aShape);
-  void CancelCompute(::SMESH_Mesh &        aMesh,
-                     const TopoDS_Shape &  aShape);
+    void PrepareCompute(::SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
+    void CancelCompute(::SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  const SMESH_subMesh* GetCurrentSubMesh() const;
+    const SMESH_subMesh *GetCurrentSubMesh() const;
 
-  /*!
+    /*!
    * \brief evaluates size of prospective mesh on a shape 
    * \param aMesh - the mesh
    * \param aShape - the shape
    * \param aResMap - map for prospective numbers of elements
    * \retval bool - is a success
    */
-  bool Evaluate(::SMESH_Mesh &        aMesh,
-                const TopoDS_Shape &  aShape,
-                MapShapeNbElems&      aResMap,
-                const bool            anUpward=false,
-                TSetOfInt*            aShapesId=0);
+    bool Evaluate(::SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap,
+                  const bool anUpward = false, TSetOfInt *aShapesId = 0);
 
-  bool CheckAlgoState(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape);
-  // notify on bad state of attached algos, return false
-  // if Compute() would fail because of some algo bad state
+    bool CheckAlgoState(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
+    // notify on bad state of attached algos, return false
+    // if Compute() would fail because of some algo bad state
 
-  /*!
+    /*!
    * \brief Sets number of segments per diagonal of boundary box of geometry by which
    *        default segment length of appropriate 1D hypotheses is defined
    */
-  void SetBoundaryBoxSegmentation( int theNbSegments ) { _segmentation = theNbSegments; }
-  int  GetBoundaryBoxSegmentation() const { return _segmentation; }
-  /*!
+    void SetBoundaryBoxSegmentation(int theNbSegments) { _segmentation = theNbSegments; }
+    int GetBoundaryBoxSegmentation() const { return _segmentation; }
+    /*!
    * \brief Sets default number of segments per edge
    */
-  void SetDefaultNbSegments(int nb) { _nbSegments = nb; }
-  int GetDefaultNbSegments() const { return _nbSegments; }
+    void SetDefaultNbSegments(int nb) { _nbSegments = nb; }
+    int GetDefaultNbSegments() const { return _nbSegments; }
 
-  struct TAlgoStateError
-  {
-    TAlgoStateErrorName _name;
-    const SMESH_Algo*   _algo;
-    int                 _algoDim;
-    bool                _isGlobalAlgo;
+    struct TAlgoStateError {
+        TAlgoStateErrorName _name;
+        const SMESH_Algo *_algo;
+        int _algoDim;
+        bool _isGlobalAlgo;
 
-    TAlgoStateError(): _name(SMESH_Hypothesis::HYP_OK), _algo(0), _algoDim(0) {}
-    void Set(TAlgoStateErrorName name, const SMESH_Algo* algo, bool isGlobal)
-    { _name = name; _algo = algo; _algoDim = algo->GetDim(); _isGlobalAlgo = isGlobal; }
-    void Set(TAlgoStateErrorName name, const int algoDim,      bool isGlobal)
-    { _name = name; _algo = 0;    _algoDim = algoDim;        _isGlobalAlgo = isGlobal; }
-  };
+        TAlgoStateError() : _name(SMESH_Hypothesis::HYP_OK), _algo(0), _algoDim(0) {}
+        void Set(TAlgoStateErrorName name, const SMESH_Algo *algo, bool isGlobal)
+        {
+            _name = name;
+            _algo = algo;
+            _algoDim = algo->GetDim();
+            _isGlobalAlgo = isGlobal;
+        }
+        void Set(TAlgoStateErrorName name, const int algoDim, bool isGlobal)
+        {
+            _name = name;
+            _algo = 0;
+            _algoDim = algoDim;
+            _isGlobalAlgo = isGlobal;
+        }
+    };
 
-  bool GetAlgoState(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape,
-                    std::list< SMESH_Gen::TAlgoStateError > & theErrors);
-  // notify on bad state of attached algos, return false
-  // if Compute() would fail because of some algo bad state
-  // theErrors list contains problems description
+    bool GetAlgoState(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                      std::list<SMESH_Gen::TAlgoStateError> &theErrors);
+    // notify on bad state of attached algos, return false
+    // if Compute() would fail because of some algo bad state
+    // theErrors list contains problems description
 
-  StudyContextStruct *GetStudyContext(int studyId);
+    StudyContextStruct *GetStudyContext(int studyId);
 
-  static int GetShapeDim(const TopAbs_ShapeEnum & aShapeType);
-  static int GetShapeDim(const TopoDS_Shape & aShape)
-  { return GetShapeDim( aShape.ShapeType() ); }
+    static int GetShapeDim(const TopAbs_ShapeEnum &aShapeType);
+    static int GetShapeDim(const TopoDS_Shape &aShape) { return GetShapeDim(aShape.ShapeType()); }
 
-  SMESH_Algo* GetAlgo(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape, TopoDS_Shape* assignedTo=0);
-  SMESH_Algo* GetAlgo(SMESH_subMesh * aSubMesh, TopoDS_Shape* assignedTo=0);
+    SMESH_Algo *GetAlgo(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                        TopoDS_Shape *assignedTo = 0);
+    SMESH_Algo *GetAlgo(SMESH_subMesh *aSubMesh, TopoDS_Shape *assignedTo = 0);
 
-  static bool IsGlobalHypothesis(const SMESH_Hypothesis* theHyp, SMESH_Mesh& aMesh);
+    static bool IsGlobalHypothesis(const SMESH_Hypothesis *theHyp, SMESH_Mesh &aMesh);
 
-  static std::vector< std::string > GetPluginXMLPaths();
+    static std::vector<std::string> GetPluginXMLPaths();
 
-  int GetANewId();
+    int GetANewId();
 
-  // std::map < int, SMESH_Algo * >_mapAlgo;
-  // std::map < int, SMESH_0D_Algo * >_map0D_Algo;
-  // std::map < int, SMESH_1D_Algo * >_map1D_Algo;
-  // std::map < int, SMESH_2D_Algo * >_map2D_Algo;
-  // std::map < int, SMESH_3D_Algo * >_map3D_Algo;
+    // std::map < int, SMESH_Algo * >_mapAlgo;
+    // std::map < int, SMESH_0D_Algo * >_map0D_Algo;
+    // std::map < int, SMESH_1D_Algo * >_map1D_Algo;
+    // std::map < int, SMESH_2D_Algo * >_map2D_Algo;
+    // std::map < int, SMESH_3D_Algo * >_map3D_Algo;
 
 private:
+    int _localId; // unique Id of created objects, within SMESH_Gen entity
+    std::map<int, StudyContextStruct *> _mapStudyContext;
 
-  int _localId;                         // unique Id of created objects, within SMESH_Gen entity
-  std::map < int, StudyContextStruct * >_mapStudyContext;
+    // hypotheses managing
+    int _hypId;
 
-  // hypotheses managing
-  int _hypId;
+    // number of segments per diagonal of boundary box of geometry by which
+    // default segment length of appropriate 1D hypotheses is defined
+    int _segmentation;
+    // default number of segments
+    int _nbSegments;
 
-  // number of segments per diagonal of boundary box of geometry by which
-  // default segment length of appropriate 1D hypotheses is defined
-  int _segmentation;
-  // default number of segments
-  int _nbSegments;
+    void setCurrentSubMesh(SMESH_subMesh *sm);
+    void resetCurrentSubMesh();
 
-  void setCurrentSubMesh(SMESH_subMesh* sm);
-  void resetCurrentSubMesh();
-
-  volatile bool               _compute_canceled;
-  std::list< SMESH_subMesh* > _sm_current;
+    volatile bool _compute_canceled;
+    std::list<SMESH_subMesh *> _sm_current;
 };
 
 #endif

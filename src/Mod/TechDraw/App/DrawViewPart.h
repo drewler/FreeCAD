@@ -60,9 +60,10 @@ class GeometryObject;
 class Vertex;
 class BaseGeom;
 class Face;
-}
+} // namespace TechDraw
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawHatch;
 class DrawGeomHatch;
 class DrawViewDimension;
@@ -74,14 +75,14 @@ class CosmeticVertex;
 class CosmeticEdge;
 class CenterLine;
 class GeomFormat;
-}
+} // namespace TechDraw
 
 namespace TechDraw
 {
 
 class DrawViewSection;
 
-class TechDrawExport DrawViewPart : public DrawView, public CosmeticExtension
+class TechDrawExport DrawViewPart: public DrawView, public CosmeticExtension
 {
     PROPERTY_HEADER_WITH_EXTENSIONS(TechDraw::DrawViewPart);
 
@@ -89,37 +90,36 @@ public:
     DrawViewPart();
     ~DrawViewPart() override;
 
-    App::PropertyLinkList     Source;
-    App::PropertyXLinkList    XSource;
-    App::PropertyVector       Direction;  //TODO: Rename to YAxisDirection or whatever this actually is  (ProjectionDirection)
-    App::PropertyVector       XDirection;
-    App::PropertyBool         Perspective;
-    App::PropertyDistance     Focus;
+    App::PropertyLinkList Source;
+    App::PropertyXLinkList XSource;
+    App::PropertyVector
+        Direction; //TODO: Rename to YAxisDirection or whatever this actually is  (ProjectionDirection)
+    App::PropertyVector XDirection;
+    App::PropertyBool Perspective;
+    App::PropertyDistance Focus;
 
-    App::PropertyBool   CoarseView;
-    App::PropertyBool   SeamVisible;
-    App::PropertyBool   SmoothVisible;
+    App::PropertyBool CoarseView;
+    App::PropertyBool SeamVisible;
+    App::PropertyBool SmoothVisible;
     //App::PropertyBool   OutlinesVisible;
-    App::PropertyBool   IsoVisible;
+    App::PropertyBool IsoVisible;
 
-    App::PropertyBool   HardHidden;
-    App::PropertyBool   SmoothHidden;
-    App::PropertyBool   SeamHidden;
+    App::PropertyBool HardHidden;
+    App::PropertyBool SmoothHidden;
+    App::PropertyBool SeamHidden;
     //App::PropertyBool   OutlinesHidden;
-    App::PropertyBool   IsoHidden;
-    App::PropertyInteger  IsoCount;
+    App::PropertyBool IsoHidden;
+    App::PropertyInteger IsoCount;
 
     short mustExecute() const override;
     App::DocumentObjectExecReturn *execute() override;
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderViewPart";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderViewPart"; }
     PyObject *getPyObject() override;
 
-    std::vector<TechDraw::DrawHatch*> getHatches() const;
-    std::vector<TechDraw::DrawGeomHatch*> getGeomHatches() const;
-    std::vector<TechDraw::DrawViewDimension*> getDimensions() const;
-    std::vector<TechDraw::DrawViewBalloon*> getBalloons() const;
+    std::vector<TechDraw::DrawHatch *> getHatches() const;
+    std::vector<TechDraw::DrawGeomHatch *> getGeomHatches() const;
+    std::vector<TechDraw::DrawViewDimension *> getDimensions() const;
+    std::vector<TechDraw::DrawViewBalloon *> getBalloons() const;
 
     const std::vector<TechDraw::VertexPtr> getVertexGeometry() const;
     const BaseGeomPtrVector getEdgeGeometry() const;
@@ -127,35 +127,36 @@ public:
     const std::vector<TechDraw::FacePtr> getFaceGeometry() const;
 
     bool hasGeometry() const;
-    TechDraw::GeometryObject* getGeometryObject() const { return geometryObject; }
+    TechDraw::GeometryObject *getGeometryObject() const { return geometryObject; }
 
-    TechDraw::BaseGeomPtr getGeomByIndex(int idx) const;               //get existing geom for edge idx in projection
-    TechDraw::VertexPtr getProjVertexByIndex(int idx) const;           //get existing geom for vertex idx in projection
+    TechDraw::BaseGeomPtr
+    getGeomByIndex(int idx) const; //get existing geom for edge idx in projection
+    TechDraw::VertexPtr
+    getProjVertexByIndex(int idx) const; //get existing geom for vertex idx in projection
     TechDraw::VertexPtr getProjVertexByCosTag(std::string cosTag);
-    std::vector<TechDraw::BaseGeomPtr> getFaceEdgesByIndex(int idx) const;  //get edges for face idx in projection
+    std::vector<TechDraw::BaseGeomPtr>
+    getFaceEdgesByIndex(int idx) const; //get edges for face idx in projection
 
     virtual Base::BoundBox3d getBoundingBox() const;
     double getBoxX() const;
     double getBoxY() const;
     QRectF getRect() const override;
-    virtual std::vector<DrawViewSection*> getSectionRefs() const;       //are there ViewSections based on this ViewPart?
-    virtual std::vector<DrawViewDetail*> getDetailRefs() const;
+    virtual std::vector<DrawViewSection *>
+    getSectionRefs() const; //are there ViewSections based on this ViewPart?
+    virtual std::vector<DrawViewDetail *> getDetailRefs() const;
 
 
-    virtual Base::Vector3d projectPoint(const Base::Vector3d& pt,
-                                        bool invert = true) const;
-    virtual BaseGeomPtr projectEdge(const TopoDS_Edge& e) const;
+    virtual Base::Vector3d projectPoint(const Base::Vector3d &pt, bool invert = true) const;
+    virtual BaseGeomPtr projectEdge(const TopoDS_Edge &e) const;
 
-    virtual gp_Ax2 getViewAxis(const Base::Vector3d& pt,
-                               const Base::Vector3d& direction,
-                               const bool flip=true) const;
+    virtual gp_Ax2 getViewAxis(const Base::Vector3d &pt, const Base::Vector3d &direction,
+                               const bool flip = true) const;
     virtual gp_Ax2 getProjectionCS(Base::Vector3d pt) const;
-    virtual Base::Vector3d getXDirection() const;       //don't use XDirection.getValue()
+    virtual Base::Vector3d getXDirection() const; //don't use XDirection.getValue()
     virtual Base::Vector3d getOriginalCentroid() const;
     virtual Base::Vector3d getCurrentCentroid() const;
-    virtual Base::Vector3d getLegacyX(const Base::Vector3d& pt,
-                                      const Base::Vector3d& axis,
-                                      const bool flip = true)  const;
+    virtual Base::Vector3d getLegacyX(const Base::Vector3d &pt, const Base::Vector3d &axis,
+                                      const bool flip = true) const;
 
 
     bool handleFaces();
@@ -202,10 +203,10 @@ public:
     void removeAllReferencesFromGeom();
     void resetReferenceVerts();
 
-    std::vector<App::DocumentObject*> getAllSources() const;
+    std::vector<App::DocumentObject *> getAllSources() const;
 
     bool waitingForFaces() const { return m_waitingForFaces; }
-    void waitingForFaces(bool s) { m_waitingForFaces = s;}
+    void waitingForFaces(bool s) { m_waitingForFaces = s; }
     bool waitingForHlr() const { return m_waitingForHlr; }
     void waitingForHlr(bool s) { m_waitingForHlr = s; }
     virtual bool waitingForResult() const;
@@ -219,16 +220,16 @@ public Q_SLOTS:
 protected:
     bool checkXDirection() const;
 
-    TechDraw::GeometryObject* geometryObject;
-    TechDraw::GeometryObject* m_tempGeometryObject;  //holds the new GO until hlr is completed
+    TechDraw::GeometryObject *geometryObject;
+    TechDraw::GeometryObject *m_tempGeometryObject; //holds the new GO until hlr is completed
     Base::BoundBox3d bbox;
 
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     void unsetupObject() override;
 
-    virtual TechDraw::GeometryObject*  buildGeometryObject(TopoDS_Shape& shape, gp_Ax2& viewAxis);
-    virtual TechDraw::GeometryObject*  makeGeometryForShape(TopoDS_Shape& shape);   //const??
-    void partExec(TopoDS_Shape& shape);
+    virtual TechDraw::GeometryObject *buildGeometryObject(TopoDS_Shape &shape, gp_Ax2 &viewAxis);
+    virtual TechDraw::GeometryObject *makeGeometryForShape(TopoDS_Shape &shape); //const??
+    void partExec(TopoDS_Shape &shape);
     virtual void addShapes2d(void);
 
     void extractFaces();
@@ -238,10 +239,11 @@ protected:
 
     bool m_handleFaces;
 
-    TopoDS_Shape m_saveShape;    //TODO: make this a Property.  Part::TopoShapeProperty??
-    Base::Vector3d m_saveCentroid;   //centroid before centering shape in origin
+    TopoDS_Shape m_saveShape;      //TODO: make this a Property.  Part::TopoShapeProperty??
+    Base::Vector3d m_saveCentroid; //centroid before centering shape in origin
 
-    void handleChangedPropertyName(Base::XMLReader &reader, const char* TypeName, const char* PropName) override;
+    void handleChangedPropertyName(Base::XMLReader &reader, const char *TypeName,
+                                   const char *PropName) override;
 
     bool prefHardViz();
     bool prefSeamViz();
@@ -251,7 +253,7 @@ protected:
     bool prefSeamHid();
     bool prefSmoothHid();
     bool prefIsoHid();
-    int  prefIsoCount();
+    int prefIsoCount();
 
     std::vector<TechDraw::VertexPtr> m_referenceVerts;
 
@@ -266,11 +268,10 @@ private:
     QMetaObject::Connection connectFaceWatcher;
     QFutureWatcher<void> m_faceWatcher;
     QFuture<void> m_faceFuture;
-
 };
 
 using DrawViewPartPython = App::FeaturePythonT<DrawViewPart>;
 
 } //namespace TechDraw
 
-#endif  // #ifndef DrawViewPart_h_
+#endif // #ifndef DrawViewPart_h_

@@ -6,73 +6,82 @@
 #include <stdexcept>
 #include <string>
 
-namespace zipios {
+namespace zipios
+{
 
-using std::string ;
-using std::exception ;
+using std::exception;
+using std::string;
 
 /** An IOException is used to signal an I/O error.
  */
-class IOException : public exception {
+class IOException: public exception
+{
 public:
-  IOException() throw () ;
-  explicit IOException( const string &msg ) throw () ;
-  IOException( const IOException &src ) throw () ;
-  IOException &operator= ( const IOException &src ) throw () ;
-  
-  virtual const char *what() const throw () ;
-  virtual ~IOException() throw () ;
+    IOException() throw();
+    explicit IOException(const string &msg) throw();
+    IOException(const IOException &src) throw();
+    IOException &operator=(const IOException &src) throw();
+
+    virtual const char *what() const throw();
+    virtual ~IOException() throw();
+
 private:
-  string _what ;
+    string _what;
 };
 
 /** An FCollException is used to signal a problem with a
  FileCollection. */
-class FCollException : public exception {
+class FCollException: public exception
+{
 public:
-  FCollException() throw () ;
-  explicit FCollException( const string &msg ) throw () ;
-  FCollException( const FCollException &src ) throw () ;
-  FCollException &operator= ( const FCollException &src ) throw () ;
-  
-  virtual const char *what() const throw () ;
-  virtual ~FCollException() throw () ;
+    FCollException() throw();
+    explicit FCollException(const string &msg) throw();
+    FCollException(const FCollException &src) throw();
+    FCollException &operator=(const FCollException &src) throw();
+
+    virtual const char *what() const throw();
+    virtual ~FCollException() throw();
+
 private:
-  string _what ;
+    string _what;
 };
 
 /** An object member function may throw this exception, if the
     operation it normally performs is inappropriate or impossible to
     perform because of the current state of the object. */
-class InvalidStateException : public exception {
+class InvalidStateException: public exception
+{
 public:
-  InvalidStateException() throw () ;
-  explicit InvalidStateException( const string &msg ) throw () ;
-  InvalidStateException( const InvalidStateException &src ) throw () ;
-  InvalidStateException &operator= ( const InvalidStateException &src ) throw () ;
-  
-  virtual const char *what() const throw () ;
-  virtual ~InvalidStateException() throw () ;
+    InvalidStateException() throw();
+    explicit InvalidStateException(const string &msg) throw();
+    InvalidStateException(const InvalidStateException &src) throw();
+    InvalidStateException &operator=(const InvalidStateException &src) throw();
+
+    virtual const char *what() const throw();
+    virtual ~InvalidStateException() throw();
+
 private:
-  string _what ;
+    string _what;
 };
 
 /** Basic exception */
-class Exception : public exception {
+class Exception: public exception
+{
 public:
-  Exception() throw () ;
-  explicit Exception( const string &msg ) throw () ;
-  Exception( const Exception &src ) throw () ;
-  Exception &operator= ( const Exception &src ) throw () ;
-  
-  virtual const char *what() const throw () ;
-  virtual ~Exception() throw () ;
+    Exception() throw();
+    explicit Exception(const string &msg) throw();
+    Exception(const Exception &src) throw();
+    Exception &operator=(const Exception &src) throw();
+
+    virtual const char *what() const throw();
+    virtual ~Exception() throw();
+
 private:
-  string _what ;
+    string _what;
 };
 
 
-} // namespace
+} // namespace zipios
 #endif
 
 /** \file

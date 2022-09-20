@@ -32,19 +32,21 @@
 #include <boost_signals2.hpp>
 #include <Base/Writer.h>
 
-namespace App {
+namespace App
+{
 class Document;
 class DocumentObject;
 class Property;
-}
+} // namespace App
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 
 class AutoSaveProperty
 {
 public:
-    AutoSaveProperty(const App::Document* doc);
+    AutoSaveProperty(const App::Document *doc);
     ~AutoSaveProperty();
     int timerId;
     std::set<std::string> touched;
@@ -52,8 +54,8 @@ public:
     std::map<std::string, std::string> fileMap;
 
 private:
-    void slotNewObject(const App::DocumentObject&);
-    void slotChangePropertyData(const App::Property&);
+    void slotNewObject(const App::DocumentObject &);
+    void slotChangePropertyData(const App::Property &);
     using Connection = boost::signals2::connection;
     Connection documentNew;
     Connection documentMod;
@@ -63,17 +65,17 @@ private:
  The class AutoSaver is used to automatically save a document to a temporary file.
  @author Werner Mayer
  */
-class AutoSaver : public QObject
+class AutoSaver: public QObject
 {
     Q_OBJECT
 
 private:
-    static AutoSaver* self;
-    AutoSaver(QObject* parent);
+    static AutoSaver *self;
+    AutoSaver(QObject *parent);
     ~AutoSaver() override;
 
 public:
-    static AutoSaver* instance();
+    static AutoSaver *instance();
     /*!
      Sets the timeout in milliseconds. A value of 0 means that no timer is used.
      */
@@ -84,10 +86,10 @@ public:
     void setCompressed(bool on);
 
 protected:
-    void slotCreateDocument(const App::Document& Doc);
-    void slotDeleteDocument(const App::Document& Doc);
-    void timerEvent(QTimerEvent * event) override;
-    void saveDocument(const std::string&, AutoSaveProperty&);
+    void slotCreateDocument(const App::Document &Doc);
+    void slotDeleteDocument(const App::Document &Doc);
+    void timerEvent(QTimerEvent *event) override;
+    void saveDocument(const std::string &, AutoSaveProperty &);
 
 public Q_SLOTS:
     void renameFile(QString dirName, QString file, QString tmpFile);
@@ -95,13 +97,13 @@ public Q_SLOTS:
 private:
     int timeout; /*!< Timeout in milliseconds */
     bool compressed;
-    std::map<std::string, AutoSaveProperty*> saverMap;
+    std::map<std::string, AutoSaveProperty *> saverMap;
 };
 
-class RecoveryWriter : public Base::FileWriter
+class RecoveryWriter: public Base::FileWriter
 {
 public:
-    RecoveryWriter(AutoSaveProperty&);
+    RecoveryWriter(AutoSaveProperty &);
     ~RecoveryWriter() override;
 
     /*!
@@ -109,11 +111,11 @@ public:
      to write out certain objects. The default implementation
      always returns true.
      */
-    bool shouldWrite(const std::string&, const Base::Persistence *) const override;
+    bool shouldWrite(const std::string &, const Base::Persistence *) const override;
     void writeFiles() override;
 
 private:
-    AutoSaveProperty& saver;
+    AutoSaveProperty &saver;
 };
 
 } //namespace Gui

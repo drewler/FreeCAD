@@ -39,55 +39,59 @@ namespace SurfaceGui
 
 class Ui_GeomFillSurface;
 
-class ViewProviderGeomFillSurface : public PartGui::ViewProviderSpline
+class ViewProviderGeomFillSurface: public PartGui::ViewProviderSpline
 {
     PROPERTY_HEADER_WITH_OVERRIDE(SurfaceGui::ViewProviderGeomFillSurface);
+
 public:
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
     bool setEdit(int ModNum) override;
     void unsetEdit(int ModNum) override;
     QIcon getIcon() const override;
     void highlightReferences(bool on);
 };
 
-class GeomFillSurface : public QWidget,
-                        public Gui::SelectionObserver,
-                        public Gui::DocumentObserver
+class GeomFillSurface: public QWidget, public Gui::SelectionObserver, public Gui::DocumentObserver
 {
     Q_OBJECT
 
 protected:
     class EdgeSelection;
-    enum SelectionMode { None, Append, Remove };
+    enum SelectionMode
+    {
+        None,
+        Append,
+        Remove
+    };
     SelectionMode selectionMode;
-    Surface::GeomFillSurface* editedObject;
+    Surface::GeomFillSurface *editedObject;
     bool checkCommand;
 
 private:
-    Ui_GeomFillSurface* ui;
-    ViewProviderGeomFillSurface* vp;
+    Ui_GeomFillSurface *ui;
+    ViewProviderGeomFillSurface *vp;
 
 public:
-    GeomFillSurface(ViewProviderGeomFillSurface* vp, Surface::GeomFillSurface* obj);
+    GeomFillSurface(ViewProviderGeomFillSurface *vp, Surface::GeomFillSurface *obj);
     ~GeomFillSurface() override;
 
     void open();
     void checkOpenCommand();
     bool accept();
     bool reject();
-    void setEditedObject(Surface::GeomFillSurface* obj);
+    void setEditedObject(Surface::GeomFillSurface *obj);
 
 protected:
     void changeEvent(QEvent *e) override;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     /** Notifies on undo */
-    void slotUndoDocument(const Gui::Document& Doc) override;
+    void slotUndoDocument(const Gui::Document &Doc) override;
     /** Notifies on redo */
-    void slotRedoDocument(const Gui::Document& Doc) override;
+    void slotRedoDocument(const Gui::Document &Doc) override;
     /** Notifies when the object is about to be removed. */
-    void slotDeletedObject(const Gui::ViewProviderDocumentObject& Obj) override;
+    void slotDeletedObject(const Gui::ViewProviderDocumentObject &Obj) override;
     void changeFillType(GeomFill_FillingStyle);
-    void flipOrientation(QListWidgetItem*);
+    void flipOrientation(QListWidgetItem *);
 
 private Q_SLOTS:
     void on_fillType_stretch_clicked();
@@ -95,20 +99,20 @@ private Q_SLOTS:
     void on_fillType_curved_clicked();
     void on_buttonEdgeAdd_clicked();
     void on_buttonEdgeRemove_clicked();
-    void on_listWidget_itemDoubleClicked(QListWidgetItem*);
+    void on_listWidget_itemDoubleClicked(QListWidgetItem *);
     void onDeleteEdge();
     void onFlipOrientation();
     void clearSelection();
 };
 
-class TaskGeomFillSurface : public Gui::TaskView::TaskDialog
+class TaskGeomFillSurface: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    TaskGeomFillSurface(ViewProviderGeomFillSurface* vp, Surface::GeomFillSurface* obj);
+    TaskGeomFillSurface(ViewProviderGeomFillSurface *vp, Surface::GeomFillSurface *obj);
     ~TaskGeomFillSurface() override;
-    void setEditedObject(Surface::GeomFillSurface* obj);
+    void setEditedObject(Surface::GeomFillSurface *obj);
 
 public:
     void open() override;
@@ -116,11 +120,13 @@ public:
     bool reject() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 private:
-    GeomFillSurface* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    GeomFillSurface *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace SurfaceGui

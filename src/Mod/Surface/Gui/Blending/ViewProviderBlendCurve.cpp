@@ -30,9 +30,6 @@ PROPERTY_SOURCE(SurfaceGui::ViewProviderBlendCurve, PartGui::ViewProviderSpline)
 namespace SurfaceGui
 {
 
-QIcon ViewProviderBlendCurve::getIcon() const
-{
-    return Gui::BitmapFactory().pixmap("BlendCurve");
-}
+QIcon ViewProviderBlendCurve::getIcon() const { return Gui::BitmapFactory().pixmap("BlendCurve"); }
 
-}//namespace SurfaceGui
+} //namespace SurfaceGui

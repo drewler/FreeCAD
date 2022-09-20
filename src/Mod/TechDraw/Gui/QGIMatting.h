@@ -41,21 +41,29 @@ namespace TechDrawGui
 {
 class QGCustomRect;
 
-class TechDrawGuiExport QGIMatting : public QGraphicsItemGroup
+class TechDrawGuiExport QGIMatting: public QGraphicsItemGroup
 {
 public:
     explicit QGIMatting();
     ~QGIMatting() override {}
 
-    enum {Type = QGraphicsItem::UserType + 205};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 205
+    };
+    int type() const override { return Type; }
 
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr ) override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget = nullptr) override;
     QRectF boundingRect() const override;
 
-    virtual void setSize(double w, double h) {m_height = h; m_width = w;}
+    virtual void setSize(double w, double h)
+    {
+        m_height = h;
+        m_width = w;
+    }
     //virtual void setHoleStyle(int hs) {m_holeStyle = hs;}
-    virtual void setRadius(double r)  {m_radius = r;}
+    virtual void setRadius(double r) { m_radius = r; }
     virtual void draw();
 
 protected:
@@ -64,14 +72,13 @@ protected:
     double m_radius;
     int getHoleStyle();
 
-    QGraphicsPathItem* m_border;
+    QGraphicsPathItem *m_border;
 
 private:
     QPen m_pen;
     QBrush m_brush;
-
 };
 
-} // namespace MDIViewPageGui
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGIMATTING_H

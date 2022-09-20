@@ -25,28 +25,31 @@
 #include <QObject>
 #include <memory>
 
-namespace Sketcher {
+namespace Sketcher
+{
 class Constraint;
 class SketchObject;
-}
+} // namespace Sketcher
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 class ViewProviderSketch;
 class Ui_InsertDatum;
 
-class EditDatumDialog : public QObject {
+class EditDatumDialog: public QObject
+{
     Q_OBJECT
 
 public:
-    EditDatumDialog(ViewProviderSketch* vp, int ConstrNbr);
-    EditDatumDialog(Sketcher::SketchObject* pcSketch, int ConstrNbr);
+    EditDatumDialog(ViewProviderSketch *vp, int ConstrNbr);
+    EditDatumDialog(Sketcher::SketchObject *pcSketch, int ConstrNbr);
     ~EditDatumDialog() override;
 
-    void exec(bool atCursor=true);
+    void exec(bool atCursor = true);
 
 private:
-    Sketcher::SketchObject* sketch;
-    Sketcher::Constraint* Constr;
+    Sketcher::SketchObject *sketch;
+    Sketcher::Constraint *Constr;
     int ConstrNbr;
     std::unique_ptr<Ui_InsertDatum> ui_ins_datum;
 
@@ -58,5 +61,5 @@ private Q_SLOTS:
     void formEditorOpened(bool);
 };
 
-}
+} // namespace SketcherGui
 #endif // SKETCHERGUI_DrawSketchHandler_H

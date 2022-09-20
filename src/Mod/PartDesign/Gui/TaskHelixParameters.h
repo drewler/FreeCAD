@@ -27,30 +27,32 @@
 #include "ViewProviderHelix.h"
 
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 class Ui_TaskHelixParameters;
 
 
-
-class TaskHelixParameters : public TaskSketchBasedParameters
+class TaskHelixParameters: public TaskSketchBasedParameters
 {
     Q_OBJECT
 
 public:
-    explicit TaskHelixParameters(ViewProviderHelix* HelixView, QWidget* parent = nullptr);
+    explicit TaskHelixParameters(ViewProviderHelix *HelixView, QWidget *parent = nullptr);
     ~TaskHelixParameters() override;
 
     void apply() override;
 
-    static bool showPreview(PartDesign::Helix*);
+    static bool showPreview(PartDesign::Helix *);
 
 private:
     /**
@@ -61,7 +63,7 @@ private:
      * list (if necessary), and selected. If the list is empty, it will be refilled anyway.
      */
     void fillAxisCombo(bool forceRefill = false);
-    void addAxisToCombo(App::DocumentObject* linkObj, std::string linkSubname, QString itemText);
+    void addAxisToCombo(App::DocumentObject *linkObj, std::string linkSubname, QString itemText);
     void addSketchAxes();
     void addPartAxes();
     int addCurrentLink();
@@ -82,24 +84,24 @@ private Q_SLOTS:
 
 
 protected:
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
-    void changeEvent(QEvent* e) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
+    void changeEvent(QEvent *e) override;
     bool updateView() const;
-    void getReferenceAxis(App::DocumentObject*& obj, std::vector<std::string>& sub) const;
-    void startReferenceSelection(App::DocumentObject* profile, App::DocumentObject* base) override;
-    void finishReferenceSelection(App::DocumentObject* profile, App::DocumentObject* base) override;
+    void getReferenceAxis(App::DocumentObject *&obj, std::vector<std::string> &sub) const;
+    void startReferenceSelection(App::DocumentObject *profile, App::DocumentObject *base) override;
+    void finishReferenceSelection(App::DocumentObject *profile, App::DocumentObject *base) override;
 
     //mirrors of helixes's properties
-    App::PropertyLength*      propPitch;
-    App::PropertyLength*      propHeight;
-    App::PropertyFloatConstraint*       propTurns;
-    App::PropertyBool*        propLeftHanded;
-    App::PropertyBool*        propReversed;
-    App::PropertyLinkSub*     propReferenceAxis;
-    App::PropertyAngle*       propAngle;
-    App::PropertyDistance*    propGrowth;
-    App::PropertyEnumeration* propMode;
-    App::PropertyBool*        propOutside;
+    App::PropertyLength *propPitch;
+    App::PropertyLength *propHeight;
+    App::PropertyFloatConstraint *propTurns;
+    App::PropertyBool *propLeftHanded;
+    App::PropertyBool *propReversed;
+    App::PropertyLinkSub *propReferenceAxis;
+    App::PropertyAngle *propAngle;
+    App::PropertyDistance *propGrowth;
+    App::PropertyEnumeration *propMode;
+    App::PropertyBool *propOutside;
 
 
 private:
@@ -113,7 +115,7 @@ private:
     void showCoordinateAxes();
 
 private:
-    QWidget* proxy;
+    QWidget *proxy;
     std::unique_ptr<Ui_TaskHelixParameters> ui;
 
     /**
@@ -128,15 +130,14 @@ private:
 };
 
 /// simulation dialog for the TaskView
-class TaskDlgHelixParameters : public TaskDlgSketchBasedParameters
+class TaskDlgHelixParameters: public TaskDlgSketchBasedParameters
 {
     Q_OBJECT
 
 public:
-    explicit TaskDlgHelixParameters(ViewProviderHelix* HelixView);
+    explicit TaskDlgHelixParameters(ViewProviderHelix *HelixView);
 
-    ViewProviderHelix* getHelixView() const
-    { return static_cast<ViewProviderHelix*>(vp); }
+    ViewProviderHelix *getHelixView() const { return static_cast<ViewProviderHelix *>(vp); }
 };
 
 } //namespace PartDesignGui

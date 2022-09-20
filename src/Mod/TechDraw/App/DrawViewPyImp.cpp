@@ -31,18 +31,9 @@
 using namespace TechDraw;
 
 // returns a string which represents the object e.g. when printed in python
-std::string DrawViewPy::representation(void) const
-{
-    return std::string("<DrawView object>");
-}
+std::string DrawViewPy::representation(void) const { return std::string("<DrawView object>"); }
 
 
-PyObject *DrawViewPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *DrawViewPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int DrawViewPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int DrawViewPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

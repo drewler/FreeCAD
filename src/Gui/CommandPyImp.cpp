@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #endif
 
 #include "Command.h"
@@ -39,18 +39,14 @@
 
 
 // returns a string which represents the object e.g. when printed in python
-std::string CommandPy::representation() const
-{
-    return std::string("<Command object>");
-}
+std::string CommandPy::representation() const { return std::string("<Command object>"); }
 
-PyObject* CommandPy::get(PyObject *args)
+PyObject *CommandPy::get(PyObject *args)
 {
-    char* pName;
-    if (!PyArg_ParseTuple(args, "s", &pName))
-        return nullptr;
+    char *pName;
+    if (!PyArg_ParseTuple(args, "s", &pName)) return nullptr;
 
-    Command* cmd = Application::Instance->commandManager().getCommandByName(pName);
+    Command *cmd = Application::Instance->commandManager().getCommandByName(pName);
     if (cmd) {
         auto cmdPy = new CommandPy(cmd);
         return cmdPy;
@@ -59,82 +55,79 @@ PyObject* CommandPy::get(PyObject *args)
     Py_Return;
 }
 
-PyObject* CommandPy::update(PyObject *args)
+PyObject *CommandPy::update(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     getMainWindow()->updateActions();
     Py_Return;
 }
 
-PyObject* CommandPy::listAll(PyObject *args)
+PyObject *CommandPy::listAll(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    std::vector <Command*> cmds = Application::Instance->commandManager().getAllCommands();
-    PyObject* pyList = PyList_New(cmds.size());
-    int i=0;
-    for (const auto & cmd : cmds) {
-        PyObject* str = PyUnicode_FromString(cmd->getName());
+    std::vector<Command *> cmds = Application::Instance->commandManager().getAllCommands();
+    PyObject *pyList = PyList_New(cmds.size());
+    int i = 0;
+    for (const auto &cmd : cmds) {
+        PyObject *str = PyUnicode_FromString(cmd->getName());
         PyList_SetItem(pyList, i++, str);
     }
     return pyList;
 }
 
-PyObject* CommandPy::listByShortcut(PyObject *args)
+PyObject *CommandPy::listByShortcut(PyObject *args)
 {
-    char* shortcut_to_find;
-    PyObject* bIsRegularExp = Py_False;
+    char *shortcut_to_find;
+    PyObject *bIsRegularExp = Py_False;
     if (!PyArg_ParseTuple(args, "s|O!", &shortcut_to_find, &PyBool_Type, &bIsRegularExp))
         return nullptr;
 
-    std::vector <Command*> cmds = Application::Instance->commandManager().getAllCommands();
-    std::vector <std::string> matches;
-    for (Command* c : cmds) {
-        Action* action = c->getAction();
+    std::vector<Command *> cmds = Application::Instance->commandManager().getAllCommands();
+    std::vector<std::string> matches;
+    for (Command *c : cmds) {
+        Action *action = c->getAction();
         if (action) {
             QString spc = QString::fromLatin1(" ");
             if (Base::asBoolean(bIsRegularExp)) {
-               QRegExp re = QRegExp(QString::fromLatin1(shortcut_to_find));
-               re.setCaseSensitivity(Qt::CaseInsensitive);
-               if (!re.isValid()) {
-                   std::stringstream str;
-                   str << "Invalid regular expression:" << ' ' << shortcut_to_find;
-                   throw Py::RuntimeError(str.str());
-               }
+                QRegExp re = QRegExp(QString::fromLatin1(shortcut_to_find));
+                re.setCaseSensitivity(Qt::CaseInsensitive);
+                if (!re.isValid()) {
+                    std::stringstream str;
+                    str << "Invalid regular expression:" << ' ' << shortcut_to_find;
+                    throw Py::RuntimeError(str.str());
+                }
 
-               if (re.indexIn(action->shortcut().toString().remove(spc).toUpper()) != -1) {
-                   matches.emplace_back(c->getName());
-               }
+                if (re.indexIn(action->shortcut().toString().remove(spc).toUpper()) != -1) {
+                    matches.emplace_back(c->getName());
+                }
             }
-            else if (action->shortcut().toString().remove(spc).toUpper() ==
-                     QString::fromLatin1(shortcut_to_find).remove(spc).toUpper()) {
+            else if (action->shortcut().toString().remove(spc).toUpper()
+                     == QString::fromLatin1(shortcut_to_find).remove(spc).toUpper()) {
                 matches.emplace_back(c->getName());
             }
         }
     }
 
-    PyObject* pyList = PyList_New(matches.size());
-    int i=0;
-    for (const std::string& match : matches) {
-        PyObject* str = PyUnicode_FromString(match.c_str());
+    PyObject *pyList = PyList_New(matches.size());
+    int i = 0;
+    for (const std::string &match : matches) {
+        PyObject *str = PyUnicode_FromString(match.c_str());
         PyList_SetItem(pyList, i++, str);
     }
     return pyList;
 }
 
-PyObject* CommandPy::run(PyObject *args)
+PyObject *CommandPy::run(PyObject *args)
 {
     int item = 0;
-    if (!PyArg_ParseTuple(args, "|i", &item))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "|i", &item)) return nullptr;
 
     Gui::Command::LogDisabler d1;
     Gui::SelectionLogDisabler d2;
 
-    Command* cmd = this->getCommandPtr();
+    Command *cmd = this->getCommandPtr();
     if (cmd) {
         cmd->invoke(item);
         Py_Return;
@@ -145,16 +138,13 @@ PyObject* CommandPy::run(PyObject *args)
     }
 }
 
-PyObject* CommandPy::isActive(PyObject *args)
+PyObject *CommandPy::isActive(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    Command* cmd = this->getCommandPtr();
+    Command *cmd = this->getCommandPtr();
     if (cmd) {
-        PY_TRY {
-            return Py::new_reference_to(Py::Boolean(cmd->isActive()));
-        }
+        PY_TRY { return Py::new_reference_to(Py::Boolean(cmd->isActive())); }
         PY_CATCH;
     }
     else {
@@ -163,14 +153,14 @@ PyObject* CommandPy::isActive(PyObject *args)
     }
 }
 
-PyObject* CommandPy::getShortcut(PyObject *args)
+PyObject *CommandPy::getShortcut(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    Command* cmd = this->getCommandPtr();
+    Command *cmd = this->getCommandPtr();
     if (cmd) {
-        PyObject* str = PyUnicode_FromString(cmd->getAction() ? cmd->getAction()->shortcut().toString().toStdString().c_str() : "");
+        PyObject *str = PyUnicode_FromString(
+            cmd->getAction() ? cmd->getAction()->shortcut().toString().toStdString().c_str() : "");
         return str;
     }
     else {
@@ -179,15 +169,14 @@ PyObject* CommandPy::getShortcut(PyObject *args)
     }
 }
 
-PyObject* CommandPy::setShortcut(PyObject *args)
+PyObject *CommandPy::setShortcut(PyObject *args)
 {
-    char* pShortcut;
-    if (!PyArg_ParseTuple(args, "s", &pShortcut))
-        return nullptr;
+    char *pShortcut;
+    if (!PyArg_ParseTuple(args, "s", &pShortcut)) return nullptr;
 
-    Command* cmd = this->getCommandPtr();
+    Command *cmd = this->getCommandPtr();
     if (cmd) {
-        Action* action = cmd->getAction();
+        Action *action = cmd->getAction();
         if (action) {
             QKeySequence shortcut = QString::fromLatin1(pShortcut);
             QString nativeText = shortcut.toString(QKeySequence::NativeText);
@@ -201,9 +190,11 @@ PyObject* CommandPy::setShortcut(PyObject *args)
             QString default_shortcut = QString::fromLatin1(cmd->getAccel());
             QString spc = QString::fromLatin1(" ");
 
-            ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("Shortcut");
-            const char* pName = cmd->getName();
-            if (success && default_shortcut.remove(spc).toUpper() != nativeText.remove(spc).toUpper()) {
+            ParameterGrp::handle hGrp =
+                WindowParameter::getDefaultParameter()->GetGroup("Shortcut");
+            const char *pName = cmd->getName();
+            if (success
+                && default_shortcut.remove(spc).toUpper() != nativeText.remove(spc).toUpper()) {
                 hGrp->SetASCII(pName, pShortcut);
             }
             else {
@@ -221,64 +212,65 @@ PyObject* CommandPy::setShortcut(PyObject *args)
     }
 }
 
-PyObject* CommandPy::resetShortcut(PyObject *args)
+PyObject *CommandPy::resetShortcut(PyObject *args)
 {
 
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    Command* cmd = this->getCommandPtr();
+    Command *cmd = this->getCommandPtr();
     if (cmd) {
-        Action* action = cmd->getAction();
-        if (action){
+        Action *action = cmd->getAction();
+        if (action) {
             QString default_shortcut = QString::fromLatin1(cmd->getAccel());
             action->setShortcut(default_shortcut);
-            ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("Shortcut");
+            ParameterGrp::handle hGrp =
+                WindowParameter::getDefaultParameter()->GetGroup("Shortcut");
             hGrp->RemoveASCII(cmd->getName());
             /** test to see if we successfully reset the shortcut by loading it back and comparing */
             QString spc = QString::fromLatin1(" ");
             QString new_shortcut = action->shortcut().toString();
-            if (default_shortcut.remove(spc).toUpper() == new_shortcut.remove(spc).toUpper()){
+            if (default_shortcut.remove(spc).toUpper() == new_shortcut.remove(spc).toUpper()) {
                 return Py::new_reference_to(Py::Boolean(true));
-            } else {
+            }
+            else {
                 return Py::new_reference_to(Py::Boolean(false));
             }
-        } else {
+        }
+        else {
             return Py::new_reference_to(Py::Boolean(false));
         }
-
-    } else {
+    }
+    else {
         PyErr_Format(Base::PyExc_FC_GeneralError, "No such command");
         return nullptr;
     }
 }
 
-PyObject* CommandPy::getInfo(PyObject *args)
+PyObject *CommandPy::getInfo(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    Command* cmd = this->getCommandPtr();
+    Command *cmd = this->getCommandPtr();
     if (cmd) {
-        Action* action = cmd->getAction();
-        PyObject* pyDict = PyDict_New();
-        const char* cmdName = cmd->getName();
-        const char* menuTxt = cmd->getMenuText();
-        const char* tooltipTxt = cmd->getToolTipText();
-        const char* whatsThisTxt = cmd->getWhatsThis();
-        const char* statustipTxt = cmd->getStatusTip();
-        const char* pixMapTxt = cmd->getPixmap();
+        Action *action = cmd->getAction();
+        PyObject *pyDict = PyDict_New();
+        const char *cmdName = cmd->getName();
+        const char *menuTxt = cmd->getMenuText();
+        const char *tooltipTxt = cmd->getToolTipText();
+        const char *whatsThisTxt = cmd->getWhatsThis();
+        const char *statustipTxt = cmd->getStatusTip();
+        const char *pixMapTxt = cmd->getPixmap();
         std::string shortcutTxt;
-        if (action)
-            shortcutTxt = action->shortcut().toString().toStdString();
+        if (action) shortcutTxt = action->shortcut().toString().toStdString();
 
-        PyObject* strCmdName = PyUnicode_FromString(cmdName);
-        PyObject* strMenuTxt = PyUnicode_FromString(menuTxt ? menuTxt : "");
-        PyObject* strTooltipTxt = PyUnicode_FromString(tooltipTxt ? tooltipTxt : "");
-        PyObject* strWhatsThisTxt = PyUnicode_FromString(whatsThisTxt ? whatsThisTxt : "");
-        PyObject* strStatustipTxt = PyUnicode_FromString(statustipTxt ? statustipTxt : "");
-        PyObject* strPixMapTxt = PyUnicode_FromString(pixMapTxt ? pixMapTxt : "");
-        PyObject* strShortcutTxt = PyUnicode_FromString(!shortcutTxt.empty() ? shortcutTxt.c_str() : "");
+        PyObject *strCmdName = PyUnicode_FromString(cmdName);
+        PyObject *strMenuTxt = PyUnicode_FromString(menuTxt ? menuTxt : "");
+        PyObject *strTooltipTxt = PyUnicode_FromString(tooltipTxt ? tooltipTxt : "");
+        PyObject *strWhatsThisTxt = PyUnicode_FromString(whatsThisTxt ? whatsThisTxt : "");
+        PyObject *strStatustipTxt = PyUnicode_FromString(statustipTxt ? statustipTxt : "");
+        PyObject *strPixMapTxt = PyUnicode_FromString(pixMapTxt ? pixMapTxt : "");
+        PyObject *strShortcutTxt =
+            PyUnicode_FromString(!shortcutTxt.empty() ? shortcutTxt.c_str() : "");
         PyDict_SetItemString(pyDict, "name", strCmdName);
         PyDict_SetItemString(pyDict, "menuText", strMenuTxt);
         PyDict_SetItemString(pyDict, "toolTip", strTooltipTxt);
@@ -294,15 +286,14 @@ PyObject* CommandPy::getInfo(PyObject *args)
     }
 }
 
-PyObject* CommandPy::getAction(PyObject *args)
+PyObject *CommandPy::getAction(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    Command* cmd = this->getCommandPtr();
+    Command *cmd = this->getCommandPtr();
     if (cmd) {
-        Action* action = cmd->getAction();
-        auto* group = qobject_cast<ActionGroup*>(action);
+        Action *action = cmd->getAction();
+        auto *group = qobject_cast<ActionGroup *>(action);
 
         PythonWrapper wrap;
         wrap.loadWidgetsModule();
@@ -310,8 +301,7 @@ PyObject* CommandPy::getAction(PyObject *args)
         Py::List list;
         if (group) {
             const auto actions = group->actions();
-            for (auto a : actions)
-                list.append(wrap.fromQObject(a));
+            for (auto a : actions) list.append(wrap.fromQObject(a));
         }
         else if (action) {
             list.append(wrap.fromQObject(action->action()));
@@ -326,59 +316,54 @@ PyObject* CommandPy::getAction(PyObject *args)
 }
 
 
-PyObject* CommandPy::createCustomCommand(PyObject* args, PyObject* kw)
+PyObject *CommandPy::createCustomCommand(PyObject *args, PyObject *kw)
 {
-    const char* macroFile;
-    const char* menuTxt = nullptr;
-    const char* tooltipTxt = nullptr;
-    const char* whatsthisTxt = nullptr;
-    const char* statustipTxt = nullptr;
-    const char* pixmapTxt = nullptr;
-    const char* shortcutTxt = nullptr;
-    static char* kwlist[] = {"macroFile", "menuText", "toolTip", "whatsThis","statusTip", "pixmap", "shortcut", nullptr};
+    const char *macroFile;
+    const char *menuTxt = nullptr;
+    const char *tooltipTxt = nullptr;
+    const char *whatsthisTxt = nullptr;
+    const char *statustipTxt = nullptr;
+    const char *pixmapTxt = nullptr;
+    const char *shortcutTxt = nullptr;
+    static char *kwlist[] = {"macroFile", "menuText", "toolTip",  "whatsThis",
+                             "statusTip", "pixmap",   "shortcut", nullptr};
     if (!PyArg_ParseTupleAndKeywords(args, kw, "s|zzzzzz", kwlist, &macroFile, &menuTxt,
-            &tooltipTxt, &whatsthisTxt, &statustipTxt, &pixmapTxt, &shortcutTxt))
+                                     &tooltipTxt, &whatsthisTxt, &statustipTxt, &pixmapTxt,
+                                     &shortcutTxt))
         return nullptr;
 
     auto name = Application::Instance->commandManager().newMacroName();
-    CommandManager& commandManager = Application::Instance->commandManager();
+    CommandManager &commandManager = Application::Instance->commandManager();
     auto macro = new MacroCommand(name.c_str(), false);
     commandManager.addCommand(macro);
 
-    macro->setScriptName(macroFile); 
+    macro->setScriptName(macroFile);
 
-    if (menuTxt)
-        macro->setMenuText(menuTxt);
+    if (menuTxt) macro->setMenuText(menuTxt);
 
-    if (tooltipTxt)
-        macro->setToolTipText(tooltipTxt);
+    if (tooltipTxt) macro->setToolTipText(tooltipTxt);
 
-    if (whatsthisTxt)
-        macro->setWhatsThis(whatsthisTxt);
+    if (whatsthisTxt) macro->setWhatsThis(whatsthisTxt);
 
-    if (statustipTxt)
-        macro->setStatusTip(statustipTxt);
+    if (statustipTxt) macro->setStatusTip(statustipTxt);
 
-    if (pixmapTxt)
-        macro->setPixmap(pixmapTxt);
+    if (pixmapTxt) macro->setPixmap(pixmapTxt);
 
-    if (shortcutTxt)
-        macro->setAccel(shortcutTxt);
+    if (shortcutTxt) macro->setAccel(shortcutTxt);
 
     return PyUnicode_FromString(name.c_str());
 }
 
-PyObject* CommandPy::removeCustomCommand(PyObject* args)
+PyObject *CommandPy::removeCustomCommand(PyObject *args)
 {
-    const char* actionName = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &actionName))
-        return nullptr;
+    const char *actionName = nullptr;
+    if (!PyArg_ParseTuple(args, "s", &actionName)) return nullptr;
 
-    CommandManager& commandManager = Application::Instance->commandManager();
-    std::vector<Command*> macros = commandManager.getGroupCommands("Macros");
+    CommandManager &commandManager = Application::Instance->commandManager();
+    std::vector<Command *> macros = commandManager.getGroupCommands("Macros");
 
-    auto action = std::find_if(macros.begin(), macros.end(), [actionName](const Command* c) { 
-        return std::string(c->getName()) == std::string(actionName); 
+    auto action = std::find_if(macros.begin(), macros.end(), [actionName](const Command *c) {
+        return std::string(c->getName()) == std::string(actionName);
     });
 
     if (action != macros.end()) {
@@ -390,35 +375,25 @@ PyObject* CommandPy::removeCustomCommand(PyObject* args)
     }
 }
 
-PyObject* CommandPy::findCustomCommand(PyObject* args)
+PyObject *CommandPy::findCustomCommand(PyObject *args)
 {
-    const char* macroScriptName = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &macroScriptName))
-        return nullptr;
+    const char *macroScriptName = nullptr;
+    if (!PyArg_ParseTuple(args, "s", &macroScriptName)) return nullptr;
 
-    CommandManager& commandManager = Application::Instance->commandManager();
-    std::vector<Command*> macros = commandManager.getGroupCommands("Macros");
+    CommandManager &commandManager = Application::Instance->commandManager();
+    std::vector<Command *> macros = commandManager.getGroupCommands("Macros");
 
-    auto action = std::find_if(macros.begin(), macros.end(), [macroScriptName](const Command* c) {
-        if (auto mc = dynamic_cast<const MacroCommand*>(c))
-            if (std::string(mc->getScriptName()) == std::string(macroScriptName))
-                return true;
+    auto action = std::find_if(macros.begin(), macros.end(), [macroScriptName](const Command *c) {
+        if (auto mc = dynamic_cast<const MacroCommand *>(c))
+            if (std::string(mc->getScriptName()) == std::string(macroScriptName)) return true;
         return false;
-        });
+    });
 
-    if (action != macros.end())
-        return PyUnicode_FromString((*action)->getName());
+    if (action != macros.end()) return PyUnicode_FromString((*action)->getName());
     else
         Py_Return;
 }
 
-PyObject *CommandPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *CommandPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int CommandPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
-
+int CommandPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

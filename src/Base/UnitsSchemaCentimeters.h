@@ -28,7 +28,8 @@
 #include "UnitsSchema.h"
 
 
-namespace Base {
+namespace Base
+{
 
 /**
  * The UnitSchema class
@@ -36,7 +37,8 @@ namespace Base {
 class UnitsSchemaCentimeters: public UnitsSchema
 {
 public:
-    QString schemaTranslate(const Base::Quantity& quant, double &factor, QString &unitString) override;
+    QString schemaTranslate(const Base::Quantity &quant, double &factor,
+                            QString &unitString) override;
 };
 
 } // namespace Base

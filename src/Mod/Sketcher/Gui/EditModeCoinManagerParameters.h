@@ -25,17 +25,17 @@
 #define SKETCHERGUI_EditModeCoinManagerParameters_H
 
 #ifndef _PreComp_
-# include <Inventor/nodes/SoMaterial.h>
-# include <Inventor/nodes/SoCoordinate3.h>
-# include <Inventor/nodes/SoLineSet.h>
-# include <Inventor/nodes/SoGroup.h>
-# include <Inventor/nodes/SoMarkerSet.h>
-# include <Inventor/nodes/SoText2.h>
-# include <Inventor/nodes/SoPickStyle.h>
-# include <Inventor/nodes/SoTranslation.h>
-# include <Inventor/nodes/SoDrawStyle.h>
-# include <Inventor/SbColor.h>
-#endif  // #ifndef _PreComp_
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoLineSet.h>
+#include <Inventor/nodes/SoGroup.h>
+#include <Inventor/nodes/SoMarkerSet.h>
+#include <Inventor/nodes/SoText2.h>
+#include <Inventor/nodes/SoPickStyle.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/SbColor.h>
+#endif // #ifndef _PreComp_
 
 #include <Gui/Inventor/SmSwitchboard.h>
 
@@ -48,11 +48,13 @@
 #include <map>
 
 
-namespace Part {
-    class Geometry;
+namespace Part
+{
+class Geometry;
 }
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 /** @brief      Struct for storing local drawing parameters
  *
@@ -64,23 +66,24 @@ struct DrawingParameters {
 
     /** @name Rendering Heights - virtual height introduced in the scenegraph to determine what is drawn on top of what*/
     //@{
-    const float zEdit       = 0.001f; // Height used by temporal edit curves
-    const float zCross      = 0.001f; // Height used by the Axes
-    const float zInfo       = 0.004f; // Height used by the Overlay information layer
-    const float zLowLines   = 0.005f; // Height used for bottom rendered lines
-    const float zMidLines   = 0.006f; // Height used for in-the-middle rendered lines
-    const float zHighLines  = 0.007f; // Height used for on top rendered lines
-    const float zHighLine   = 0.008f; // Height for highlighted lines (selected/preselected)
-    const float zConstr     = 0.009f; // Height for rendering constraints
-    const float zRootPoint  = 0.010f; // Height used for rendering the root point
-    const float zLowPoints  = 0.011f; // Height used for bottom rendered points
+    const float zEdit = 0.001f;       // Height used by temporal edit curves
+    const float zCross = 0.001f;      // Height used by the Axes
+    const float zInfo = 0.004f;       // Height used by the Overlay information layer
+    const float zLowLines = 0.005f;   // Height used for bottom rendered lines
+    const float zMidLines = 0.006f;   // Height used for in-the-middle rendered lines
+    const float zHighLines = 0.007f;  // Height used for on top rendered lines
+    const float zHighLine = 0.008f;   // Height for highlighted lines (selected/preselected)
+    const float zConstr = 0.009f;     // Height for rendering constraints
+    const float zRootPoint = 0.010f;  // Height used for rendering the root point
+    const float zLowPoints = 0.011f;  // Height used for bottom rendered points
     const float zHighPoints = 0.012f; // Height used for in-the-middle rendered points
-    const float zHighlight  = 0.013f; // Height for highlighted points (selected/preselected)
-    const float zText       = 0.013f; // Height for rendered text
+    const float zHighlight = 0.013f;  // Height for highlighted points (selected/preselected)
+    const float zText = 0.013f;       // Height for rendered text
     //@}
 
     /// Different categories of geometries that can be selected by the user to be rendered on top, in the middle or in the bottom
-    enum class GeometryRendering {
+    enum class GeometryRendering
+    {
         NormalGeometry = 1,
         Construction = 2,
         ExternalGeometry = 3
@@ -94,37 +97,44 @@ struct DrawingParameters {
 
     /** @name Rendering Coin Colors **/
     //@{
-    static SbColor InformationColor;                            // Information Overlay Color
-    static SbColor CreateCurveColor;                            // Color for Edit Curves during creation
-    static SbColor CrossColorH;                                 // Color for the Horizontal Axis
-    static SbColor CrossColorV;                                 // Color for the Vertical Axis
-    static SbColor InvalidSketchColor;                          // Color for rendering an invalid sketch
-    static SbColor FullyConstrainedColor;                       // Color for a fully constrained sketch
-    static SbColor FullyConstraintInternalAlignmentColor;       // Color for fully constrained internal alignment geometry
-    static SbColor InternalAlignedGeoColor;                     // Color for non-fully constrained internal alignment geometry
-    static SbColor FullyConstraintConstructionPointColor;       // Color for fully constrained construction points
-    static SbColor VertexColor;                                 // Color for vertices
-    static SbColor FullyConstraintElementColor;                 // Color for a fully constrained element
-    static SbColor CurveColor;                                  // Color for curves
-    static SbColor PreselectColor;                              // Color used for pre-selection
-    static SbColor PreselectSelectedColor;                      // Color used for pre-selection when geometry is already selected
-    static SbColor SelectColor;                                 // Color used for selected geometry
-    static SbColor CurveExternalColor;                          // Color used for external geometry
-    static SbColor CurveDraftColor;                             // Color used for construction geometry
-    static SbColor FullyConstraintConstructionElementColor;     // Color used for a fully constrained construction element
-    static SbColor ConstrDimColor;                              // Color used for a dimensional constraints
-    static SbColor ConstrIcoColor;                              // Color used for constraint icons
-    static SbColor NonDrivingConstrDimColor;                    // Color used for non-driving (reference) dimensional constraints
-    static SbColor ExprBasedConstrDimColor;                     // Color used for expression based dimensional constraints
-    static SbColor DeactivatedConstrDimColor;                   // Color used for deactivated dimensional constraints
+    static SbColor InformationColor;      // Information Overlay Color
+    static SbColor CreateCurveColor;      // Color for Edit Curves during creation
+    static SbColor CrossColorH;           // Color for the Horizontal Axis
+    static SbColor CrossColorV;           // Color for the Vertical Axis
+    static SbColor InvalidSketchColor;    // Color for rendering an invalid sketch
+    static SbColor FullyConstrainedColor; // Color for a fully constrained sketch
+    static SbColor
+        FullyConstraintInternalAlignmentColor; // Color for fully constrained internal alignment geometry
+    static SbColor
+        InternalAlignedGeoColor; // Color for non-fully constrained internal alignment geometry
+    static SbColor
+        FullyConstraintConstructionPointColor;  // Color for fully constrained construction points
+    static SbColor VertexColor;                 // Color for vertices
+    static SbColor FullyConstraintElementColor; // Color for a fully constrained element
+    static SbColor CurveColor;                  // Color for curves
+    static SbColor PreselectColor;              // Color used for pre-selection
+    static SbColor
+        PreselectSelectedColor; // Color used for pre-selection when geometry is already selected
+    static SbColor SelectColor; // Color used for selected geometry
+    static SbColor CurveExternalColor; // Color used for external geometry
+    static SbColor CurveDraftColor;    // Color used for construction geometry
+    static SbColor
+        FullyConstraintConstructionElementColor; // Color used for a fully constrained construction element
+    static SbColor ConstrDimColor;               // Color used for a dimensional constraints
+    static SbColor ConstrIcoColor;               // Color used for constraint icons
+    static SbColor
+        NonDrivingConstrDimColor; // Color used for non-driving (reference) dimensional constraints
+    static SbColor
+        ExprBasedConstrDimColor; // Color used for expression based dimensional constraints
+    static SbColor DeactivatedConstrDimColor; // Color used for deactivated dimensional constraints
     //@}
 
     /** @name Rendering sizes (also to support HDPI monitors) **/
     //@{
-    double pixelScalingFactor = 1.0;    // Scaling factor to be used for pixels
-    int coinFontSize = 17;              // Font size to be used by coin
-    int constraintIconSize = 15;        // Size of constraint icons
-    int markerSize = 7;                 // Size used for markers
+    double pixelScalingFactor = 1.0; // Scaling factor to be used for pixels
+    int coinFontSize = 17;           // Font size to be used by coin
+    int constraintIconSize = 15;     // Size of constraint icons
+    int markerSize = 7;              // Size used for markers
     //@}
 };
 
@@ -133,15 +143,15 @@ struct DrawingParameters {
 struct GeometryLayerNodes {
     /** @name Point nodes*/
     //@{
-    std::vector<SoMaterial *> &     PointsMaterials;    // The materials for the points/vertices
-    std::vector<SoCoordinate3 *>&   PointsCoordinate;   // The coordinates of the points/vertices
+    std::vector<SoMaterial *> &PointsMaterials;     // The materials for the points/vertices
+    std::vector<SoCoordinate3 *> &PointsCoordinate; // The coordinates of the points/vertices
     //@}
 
     /** @name Curve nodes*/
     //@{
-    std::vector<SoMaterial *> &     CurvesMaterials;    // The materials for the curves
-    std::vector<SoCoordinate3 *> &  CurvesCoordinate;   // The coordinates of the segments of the curves
-    std::vector<SoLineSet *> &      CurveSet;           // The set of curves
+    std::vector<SoMaterial *> &CurvesMaterials;     // The materials for the curves
+    std::vector<SoCoordinate3 *> &CurvesCoordinate; // The coordinates of the segments of the curves
+    std::vector<SoLineSet *> &CurveSet;             // The set of curves
     //@}
 };
 
@@ -156,23 +166,25 @@ struct GeometryLayerNodes {
  * Overloaded operators and specialisation of std::less enable it to be used in containers including ordered
  * containers.
  */
-class MultiFieldId {
+class MultiFieldId
+{
 public:
-    explicit constexpr MultiFieldId(int fieldindex = -1, int layerid = 0):  fieldIndex(fieldindex),
-                                                                            layerId(layerid){}
+    explicit constexpr MultiFieldId(int fieldindex = -1, int layerid = 0)
+        : fieldIndex(fieldindex), layerId(layerid)
+    {}
 
-    MultiFieldId(const MultiFieldId & ) = default;
-    MultiFieldId & operator=(const MultiFieldId &) = default;
+    MultiFieldId(const MultiFieldId &) = default;
+    MultiFieldId &operator=(const MultiFieldId &) = default;
 
-    MultiFieldId(MultiFieldId && ) = default;
-    MultiFieldId & operator=(MultiFieldId &&) = default;
+    MultiFieldId(MultiFieldId &&) = default;
+    MultiFieldId &operator=(MultiFieldId &&) = default;
 
-    inline bool operator==(const MultiFieldId& obj) const
+    inline bool operator==(const MultiFieldId &obj) const
     {
         return this->fieldIndex == obj.fieldIndex && this->layerId == obj.layerId;
     }
 
-    inline bool operator!=(const MultiFieldId& obj) const
+    inline bool operator!=(const MultiFieldId &obj) const
     {
         return this->fieldIndex != obj.fieldIndex || this->layerId != obj.layerId;
     }
@@ -188,17 +200,20 @@ public:
 
 namespace std
 {
-    template<> struct less<SketcherGui::MultiFieldId>
+template<> struct less<SketcherGui::MultiFieldId> {
+    bool operator()(const SketcherGui::MultiFieldId &lhs,
+                    const SketcherGui::MultiFieldId &rhs) const
     {
-       bool operator() (const SketcherGui::MultiFieldId& lhs, const SketcherGui::MultiFieldId& rhs) const
-       {
-           return (lhs.layerId != rhs.layerId)?(lhs.layerId < rhs.layerId):(static_cast<int>(lhs.fieldIndex) < static_cast<int>(rhs.fieldIndex));
-       }
-    };
+        return (lhs.layerId != rhs.layerId)
+            ? (lhs.layerId < rhs.layerId)
+            : (static_cast<int>(lhs.fieldIndex) < static_cast<int>(rhs.fieldIndex));
+    }
+};
 } // namespace std
 
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 /** @brief
  * Helper class to store geometry layers configuration
@@ -215,25 +230,29 @@ namespace SketcherGui {
  * 1. A N:N relationship between logical layers and coin layers.
  * 2. A M:N relationship between logical layers and coin layers (M<N), including a 1:N relationship.
  */
-class GeometryLayerParameters {
+class GeometryLayerParameters
+{
 
 public:
-    GeometryLayerParameters() { reset();}
+    GeometryLayerParameters() { reset(); }
 
 private:
-    enum CoinLayer {
+    enum CoinLayer
+    {
         Default = 0
     };
 
 public:
-    void reset() {
+    void reset()
+    {
         CoinLayers = 1;
         logicalLayer2CoinLayer.clear();
         logicalLayer2CoinLayer.push_back(Default); // Logical layer 1 always maps to CoinLayer 1
     }
 
-    int getCoinLayer(int logicallayer) {
-        if(logicallayer < int(logicalLayer2CoinLayer.size()))
+    int getCoinLayer(int logicallayer)
+    {
+        if (logicallayer < int(logicalLayer2CoinLayer.size()))
             return logicalLayer2CoinLayer[logicallayer];
 
         return Default;
@@ -248,10 +267,10 @@ private:
 
 /** @brief     Struct to hold the results of analysis performed on geometry
 */
-struct AnalysisResults { // TODO: This needs to be refactored
-    double combRepresentationScale = 0;     // used for information overlay (BSpline comb)
-    float boundingBoxMagnitudeOrder = 0;    // used for grid extension
-    std::vector<int> bsplineGeoIds;         // used for information overlay
+struct AnalysisResults {                 // TODO: This needs to be refactored
+    double combRepresentationScale = 0;  // used for information overlay (BSpline comb)
+    float boundingBoxMagnitudeOrder = 0; // used for grid extension
+    std::vector<int> bsplineGeoIds;      // used for information overlay
 };
 
 /** @brief      Struct adapted to store the parameters necessary to create and update
@@ -274,9 +293,9 @@ struct OverlayParameters {
  *  constraints.
  */
 struct ConstraintParameters {
-    bool bHideUnits;                    // whether units should be hidden or not
-    bool bShowDimensionalName;          // whether the name of dimensional constraints should be shown or not
-    QString sDimensionalStringFormat;   // how to code strings of dimensional constraints
+    bool bHideUnits;           // whether units should be hidden or not
+    bool bShowDimensionalName; // whether the name of dimensional constraints should be shown or not
+    QString sDimensionalStringFormat; // how to code strings of dimensional constraints
 };
 
 /** @brief      Helper struct adapted to store the pointer to edit mode scenegraph objects.
@@ -284,52 +303,52 @@ struct ConstraintParameters {
 struct EditModeScenegraphNodes {
     /** @name Point nodes*/
     //@{
-    SoSeparator *                   EditRoot;
-    SmSwitchboard *                 PointsGroup;
-    std::vector<SoMaterial *>       PointsMaterials;
-    std::vector<SoCoordinate3 *>    PointsCoordinate;
-    std::vector<SoDrawStyle *>      PointsDrawStyle;
-    std::vector<SoMarkerSet *>      PointSet;
+    SoSeparator *EditRoot;
+    SmSwitchboard *PointsGroup;
+    std::vector<SoMaterial *> PointsMaterials;
+    std::vector<SoCoordinate3 *> PointsCoordinate;
+    std::vector<SoDrawStyle *> PointsDrawStyle;
+    std::vector<SoMarkerSet *> PointSet;
     //@}
 
     /** @name Curve nodes*/
     //@{
-    SmSwitchboard *                 CurvesGroup;
-    std::vector<SoMaterial *>       CurvesMaterials;
-    std::vector<SoCoordinate3 *>    CurvesCoordinate;
-    std::vector<SoDrawStyle *>      CurvesDrawStyle;
-    std::vector<SoLineSet *>        CurveSet;
+    SmSwitchboard *CurvesGroup;
+    std::vector<SoMaterial *> CurvesMaterials;
+    std::vector<SoCoordinate3 *> CurvesCoordinate;
+    std::vector<SoDrawStyle *> CurvesDrawStyle;
+    std::vector<SoLineSet *> CurveSet;
     //@}
 
     /** @name Axes nodes*/
     /// @warning Root Point is added together with the Point nodes above
     //@{
-    SoMaterial    *RootCrossMaterials;
+    SoMaterial *RootCrossMaterials;
     SoCoordinate3 *RootCrossCoordinate;
-    SoLineSet     *RootCrossSet;
-    SoDrawStyle   *RootCrossDrawStyle;
+    SoLineSet *RootCrossSet;
+    SoDrawStyle *RootCrossDrawStyle;
     //@}
 
     /** @name Temporal edit curve nodes - For geometry creation */
     //@{
-    SoMaterial    *EditCurvesMaterials;
+    SoMaterial *EditCurvesMaterials;
     SoCoordinate3 *EditCurvesCoordinate;
-    SoLineSet     *EditCurveSet;
-    SoDrawStyle   *EditCurvesDrawStyle;
-    SoPickStyle   *pickStyleAxes;
+    SoLineSet *EditCurveSet;
+    SoDrawStyle *EditCurvesDrawStyle;
+    SoPickStyle *pickStyleAxes;
     //@}
 
     /** @name Temporal edit markers nodes- For operation rendering, such as trimming green circles*/
     //@{
-    SoMaterial    *EditMarkersMaterials;
+    SoMaterial *EditMarkersMaterials;
     SoCoordinate3 *EditMarkersCoordinate;
-    SoMarkerSet   *EditMarkerSet;
-    SoDrawStyle   *EditMarkersDrawStyle;
+    SoMarkerSet *EditMarkerSet;
+    SoDrawStyle *EditMarkersDrawStyle;
     //@}
 
     /** @name Temporal edit text nodes*/
     //@{
-    SoText2       *textX;
+    SoText2 *textX;
     SoTranslation *textPos;
     //@}
 
@@ -337,13 +356,13 @@ struct EditModeScenegraphNodes {
     //@{
     SmSwitchboard *constrGroup;
     SoPickStyle *constrGrpSelect;
-    SoDrawStyle   *ConstraintDrawStyle;
+    SoDrawStyle *ConstraintDrawStyle;
     //@}
 
     /** @name Information Overlay Layer nodes*/
     //@{
-    SoGroup       *infoGroup;
-    SoDrawStyle   *InformationDrawStyle;
+    SoGroup *infoGroup;
+    SoDrawStyle *InformationDrawStyle;
     //@}
 };
 
@@ -354,7 +373,8 @@ struct EditModeScenegraphNodes {
  */
 struct CoinMapping {
 
-    void clear() {
+    void clear()
+    {
         CurvIdToGeoId.clear();
         PointIdToGeoId.clear();
         GeoElementId2SetId.clear();
@@ -362,49 +382,58 @@ struct CoinMapping {
     };
 
     /// given the MF index of a curve and the coin layer in which it is drawn returns the GeoId of the curve
-    int getCurveGeoId(int curveindex, int layerindex) {return CurvIdToGeoId[layerindex][curveindex];}
+    int getCurveGeoId(int curveindex, int layerindex)
+    {
+        return CurvIdToGeoId[layerindex][curveindex];
+    }
     /// given the MF index of a point and the coin layer in which it is drawn returns the GeoId of the point
-    int getPointGeoId(int pointindex, int layerindex) {return PointIdToGeoId[layerindex][pointindex];}
+    int getPointGeoId(int pointindex, int layerindex)
+    {
+        return PointIdToGeoId[layerindex][pointindex];
+    }
     /// given the MF index of a point and the coin layer in which it is drawn returns the VertexId of the point
-    int getPointVertexId(int pointindex, int layerindex) {return PointIdToVertexId[layerindex][pointindex];}
+    int getPointVertexId(int pointindex, int layerindex)
+    {
+        return PointIdToVertexId[layerindex][pointindex];
+    }
 
     /// given the {GeoId, PointPos} of a curve or point, returns MultiFieldId containing the MF index and the coin layer of the curve or point
-    MultiFieldId getIndexLayer(int geoid, Sketcher::PointPos pos) {
+    MultiFieldId getIndexLayer(int geoid, Sketcher::PointPos pos)
+    {
         auto indexit = GeoElementId2SetId.find(Sketcher::GeoElementId(geoid, pos));
 
-        if (indexit != GeoElementId2SetId.end()) {
-            return indexit->second;
-        }
+        if (indexit != GeoElementId2SetId.end()) { return indexit->second; }
 
         return MultiFieldId::Invalid;
     }
 
     /// given the VertexId of a point, returns MultiFieldId containing the MF index and the coin layer of the point
-    MultiFieldId getIndexLayer(int vertexId) {
+    MultiFieldId getIndexLayer(int vertexId)
+    {
 
-        for(size_t l=0; l<PointIdToVertexId.size(); l++) {
-            auto indexit = std::find(PointIdToVertexId[l].begin(), PointIdToVertexId[l].end(), vertexId);
+        for (size_t l = 0; l < PointIdToVertexId.size(); l++) {
+            auto indexit =
+                std::find(PointIdToVertexId[l].begin(), PointIdToVertexId[l].end(), vertexId);
 
-            if(indexit != PointIdToVertexId[l].end())
-                return MultiFieldId(std::distance(PointIdToVertexId[l].begin(),indexit),l);
+            if (indexit != PointIdToVertexId[l].end())
+                return MultiFieldId(std::distance(PointIdToVertexId[l].begin(), indexit), l);
         }
 
         return MultiFieldId::Invalid;
     }
 
     //* These map a MF index (second index) within a coin layer (first index) for points or curves to a GeoId */
-    std::vector<std::vector<int>> CurvIdToGeoId; // conversion of SoLineSet index to GeoId
+    std::vector<std::vector<int>> CurvIdToGeoId;  // conversion of SoLineSet index to GeoId
     std::vector<std::vector<int>> PointIdToGeoId; // conversion of SoCoordinate3 index to GeoId
 
     //* This maps an MF index (second index) of a point within a coin layer (first index) to a global VertexId */
     std::vector<std::vector<int>> PointIdToVertexId;
 
     /// This maps GeoElementId index {GeoId, PointPos} to a {coin layer and MF index} of a curve or point.
-    std::map<Sketcher::GeoElementId,MultiFieldId> GeoElementId2SetId;
+    std::map<Sketcher::GeoElementId, MultiFieldId> GeoElementId2SetId;
 };
 
 
 } // namespace SketcherGui
 
 #endif // SKETCHERGUI_EditModeCoinManagerParameters_H
-

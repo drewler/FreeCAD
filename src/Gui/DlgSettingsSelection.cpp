@@ -32,20 +32,18 @@ using namespace Gui::Dialog;
 
 /* TRANSLATOR Gui::Dialog::DlgSettingsSelection */
 
-DlgSettingsSelection::DlgSettingsSelection(QWidget* parent)
-    : PreferencePage(parent)
-    , ui(new Ui_DlgSettingsSelection)
+DlgSettingsSelection::DlgSettingsSelection(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsSelection)
 {
     ui->setupUi(this);
 }
 
-DlgSettingsSelection::~DlgSettingsSelection()
-{
-}
+DlgSettingsSelection::~DlgSettingsSelection() {}
 
 void DlgSettingsSelection::saveSettings()
 {
-    auto handle = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/TreeView");
+    auto handle = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/TreeView");
     handle->SetBool("SyncView", ui->checkBoxAutoSwitch->isChecked());
     handle->SetBool("SyncSelection", ui->checkBoxAutoExpand->isChecked());
     handle->SetBool("PreSelection", ui->checkBoxPreselect->isChecked());
@@ -55,7 +53,8 @@ void DlgSettingsSelection::saveSettings()
 
 void DlgSettingsSelection::loadSettings()
 {
-    auto handle = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/TreeView");
+    auto handle = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/TreeView");
     ui->checkBoxAutoSwitch->setChecked(handle->GetBool("SyncView", true));
     ui->checkBoxAutoExpand->setChecked(handle->GetBool("SyncSelection", true));
     ui->checkBoxPreselect->setChecked(handle->GetBool("PreSelection", true));
@@ -65,13 +64,10 @@ void DlgSettingsSelection::loadSettings()
 
 void DlgSettingsSelection::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }
 }
 
 #include "moc_DlgSettingsSelection.cpp"
-

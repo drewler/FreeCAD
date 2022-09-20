@@ -41,24 +41,19 @@ class DrawViewPart;
 class DrawViewDimension;
 
 /// Additional functions for working with Dimensions
-class TechDrawExport DrawDimHelper {
-    public:
-    static void makeExtentDim(DrawViewPart* dvp,
-                              std::vector<std::string> edgeNames,
-                              int direction);
-    static gp_Pnt findClosestPoint(std::vector<TopoDS_Edge> inEdges,
-                                   TopoDS_Edge& boundary);
+class TechDrawExport DrawDimHelper
+{
+public:
+    static void makeExtentDim(DrawViewPart *dvp, std::vector<std::string> edgeNames, int direction);
+    static gp_Pnt findClosestPoint(std::vector<TopoDS_Edge> inEdges, TopoDS_Edge &boundary);
 
 
-    static TechDraw::DrawViewDimension* makeDistDim(DrawViewPart* dvp,
-                                                    std::string dimType,
-                                                    Base::Vector3d refMin,
-                                                    Base::Vector3d refMax,
+    static TechDraw::DrawViewDimension *makeDistDim(DrawViewPart *dvp, std::string dimType,
+                                                    Base::Vector3d refMin, Base::Vector3d refMax,
                                                     bool extent = false);
 
-    static std::pair<Base::Vector3d, Base::Vector3d> minMax(DrawViewPart* dvp,
-                                                            std::vector<std::string> edgeNames,
-                                                            int direction);
+    static std::pair<Base::Vector3d, Base::Vector3d>
+    minMax(DrawViewPart *dvp, std::vector<std::string> edgeNames, int direction);
 };
 
 } //end namespace TechDraw

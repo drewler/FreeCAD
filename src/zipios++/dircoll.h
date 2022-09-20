@@ -8,65 +8,60 @@
 #include "basicentry.h"
 #include "filepath.h"
 
-namespace zipios {
+namespace zipios
+{
 
 /** DirEntry is a BasicEntry. */
-typedef BasicEntry DirEntry ;
+typedef BasicEntry DirEntry;
 
 /** \anchor dircol_anchor
     DirectoryCollection is a FileCollection that obtains its entries
     from a directory. */
-class DirectoryCollection : public FileCollection {
+class DirectoryCollection: public FileCollection
+{
 public:
-
-  /** Default Constructor. */
-  explicit DirectoryCollection() 
-    : _entries_loaded( false ), _recursive( true ) {}
+    /** Default Constructor. */
+    explicit DirectoryCollection() : _entries_loaded(false), _recursive(true) {}
 
 
-  /** Constructor.
+    /** Constructor.
       @param path A directory path name. If the name is not a valid directory
                   the created DirectoryCollection will be invalid.
       @param recursive 
       @param load_now Load directory into memory now. Otherwise it will
                       be done when it is first needed.
   */
-  explicit DirectoryCollection( const string &path, 
-				bool recursive = true,
-				bool load_now = false ) ;
+    explicit DirectoryCollection(const string &path, bool recursive = true, bool load_now = false);
 
-  /* Default Copy constructor and copy assignment operator are sufficient. */
+    /* Default Copy constructor and copy assignment operator are sufficient. */
 
-  virtual void close() ;
+    virtual void close();
 
-  virtual ConstEntries entries() const ;
+    virtual ConstEntries entries() const;
 
-  virtual ConstEntryPointer getEntry( const string &name, 
-				     MatchPath matchpath = MATCH ) const ;
+    virtual ConstEntryPointer getEntry(const string &name, MatchPath matchpath = MATCH) const;
 
-  virtual istream *getInputStream( const ConstEntryPointer &entry ) ;
+    virtual istream *getInputStream(const ConstEntryPointer &entry);
 
-  virtual istream *getInputStream( const string &entry_name, 
-				     MatchPath matchpath = MATCH ) ;
+    virtual istream *getInputStream(const string &entry_name, MatchPath matchpath = MATCH);
 
-  virtual int size() const ;
+    virtual int size() const;
 
-  virtual FileCollection *clone() const ;
+    virtual FileCollection *clone() const;
 
-  /** Destructor. */
-  virtual ~DirectoryCollection() ;
+    /** Destructor. */
+    virtual ~DirectoryCollection();
 
 protected:
-  mutable bool _entries_loaded ;
-  bool _recursive ; // recurse into subdirs.
-  FilePath _filepath ;
+    mutable bool _entries_loaded;
+    bool _recursive; // recurse into subdirs.
+    FilePath _filepath;
 
-  void loadEntries() const ;
-  void load( bool recursive, const FilePath &subdir = FilePath() ) ;
- 
+    void loadEntries() const;
+    void load(bool recursive, const FilePath &subdir = FilePath());
 };
- 
-} // namespace
+
+} // namespace zipios
 
 #endif
 

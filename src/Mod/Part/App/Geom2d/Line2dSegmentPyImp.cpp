@@ -22,10 +22,10 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <GCE2d_MakeSegment.hxx>
-# include <Geom2d_Line.hxx>
-# include <Geom2d_TrimmedCurve.hxx>
-# include <gp_Lin2d.hxx>
+#include <GCE2d_MakeSegment.hxx>
+#include <Geom2d_Line.hxx>
+#include <Geom2d_TrimmedCurve.hxx>
+#include <gp_Lin2d.hxx>
 #endif
 
 #include <Base/GeometryPyCXX.h>
@@ -38,22 +38,19 @@
 
 using namespace Part;
 
-extern const char* gce_ErrorStatusText(gce_ErrorType et);
+extern const char *gce_ErrorStatusText(gce_ErrorType et);
 
 // returns a string which represents the object e.g. when printed in python
-std::string Line2dSegmentPy::representation() const
-{
-    return "<Line2dSegment object>";
-}
+std::string Line2dSegmentPy::representation() const { return "<Line2dSegment object>"; }
 
-PyObject *Line2dSegmentPy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *Line2dSegmentPy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     // create a new instance of Line2dSegmentPy and the Twin object
     return new Line2dSegmentPy(new Geom2dLineSegment);
 }
 
 // constructor method
-int Line2dSegmentPy::PyInit(PyObject* args, PyObject* /*kwd*/)
+int Line2dSegmentPy::PyInit(PyObject *args, PyObject * /*kwd*/)
 {
     if (PyArg_ParseTuple(args, "")) {
         // default line
@@ -64,17 +61,15 @@ int Line2dSegmentPy::PyInit(PyObject* args, PyObject* /*kwd*/)
     PyObject *pLine;
     if (PyArg_ParseTuple(args, "O!", &(Line2dSegmentPy::Type), &pLine)) {
         // Copy line
-        Line2dSegmentPy* pcLine = static_cast<Line2dSegmentPy*>(pLine);
+        Line2dSegmentPy *pcLine = static_cast<Line2dSegmentPy *>(pLine);
         // get Geom_Line of line segment
-        Handle(Geom2d_TrimmedCurve) that_curv = Handle(Geom2d_TrimmedCurve)::DownCast
-            (pcLine->getGeom2dLineSegmentPtr()->handle());
-        Handle(Geom2d_Line) that_line = Handle(Geom2d_Line)::DownCast
-            (that_curv->BasisCurve());
+        Handle(Geom2d_TrimmedCurve) that_curv =
+            Handle(Geom2d_TrimmedCurve)::DownCast(pcLine->getGeom2dLineSegmentPtr()->handle());
+        Handle(Geom2d_Line) that_line = Handle(Geom2d_Line)::DownCast(that_curv->BasisCurve());
         // get Geom_Line of line segment
-        Handle(Geom2d_TrimmedCurve) this_curv = Handle(Geom2d_TrimmedCurve)::DownCast
-            (this->getGeom2dLineSegmentPtr()->handle());
-        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast
-            (this_curv->BasisCurve());
+        Handle(Geom2d_TrimmedCurve) this_curv =
+            Handle(Geom2d_TrimmedCurve)::DownCast(this->getGeom2dLineSegmentPtr()->handle());
+        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast(this_curv->BasisCurve());
 
         // Assign the lines
         this_line->SetLin2d(that_line->Lin2d());
@@ -86,17 +81,15 @@ int Line2dSegmentPy::PyInit(PyObject* args, PyObject* /*kwd*/)
     double first, last;
     if (PyArg_ParseTuple(args, "O!dd", &(Line2dSegmentPy::Type), &pLine, &first, &last)) {
         // Copy line
-        Line2dSegmentPy* pcLine = static_cast<Line2dSegmentPy*>(pLine);
+        Line2dSegmentPy *pcLine = static_cast<Line2dSegmentPy *>(pLine);
         // get Geom_Line of line segment
-        Handle(Geom2d_TrimmedCurve) that_curv = Handle(Geom2d_TrimmedCurve)::DownCast
-            (pcLine->getGeom2dLineSegmentPtr()->handle());
-        Handle(Geom2d_Line) that_line = Handle(Geom2d_Line)::DownCast
-            (that_curv->BasisCurve());
+        Handle(Geom2d_TrimmedCurve) that_curv =
+            Handle(Geom2d_TrimmedCurve)::DownCast(pcLine->getGeom2dLineSegmentPtr()->handle());
+        Handle(Geom2d_Line) that_line = Handle(Geom2d_Line)::DownCast(that_curv->BasisCurve());
         // get Geom_Line of line segment
-        Handle(Geom2d_TrimmedCurve) this_curv = Handle(Geom2d_TrimmedCurve)::DownCast
-            (this->getGeom2dLineSegmentPtr()->handle());
-        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast
-            (this_curv->BasisCurve());
+        Handle(Geom2d_TrimmedCurve) this_curv =
+            Handle(Geom2d_TrimmedCurve)::DownCast(this->getGeom2dLineSegmentPtr()->handle());
+        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast(this_curv->BasisCurve());
 
         // Assign the lines
         this_line->SetLin2d(that_line->Lin2d());
@@ -107,15 +100,14 @@ int Line2dSegmentPy::PyInit(PyObject* args, PyObject* /*kwd*/)
     PyErr_Clear();
     if (PyArg_ParseTuple(args, "O!dd", &(Line2dPy::Type), &pLine, &first, &last)) {
         // Copy line
-        Line2dPy* pcLine = static_cast<Line2dPy*>(pLine);
+        Line2dPy *pcLine = static_cast<Line2dPy *>(pLine);
         // get Geom_Line of line
-        Handle(Geom2d_Line) that_line = Handle(Geom2d_Line)::DownCast
-            (pcLine->getGeom2dLinePtr()->handle());
+        Handle(Geom2d_Line) that_line =
+            Handle(Geom2d_Line)::DownCast(pcLine->getGeom2dLinePtr()->handle());
         // get Geom_Line of line segment
-        Handle(Geom2d_TrimmedCurve) this_curv = Handle(Geom2d_TrimmedCurve)::DownCast
-            (this->getGeom2dLineSegmentPtr()->handle());
-        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast
-            (this_curv->BasisCurve());
+        Handle(Geom2d_TrimmedCurve) this_curv =
+            Handle(Geom2d_TrimmedCurve)::DownCast(this->getGeom2dLineSegmentPtr()->handle());
+        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast(this_curv->BasisCurve());
 
         // Assign the lines
         this_line->SetLin2d(that_line->Lin2d());
@@ -126,34 +118,31 @@ int Line2dSegmentPy::PyInit(PyObject* args, PyObject* /*kwd*/)
     PyErr_Clear();
     PyObject *pV1, *pV2;
     if (PyArg_ParseTuple(args, "O!O!", Base::Vector2dPy::type_object(), &pV1,
-                                       Base::Vector2dPy::type_object(), &pV2)) {
+                         Base::Vector2dPy::type_object(), &pV2)) {
         Base::Vector2d v1 = Py::toVector2d(pV1);
         Base::Vector2d v2 = Py::toVector2d(pV2);
         try {
             // Create line out of two points
-            double distance = (v1-v2).Length();
-            if (distance < gp::Resolution())
-                Standard_Failure::Raise("Both points are equal");
-            GCE2d_MakeSegment ms(gp_Pnt2d(v1.x,v1.y),
-                                 gp_Pnt2d(v2.x,v2.y));
+            double distance = (v1 - v2).Length();
+            if (distance < gp::Resolution()) Standard_Failure::Raise("Both points are equal");
+            GCE2d_MakeSegment ms(gp_Pnt2d(v1.x, v1.y), gp_Pnt2d(v2.x, v2.y));
             if (!ms.IsDone()) {
                 PyErr_SetString(PartExceptionOCCError, gce_ErrorStatusText(ms.Status()));
                 return -1;
             }
 
             // get Geom_Line of line segment
-            Handle(Geom2d_TrimmedCurve) this_curv = Handle(Geom2d_TrimmedCurve)::DownCast
-                (this->getGeom2dLineSegmentPtr()->handle());
-            Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast
-                (this_curv->BasisCurve());
+            Handle(Geom2d_TrimmedCurve) this_curv =
+                Handle(Geom2d_TrimmedCurve)::DownCast(this->getGeom2dLineSegmentPtr()->handle());
+            Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast(this_curv->BasisCurve());
             Handle(Geom2d_TrimmedCurve) that_curv = ms.Value();
             Handle(Geom2d_Line) that_line = Handle(Geom2d_Line)::DownCast(that_curv->BasisCurve());
             this_line->SetLin2d(that_line->Lin2d());
             this_curv->SetTrim(that_curv->FirstParameter(), that_curv->LastParameter());
             return 0;
         }
-        catch (Standard_Failure& e) {
-    
+        catch (Standard_Failure &e) {
+
             PyErr_SetString(PartExceptionOCCError, e.GetMessageString());
             return -1;
         }
@@ -163,39 +152,39 @@ int Line2dSegmentPy::PyInit(PyObject* args, PyObject* /*kwd*/)
         }
     }
 
-    PyErr_SetString(PyExc_TypeError, "Line2dSegment constructor accepts:\n"
-        "-- empty parameter list\n"
-        "-- Line2dSegment\n"
-        "-- Line2dSegment, float, float\n"
-        "-- Line2d, float, float\n"
-        "-- Point, Point");
+    PyErr_SetString(PyExc_TypeError,
+                    "Line2dSegment constructor accepts:\n"
+                    "-- empty parameter list\n"
+                    "-- Line2dSegment\n"
+                    "-- Line2dSegment, float, float\n"
+                    "-- Line2d, float, float\n"
+                    "-- Point, Point");
     return -1;
 }
 
-PyObject* Line2dSegmentPy::setParameterRange(PyObject *args)
+PyObject *Line2dSegmentPy::setParameterRange(PyObject *args)
 {
     double first, last;
-    if (!PyArg_ParseTuple(args, "dd", &first, &last))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "dd", &first, &last)) return nullptr;
 
     try {
-        Handle(Geom2d_TrimmedCurve) this_curve = Handle(Geom2d_TrimmedCurve)::DownCast
-            (this->getGeom2dLineSegmentPtr()->handle());
+        Handle(Geom2d_TrimmedCurve) this_curve =
+            Handle(Geom2d_TrimmedCurve)::DownCast(this->getGeom2dLineSegmentPtr()->handle());
         this_curve->SetTrim(first, last);
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
 
         PyErr_SetString(PartExceptionOCCError, e.GetMessageString());
         return nullptr;
     }
 
-    Py_Return; 
+    Py_Return;
 }
 
 Py::Object Line2dSegmentPy::getStartPoint() const
 {
-    Handle(Geom2d_TrimmedCurve) this_curve = Handle(Geom2d_TrimmedCurve)::DownCast
-        (this->getGeom2dLineSegmentPtr()->handle());
+    Handle(Geom2d_TrimmedCurve) this_curve =
+        Handle(Geom2d_TrimmedCurve)::DownCast(this->getGeom2dLineSegmentPtr()->handle());
     gp_Pnt2d pnt = this_curve->StartPoint();
     return Base::Vector2dPy::create(pnt.X(), pnt.Y());
 }
@@ -203,8 +192,8 @@ Py::Object Line2dSegmentPy::getStartPoint() const
 void Line2dSegmentPy::setStartPoint(Py::Object arg)
 {
     gp_Pnt2d p1, p2;
-    Handle(Geom2d_TrimmedCurve) this_curv = Handle(Geom2d_TrimmedCurve)::DownCast
-        (this->getGeom2dLineSegmentPtr()->handle());
+    Handle(Geom2d_TrimmedCurve) this_curv =
+        Handle(Geom2d_TrimmedCurve)::DownCast(this->getGeom2dLineSegmentPtr()->handle());
     p2 = this_curv->EndPoint();
 
     PyObject *p = arg.ptr();
@@ -226,30 +215,26 @@ void Line2dSegmentPy::setStartPoint(Py::Object arg)
 
     try {
         // Create line out of two points
-        if (p1.Distance(p2) < gp::Resolution())
-            Standard_Failure::Raise("Both points are equal");
+        if (p1.Distance(p2) < gp::Resolution()) Standard_Failure::Raise("Both points are equal");
         GCE2d_MakeSegment ms(p1, p2);
-        if (!ms.IsDone()) {
-            throw Py::RuntimeError(gce_ErrorStatusText(ms.Status()));
-        }
+        if (!ms.IsDone()) { throw Py::RuntimeError(gce_ErrorStatusText(ms.Status())); }
 
         // get Geom_Line of line segment
-        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast
-            (this_curv->BasisCurve());
+        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast(this_curv->BasisCurve());
         Handle(Geom2d_TrimmedCurve) that_curv = ms.Value();
         Handle(Geom2d_Line) that_line = Handle(Geom2d_Line)::DownCast(that_curv->BasisCurve());
         this_line->SetLin2d(that_line->Lin2d());
         this_curv->SetTrim(that_curv->FirstParameter(), that_curv->LastParameter());
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         throw Py::RuntimeError(e.GetMessageString());
     }
 }
 
 Py::Object Line2dSegmentPy::getEndPoint() const
 {
-    Handle(Geom2d_TrimmedCurve) this_curve = Handle(Geom2d_TrimmedCurve)::DownCast
-        (this->getGeom2dLineSegmentPtr()->handle());
+    Handle(Geom2d_TrimmedCurve) this_curve =
+        Handle(Geom2d_TrimmedCurve)::DownCast(this->getGeom2dLineSegmentPtr()->handle());
     gp_Pnt2d pnt = this_curve->EndPoint();
     return Base::Vector2dPy::create(pnt.X(), pnt.Y());
 }
@@ -257,8 +242,8 @@ Py::Object Line2dSegmentPy::getEndPoint() const
 void Line2dSegmentPy::setEndPoint(Py::Object arg)
 {
     gp_Pnt2d p1, p2;
-    Handle(Geom2d_TrimmedCurve) this_curv = Handle(Geom2d_TrimmedCurve)::DownCast
-        (this->getGeom2dLineSegmentPtr()->handle());
+    Handle(Geom2d_TrimmedCurve) this_curv =
+        Handle(Geom2d_TrimmedCurve)::DownCast(this->getGeom2dLineSegmentPtr()->handle());
     p1 = this_curv->StartPoint();
 
     PyObject *p = arg.ptr();
@@ -280,32 +265,22 @@ void Line2dSegmentPy::setEndPoint(Py::Object arg)
 
     try {
         // Create line out of two points
-        if (p1.Distance(p2) < gp::Resolution())
-            Standard_Failure::Raise("Both points are equal");
+        if (p1.Distance(p2) < gp::Resolution()) Standard_Failure::Raise("Both points are equal");
         GCE2d_MakeSegment ms(p1, p2);
-        if (!ms.IsDone()) {
-            throw Py::RuntimeError(gce_ErrorStatusText(ms.Status()));
-        }
+        if (!ms.IsDone()) { throw Py::RuntimeError(gce_ErrorStatusText(ms.Status())); }
 
         // get Geom_Line of line segment
-        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast
-            (this_curv->BasisCurve());
+        Handle(Geom2d_Line) this_line = Handle(Geom2d_Line)::DownCast(this_curv->BasisCurve());
         Handle(Geom2d_TrimmedCurve) that_curv = ms.Value();
         Handle(Geom2d_Line) that_line = Handle(Geom2d_Line)::DownCast(that_curv->BasisCurve());
         this_line->SetLin2d(that_line->Lin2d());
         this_curv->SetTrim(that_curv->FirstParameter(), that_curv->LastParameter());
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         throw Py::RuntimeError(e.GetMessageString());
     }
 }
 
-PyObject *Line2dSegmentPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *Line2dSegmentPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int Line2dSegmentPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0; 
-}
+int Line2dSegmentPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

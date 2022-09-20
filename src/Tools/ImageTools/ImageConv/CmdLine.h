@@ -113,7 +113,7 @@
 
 
 #ifdef __AFX_H__
-// if we're using MFC, use CStrings 
+// if we're using MFC, use CStrings
 #define StringType CString
 #else
 // if we're not using MFC, use STL strings
@@ -121,38 +121,37 @@
 #endif
 
 // tell the compiler to shut up
-#pragma warning(disable:4786)
+#pragma warning(disable : 4786)
 
 //#include <iostream> // you may need this
 #include <map>
 #include <string>
 #include <vector>
-using namespace std ;
+using namespace std;
 
 // handy little container for our argument vector
-struct CCmdParam
-{
-   vector<StringType> m_strings;
+struct CCmdParam {
+    vector<StringType> m_strings;
 };
 
 // this class is actually a map of strings to vectors
 using _CCmdLine = map<StringType, CCmdParam>;
 
 // the command line parser class
-class CCmdLine : public _CCmdLine
+class CCmdLine: public _CCmdLine
 {
 
 public:
-   /*------------------------------------------------------
+    /*------------------------------------------------------
       int CCmdLine::SplitLine(int argc, char **argv)
 
       parse the command line into switches and arguments.
 
       returns number of switches found
    ------------------------------------------------------*/
-   int         SplitLine(int argc, char **argv);
+    int SplitLine(int argc, char **argv);
 
-   /*------------------------------------------------------
+    /*------------------------------------------------------
       bool CCmdLine::HasSwitch(const char *pSwitch)
 
       was the switch found on the command line ?
@@ -163,10 +162,10 @@ public:
       ----                          ------
       cmdLine.HasSwitch("-a")       true
       cmdLine.HasSwitch("-z")       false
-   ------------------------------------------------------*/   
-   bool        HasSwitch(const char *pSwitch);
+   ------------------------------------------------------*/
+    bool HasSwitch(const char *pSwitch);
 
-   /*------------------------------------------------------
+    /*------------------------------------------------------
 
       StringType CCmdLine::GetSafeArgument(const char *pSwitch, int iIdx, const char *pDefault)
 
@@ -187,9 +186,9 @@ public:
 
    ------------------------------------------------------*/
 
-   StringType  GetSafeArgument(const char *pSwitch, int iIdx, const char *pDefault);
+    StringType GetSafeArgument(const char *pSwitch, int iIdx, const char *pDefault);
 
-   /*------------------------------------------------------
+    /*------------------------------------------------------
 
       StringType CCmdLine::GetArgument(const char *pSwitch, int iIdx)
 
@@ -206,9 +205,9 @@ public:
       cmdLine.GetArgument("-b", 1)     throws (int)0, returns an empty string
 
    ------------------------------------------------------*/
-   StringType  GetArgument(const char *pSwitch, int iIdx); 
+    StringType GetArgument(const char *pSwitch, int iIdx);
 
-   /*------------------------------------------------------
+    /*------------------------------------------------------
       int CCmdLine::GetArgumentCount(const char *pSwitch)
 
       returns the number of arguments found for a given switch.
@@ -216,10 +215,10 @@ public:
       returns -1 if the switch was not found
 
    ------------------------------------------------------*/
-   int         GetArgumentCount(const char *pSwitch);
+    int GetArgumentCount(const char *pSwitch);
 
 protected:
-   /*------------------------------------------------------
+    /*------------------------------------------------------
 
    protected member function
    test a parameter to see if it's a switch :
@@ -229,7 +228,7 @@ protected:
    the first character of a switch must be non-numeric!
 
    ------------------------------------------------------*/
-   bool        IsSwitch(const char *pParam);
+    bool IsSwitch(const char *pParam);
 };
 
 #endif

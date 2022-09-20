@@ -50,124 +50,134 @@
 // This mimics the Python structure, in order to minimize confusion
 namespace Py
 {
-    class ExtensionExceptionType;
+class ExtensionExceptionType;
 
-    class Object;
+class Object;
 
-    class PYCXX_EXPORT BaseException
-    {
-    public:
-        BaseException( ExtensionExceptionType &exception, const std::string &reason );
-        BaseException( ExtensionExceptionType &exception, Object &reason );
-        BaseException( PyObject *exception, Object &reason );
-        BaseException( PyObject *exception, const std::string &reason );
-        explicit BaseException();
+class PYCXX_EXPORT BaseException
+{
+public:
+    BaseException(ExtensionExceptionType &exception, const std::string &reason);
+    BaseException(ExtensionExceptionType &exception, Object &reason);
+    BaseException(PyObject *exception, Object &reason);
+    BaseException(PyObject *exception, const std::string &reason);
+    explicit BaseException();
 
-        void clear(); // clear the error
+    void clear(); // clear the error
 
-        // is the exception this specific exception 'exc'
-        bool matches( ExtensionExceptionType &exc );
+    // is the exception this specific exception 'exc'
+    bool matches(ExtensionExceptionType &exc);
 
-        Object errorType(); // get the error type of the active exception
-        Object errorValue();// get the error value of the active exception
-    };
+    Object errorType();  // get the error type of the active exception
+    Object errorValue(); // get the error value of the active exception
+};
 
-    // for user defined exceptions to be made know to pycxx
-    typedef void (*throw_exception_func_t)( void );
-    void addPythonException( ExtensionExceptionType &py_exc_type, throw_exception_func_t throw_func );
+// for user defined exceptions to be made know to pycxx
+typedef void (*throw_exception_func_t)(void);
+void addPythonException(ExtensionExceptionType &py_exc_type, throw_exception_func_t throw_func);
 
-#if defined( PYCXX_6_2_COMPATIBILITY )
-    class PYCXX_EXPORT Exception : public BaseException
-    {
-    public:
-        Exception( ExtensionExceptionType &exception, const std::string &reason )
-        : BaseException( exception, reason )
-        {}
+#if defined(PYCXX_6_2_COMPATIBILITY)
+class PYCXX_EXPORT Exception: public BaseException
+{
+public:
+    Exception(ExtensionExceptionType &exception, const std::string &reason)
+        : BaseException(exception, reason)
+    {}
 
-        Exception( ExtensionExceptionType &exception, Object &reason )
-        : BaseException( exception, reason )
-        {}
+    Exception(ExtensionExceptionType &exception, Object &reason) : BaseException(exception, reason)
+    {}
 
-        Exception( PyObject *exception, Object &reason  )
-        : BaseException( exception, reason  )
-        {}
+    Exception(PyObject *exception, Object &reason) : BaseException(exception, reason) {}
 
-        Exception( PyObject *exception, const std::string &reason )
-        : BaseException( exception, reason )
-        {}
+    Exception(PyObject *exception, const std::string &reason) : BaseException(exception, reason) {}
 
-        explicit Exception()
-        : BaseException()
-        {}
-    };
+    explicit Exception() : BaseException() {}
+};
 #endif
 
-#define PYCXX_STANDARD_EXCEPTION( eclass, bclass ) \
-    class PYCXX_EXPORT eclass : public bclass \
-    { \
-    public: \
-        eclass() {} \
-        eclass( const char *reason ) { PyErr_SetString( _Exc_##eclass(), reason ); } \
-        eclass( const std::string &reason ) { PyErr_SetString( _Exc_##eclass(), reason.c_str() ); } \
-        ~eclass() {} \
-        \
-        static void throwFunc() { throw eclass(); } \
-        static PyObject *exceptionType() { return _Exc_##eclass(); } \
-    }; \
+#define PYCXX_STANDARD_EXCEPTION(eclass, bclass)                                                   \
+    class PYCXX_EXPORT eclass: public bclass                                                       \
+    {                                                                                              \
+    public:                                                                                        \
+        eclass()                                                                                   \
+        {}                                                                                         \
+        eclass(const char *reason)                                                                 \
+        {                                                                                          \
+            PyErr_SetString(_Exc_##eclass(), reason);                                              \
+        }                                                                                          \
+        eclass(const std::string &reason)                                                          \
+        {                                                                                          \
+            PyErr_SetString(_Exc_##eclass(), reason.c_str());                                      \
+        }                                                                                          \
+        ~eclass()                                                                                  \
+        {}                                                                                         \
+                                                                                                   \
+        static void throwFunc()                                                                    \
+        {                                                                                          \
+            throw eclass();                                                                        \
+        }                                                                                          \
+        static PyObject *exceptionType()                                                           \
+        {                                                                                          \
+            return _Exc_##eclass();                                                                \
+        }                                                                                          \
+    };
 
 #include <CXX/Python3/cxx_standard_exceptions.hxx>
 
 #undef PYCXX_STANDARD_EXCEPTION
 
-#define PYCXX_USER_EXCEPTION_STR_ARG( uclass ) \
-class PYCXX_EXPORT uclass : public Py::BaseException \
-{ \
-public: \
-    uclass( const std::string &reason ) \
-    : Py::BaseException( m_error, reason ) \
-    { } \
-    ~uclass() {} \
-    static void init( Py::ExtensionModuleBase &module ) \
-    { \
-        m_error.init( module, #uclass ); \
-        Py::addPythonException( m_error, throwFunc ); \
-        Py::Dict d( module.moduleDictionary() ); \
-        d[#uclass] = m_error; \
-    } \
-private: \
-    uclass() : Py::BaseException() {} \
-    static void throwFunc() \
-    { \
-        throw uclass(); \
-    } \
-    static Py::ExtensionExceptionType m_error; \
-}; \
-Py::ExtensionExceptionType uclass::m_error;
+#define PYCXX_USER_EXCEPTION_STR_ARG(uclass)                                                       \
+    class PYCXX_EXPORT uclass: public Py::BaseException                                            \
+    {                                                                                              \
+    public:                                                                                        \
+        uclass(const std::string &reason) : Py::BaseException(m_error, reason)                     \
+        {}                                                                                         \
+        ~uclass()                                                                                  \
+        {}                                                                                         \
+        static void init(Py::ExtensionModuleBase &module)                                          \
+        {                                                                                          \
+            m_error.init(module, #uclass);                                                         \
+            Py::addPythonException(m_error, throwFunc);                                            \
+            Py::Dict d(module.moduleDictionary());                                                 \
+            d[#uclass] = m_error;                                                                  \
+        }                                                                                          \
+                                                                                                   \
+    private:                                                                                       \
+        uclass() : Py::BaseException()                                                             \
+        {}                                                                                         \
+        static void throwFunc()                                                                    \
+        {                                                                                          \
+            throw uclass();                                                                        \
+        }                                                                                          \
+        static Py::ExtensionExceptionType m_error;                                                 \
+    };                                                                                             \
+    Py::ExtensionExceptionType uclass::m_error;
 
-#define PYCXX_USER_EXCEPTION_NO_ARG( uclass ) \
-class PYCXX_EXPORT uclass : public Py::BaseException \
-{ \
-public: \
-    uclass() \
-    : Py::BaseException() \
-    { } \
-    ~uclass() {} \
-    static void init( Py::ExtensionModuleBase &module ) \
-    { \
-        m_error.init( module, #uclass ); \
-        Py::addPythonException( m_error, throwFunc ); \
-        Py::Dict d( module.moduleDictionary() ); \
-        d[#uclass] = m_error; \
-    } \
-private: \
-    static void throwFunc() \
-    { \
-        throw uclass(); \
-    } \
-    static Py::ExtensionExceptionType m_error; \
-}; \
-Py::ExtensionExceptionType uclass::m_error;
+#define PYCXX_USER_EXCEPTION_NO_ARG(uclass)                                                        \
+    class PYCXX_EXPORT uclass: public Py::BaseException                                            \
+    {                                                                                              \
+    public:                                                                                        \
+        uclass() : Py::BaseException()                                                             \
+        {}                                                                                         \
+        ~uclass()                                                                                  \
+        {}                                                                                         \
+        static void init(Py::ExtensionModuleBase &module)                                          \
+        {                                                                                          \
+            m_error.init(module, #uclass);                                                         \
+            Py::addPythonException(m_error, throwFunc);                                            \
+            Py::Dict d(module.moduleDictionary());                                                 \
+            d[#uclass] = m_error;                                                                  \
+        }                                                                                          \
+                                                                                                   \
+    private:                                                                                       \
+        static void throwFunc()                                                                    \
+        {                                                                                          \
+            throw uclass();                                                                        \
+        }                                                                                          \
+        static Py::ExtensionExceptionType m_error;                                                 \
+    };                                                                                             \
+    Py::ExtensionExceptionType uclass::m_error;
 
-}// Py
+} // namespace Py
 
 #endif

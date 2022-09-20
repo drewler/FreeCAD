@@ -35,14 +35,15 @@ class QGraphicsSceneMouseEvent;
 class QEvent;
 QT_END_NAMESPACE
 
-namespace TechDraw {
-    class DrawProjGroup;
+namespace TechDraw
+{
+class DrawProjGroup;
 }
 
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGIProjGroup : public QGIViewCollection
+class TechDrawGuiExport QGIProjGroup: public QGIViewCollection
 {
 public:
     QGIProjGroup();
@@ -50,8 +51,11 @@ public:
     // TODO: if the QGIVO is deleted, should we clean up any remaining QGIVParts??
     ~QGIProjGroup() override = default;
 
-    enum {Type = QGraphicsItem::UserType + 113};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 113
+    };
+    int type() const override { return Type; }
 
     void alignTo(QGIProjGroup *, const QString &alignment);
 
@@ -60,22 +64,22 @@ public:
     void drawBorder() override;
 
 protected:
-    bool sceneEventFilter(QGraphicsItem* watched, QEvent *event) override;
+    bool sceneEventFilter(QGraphicsItem *watched, QEvent *event) override;
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
     // Mouse handling
-    void mouseMoveEvent(QGraphicsSceneMouseEvent * event ) override;
-    void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
-    QGIView * getAnchorQItem() const;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    QGIView *getAnchorQItem() const;
 
 private:
     /// Convenience function
-    TechDraw::DrawProjGroup* getDrawView() const;
+    TechDraw::DrawProjGroup *getDrawView() const;
 
-    QGraphicsItem* m_origin;
+    QGraphicsItem *m_origin;
     QPoint mousePos;
 };
 
-} // namespace MDIViewPageGui
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGIProjGroup_H

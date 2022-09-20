@@ -32,23 +32,20 @@
 
 #include <NCollection_DefineDataMap.hxx>
 
-SMESH_EXPORT 
-inline Standard_Integer HashCode(SMDS_MeshElementPtr theElem,
-                                 const Standard_Integer theUpper)
+SMESH_EXPORT
+inline Standard_Integer HashCode(SMDS_MeshElementPtr theElem, const Standard_Integer theUpper)
 {
-  void* anElem = (void*) theElem;
-  return HashCode(anElem,theUpper);
+    void *anElem = (void *)theElem;
+    return HashCode(anElem, theUpper);
 }
 
-SMESH_EXPORT 
-inline Standard_Boolean IsEqual(SMDS_MeshElementPtr theOne,
-                                SMDS_MeshElementPtr theTwo)
+SMESH_EXPORT
+inline Standard_Boolean IsEqual(SMDS_MeshElementPtr theOne, SMDS_MeshElementPtr theTwo)
 {
-  return theOne == theTwo;
+    return theOne == theTwo;
 }
 
-DEFINE_BASECOLLECTION (SMESH_BaseCollectionSequenceOfElemPtr, SMESH_SequenceOfElemPtr)
-DEFINE_DATAMAP (SMESH_DataMapOfElemPtrSequenceOfElemPtr,
-                SMESH_BaseCollectionSequenceOfElemPtr,
-                SMDS_MeshElementPtr, SMESH_SequenceOfElemPtr)
-#endif 
+DEFINE_BASECOLLECTION(SMESH_BaseCollectionSequenceOfElemPtr, SMESH_SequenceOfElemPtr)
+DEFINE_DATAMAP(SMESH_DataMapOfElemPtrSequenceOfElemPtr, SMESH_BaseCollectionSequenceOfElemPtr,
+               SMDS_MeshElementPtr, SMESH_SequenceOfElemPtr)
+#endif

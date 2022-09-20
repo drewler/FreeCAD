@@ -34,8 +34,8 @@
 class SMESH_EXPORT SMESH_0D_Algo: public SMESH_Algo
 {
 public:
-  SMESH_0D_Algo(int hypId, int studyId,  SMESH_Gen* gen);
-  virtual ~SMESH_0D_Algo();
+    SMESH_0D_Algo(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~SMESH_0D_Algo();
 };
 
 #endif

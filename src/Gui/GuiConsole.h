@@ -27,7 +27,8 @@
 
 #include <Base/Console.h>
 
-namespace Gui {
+namespace Gui
+{
 
 /** The console window class
  *  This class opens a console window when instantiated
@@ -40,22 +41,21 @@ namespace Gui {
  *  @see FCConsole
  *  \author Jürgen Riegel
  */
-class GuiExport GUIConsole :public Base::ILogger
+class GuiExport GUIConsole: public Base::ILogger
 {
 public:
-  /// Constructor
-  GUIConsole();
-  /// Destructor
-  ~GUIConsole() override;
-  void SendLog(const std::string& msg, Base::LogStyle level) override;
-  const char* Name() override {return "GUIConsole";}
+    /// Constructor
+    GUIConsole();
+    /// Destructor
+    ~GUIConsole() override;
+    void SendLog(const std::string &msg, Base::LogStyle level) override;
+    const char *Name() override { return "GUIConsole"; }
 
 protected:
-  static const unsigned int s_nMaxLines;
-  static unsigned int       s_nRefCount;
+    static const unsigned int s_nMaxLines;
+    static unsigned int s_nRefCount;
 };
 
 } // namespace Gui
 
 #endif // GUI_GUICONSOLE_H
-

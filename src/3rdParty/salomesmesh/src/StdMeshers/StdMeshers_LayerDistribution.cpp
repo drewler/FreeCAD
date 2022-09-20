@@ -40,13 +40,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_LayerDistribution::StdMeshers_LayerDistribution(int hypId, int studyId,
-                                                           SMESH_Gen * gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_LayerDistribution::StdMeshers_LayerDistribution(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "LayerDistribution"; // used by RadialPrism_3D
-  _param_algo_dim = 3; // 3D
-  myHyp = 0;
+    _name = "LayerDistribution"; // used by RadialPrism_3D
+    _param_algo_dim = 3;         // 3D
+    myHyp = 0;
 }
 
 //=============================================================================
@@ -59,31 +58,29 @@ StdMeshers_LayerDistribution::StdMeshers_LayerDistribution(int hypId, int studyI
 
 StdMeshers_LayerDistribution::~StdMeshers_LayerDistribution()
 {
-  MESSAGE( "StdMeshers_LayerDistribution::~StdMeshers_LayerDistribution" );
+    MESSAGE("StdMeshers_LayerDistribution::~StdMeshers_LayerDistribution");
 }
 
 //=============================================================================
-  /*!
+/*!
    * \brief Sets  1D hypothesis specifying distribution of layers
     * \param hyp1D - 1D hypothesis
    */
 //=============================================================================
 
-void StdMeshers_LayerDistribution::SetLayerDistribution(SMESH_Hypothesis* hyp1D)
+void StdMeshers_LayerDistribution::SetLayerDistribution(SMESH_Hypothesis *hyp1D)
 {
-  if ( myHyp != hyp1D ) {
-    if ( myHyp && hyp1D->GetDim() != 1 )
-      throw SALOME_Exception(LOCALIZED("1D hypothesis is expected"));
-    myHyp = hyp1D;
-  }
-  std::ostringstream os;
-  if ( myHyp )
-    myHyp->SaveTo( os );
+    if (myHyp != hyp1D) {
+        if (myHyp && hyp1D->GetDim() != 1)
+            throw SALOME_Exception(LOCALIZED("1D hypothesis is expected"));
+        myHyp = hyp1D;
+    }
+    std::ostringstream os;
+    if (myHyp) myHyp->SaveTo(os);
 
-  if ( mySavedHyp != os.str() )
-    NotifySubMeshesHypothesisModification();
+    if (mySavedHyp != os.str()) NotifySubMeshesHypothesisModification();
 
-  mySavedHyp = os.str();
+    mySavedHyp = os.str();
 }
 
 //=============================================================================
@@ -92,10 +89,7 @@ void StdMeshers_LayerDistribution::SetLayerDistribution(SMESH_Hypothesis* hyp1D)
  */
 //=============================================================================
 
-ostream & StdMeshers_LayerDistribution::SaveTo(ostream & save)
-{
-  return save;
-}
+ostream &StdMeshers_LayerDistribution::SaveTo(ostream &save) { return save; }
 
 //=============================================================================
 /*!
@@ -103,10 +97,7 @@ ostream & StdMeshers_LayerDistribution::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_LayerDistribution::LoadFrom(istream & load)
-{
-  return load;
-}
+istream &StdMeshers_LayerDistribution::LoadFrom(istream &load) { return load; }
 
 //=============================================================================
 /*!
@@ -114,10 +105,7 @@ istream & StdMeshers_LayerDistribution::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_LayerDistribution & hyp)
-{
-  return hyp.SaveTo( save );
-}
+ostream &operator<<(ostream &save, StdMeshers_LayerDistribution &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -125,10 +113,7 @@ ostream & operator <<(ostream & save, StdMeshers_LayerDistribution & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_LayerDistribution & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+istream &operator>>(istream &load, StdMeshers_LayerDistribution &hyp) { return hyp.LoadFrom(load); }
 
 //================================================================================
 /*!
@@ -139,10 +124,9 @@ istream & operator >>(istream & load, StdMeshers_LayerDistribution & hyp)
  */
 //================================================================================
 
-bool StdMeshers_LayerDistribution::SetParametersByMesh(const SMESH_Mesh*   ,
-                                                       const TopoDS_Shape& )
+bool StdMeshers_LayerDistribution::SetParametersByMesh(const SMESH_Mesh *, const TopoDS_Shape &)
 {
-  return false;
+    return false;
 }
 //================================================================================
 /*!
@@ -151,8 +135,8 @@ bool StdMeshers_LayerDistribution::SetParametersByMesh(const SMESH_Mesh*   ,
  */
 //================================================================================
 
-bool StdMeshers_LayerDistribution::SetParametersByDefaults(const TDefaults&  dflts,
-                                                           const SMESH_Mesh* theMesh)
+bool StdMeshers_LayerDistribution::SetParametersByDefaults(const TDefaults &dflts,
+                                                           const SMESH_Mesh *theMesh)
 {
-  return myHyp ? myHyp->SetParametersByDefaults(dflts,theMesh) : false;
+    return myHyp ? myHyp->SetParametersByDefaults(dflts, theMesh) : false;
 }

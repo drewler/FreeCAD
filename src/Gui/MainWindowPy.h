@@ -29,14 +29,16 @@
 #include <QPointer>
 #include <FCGlobal.h>
 
-namespace Gui {
+namespace Gui
+{
 class MainWindow;
 
-class GuiExport MainWindowPy : public Py::PythonExtension<MainWindowPy>
+class GuiExport MainWindowPy: public Py::PythonExtension<MainWindowPy>
 {
 public:
     static void init_type();
-    static PyObject *extension_object_new( PyTypeObject *subtype, PyObject * /*args*/, PyObject * /*kwds*/ );
+    static PyObject *extension_object_new(PyTypeObject *subtype, PyObject * /*args*/,
+                                          PyObject * /*kwds*/);
 
     static Py::Object createWrapper(MainWindow *mw);
     static Py::Object type();
@@ -47,10 +49,10 @@ public:
 
     Py::Object repr() override;
 
-    Py::Object getWindows(const Py::Tuple&);
-    Py::Object getWindowsOfType(const Py::Tuple&);
-    Py::Object setActiveWindow(const Py::Tuple&);
-    Py::Object getActiveWindow(const Py::Tuple&);
+    Py::Object getWindows(const Py::Tuple &);
+    Py::Object getWindowsOfType(const Py::Tuple &);
+    Py::Object setActiveWindow(const Py::Tuple &);
+    Py::Object getActiveWindow(const Py::Tuple &);
 
 private:
     QPointer<MainWindow> _mw;

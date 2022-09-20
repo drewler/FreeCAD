@@ -1,4 +1,4 @@
- /**************************************************************************
+/**************************************************************************
  *   Copyright (c) 2021 FreeCAD Developers                                 *
  *   Author: Ajinkya Dahale                                                *
  *   Based on src/Gui/DlgAddProperty.h                                     *
@@ -33,28 +33,28 @@
 #include <Mod/PartDesign/PartDesignGlobal.h>
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 class Ui_DlgActiveBody;
 
 /** Dialog box to ask user to pick a Part Design body to make active
  *  or make a new one
  */
-class PartDesignGuiExport DlgActiveBody : public QDialog
+class PartDesignGuiExport DlgActiveBody: public QDialog
 {
     Q_OBJECT
 
 public:
-    DlgActiveBody(QWidget* parent, App::Document*& doc,
-                  const QString& infoText=QString());
+    DlgActiveBody(QWidget *parent, App::Document *&doc, const QString &infoText = QString());
     ~DlgActiveBody() override;
 
     void accept() override;
-    PartDesign::Body* getActiveBody() const { return activeBody; }
+    PartDesign::Body *getActiveBody() const { return activeBody; }
 
 private:
     std::unique_ptr<Ui_DlgActiveBody> ui;
-    App::Document* _doc;
-    PartDesign::Body* activeBody;
+    App::Document *_doc;
+    PartDesign::Body *activeBody;
 };
 
 } // namespace PartDesignGui

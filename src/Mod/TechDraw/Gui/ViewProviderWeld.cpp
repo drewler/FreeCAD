@@ -24,8 +24,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMessageBox>
-# include <QTextStream>
+#include <QMessageBox>
+#include <QTextStream>
 #endif
 
 #include <App/Application.h>
@@ -52,53 +52,50 @@ ViewProviderWeld::ViewProviderWeld()
     sPixmap = "actions/TechDraw_WeldSymbol";
     static const char *group = "Text";
 
-    ADD_PROPERTY_TYPE(Font, (prefFontName().c_str()), group, App::Prop_None, "The name of the font to use");
-    ADD_PROPERTY_TYPE(FontSize, (prefFontSize()), group,
-                                (App::PropertyType)(App::Prop_None), "Tail text size");
+    ADD_PROPERTY_TYPE(Font, (prefFontName().c_str()), group, App::Prop_None,
+                      "The name of the font to use");
+    ADD_PROPERTY_TYPE(FontSize, (prefFontSize()), group, (App::PropertyType)(App::Prop_None),
+                      "Tail text size");
     ADD_PROPERTY_TYPE(TileFontSize, (prefFontSize() * prefTileTextAdjust()), group,
-                                (App::PropertyType)(App::Prop_None), "Text size on individual symbol tiles");
+                      (App::PropertyType)(App::Prop_None), "Text size on individual symbol tiles");
 }
 
-ViewProviderWeld::~ViewProviderWeld()
-{
-}
+ViewProviderWeld::~ViewProviderWeld() {}
 
-void ViewProviderWeld::onChanged(const App::Property* p)
+void ViewProviderWeld::onChanged(const App::Property *p)
 {
-    QGIView* qgiv = getQView();
-    if (qgiv) {
-        qgiv->updateView(true);
-    }
+    QGIView *qgiv = getQView();
+    if (qgiv) { qgiv->updateView(true); }
 
     ViewProviderDrawingView::onChanged(p);
 }
 
-std::vector<App::DocumentObject*> ViewProviderWeld::claimChildren() const
+std::vector<App::DocumentObject *> ViewProviderWeld::claimChildren() const
 {
     // Collect any child Document Objects and put them in the right place in the Feature tree
     // valid children of a DrawWeldSymbol are:
     //    - DrawTiles
-    std::vector<App::DocumentObject*> temp;
+    std::vector<App::DocumentObject *> temp;
     const std::vector<App::DocumentObject *> &tiles = getFeature()->getInList();
     try {
-        for(std::vector<App::DocumentObject *>::const_iterator it = tiles.begin(); it != tiles.end(); ++it) {
+        for (std::vector<App::DocumentObject *>::const_iterator it = tiles.begin();
+             it != tiles.end(); ++it) {
             if ((*it)->getTypeId().isDerivedFrom(TechDraw::DrawTile::getClassTypeId())) {
                 temp.push_back((*it));
             }
         }
-      return temp;
-    } catch (...) {
-        return std::vector<App::DocumentObject*>();
+        return temp;
+    }
+    catch (...) {
+        return std::vector<App::DocumentObject *>();
     }
 }
 
 bool ViewProviderWeld::setEdit(int ModNum)
 {
-//    Base::Console().Message("VPW::setEdit(%d)\n", ModNum);
-    if (ModNum != ViewProvider::Default ) {
-        return ViewProviderDrawingView::setEdit(ModNum);
-    }
-    if (Gui::Control().activeDialog())  {         //TaskPanel already open!
+    //    Base::Console().Message("VPW::setEdit(%d)\n", ModNum);
+    if (ModNum != ViewProvider::Default) { return ViewProviderDrawingView::setEdit(ModNum); }
+    if (Gui::Control().activeDialog()) { //TaskPanel already open!
         return false;
     }
     // clear the selection (convenience)
@@ -109,27 +106,23 @@ bool ViewProviderWeld::setEdit(int ModNum)
 
 bool ViewProviderWeld::doubleClicked()
 {
-//    Base::Console().Message("VPW::doubleClicked()\n");
+    //    Base::Console().Message("VPW::doubleClicked()\n");
     setEdit(ViewProvider::Default);
     return true;
 }
 
-std::string ViewProviderWeld::prefFontName()
-{
-    return Preferences::labelFont();
-}
+std::string ViewProviderWeld::prefFontName() { return Preferences::labelFont(); }
 
-double ViewProviderWeld::prefFontSize()
-{
-    return Preferences::labelFontSizeMM();
-}
+double ViewProviderWeld::prefFontSize() { return Preferences::labelFontSizeMM(); }
 
 double ViewProviderWeld::prefTileTextAdjust()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-                                         .GetGroup("BaseApp")->GetGroup("Preferences")->
-                                 GetGroup("Mod/TechDraw/Dimensions");
-    double adjust   = hGrp->GetFloat("TileTextAdjust", 0.75);
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Dimensions");
+    double adjust = hGrp->GetFloat("TileTextAdjust", 0.75);
     return adjust;
 }
 
@@ -144,10 +137,11 @@ bool ViewProviderWeld::onDelete(const std::vector<std::string> &)
         QString bodyMessage;
         QTextStream bodyMessageStream(&bodyMessage);
         bodyMessageStream << qApp->translate("Std_Delete",
-            "You cannot delete this weld symbol because\nit has a tile weld that would become broken.");
+                                             "You cannot delete this weld symbol because\nit has a "
+                                             "tile weld that would become broken.");
         QMessageBox::warning(Gui::getMainWindow(),
-            qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
-            QMessageBox::Ok);
+                             qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
+                             QMessageBox::Ok);
         return false;
     }
 
@@ -164,12 +158,9 @@ bool ViewProviderWeld::canDelete(App::DocumentObject *obj) const
     return true;
 }
 
-TechDraw::DrawWeldSymbol* ViewProviderWeld::getViewObject() const
+TechDraw::DrawWeldSymbol *ViewProviderWeld::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawWeldSymbol*>(pcObject);
+    return dynamic_cast<TechDraw::DrawWeldSymbol *>(pcObject);
 }
 
-TechDraw::DrawWeldSymbol* ViewProviderWeld::getFeature() const
-{
-    return getViewObject();
-}
+TechDraw::DrawWeldSymbol *ViewProviderWeld::getFeature() const { return getViewObject(); }

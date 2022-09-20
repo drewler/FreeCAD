@@ -6,14 +6,16 @@
 
 #include "fileentry.h"
 
-namespace zipios {
+namespace zipios
+{
 
-ostream &operator<< ( ostream &os, const FileEntry &entry ) {
-  os << entry.toString() ;
-  return os ;
+ostream &operator<<(ostream &os, const FileEntry &entry)
+{
+    os << entry.toString();
+    return os;
 }
 
-} // namespace
+} // namespace zipios
 
 /** \file
     Implementation of FileEntry.

@@ -31,8 +31,7 @@
 #include "utilities.h"
 
 #ifndef WIN32
-extern "C"
-{
+extern "C" {
 #endif
 #include <math.h>
 #include <stdio.h>
@@ -42,81 +41,71 @@ extern "C"
 #endif
 
 
-const char* duplicate( const char *const str ) ;
+const char *duplicate(const char *const str);
 
-SALOME_Exception::SALOME_Exception( void ): exception() , _text(0)
+SALOME_Exception::SALOME_Exception(void) : exception(), _text(0)
 {
-        MESSAGE( "You must use the standard builder: SALOME_Exception::SALOME_Exception( const char *text )" ) ;
-        INTERRUPTION(1) ;
+    MESSAGE("You must use the standard builder: SALOME_Exception::SALOME_Exception( const char "
+            "*text )");
+    INTERRUPTION(1);
 }
 
 
-
-const char *makeText( const char *text, const char *fileName, const unsigned int lineNumber )
+const char *makeText(const char *text, const char *fileName, const unsigned int lineNumber)
 {
-        char *newText = 0 ;
+    char *newText = 0;
 
-        ASSERT(text) ;
-        const size_t l1 = 1+strlen(text) ;
-        ASSERT(l1>1) ;
+    ASSERT(text);
+    const size_t l1 = 1 + strlen(text);
+    ASSERT(l1 > 1);
 
-        const char* prefix = "Salome Exception" ;
-        const size_t l0 = 2+strlen(prefix) ;
+    const char *prefix = "Salome Exception";
+    const size_t l0 = 2 + strlen(prefix);
 
-        if ( fileName )
-        {
-                const size_t l2 = 4+strlen(fileName) ;
-                ASSERT(l2>4) ;
+    if (fileName) {
+        const size_t l2 = 4 + strlen(fileName);
+        ASSERT(l2 > 4);
 
-                ASSERT(lineNumber>=1) ;
-                const size_t l3 = 4+int(log10(float(lineNumber))) ;
-                
-                newText = new char [ 1+l0+l1+l2+l3 ] ;
-                sprintf( newText , "%s in %s [%u] : %s" , prefix, fileName, lineNumber, text ) ;
-        }
-        else
-        {
-                newText = new char [ 1+l0+l1 ] ;
-                sprintf( newText , "%s : %s" , prefix, text ) ;
-        }
-        ASSERT(newText) ;
-        return newText ;
+        ASSERT(lineNumber >= 1);
+        const size_t l3 = 4 + int(log10(float(lineNumber)));
+
+        newText = new char[1 + l0 + l1 + l2 + l3];
+        sprintf(newText, "%s in %s [%u] : %s", prefix, fileName, lineNumber, text);
+    }
+    else {
+        newText = new char[1 + l0 + l1];
+        sprintf(newText, "%s : %s", prefix, text);
+    }
+    ASSERT(newText);
+    return newText;
 }
 
 
-SALOME_Exception::SALOME_Exception( const char *text, const char *fileName, const unsigned int lineNumber ) : exception(), _text( makeText( text , fileName , lineNumber ) )
+SALOME_Exception::SALOME_Exception(const char *text, const char *fileName,
+                                   const unsigned int lineNumber)
+    : exception(), _text(makeText(text, fileName, lineNumber))
+{}
+
+
+SALOME_Exception::~SALOME_Exception() throw()
 {
+    if (_text) {
+        delete[] ((char *)_text);
+        char **pRef = (char **)&_text;
+        *pRef = 0;
+    }
+    ASSERT(_text == NULL);
 }
 
 
-SALOME_Exception::~SALOME_Exception() throw ()
+SALOME_Exception::SALOME_Exception(const SALOME_Exception &ex) : _text(duplicate(ex._text)) { ; }
+
+
+std::ostream &operator<<(std::ostream &os, const SALOME_Exception &ex)
 {
-        if ( _text )
-        {
-                delete [] ((char*)_text);
-                char** pRef = (char**)&_text;
-                *pRef = 0;
-        }
-        ASSERT(_text==NULL) ;
+    os << ex._text;
+    return os;
 }
 
 
-
-SALOME_Exception::SALOME_Exception( const SALOME_Exception &ex ): _text(duplicate(ex._text))
-{
-        ;
-}
-
-
-std::ostream & operator<<( std::ostream &os , const SALOME_Exception &ex )
-{
-        os << ex._text ;
-        return os ;
-}
-
-
-
-const char* SALOME_Exception::what( void ) const throw ()
-{
-        return _text ;
-}
+const char *SALOME_Exception::what(void) const throw() { return _text; }

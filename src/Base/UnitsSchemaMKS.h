@@ -28,7 +28,8 @@
 #include "UnitsSchema.h"
 
 
-namespace Base {
+namespace Base
+{
 
 
 /**
@@ -37,7 +38,8 @@ namespace Base {
 class UnitsSchemaMKS: public UnitsSchema
 {
 public:
-    QString schemaTranslate(const Base::Quantity& quant, double &factor, QString &unitString) override;
+    QString schemaTranslate(const Base::Quantity &quant, double &factor,
+                            QString &unitString) override;
 };
 
 

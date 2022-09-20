@@ -5,39 +5,41 @@
 
 #include "meta-iostreams.h"
 
-namespace zipios {
+namespace zipios
+{
 
-using std::streambuf ;
+using std::streambuf;
 
 /** An input streambuf filter is a streambuf that filters the input it
  gets from the streambuf it is attached to. FilterInputStreambuf is a base class to
  derive input streambuf filters from. */
-class FilterInputStreambuf : public streambuf {
+class FilterInputStreambuf: public streambuf
+{
 public:
-  /** Constructor.
+    /** Constructor.
       @param inbuf the streambuf to use for input.
       @param del_inbuf if true is specified inbuf will be deleted, when 
       the FilterInputStreambuf is destructed.
   */
-  explicit FilterInputStreambuf( streambuf *inbuf, bool del_inbuf = false ) ;
-  /** Destructor. */
-  virtual ~FilterInputStreambuf() ;
+    explicit FilterInputStreambuf(streambuf *inbuf, bool del_inbuf = false);
+    /** Destructor. */
+    virtual ~FilterInputStreambuf();
 
 protected:
-  int _s_pos ; // Position in this streambuf - FIXME: is this used?
-  streambuf *_inbuf ;
-  bool _del_inbuf ;
+    int _s_pos; // Position in this streambuf - FIXME: is this used?
+    streambuf *_inbuf;
+    bool _del_inbuf;
+
 private:
+    /** Copy-constructor is private to prevent copying. */
+    FilterInputStreambuf(const FilterInputStreambuf &src);
 
-  /** Copy-constructor is private to prevent copying. */
-  FilterInputStreambuf( const FilterInputStreambuf &src ) ;
-
-  /** Copy-assignment operator is private to prevent copying.  */
-  const FilterInputStreambuf &operator= ( const FilterInputStreambuf &src ) ;
+    /** Copy-assignment operator is private to prevent copying.  */
+    const FilterInputStreambuf &operator=(const FilterInputStreambuf &src);
 };
 
 
-} // namespace 
+} // namespace zipios
 
 
 #endif

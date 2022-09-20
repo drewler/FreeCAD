@@ -25,9 +25,13 @@
 
 #include <Inventor/nodes/SoShape.h>
 
-namespace Gui { namespace Inventor {
+namespace Gui
+{
+namespace Inventor
+{
 
-class GuiExport SoDrawingGrid : public SoShape {
+class GuiExport SoDrawingGrid: public SoShape
+{
     using inherited = SoShape;
 
     SO_NODE_HEADER(SoDrawingGrid);

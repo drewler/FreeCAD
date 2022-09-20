@@ -38,26 +38,23 @@
  * \brief Driver reading a mesh from the GMF file. The mesh to read is selected by 
  *  an index (counted form 0) set via SetMeshId()
  */
-class MESHDriverGMF_EXPORT DriverGMF_Read : public Driver_SMESHDS_Mesh
+class MESHDriverGMF_EXPORT DriverGMF_Read: public Driver_SMESHDS_Mesh
 {
 public:
+    DriverGMF_Read();
+    ~DriverGMF_Read();
 
-  DriverGMF_Read();
-  ~DriverGMF_Read();
+    void SetMakeRequiredGroups(bool theMakeRequiredGroups)
+    {
+        _makeRequiredGroups = theMakeRequiredGroups;
+    }
 
-  void SetMakeRequiredGroups( bool theMakeRequiredGroups )
-  {
-    _makeRequiredGroups = theMakeRequiredGroups;
-  }
+    virtual Status Perform();
 
-  virtual Status Perform();
+private:
+    Status storeBadNodeIds(const char *gmfKwd, int elemNb, int nb, ...);
 
- private:
-
-  Status storeBadNodeIds(const char* gmfKwd, int elemNb, int nb, ...);
-
-  bool _makeRequiredGroups;
-
+    bool _makeRequiredGroups;
 };
 
 

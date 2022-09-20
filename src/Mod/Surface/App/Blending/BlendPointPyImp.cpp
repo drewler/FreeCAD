@@ -47,7 +47,7 @@ std::string BlendPointPy::representation() const
     return str.str();
 }
 
-PyObject *BlendPointPy::PyMake(struct _typeobject *, PyObject *, PyObject *)// Python wrapper
+PyObject *BlendPointPy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     // create a new instance of BlendPointPy
     return new BlendPointPy(new BlendPoint);
@@ -59,9 +59,7 @@ int BlendPointPy::PyInit(PyObject *args, PyObject *)
     std::vector<Base::Vector3d> vecs;
     if (PyArg_ParseTuple(args, "O", &plist)) {
         Py::Sequence list(plist);
-        if (list.size() == 0) {
-            vecs.emplace_back(Base::Vector3d(0, 0, 0));
-        }
+        if (list.size() == 0) { vecs.emplace_back(Base::Vector3d(0, 0, 0)); }
         else {
             for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {
                 Py::Vector v(*it);
@@ -88,7 +86,8 @@ int BlendPointPy::PyInit(PyObject *args, PyObject *)
     if (PyArg_ParseTuple(args, "O!di", &(Part::TopoShapePy::Type), &pcObj, &param, &cont)) {
         try {
             gp_Pnt Pt;
-            TopoDS_Shape shape = static_cast<Part::TopoShapePy *>(pcObj)->getTopoShapePtr()->getShape();
+            TopoDS_Shape shape =
+                static_cast<Part::TopoShapePy *>(pcObj)->getTopoShapePtr()->getShape();
             const TopoDS_Edge &e = TopoDS::Edge(shape);
             BRepAdaptor_Curve adapt(e);
             if (param < adapt.FirstParameter() || param > adapt.LastParameter()) {
@@ -115,7 +114,8 @@ int BlendPointPy::PyInit(PyObject *args, PyObject *)
         }
     }
 
-    PyErr_SetString(PyExc_TypeError, "supported signatures:\n"
+    PyErr_SetString(PyExc_TypeError,
+                    "supported signatures:\n"
                     "BlendPoint()\n"
                     "BlendPoint(list of Vector)\n"
                     "BlendPoint(edge, parameter and continiuity)\n");
@@ -126,8 +126,7 @@ PyObject *BlendPointPy::setSize(PyObject *args)
 {
     double size = 1.0;
 
-    if (!PyArg_ParseTuple(args, "d", &size))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "d", &size)) return nullptr;
     try {
         getBlendPointPtr()->setSize(size);
         Py_Return;
@@ -140,8 +139,7 @@ PyObject *BlendPointPy::setSize(PyObject *args)
 
 PyObject *BlendPointPy::getSize(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
     int nb = getBlendPointPtr()->nbVectors();
     if (nb >= 2) {
         double bpTangentLength = getBlendPointPtr()->vectors[1].Length();
@@ -156,7 +154,7 @@ Py::List BlendPointPy::getVectors() const
 {
     BlendPoint *bp = getBlendPointPtr();
     Py::List vecs;
-    for (const auto& p : bp->vectors) {
+    for (const auto &p : bp->vectors) {
         Base::VectorPy *vec = new Base::VectorPy(p);
         vecs.append(Py::asObject(vec));
     }
@@ -184,12 +182,6 @@ PyObject *BlendPointPy::setvectors(PyObject *args)
     Py_Return;
 }
 
-PyObject *BlendPointPy::getCustomAttributes(const char * /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *BlendPointPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int BlendPointPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
-{
-    return 0;
-}
+int BlendPointPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

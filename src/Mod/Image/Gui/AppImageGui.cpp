@@ -31,8 +31,9 @@ void loadImageResource()
     Gui::Translator::instance()->refresh();
 }
 
-namespace ImageGui {
-extern PyObject* initModule();
+namespace ImageGui
+{
+extern PyObject *initModule();
 }
 
 
@@ -44,7 +45,7 @@ PyMOD_INIT_FUNC(ImageGui)
         PyMOD_Return(nullptr);
     }
 
-    PyObject* mod = ImageGui::initModule();
+    PyObject *mod = ImageGui::initModule();
     Base::Console().Log("Loading GUI of Image module... done\n");
 
     // instantiating the commands

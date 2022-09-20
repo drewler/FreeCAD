@@ -23,12 +23,12 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# ifdef _MSC_VER
-#  define _USE_MATH_DEFINES
-#  include <cmath>
-# endif
-# include <QAction>
-# include <QMenu>
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#include <cmath>
+#endif
+#include <QAction>
+#include <QMenu>
 #endif
 
 #include <Gui/ActionFunction.h>
@@ -50,38 +50,30 @@ ViewProviderAttachExtension::ViewProviderAttachExtension()
     initExtensionType(ViewProviderAttachExtension::getExtensionClassTypeId());
 }
 
-QIcon ViewProviderAttachExtension::extensionMergeColorfullOverlayIcons (const QIcon & orig) const
+QIcon ViewProviderAttachExtension::extensionMergeColorfullOverlayIcons(const QIcon &orig) const
 {
     QIcon mergedicon = orig;
 
-    if (getExtendedViewProvider()->getObject()->hasExtension(Part::AttachExtension::getExtensionClassTypeId())) {
+    if (getExtendedViewProvider()->getObject()->hasExtension(
+            Part::AttachExtension::getExtensionClassTypeId())) {
 
-        auto* attach = getExtendedViewProvider()->getObject()->getExtensionByType<Part::AttachExtension>();
+        auto *attach =
+            getExtendedViewProvider()->getObject()->getExtensionByType<Part::AttachExtension>();
 
         if (attach) {
 
-            if(!attach->isAttacherActive()) {
+            if (!attach->isAttacherActive()) {
                 QPixmap px;
 
-                static const char * const feature_detached_xpm[]={
-                    "9 10 3 1",
-                    ". c None",
-                    "# c #cc00cc",
-                    "a c #ffffff",
-                    "...###...",
-                    ".##aaa##.",
-                    "##aaaaa##",
-                    "##aaaaa##",
-                    "#########",
-                    "#########",
-                    "#########",
-                    ".##aaa##.",
-                    ".##aaa##.",
-                    "...###..."};
+                static const char *const feature_detached_xpm[] = {
+                    "9 10 3 1",  ". c None",  "# c #cc00cc", "a c #ffffff", "...###...",
+                    ".##aaa##.", "##aaaaa##", "##aaaaa##",   "#########",   "#########",
+                    "#########", ".##aaa##.", ".##aaa##.",   "...###..."};
 
-                    px = QPixmap(feature_detached_xpm);
+                px = QPixmap(feature_detached_xpm);
 
-                    mergedicon = Gui::BitmapFactoryInst::mergePixmap(mergedicon, px, Gui::BitmapFactoryInst::BottomLeft);
+                mergedicon = Gui::BitmapFactoryInst::mergePixmap(
+                    mergedicon, px, Gui::BitmapFactoryInst::BottomLeft);
             }
         }
     }
@@ -89,35 +81,33 @@ QIcon ViewProviderAttachExtension::extensionMergeColorfullOverlayIcons (const QI
     return mergedicon;
 }
 
-void ViewProviderAttachExtension::extensionUpdateData(const App::Property* prop)
+void ViewProviderAttachExtension::extensionUpdateData(const App::Property *prop)
 {
-    if (getExtendedViewProvider()->getObject()->hasExtension(Part::AttachExtension::getExtensionClassTypeId())) {
-        auto* attach = getExtendedViewProvider()->getObject()->getExtensionByType<Part::AttachExtension>();
+    if (getExtendedViewProvider()->getObject()->hasExtension(
+            Part::AttachExtension::getExtensionClassTypeId())) {
+        auto *attach =
+            getExtendedViewProvider()->getObject()->getExtensionByType<Part::AttachExtension>();
 
-        if(attach) {
-            if( prop == &(attach->Support) ||
-                prop == &(attach->MapMode) ||
-                prop == &(attach->MapPathParameter) ||
-                prop == &(attach->MapReversed) ||
-                prop == &(attach->AttachmentOffset) ||
-                prop == &(attach->AttacherType) ) {
+        if (attach) {
+            if (prop == &(attach->Support) || prop == &(attach->MapMode)
+                || prop == &(attach->MapPathParameter) || prop == &(attach->MapReversed)
+                || prop == &(attach->AttachmentOffset) || prop == &(attach->AttacherType)) {
 
                 getExtendedViewProvider()->signalChangeIcon(); // signal icon change
             }
         }
     }
-
 }
 
-void ViewProviderAttachExtension::extensionSetupContextMenu(QMenu* menu, QObject*, const char*)
+void ViewProviderAttachExtension::extensionSetupContextMenu(QMenu *menu, QObject *, const char *)
 {
-    bool attach = getExtendedViewProvider()->getObject()->hasExtension(Part::AttachExtension::getExtensionClassTypeId());
+    bool attach = getExtendedViewProvider()->getObject()->hasExtension(
+        Part::AttachExtension::getExtensionClassTypeId());
     if (attach) {
         // toggle command to display components
-        Gui::ActionFunction* func = new Gui::ActionFunction(menu);
-        QAction* act = menu->addAction(QObject::tr("Attachment editor"));
-        if (Gui::Control().activeDialog())
-            act->setDisabled(true);
+        Gui::ActionFunction *func = new Gui::ActionFunction(menu);
+        QAction *act = menu->addAction(QObject::tr("Attachment editor"));
+        if (Gui::Control().activeDialog()) act->setDisabled(true);
         func->trigger(act, std::bind(&ViewProviderAttachExtension::showAttachmentEditor, this));
     }
 }
@@ -125,9 +115,9 @@ void ViewProviderAttachExtension::extensionSetupContextMenu(QMenu* menu, QObject
 void ViewProviderAttachExtension::showAttachmentEditor()
 {
     // See PropertyEnumAttacherItem::openTask()
-    Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
-    TaskDlgAttacher* task;
-    task = qobject_cast<TaskDlgAttacher*>(dlg);
+    Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
+    TaskDlgAttacher *task;
+    task = qobject_cast<TaskDlgAttacher *>(dlg);
 
     if (dlg && !task) {
         // there is already another task dialog which must be closed first
@@ -135,16 +125,16 @@ void ViewProviderAttachExtension::showAttachmentEditor()
         return;
     }
 
-    if (!task) {
-        task = new TaskDlgAttacher(getExtendedViewProvider());
-    }
+    if (!task) { task = new TaskDlgAttacher(getExtendedViewProvider()); }
 
     Gui::Control().showDialog(task);
 }
 
-namespace Gui {
-    EXTENSION_PROPERTY_SOURCE_TEMPLATE(PartGui::ViewProviderAttachExtensionPython, PartGui::ViewProviderAttachExtension)
+namespace Gui
+{
+EXTENSION_PROPERTY_SOURCE_TEMPLATE(PartGui::ViewProviderAttachExtensionPython,
+                                   PartGui::ViewProviderAttachExtension)
 
 // explicit template instantiation
-    template class PartGuiExport ViewProviderExtensionPythonT<PartGui::ViewProviderAttachExtension>;
-}
+template class PartGuiExport ViewProviderExtensionPythonT<PartGui::ViewProviderAttachExtension>;
+} // namespace Gui

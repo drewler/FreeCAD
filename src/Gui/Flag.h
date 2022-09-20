@@ -30,25 +30,26 @@
 #include <Inventor/SbVec3f.h>
 #include <Gui/GLPainter.h>
 
-namespace Gui {
+namespace Gui
+{
 class View3DInventorViewer;
 
 /**
  * @author Werner Mayer
  */
-class GuiExport Flag : public QtGLWidget
+class GuiExport Flag: public QtGLWidget
 {
     Q_OBJECT
 
 public:
-    Flag(QWidget* parent=nullptr);
+    Flag(QWidget *parent = nullptr);
     ~Flag() override;
 
     QSize sizeHint() const override;
-    void setOrigin(const SbVec3f&);
-    const SbVec3f& getOrigin() const;
-    void drawLine(Gui::View3DInventorViewer*, int tox, int toy);
-    void setText(const QString&);
+    void setOrigin(const SbVec3f &);
+    const SbVec3f &getOrigin() const;
+    void drawLine(Gui::View3DInventorViewer *, int tox, int toy);
+    void setText(const QString &);
 
 protected:
     void initializeGL() override;
@@ -68,12 +69,18 @@ private:
 };
 
 
-class FlagLayout : public QLayout
+class FlagLayout: public QLayout
 {
     Q_OBJECT
 
 public:
-    enum Position { TopLeft, TopRight, BottomLeft, BottomRight };
+    enum Position
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight
+    };
 
     FlagLayout(QWidget *parent, int margin = 0, int spacing = -1);
     FlagLayout(int spacing = -1);
@@ -93,9 +100,9 @@ public:
     void add(QLayoutItem *item, Position position);
 
 private:
-    struct ItemWrapper
-    {
-        ItemWrapper(QLayoutItem *i, Position p) {
+    struct ItemWrapper {
+        ItemWrapper(QLayoutItem *i, Position p)
+        {
             item = i;
             position = p;
         }
@@ -104,30 +111,34 @@ private:
         Position position;
     };
 
-    enum SizeType { MinimumSize, SizeHint };
+    enum SizeType
+    {
+        MinimumSize,
+        SizeHint
+    };
     QSize calculateSize(SizeType sizeType) const;
 
     QList<ItemWrapper *> list;
 };
 
-class GuiExport GLFlagWindow : public Gui::GLGraphicsItem
+class GuiExport GLFlagWindow: public Gui::GLGraphicsItem
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-    GLFlagWindow(View3DInventorViewer*);
+    GLFlagWindow(View3DInventorViewer *);
     ~GLFlagWindow() override;
-    void addFlag(Flag* item, FlagLayout::Position pos);
-    void removeFlag(Flag* item);
+    void addFlag(Flag *item, FlagLayout::Position pos);
+    void removeFlag(Flag *item);
     void deleteFlags();
-    Flag* getFlag(int) const;
+    Flag *getFlag(int) const;
     int countFlags() const;
 
     void paintGL() override;
 
 private:
-    View3DInventorViewer* _viewer;
-    FlagLayout* _flagLayout;
+    View3DInventorViewer *_viewer;
+    FlagLayout *_flagLayout;
 };
 
 } // namespace Gui

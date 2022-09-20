@@ -38,18 +38,19 @@ namespace Part
 // To migrate data:
 // 1. Add an enum bit to indicate the type of migration type
 // 2. Add the data members to store the information and accessors
-class PartExport GeometryMigrationExtension : public Part::GeometryExtension
+class PartExport GeometryMigrationExtension: public Part::GeometryExtension
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
-public:
 
+public:
     // Indicates the type of migration to be performed, it is stored as a bitset, so several
     // migrations may take place in a single extension.
     // It is intended to support also LinkStage3 migration with a single framework (Id, Ref, ...)
-    enum MigrationType {
-            None                    = 0,
-            Construction            = 1,
-            NumMigrationType        // Must be the last
+    enum MigrationType
+    {
+        None = 0,
+        Construction = 1,
+        NumMigrationType // Must be the last
     };
 
     GeometryMigrationExtension();
@@ -60,23 +61,28 @@ public:
     PyObject *getPyObject() override;
 
 
-    virtual bool getConstruction() const {return ConstructionState;}
-    virtual void setConstruction(bool construction) {ConstructionState = construction;}
+    virtual bool getConstruction() const { return ConstructionState; }
+    virtual void setConstruction(bool construction) { ConstructionState = construction; }
 
-    virtual bool testMigrationType(int flag) const { return GeometryMigrationFlags.test((size_t)(flag)); };
-    virtual void setMigrationType(int flag, bool v=true) { GeometryMigrationFlags.set((size_t)(flag), v); };
+    virtual bool testMigrationType(int flag) const
+    {
+        return GeometryMigrationFlags.test((size_t)(flag));
+    };
+    virtual void setMigrationType(int flag, bool v = true)
+    {
+        GeometryMigrationFlags.set((size_t)(flag), v);
+    };
 
 protected:
-    void copyAttributes(Part::GeometryExtension * cpy) const override;
+    void copyAttributes(Part::GeometryExtension *cpy) const override;
 
 private:
-    GeometryMigrationExtension(const GeometryMigrationExtension&) = default;
+    GeometryMigrationExtension(const GeometryMigrationExtension &) = default;
 
 private:
     using MigrationTypeFlagType = std::bitset<32>;
-    MigrationTypeFlagType           GeometryMigrationFlags;
-    bool                            ConstructionState;
-
+    MigrationTypeFlagType GeometryMigrationFlags;
+    bool ConstructionState;
 };
 
 } //namespace Part

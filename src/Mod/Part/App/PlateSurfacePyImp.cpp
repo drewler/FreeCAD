@@ -22,10 +22,10 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <GeomPlate_BuildPlateSurface.hxx>
-# include <GeomPlate_MakeApprox.hxx>
-# include <GeomPlate_PointConstraint.hxx>
-# include <GeomPlate_Surface.hxx>
+#include <GeomPlate_BuildPlateSurface.hxx>
+#include <GeomPlate_MakeApprox.hxx>
+#include <GeomPlate_PointConstraint.hxx>
+#include <GeomPlate_Surface.hxx>
 #endif
 
 #include <Base/GeometryPyCXX.h>
@@ -41,26 +41,24 @@
 using namespace Part;
 
 // returns a string which represents the object e.g. when printed in python
-std::string PlateSurfacePy::representation() const
-{
-    return "<PlateSurface object>";
-}
+std::string PlateSurfacePy::representation() const { return "<PlateSurface object>"; }
 
-PyObject *PlateSurfacePy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *PlateSurfacePy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
-    // create a new instance of PlateSurfacePy and the Twin object 
+    // create a new instance of PlateSurfacePy and the Twin object
     return new PlateSurfacePy(new GeomPlateSurface);
 }
 
 // constructor method
-int PlateSurfacePy::PyInit(PyObject* args, PyObject* kwds)
+int PlateSurfacePy::PyInit(PyObject *args, PyObject *kwds)
 {
-    static char* kwds_Parameter[] = {"Surface","Points","Curves","Degree",
-        "NbPtsOnCur","NbIter","Tol2d","Tol3d","TolAng","TolCurv","Anisotropie",nullptr};
+    static char *kwds_Parameter[] = {"Surface",    "Points",  "Curves",      "Degree",
+                                     "NbPtsOnCur", "NbIter",  "Tol2d",       "Tol3d",
+                                     "TolAng",     "TolCurv", "Anisotropie", nullptr};
 
-    PyObject* surface = nullptr;
-    PyObject* points = nullptr;
-    PyObject* curves = nullptr;
+    PyObject *surface = nullptr;
+    PyObject *points = nullptr;
+    PyObject *curves = nullptr;
     int Degree = 3;
     int NbPtsOnCur = 10;
     int NbIter = 3;
@@ -68,12 +66,12 @@ int PlateSurfacePy::PyInit(PyObject* args, PyObject* kwds)
     double Tol3d = 0.0001;
     double TolAng = 0.01;
     double TolCurv = 0.1;
-    PyObject* Anisotropie = Py_False;
+    PyObject *Anisotropie = Py_False;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O!OOiiiddddO!", kwds_Parameter,
-        &(GeometryPy::Type), &surface, &points, &curves,
-        &Degree, &NbPtsOnCur, &NbIter, &Tol2d, &Tol3d, &TolAng, &TolCurv,
-        &PyBool_Type,&Anisotropie))
+                                     &(GeometryPy::Type), &surface, &points, &curves, &Degree,
+                                     &NbPtsOnCur, &NbIter, &Tol2d, &Tol3d, &TolAng, &TolCurv,
+                                     &PyBool_Type, &Anisotropie))
         return -1;
 
     if (!surface && !points && !curves) {
@@ -83,9 +81,8 @@ int PlateSurfacePy::PyInit(PyObject* args, PyObject* kwds)
 
     Handle(Geom_Surface) surf;
     if (surface) {
-        GeometryPy* pcGeo = static_cast<GeometryPy*>(surface);
-        surf = Handle(Geom_Surface)::DownCast
-            (pcGeo->getGeometryPtr()->handle());
+        GeometryPy *pcGeo = static_cast<GeometryPy *>(surface);
+        surf = Handle(Geom_Surface)::DownCast(pcGeo->getGeometryPtr()->handle());
         if (surf.IsNull()) {
             PyErr_SetString(PyExc_TypeError, "geometry is not a surface");
             return -1;
@@ -93,18 +90,18 @@ int PlateSurfacePy::PyInit(PyObject* args, PyObject* kwds)
     }
 
     try {
-        GeomPlate_BuildPlateSurface buildPlate(Degree, NbPtsOnCur, NbIter, Tol2d, Tol3d, TolAng, TolCurv,
-            Base::asBoolean(Anisotropie));
+        GeomPlate_BuildPlateSurface buildPlate(Degree, NbPtsOnCur, NbIter, Tol2d, Tol3d, TolAng,
+                                               TolCurv, Base::asBoolean(Anisotropie));
         if (!surf.IsNull()) {
             buildPlate.LoadInitSurface(surf);
 
             if (!points && !curves) {
-                Standard_Real U1,U2,V1,V2;
-                surf->Bounds(U1,U2,V1,V2);
-                buildPlate.Add(new GeomPlate_PointConstraint(surf->Value(U1,V1),0));
-                buildPlate.Add(new GeomPlate_PointConstraint(surf->Value(U1,V2),0));
-                buildPlate.Add(new GeomPlate_PointConstraint(surf->Value(U2,V1),0));
-                buildPlate.Add(new GeomPlate_PointConstraint(surf->Value(U2,V2),0));
+                Standard_Real U1, U2, V1, V2;
+                surf->Bounds(U1, U2, V1, V2);
+                buildPlate.Add(new GeomPlate_PointConstraint(surf->Value(U1, V1), 0));
+                buildPlate.Add(new GeomPlate_PointConstraint(surf->Value(U1, V2), 0));
+                buildPlate.Add(new GeomPlate_PointConstraint(surf->Value(U2, V1), 0));
+                buildPlate.Add(new GeomPlate_PointConstraint(surf->Value(U2, V2), 0));
             }
         }
 
@@ -112,7 +109,8 @@ int PlateSurfacePy::PyInit(PyObject* args, PyObject* kwds)
             Py::Sequence list(points);
             for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {
                 Base::Vector3d vec = Py::Vector(*it).toVector();
-                Handle(GeomPlate_PointConstraint) PCont = new GeomPlate_PointConstraint(gp_Pnt(vec.x,vec.y,vec.z),0);
+                Handle(GeomPlate_PointConstraint) PCont =
+                    new GeomPlate_PointConstraint(gp_Pnt(vec.x, vec.y, vec.z), 0);
                 buildPlate.Add(PCont);
             }
         }
@@ -128,34 +126,33 @@ int PlateSurfacePy::PyInit(PyObject* args, PyObject* kwds)
         getGeomPlateSurfacePtr()->setHandle(buildPlate.Surface());
         return 0;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
 
         PyErr_SetString(PartExceptionOCCError, e.GetMessageString());
         return -1;
     }
 }
 
-PyObject* PlateSurfacePy::makeApprox(PyObject *args, PyObject* kwds)
+PyObject *PlateSurfacePy::makeApprox(PyObject *args, PyObject *kwds)
 {
-    static char* kwds_Parameter[] = {"Tol3d","MaxSegments","MaxDegree","MaxDistance",
-        "CritOrder","Continuity","EnlargeCoeff",nullptr};
+    static char *kwds_Parameter[] = {"Tol3d",     "MaxSegments", "MaxDegree",    "MaxDistance",
+                                     "CritOrder", "Continuity",  "EnlargeCoeff", nullptr};
 
-    double tol3d=0.01;
-    int maxSeg=9;
-    int maxDegree=3;
+    double tol3d = 0.01;
+    int maxSeg = 9;
+    int maxDegree = 3;
     double dmax = 0.0001;
-    int critOrder=0;
-    char* cont = "C1";
+    int critOrder = 0;
+    char *cont = "C1";
     double enlargeCoeff = 1.1;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|diidisd", kwds_Parameter,
-        &tol3d, &maxSeg, &maxDegree, &dmax, &critOrder, &cont, &enlargeCoeff))
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|diidisd", kwds_Parameter, &tol3d, &maxSeg,
+                                     &maxDegree, &dmax, &critOrder, &cont, &enlargeCoeff))
         return nullptr;
 
     GeomAbs_Shape continuity;
     std::string uc = cont;
-    if (uc == "C0")
-        continuity = GeomAbs_C0;
+    if (uc == "C0") continuity = GeomAbs_C0;
     else if (uc == "C1")
         continuity = GeomAbs_C1;
     else if (uc == "C2")
@@ -169,9 +166,11 @@ PyObject* PlateSurfacePy::makeApprox(PyObject *args, PyObject* kwds)
     else
         continuity = GeomAbs_C1;
 
-    PY_TRY {
-        GeomPlate_MakeApprox approx(Handle(GeomPlate_Surface)::DownCast(getGeomPlateSurfacePtr()->handle()),
-            tol3d, maxSeg, maxDegree, dmax, critOrder, continuity, enlargeCoeff);
+    PY_TRY
+    {
+        GeomPlate_MakeApprox approx(
+            Handle(GeomPlate_Surface)::DownCast(getGeomPlateSurfacePtr()->handle()), tol3d, maxSeg,
+            maxDegree, dmax, critOrder, continuity, enlargeCoeff);
         Handle(Geom_BSplineSurface) hSurf = approx.Surface();
 
         if (!hSurf.IsNull()) {
@@ -180,15 +179,10 @@ PyObject* PlateSurfacePy::makeApprox(PyObject *args, PyObject* kwds)
 
         PyErr_SetString(PyExc_RuntimeError, "Approximation of B-spline surface failed");
         return nullptr;
-    } PY_CATCH_OCC;
+    }
+    PY_CATCH_OCC;
 }
 
-PyObject *PlateSurfacePy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *PlateSurfacePy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int PlateSurfacePy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0; 
-}
+int PlateSurfacePy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

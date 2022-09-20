@@ -28,12 +28,13 @@
 
 // here get the warnings of too long specifiers disabled
 #ifdef _MSC_VER
-#pragma warning( disable : 4251 )
-#pragma warning( disable : 4273 )
-#pragma warning( disable : 4275 )
-#pragma warning( disable : 4482 )  // nonstandard extension used: enum 'App::ObjectStatus' used in qualified name
-#pragma warning( disable : 4503 )
-#pragma warning( disable : 4786 )  // specifier longer then 255 chars
+#pragma warning(disable : 4251)
+#pragma warning(disable : 4273)
+#pragma warning(disable : 4275)
+#pragma warning(                                                                                   \
+    disable : 4482) // nonstandard extension used: enum 'App::ObjectStatus' used in qualified name
+#pragma warning(disable : 4503)
+#pragma warning(disable : 4786) // specifier longer then 255 chars
 #endif
 
 

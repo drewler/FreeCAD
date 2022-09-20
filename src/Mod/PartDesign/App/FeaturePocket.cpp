@@ -23,11 +23,11 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepAlgoAPI_Cut.hxx>
-# include <gp_Dir.hxx>
-# include <Precision.hxx>
-# include <TopExp_Explorer.hxx>
-# include <TopoDS_Face.hxx>
+#include <BRepAlgoAPI_Cut.hxx>
+#include <gp_Dir.hxx>
+#include <Precision.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS_Face.hxx>
 #endif
 
 #include <App/DocumentObject.h>
@@ -39,7 +39,8 @@ using namespace PartDesign;
 
 /* TRANSLATOR PartDesign::Pocket */
 
-const char* Pocket::TypeEnums[]= {"Length", "ThroughAll", "UpToFirst", "UpToFace", "TwoLengths", nullptr};
+const char *Pocket::TypeEnums[] = {"Length",   "ThroughAll", "UpToFirst",
+                                   "UpToFace", "TwoLengths", nullptr};
 
 PROPERTY_SOURCE(PartDesign::Pocket, PartDesign::FeatureExtrude)
 
@@ -51,16 +52,22 @@ Pocket::Pocket()
     Type.setEnums(TypeEnums);
     ADD_PROPERTY_TYPE(Length, (5.0), "Pocket", App::Prop_None, "Pocket length");
     ADD_PROPERTY_TYPE(Length2, (5.0), "Pocket", App::Prop_None, "Pocket length in 2nd direction");
-    ADD_PROPERTY_TYPE(UseCustomVector, (false), "Pocket", App::Prop_None, "Use custom vector for pocket direction");
-    ADD_PROPERTY_TYPE(Direction, (Base::Vector3d(1.0, 1.0, 1.0)), "Pocket", App::Prop_None, "Pocket direction vector");
-    ADD_PROPERTY_TYPE(ReferenceAxis, (nullptr), "Pocket", App::Prop_None, "Reference axis of direction");
-    ADD_PROPERTY_TYPE(AlongSketchNormal, (true), "Pocket", App::Prop_None, "Measure pocket length along the sketch normal direction");
+    ADD_PROPERTY_TYPE(UseCustomVector, (false), "Pocket", App::Prop_None,
+                      "Use custom vector for pocket direction");
+    ADD_PROPERTY_TYPE(Direction, (Base::Vector3d(1.0, 1.0, 1.0)), "Pocket", App::Prop_None,
+                      "Pocket direction vector");
+    ADD_PROPERTY_TYPE(ReferenceAxis, (nullptr), "Pocket", App::Prop_None,
+                      "Reference axis of direction");
+    ADD_PROPERTY_TYPE(AlongSketchNormal, (true), "Pocket", App::Prop_None,
+                      "Measure pocket length along the sketch normal direction");
     ADD_PROPERTY_TYPE(UpToFace, (nullptr), "Pocket", App::Prop_None, "Face where pocket will end");
-    ADD_PROPERTY_TYPE(Offset, (0.0), "Pocket", App::Prop_None, "Offset from face in which pocket will end");
+    ADD_PROPERTY_TYPE(Offset, (0.0), "Pocket", App::Prop_None,
+                      "Offset from face in which pocket will end");
     Offset.setConstraints(&signedLengthConstraint);
     ADD_PROPERTY_TYPE(TaperAngle, (0.0), "Pocket", App::Prop_None, "Taper angle");
     TaperAngle.setConstraints(&floatAngle);
-    ADD_PROPERTY_TYPE(TaperAngle2, (0.0), "Pocket", App::Prop_None, "Taper angle for 2nd direction");
+    ADD_PROPERTY_TYPE(TaperAngle2, (0.0), "Pocket", App::Prop_None,
+                      "Taper angle for 2nd direction");
     TaperAngle2.setConstraints(&floatAngle);
 
     // Remove the constraints and keep the type to allow to accept negative values
@@ -72,8 +79,8 @@ App::DocumentObjectExecReturn *Pocket::execute()
 {
     // Handle legacy features, these typically have Type set to 3 (previously NULL, now UpToFace),
     // empty FaceName (because it didn't exist) and a value for Length
-    if (std::string(Type.getValueAsString()) == "UpToFace" &&
-        (!UpToFace.getValue() && Length.getValue() > Precision::Confusion()))
+    if (std::string(Type.getValueAsString()) == "UpToFace"
+        && (!UpToFace.getValue() && Length.getValue() > Precision::Confusion()))
         Type.setValue("Length");
 
     // Validate parameters
@@ -88,7 +95,8 @@ App::DocumentObjectExecReturn *Pocket::execute()
     TopoDS_Shape profileshape;
     try {
         profileshape = getVerifiedFace();
-    } catch (const Base::Exception& e) {
+    }
+    catch (const Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 
@@ -97,11 +105,12 @@ App::DocumentObjectExecReturn *Pocket::execute()
     try {
         base = getBaseShape();
     }
-    catch (const Base::Exception&) {
-        std::string text(QT_TR_NOOP("The requested feature cannot be created. The reason may be that:\n"
-                                    "  - the active Body does not contain a base shape, so there is no\n"
-                                    "  material to be removed;\n"
-                                    "  - the selected sketch does not belong to the active Body."));
+    catch (const Base::Exception &) {
+        std::string text(
+            QT_TR_NOOP("The requested feature cannot be created. The reason may be that:\n"
+                       "  - the active Body does not contain a base shape, so there is no\n"
+                       "  material to be removed;\n"
+                       "  - the selected sketch does not belong to the active Body."));
         return new App::DocumentObjectExecReturn(text);
     }
 
@@ -135,7 +144,8 @@ App::DocumentObjectExecReturn *Pocket::execute()
 
         // factor would be zero if vectors are orthogonal
         if (factor < Precision::Confusion())
-            return new App::DocumentObjectExecReturn("Pocket: Creation failed because direction is orthogonal to sketch's normal vector");
+            return new App::DocumentObjectExecReturn("Pocket: Creation failed because direction is "
+                                                     "orthogonal to sketch's normal vector");
 
         // perform the length correction if not along custom vector
         if (AlongSketchNormal.getValue()) {
@@ -152,14 +162,15 @@ App::DocumentObjectExecReturn *Pocket::execute()
         std::string method(Type.getValueAsString());
         if (method == "UpToFirst" || method == "UpToFace") {
             if (base.IsNull())
-                return new App::DocumentObjectExecReturn("Pocket: Extruding up to a face is only possible if the sketch is located on a face");
+                return new App::DocumentObjectExecReturn(
+                    "Pocket: Extruding up to a face is only possible if the sketch is located on a "
+                    "face");
 
             // Note: This will return an unlimited planar face if support is a datum plane
             TopoDS_Face supportface = getSupportFace();
             supportface.Move(invObjLoc);
 
-            if (Reversed.getValue())
-                dir.Reverse();
+            if (Reversed.getValue()) dir.Reverse();
 
             // Find a valid face or datum plane to extrude up to
             TopoDS_Face upToFace;
@@ -177,24 +188,26 @@ App::DocumentObjectExecReturn *Pocket::execute()
             // The bug only occurs when the upToFace is limited (by a wire), not for unlimited upToFace. But
             // other problems occur with unlimited concave upToFace so it is not an option to always unlimit upToFace
             // Check supportface for limits, otherwise Perform() throws an exception
-            TopExp_Explorer Ex(supportface,TopAbs_WIRE);
-            if (!Ex.More())
-                supportface = TopoDS_Face();
+            TopExp_Explorer Ex(supportface, TopAbs_WIRE);
+            if (!Ex.More()) supportface = TopoDS_Face();
             TopoDS_Shape prism;
             PrismMode mode = PrismMode::CutFromBase;
-            generatePrism(prism, method, base, profileshape, supportface, upToFace, dir, mode, Standard_True);
+            generatePrism(prism, method, base, profileshape, supportface, upToFace, dir, mode,
+                          Standard_True);
 
             // And the really expensive way to get the SubShape...
             BRepAlgoAPI_Cut mkCut(base, prism);
             if (!mkCut.IsDone())
-                return new App::DocumentObjectExecReturn("Pocket: Up to face: Could not get SubShape!");
+                return new App::DocumentObjectExecReturn(
+                    "Pocket: Up to face: Could not get SubShape!");
             // FIXME: In some cases this affects the Shape property: It is set to the same shape as the SubShape!!!!
             TopoDS_Shape result = refineShapeIfActive(mkCut.Shape());
             this->AddSubShape.setValue(result);
 
             int prismCount = countSolids(prism);
             if (prismCount > 1) {
-                return new App::DocumentObjectExecReturn("Pocket: Result has multiple solids. This is not supported at this time.");
+                return new App::DocumentObjectExecReturn(
+                    "Pocket: Result has multiple solids. This is not supported at this time.");
             }
 
             this->Shape.setValue(getSolid(prism));
@@ -202,12 +215,13 @@ App::DocumentObjectExecReturn *Pocket::execute()
         else {
             TopoDS_Shape prism;
             if (hasTaperedAngle()) {
-                if (Reversed.getValue())
-                    dir.Reverse();
-                generateTaperedPrism(prism, profileshape, method, dir, L, L2, TaperAngle.getValue(), TaperAngle2.getValue(), Midplane.getValue());
+                if (Reversed.getValue()) dir.Reverse();
+                generateTaperedPrism(prism, profileshape, method, dir, L, L2, TaperAngle.getValue(),
+                                     TaperAngle2.getValue(), Midplane.getValue());
             }
             else {
-                generatePrism(prism, profileshape, method, dir, L, L2, Midplane.getValue(), Reversed.getValue());
+                generatePrism(prism, profileshape, method, dir, L, L2, Midplane.getValue(),
+                              Reversed.getValue());
             }
 
             if (prism.IsNull())
@@ -229,8 +243,8 @@ App::DocumentObjectExecReturn *Pocket::execute()
 
             int solidCount = countSolids(result);
             if (solidCount > 1) {
-                return new App::DocumentObjectExecReturn("Pocket: Result has multiple solids. This is not supported at this time.");
-
+                return new App::DocumentObjectExecReturn(
+                    "Pocket: Result has multiple solids. This is not supported at this time.");
             }
             solRes = refineShapeIfActive(solRes);
             remapSupportShape(solRes);
@@ -242,16 +256,18 @@ App::DocumentObjectExecReturn *Pocket::execute()
 
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
-        if (std::string(e.GetMessageString()) == "TopoDS::Face" &&
-            (std::string(Type.getValueAsString()) == "UpToFirst" || std::string(Type.getValueAsString()) == "UpToFace"))
-            return new App::DocumentObjectExecReturn("Could not create face from sketch.\n"
+    catch (Standard_Failure &e) {
+        if (std::string(e.GetMessageString()) == "TopoDS::Face"
+            && (std::string(Type.getValueAsString()) == "UpToFirst"
+                || std::string(Type.getValueAsString()) == "UpToFace"))
+            return new App::DocumentObjectExecReturn(
+                "Could not create face from sketch.\n"
                 "Intersecting sketch entities or multiple faces in a sketch are not allowed "
                 "for making a pocket up to a face.");
         else
             return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
-    catch (Base::Exception& e) {
+    catch (Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 }

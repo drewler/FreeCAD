@@ -46,7 +46,7 @@ class Module: public Py::ExtensionModule<Module>
 public:
     Module() : Py::ExtensionModule<Module>("Surface")
     {
-        initialize("This module is the Surface module.");// register with Python
+        initialize("This module is the Surface module."); // register with Python
     }
 
     ~Module() override {}
@@ -54,12 +54,9 @@ public:
 private:
 };
 
-PyObject *initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
-}// namespace Surface
+} // namespace Surface
 
 /* Python entry */
 PyMOD_INIT_FUNC(Surface)
@@ -78,13 +75,13 @@ PyMOD_INIT_FUNC(Surface)
     Base::Interpreter().addType(&Surface::BlendCurvePy::Type, mod, "BlendCurve");
 
     // Add types to module
-    Surface::Filling           ::init();
-    Surface::Sewing            ::init();
-    Surface::Cut               ::init();
-    Surface::GeomFillSurface   ::init();
-    Surface::Extend            ::init();
+    Surface::Filling ::init();
+    Surface::Sewing ::init();
+    Surface::Cut ::init();
+    Surface::GeomFillSurface ::init();
+    Surface::Extend ::init();
     Surface::FeatureBlendCurve ::init();
-    Surface::Sections          ::init();
+    Surface::Sections ::init();
 
     PyMOD_Return(mod);
 }

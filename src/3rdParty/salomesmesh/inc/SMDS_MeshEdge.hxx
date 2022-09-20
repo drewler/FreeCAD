@@ -30,10 +30,10 @@
 
 class SMDS_EXPORT SMDS_MeshEdge: public SMDS_MeshCell
 {
-        
- public:
-  virtual SMDSAbs_ElementType  GetType() const;
-  virtual vtkIdType            GetVtkType() const;
-  virtual SMDSAbs_GeometryType GetGeomType() const { return SMDSGeom_EDGE; }
+
+public:
+    virtual SMDSAbs_ElementType GetType() const;
+    virtual vtkIdType GetVtkType() const;
+    virtual SMDSAbs_GeometryType GetGeomType() const { return SMDSGeom_EDGE; }
 };
 #endif

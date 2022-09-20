@@ -59,13 +59,11 @@ Branding::Branding()
     filter.push_back("UserParameterTemplate");
 }
 
-bool Branding::readFile(const QString& fn)
+bool Branding::readFile(const QString &fn)
 {
     QFile file(fn);
-    if (!file.open(QFile::ReadOnly))
-        return false;
-    if (!evaluateXML(&file, domDocument))
-        return false;
+    if (!file.open(QFile::ReadOnly)) return false;
+    if (!evaluateXML(&file, domDocument)) return false;
     file.close();
     return true;
 }
@@ -80,33 +78,28 @@ Branding::XmlConfig Branding::getUserDefines() const
         while (!child.isNull()) {
             std::string name = child.localName().toLatin1().constData();
             std::string value = child.text().toUtf8().constData();
-            if (std::find(filter.begin(), filter.end(), name) != filter.end())
-                cfg[name] = value;
+            if (std::find(filter.begin(), filter.end(), name) != filter.end()) cfg[name] = value;
             child = child.nextSiblingElement();
         }
     }
     return cfg;
 }
 
-bool Branding::evaluateXML(QIODevice *device, QDomDocument& xmlDocument)
+bool Branding::evaluateXML(QIODevice *device, QDomDocument &xmlDocument)
 {
     QString errorStr;
     int errorLine;
     int errorColumn;
 
-    if (!xmlDocument.setContent(device, true, &errorStr, &errorLine,
-                                &errorColumn)) {
+    if (!xmlDocument.setContent(device, true, &errorStr, &errorLine, &errorColumn)) {
         return false;
     }
 
     QDomElement root = xmlDocument.documentElement();
-    if (root.tagName() != QLatin1String("Branding")) {
-        return false;
-    }
+    if (root.tagName() != QLatin1String("Branding")) { return false; }
     else if (root.hasAttribute(QLatin1String("version"))) {
         QString attr = root.attribute(QLatin1String("version"));
-        if (attr != QLatin1String("1.0"))
-            return false;
+        if (attr != QLatin1String("1.0")) return false;
     }
 
     return true;

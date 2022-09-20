@@ -21,7 +21,6 @@
  ***************************************************************************/
 
 
-
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
@@ -44,46 +43,35 @@ PROPERTY_SOURCE(Mesh::FixDefects, Mesh::Feature)
 
 FixDefects::FixDefects()
 {
-  ADD_PROPERTY(Source  ,(nullptr));
-  ADD_PROPERTY(Epsilon  ,(0));
+    ADD_PROPERTY(Source, (nullptr));
+    ADD_PROPERTY(Epsilon, (0));
 }
 
-FixDefects::~FixDefects()
-{
-}
+FixDefects::~FixDefects() {}
 
 short FixDefects::mustExecute() const
 {
-    if (Source.isTouched())
-        return 1;
+    if (Source.isTouched()) return 1;
     return 0;
 }
 
-App::DocumentObjectExecReturn *FixDefects::execute()
-{
-  return App::DocumentObject::StdReturn;
-}
+App::DocumentObjectExecReturn *FixDefects::execute() { return App::DocumentObject::StdReturn; }
 
 // ----------------------------------------------------------------------
 
 PROPERTY_SOURCE(Mesh::HarmonizeNormals, Mesh::FixDefects)
 
-HarmonizeNormals::HarmonizeNormals()
-{
-}
+HarmonizeNormals::HarmonizeNormals() {}
 
-HarmonizeNormals::~HarmonizeNormals()
-{
-}
+HarmonizeNormals::~HarmonizeNormals() {}
 
 App::DocumentObjectExecReturn *HarmonizeNormals::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         mesh->harmonizeNormals();
@@ -97,22 +85,17 @@ App::DocumentObjectExecReturn *HarmonizeNormals::execute()
 
 PROPERTY_SOURCE(Mesh::FlipNormals, Mesh::FixDefects)
 
-FlipNormals::FlipNormals()
-{
-}
+FlipNormals::FlipNormals() {}
 
-FlipNormals::~FlipNormals()
-{
-}
+FlipNormals::~FlipNormals() {}
 
 App::DocumentObjectExecReturn *FlipNormals::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         mesh->flipNormals();
@@ -126,22 +109,17 @@ App::DocumentObjectExecReturn *FlipNormals::execute()
 
 PROPERTY_SOURCE(Mesh::FixNonManifolds, Mesh::FixDefects)
 
-FixNonManifolds::FixNonManifolds()
-{
-}
+FixNonManifolds::FixNonManifolds() {}
 
-FixNonManifolds::~FixNonManifolds()
-{
-}
+FixNonManifolds::~FixNonManifolds() {}
 
 App::DocumentObjectExecReturn *FixNonManifolds::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         mesh->removeNonManifolds();
@@ -155,22 +133,17 @@ App::DocumentObjectExecReturn *FixNonManifolds::execute()
 
 PROPERTY_SOURCE(Mesh::FixDuplicatedFaces, Mesh::FixDefects)
 
-FixDuplicatedFaces::FixDuplicatedFaces()
-{
-}
+FixDuplicatedFaces::FixDuplicatedFaces() {}
 
-FixDuplicatedFaces::~FixDuplicatedFaces()
-{
-}
+FixDuplicatedFaces::~FixDuplicatedFaces() {}
 
 App::DocumentObjectExecReturn *FixDuplicatedFaces::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         mesh->removeDuplicatedFacets();
@@ -184,22 +157,17 @@ App::DocumentObjectExecReturn *FixDuplicatedFaces::execute()
 
 PROPERTY_SOURCE(Mesh::FixDuplicatedPoints, Mesh::FixDefects)
 
-FixDuplicatedPoints::FixDuplicatedPoints()
-{
-}
+FixDuplicatedPoints::FixDuplicatedPoints() {}
 
-FixDuplicatedPoints::~FixDuplicatedPoints()
-{
-}
+FixDuplicatedPoints::~FixDuplicatedPoints() {}
 
 App::DocumentObjectExecReturn *FixDuplicatedPoints::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         mesh->removeDuplicatedPoints();
@@ -213,22 +181,17 @@ App::DocumentObjectExecReturn *FixDuplicatedPoints::execute()
 
 PROPERTY_SOURCE(Mesh::FixDegenerations, Mesh::FixDefects)
 
-FixDegenerations::FixDegenerations()
-{
-}
+FixDegenerations::FixDegenerations() {}
 
-FixDegenerations::~FixDegenerations()
-{
-}
+FixDegenerations::~FixDegenerations() {}
 
 App::DocumentObjectExecReturn *FixDegenerations::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         mesh->validateDegenerations(static_cast<float>(Epsilon.getValue()));
@@ -242,28 +205,21 @@ App::DocumentObjectExecReturn *FixDegenerations::execute()
 
 PROPERTY_SOURCE(Mesh::FixDeformations, Mesh::FixDefects)
 
-FixDeformations::FixDeformations()
-{
-  ADD_PROPERTY(MaxAngle  ,(5.0f));
-}
+FixDeformations::FixDeformations() { ADD_PROPERTY(MaxAngle, (5.0f)); }
 
-FixDeformations::~FixDeformations()
-{
-}
+FixDeformations::~FixDeformations() {}
 
 App::DocumentObjectExecReturn *FixDeformations::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         float maxAngle = Base::toRadians(MaxAngle.getValue());
-        mesh->validateDeformations(maxAngle,
-                                   static_cast<float>(Epsilon.getValue()));
+        mesh->validateDeformations(maxAngle, static_cast<float>(Epsilon.getValue()));
         this->Mesh.setValuePtr(mesh.release());
     }
 
@@ -274,22 +230,17 @@ App::DocumentObjectExecReturn *FixDeformations::execute()
 
 PROPERTY_SOURCE(Mesh::FixIndices, Mesh::FixDefects)
 
-FixIndices::FixIndices()
-{
-}
+FixIndices::FixIndices() {}
 
-FixIndices::~FixIndices()
-{
-}
+FixIndices::~FixIndices() {}
 
 App::DocumentObjectExecReturn *FixIndices::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         mesh->validateIndices();
@@ -305,22 +256,19 @@ PROPERTY_SOURCE(Mesh::FillHoles, Mesh::FixDefects)
 
 FillHoles::FillHoles()
 {
-    ADD_PROPERTY(FillupHolesOfLength,(0));
-    ADD_PROPERTY(MaxArea,(0.1f));
+    ADD_PROPERTY(FillupHolesOfLength, (0));
+    ADD_PROPERTY(MaxArea, (0.1f));
 }
 
-FillHoles::~FillHoles()
-{
-}
+FillHoles::~FillHoles() {}
 
 App::DocumentObjectExecReturn *FillHoles::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         MeshCore::ConstraintDelaunayTriangulator cTria((float)MaxArea.getValue());
@@ -336,23 +284,17 @@ App::DocumentObjectExecReturn *FillHoles::execute()
 
 PROPERTY_SOURCE(Mesh::RemoveComponents, Mesh::FixDefects)
 
-RemoveComponents::RemoveComponents()
-{
-    ADD_PROPERTY(RemoveCompOfSize,(0));
-}
+RemoveComponents::RemoveComponents() { ADD_PROPERTY(RemoveCompOfSize, (0)); }
 
-RemoveComponents::~RemoveComponents()
-{
-}
+RemoveComponents::~RemoveComponents() {}
 
 App::DocumentObjectExecReturn *RemoveComponents::execute()
 {
-    App::DocumentObject* link = Source.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No mesh linked");
-    App::Property* prop = link->getPropertyByName("Mesh");
+    App::DocumentObject *link = Source.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No mesh linked");
+    App::Property *prop = link->getPropertyByName("Mesh");
     if (prop && prop->getTypeId() == Mesh::PropertyMeshKernel::getClassTypeId()) {
-        Mesh::PropertyMeshKernel* kernel = static_cast<Mesh::PropertyMeshKernel*>(prop);
+        Mesh::PropertyMeshKernel *kernel = static_cast<Mesh::PropertyMeshKernel *>(prop);
         std::unique_ptr<MeshObject> mesh(new MeshObject);
         *mesh = kernel->getValue();
         mesh->removeComponents(RemoveCompOfSize.getValue());

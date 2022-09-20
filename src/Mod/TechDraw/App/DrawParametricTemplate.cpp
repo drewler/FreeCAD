@@ -23,7 +23,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #endif
 
 #include <Base/Exception.h>
@@ -51,12 +51,10 @@ PROPERTY_SOURCE(TechDraw::DrawParametricTemplate, TechDraw::DrawTemplate)
 DrawParametricTemplate::DrawParametricTemplate()
 {
     static const char *group = "Page";
-    ADD_PROPERTY_TYPE(Template ,(""), group, (App::PropertyType) App::Prop_None, "Template script");
+    ADD_PROPERTY_TYPE(Template, (""), group, (App::PropertyType)App::Prop_None, "Template script");
 }
 
-DrawParametricTemplate::~DrawParametricTemplate()
-{
-}
+DrawParametricTemplate::~DrawParametricTemplate() {}
 
 
 PyObject *DrawParametricTemplate::getPyObject()
@@ -68,28 +66,24 @@ PyObject *DrawParametricTemplate::getPyObject()
     return Py::new_reference_to(PythonObject);
 }
 
-unsigned int DrawParametricTemplate::getMemSize() const
+unsigned int DrawParametricTemplate::getMemSize() const { return 0; }
+
+double DrawParametricTemplate::getWidth() const
 {
-    return 0;
-}
-
-double DrawParametricTemplate::getWidth() const {
-  throw Base::NotImplementedError("Need to Implement");
+    throw Base::NotImplementedError("Need to Implement");
 }
 
 
-double DrawParametricTemplate::getHeight() const {
-  throw Base::NotImplementedError("Need to Implement");
-}
-
-
-short DrawParametricTemplate::mustExecute() const
+double DrawParametricTemplate::getHeight() const
 {
-    return App::DocumentObject::mustExecute();
+    throw Base::NotImplementedError("Need to Implement");
 }
+
+
+short DrawParametricTemplate::mustExecute() const { return App::DocumentObject::mustExecute(); }
 
 /// get called by the container when a Property was changed
-void DrawParametricTemplate::onChanged(const App::Property* prop)
+void DrawParametricTemplate::onChanged(const App::Property *prop)
 {
     App::DocumentObject::onChanged(prop);
 }
@@ -106,10 +100,10 @@ App::DocumentObjectExecReturn *DrawParametricTemplate::execute()
         try {
             Base::Interpreter().runFile(temp.c_str(), true);
         }
-    catch(const Base::Exception& e) {
-        PyErr_SetString(PyExc_ImportError, e.what());
-        return App::DocumentObject::StdReturn;
-    }
+        catch (const Base::Exception &e) {
+            PyErr_SetString(PyExc_ImportError, e.what());
+            return App::DocumentObject::StdReturn;
+        }
     }
 
     return App::DocumentObject::StdReturn;
@@ -117,14 +111,14 @@ App::DocumentObjectExecReturn *DrawParametricTemplate::execute()
 
 int DrawParametricTemplate::drawLine(double x1, double y1, double x2, double y2)
 {
-//    TechDraw::GenericPtr line = new TechDraw::Generic();
+    //    TechDraw::GenericPtr line = new TechDraw::Generic();
     TechDraw::GenericPtr line(new TechDraw::Generic());
 
     line->points.emplace_back(x1, y1);
     line->points.emplace_back(x2, y2);
 
     geom.push_back(line); // Push onto geometry stack
-    return geom.size() -1;
+    return geom.size() - 1;
 }
 
 int DrawParametricTemplate::clearGeometry()
@@ -136,14 +130,16 @@ int DrawParametricTemplate::clearGeometry()
 
 // Python Template feature ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(TechDraw::DrawParametricTemplatePython, TechDraw::DrawParametricTemplate)
-template<> const char* TechDraw::DrawParametricTemplatePython::getViewProviderName() const {
+template<> const char *TechDraw::DrawParametricTemplatePython::getViewProviderName() const
+{
     return "TechDrawGui::ViewProviderPython";
 }
 /// @endcond
 
 // explicit template instantiation
 template class TechDrawExport FeaturePythonT<TechDraw::DrawParametricTemplate>;
-}
+} // namespace App

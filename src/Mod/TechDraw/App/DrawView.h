@@ -46,7 +46,7 @@ class DrawLeaderLine;
 
 /** Base class of all View Features in the drawing module
  */
-class TechDrawExport DrawView : public App::DocumentObject
+class TechDrawExport DrawView: public App::DocumentObject
 {
     Q_DECLARE_TR_FUNCTIONS(TechDraw::DrawView)
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawView);
@@ -72,32 +72,33 @@ public:
     void onDocumentRestored() override;
     short mustExecute() const override;
     //@}
-    void handleChangedPropertyType(
-        Base::XMLReader &reader, const char * TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
     bool isInClip();
-    DrawViewClip* getClipGroup();
+    DrawViewClip *getClipGroup();
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "TechDrawGui::ViewProviderDrawingView";
     }
     //return PyObject as DrawViewPy
     PyObject *getPyObject() override;
 
-    virtual DrawPage* findParentPage() const;
-    virtual std::vector<DrawPage*> findAllParentPages() const;
+    virtual DrawPage *findParentPage() const;
+    virtual std::vector<DrawPage *> findAllParentPages() const;
     virtual int countParentPages() const;
-    virtual QRectF getRect() const;                      //must be overridden by derived class
+    virtual QRectF getRect() const; //must be overridden by derived class
     virtual double autoScale() const;
     virtual double autoScale(double w, double h) const;
     virtual bool checkFit() const;
-    virtual bool checkFit(DrawPage*) const;
+    virtual bool checkFit(DrawPage *) const;
     virtual void setPosition(double x, double y, bool force = false);
     virtual bool keepUpdated(void);
 
-    boost::signals2::signal<void (const DrawView*)> signalGuiPaint;
-    boost::signals2::signal<void (const DrawView*, std::string, std::string)> signalProgressMessage;
+    boost::signals2::signal<void(const DrawView *)> signalGuiPaint;
+    boost::signals2::signal<void(const DrawView *, std::string, std::string)> signalProgressMessage;
     void requestPaint(void);
     void showProgressMessage(std::string featureName, std::string text);
 
@@ -108,7 +109,7 @@ public:
     virtual bool isLocked(void) const;
     virtual bool showLock(void) const;
 
-    std::vector<TechDraw::DrawLeaderLine*> getLeaders(void) const;
+    std::vector<TechDraw::DrawLeaderLine *> getLeaders(void) const;
 
     void setScaleAttribute();
 
@@ -116,7 +117,7 @@ public:
     bool overrideKeepUpdated(void) { return m_overrideKeepUpdated; }
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     virtual void validateScale();
     std::string pageFeatName;
     bool autoPos;
@@ -126,7 +127,7 @@ protected:
     double prefScale();
 
 private:
-    static const char* ScaleTypeEnums[];
+    static const char *ScaleTypeEnums[];
     static App::PropertyFloatConstraint::Constraints scaleRange;
 
     bool m_overrideKeepUpdated;

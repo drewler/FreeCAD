@@ -42,7 +42,7 @@ PROPERTY_SOURCE(App::GeoFeature, App::DocumentObject)
 
 GeoFeature::GeoFeature()
 {
-    ADD_PROPERTY_TYPE(Placement,(Base::Placement()),nullptr,Prop_NoRecompute,nullptr);
+    ADD_PROPERTY_TYPE(Placement, (Base::Placement()), nullptr, Prop_NoRecompute, nullptr);
 }
 
 GeoFeature::~GeoFeature() = default;
@@ -56,84 +56,71 @@ void GeoFeature::transformPlacement(const Base::Placement &transform)
 
 Base::Placement GeoFeature::globalPlacement() const
 {
-    auto* group = GeoFeatureGroupExtension::getGroupOfObject(this);
+    auto *group = GeoFeatureGroupExtension::getGroupOfObject(this);
     if (group) {
         auto ext = group->getExtensionByType<GeoFeatureGroupExtension>();
         return ext->globalGroupPlacement() * Placement.getValue();
     }
-    return Placement.getValue();    
+    return Placement.getValue();
 }
 
-const PropertyComplexGeoData* GeoFeature::getPropertyOfGeometry() const
-{
-    return nullptr;
-}
+const PropertyComplexGeoData *GeoFeature::getPropertyOfGeometry() const { return nullptr; }
 
-PyObject* GeoFeature::getPyObject()
+PyObject *GeoFeature::getPyObject()
 {
     if (PythonObject.is(Py::_None())) {
         // ref counter is set to 1
-        PythonObject = Py::Object(new GeoFeaturePy(this),true);
+        PythonObject = Py::Object(new GeoFeaturePy(this), true);
     }
     return Py::new_reference_to(PythonObject);
 }
 
 
-std::pair<std::string,std::string> GeoFeature::getElementName(
-        const char *name, ElementNameType type) const
+std::pair<std::string, std::string> GeoFeature::getElementName(const char *name,
+                                                               ElementNameType type) const
 {
     (void)type;
 
-    std::pair<std::string,std::string> ret;
-    if(!name)
-        return ret;
+    std::pair<std::string, std::string> ret;
+    if (!name) return ret;
 
     ret.second = name;
     return ret;
 }
 
-DocumentObject *GeoFeature::resolveElement(DocumentObject *obj, const char *subname, 
-        std::pair<std::string,std::string> &elementName, bool append, 
-        ElementNameType type, const DocumentObject *filter, 
-        const char **_element, GeoFeature **geoFeature)
+DocumentObject *GeoFeature::resolveElement(DocumentObject *obj, const char *subname,
+                                           std::pair<std::string, std::string> &elementName,
+                                           bool append, ElementNameType type,
+                                           const DocumentObject *filter, const char **_element,
+                                           GeoFeature **geoFeature)
 {
-    if(!obj || !obj->getNameInDocument())
-        return nullptr;
-    if(!subname)
-        subname = "";
+    if (!obj || !obj->getNameInDocument()) return nullptr;
+    if (!subname) subname = "";
     const char *element = Data::ComplexGeoData::findElementName(subname);
-    if(_element) *_element = element;
+    if (_element) *_element = element;
     auto sobj = obj->getSubObject(subname);
-    if(!sobj)
-        return nullptr;
+    if (!sobj) return nullptr;
     obj = sobj->getLinkedObject(true);
-    auto geo = dynamic_cast<GeoFeature*>(obj);
-    if(geoFeature) 
-        *geoFeature = geo;
-    if(!obj || (filter && obj!=filter))
-        return nullptr;
-    if(!element || !element[0]) {
-        if(append) 
-            elementName.second = Data::ComplexGeoData::oldElementName(subname);
+    auto geo = dynamic_cast<GeoFeature *>(obj);
+    if (geoFeature) *geoFeature = geo;
+    if (!obj || (filter && obj != filter)) return nullptr;
+    if (!element || !element[0]) {
+        if (append) elementName.second = Data::ComplexGeoData::oldElementName(subname);
         return sobj;
     }
 
-    if(!geo || hasHiddenMarker(element)) {
-        if(!append) 
-            elementName.second = element;
+    if (!geo || hasHiddenMarker(element)) {
+        if (!append) elementName.second = element;
         else
             elementName.second = Data::ComplexGeoData::oldElementName(subname);
         return sobj;
     }
-    if(!append) 
-        elementName = geo->getElementName(element,type);
-    else{
-        const auto &names = geo->getElementName(element,type);
-        std::string prefix(subname,element-subname);
-        if(!names.first.empty())
-            elementName.first = prefix + names.first;
+    if (!append) elementName = geo->getElementName(element, type);
+    else {
+        const auto &names = geo->getElementName(element, type);
+        std::string prefix(subname, element - subname);
+        if (!names.first.empty()) elementName.first = prefix + names.first;
         elementName.second = prefix + names.second;
     }
     return sobj;
 }
-

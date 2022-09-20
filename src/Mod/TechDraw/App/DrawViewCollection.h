@@ -36,12 +36,13 @@ namespace TechDraw
 
 /** Base class for collection of view objects
  */
-class TechDrawExport DrawViewCollection : public DrawView
+class TechDrawExport DrawViewCollection: public DrawView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawViewCollection);
 
 public:
     App::PropertyLinkList Views;
+
 public:
     /// Constructor
     DrawViewCollection();
@@ -61,13 +62,14 @@ public:
     void unsetupObject() override;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "TechDrawGui::ViewProviderViewCollection";
     }
     QRectF getRect() const override;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     bool nowUnsetting;
 };
 

@@ -29,72 +29,76 @@
 #include <Inventor/elements/SoReplacedElement.h>
 #include <Mod/Mesh/App/Core/Elements.h>
 
-namespace MeshGui {
+namespace MeshGui
+{
 
-class MeshGuiExport SoSFMeshPointArray : public SoSField {
-  using inherited = SoSField;
+class MeshGuiExport SoSFMeshPointArray: public SoSField
+{
+    using inherited = SoSField;
 
-  SO_SFIELD_HEADER(SoSFMeshPointArray, MeshCore::MeshPointArray*, MeshCore::MeshPointArray*)
+    SO_SFIELD_HEADER(SoSFMeshPointArray, MeshCore::MeshPointArray *, MeshCore::MeshPointArray *)
 
 public:
-  static void initClass(void);
-  void setValue(const MeshCore::MeshPointArray& p);
+    static void initClass(void);
+    void setValue(const MeshCore::MeshPointArray &p);
 
 protected:
-  SbBool readBinaryValues(SoInput * in, unsigned long numarg);
-  SbBool read1Value(SoInput * in, unsigned long idx);
-  void writeBinaryValues(SoOutput * out) const;
-  void write1Value(SoOutput * out, unsigned long idx) const;
-  int getNumValuesPerLine() const;
+    SbBool readBinaryValues(SoInput *in, unsigned long numarg);
+    SbBool read1Value(SoInput *in, unsigned long idx);
+    void writeBinaryValues(SoOutput *out) const;
+    void write1Value(SoOutput *out, unsigned long idx) const;
+    int getNumValuesPerLine() const;
 };
 
 // -------------------------------------------------------
 
-class MeshGuiExport SoFCMeshVertexElement : public SoReplacedElement {
-  using inherited = SoReplacedElement;
+class MeshGuiExport SoFCMeshVertexElement: public SoReplacedElement
+{
+    using inherited = SoReplacedElement;
 
-  SO_ELEMENT_HEADER(SoFCMeshVertexElement);
+    SO_ELEMENT_HEADER(SoFCMeshVertexElement);
 
 public:
-  static void initClass(void);
+    static void initClass(void);
 
-  virtual void init(SoState * state);
-  static void set(SoState * const state, SoNode * const node, const MeshCore::MeshPointArray * const coords);
-  static const MeshCore::MeshPointArray * get(SoState * const state);
-  static const SoFCMeshVertexElement * getInstance(SoState * state);
-  virtual void print(FILE * file) const;
+    virtual void init(SoState *state);
+    static void set(SoState *const state, SoNode *const node,
+                    const MeshCore::MeshPointArray *const coords);
+    static const MeshCore::MeshPointArray *get(SoState *const state);
+    static const SoFCMeshVertexElement *getInstance(SoState *state);
+    virtual void print(FILE *file) const;
 
 protected:
-  virtual ~SoFCMeshVertexElement();
-  const MeshCore::MeshPointArray *coords3D;
+    virtual ~SoFCMeshVertexElement();
+    const MeshCore::MeshPointArray *coords3D;
 };
 
 // -------------------------------------------------------
 
-class MeshGuiExport SoFCMeshVertex : public SoNode {
-  using inherited = SoSField;
+class MeshGuiExport SoFCMeshVertex: public SoNode
+{
+    using inherited = SoSField;
 
-  SO_NODE_HEADER(SoFCMeshVertex);
+    SO_NODE_HEADER(SoFCMeshVertex);
 
 public:
-  static void initClass(void);
-  SoFCMeshVertex(void);
+    static void initClass(void);
+    SoFCMeshVertex(void);
 
-  SoSFMeshPointArray point;
+    SoSFMeshPointArray point;
 
-  virtual void doAction(SoAction * action);
-  virtual void GLRender(SoGLRenderAction * action);
-  virtual void callback(SoCallbackAction * action);
-  virtual void getBoundingBox(SoGetBoundingBoxAction * action);
-  virtual void pick(SoPickAction * action);
-  virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);
+    virtual void doAction(SoAction *action);
+    virtual void GLRender(SoGLRenderAction *action);
+    virtual void callback(SoCallbackAction *action);
+    virtual void getBoundingBox(SoGetBoundingBoxAction *action);
+    virtual void pick(SoPickAction *action);
+    virtual void getPrimitiveCount(SoGetPrimitiveCountAction *action);
 
 protected:
-  virtual ~SoFCMeshVertex();
+    virtual ~SoFCMeshVertex();
 };
 
 } // namespace MeshGui
 
 
 #endif // MESHGUI_SOFCMESHVERTEX_H
-

@@ -27,8 +27,10 @@
 #include "PropertyPage.h"
 #include <memory>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgSettingsPythonConsole;
 
 /**
@@ -36,12 +38,12 @@ class Ui_DlgSettingsPythonConsole;
  * for the Python console.
  * @author Werner Mayer
  */
-class DlgSettingsPythonConsole : public PreferencePage
+class DlgSettingsPythonConsole: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsPythonConsole(QWidget* parent = nullptr);
+    explicit DlgSettingsPythonConsole(QWidget *parent = nullptr);
     ~DlgSettingsPythonConsole() override;
 
     void saveSettings() override;

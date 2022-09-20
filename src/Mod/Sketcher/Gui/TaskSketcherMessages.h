@@ -31,15 +31,17 @@
 class Ui_TaskSketcherMessages;
 using Connection = boost::signals2::connection;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace SketcherGui { 
+namespace SketcherGui
+{
 
 class ViewProviderSketch;
 
-class TaskSketcherMessages : public Gui::TaskView::TaskBox
+class TaskSketcherMessages: public Gui::TaskView::TaskBox
 {
     Q_OBJECT
 
@@ -47,20 +49,21 @@ public:
     explicit TaskSketcherMessages(ViewProviderSketch *sketchView);
     ~TaskSketcherMessages() override;
 
-    void slotSetUp(const QString &state, const QString &msg, const QString& link, const QString& linkText);
+    void slotSetUp(const QString &state, const QString &msg, const QString &link,
+                   const QString &linkText);
 
 private Q_SLOTS:
     void on_labelConstrainStatusLink_linkClicked(const QString &);
     void on_autoUpdate_stateChanged(int state);
     void on_autoRemoveRedundants_stateChanged(int state);
     void on_manualUpdate_clicked(bool checked);
-    
+
 protected:
     ViewProviderSketch *sketchView;
     Connection connectionSetUp;
 
 private:
-    QWidget* proxy;
+    QWidget *proxy;
     std::unique_ptr<Ui_TaskSketcherMessages> ui;
 };
 

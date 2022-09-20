@@ -152,64 +152,60 @@
 
 using namespace SIM::Coin3D::Quarter;
 
-static QuarterP * self = nullptr;
+static QuarterP *self = nullptr;
 
 /*!
   initialize Quarter, and implicitly Coin
  */
-void
-Quarter::init(bool initCoin)
+void Quarter::init(bool initCoin)
 {
-  COMPILE_ONLY_BEFORE(2,0,0,"Should not be encapsulated in double Quarter namespace");
-  if (self) {
-    // FIXME: Use SoDebugError
-    fprintf(stderr, "Quarter is already initialized\n");
-    return;
-  }
+    COMPILE_ONLY_BEFORE(2, 0, 0, "Should not be encapsulated in double Quarter namespace");
+    if (self) {
+        // FIXME: Use SoDebugError
+        fprintf(stderr, "Quarter is already initialized\n");
+        return;
+    }
 
-  if (initCoin) {
-    SoDB::init();
-    SoNodeKit::init();
-    SoInteraction::init();
-  }
+    if (initCoin) {
+        SoDB::init();
+        SoNodeKit::init();
+        SoInteraction::init();
+    }
 
-  self = new QuarterP;
-  self->initCoin = initCoin;
-
+    self = new QuarterP;
+    self->initCoin = initCoin;
 }
 
 /*!
   clean up resources
  */
-void
-Quarter::clean()
+void Quarter::clean()
 {
-  COMPILE_ONLY_BEFORE(2,0,0,"Should not be encapsulated in double Quarter namespace");
-  assert(self);
-  bool initCoin = self->initCoin;
+    COMPILE_ONLY_BEFORE(2, 0, 0, "Should not be encapsulated in double Quarter namespace");
+    assert(self);
+    bool initCoin = self->initCoin;
 
-  delete self;
-  self = nullptr;
+    delete self;
+    self = nullptr;
 
-  if (initCoin) {
-    // SoDB::finish() will clean up everything that has been
-    // initialized. There's no need to add SoNodeKit::finish() and
-    // SoInteraction::finish() like in TGS Inventor
-    SoDB::finish();
-  }
+    if (initCoin) {
+        // SoDB::finish() will clean up everything that has been
+        // initialized. There's no need to add SoNodeKit::finish() and
+        // SoInteraction::finish() like in TGS Inventor
+        SoDB::finish();
+    }
 }
 
 /*!
   override lower refresh rate limit
  */
-void
-Quarter::setTimerEpsilon(double sec)
+void Quarter::setTimerEpsilon(double sec)
 {
-  COMPILE_ONLY_BEFORE(2,0,0,"Should not be encapsulated in double Quarter namespace");
-  if (!self) {
-    fprintf(stderr, "Quarter is not initialized!\n");
-    return;
-  }
+    COMPILE_ONLY_BEFORE(2, 0, 0, "Should not be encapsulated in double Quarter namespace");
+    if (!self) {
+        fprintf(stderr, "Quarter is not initialized!\n");
+        return;
+    }
 
-  self->sensormanager->setTimerEpsilon(sec);
+    self->sensormanager->setTimerEpsilon(sec);
 }

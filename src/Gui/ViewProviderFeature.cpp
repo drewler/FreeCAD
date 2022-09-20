@@ -35,12 +35,10 @@ PROPERTY_SOURCE(Gui::ViewProviderFeature, Gui::ViewProviderDocumentObject)
 ViewProviderFeature::ViewProviderFeature()
 {
     App::Color c;
-    ADD_PROPERTY(ColourList,(c));
+    ADD_PROPERTY(ColourList, (c));
 }
 
-ViewProviderFeature::~ViewProviderFeature()
-{
-}
+ViewProviderFeature::~ViewProviderFeature() {}
 
 void ViewProviderFeature::attach(App::DocumentObject *pcObj)
 {

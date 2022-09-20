@@ -29,15 +29,17 @@
 class Ui_TaskTransformedMessages;
 using Connection = boost::signals2::connection;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace PartDesignGui { 
+namespace PartDesignGui
+{
 
 class ViewProviderTransformed;
 
-class TaskTransformedMessages : public Gui::TaskView::TaskBox
+class TaskTransformedMessages: public Gui::TaskView::TaskBox
 {
     Q_OBJECT
 
@@ -48,13 +50,13 @@ public:
     void slotDiagnosis(QString msg);
 
 private Q_SLOTS:
-    
+
 protected:
     ViewProviderTransformed *transformedView;
     Connection connectionDiagnosis;
 
 private:
-    QWidget* proxy;
+    QWidget *proxy;
     std::unique_ptr<Ui_TaskTransformedMessages> ui;
 };
 

@@ -44,23 +44,17 @@ QGCustomSvg::QGCustomSvg()
     m_svgRender = new QSvgRenderer();
 }
 
-QGCustomSvg::~QGCustomSvg()
-{
-    delete m_svgRender;
-}
+QGCustomSvg::~QGCustomSvg() { delete m_svgRender; }
 
-void QGCustomSvg::centerAt(QPointF centerPos)
-{
-    centerAt(centerPos.x(), centerPos.y());
-}
+void QGCustomSvg::centerAt(QPointF centerPos) { centerAt(centerPos.x(), centerPos.y()); }
 
 void QGCustomSvg::centerAt(double cX, double cY)
 {
     QRectF box = boundingRect();
     double width = box.width();
     double height = box.height();
-    double newX = (cX - width/2.) * scale();
-    double newY = (cY - height/2.) * scale();
+    double newX = (cX - width / 2.) * scale();
+    double newY = (cY - height / 2.) * scale();
     setPos(newX, newY);
 }
 
@@ -69,15 +63,16 @@ bool QGCustomSvg::load(QByteArray *svgBytes)
     bool success = m_svgRender->load(*svgBytes);
     prepareGeometryChange();
     setSharedRenderer(m_svgRender);
-    return(success);
+    return (success);
 }
 
-void QGCustomSvg::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGCustomSvg::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
-//    painter->setPen(Qt::yellow);
-//    painter->drawRect(boundingRect());          //good for debugging
+    //    painter->setPen(Qt::yellow);
+    //    painter->drawRect(boundingRect());          //good for debugging
 
-    QGraphicsSvgItem::paint (painter, &myOption, widget);
+    QGraphicsSvgItem::paint(painter, &myOption, widget);
 }

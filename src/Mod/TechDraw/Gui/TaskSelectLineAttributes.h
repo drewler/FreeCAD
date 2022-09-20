@@ -29,17 +29,17 @@
 #include <Gui/TaskView/TaskView.h>
 
 
-class dimAttributes {
+class dimAttributes
+{
     double cascadeSpacing;
     double lineStretch;
 
-    public:
-
+public:
     dimAttributes();
     void setCascadeSpacing(double);
-    double getCascadeSpacing() {return cascadeSpacing;}
+    double getCascadeSpacing() { return cascadeSpacing; }
     void setLineStretch(double);
-    double getLineStretch() {return lineStretch;}
+    double getLineStretch() { return lineStretch; }
 
 }; // class dimAttributes
 
@@ -52,7 +52,7 @@ class DrawView;
 class DrawViewPart;
 class CosmeticEdge;
 class LineFormat;
-}
+} // namespace TechDraw
 
 namespace TechDraw
 {
@@ -69,31 +69,31 @@ class MDIViewPage;
 class ViewProviderViewPart;
 class Ui_TaskSelectLineAttributes;
 
-class lineAttributes {
+class lineAttributes
+{
     int style;
     int width;
     int color;
 
 public:
-
     lineAttributes();
     void setStyle(int);
-    int getStyle() const {return style;}
+    int getStyle() const { return style; }
     void setWidth(int);
-    int getWidth() const {return width;}
+    int getWidth() const { return width; }
     float getWidthValue();
     void setColor(int);
-    int getColor() const {return color;}
+    int getColor() const { return color; }
     App::Color getColorValue();
 
 }; // class lineAttributes
 
-class TaskSelectLineAttributes : public QWidget
+class TaskSelectLineAttributes: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TaskSelectLineAttributes(lineAttributes * ptActiveAttributes);
+    explicit TaskSelectLineAttributes(lineAttributes *ptActiveAttributes);
     ~TaskSelectLineAttributes() override;
 
     virtual bool accept();
@@ -106,16 +106,16 @@ protected:
     void setUiEdit();
 
 private:
-    lineAttributes* activeAttributes;
+    lineAttributes *activeAttributes;
     std::unique_ptr<Ui_TaskSelectLineAttributes> ui;
 }; // class TaskSelectLineAttributes
 
-class TaskDlgSelectLineAttributes : public Gui::TaskView::TaskDialog
+class TaskDlgSelectLineAttributes: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskDlgSelectLineAttributes(lineAttributes * ptActiveAttributes);
+    explicit TaskDlgSelectLineAttributes(lineAttributes *ptActiveAttributes);
     ~TaskDlgSelectLineAttributes() override;
 
 public:
@@ -128,16 +128,14 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    bool isAllowedAlterDocument() const override
-                        { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
     void update();
 
 protected:
-
 private:
-    TaskSelectLineAttributes* widget;
+    TaskSelectLineAttributes *widget;
 
-    Gui::TaskView::TaskBox* taskbox;
+    Gui::TaskView::TaskBox *taskbox;
 }; // class TaskDlgSelectLineAttributes
 
 } // namespace TechDrawGui

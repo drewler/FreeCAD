@@ -43,12 +43,6 @@ std::string DrawLeaderLinePy::representation() const
     return std::string("<DrawLeaderLine object>");
 }
 
-PyObject *DrawLeaderLinePy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *DrawLeaderLinePy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int DrawLeaderLinePy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int DrawLeaderLinePy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

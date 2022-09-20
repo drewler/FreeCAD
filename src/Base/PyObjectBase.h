@@ -26,11 +26,11 @@
 // Std. configurations
 
 // (re-)defined in pyconfig.h
-#if defined (_POSIX_C_SOURCE)
-#   undef    _POSIX_C_SOURCE
+#if defined(_POSIX_C_SOURCE)
+#undef _POSIX_C_SOURCE
 #endif
-#if defined (_XOPEN_SOURCE)
-#   undef    _XOPEN_SOURCE
+#if defined(_XOPEN_SOURCE)
+#undef _XOPEN_SOURCE
 #endif
 
 // needed header
@@ -67,7 +67,7 @@
  * @see PYFUNCIMP_S
  * @see FCPythonExport
  */
-#define PYFUNCDEF_S(SFUNC)   static PyObject* SFUNC (PyObject *self,PyObject *args,PyObject *kwd)
+#define PYFUNCDEF_S(SFUNC) static PyObject *SFUNC(PyObject *self, PyObject *args, PyObject *kwd)
 
 
 /** Python static class macro for implementation
@@ -83,7 +83,8 @@
  * @see PYFUNCDEF_S
  * @see FCPythonExport
  */
-#define PYFUNCIMP_S(CLASS,SFUNC) PyObject* CLASS::SFUNC (PyObject *self,PyObject *args,PyObject *kwd)
+#define PYFUNCIMP_S(CLASS, SFUNC)                                                                  \
+    PyObject *CLASS::SFUNC(PyObject *self, PyObject *args, PyObject *kwd)
 
 
 /** Macro for initialization function of Python modules.
@@ -101,32 +102,32 @@
 namespace Base
 {
 
-inline int streq(const char *A, const char *B)  // define "streq"
-{ return strcmp(A,B) == 0;}
-
-
-inline void Assert(int expr, char *msg)         // C++ assert
+inline int streq(const char *A, const char *B) // define "streq"
 {
-    if (!expr)
-    {
-      fprintf(stderr, "%s\n", msg);
-      exit(-1);
+    return strcmp(A, B) == 0;
+}
+
+
+inline void Assert(int expr, char *msg) // C++ assert
+{
+    if (!expr) {
+        fprintf(stderr, "%s\n", msg);
+        exit(-1);
     };
 }
 
-inline PyObject* getTypeAsObject(PyTypeObject* type) {
+inline PyObject *getTypeAsObject(PyTypeObject *type)
+{
     // See https://en.cppreference.com/w/cpp/string/byte/memcpy
     // and https://en.cppreference.com/w/cpp/language/reinterpret_cast
-    PyObject* obj;
+    PyObject *obj;
     std::memcpy(&obj, &type, sizeof type);
     return obj;
 }
 
-inline bool asBoolean(PyObject *obj) {
-    return PyObject_IsTrue(obj) != 0;
-}
+inline bool asBoolean(PyObject *obj) { return PyObject_IsTrue(obj) != 0; }
 
-}
+} // namespace Base
 
 /*------------------------------
  * Python defines
@@ -137,23 +138,43 @@ inline bool asBoolean(PyObject *obj) {
 /// return with no return value if nothing happens
 #define Py_Return return Py_INCREF(Py_None), Py_None
 /// returns an error
-#define Py_Error(E, M)   _Py_Error(return(nullptr),E,M)
-#define _Py_Error(R, E, M)   {PyErr_SetString(E, M); R;}
+#define Py_Error(E, M) _Py_Error(return (nullptr), E, M)
+#define _Py_Error(R, E, M)                                                                         \
+    {                                                                                              \
+        PyErr_SetString(E, M);                                                                     \
+        R;                                                                                         \
+    }
 /// returns an error
-#define Py_ErrorObj(E, O)   _Py_ErrorObj(return(nullptr),E,O)
-#define _Py_ErrorObj(R, E, O)   {PyErr_SetObject(E, O); R;}
+#define Py_ErrorObj(E, O) _Py_ErrorObj(return (nullptr), E, O)
+#define _Py_ErrorObj(R, E, O)                                                                      \
+    {                                                                                              \
+        PyErr_SetObject(E, O);                                                                     \
+        R;                                                                                         \
+    }
 /// checks on a condition and returns an error on failure
-#define Py_Try(F) {if (!(F)) return NULL;}
+#define Py_Try(F)                                                                                  \
+    {                                                                                              \
+        if (!(F)) return NULL;                                                                     \
+    }
 /// assert which returns with an error on failure
-#define Py_Assert(A,E,M) {if (!(A)) {PyErr_SetString(E, M); return nullptr;}}
+#define Py_Assert(A, E, M)                                                                         \
+    {                                                                                              \
+        if (!(A)) {                                                                                \
+            PyErr_SetString(E, M);                                                                 \
+            return nullptr;                                                                        \
+        }                                                                                          \
+    }
 
 
 /// This must be the first line of each PyC++ class
-#define Py_Header                                           \
-public:                                                     \
-    static PyTypeObject   Type;                             \
-    static PyMethodDef    Methods[];                        \
-    virtual PyTypeObject *GetType(void) {return &Type;}
+#define Py_Header                                                                                  \
+public:                                                                                            \
+    static PyTypeObject Type;                                                                      \
+    static PyMethodDef Methods[];                                                                  \
+    virtual PyTypeObject *GetType(void)                                                            \
+    {                                                                                              \
+        return &Type;                                                                              \
+    }
 
 /*------------------------------
  * PyObjectBase
@@ -184,7 +205,7 @@ namespace Base
  *  @see Py_Try
  *  @see Py_Assert
  */
-class BaseExport PyObjectBase : public PyObject
+class BaseExport PyObjectBase: public PyObject
 {
     /** Py_Header struct from python.h.
      *  Every PyObjectBase object is also a python object. So you can use
@@ -192,40 +213,46 @@ class BaseExport PyObjectBase : public PyObject
      */
     Py_Header
 
-    enum Status {
-        Valid = 0,
-        Immutable = 1,
-        Notify = 2,
-        NoTrack = 3
-    };
+        enum Status {
+            Valid = 0,
+            Immutable = 1,
+            Notify = 2,
+            NoTrack = 3
+        };
 
 protected:
     /// destructor
     virtual ~PyObjectBase();
 
     /// Overrides the pointer to the twin object
-    void setTwinPointer(void* ptr) {
-        _pcTwinPointer = ptr;
-    }
+    void setTwinPointer(void *ptr) { _pcTwinPointer = ptr; }
 
 public:
     /** Constructor
      *  Sets the Type of the object (for inheritance) and decrease the
      *  the reference count of the PyObject.
      */
-    PyObjectBase(void*, PyTypeObject *T);
+    PyObjectBase(void *, PyTypeObject *T);
     /// Wrapper for the Python destructor
-    static void PyDestructor(PyObject *P)   // python wrapper
-    {  delete ((PyObjectBase *) P);  }
+    static void PyDestructor(PyObject *P) // python wrapper
+    {
+        delete ((PyObjectBase *)P);
+    }
     /// incref method wrapper (see python extending manual)
-    PyObjectBase* IncRef() {Py_INCREF(this);return this;}
+    PyObjectBase *IncRef()
+    {
+        Py_INCREF(this);
+        return this;
+    }
     /// decref method wrapper (see python extending manual)
-    PyObjectBase* DecRef() {Py_DECREF(this);return this;}
+    PyObjectBase *DecRef()
+    {
+        Py_DECREF(this);
+        return this;
+    }
 
     /// Get the pointer of the twin object
-    void* getTwinPointer() const {
-        return _pcTwinPointer;
-    }
+    void *getTwinPointer() const { return _pcTwinPointer; }
 
     /** GetAttribute implementation
      *  This method implements the retrieval of object attributes.
@@ -238,7 +265,7 @@ public:
      */
     virtual PyObject *_getattr(const char *attr);
     /// static wrapper for pythons _getattro()
-    static  PyObject *__getattro(PyObject * PyObj, PyObject *attro);
+    static PyObject *__getattro(PyObject *PyObj, PyObject *attro);
 
     /** SetAttribute implementation
      *  This method implements the setting of object attributes.
@@ -246,9 +273,9 @@ public:
      *  this method.
      *  You have to call the method of the base class.
      */
-    virtual int _setattr(const char *attro, PyObject *value);    // _setattr method
+    virtual int _setattr(const char *attro, PyObject *value); // _setattr method
     /// static wrapper for pythons _setattro(). // This should be the entry in Type.
-    static  int __setattro(PyObject *PyObj, PyObject *attro, PyObject *value);
+    static int __setattro(PyObject *PyObj, PyObject *attro, PyObject *value);
 
     /** _repr method
     * Override this method to return a string object with some
@@ -266,89 +293,75 @@ public:
     */
     virtual PyObject *_repr();
     /// python wrapper for the _repr() function
-    static  PyObject *__repr(PyObject *PyObj)	{
-        if (!((PyObjectBase*) PyObj)->isValid()){
+    static PyObject *__repr(PyObject *PyObj)
+    {
+        if (!((PyObjectBase *)PyObj)->isValid()) {
             PyErr_Format(PyExc_ReferenceError, "Cannot print representation of deleted object");
             return nullptr;
         }
-        return ((PyObjectBase*) PyObj)->_repr();
+        return ((PyObjectBase *)PyObj)->_repr();
     }
 
     /** PyInit method
     * Override this method to initialize a newly created
     * instance of the class (Constructor)
     */
-    virtual int PyInit(PyObject* /*args*/, PyObject* /*kwd*/)
-    {
-        return 0;
-    }
+    virtual int PyInit(PyObject * /*args*/, PyObject * /*kwd*/) { return 0; }
     /// python wrapper for the _repr() function
-    static  int __PyInit(PyObject* self, PyObject* args, PyObject* kwd)
+    static int __PyInit(PyObject *self, PyObject *args, PyObject *kwd)
     {
-        return ((PyObjectBase*) self)->PyInit(args, kwd);
+        return ((PyObjectBase *)self)->PyInit(args, kwd);
     }
 
-    void setInvalid() {
+    void setInvalid()
+    {
         // first bit is not set, i.e. invalid
         StatusBits.reset(Valid);
         clearAttributes();
         _pcTwinPointer = nullptr;
     }
 
-    bool isValid() {
-        return StatusBits.test(Valid);
-    }
+    bool isValid() { return StatusBits.test(Valid); }
 
-    void setConst() {
+    void setConst()
+    {
         // second bit is set, i.e. immutable
         StatusBits.set(Immutable);
     }
 
-    bool isConst() {
-        return StatusBits.test(Immutable);
-    }
+    bool isConst() { return StatusBits.test(Immutable); }
 
-    void setShouldNotify(bool on) {
-        StatusBits.set(Notify, on);
-    }
+    void setShouldNotify(bool on) { StatusBits.set(Notify, on); }
 
-    bool shouldNotify() const {
-        return StatusBits.test(Notify);
-    }
+    bool shouldNotify() const { return StatusBits.test(Notify); }
 
     void startNotify();
 
-    void setNotTracking(bool on=true) {
-        StatusBits.set(NoTrack, on);
-    }
+    void setNotTracking(bool on = true) { StatusBits.set(NoTrack, on); }
 
-    bool isNotTracking() const {
-        return StatusBits.test(NoTrack);
-    }
+    bool isNotTracking() const { return StatusBits.test(NoTrack); }
 
-    using PointerType = void*;
+    using PointerType = void *;
 
 private:
-    void setAttributeOf(const char* attr, PyObject* par);
+    void setAttributeOf(const char *attr, PyObject *par);
     void resetAttribute();
-    PyObject* getTrackedAttribute(const char* attr);
-    void trackAttribute(const char* attr, PyObject* obj);
-    void untrackAttribute(const char* attr);
+    PyObject *getTrackedAttribute(const char *attr);
+    void trackAttribute(const char *attr, PyObject *obj);
+    void untrackAttribute(const char *attr);
     void clearAttributes();
 
 protected:
     std::bitset<32> StatusBits;
     /// pointer to the handled class
-    void * _pcTwinPointer;
+    void *_pcTwinPointer;
 
 public:
-    PyObject* baseProxy;
+    PyObject *baseProxy;
 
 private:
-    PyObject* attrDict;
+    PyObject *attrDict;
 };
-
-
 
 
 /** Python dynamic class macro for definition
@@ -369,8 +382,12 @@ private:
  * @see PYFUNCIMP_D
  * @see PyObjectBase
  */
-#define PYFUNCDEF_D(CLASS,DFUNC)	PyObject * DFUNC (PyObject *args);  \
-static PyObject * s##DFUNC (PyObject *self, PyObject *args, PyObject * /*kwd*/){return (( CLASS *)self)-> DFUNC (args);};
+#define PYFUNCDEF_D(CLASS, DFUNC)                                                                  \
+    PyObject *DFUNC(PyObject *args);                                                               \
+    static PyObject *s##DFUNC(PyObject *self, PyObject *args, PyObject * /*kwd*/)                  \
+    {                                                                                              \
+        return ((CLASS *)self)->DFUNC(args);                                                       \
+    };
 
 /** Python dynamic class macro for implementation
  * used to set up an implementation for PYFUNCDEF_D definition.
@@ -384,8 +401,7 @@ static PyObject * s##DFUNC (PyObject *self, PyObject *args, PyObject * /*kwd*/){
  * @see PYFUNCDEF_D
  * @see PyObjectBase
  */
-#define PYFUNCIMP_D(CLASS,DFUNC) PyObject* CLASS::DFUNC (PyObject *args)
-
+#define PYFUNCIMP_D(CLASS, DFUNC) PyObject *CLASS::DFUNC(PyObject *args)
 
 
 /** Python dynamic class macro for the method list
@@ -412,22 +428,21 @@ static PyObject * s##DFUNC (PyObject *self, PyObject *args, PyObject * /*kwd*/){
  * @see PYFUNCDEF_D
  * @see PyObjectBase
  */
-#define PYMETHODEDEF(FUNC)	{"" #FUNC "",(PyCFunction) s##FUNC,Py_NEWARGS},
+#define PYMETHODEDEF(FUNC) {"" #FUNC "", (PyCFunction)s##FUNC, Py_NEWARGS},
 
-BaseExport extern PyObject* PyExc_FC_GeneralError;
-#define PY_FCERROR (Base::PyExc_FC_GeneralError ? \
- PyExc_FC_GeneralError : PyExc_RuntimeError)
+BaseExport extern PyObject *PyExc_FC_GeneralError;
+#define PY_FCERROR (Base::PyExc_FC_GeneralError ? PyExc_FC_GeneralError : PyExc_RuntimeError)
 
-BaseExport extern PyObject* PyExc_FC_FreeCADAbort;
-BaseExport extern PyObject* PyExc_FC_XMLBaseException;
-BaseExport extern PyObject* PyExc_FC_XMLParseException;
-BaseExport extern PyObject* PyExc_FC_XMLAttributeError;
-BaseExport extern PyObject* PyExc_FC_UnknownProgramOption;
-BaseExport extern PyObject* PyExc_FC_BadFormatError;
-BaseExport extern PyObject* PyExc_FC_BadGraphError;
-BaseExport extern PyObject* PyExc_FC_ExpressionError;
-BaseExport extern PyObject* PyExc_FC_ParserError;
-BaseExport extern PyObject* PyExc_FC_CADKernelError;
+BaseExport extern PyObject *PyExc_FC_FreeCADAbort;
+BaseExport extern PyObject *PyExc_FC_XMLBaseException;
+BaseExport extern PyObject *PyExc_FC_XMLParseException;
+BaseExport extern PyObject *PyExc_FC_XMLAttributeError;
+BaseExport extern PyObject *PyExc_FC_UnknownProgramOption;
+BaseExport extern PyObject *PyExc_FC_BadFormatError;
+BaseExport extern PyObject *PyExc_FC_BadGraphError;
+BaseExport extern PyObject *PyExc_FC_ExpressionError;
+BaseExport extern PyObject *PyExc_FC_ParserError;
+BaseExport extern PyObject *PyExc_FC_CADKernelError;
 
 /** Exception handling for python callback functions
  * Is a convenience macro to manage the exception handling of python callback
@@ -466,56 +481,54 @@ BaseExport extern PyObject* PyExc_FC_CADKernelError;
  * @see PYMETHODEDEF
  * @see PyObjectBase
  */
-#define PY_TRY	try
+#define PY_TRY try
 
-#define __PY_CATCH(R)                                               \
-    catch(Base::Exception &e)                                       \
-    {                                                               \
-        auto pye = e.getPyExceptionType();                          \
-        if(!pye)                                                    \
-            pye = Base::PyExc_FC_GeneralError;                      \
-        _Py_ErrorObj(R,pye,e.getPyObject());                        \
-    }                                                               \
-    catch(const std::exception &e)                                  \
-    {                                                               \
-        _Py_Error(R,Base::PyExc_FC_GeneralError, e.what());         \
-    }                                                               \
-    catch(const Py::Exception&)                                     \
-    {                                                               \
-        R;                                                          \
-    }                                                               \
+#define __PY_CATCH(R)                                                                              \
+    catch (Base::Exception & e)                                                                    \
+    {                                                                                              \
+        auto pye = e.getPyExceptionType();                                                         \
+        if (!pye) pye = Base::PyExc_FC_GeneralError;                                               \
+        _Py_ErrorObj(R, pye, e.getPyObject());                                                     \
+    }                                                                                              \
+    catch (const std::exception &e)                                                                \
+    {                                                                                              \
+        _Py_Error(R, Base::PyExc_FC_GeneralError, e.what());                                       \
+    }                                                                                              \
+    catch (const Py::Exception &)                                                                  \
+    {                                                                                              \
+        R;                                                                                         \
+    }
 
 #ifndef DONT_CATCH_CXX_EXCEPTIONS
 /// see docu of PY_TRY
-#  define _PY_CATCH(R)                                              \
-    __PY_CATCH(R)                                                   \
-    catch(...)                                                      \
-    {                                                               \
-        _Py_Error(R,Base::PyExc_FC_GeneralError,"Unknown C++ exception"); \
+#define _PY_CATCH(R)                                                                               \
+    __PY_CATCH(R)                                                                                  \
+    catch (...)                                                                                    \
+    {                                                                                              \
+        _Py_Error(R, Base::PyExc_FC_GeneralError, "Unknown C++ exception");                        \
     }
 
 #else
 /// see docu of PY_TRY
-#  define _PY_CATCH(R) __PY_CATCH(R)
-#endif  // DONT_CATCH_CXX_EXCEPTIONS
+#define _PY_CATCH(R) __PY_CATCH(R)
+#endif // DONT_CATCH_CXX_EXCEPTIONS
 
-#define PY_CATCH _PY_CATCH(return(nullptr))
+#define PY_CATCH _PY_CATCH(return (nullptr))
 
 /** Python helper class
  *  This class encapsulate the Decoding of UTF8 to a python object.
  *  Including exception handling.
  */
-inline PyObject * PyAsUnicodeObject(const char *str)
+inline PyObject *PyAsUnicodeObject(const char *str)
 {
     // Returns a new reference, don't increment it!
     Py_ssize_t len = Py_SAFE_DOWNCAST(strlen(str), size_t, Py_ssize_t);
     PyObject *p = PyUnicode_DecodeUTF8(str, len, nullptr);
-    if (!p)
-        throw Base::UnicodeError("UTF8 conversion failure at PyAsUnicodeString()");
+    if (!p) throw Base::UnicodeError("UTF8 conversion failure at PyAsUnicodeString()");
     return p;
 }
 
-inline PyObject * PyAsUnicodeObject(const std::string &str)
+inline PyObject *PyAsUnicodeObject(const std::string &str)
 {
     return PyAsUnicodeObject(str.c_str());
 }

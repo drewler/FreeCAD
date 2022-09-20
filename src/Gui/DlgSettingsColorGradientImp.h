@@ -30,8 +30,10 @@
 
 class QDoubleValidator;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgSettingsColorGradient;
 
 /**
@@ -39,14 +41,13 @@ class Ui_DlgSettingsColorGradient;
  * for the color gradient bar.
  * @author Werner Mayer
  */
-class DlgSettingsColorGradientImp : public QDialog
+class DlgSettingsColorGradientImp: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsColorGradientImp(const App::ColorGradient& cg,
-                                QWidget* parent = nullptr,
-                                Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgSettingsColorGradientImp(const App::ColorGradient &cg, QWidget *parent = nullptr,
+                                         Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgSettingsColorGradientImp() override;
 
     void accept() override;
@@ -54,7 +55,7 @@ public:
     /** @name Color profile */
     //@{
     App::ColorGradientProfile getProfile() const;
-    void setProfile(const App::ColorGradientProfile& pro);
+    void setProfile(const App::ColorGradientProfile &pro);
     //@}
     /** @name Parameter range and scale */
     //@{
@@ -67,26 +68,26 @@ private:
 
     /** @name Color model */
     //@{
-    void setColorModelNames(const std::vector<std::string>&);
+    void setColorModelNames(const std::vector<std::string> &);
     void setColorModel(std::size_t tModel);
     std::size_t colorModel() const;
     //@}
     /** @name Color style */
     //@{
-    void setColorStyle( App::ColorBarStyle tStyle );
+    void setColorStyle(App::ColorBarStyle tStyle);
     App::ColorBarStyle colorStyle() const;
     //@}
     /** @name Display mode */
     //@{
-    void setOutGrayed( bool grayed );
+    void setOutGrayed(bool grayed);
     bool isOutGrayed() const;
-    void setOutInvisible( bool invisible );
+    void setOutInvisible(bool invisible);
     bool isOutInvisible() const;
     //@}
     /** @name Parameter range and scale */
     //@{
     void setRange(float fMin, float fMax);
-    void getRange(float& fMin, float& fMax) const;
+    void getRange(float &fMin, float &fMax) const;
     void setNumberOfLabels(int);
     int numberOfLabels() const;
     //@}
@@ -95,7 +96,7 @@ Q_SIGNALS:
     void colorModelChanged();
 
 private:
-    QDoubleValidator* validator;
+    QDoubleValidator *validator;
     std::unique_ptr<Ui_DlgSettingsColorGradient> ui;
 };
 

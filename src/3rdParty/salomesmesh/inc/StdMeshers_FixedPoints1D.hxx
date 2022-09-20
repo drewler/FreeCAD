@@ -26,7 +26,6 @@
 #define _SMESH_FIXEDPOINTS1D_HXX_
 
 
-
 #include "SMESH_StdMeshers.hxx"
 
 #include "SMESH_Hypothesis.hxx"
@@ -34,53 +33,52 @@
 
 #include <vector>
 
-class STDMESHERS_EXPORT StdMeshers_FixedPoints1D:
-  public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_FixedPoints1D: public SMESH_Hypothesis
 {
 public:
-  StdMeshers_FixedPoints1D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_FixedPoints1D();
+    StdMeshers_FixedPoints1D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_FixedPoints1D();
 
-  void SetPoints(std::vector<double>& listParams);
+    void SetPoints(std::vector<double> &listParams);
 
-  void SetNbSegments(std::vector<int>& listNbSeg);
+    void SetNbSegments(std::vector<int> &listNbSeg);
 
-  const std::vector<double>& GetPoints() const { return _params; }
+    const std::vector<double> &GetPoints() const { return _params; }
 
-  const std::vector<int>& GetNbSegments() const { return _nbsegs; }
+    const std::vector<int> &GetNbSegments() const { return _nbsegs; }
 
-  void SetReversedEdges( std::vector<int>& ids);
+    void SetReversedEdges(std::vector<int> &ids);
 
-  void SetObjectEntry( const char* entry ) { _objEntry = entry; }
+    void SetObjectEntry(const char *entry) { _objEntry = entry; }
 
-  const char* GetObjectEntry() { return _objEntry.c_str(); }
+    const char *GetObjectEntry() { return _objEntry.c_str(); }
 
-  const std::vector<int>& GetReversedEdges() const { return _edgeIDs; }
+    const std::vector<int> &GetReversedEdges() const { return _edgeIDs; }
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  friend std::ostream& operator << (std::ostream & save, StdMeshers_FixedPoints1D & hyp);
-  friend std::istream& operator >> (std::istream & load, StdMeshers_FixedPoints1D & hyp);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    friend std::ostream &operator<<(std::ostream &save, StdMeshers_FixedPoints1D &hyp);
+    friend std::istream &operator>>(std::istream &load, StdMeshers_FixedPoints1D &hyp);
 
-  /*!
+    /*!
    * \brief Initialize start and end length by the mesh built on the geometry
     * \param theMesh - the built mesh
     * \param theShape - the geometry of interest
     * \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
 protected:
-  std::vector<double> _params;
-  std::vector<int>    _nbsegs;
-  std::vector<int>    _edgeIDs;
-  std::string         _objEntry;
+    std::vector<double> _params;
+    std::vector<int> _nbsegs;
+    std::vector<int> _edgeIDs;
+    std::string _objEntry;
 };
 
 #endif

@@ -170,7 +170,7 @@
 #include <QStackedWidget>
 #include <QWidget>
 // QtXML
-# include <QDomDocument>
-# include <QDomElement>
+#include <QDomDocument>
+#include <QDomElement>
 
 #endif

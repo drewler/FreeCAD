@@ -27,8 +27,10 @@
 #include "PropertyPage.h"
 #include <memory>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgSettingsMacro;
 
 /**
@@ -36,12 +38,12 @@ class Ui_DlgSettingsMacro;
  * for macro stuff.
  * \author Jürgen Riegel
  */
-class DlgSettingsMacroImp : public PreferencePage
+class DlgSettingsMacroImp: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsMacroImp( QWidget* parent = nullptr );
+    explicit DlgSettingsMacroImp(QWidget *parent = nullptr);
     ~DlgSettingsMacroImp() override;
 
     void saveSettings() override;

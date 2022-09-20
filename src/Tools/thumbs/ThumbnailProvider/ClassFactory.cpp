@@ -25,7 +25,7 @@
 #include "Common.h"
 #include "ClassFactory.h"
 
-STDAPI CThumbnailProvider_CreateInstance(REFIID riid, void** ppvObject);
+STDAPI CThumbnailProvider_CreateInstance(REFIID riid, void **ppvObject);
 
 
 CClassFactory::CClassFactory()
@@ -35,17 +35,12 @@ CClassFactory::CClassFactory()
 }
 
 
-CClassFactory::~CClassFactory()
-{
-    DllRelease();
-}
+CClassFactory::~CClassFactory() { DllRelease(); }
 
 
-STDMETHODIMP CClassFactory::QueryInterface(REFIID riid,
-                                           void** ppvObject)
+STDMETHODIMP CClassFactory::QueryInterface(REFIID riid, void **ppvObject)
 {
-    static const QITAB qit[] = 
-    {
+    static const QITAB qit[] = {
         QITABENT(CClassFactory, IClassFactory),
         {0},
     };
@@ -63,45 +58,33 @@ STDMETHODIMP_(ULONG) CClassFactory::AddRef()
 STDMETHODIMP_(ULONG) CClassFactory::Release()
 {
     LONG cRef = InterlockedDecrement(&m_cRef);
-    if (0 == cRef)
-        delete this;
+    if (0 == cRef) delete this;
     return (ULONG)cRef;
 }
 
 
-STDMETHODIMP CClassFactory::CreateInstance(IUnknown* punkOuter,
-                                           REFIID riid,
-                                           void** ppvObject)
+STDMETHODIMP CClassFactory::CreateInstance(IUnknown *punkOuter, REFIID riid, void **ppvObject)
 {
-    if (NULL != punkOuter)
-        return CLASS_E_NOAGGREGATION;
+    if (NULL != punkOuter) return CLASS_E_NOAGGREGATION;
 
     return CThumbnailProvider_CreateInstance(riid, ppvObject);
 }
 
 
-STDMETHODIMP CClassFactory::LockServer(BOOL fLock)
+STDMETHODIMP CClassFactory::LockServer(BOOL fLock) { return E_NOTIMPL; }
+
+
+STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void **ppv)
 {
-    return E_NOTIMPL;
-}
+    if (NULL == ppv) return E_INVALIDARG;
 
-
-STDAPI DllGetClassObject(REFCLSID rclsid,
-                         REFIID riid,
-                         void **ppv)
-{
-    if (NULL == ppv)
-        return E_INVALIDARG;
-
-    if (!IsEqualCLSID(CLSID_SampleThumbnailProvider, rclsid))
-        return CLASS_E_CLASSNOTAVAILABLE;
+    if (!IsEqualCLSID(CLSID_SampleThumbnailProvider, rclsid)) return CLASS_E_CLASSNOTAVAILABLE;
 
     CClassFactory *pcf;
     HRESULT hr;
 
     pcf = new CClassFactory();
-    if (NULL == pcf)
-        return E_OUTOFMEMORY;
+    if (NULL == pcf) return E_OUTOFMEMORY;
 
     hr = pcf->QueryInterface(riid, ppv);
     pcf->Release();

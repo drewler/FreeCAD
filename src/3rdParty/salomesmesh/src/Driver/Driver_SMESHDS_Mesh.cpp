@@ -24,11 +24,6 @@
 
 using namespace std;
 
-Driver_SMESHDS_Mesh::Driver_SMESHDS_Mesh():
-  myMesh(NULL)
-{}
+Driver_SMESHDS_Mesh::Driver_SMESHDS_Mesh() : myMesh(NULL) {}
 
-void Driver_SMESHDS_Mesh::SetMesh(SMESHDS_Mesh *theMesh)
-{
-  myMesh = theMesh;
-}
+void Driver_SMESHDS_Mesh::SetMesh(SMESHDS_Mesh *theMesh) { myMesh = theMesh; }

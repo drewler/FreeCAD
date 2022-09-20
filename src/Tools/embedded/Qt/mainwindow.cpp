@@ -5,7 +5,7 @@
 #include <QtGui>
 #include <QtWidgets>
 #if defined(Q_WS_X11)
-# include <QX11EmbedContainer>
+#include <QX11EmbedContainer>
 #endif
 
 #include "mainwindow.h"
@@ -67,17 +67,17 @@ void MainWindow::loadFreeCAD()
 {
     QString path = QFileDialog::getExistingDirectory(this, "FreeCAD module path");
     if (!path.isEmpty()) {
-        path.replace('\\','/');
-        PyObject* main = PyImport_AddModule("__main__");
-        PyObject* dict = PyModule_GetDict(main);
+        path.replace('\\', '/');
+        PyObject *main = PyImport_AddModule("__main__");
+        PyObject *dict = PyModule_GetDict(main);
         std::stringstream cmd;
         cmd << "import sys,os\n"
-            << "sys.path.append(\"" << (const char*)path.toLatin1() << "\")\n"
-            << "os.chdir(\"" << (const char*)path.toLatin1() << "\")\n"
+            << "sys.path.append(\"" << (const char *)path.toLatin1() << "\")\n"
+            << "os.chdir(\"" << (const char *)path.toLatin1() << "\")\n"
             << "import FreeCADGui\n"
             << "FreeCADGui.showMainWindow()\n";
 
-        PyObject* result = PyRun_String(cmd.str().c_str(), Py_file_input, dict, dict);
+        PyObject *result = PyRun_String(cmd.str().c_str(), Py_file_input, dict, dict);
         if (result) {
             Py_DECREF(result);
             loadAct->setDisabled(true);
@@ -87,8 +87,8 @@ void MainWindow::loadFreeCAD()
         else {
             PyObject *ptype, *pvalue, *ptrace;
             PyErr_Fetch(&ptype, &pvalue, &ptrace);
-            PyObject* pystring = PyObject_Str(pvalue);
-            const char* error = PyUnicode_AsUTF8(pystring);
+            PyObject *pystring = PyObject_Str(pvalue);
+            const char *error = PyUnicode_AsUTF8(pystring);
             QMessageBox::warning(this, "Error", error);
             Py_DECREF(pystring);
         }
@@ -98,20 +98,17 @@ void MainWindow::loadFreeCAD()
 
 void MainWindow::newDocument()
 {
-    PyObject* main = PyImport_AddModule("__main__");
-    PyObject* dict = PyModule_GetDict(main);
-    const char* cmd =
-        "FreeCAD.newDocument()\n";
+    PyObject *main = PyImport_AddModule("__main__");
+    PyObject *dict = PyModule_GetDict(main);
+    const char *cmd = "FreeCAD.newDocument()\n";
 
-    PyObject* result = PyRun_String(cmd, Py_file_input, dict, dict);
-    if (result) {
-        Py_DECREF(result);
-    }
+    PyObject *result = PyRun_String(cmd, Py_file_input, dict, dict);
+    if (result) { Py_DECREF(result); }
     else {
         PyObject *ptype, *pvalue, *ptrace;
         PyErr_Fetch(&ptype, &pvalue, &ptrace);
-        PyObject* pystring = PyObject_Str(pvalue);
-        const char* error = PyUnicode_AsUTF8(pystring);
+        PyObject *pystring = PyObject_Str(pvalue);
+        const char *error = PyUnicode_AsUTF8(pystring);
         QMessageBox::warning(this, "Error", error);
         Py_DECREF(pystring);
     }
@@ -120,8 +117,8 @@ void MainWindow::newDocument()
 
 void MainWindow::embedWindow()
 {
-    PyObject* main = PyImport_AddModule("__main__");
-    PyObject* dict = PyModule_GetDict(main);
+    PyObject *main = PyImport_AddModule("__main__");
+    PyObject *dict = PyModule_GetDict(main);
     std::stringstream cmd;
     cmd << "class BlankWorkbench (Workbench):\n"
         << "   MenuText = \"Blank\"\n"
@@ -142,21 +139,21 @@ void MainWindow::embedWindow()
         << "\n";
 #endif
 
-    PyObject* result = PyRun_String(cmd.str().c_str(), Py_file_input, dict, dict);
+    PyObject *result = PyRun_String(cmd.str().c_str(), Py_file_input, dict, dict);
     if (result) {
         Py_DECREF(result);
 
 #if !defined(Q_WS_X11)
         // This is a workaround for the lack of a replacement of QX11EmbedWidget with Qt5
-        QWidget* mw = nullptr;
+        QWidget *mw = nullptr;
         for (auto it : qApp->topLevelWidgets()) {
             if (it->inherits("Gui::MainWindow")) {
-              mw = it;
-              break;
+                mw = it;
+                break;
             }
         }
         if (mw) {
-            QVBoxLayout* vb = new QVBoxLayout();
+            QVBoxLayout *vb = new QVBoxLayout();
             centralWidget()->setLayout(vb);
             vb->addWidget(mw);
         }
@@ -167,8 +164,8 @@ void MainWindow::embedWindow()
     else {
         PyObject *ptype, *pvalue, *ptrace;
         PyErr_Fetch(&ptype, &pvalue, &ptrace);
-        PyObject* pystring = PyObject_Str(pvalue);
-        const char* error = PyUnicode_AsUTF8(pystring);
+        PyObject *pystring = PyObject_Str(pvalue);
+        const char *error = PyUnicode_AsUTF8(pystring);
         QMessageBox::warning(this, "Error", error);
         Py_DECREF(pystring);
     }
@@ -177,6 +174,5 @@ void MainWindow::embedWindow()
 
 void MainWindow::about()
 {
-   QMessageBox::about(this, tr("About"),
-            tr("Demonstrates remote control of FreeCAD"));
+    QMessageBox::about(this, tr("About"), tr("Demonstrates remote control of FreeCAD"));
 }

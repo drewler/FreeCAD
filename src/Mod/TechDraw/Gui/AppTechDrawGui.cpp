@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QFontDatabase>
+#include <QFontDatabase>
 #endif
 
 #include <Base/Console.h>
@@ -89,12 +89,14 @@ void loadTechDrawResource()
     QFontDatabase fontDB;
     int rc = fontDB.addApplicationFont(fontFile);
     if (rc) {
-        Base::Console().Log("TechDraw failed to load osifont file: %d from: %s\n", rc, qPrintable(fontFile));
+        Base::Console().Log("TechDraw failed to load osifont file: %d from: %s\n", rc,
+                            qPrintable(fontFile));
     }
 }
 
-namespace TechDrawGui {
-    extern PyObject* initModule();
+namespace TechDrawGui
+{
+extern PyObject *initModule();
 }
 
 /* Python entry */
@@ -108,11 +110,11 @@ PyMOD_INIT_FUNC(TechDrawGui)
     try {
         Base::Interpreter().loadModule("TechDraw");
     }
-    catch(const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         PyErr_SetString(PyExc_ImportError, e.what());
         PyMOD_Return(nullptr);
     }
-    PyObject* mod = TechDrawGui::initModule();
+    PyObject *mod = TechDrawGui::initModule();
 
     Base::Console().Log("Loading TechDrawGui module... done\n");
 
@@ -155,13 +157,13 @@ PyMOD_INIT_FUNC(TechDrawGui)
     TechDrawGui::ViewProviderCosmeticExtension::init();
 
     // register preferences pages
-    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawGeneralImp> ("TechDraw");    //General
-    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawScaleImp> ("TechDraw");      //Scale
-    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawDimensionsImp>("TechDraw");  //Dimensions
-    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawAnnotationImp> ("TechDraw"); //Annotation
-    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawColorsImp>("TechDraw");      //Colors
-    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawHLRImp> ("TechDraw");        //HLR
-    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawAdvancedImp> ("TechDraw");   //Advanced
+    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawGeneralImp>("TechDraw");    //General
+    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawScaleImp>("TechDraw");      //Scale
+    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawDimensionsImp>("TechDraw"); //Dimensions
+    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawAnnotationImp>("TechDraw"); //Annotation
+    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawColorsImp>("TechDraw");     //Colors
+    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawHLRImp>("TechDraw");        //HLR
+    new Gui::PrefPageProducer<TechDrawGui::DlgPrefsTechDrawAdvancedImp>("TechDraw");   //Advanced
 
     // add resources and reloads the translators
     loadTechDrawResource();

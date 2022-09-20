@@ -25,26 +25,29 @@
 
 #include <unordered_set>
 
-namespace App {
+namespace App
+{
 class PropertyContainer;
 }
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 
 class Ui_DlgAddProperty;
-class GuiExport DlgAddProperty : public QDialog
+class GuiExport DlgAddProperty: public QDialog
 {
     Q_OBJECT
 
 public:
-    DlgAddProperty(QWidget *parent, std::unordered_set<App::PropertyContainer*> &&);
+    DlgAddProperty(QWidget *parent, std::unordered_set<App::PropertyContainer *> &&);
     ~DlgAddProperty();
 
     virtual void accept() override;
 
 private:
-    std::unordered_set<App::PropertyContainer*> containers;
+    std::unordered_set<App::PropertyContainer *> containers;
     std::unique_ptr<Ui_DlgAddProperty> ui;
 };
 

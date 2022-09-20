@@ -34,10 +34,11 @@ class SoSeparator;
 class SbVec3f;
 class SoTransform;
 
-namespace PartGui {
+namespace PartGui
+{
 
 
-class PartGuiExport ViewProvider2DObject : public PartGui::ViewProviderPart
+class PartGuiExport ViewProvider2DObject: public PartGui::ViewProviderPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProvider2DObject);
 
@@ -47,10 +48,10 @@ public:
     /// destructor
     ~ViewProvider2DObject() override;
     std::vector<std::string> getDisplayModes() const override;
-    const char* getDefaultDisplayMode() const override;
+    const char *getDefaultDisplayMode() const override;
 };
 
-class PartGuiExport ViewProvider2DObjectGrid : public ViewProvider2DObject
+class PartGuiExport ViewProvider2DObjectGrid: public ViewProvider2DObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProvider2DObjectGrid);
 
@@ -71,24 +72,25 @@ public:
     App::PropertyInteger maxNumberOfLines;
 
     void attach(App::DocumentObject *) override;
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
 
     /// creates the grid
-    SoSeparator* createGrid();
+    SoSeparator *createGrid();
 
 protected:
     bool setEdit(int ModNum) override;
     void unsetEdit(int ModNum) override;
     /// get called by the container whenever a property has been changed
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     void Restore(Base::XMLReader &reader) override;
-    void handleChangedPropertyType(Base::XMLReader &reader, const char * TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
-    SoSeparator  *GridRoot;
+    SoSeparator *GridRoot;
 
     void updateGridExtent(float minx, float maxx, float miny, float maxy);
 
-    static const char* GridStyleEnums[];
+    static const char *GridStyleEnums[];
     static App::PropertyQuantityConstraint::Constraints GridSizeRange;
 
 private:
@@ -104,4 +106,3 @@ using ViewProvider2DObjectPython = Gui::ViewProviderPythonFeatureT<ViewProvider2
 
 
 #endif // PARTGUI_VIEWPROVIDER2DOBJECT_H
-

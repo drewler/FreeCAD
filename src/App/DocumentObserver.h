@@ -50,30 +50,26 @@ public:
     /*! Constructor */
     DocumentT();
     /*! Constructor */
-    DocumentT(Document*); // explicit bombs
+    DocumentT(Document *); // explicit bombs
     /*! Constructor */
-    explicit DocumentT(const std::string&);
+    explicit DocumentT(const std::string &);
     /*! Constructor */
-    DocumentT(const DocumentT&);
+    DocumentT(const DocumentT &);
     /*! Destructor */
     ~DocumentT();
     /*! Assignment operator */
-    void operator=(const DocumentT&);
+    void operator=(const DocumentT &);
     /*! Assignment operator */
-    void operator=(const Document*);
+    void operator=(const Document *);
     /*! Assignment operator */
-    void operator=(const std::string&);
+    void operator=(const std::string &);
 
-    bool operator==(const DocumentT &other) const {
-        return document == other.document;
-    }
+    bool operator==(const DocumentT &other) const { return document == other.document; }
 
-    bool operator<(const DocumentT &other) const {
-        return document < other.document;
-    }
+    bool operator<(const DocumentT &other) const { return document < other.document; }
 
     /*! Get a pointer to the document or 0 if it doesn't exist any more. */
-    Document* getDocument() const;
+    Document *getDocument() const;
     /*! Get the name of the document. */
     const std::string &getDocumentName() const;
     /*! Get the document as Python command. */
@@ -100,36 +96,36 @@ public:
     /*! Constructor */
     DocumentObjectT(DocumentObjectT &&);
     /*! Constructor */
-    explicit DocumentObjectT(const DocumentObject*);
+    explicit DocumentObjectT(const DocumentObject *);
     /*! Constructor */
-    DocumentObjectT(const Document*, const std::string& objName);
+    DocumentObjectT(const Document *, const std::string &objName);
     /*! Constructor */
     DocumentObjectT(const char *docName, const char *objName);
     /*! Constructor */
-    explicit DocumentObjectT(const Property*);
+    explicit DocumentObjectT(const Property *);
     /*! Destructor */
     ~DocumentObjectT();
     /*! Assignment operator */
-    DocumentObjectT &operator=(const DocumentObjectT&);
+    DocumentObjectT &operator=(const DocumentObjectT &);
     /*! Assignment operator */
     DocumentObjectT &operator=(DocumentObjectT &&);
     /*! Assignment operator */
-    void operator=(const DocumentObject*);
+    void operator=(const DocumentObject *);
     /*! Assignment operator */
-    void operator=(const Property*);
+    void operator=(const Property *);
     /*! Equality operator */
-    bool operator==(const DocumentObjectT&) const;
+    bool operator==(const DocumentObjectT &) const;
 
     /*! Get a pointer to the document or 0 if it doesn't exist any more. */
-    Document* getDocument() const;
+    Document *getDocument() const;
     /*! Get the name of the document. */
     const std::string &getDocumentName() const;
     /*! Get the document as Python command. */
     std::string getDocumentPython() const;
     /*! Get a pointer to the document object or 0 if it doesn't exist any more. */
-    DocumentObject* getObject() const;
+    DocumentObject *getObject() const;
     /*! Get a pointer to the property or 0 if it doesn't exist any more. */
-    Property* getProperty() const;
+    Property *getProperty() const;
     /*! Get the name of the document object. */
     const std::string &getObjectName() const;
     /*! Get the label of the document object. */
@@ -141,13 +137,11 @@ public:
     /*! Get the property as Python command. */
     std::string getPropertyPython() const;
     /*! Get a pointer to the document or 0 if it doesn't exist any more or the type doesn't match. */
-    template<typename T>
-    inline T* getObjectAs() const
+    template<typename T> inline T *getObjectAs() const
     {
         return Base::freecad_dynamic_cast<T>(getObject());
     }
-    template<typename T>
-    inline T* getPropertyAs() const
+    template<typename T> inline T *getPropertyAs() const
     {
         return Base::freecad_dynamic_cast<T>(getProperty());
     }
@@ -159,7 +153,7 @@ private:
     std::string property;
 };
 
-class AppExport SubObjectT : public DocumentObjectT
+class AppExport SubObjectT: public DocumentObjectT
 {
 public:
     /*! Constructor */
@@ -172,39 +166,37 @@ public:
     SubObjectT(SubObjectT &&);
 
     /*! Constructor */
-    SubObjectT(const DocumentObjectT & obj, const char *subname);
+    SubObjectT(const DocumentObjectT &obj, const char *subname);
 
     /*! Constructor */
-    SubObjectT(const DocumentObject*, const char *subname);
+    SubObjectT(const DocumentObject *, const char *subname);
 
     /*! Constructor */
-    SubObjectT(const DocumentObject*);// explicit bombs
+    SubObjectT(const DocumentObject *); // explicit bombs
 
     /*! Constructor */
     SubObjectT(const char *docName, const char *objName, const char *subname);
 
     /*! Assignment operator */
-    SubObjectT &operator=(const SubObjectT&);
+    SubObjectT &operator=(const SubObjectT &);
 
     /*! Assignment operator */
     SubObjectT &operator=(SubObjectT &&);
 
     /*! Assignment operator */
-    SubObjectT &operator=(const DocumentObjectT&);
+    SubObjectT &operator=(const DocumentObjectT &);
 
     /*! Assignment operator */
-    SubObjectT &operator=(const App::DocumentObject*);
+    SubObjectT &operator=(const App::DocumentObject *);
 
     /*! Equality operator */
-    bool operator==(const SubObjectT&) const;
+    bool operator==(const SubObjectT &) const;
 
     /// Set the subname path to the sub-object
     void setSubName(const char *subname);
 
     /// Set the subname path to the sub-object
-    void setSubName(const std::string &subname) {
-        setSubName(subname.c_str());
-    }
+    void setSubName(const std::string &subname) { setSubName(subname.c_str()); }
 
     /// Return the subname path
     const std::string &getSubName() const;
@@ -213,13 +205,13 @@ public:
      * @param docName: optional document name. The document prefix will only be printed
      * if it is different then the given 'doc'.
      */
-    std::string getObjectFullName(const char *docName=nullptr) const;
+    std::string getObjectFullName(const char *docName = nullptr) const;
 
     /** Return docname#objname.subname (label)
      * @param doc: optional document name. The document prefix will only be printed
      * if it is different then the given 'doc'.
      */
-    std::string getSubObjectFullName(const char *docName=nullptr) const;
+    std::string getSubObjectFullName(const char *docName = nullptr) const;
     /// Return the subname path without sub-element
     std::string getSubNameNoElement() const;
 
@@ -232,7 +224,7 @@ public:
     /** Return the old style sub-element name
      * @param index: if given, then return the element type, and extract the index
      */
-    std::string getOldElementName(int *index=nullptr) const;
+    std::string getOldElementName(int *index = nullptr) const;
 
     /// Return the sub-object
     DocumentObject *getSubObject() const;
@@ -242,7 +234,7 @@ public:
 
     bool operator<(const SubObjectT &other) const;
 
-    std::string getSubObjectPython(bool force=true) const;
+    std::string getSubObjectPython(bool force = true) const;
 
 private:
     std::string subname;
@@ -261,13 +253,14 @@ public:
     explicit PropertyLinkT(DocumentObject *obj);
 
     /*! Constructor */
-    PropertyLinkT(DocumentObject *obj, const std::vector<std::string>& subNames);
+    PropertyLinkT(DocumentObject *obj, const std::vector<std::string> &subNames);
 
     /*! Constructor */
-    explicit PropertyLinkT(const std::vector<DocumentObject*>& objs);
+    explicit PropertyLinkT(const std::vector<DocumentObject *> &objs);
 
     /*! Constructor */
-    PropertyLinkT(const std::vector<DocumentObject*>& objs, const std::vector<std::string>& subNames);
+    PropertyLinkT(const std::vector<DocumentObject *> &objs,
+                  const std::vector<std::string> &subNames);
 
     /*! Get the property as Python command. */
     std::string getPropertyPython() const;
@@ -282,7 +275,7 @@ private:
 class AppExport DocumentWeakPtrT
 {
 public:
-    explicit DocumentWeakPtrT(App::Document*) noexcept;
+    explicit DocumentWeakPtrT(App::Document *) noexcept;
     ~DocumentWeakPtrT();
 
     /*!
@@ -299,17 +292,17 @@ public:
      * \brief operator *
      * \return pointer to the document
      */
-    App::Document* operator*() const noexcept;
+    App::Document *operator*() const noexcept;
     /*!
      * \brief operator ->
      * \return pointer to the document
      */
-    App::Document* operator->() const noexcept;
+    App::Document *operator->() const noexcept;
 
 private:
     // disable
-    DocumentWeakPtrT(const DocumentWeakPtrT&);
-    DocumentWeakPtrT& operator=(const DocumentWeakPtrT&);
+    DocumentWeakPtrT(const DocumentWeakPtrT &);
+    DocumentWeakPtrT &operator=(const DocumentWeakPtrT &);
 
     class Private;
     std::unique_ptr<Private> d;
@@ -321,7 +314,7 @@ private:
 class AppExport DocumentObjectWeakPtrT
 {
 public:
-    explicit DocumentObjectWeakPtrT(App::DocumentObject*);
+    explicit DocumentObjectWeakPtrT(App::DocumentObject *);
     ~DocumentObjectWeakPtrT();
 
     /*!
@@ -338,39 +331,38 @@ public:
      * \brief operator =
      * Assignment operator
      */
-    DocumentObjectWeakPtrT& operator= (App::DocumentObject* p);
+    DocumentObjectWeakPtrT &operator=(App::DocumentObject *p);
     /*!
      * \brief operator *
      * \return pointer to the document object
      */
-    App::DocumentObject* operator*() const noexcept;
+    App::DocumentObject *operator*() const noexcept;
     /*!
      * \brief operator ->
      * \return pointer to the document object
      */
-    App::DocumentObject* operator->() const noexcept;
+    App::DocumentObject *operator->() const noexcept;
     /*!
      * \brief operator ==
      * \return true if both objects are equal, false otherwise
      */
-    bool operator== (const DocumentObjectWeakPtrT& p) const noexcept;
+    bool operator==(const DocumentObjectWeakPtrT &p) const noexcept;
     /*!
      * \brief operator !=
      * \return true if both objects are inequal, false otherwise
      */
-    bool operator!= (const DocumentObjectWeakPtrT& p) const noexcept;
+    bool operator!=(const DocumentObjectWeakPtrT &p) const noexcept;
     /*! Get a pointer to the object or 0 if it doesn't exist any more or the type doesn't match. */
-    template<typename T>
-    inline T* get() const noexcept
+    template<typename T> inline T *get() const noexcept
     {
         return Base::freecad_dynamic_cast<T>(_get());
     }
 
 private:
-    App::DocumentObject* _get() const noexcept;
+    App::DocumentObject *_get() const noexcept;
     // disable
-    DocumentObjectWeakPtrT(const DocumentObjectWeakPtrT&);
-    DocumentObjectWeakPtrT& operator=(const DocumentObjectWeakPtrT&);
+    DocumentObjectWeakPtrT(const DocumentObjectWeakPtrT &);
+    DocumentObjectWeakPtrT &operator=(const DocumentObjectWeakPtrT &);
 
 private:
     class Private;
@@ -380,33 +372,28 @@ private:
 /**
  * @brief The WeakPtrT class
  */
-template <class T>
-class WeakPtrT
+template<class T> class WeakPtrT
 {
 public:
-    explicit WeakPtrT(T* t) : ptr(t) {
-    }
+    explicit WeakPtrT(T *t) : ptr(t) {}
     ~WeakPtrT() = default;
 
     /*!
      * \brief reset
      * Releases the reference to the managed object. After the call *this manages no object.
      */
-    void reset() {
-        ptr.reset();
-    }
+    void reset() { ptr.reset(); }
     /*!
      * \brief expired
      * \return true if the managed object has already been deleted, false otherwise.
      */
-    bool expired() const {
-        return ptr.expired();
-    }
+    bool expired() const { return ptr.expired(); }
     /*!
      * \brief operator =
      * Assignment operator
      */
-    WeakPtrT<T>& operator= (T* p) {
+    WeakPtrT<T> &operator=(T *p)
+    {
         ptr = p;
         return *this;
     }
@@ -414,40 +401,29 @@ public:
      * \brief operator ->
      * \return pointer to the document object
      */
-    T* operator*() const {
-        return ptr.get<T>();
-    }
+    T *operator*() const { return ptr.get<T>(); }
     /*!
      * \brief operator ->
      * \return pointer to the document object
      */
-    T* operator->() const {
-        return ptr.get<T>();
-    }
+    T *operator->() const { return ptr.get<T>(); }
     /*!
      * \brief operator ==
      * \return true if both objects are equal, false otherwise
      */
-    bool operator== (const WeakPtrT<T>& p) const {
-        return ptr == p.ptr;
-    }
+    bool operator==(const WeakPtrT<T> &p) const { return ptr == p.ptr; }
     /*!
      * \brief operator !=
      * \return true if both objects are inequal, false otherwise
      */
-    bool operator!= (const WeakPtrT<T>& p) const {
-        return ptr != p.ptr;
-    }
+    bool operator!=(const WeakPtrT<T> &p) const { return ptr != p.ptr; }
     /*! Get a pointer to the object or 0 if it doesn't exist any more. */
-    T* get() const noexcept
-    {
-        return ptr.get<T>();
-    }
+    T *get() const noexcept { return ptr.get<T>(); }
 
 private:
     // disable
-    WeakPtrT(const WeakPtrT&);
-    WeakPtrT& operator=(const WeakPtrT&);
+    WeakPtrT(const WeakPtrT &);
+    WeakPtrT &operator=(const WeakPtrT &);
 
 private:
     DocumentObjectWeakPtrT ptr;
@@ -467,13 +443,13 @@ class AppExport DocumentObserver
 public:
     /// Constructor
     DocumentObserver();
-    explicit DocumentObserver(Document*);
+    explicit DocumentObserver(Document *);
     virtual ~DocumentObserver();
 
     /** Attaches to another document, the old document
      * is not longer observed then.
      */
-    void attachDocument(Document*);
+    void attachDocument(Document *);
     /** Detaches from the current document, the document
      * is not longer observed then.
      */
@@ -481,27 +457,27 @@ public:
 
 private:
     /** Called when a new document was created */
-    virtual void slotCreatedDocument(const App::Document& Doc);
+    virtual void slotCreatedDocument(const App::Document &Doc);
     /** Called when a document is about to be closed */
-    virtual void slotDeletedDocument(const App::Document& Doc);
+    virtual void slotDeletedDocument(const App::Document &Doc);
     /** Called when a document is activated */
-    virtual void slotActivateDocument(const App::Document& Doc);
+    virtual void slotActivateDocument(const App::Document &Doc);
     /** Checks if a new object was added. */
-    virtual void slotCreatedObject(const App::DocumentObject& Obj);
+    virtual void slotCreatedObject(const App::DocumentObject &Obj);
     /** Checks if the given object is about to be removed. */
-    virtual void slotDeletedObject(const App::DocumentObject& Obj);
+    virtual void slotDeletedObject(const App::DocumentObject &Obj);
     /** The property of an observed object has changed */
-    virtual void slotChangedObject(const App::DocumentObject& Obj, const App::Property& Prop);
+    virtual void slotChangedObject(const App::DocumentObject &Obj, const App::Property &Prop);
     /** Called when a given object is recomputed */
-    virtual void slotRecomputedObject(const App::DocumentObject& Obj);
+    virtual void slotRecomputedObject(const App::DocumentObject &Obj);
     /** Called when a observed document is recomputed */
-    virtual void slotRecomputedDocument(const App::Document& Doc);
+    virtual void slotRecomputedDocument(const App::Document &Doc);
 
 protected:
-    Document* getDocument() const;
+    Document *getDocument() const;
 
 private:
-    App::Document* _document;
+    App::Document *_document;
     using Connection = boost::signals2::connection;
     Connection connectApplicationCreatedDocument;
     Connection connectApplicationDeletedDocument;
@@ -519,11 +495,11 @@ private:
  *
  * @author Werner Mayer
  */
-class AppExport DocumentObjectObserver : public DocumentObserver
+class AppExport DocumentObjectObserver: public DocumentObserver
 {
 
 public:
-    using const_iterator = std::set<App::DocumentObject*>::const_iterator;
+    using const_iterator = std::set<App::DocumentObject *>::const_iterator;
 
     /// Constructor
     DocumentObjectObserver();
@@ -531,20 +507,20 @@ public:
 
     const_iterator begin() const;
     const_iterator end() const;
-    void addToObservation(App::DocumentObject*);
-    void removeFromObservation(App::DocumentObject*);
+    void addToObservation(App::DocumentObject *);
+    void removeFromObservation(App::DocumentObject *);
 
 private:
     /** Checks if a new document was created */
-    void slotCreatedDocument(const App::Document& Doc) override;
+    void slotCreatedDocument(const App::Document &Doc) override;
     /** Checks if the given document is about to be closed */
-    void slotDeletedDocument(const App::Document& Doc) override;
+    void slotDeletedDocument(const App::Document &Doc) override;
     /** Checks if a new object was added. */
-    void slotCreatedObject(const App::DocumentObject& Obj) override;
+    void slotCreatedObject(const App::DocumentObject &Obj) override;
     /** Checks if the given object is about to be removed. */
-    void slotDeletedObject(const App::DocumentObject& Obj) override;
+    void slotDeletedObject(const App::DocumentObject &Obj) override;
     /** The property of an observed object has changed */
-    void slotChangedObject(const App::DocumentObject& Obj, const App::Property& Prop) override;
+    void slotChangedObject(const App::DocumentObject &Obj, const App::Property &Prop) override;
     /** This method gets called when all observed objects are deleted or the whole document is deleted.
       * This method can be re-implemented to perform an extra step like closing a dialog that observes
       * a document.
@@ -552,7 +528,7 @@ private:
     virtual void cancelObservation();
 
 private:
-    std::set<App::DocumentObject*> _objects;
+    std::set<App::DocumentObject *> _objects;
 };
 
 } //namespace App

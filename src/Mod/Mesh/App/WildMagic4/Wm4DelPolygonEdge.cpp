@@ -20,30 +20,25 @@
 namespace Wm4
 {
 //----------------------------------------------------------------------------
-template <class Real>
-DelPolygonEdge<Real>::DelPolygonEdge (int iV0, int iV1, int iNullIndex,
-    DelTriangle<Real>* pkTri)
-    :
-    VEManifoldMesh::Edge(iV0,iV1)
+template<class Real>
+DelPolygonEdge<Real>::DelPolygonEdge(int iV0, int iV1, int iNullIndex, DelTriangle<Real> *pkTri)
+    : VEManifoldMesh::Edge(iV0, iV1)
 {
     NullIndex = iNullIndex;
     Tri = pkTri;
 }
 //----------------------------------------------------------------------------
-template <class Real>
-VEManifoldMesh::EPtr DelPolygonEdge<Real>::ECreator (int iV0, int iV1)
+template<class Real> VEManifoldMesh::EPtr DelPolygonEdge<Real>::ECreator(int iV0, int iV1)
 {
-    return WM4_NEW DelPolygonEdge<Real>(iV0,iV1,0,nullptr);
+    return WM4_NEW DelPolygonEdge<Real>(iV0, iV1, 0, nullptr);
 }
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // explicit instantiation
 //----------------------------------------------------------------------------
-template WM4_FOUNDATION_ITEM
-class DelPolygonEdge<float>;
+template WM4_FOUNDATION_ITEM class DelPolygonEdge<float>;
 
-template WM4_FOUNDATION_ITEM
-class DelPolygonEdge<double>;
+template WM4_FOUNDATION_ITEM class DelPolygonEdge<double>;
 //----------------------------------------------------------------------------
-}
+} // namespace Wm4

@@ -33,9 +33,10 @@
 #include "DrawViewDimension.h"
 
 
-namespace TechDraw {
+namespace TechDraw
+{
 
-class TechDrawExport DrawViewDimExtent : public TechDraw::DrawViewDimension
+class TechDrawExport DrawViewDimExtent: public TechDraw::DrawViewDimension
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawViewDimExtent);
 
@@ -44,11 +45,11 @@ public:
     DrawViewDimExtent();
     ~DrawViewDimExtent() = default;
 
-    App::PropertyLinkSubList       Source;                       //DrawViewPart & SubElements(Edges)
-                                                                 //Cosmetic End points are stored in DVD::References2d
-    App::PropertyLinkSubList       Source3d;                     //Part::Feature & SubElements  TBI
-    App::PropertyInteger           DirExtent;                    //Horizontal, Vertical, TBD
-    App::PropertyStringList        CosmeticTags;                 //id of cosmetic end points.
+    App::PropertyLinkSubList Source;      //DrawViewPart & SubElements(Edges)
+                                          //Cosmetic End points are stored in DVD::References2d
+    App::PropertyLinkSubList Source3d;    //Part::Feature & SubElements  TBI
+    App::PropertyInteger DirExtent;       //Horizontal, Vertical, TBD
+    App::PropertyStringList CosmeticTags; //id of cosmetic end points.
 
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
@@ -62,7 +63,7 @@ public:
     PyObject *getPyObject() override;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     std::vector<std::string> getSubNames();
     pointPair getPointsTwoVerts() override;
 

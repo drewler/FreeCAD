@@ -28,9 +28,10 @@
 #include "ViewProviderDocumentObject.h"
 #include "ViewProviderPythonFeature.h"
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport ViewProviderMaterialObject : public ViewProviderDocumentObject
+class GuiExport ViewProviderMaterialObject: public ViewProviderDocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderMaterialObject);
 
@@ -45,8 +46,7 @@ public:
     bool doubleClicked() override;
 
     // shows solid in the tree
-    bool isShow() const override{return true;}
-
+    bool isShow() const override { return true; }
 };
 
 using ViewProviderMaterialObjectPython = ViewProviderPythonFeatureT<ViewProviderMaterialObject>;
@@ -54,4 +54,3 @@ using ViewProviderMaterialObjectPython = ViewProviderPythonFeatureT<ViewProvider
 } // namespace Gui
 
 #endif // GUI_ViewProviderMaterialObject_H
-

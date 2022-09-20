@@ -28,30 +28,36 @@
 #include <QKeySequence>
 #include <FCGlobal.h>
 
-namespace Gui {
+namespace Gui
+{
 
 /*!
  * \brief The QtTools class
  * Helper class to reduce adding a lot of extra QT_VERSION checks to client code.
  */
-class GuiExport QtTools {
+class GuiExport QtTools
+{
 public:
-    static int horizontalAdvance(const QFontMetrics& fm, QChar ch) {
+    static int horizontalAdvance(const QFontMetrics &fm, QChar ch)
+    {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
         return fm.horizontalAdvance(ch);
 #else
         return fm.width(ch);
 #endif
     }
-    static int horizontalAdvance(const QFontMetrics& fm, const QString& text, int len = -1) {
+    static int horizontalAdvance(const QFontMetrics &fm, const QString &text, int len = -1)
+    {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
         return fm.horizontalAdvance(text, len);
 #else
         return fm.width(text, len);
 #endif
     }
-    static bool matches(QKeyEvent* ke, const QKeySequence& ks) {
-        uint searchkey = (ke->modifiers() | ke->key()) & ~(Qt::KeypadModifier | Qt::GroupSwitchModifier);
+    static bool matches(QKeyEvent *ke, const QKeySequence &ks)
+    {
+        uint searchkey =
+            (ke->modifiers() | ke->key()) & ~(Qt::KeypadModifier | Qt::GroupSwitchModifier);
         return ks == QKeySequence(searchkey);
     }
 };

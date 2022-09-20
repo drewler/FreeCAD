@@ -1,4 +1,4 @@
- /**************************************************************************
+/**************************************************************************
  *   Copyright (c) 2016 WandererFan <wandererfan@gmail.com>                *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
@@ -30,15 +30,16 @@
 #include <QString>
 #include <memory>
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 class Ui_dlgTemplateField;
-class DlgTemplateField : public QDialog
+class DlgTemplateField: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DlgTemplateField( QWidget *parent = nullptr );
+    explicit DlgTemplateField(QWidget *parent = nullptr);
     ~DlgTemplateField() override = default;
 
     void setFieldName(std::string name);

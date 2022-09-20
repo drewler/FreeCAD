@@ -29,6 +29,6 @@
 
 #include "SALOME_Utils.hxx"
 
-UTILS_EXPORT const char *duplicate(const char * const);
+UTILS_EXPORT const char *duplicate(const char *const);
 
 #endif

@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  SMESH Driver : implementation of driver for reading and writing      
+//  SMESH Driver : implementation of driver for reading and writing
 //  File   : Mesh_Reader.cxx
 //  Module : SMESH
 //
@@ -32,33 +32,17 @@
 
 using namespace std;
 
-Driver_Mesh::Driver_Mesh():
-  myFile(""),
-  myMeshId(-1),
-  myStatus( DRS_OK )
-{}
+Driver_Mesh::Driver_Mesh() : myFile(""), myMeshId(-1), myStatus(DRS_OK) {}
 
 
-void Driver_Mesh::SetMeshId(int theMeshId)
-{
-  myMeshId = theMeshId;
-}
+void Driver_Mesh::SetMeshId(int theMeshId) { myMeshId = theMeshId; }
 
-void Driver_Mesh::SetMeshName(const std::string& theMeshName)
-{
-  myMeshName = theMeshName;
-}
+void Driver_Mesh::SetMeshName(const std::string &theMeshName) { myMeshName = theMeshName; }
 
-std::string Driver_Mesh::GetMeshName() const
-{
-  return myMeshName;
-}
+std::string Driver_Mesh::GetMeshName() const { return myMeshName; }
 
 
-void Driver_Mesh::SetFile(const std::string& theFileName)
-{
-  myFile = theFileName;
-}
+void Driver_Mesh::SetFile(const std::string &theFileName) { myFile = theFileName; }
 
 
 //================================================================================
@@ -69,19 +53,17 @@ void Driver_Mesh::SetFile(const std::string& theFileName)
  */
 //================================================================================
 
-Driver_Mesh::Status Driver_Mesh::addMessage(const std::string& msg,
-                                            const bool         isFatal/*=false*/)
+Driver_Mesh::Status Driver_Mesh::addMessage(const std::string &msg, const bool isFatal /*=false*/)
 {
-  if ( isFatal )
-    myErrorMessages.clear(); // warnings are useless if a fatal error encounters
+    if (isFatal) myErrorMessages.clear(); // warnings are useless if a fatal error encounters
 
-  myErrorMessages.push_back( msg );
+    myErrorMessages.push_back(msg);
 
-  MESSAGE(msg);
+    MESSAGE(msg);
 #ifdef _DEBUG_
-  cout << msg << endl;
+    cout << msg << endl;
 #endif
-  return ( myStatus = isFatal ? DRS_FAIL : DRS_WARN_SKIP_ELEM );
+    return (myStatus = isFatal ? DRS_FAIL : DRS_WARN_SKIP_ELEM);
 }
 
 //================================================================================
@@ -92,12 +74,10 @@ Driver_Mesh::Status Driver_Mesh::addMessage(const std::string& msg,
 
 SMESH_ComputeErrorPtr Driver_Mesh::GetError()
 {
-  SMESH_Comment msg;
-  for ( size_t i = 0; i < myErrorMessages.size(); ++i )
-  {
-    msg << myErrorMessages[i];
-    if ( i+1 < myErrorMessages.size() )
-      msg << "\n";
-  }
-  return SMESH_ComputeError::New( myStatus == DRS_OK ? int(COMPERR_OK) : int(myStatus), msg );
+    SMESH_Comment msg;
+    for (size_t i = 0; i < myErrorMessages.size(); ++i) {
+        msg << myErrorMessages[i];
+        if (i + 1 < myErrorMessages.size()) msg << "\n";
+    }
+    return SMESH_ComputeError::New(myStatus == DRS_OK ? int(COMPERR_OK) : int(myStatus), msg);
 }

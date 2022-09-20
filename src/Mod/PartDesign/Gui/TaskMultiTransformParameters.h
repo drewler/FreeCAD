@@ -30,43 +30,45 @@
 class Ui_TaskMultiTransformParameters;
 class QModelIndex;
 
-namespace PartDesign {
+namespace PartDesign
+{
 class Transformed;
 }
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 
-
-class TaskMultiTransformParameters : public TaskTransformedParameters
+class TaskMultiTransformParameters: public TaskTransformedParameters
 {
     Q_OBJECT
 
 public:
-    explicit TaskMultiTransformParameters(ViewProviderTransformed *TransformedView,QWidget *parent = nullptr);
+    explicit TaskMultiTransformParameters(ViewProviderTransformed *TransformedView,
+                                          QWidget *parent = nullptr);
     ~TaskMultiTransformParameters() override;
 
-    const std::vector<App::DocumentObject*> getTransformFeatures() const;
+    const std::vector<App::DocumentObject *> getTransformFeatures() const;
 
     /// Return the currently active subFeature
-    PartDesign::Transformed* getSubFeature() {
-        return subFeature;
-    }
+    PartDesign::Transformed *getSubFeature() { return subFeature; }
 
     void apply() override;
 
 private Q_SLOTS:
     void onTransformDelete();
     void onTransformEdit();
-    void onTransformActivated(const QModelIndex& index);
+    void onTransformActivated(const QModelIndex &index);
     void onTransformAddMirrored();
     void onTransformAddLinearPattern();
     void onTransformAddPolarPattern();
@@ -80,13 +82,13 @@ private Q_SLOTS:
     virtual void onUpdateView(bool);
     void onFeatureDeleted() override;
     /** Notifies when the object is about to be removed. */
-    void slotDeletedObject(const Gui::ViewProviderDocumentObject& Obj) override;
+    void slotDeletedObject(const Gui::ViewProviderDocumentObject &Obj) override;
 
 protected:
-    void addObject(App::DocumentObject*) override;
-    void removeObject(App::DocumentObject*) override;
+    void addObject(App::DocumentObject *) override;
+    void removeObject(App::DocumentObject *) override;
     void changeEvent(QEvent *e) override;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     void clearButtons() override;
 
 private:
@@ -98,14 +100,14 @@ private:
 private:
     std::unique_ptr<Ui_TaskMultiTransformParameters> ui;
     /// The subTask and subFeature currently active in the UI
-    TaskTransformedParameters* subTask;
-    PartDesign::Transformed* subFeature;
+    TaskTransformedParameters *subTask;
+    PartDesign::Transformed *subFeature;
     bool editHint;
 };
 
 
 /// simulation dialog for the TaskView
-class TaskDlgMultiTransformParameters : public TaskDlgTransformedParameters
+class TaskDlgMultiTransformParameters: public TaskDlgTransformedParameters
 {
     Q_OBJECT
 

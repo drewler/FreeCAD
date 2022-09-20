@@ -61,36 +61,30 @@ public:
     void setSize(int newSize) override;
     int getSize() const override;
 
-    void setValue(const Base::Vector3f&);
+    void setValue(const Base::Vector3f &);
     void setValue(float x, float y, float z);
 
-    const Base::Vector3f& operator[] (const int idx) const {
-        return _lValueList[idx];
-    }
+    const Base::Vector3f &operator[](const int idx) const { return _lValueList[idx]; }
 
-    void set1Value (const int idx, const Base::Vector3f& value) {
-        _lValueList[idx] = value;
-    }
+    void set1Value(const int idx, const Base::Vector3f &value) { _lValueList[idx] = value; }
 
-    void setValues (const std::vector<Base::Vector3f>& values);
+    void setValues(const std::vector<Base::Vector3f> &values);
 
-    const std::vector<Base::Vector3f> &getValues() const {
-        return _lValueList;
-    }
+    const std::vector<Base::Vector3f> &getValues() const { return _lValueList; }
 
     PyObject *getPyObject() override;
     void setPyObject(PyObject *) override;
 
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
-    void SaveDocFile (Base::Writer &writer) const override;
+    void SaveDocFile(Base::Writer &writer) const override;
     void RestoreDocFile(Base::Reader &reader) override;
 
     App::Property *Copy() const override;
     void Paste(const App::Property &from) override;
 
-    unsigned int getMemSize () const override;
+    unsigned int getMemSize() const override;
 
     void transformGeometry(const Base::Matrix4D &rclMat);
 
@@ -99,8 +93,7 @@ private:
 };
 
 /** Curvature information. */
-struct MeshExport CurvatureInfo
-{
+struct MeshExport CurvatureInfo {
     float fMaxCurvature, fMinCurvature;
     Base::Vector3f cMaxCurvDir, cMinCurvDir;
 };
@@ -113,52 +106,47 @@ class MeshExport PropertyCurvatureList: public App::PropertyLists
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-    enum { 
-        MeanCurvature  = 0,  /**< Mean curvature */
-        GaussCurvature = 1,  /**< Gaussian curvature */
-        MaxCurvature   = 2,  /**< Maximum curvature */ 
-        MinCurvature   = 3,  /**< Minimum curvature */
-        AbsCurvature   = 4   /**< Absolute curvature */
+    enum
+    {
+        MeanCurvature = 0,  /**< Mean curvature */
+        GaussCurvature = 1, /**< Gaussian curvature */
+        MaxCurvature = 2,   /**< Maximum curvature */
+        MinCurvature = 3,   /**< Minimum curvature */
+        AbsCurvature = 4    /**< Absolute curvature */
     };
 
 public:
     PropertyCurvatureList();
     ~PropertyCurvatureList() override;
 
-    void setSize(int newSize) override{_lValueList.resize(newSize);}
-    int getSize() const override {return _lValueList.size();}
-    std::vector<float> getCurvature( int tMode) const;
-    void setValue(const CurvatureInfo&);
-    void setValues(const std::vector<CurvatureInfo>&);
+    void setSize(int newSize) override { _lValueList.resize(newSize); }
+    int getSize() const override { return _lValueList.size(); }
+    std::vector<float> getCurvature(int tMode) const;
+    void setValue(const CurvatureInfo &);
+    void setValues(const std::vector<CurvatureInfo> &);
 
     /// index operator
-    const CurvatureInfo& operator[] (const int idx) const {
-        return _lValueList[idx];
-    }
-    void  set1Value (const int idx, const CurvatureInfo& value) {
-        _lValueList[idx] = value;
-    }
-    const std::vector<CurvatureInfo> &getValues() const {
-        return _lValueList;
-    }
+    const CurvatureInfo &operator[](const int idx) const { return _lValueList[idx]; }
+    void set1Value(const int idx, const CurvatureInfo &value) { _lValueList[idx] = value; }
+    const std::vector<CurvatureInfo> &getValues() const { return _lValueList; }
     void transformGeometry(const Base::Matrix4D &rclMat);
 
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
-    void SaveDocFile (Base::Writer &writer) const override;
+    void SaveDocFile(Base::Writer &writer) const override;
     void RestoreDocFile(Base::Reader &reader) override;
 
     /** @name Python interface */
     //@{
-    PyObject* getPyObject() override;
+    PyObject *getPyObject() override;
     void setPyObject(PyObject *value) override;
     //@}
 
     App::Property *Copy() const override;
     void Paste(const App::Property &from) override;
 
-    unsigned int getMemSize () const override{return _lValueList.size() * sizeof(CurvatureInfo);}
+    unsigned int getMemSize() const override { return _lValueList.size() * sizeof(CurvatureInfo); }
 
 private:
     std::vector<CurvatureInfo> _lValueList;
@@ -167,7 +155,7 @@ private:
 /** The mesh kernel property class.
  * @author Werner Mayer
  */
-class MeshExport PropertyMeshKernel : public App::PropertyComplexGeoData
+class MeshExport PropertyMeshKernel: public App::PropertyComplexGeoData
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -185,38 +173,38 @@ public:
      * @note Make sure not to reference the internal mesh pointer pf this class in
      * client code. This could lead to crashes if not handled properly.
      */
-    void setValuePtr(MeshObject* m);
+    void setValuePtr(MeshObject *m);
     /** This method sets the mesh by copying the data. */
-    void setValue(const MeshObject& m);
+    void setValue(const MeshObject &m);
     /** This method sets the mesh by copying the data. */
-    void setValue(const MeshCore::MeshKernel& m);
+    void setValue(const MeshCore::MeshKernel &m);
     /** Swaps the mesh data structure. */
-    void swapMesh(MeshObject&);
+    void swapMesh(MeshObject &);
     /** Swaps the mesh data structure. */
-    void swapMesh(MeshCore::MeshKernel&);
+    void swapMesh(MeshCore::MeshKernel &);
     /** Returns a the attached mesh object by reference. It cannot be modified 
      * from outside.
      */
     const MeshObject &getValue() const;
     const MeshObject *getValuePtr() const;
-    unsigned int getMemSize () const override;
+    unsigned int getMemSize() const override;
     //@}
 
     /** @name Getting basic geometric entities */
     //@{
-    const Data::ComplexGeoData* getComplexData() const override;
+    const Data::ComplexGeoData *getComplexData() const override;
     /** Returns the bounding box around the underlying mesh kernel */
     Base::BoundBox3d getBoundingBox() const override;
     //@}
 
     /** @name Modification */
     //@{
-    MeshObject* startEditing();
+    MeshObject *startEditing();
     void finishEditing();
     /// Transform the real mesh data
     void transformGeometry(const Base::Matrix4D &rclMat) override;
-    void setPointIndices( const std::vector<std::pair<PointIndex, Base::Vector3f> >& );
-    void setTransform(const Base::Matrix4D& rclTrf) override;
+    void setPointIndices(const std::vector<std::pair<PointIndex, Base::Vector3f>> &);
+    void setTransform(const Base::Matrix4D &rclTrf) override;
     Base::Matrix4D getTransform() const override;
     //@}
 
@@ -226,7 +214,7 @@ public:
      * create a copy. However, the Python wrapper is marked as \a immutable so
      * that the mesh object cannot be modified from outside.
      */
-    PyObject* getPyObject() override;
+    PyObject *getPyObject() override;
     /** This method copies the content, hence creates an new mesh object 
      * to copy the data. The passed argument can be an instance of the Python
      * wrapper for the mesh object or simply a list of triangles, i.e. a list
@@ -235,16 +223,14 @@ public:
     void setPyObject(PyObject *value) override;
     //@}
 
-    const char* getEditorName() const override {
-        return "MeshGui::PropertyMeshKernelItem";
-    }
+    const char *getEditorName() const override { return "MeshGui::PropertyMeshKernelItem"; }
 
     /** @name Save/restore */
     //@{
-    void Save (Base::Writer &writer) const override;
+    void Save(Base::Writer &writer) const override;
     void Restore(Base::XMLReader &reader) override;
 
-    void SaveDocFile (Base::Writer &writer) const override;
+    void SaveDocFile(Base::Writer &writer) const override;
     void RestoreDocFile(Base::Reader &reader) override;
 
     App::Property *Copy() const override;
@@ -253,7 +239,7 @@ public:
 
 private:
     Base::Reference<MeshObject> _meshObject;
-    MeshPy* meshPyObject;
+    MeshPy *meshPyObject;
 };
 
 } // namespace Mesh

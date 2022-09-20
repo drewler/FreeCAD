@@ -41,9 +41,8 @@ using namespace TechDrawGui;
 using namespace TechDraw;
 
 
-DlgPrefsTechDrawDimensionsImp::DlgPrefsTechDrawDimensionsImp( QWidget* parent )
-  : PreferencePage( parent )
-  , ui(new Ui_DlgPrefsTechDrawDimensionsImp)
+DlgPrefsTechDrawDimensionsImp::DlgPrefsTechDrawDimensionsImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgPrefsTechDrawDimensionsImp)
 {
     ui->setupUi(this);
     ui->plsb_FontSize->setUnit(Base::Unit::Length);
@@ -80,8 +79,8 @@ void DlgPrefsTechDrawDimensionsImp::loadSettings()
     //QAbstractSpinBox
     double fontDefault = Preferences::dimFontSizeMM();
     ui->plsb_FontSize->setValue(fontDefault);
-//    double arrowDefault = 5.0;
-//    plsb_ArrowSize->setValue(arrowDefault);
+    //    double arrowDefault = 5.0;
+    //    plsb_ArrowSize->setValue(arrowDefault);
     ui->plsb_ArrowSize->setValue(fontDefault);
 
     ui->pcbStandardAndStyle->onRestore();

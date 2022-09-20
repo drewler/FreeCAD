@@ -62,19 +62,17 @@ public:
     //@}
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderViewClip";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderViewClip"; }
     //return PyObject as DrawViewClipPy
     PyObject *getPyObject() override;
 
     std::vector<std::string> getChildViewNames();
-    bool isViewInClip(App::DocumentObject* view);
-    QRectF getRect() const override { return { 0, 0, Width.getValue(), Height.getValue() };  }
+    bool isViewInClip(App::DocumentObject *view);
+    QRectF getRect() const override { return {0, 0, Width.getValue(), Height.getValue()}; }
 
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
 };
 
 using DrawViewClipPython = App::FeaturePythonT<DrawViewClip>;

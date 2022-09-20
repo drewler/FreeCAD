@@ -34,117 +34,95 @@
  */
 //=======================================================================
 
-template <class SUBMESH>
-class SMESHDS_TSubMeshHolder
+template<class SUBMESH> class SMESHDS_TSubMeshHolder
 {
-  std::vector< SUBMESH* >   myVec; // for ID >= 0
-  std::map< int, SUBMESH* > myMap; // for ID < 0
+    std::vector<SUBMESH *> myVec;   // for ID >= 0
+    std::map<int, SUBMESH *> myMap; // for ID < 0
 
 public:
-
-  ~SMESHDS_TSubMeshHolder()
-  {
-    DeleteAll();
-  }
-  void Add( int id, SUBMESH* sm )
-  {
-    if ( id < 0 )
+    ~SMESHDS_TSubMeshHolder() { DeleteAll(); }
+    void Add(int id, SUBMESH *sm)
     {
-      myMap[ id ] = sm;
+        if (id < 0) { myMap[id] = sm; }
+        else {
+            if (myVec.size() <= id) myVec.resize(id + 1, (SUBMESH *)NULL);
+            myVec[id] = sm;
+        }
     }
-    else
+    SUBMESH *Get(int id) const
     {
-      if ( myVec.size() <= id )
-        myVec.resize( id+1, (SUBMESH*) NULL );
-      myVec[ id ] = sm;
+        if (id < 0) {
+            typename std::map<int, SUBMESH *>::const_iterator i2sm = myMap.find(id);
+            return (SUBMESH *)(i2sm == myMap.end() ? NULL : i2sm->second);
+        }
+        else {
+            return (SUBMESH *)(id >= myVec.size() ? NULL : myVec[id]);
+        }
     }
-  }
-  SUBMESH* Get( int id ) const
-  {
-    if ( id < 0 )
+    void DeleteAll()
     {
-      typename std::map< int, SUBMESH* >::const_iterator i2sm = myMap.find( id );
-      return (SUBMESH*) ( i2sm == myMap.end() ? NULL : i2sm->second );
+        for (size_t i = 0; i < myVec.size(); ++i)
+            if (SUBMESH *sm = myVec[i]) {
+                myVec[i] = 0; // avoid access via Get(i)
+                delete sm;
+            }
+        myVec.clear();
+
+        typename std::map<int, SUBMESH *>::iterator i2sm = myMap.begin();
+        for (; i2sm != myMap.end(); ++i2sm)
+            if (SUBMESH *sm = i2sm->second) {
+                i2sm->second = 0; // avoid access via Get(i)
+                delete sm;
+            }
+        myMap.clear();
     }
-    else
+    int GetMinID() const { return myMap.empty() ? 0 : myMap.begin()->first; }
+    int GetMaxID() const
     {
-      return (SUBMESH*) ( id >= myVec.size() ? NULL : myVec[ id ]);
-    }
-  }
-  void DeleteAll()
-  {
-    for ( size_t i = 0; i < myVec.size(); ++i )
-      if ( SUBMESH* sm = myVec[i] )
-      {
-        myVec[i] = 0; // avoid access via Get(i)
-        delete sm;
-      }
-    myVec.clear();
-
-    typename std::map< int, SUBMESH* >::iterator i2sm = myMap.begin();
-    for ( ; i2sm != myMap.end(); ++i2sm )
-      if ( SUBMESH* sm = i2sm->second )
-      {
-        i2sm->second = 0; // avoid access via Get(i)
-        delete sm;
-      }
-    myMap.clear();
-  }
-  int GetMinID() const
-  {
-    return myMap.empty() ? 0 : myMap.begin()->first;
-  }
-  int GetMaxID() const
-  {
-    return myVec.empty() ? ( myMap.empty() ? 0 : myMap.rbegin()->first ) : myVec.size();
-  }
-
-  //-----------------------------------------------------------------------
-  struct Iterator : public SMDS_Iterator< SUBMESH* >
-  {
-    const SMESHDS_TSubMeshHolder<SUBMESH>* myHolder;
-    SUBMESH* myNext;
-    int myCurID, myEndID, myIDDelta;
-
-    void init( const SMESHDS_TSubMeshHolder<SUBMESH>* holder,
-               int firstID, int endID, int delta )
-    {
-      myHolder  = holder;
-      myNext    = 0;
-      myCurID   = firstID;
-      myEndID   = endID;
-      myIDDelta = delta;
-
-      next();
+        return myVec.empty() ? (myMap.empty() ? 0 : myMap.rbegin()->first) : myVec.size();
     }
 
-    bool more()
-    {
-      return myNext;
-    }
+    //-----------------------------------------------------------------------
+    struct Iterator: public SMDS_Iterator<SUBMESH *> {
+        const SMESHDS_TSubMeshHolder<SUBMESH> *myHolder;
+        SUBMESH *myNext;
+        int myCurID, myEndID, myIDDelta;
 
-    SUBMESH* next()
-    {
-      SUBMESH* res = myNext;
-      myNext = 0;
-      while ( !myNext && myCurID != myEndID )
-      {
-        myNext = myHolder->Get( myCurID );
-        myCurID += myIDDelta;
-      }
-      return res;
-    }
-    virtual ~Iterator() {}
-  };
-  //-----------------------------------------------------------------------
+        void init(const SMESHDS_TSubMeshHolder<SUBMESH> *holder, int firstID, int endID, int delta)
+        {
+            myHolder = holder;
+            myNext = 0;
+            myCurID = firstID;
+            myEndID = endID;
+            myIDDelta = delta;
 
-  SMDS_Iterator< SUBMESH* >* GetIterator(const bool reverse=false) const
-  {
-    Iterator* iter = new Iterator;
-    if ( reverse ) iter->init( this, GetMaxID(), GetMinID()-1, -1 );
-    else           iter->init( this, GetMinID(), GetMaxID()+1, +1 );
-    return iter;
-  }
+            next();
+        }
+
+        bool more() { return myNext; }
+
+        SUBMESH *next()
+        {
+            SUBMESH *res = myNext;
+            myNext = 0;
+            while (!myNext && myCurID != myEndID) {
+                myNext = myHolder->Get(myCurID);
+                myCurID += myIDDelta;
+            }
+            return res;
+        }
+        virtual ~Iterator() {}
+    };
+    //-----------------------------------------------------------------------
+
+    SMDS_Iterator<SUBMESH *> *GetIterator(const bool reverse = false) const
+    {
+        Iterator *iter = new Iterator;
+        if (reverse) iter->init(this, GetMaxID(), GetMinID() - 1, -1);
+        else
+            iter->init(this, GetMinID(), GetMaxID() + 1, +1);
+        return iter;
+    }
 };
 
 

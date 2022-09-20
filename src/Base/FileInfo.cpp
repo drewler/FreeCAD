@@ -25,18 +25,18 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <algorithm>
-# include <cassert>
-# include <codecvt>
-# include <cstring>
-# include <locale>
-# if defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
-# include <dirent.h>
-# include <unistd.h>
-# elif defined (FC_OS_WIN32)
-# include <io.h>
-# include <Windows.h>
-# endif
+#include <algorithm>
+#include <cassert>
+#include <codecvt>
+#include <cstring>
+#include <locale>
+#if defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+#include <dirent.h>
+#include <unistd.h>
+#elif defined(FC_OS_WIN32)
+#include <io.h>
+#include <Windows.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif
@@ -49,40 +49,40 @@
 using namespace Base;
 
 #ifndef R_OK
-#define R_OK    4   /* Test for read permission    */
+#define R_OK 4 /* Test for read permission    */
 #endif
 #ifndef W_OK
-#define W_OK    2   /* Test for write permission   */
+#define W_OK 2 /* Test for write permission   */
 #endif
 #ifndef X_OK
-#define X_OK    1   /* Test for execute permission */
+#define X_OK 1 /* Test for execute permission */
 #endif
 #ifndef F_OK
-#define F_OK    0   /* Test for existence          */
+#define F_OK 0 /* Test for existence          */
 #endif
 
 //**********************************************************************************
 // helper
 
 #ifdef FC_OS_WIN32
-std::string ConvertFromWideString(const std::wstring& string)
+std::string ConvertFromWideString(const std::wstring &string)
 {
-    int neededSize = WideCharToMultiByte(CP_UTF8, 0, string.c_str(), -1, 0, 0,0,0);
-    char * CharString = new char[static_cast<size_t>(neededSize)];
-    WideCharToMultiByte(CP_UTF8, 0, string.c_str(), -1, CharString, neededSize,0,0);
+    int neededSize = WideCharToMultiByte(CP_UTF8, 0, string.c_str(), -1, 0, 0, 0, 0);
+    char *CharString = new char[static_cast<size_t>(neededSize)];
+    WideCharToMultiByte(CP_UTF8, 0, string.c_str(), -1, CharString, neededSize, 0, 0);
     std::string String(CharString);
-    delete [] CharString;
+    delete[] CharString;
     CharString = NULL;
     return String;
 }
 
-std::wstring ConvertToWideString(const std::string& string)
+std::wstring ConvertToWideString(const std::string &string)
 {
     int neededSize = MultiByteToWideChar(CP_UTF8, 0, string.c_str(), -1, 0, 0);
-    wchar_t* wideCharString = new wchar_t[static_cast<size_t>(neededSize)];
+    wchar_t *wideCharString = new wchar_t[static_cast<size_t>(neededSize)];
     MultiByteToWideChar(CP_UTF8, 0, string.c_str(), -1, wideCharString, neededSize);
     std::wstring wideString(wideCharString);
-    delete [] wideCharString;
+    delete[] wideCharString;
     wideCharString = NULL;
     return wideString;
 }
@@ -93,15 +93,9 @@ std::wstring ConvertToWideString(const std::string& string)
 // FileInfo
 
 
-FileInfo::FileInfo (const char* _FileName)
-{
-    setFile(_FileName);
-}
+FileInfo::FileInfo(const char *_FileName) { setFile(_FileName); }
 
-FileInfo::FileInfo (const std::string &_FileName)
-{
-    setFile(_FileName.c_str());
-}
+FileInfo::FileInfo(const std::string &_FileName) { setFile(_FileName.c_str()); }
 
 const std::string &FileInfo::getTempPath()
 {
@@ -110,20 +104,20 @@ const std::string &FileInfo::getTempPath()
     if (tempPath == "") {
 #ifdef FC_OS_WIN32
         wchar_t buf[MAX_PATH + 2];
-        GetTempPathW(MAX_PATH + 1,buf);
+        GetTempPathW(MAX_PATH + 1, buf);
         int neededSize = WideCharToMultiByte(CP_UTF8, 0, buf, -1, 0, 0, 0, 0);
-        char* dest = new char[static_cast<size_t>(neededSize)];
-        WideCharToMultiByte(CP_UTF8, 0, buf, -1,dest, neededSize, 0, 0);
+        char *dest = new char[static_cast<size_t>(neededSize)];
+        WideCharToMultiByte(CP_UTF8, 0, buf, -1, dest, neededSize, 0, 0);
         tempPath = dest;
-        delete [] dest;
+        delete[] dest;
 #else
-        const char* tmp = getenv("TMPDIR");
+        const char *tmp = getenv("TMPDIR");
         if (tmp && tmp[0] != '\0') {
             tempPath = tmp;
             FileInfo fi(tempPath);
             if (tempPath.empty() || !fi.isDir()) // still empty or non-existent
                 tempPath = "/tmp/";
-            else if (tempPath.at(tempPath.size()-1)!='/')
+            else if (tempPath.at(tempPath.size() - 1) != '/')
                 tempPath.append("/");
         }
         else {
@@ -135,7 +129,7 @@ const std::string &FileInfo::getTempPath()
     return tempPath;
 }
 
-std::string FileInfo::getTempFileName(const char* FileName, const char* Path)
+std::string FileInfo::getTempFileName(const char *FileName, const char *Path)
 {
     //FIXME: To avoid race conditions we should rather return a file pointer
     //than a file name.
@@ -144,21 +138,19 @@ std::string FileInfo::getTempFileName(const char* FileName, const char* Path)
 
     // Path where the file is located
     std::wstring path;
-    if (Path)
-        path = ConvertToWideString(std::string(Path));
+    if (Path) path = ConvertToWideString(std::string(Path));
     else
         path = ConvertToWideString(getTempPath());
 
     // File name in the path
     std::wstring file;
-    if (FileName)
-        file = ConvertToWideString(std::string(FileName));
+    if (FileName) file = ConvertToWideString(std::string(FileName));
     else
         file = L"FCTempFile";
 
 
     // this already creates the file
-    GetTempFileNameW(path.c_str(),file.c_str(),0,buf);
+    GetTempFileNameW(path.c_str(), file.c_str(), 0, buf);
     DeleteFileW(buf);
 
     return std::string(ConvertFromWideString(std::wstring(buf)));
@@ -166,8 +158,7 @@ std::string FileInfo::getTempFileName(const char* FileName, const char* Path)
     std::string buf;
 
     // Path where the file is located
-    if (Path)
-        buf = Path;
+    if (Path) buf = Path;
     else
         buf = getTempPath();
 
@@ -188,7 +179,7 @@ std::string FileInfo::getTempFileName(const char* FileName, const char* Path)
     /* coverity[secure_temp] mkstemp uses 0600 as the mode and is safe */
     int id = mkstemp(vec.data());
     if (id > -1) {
-        FILE* file = fdopen(id, "w");
+        FILE *file = fdopen(id, "w");
         fclose(file);
         vec.pop_back(); // remove '\0'
         std::string str(vec.begin(), vec.end());
@@ -199,7 +190,7 @@ std::string FileInfo::getTempFileName(const char* FileName, const char* Path)
 #endif
 }
 
-boost::filesystem::path FileInfo::stringToPath(const std::string& str)
+boost::filesystem::path FileInfo::stringToPath(const std::string &str)
 {
 #if defined(FC_OS_WIN32)
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
@@ -210,7 +201,7 @@ boost::filesystem::path FileInfo::stringToPath(const std::string& str)
     return path;
 }
 
-std::string FileInfo::pathToString(const boost::filesystem::path& p)
+std::string FileInfo::pathToString(const boost::filesystem::path &p)
 {
 #if defined(FC_OS_WIN32)
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
@@ -220,7 +211,7 @@ std::string FileInfo::pathToString(const boost::filesystem::path& p)
 #endif
 }
 
-void FileInfo::setFile(const char* name)
+void FileInfo::setFile(const char *name)
 {
     if (!name) {
         FileName.clear();
@@ -230,51 +221,42 @@ void FileInfo::setFile(const char* name)
     FileName = name;
 
     // keep the UNC paths intact
-    if (FileName.substr(0,2) == std::string("\\\\"))
-        std::replace(FileName.begin()+2, FileName.end(), '\\', '/');
+    if (FileName.substr(0, 2) == std::string("\\\\"))
+        std::replace(FileName.begin() + 2, FileName.end(), '\\', '/');
     else
         std::replace(FileName.begin(), FileName.end(), '\\', '/');
 }
 
-std::string FileInfo::filePath () const
-{
-    return FileName;
-}
+std::string FileInfo::filePath() const { return FileName; }
 
-std::string FileInfo::fileName () const
-{
-    return FileName.substr(FileName.find_last_of('/')+1);
-}
+std::string FileInfo::fileName() const { return FileName.substr(FileName.find_last_of('/') + 1); }
 
-std::string FileInfo::dirPath () const
+std::string FileInfo::dirPath() const
 {
     std::size_t last_pos;
     std::string retval;
     last_pos = FileName.find_last_of('/');
-    if (last_pos != std::string::npos) {
-        retval = FileName.substr(0, last_pos);
-    }
+    if (last_pos != std::string::npos) { retval = FileName.substr(0, last_pos); }
     else {
 #ifdef FC_OS_WIN32
-        wchar_t buf[MAX_PATH+1];
+        wchar_t buf[MAX_PATH + 1];
         GetCurrentDirectoryW(MAX_PATH, buf);
         retval = std::string(ConvertFromWideString(std::wstring(buf)));
 #else
-        char buf[PATH_MAX+1];
-        const char* cwd = getcwd(buf, PATH_MAX);
+        char buf[PATH_MAX + 1];
+        const char *cwd = getcwd(buf, PATH_MAX);
         retval = std::string(cwd ? cwd : ".");
 #endif
     }
     return retval;
 }
 
-std::string FileInfo::fileNamePure () const
+std::string FileInfo::fileNamePure() const
 {
     std::string temp = fileName();
     std::string::size_type pos = temp.find_last_of('.');
 
-    if (pos != std::string::npos)
-        return temp.substr(0,pos);
+    if (pos != std::string::npos) return temp.substr(0, pos);
     else
         return temp;
 }
@@ -291,86 +273,82 @@ std::wstring FileInfo::toStdWString() const
 #endif
 }
 
-std::string FileInfo::extension () const
+std::string FileInfo::extension() const
 {
     std::string::size_type pos = FileName.find_last_of('.');
-    if (pos == std::string::npos)
-        return std::string();
-    return FileName.substr(pos+1);
+    if (pos == std::string::npos) return std::string();
+    return FileName.substr(pos + 1);
 }
 
-std::string FileInfo::completeExtension () const
+std::string FileInfo::completeExtension() const
 {
     std::string::size_type pos = FileName.find_first_of('.');
-    if (pos == std::string::npos)
-        return std::string();
-    return FileName.substr(pos+1);
+    if (pos == std::string::npos) return std::string();
+    return FileName.substr(pos + 1);
 }
 
-bool FileInfo::hasExtension (const char* Ext) const
+bool FileInfo::hasExtension(const char *Ext) const
 {
-#if defined (FC_OS_WIN32)
-    return _stricmp(Ext,extension().c_str()) == 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
-    return strcasecmp(Ext,extension().c_str()) == 0;
+#if defined(FC_OS_WIN32)
+    return _stricmp(Ext, extension().c_str()) == 0;
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+    return strcasecmp(Ext, extension().c_str()) == 0;
 #endif
 }
 
-bool FileInfo::exists () const
+bool FileInfo::exists() const
 {
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
     std::wstring wstr = toStdWString();
-    return _waccess(wstr.c_str(),F_OK) == 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
-    return access(FileName.c_str(),F_OK) == 0;
+    return _waccess(wstr.c_str(), F_OK) == 0;
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+    return access(FileName.c_str(), F_OK) == 0;
 #endif
 }
 
-bool FileInfo::isReadable () const
+bool FileInfo::isReadable() const
 {
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
     std::wstring wstr = toStdWString();
-    return _waccess(wstr.c_str(),R_OK) == 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
-    return access(FileName.c_str(),R_OK) == 0;
+    return _waccess(wstr.c_str(), R_OK) == 0;
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+    return access(FileName.c_str(), R_OK) == 0;
 #endif
 }
 
-bool FileInfo::isWritable () const
+bool FileInfo::isWritable() const
 {
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
     std::wstring wstr = toStdWString();
-    return _waccess(wstr.c_str(),W_OK) == 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
-    return access(FileName.c_str(),W_OK) == 0;
+    return _waccess(wstr.c_str(), W_OK) == 0;
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+    return access(FileName.c_str(), W_OK) == 0;
 #endif
 }
 
-bool FileInfo::setPermissions (Permissions perms)
+bool FileInfo::setPermissions(Permissions perms)
 {
     int mode = 0;
 
-    if (perms & FileInfo::ReadOnly)
-        mode |= S_IREAD;
-    if (perms & FileInfo::WriteOnly)
-        mode |= S_IWRITE;
+    if (perms & FileInfo::ReadOnly) mode |= S_IREAD;
+    if (perms & FileInfo::WriteOnly) mode |= S_IWRITE;
 
     if (mode == 0) // bad argument
         return false;
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
     std::wstring wstr = toStdWString();
-    return _wchmod(wstr.c_str(),mode) == 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
-    return chmod(FileName.c_str(),mode) == 0;
+    return _wchmod(wstr.c_str(), mode) == 0;
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+    return chmod(FileName.c_str(), mode) == 0;
 #endif
 }
 
-bool FileInfo::isFile () const
+bool FileInfo::isFile() const
 {
 #ifdef FC_OS_WIN32
     if (exists()) {
         std::wstring wstr = toStdWString();
-        FILE* fd = _wfopen(wstr.c_str(), L"rb");
+        FILE *fd = _wfopen(wstr.c_str(), L"rb");
         bool ok = (fd != 0);
         if (fd) fclose(fd);
         return ok;
@@ -380,8 +358,7 @@ bool FileInfo::isFile () const
         // If we can open it must be an existing file, otherwise we assume it
         // is a directory (which doesn't need to be true for any cases)
         std::ifstream str(FileName.c_str(), std::ios::in | std::ios::binary);
-        if (!str)
-            return false;
+        if (!str) return false;
         str.close();
         return true;
     }
@@ -391,24 +368,21 @@ bool FileInfo::isFile () const
     return true;
 }
 
-bool FileInfo::isDir () const
+bool FileInfo::isDir() const
 {
     if (exists()) {
         // if we can chdir then it must be a directory, otherwise we assume it
         // is a file (which doesn't need to be true for any cases)
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
         std::wstring wstr = toStdWString();
         struct _stat st;
 
-        if (_wstat(wstr.c_str(), &st) != 0)
-            return false;
+        if (_wstat(wstr.c_str(), &st) != 0) return false;
         return ((st.st_mode & _S_IFDIR) != 0);
 
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
         struct stat st;
-        if (stat(FileName.c_str(), &st) != 0) {
-            return false;
-        }
+        if (stat(FileName.c_str(), &st) != 0) { return false; }
         return S_ISDIR(st.st_mode);
 #else
         return false;
@@ -421,7 +395,7 @@ bool FileInfo::isDir () const
     //return true;
 }
 
-unsigned int FileInfo::size () const
+unsigned int FileInfo::size() const
 {
     // not implemented
     assert(0);
@@ -433,20 +407,15 @@ TimeInfo FileInfo::lastModified() const
     TimeInfo ti = TimeInfo::null();
     if (exists()) {
 
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
         std::wstring wstr = toStdWString();
         struct _stat st;
-        if (_wstat(wstr.c_str(), &st) == 0) {
-            ti.setTime_t(st.st_mtime);
-        }
+        if (_wstat(wstr.c_str(), &st) == 0) { ti.setTime_t(st.st_mtime); }
 
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
         struct stat st;
-        if (stat(FileName.c_str(), &st) == 0) {
-            ti.setTime_t(st.st_mtime);
-        }
+        if (stat(FileName.c_str(), &st) == 0) { ti.setTime_t(st.st_mtime); }
 #endif
-
     }
     return ti;
 }
@@ -456,47 +425,42 @@ TimeInfo FileInfo::lastRead() const
     TimeInfo ti = TimeInfo::null();
     if (exists()) {
 
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
         std::wstring wstr = toStdWString();
         struct _stat st;
-        if (_wstat(wstr.c_str(), &st) == 0) {
-            ti.setTime_t(st.st_atime);
-        }
+        if (_wstat(wstr.c_str(), &st) == 0) { ti.setTime_t(st.st_atime); }
 
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
         struct stat st;
-        if (stat(FileName.c_str(), &st) == 0) {
-            ti.setTime_t(st.st_atime);
-        }
+        if (stat(FileName.c_str(), &st) == 0) { ti.setTime_t(st.st_atime); }
 #endif
-
     }
     return ti;
 }
 
 bool FileInfo::deleteFile() const
 {
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
     std::wstring wstr = toStdWString();
     return ::_wremove(wstr.c_str()) == 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
-    return (::remove(FileName.c_str())==0);
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+    return (::remove(FileName.c_str()) == 0);
 #else
-#   error "FileInfo::deleteFile() not implemented for this platform!"
+#error "FileInfo::deleteFile() not implemented for this platform!"
 #endif
 }
 
-bool FileInfo::renameFile(const char* NewName)
+bool FileInfo::renameFile(const char *NewName)
 {
     bool res;
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
     std::wstring oldname = toStdWString();
     std::wstring newname = ConvertToWideString(NewName);
-    res = ::_wrename(oldname.c_str(),newname.c_str()) == 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
-    res = ::rename(FileName.c_str(),NewName) == 0;
+    res = ::_wrename(oldname.c_str(), newname.c_str()) == 0;
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+    res = ::rename(FileName.c_str(), NewName) == 0;
 #else
-#   error "FileInfo::renameFile() not implemented for this platform!"
+#error "FileInfo::renameFile() not implemented for this platform!"
 #endif
     if (!res) {
         int code = errno;
@@ -509,13 +473,13 @@ bool FileInfo::renameFile(const char* NewName)
     return res;
 }
 
-bool FileInfo::copyTo(const char* NewName) const
+bool FileInfo::copyTo(const char *NewName) const
 {
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
     std::wstring oldname = toStdWString();
     std::wstring newname = ConvertToWideString(NewName);
-    return CopyFileW(oldname.c_str(),newname.c_str(),true) != 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+    return CopyFileW(oldname.c_str(), newname.c_str(), true) != 0;
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
     FileInfo fi1(FileName);
     FileInfo fi2(NewName);
     Base::ifstream file(fi1, std::ios::in | std::ios::binary);
@@ -524,19 +488,19 @@ bool FileInfo::copyTo(const char* NewName) const
     file >> copy.rdbuf();
     return file.is_open() && copy.is_open();
 #else
-#   error "FileInfo::copyTo() not implemented for this platform!"
+#error "FileInfo::copyTo() not implemented for this platform!"
 #endif
 }
 
 bool FileInfo::createDirectory() const
 {
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
     std::wstring wstr = toStdWString();
     return _wmkdir(wstr.c_str()) == 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
     return mkdir(FileName.c_str(), 0777) == 0;
 #else
-#   error "FileInfo::createDirectory() not implemented for this platform!"
+#error "FileInfo::createDirectory() not implemented for this platform!"
 #endif
 }
 
@@ -544,37 +508,34 @@ bool FileInfo::createDirectories() const
 {
     try {
         boost::filesystem::path path(stringToPath(FileName));
-        if (boost::filesystem::exists(path))
-            return true;
+        if (boost::filesystem::exists(path)) return true;
         boost::filesystem::create_directories(path);
         return true;
     }
-    catch (const boost::filesystem::filesystem_error&) {
+    catch (const boost::filesystem::filesystem_error &) {
         return false;
     }
 }
 
 bool FileInfo::deleteDirectory() const
 {
-    if (!isDir())
-        return false;
-#if defined (FC_OS_WIN32)
+    if (!isDir()) return false;
+#if defined(FC_OS_WIN32)
     std::wstring wstr = toStdWString();
     return _wrmdir(wstr.c_str()) == 0;
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
     return rmdir(FileName.c_str()) == 0;
 #else
-#   error "FileInfo::rmdir() not implemented for this platform!"
+#error "FileInfo::rmdir() not implemented for this platform!"
 #endif
 }
 
 bool FileInfo::deleteDirectoryRecursive() const
 {
-    if (!isDir())
-        return false;
+    if (!isDir()) return false;
     std::vector<Base::FileInfo> List = getDirectoryContent();
 
-    for (std::vector<Base::FileInfo>::iterator It = List.begin();It!=List.end();++It) {
+    for (std::vector<Base::FileInfo>::iterator It = List.begin(); It != List.end(); ++It) {
         if (It->isDir()) {
             // At least on Linux, directory needs execute permission to be
             // deleted. We don't really need to set permission for directory
@@ -589,7 +550,8 @@ bool FileInfo::deleteDirectoryRecursive() const
             It->deleteFile();
         }
         else {
-            throw Base::FileException("FileInfo::deleteDirectoryRecursive(): Unknown object Type in directory!");
+            throw Base::FileException(
+                "FileInfo::deleteDirectoryRecursive(): Unknown object Type in directory!");
         }
     }
     return deleteDirectory();
@@ -598,7 +560,7 @@ bool FileInfo::deleteDirectoryRecursive() const
 std::vector<Base::FileInfo> FileInfo::getDirectoryContent() const
 {
     std::vector<Base::FileInfo> List;
-#if defined (FC_OS_WIN32)
+#if defined(FC_OS_WIN32)
     struct _wfinddata_t dentry;
 
     intptr_t hFile;
@@ -607,32 +569,27 @@ std::vector<Base::FileInfo> FileInfo::getDirectoryContent() const
     std::wstring wstr = toStdWString();
     wstr += L"/*";
 
-    if ((hFile = _wfindfirst( wstr.c_str(), &dentry)) == -1L)
-        return List;
+    if ((hFile = _wfindfirst(wstr.c_str(), &dentry)) == -1L) return List;
 
     while (_wfindnext(hFile, &dentry) == 0)
-        if (wcscmp(dentry.name,L"..") != 0)
-            List.push_back(FileInfo(FileName + "/" +ConvertFromWideString(std::wstring(dentry.name))));
+        if (wcscmp(dentry.name, L"..") != 0)
+            List.push_back(
+                FileInfo(FileName + "/" + ConvertFromWideString(std::wstring(dentry.name))));
 
     _findclose(hFile);
 
-#elif defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
-    DIR* dp(nullptr);
-    struct dirent* dentry(nullptr);
-    if (!(dp = opendir(FileName.c_str())))
-    {
-        return List;
-    }
+#elif defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX) || defined(FC_OS_BSD)
+    DIR *dp(nullptr);
+    struct dirent *dentry(nullptr);
+    if (!(dp = opendir(FileName.c_str()))) { return List; }
 
-    while ((dentry = readdir(dp)))
-    {
+    while ((dentry = readdir(dp))) {
         std::string dir = dentry->d_name;
-        if (dir != "." && dir != "..")
-            List.emplace_back(FileName + "/" + dir);
+        if (dir != "." && dir != "..") List.emplace_back(FileName + "/" + dir);
     }
     closedir(dp);
 #else
-#   error "FileInfo::getDirectoryContent() not implemented for this platform!"
+#error "FileInfo::getDirectoryContent() not implemented for this platform!"
 #endif
     return List;
 }

@@ -51,8 +51,7 @@
 
 using namespace TechDrawGui;
 
-QGCustomText::QGCustomText(QGraphicsItem* parent) :
-    QGraphicsTextItem(parent), isHighlighted(false)
+QGCustomText::QGCustomText(QGraphicsItem *parent) : QGraphicsTextItem(parent), isHighlighted(false)
 {
     setCacheMode(QGraphicsItem::NoCache);
     setAcceptHoverEvents(false);
@@ -60,22 +59,19 @@ QGCustomText::QGCustomText(QGraphicsItem* parent) :
     setFlag(QGraphicsItem::ItemIsMovable, false);
 
     m_colCurrent = getNormalColor();
-    m_colNormal  = m_colCurrent;
+    m_colNormal = m_colCurrent;
     tightBounding = false;
 }
 
-void QGCustomText::centerAt(QPointF centerPos)
-{
-      centerAt(centerPos.x(), centerPos.y());
-}
+void QGCustomText::centerAt(QPointF centerPos) { centerAt(centerPos.x(), centerPos.y()); }
 
 void QGCustomText::centerAt(double cX, double cY)
 {
     QRectF box = boundingRect();
     double width = box.width();
     double height = box.height();
-    double newX = cX - width/2.;
-    double newY = cY - height/2.;
+    double newX = cX - width / 2.;
+    double newY = cY - height / 2.;
     setPos(newX, newY);
 }
 
@@ -89,9 +85,7 @@ void QGCustomText::justifyLeftAt(double cX, double cY, bool vCenter)
     QRectF box = boundingRect();
     double height = box.height();
     double newY = cY - height;
-    if (vCenter) {
-        newY = cY - height/2.;
-    }
+    if (vCenter) { newY = cY - height / 2.; }
     setPos(cX, newY);
 }
 
@@ -107,28 +101,19 @@ void QGCustomText::justifyRightAt(double cX, double cY, bool vCenter)
     double height = box.height();
     double newX = cX - width;
     double newY = cY - height;
-    if (vCenter) {
-        newY = cY - height/2.;
-    }
+    if (vCenter) { newY = cY - height / 2.; }
     setPos(newX, newY);
 }
 
-double QGCustomText::getHeight()
-{
-    return boundingRect().height();
-}
+double QGCustomText::getHeight() { return boundingRect().height(); }
 
-double QGCustomText::getWidth()
-{
-    return boundingRect().width();
-}
+double QGCustomText::getWidth() { return boundingRect().width(); }
 QVariant QGCustomText::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-//    Base::Console().Message("QGCT::itemChange - this: %X change: %d\n", this, change);
+    //    Base::Console().Message("QGCT::itemChange - this: %X change: %d\n", this, change);
     if (change == ItemSelectedHasChanged && scene()) {
-        if(isSelected()) {
-            setPrettySel();
-        } else {
+        if (isSelected()) { setPrettySel(); }
+        else {
             setPrettyNormal();
         }
     }
@@ -138,33 +123,32 @@ QVariant QGCustomText::itemChange(GraphicsItemChange change, const QVariant &val
 
 void QGCustomText::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (!isSelected()) {
-        setPrettyPre();
-    }
+    if (!isSelected()) { setPrettyPre(); }
     QGraphicsTextItem::hoverEnterEvent(event);
 }
 
 void QGCustomText::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    if(!isSelected()) {
-        setPrettyNormal();
-    }
+    if (!isSelected()) { setPrettyNormal(); }
     QGraphicsTextItem::hoverLeaveEvent(event);
 }
 
-void QGCustomText::setPrettyNormal() {
+void QGCustomText::setPrettyNormal()
+{
     m_colCurrent = m_colNormal;
     setDefaultTextColor(m_colCurrent);
     update();
 }
 
-void QGCustomText::setPrettyPre() {
+void QGCustomText::setPrettyPre()
+{
     m_colCurrent = getPreColor();
     setDefaultTextColor(m_colCurrent);
     update();
 }
 
-void QGCustomText::setPrettySel() {
+void QGCustomText::setPrettySel()
+{
     m_colCurrent = getSelectColor();
     setDefaultTextColor(m_colCurrent);
     update();
@@ -177,28 +161,26 @@ void QGCustomText::setColor(QColor c)
     QGraphicsTextItem::setDefaultTextColor(c);
 }
 
-void QGCustomText::setTightBounding(bool tight)
-{
-    tightBounding = tight;
-}
+void QGCustomText::setTightBounding(bool tight) { tightBounding = tight; }
 
-void QGCustomText::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGCustomText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
-//    painter->setPen(Qt::green);
-//    painter->drawRect(boundingRect());          //good for debugging
+    //    painter->setPen(Qt::green);
+    //    painter->drawRect(boundingRect());          //good for debugging
 
-    QGraphicsTextItem::paint (painter, &myOption, widget);
+    QGraphicsTextItem::paint(painter, &myOption, widget);
 }
 
 QRectF QGCustomText::boundingRect() const
 {
-    if (toPlainText().isEmpty()) {
-        return QRectF();
-    } else if (tightBounding) {
+    if (toPlainText().isEmpty()) { return QRectF(); }
+    else if (tightBounding) {
         return tightBoundingRect();
-    } else {
+    }
+    else {
         return QGraphicsTextItem::boundingRect();
     }
 }
@@ -208,12 +190,12 @@ QRectF QGCustomText::tightBoundingRect() const
     QFontMetrics qfm(font());
     QRectF result = QGraphicsTextItem::boundingRect();
     QRectF tight = qfm.tightBoundingRect(toPlainText());
-    qreal x_adj = (result.width() - tight.width())/4.0;
-    qreal y_adj = (result.height() - tight.height())/4.0;
+    qreal x_adj = (result.width() - tight.width()) / 4.0;
+    qreal y_adj = (result.height() - tight.height()) / 4.0;
 
     // Adjust the bounding box 50% towards the Qt tightBoundingRect(),
     // except chomp some extra empty space above the font (1.75*y_adj)
-    result.adjust(x_adj, 1.75*y_adj, -x_adj, -y_adj);
+    result.adjust(x_adj, 1.75 * y_adj, -x_adj, -y_adj);
 
     return result;
 }
@@ -224,34 +206,31 @@ QPointF QGCustomText::tightBoundingAdjust() const
     QRectF original = QGraphicsTextItem::boundingRect();
     QRectF tight = tightBoundingRect();
 
-    return QPointF(tight.x()-original.x(), tight.y()-original.y());
+    return QPointF(tight.x() - original.x(), tight.y() - original.y());
 }
 
-QColor QGCustomText::getNormalColor()    //preference!
+QColor QGCustomText::getNormalColor() //preference!
 {
     return PreferencesGui::normalQColor();
 }
 
-QColor QGCustomText::getPreColor()
-{
-    return PreferencesGui::preselectQColor();
-}
+QColor QGCustomText::getPreColor() { return PreferencesGui::preselectQColor(); }
 
-QColor QGCustomText::getSelectColor()
-{
-    return PreferencesGui::selectQColor();
-}
+QColor QGCustomText::getSelectColor() { return PreferencesGui::selectQColor(); }
 
 Base::Reference<ParameterGrp> QGCustomText::getParmGroup()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/Colors");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Colors");
     return hGrp;
 }
 
 void QGCustomText::makeMark(double x, double y)
 {
-    QGICMark* cmItem = new QGICMark(-1);
+    QGICMark *cmItem = new QGICMark(-1);
     cmItem->setParentItem(this);
     cmItem->setPos(x, y);
     cmItem->setThick(1.0);
@@ -259,8 +238,4 @@ void QGCustomText::makeMark(double x, double y)
     cmItem->setZValue(ZVALUE::VERTEX);
 }
 
-void QGCustomText::makeMark(Base::Vector3d v)
-{
-    makeMark(v.x, v.y);
-}
-
+void QGCustomText::makeMark(Base::Vector3d v) { makeMark(v.x, v.y); }

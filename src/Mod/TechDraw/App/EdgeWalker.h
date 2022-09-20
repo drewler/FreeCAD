@@ -44,31 +44,23 @@
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
 
-namespace TechDraw {
+namespace TechDraw
+{
 //using namespace boost;
 
-using graph =
-    boost::adjacency_list
-        < boost::vecS,
-          boost::vecS,
-          boost::bidirectionalS,
-          boost::property<boost::vertex_index_t, int>,
-          boost::property<boost::edge_index_t, int>
-        >;
+using graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS,
+                                    boost::property<boost::vertex_index_t, int>,
+                                    boost::property<boost::edge_index_t, int>>;
 
-using vertex_t =
-    boost::graph_traits < graph >::vertex_descriptor;
+using vertex_t = boost::graph_traits<graph>::vertex_descriptor;
 
-using edge_t =
-    boost::graph_traits < graph >::edge_descriptor;
+using edge_t = boost::graph_traits<graph>::edge_descriptor;
 
-using planar_embedding_storage_t =
-    std::vector< std::vector<edge_t> >;
+using planar_embedding_storage_t = std::vector<std::vector<edge_t>>;
 
 using planar_embedding_t =
-    boost::iterator_property_map< planar_embedding_storage_t::iterator,
-                                  boost::property_map<graph, boost::vertex_index_t>::type
-                                >;
+    boost::iterator_property_map<planar_embedding_storage_t::iterator,
+                                 boost::property_map<graph, boost::vertex_index_t>::type>;
 
 class TechDrawExport WalkerEdge
 {
@@ -88,9 +80,9 @@ class TechDrawExport ewWire
 public:
     bool isEqual(ewWire w);
 
-    std::vector<WalkerEdge>  wedges;      //[WE] representing 1 wire
+    std::vector<WalkerEdge> wedges; //[WE] representing 1 wire
     void push_back(WalkerEdge w);
-    void clear() {wedges.clear();}
+    void clear() { wedges.clear(); }
     std::size_t size(void);
 };
 
@@ -105,16 +97,14 @@ public:
 };
 
 
-
-class TechDrawExport edgeVisitor : public boost::planar_face_traversal_visitor
+class TechDrawExport edgeVisitor: public boost::planar_face_traversal_visitor
 {
 public:
-    template <typename Edge>
-    void next_edge(Edge e);
+    template<typename Edge> void next_edge(Edge e);
     void begin_face();
     void end_face();
-    ewWireList getResult();     //a list of many wires
-    void setGraph(graph& g);
+    ewWireList getResult(); //a list of many wires
+    void setGraph(graph &g);
 
 private:
     ewWire wireEdges;
@@ -125,11 +115,20 @@ private:
 class TechDrawExport incidenceItem
 {
 public:
-    incidenceItem() {iEdge = 0; angle = 0.0;}
-    incidenceItem(std::size_t idx, double a, edge_t ed)  {iEdge = idx; angle = a; eDesc = ed;}
-    ~incidenceItem()  = default;
-    static bool iiCompare(const incidenceItem& i1, const incidenceItem& i2);
-    static bool iiEqual(const incidenceItem& i1, const incidenceItem& i2);
+    incidenceItem()
+    {
+        iEdge = 0;
+        angle = 0.0;
+    }
+    incidenceItem(std::size_t idx, double a, edge_t ed)
+    {
+        iEdge = idx;
+        angle = a;
+        eDesc = ed;
+    }
+    ~incidenceItem() = default;
+    static bool iiCompare(const incidenceItem &i1, const incidenceItem &i2);
+    static bool iiEqual(const incidenceItem &i1, const incidenceItem &i2);
     std::size_t iEdge;
     double angle;
     edge_t eDesc;
@@ -139,14 +138,18 @@ class TechDrawExport embedItem
 {
 public:
     embedItem();
-    embedItem(std::size_t i,
-              std::vector<incidenceItem> list) { iVertex = i; incidenceList = list;}
-    ~embedItem()  = default;
+    embedItem(std::size_t i, std::vector<incidenceItem> list)
+    {
+        iVertex = i;
+        incidenceList = list;
+    }
+    ~embedItem() = default;
 
     std::size_t iVertex;
     std::vector<incidenceItem> incidenceList;
     std::string dump();
-    static std::vector<incidenceItem> sortIncidenceList (std::vector<incidenceItem> &list, bool ascend);
+    static std::vector<incidenceItem> sortIncidenceList(std::vector<incidenceItem> &list,
+                                                        bool ascend);
 };
 
 
@@ -156,7 +159,7 @@ public:
     EdgeWalker();
     virtual ~EdgeWalker();
 
-    bool loadEdges(std::vector<TechDraw::WalkerEdge>& edges);
+    bool loadEdges(std::vector<TechDraw::WalkerEdge> &edges);
     bool loadEdges(std::vector<TopoDS_Edge> edges);
     bool setSize(std::size_t size);
     std::vector<TopoDS_Wire> execute(std::vector<TopoDS_Edge> edgeList, bool biggie = true);
@@ -166,22 +169,22 @@ public:
     std::vector<TopoDS_Wire> getResultNoDups();
 
     std::vector<TopoDS_Vertex> makeUniqueVList(std::vector<TopoDS_Edge> edges);
-    std::vector<WalkerEdge>    makeWalkerEdges(std::vector<TopoDS_Edge> edges,
-                                               std::vector<TopoDS_Vertex> verts);
+    std::vector<WalkerEdge> makeWalkerEdges(std::vector<TopoDS_Edge> edges,
+                                            std::vector<TopoDS_Vertex> verts);
 
     size_t findUniqueVert(TopoDS_Vertex vx, std::vector<TopoDS_Vertex> &uniqueVert);
     std::vector<TopoDS_Wire> sortStrip(std::vector<TopoDS_Wire> fw, bool includeBiggest);
-    std::vector<TopoDS_Wire> sortWiresBySize(std::vector<TopoDS_Wire>& w, bool reverse = false);
+    std::vector<TopoDS_Wire> sortWiresBySize(std::vector<TopoDS_Wire> &w, bool reverse = false);
     static TopoDS_Wire makeCleanWire(std::vector<TopoDS_Edge> edges, double tol = 0.10);
 
     std::vector<int> getEmbeddingRowIx(int v);
     std::vector<edge_t> getEmbeddingRow(int v);
     std::vector<embedItem> makeEmbedding(const std::vector<TopoDS_Edge> edges,
-                                                 const std::vector<TopoDS_Vertex> uniqueVList);
+                                         const std::vector<TopoDS_Vertex> uniqueVList);
 
 protected:
     bool prepare();
-    static bool wireCompare(const TopoDS_Wire& w1, const TopoDS_Wire& w2);
+    static bool wireCompare(const TopoDS_Wire &w1, const TopoDS_Wire &w2);
     std::vector<TechDraw::WalkerEdge> m_saveWalkerEdges;
     std::vector<TopoDS_Edge> m_saveInEdges;
     std::vector<embedItem> m_embedding;
@@ -191,6 +194,6 @@ private:
     TechDraw::graph m_g;
 };
 
-}  //end namespace TechDraw
+} //end namespace TechDraw
 
 #endif //TECHDRAW_EDGEWALKER_H

@@ -34,9 +34,9 @@
 namespace Base
 {
 
-	std::string BaseExport base64_encode(unsigned char const* , unsigned int len);
-	std::string BaseExport base64_decode(std::string const& s);
+std::string BaseExport base64_encode(unsigned char const *, unsigned int len);
+std::string BaseExport base64_decode(std::string const &s);
 
-}
+} // namespace Base
 
-#endif 
+#endif

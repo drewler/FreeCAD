@@ -32,7 +32,7 @@
 namespace Surface
 {
 
-class SurfaceExport Sewing :  public Part::Feature
+class SurfaceExport Sewing: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Surface::Sewing);
 
@@ -52,6 +52,6 @@ public:
     short mustExecute() const override;
 };
 
-}//Namespace Surface
+} //Namespace Surface
 
 #endif // SURFACE_FEATURESEWING_H

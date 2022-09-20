@@ -42,18 +42,18 @@ class BaseExport Uuid
 public:
     /// Construction
     Uuid();
-    Uuid(const Uuid&) = default;
-    Uuid& operator=(const Uuid&) = default;
+    Uuid(const Uuid &) = default;
+    Uuid &operator=(const Uuid &) = default;
     /// Destruction
     virtual ~Uuid();
 
-    void setValue(const char* sString);
+    void setValue(const char *sString);
     void setValue(const std::string &sString);
-    const std::string& getValue() const;
+    const std::string &getValue() const;
     static std::string createUuid();
 
-    bool operator==(const Uuid &other) const {return _uuid == other._uuid;}
-    bool operator<(const Uuid &other) const {return _uuid < other._uuid;}
+    bool operator==(const Uuid &other) const { return _uuid == other._uuid; }
+    bool operator<(const Uuid &other) const { return _uuid < other._uuid; }
 
 private:
     std::string _uuid;
@@ -62,4 +62,3 @@ private:
 } //namespace Base
 
 #endif // BASE_UUID_H
-

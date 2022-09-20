@@ -38,12 +38,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_LengthFromEdges::StdMeshers_LengthFromEdges(int hypId, int studyId, SMESH_Gen* gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_LengthFromEdges::StdMeshers_LengthFromEdges(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _mode =1;
-  _name = "LengthFromEdges";
-  _param_algo_dim = 2; // is used by SMESH_MEFISTO_2D
+    _mode = 1;
+    _name = "LengthFromEdges";
+    _param_algo_dim = 2; // is used by SMESH_MEFISTO_2D
 }
 
 //=============================================================================
@@ -52,9 +52,7 @@ StdMeshers_LengthFromEdges::StdMeshers_LengthFromEdges(int hypId, int studyId, S
  */
 //=============================================================================
 
-StdMeshers_LengthFromEdges::~StdMeshers_LengthFromEdges()
-{
-}
+StdMeshers_LengthFromEdges::~StdMeshers_LengthFromEdges() {}
 
 //=============================================================================
 /*!
@@ -64,12 +62,10 @@ StdMeshers_LengthFromEdges::~StdMeshers_LengthFromEdges()
 
 void StdMeshers_LengthFromEdges::SetMode(int mode)
 {
-  int oldMode = _mode;
-  if (mode <= 0) 
-    throw SALOME_Exception(LOCALIZED("mode must be positive"));
-  _mode = mode;
-  if (oldMode != _mode)
-    NotifySubMeshesHypothesisModification();
+    int oldMode = _mode;
+    if (mode <= 0) throw SALOME_Exception(LOCALIZED("mode must be positive"));
+    _mode = mode;
+    if (oldMode != _mode) NotifySubMeshesHypothesisModification();
 }
 
 //=============================================================================
@@ -78,9 +74,18 @@ void StdMeshers_LengthFromEdges::SetMode(int mode)
  */
 //=============================================================================
 
-int StdMeshers_LengthFromEdges::GetMode()
+int StdMeshers_LengthFromEdges::GetMode() { return _mode; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &StdMeshers_LengthFromEdges::SaveTo(ostream &save)
 {
-  return _mode;
+    save << this->_mode;
+    return save;
 }
 
 //=============================================================================
@@ -89,10 +94,15 @@ int StdMeshers_LengthFromEdges::GetMode()
  */
 //=============================================================================
 
-ostream & StdMeshers_LengthFromEdges::SaveTo(ostream & save)
+istream &StdMeshers_LengthFromEdges::LoadFrom(istream &load)
 {
-  save << this->_mode;
-  return save;
+    bool isOK = (bool)true;
+    int a;
+    isOK = (bool)(load >> a);
+    if (isOK) this->_mode = a;
+    else
+        load.clear(ios::badbit | load.rdstate());
+    return load;
 }
 
 //=============================================================================
@@ -101,17 +111,7 @@ ostream & StdMeshers_LengthFromEdges::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_LengthFromEdges::LoadFrom(istream & load)
-{
-  bool isOK = (bool)true;
-  int a;
-  isOK = (bool)(load >> a);
-  if (isOK) 
-    this->_mode = a;
-  else 
-    load.clear(ios::badbit | load.rdstate());
-  return load;
-}
+ostream &operator<<(ostream &save, StdMeshers_LengthFromEdges &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -119,21 +119,7 @@ istream & StdMeshers_LengthFromEdges::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator << (ostream & save, StdMeshers_LengthFromEdges & hyp)
-{
-  return hyp.SaveTo( save );
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-istream & operator >> (istream & load, StdMeshers_LengthFromEdges & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+istream &operator>>(istream &load, StdMeshers_LengthFromEdges &hyp) { return hyp.LoadFrom(load); }
 
 //================================================================================
 /*!
@@ -146,10 +132,10 @@ istream & operator >> (istream & load, StdMeshers_LengthFromEdges & hyp)
  */
 //================================================================================
 
-bool StdMeshers_LengthFromEdges::SetParametersByMesh(const SMESH_Mesh* /*theMesh*/,
-                                                     const TopoDS_Shape& /*theShape*/)
+bool StdMeshers_LengthFromEdges::SetParametersByMesh(const SMESH_Mesh * /*theMesh*/,
+                                                     const TopoDS_Shape & /*theShape*/)
 {
-  return false;
+    return false;
 }
 //================================================================================
 /*!
@@ -158,8 +144,8 @@ bool StdMeshers_LengthFromEdges::SetParametersByMesh(const SMESH_Mesh* /*theMesh
  */
 //================================================================================
 
-bool StdMeshers_LengthFromEdges::SetParametersByDefaults(const TDefaults&  /*dflts*/,
-                                                         const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_LengthFromEdges::SetParametersByDefaults(const TDefaults & /*dflts*/,
+                                                         const SMESH_Mesh * /*theMesh*/)
 {
-  return true;
+    return true;
 }

@@ -22,7 +22,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <fcntl.h>
+#include <fcntl.h>
 #endif
 
 #include <Base/Console.h>
@@ -36,15 +36,11 @@ using namespace Part;
 PROPERTY_SOURCE(Part::ImportIges, Part::Feature)
 
 
-ImportIges::ImportIges()
-{
-    ADD_PROPERTY(FileName,(""));
-}
+ImportIges::ImportIges() { ADD_PROPERTY(FileName, ("")); }
 
 short ImportIges::mustExecute() const
 {
-    if (FileName.isTouched())
-        return 1;
+    if (FileName.isTouched()) return 1;
     return 0;
 }
 
@@ -52,7 +48,7 @@ App::DocumentObjectExecReturn *ImportIges::execute()
 {
     Base::FileInfo fi(FileName.getValue());
     if (!fi.isReadable()) {
-        Base::Console().Log("ImportIges::execute() not able to open %s!\n",FileName.getValue());
+        Base::Console().Log("ImportIges::execute() not able to open %s!\n", FileName.getValue());
         std::string error = std::string("Cannot open file ") + FileName.getValue();
         return new App::DocumentObjectExecReturn(error);
     }
@@ -63,5 +59,3 @@ App::DocumentObjectExecReturn *ImportIges::execute()
 
     return App::DocumentObject::StdReturn;
 }
-
-

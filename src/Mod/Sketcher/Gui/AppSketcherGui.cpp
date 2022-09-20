@@ -59,8 +59,9 @@ void loadSketcherResource()
 }
 
 
-namespace SketcherGui {
-class Module : public Py::ExtensionModule<Module>
+namespace SketcherGui
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("SketcherGui")
@@ -73,10 +74,7 @@ public:
 private:
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace SketcherGui
 
@@ -91,19 +89,19 @@ PyMOD_INIT_FUNC(SketcherGui)
         Base::Interpreter().runString("import PartGui");
         Base::Interpreter().runString("import Sketcher");
     }
-    catch(const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         PyErr_SetString(PyExc_ImportError, e.what());
         PyMOD_Return(nullptr);
     }
 
-    PyObject* mod = SketcherGui::initModule();
+    PyObject *mod = SketcherGui::initModule();
     Base::Console().Log("Loading GUI of Sketcher module... done\n");
 
     Gui::BitmapFactory().addPath(QString::fromLatin1(":/icons/constraints"));
     Gui::BitmapFactory().addPath(QString::fromLatin1(":/icons/elements"));
     Gui::BitmapFactory().addPath(QString::fromLatin1(":/icons/general"));
     Gui::BitmapFactory().addPath(QString::fromLatin1(":/icons/geometry"));
-  //Gui::BitmapFactory().addPath(QString::fromLatin1(":/icons/obsolete"));
+    //Gui::BitmapFactory().addPath(QString::fromLatin1(":/icons/obsolete"));
     Gui::BitmapFactory().addPath(QString::fromLatin1(":/icons/pointers"));
     Gui::BitmapFactory().addPath(QString::fromLatin1(":/icons/splines"));
     Gui::BitmapFactory().addPath(QString::fromLatin1(":/icons/tools"));
@@ -120,20 +118,23 @@ PyMOD_INIT_FUNC(SketcherGui)
     SketcherGui::Workbench::init();
 
     // init objects
-    SketcherGui::ViewProviderSketch         		  ::init();
-    SketcherGui::ViewProviderPython         		  ::init();
-    SketcherGui::ViewProviderCustom         		  ::init();
-    SketcherGui::ViewProviderCustomPython   		  ::init();
-    SketcherGui::SoDatumLabel               		  ::initClass();
-    SketcherGui::SoZoomTranslation          		  ::initClass();
-    SketcherGui::PropertyConstraintListItem 		  ::init();
-    SketcherGui::ViewProviderSketchGeometryExtension  ::init();
+    SketcherGui::ViewProviderSketch ::init();
+    SketcherGui::ViewProviderPython ::init();
+    SketcherGui::ViewProviderCustom ::init();
+    SketcherGui::ViewProviderCustomPython ::init();
+    SketcherGui::SoDatumLabel ::initClass();
+    SketcherGui::SoZoomTranslation ::initClass();
+    SketcherGui::PropertyConstraintListItem ::init();
+    SketcherGui::ViewProviderSketchGeometryExtension ::init();
 
-    (void)new Gui::PrefPageProducer<SketcherGui::SketcherSettings>        ( QT_TRANSLATE_NOOP("QObject","Sketcher") );
-    (void)new Gui::PrefPageProducer<SketcherGui::SketcherSettingsDisplay> ( QT_TRANSLATE_NOOP("QObject","Sketcher") );
-    (void)new Gui::PrefPageProducer<SketcherGui::SketcherSettingsColors>  ( QT_TRANSLATE_NOOP("QObject","Sketcher") );
+    (void)new Gui::PrefPageProducer<SketcherGui::SketcherSettings>(
+        QT_TRANSLATE_NOOP("QObject", "Sketcher"));
+    (void)new Gui::PrefPageProducer<SketcherGui::SketcherSettingsDisplay>(
+        QT_TRANSLATE_NOOP("QObject", "Sketcher"));
+    (void)new Gui::PrefPageProducer<SketcherGui::SketcherSettingsColors>(
+        QT_TRANSLATE_NOOP("QObject", "Sketcher"));
 
-     // add resources and reloads the translators
+    // add resources and reloads the translators
     loadSketcherResource();
 
     PyMOD_Return(mod);

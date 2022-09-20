@@ -39,28 +39,25 @@
 class StdMeshers_ViscousLayers;
 class SMESH_MesherHelper;
 
-class STDMESHERS_EXPORT StdMeshers_Hexa_3D : public SMESH_3D_Algo
+class STDMESHERS_EXPORT StdMeshers_Hexa_3D: public SMESH_3D_Algo
 {
 public:
-  StdMeshers_Hexa_3D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_Hexa_3D();
+    StdMeshers_Hexa_3D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_Hexa_3D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh& aMesh,
-                               const TopoDS_Shape& aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh,  const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Compute(SMESH_Mesh & aMesh, SMESH_MesherHelper* aHelper);
+    virtual bool Compute(SMESH_Mesh &aMesh, SMESH_MesherHelper *aHelper);
 
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
-  static bool IsApplicable(const TopoDS_Shape & aShape, bool toCheckAll);
+    static bool IsApplicable(const TopoDS_Shape &aShape, bool toCheckAll);
 
- protected:
-
-  const StdMeshers_ViscousLayers* _viscousLayersHyp;
+protected:
+    const StdMeshers_ViscousLayers *_viscousLayersHyp;
 };
 
 #endif

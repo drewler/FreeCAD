@@ -22,8 +22,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QCoreApplication>
-# include <QEventLoop>
+#include <QCoreApplication>
+#include <QEventLoop>
 #endif
 
 #include <Base/Console.h>
@@ -38,21 +38,18 @@
 
 using namespace Gui;
 
-Breakpoint::Breakpoint()
-{
-}
+Breakpoint::Breakpoint() {}
 
-Breakpoint::Breakpoint(const Breakpoint& rBp)
+Breakpoint::Breakpoint(const Breakpoint &rBp)
 {
     setFilename(rBp.filename());
     for (std::set<int>::const_iterator it = rBp._linenums.begin(); it != rBp._linenums.end(); ++it)
         _linenums.insert(*it);
 }
 
-Breakpoint& Breakpoint::operator= (const Breakpoint& rBp)
+Breakpoint &Breakpoint::operator=(const Breakpoint &rBp)
 {
-    if (this == &rBp)
-        return *this;
+    if (this == &rBp) return *this;
     setFilename(rBp.filename());
     _linenums.clear();
     for (std::set<int>::const_iterator it = rBp._linenums.begin(); it != rBp._linenums.end(); ++it)
@@ -60,38 +57,21 @@ Breakpoint& Breakpoint::operator= (const Breakpoint& rBp)
     return *this;
 }
 
-Breakpoint::~Breakpoint()
-{
+Breakpoint::~Breakpoint() {}
 
-}
+void Breakpoint::setFilename(const QString &fn) { _filename = fn; }
 
-void Breakpoint::setFilename(const QString& fn)
-{
-    _filename = fn;
-}
+void Breakpoint::addLine(int line) { _linenums.insert(line); }
 
-void Breakpoint::addLine(int line)
-{
-    _linenums.insert(line);
-}
+void Breakpoint::removeLine(int line) { _linenums.erase(line); }
 
-void Breakpoint::removeLine(int line)
-{
-    _linenums.erase(line);
-}
+bool Breakpoint::checkLine(int line) { return (_linenums.find(line) != _linenums.end()); }
 
-bool Breakpoint::checkLine(int line)
-{
-    return (_linenums.find(line) != _linenums.end());
-}
-
-int Breakpoint::lineIndex(int ind)const
+int Breakpoint::lineIndex(int ind) const
 {
     int i = 0;
-    for (std::set<int>::const_iterator it = _linenums.begin(); it != _linenums.end(); ++it)
-    {
-        if (ind == i++)
-            return *it;
+    for (std::set<int>::const_iterator it = _linenums.begin(); it != _linenums.end(); ++it) {
+        if (ind == i++) return *it;
     }
     return -1;
 }
@@ -106,19 +86,22 @@ void PythonDebugModule::init_module()
     Base::Interpreter().addModule(new PythonDebugModule);
 }
 
-PythonDebugModule::PythonDebugModule()
-  : Py::ExtensionModule<PythonDebugModule>("FreeCADDbg")
+PythonDebugModule::PythonDebugModule() : Py::ExtensionModule<PythonDebugModule>("FreeCADDbg")
 {
     add_varargs_method("getFunctionCallCount", &PythonDebugModule::getFunctionCallCount,
-        "Get the total number of function calls executed and the number executed since the last call to this function.");
+                       "Get the total number of function calls executed and the number executed "
+                       "since the last call to this function.");
     add_varargs_method("getExceptionCount", &PythonDebugModule::getExceptionCount,
-        "Get the total number of exceptions and the number executed since the last call to this function.");
+                       "Get the total number of exceptions and the number executed since the last "
+                       "call to this function.");
     add_varargs_method("getLineCount", &PythonDebugModule::getLineCount,
-        "Get the total number of lines executed and the number executed since the last call to this function.");
+                       "Get the total number of lines executed and the number executed since the "
+                       "last call to this function.");
     add_varargs_method("getFunctionReturnCount", &PythonDebugModule::getFunctionReturnCount,
-        "Get the total number of function returns executed and the number executed since the last call to this function.");
+                       "Get the total number of function returns executed and the number executed "
+                       "since the last call to this function.");
 
-    initialize( "The FreeCAD Python debug module" );
+    initialize("The FreeCAD Python debug module");
 
     Py::Dict d(moduleDictionary());
     Py::Object out(Py::asObject(new PythonDebugStdout()));
@@ -134,25 +117,13 @@ PythonDebugModule::~PythonDebugModule()
     d["StdErr"] = Py::None();
 }
 
-Py::Object PythonDebugModule::getFunctionCallCount(const Py::Tuple &)
-{
-    return Py::None();
-}
+Py::Object PythonDebugModule::getFunctionCallCount(const Py::Tuple &) { return Py::None(); }
 
-Py::Object PythonDebugModule::getExceptionCount(const Py::Tuple &)
-{
-    return Py::None();
-}
+Py::Object PythonDebugModule::getExceptionCount(const Py::Tuple &) { return Py::None(); }
 
-Py::Object PythonDebugModule::getLineCount(const Py::Tuple &)
-{
-    return Py::None();
-}
+Py::Object PythonDebugModule::getLineCount(const Py::Tuple &) { return Py::None(); }
 
-Py::Object PythonDebugModule::getFunctionReturnCount(const Py::Tuple &)
-{
-    return Py::None();
-}
+Py::Object PythonDebugModule::getFunctionReturnCount(const Py::Tuple &) { return Py::None(); }
 
 // -----------------------------------------------------
 
@@ -162,17 +133,13 @@ void PythonDebugStdout::init_type()
     behaviors().doc("Redirection of stdout to FreeCAD's Python debugger window");
     // you must have overwritten the virtual functions
     behaviors().supportRepr();
-    add_varargs_method("write",&PythonDebugStdout::write,"write to stdout");
-    add_varargs_method("flush",&PythonDebugStdout::flush,"flush the output");
+    add_varargs_method("write", &PythonDebugStdout::write, "write to stdout");
+    add_varargs_method("flush", &PythonDebugStdout::flush, "flush the output");
 }
 
-PythonDebugStdout::PythonDebugStdout()
-{
-}
+PythonDebugStdout::PythonDebugStdout() {}
 
-PythonDebugStdout::~PythonDebugStdout()
-{
-}
+PythonDebugStdout::~PythonDebugStdout() {}
 
 Py::Object PythonDebugStdout::repr()
 {
@@ -182,19 +149,17 @@ Py::Object PythonDebugStdout::repr()
     return Py::String(s_out.str());
 }
 
-Py::Object PythonDebugStdout::write(const Py::Tuple& args)
+Py::Object PythonDebugStdout::write(const Py::Tuple &args)
 {
     char *msg;
     //PyObject* pObj;
     ////args contains a single parameter which is the string to write.
     //if (!PyArg_ParseTuple(args.ptr(), "Os:OutputString", &pObj, &msg))
-    if (!PyArg_ParseTuple(args.ptr(), "s:OutputString", &msg))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "s:OutputString", &msg)) throw Py::Exception();
 
-    if (strlen(msg) > 0)
-    {
+    if (strlen(msg) > 0) {
         //send it to our stdout
-        printf("%s\n",msg);
+        printf("%s\n", msg);
 
         //send it to the debugger as well
         //g_DebugSocket.SendMessage(eMSG_OUTPUT, msg);
@@ -202,10 +167,7 @@ Py::Object PythonDebugStdout::write(const Py::Tuple& args)
     return Py::None();
 }
 
-Py::Object PythonDebugStdout::flush(const Py::Tuple&)
-{
-    return Py::None();
-}
+Py::Object PythonDebugStdout::flush(const Py::Tuple &) { return Py::None(); }
 
 // -----------------------------------------------------
 
@@ -215,16 +177,12 @@ void PythonDebugStderr::init_type()
     behaviors().doc("Redirection of stderr to FreeCAD's Python debugger window");
     // you must have overwritten the virtual functions
     behaviors().supportRepr();
-    add_varargs_method("write",&PythonDebugStderr::write,"write to stderr");
+    add_varargs_method("write", &PythonDebugStderr::write, "write to stderr");
 }
 
-PythonDebugStderr::PythonDebugStderr()
-{
-}
+PythonDebugStderr::PythonDebugStderr() {}
 
-PythonDebugStderr::~PythonDebugStderr()
-{
-}
+PythonDebugStderr::~PythonDebugStderr() {}
 
 Py::Object PythonDebugStderr::repr()
 {
@@ -234,17 +192,15 @@ Py::Object PythonDebugStderr::repr()
     return Py::String(s_out.str());
 }
 
-Py::Object PythonDebugStderr::write(const Py::Tuple& args)
+Py::Object PythonDebugStderr::write(const Py::Tuple &args)
 {
     char *msg;
     //PyObject* pObj;
     //args contains a single parameter which is the string to write.
     //if (!PyArg_ParseTuple(args.ptr(), "Os:OutputDebugString", &pObj, &msg))
-    if (!PyArg_ParseTuple(args.ptr(), "s:OutputDebugString", &msg))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "s:OutputDebugString", &msg)) throw Py::Exception();
 
-    if (strlen(msg) > 0)
-    {
+    if (strlen(msg) > 0) {
         //send the message to our own stderr
         //dprintf(msg);
 
@@ -264,16 +220,12 @@ void PythonDebugExcept::init_type()
     behaviors().doc("Custom exception handler");
     // you must have overwritten the virtual functions
     behaviors().supportRepr();
-    add_varargs_method("fc_excepthook",&PythonDebugExcept::excepthook,"Custom exception handler");
+    add_varargs_method("fc_excepthook", &PythonDebugExcept::excepthook, "Custom exception handler");
 }
 
-PythonDebugExcept::PythonDebugExcept()
-{
-}
+PythonDebugExcept::PythonDebugExcept() {}
 
-PythonDebugExcept::~PythonDebugExcept()
-{
-}
+PythonDebugExcept::~PythonDebugExcept() {}
 
 Py::Object PythonDebugExcept::repr()
 {
@@ -283,7 +235,7 @@ Py::Object PythonDebugExcept::repr()
     return Py::String(s_out.str());
 }
 
-Py::Object PythonDebugExcept::excepthook(const Py::Tuple& args)
+Py::Object PythonDebugExcept::excepthook(const Py::Tuple &args)
 {
     PyObject *exc, *value, *tb;
     if (!PyArg_UnpackTuple(args.ptr(), "excepthook", 3, 3, &exc, &value, &tb))
@@ -292,7 +244,7 @@ Py::Object PythonDebugExcept::excepthook(const Py::Tuple& args)
     PyErr_NormalizeException(&exc, &value, &tb);
 
     PyErr_Display(exc, value, tb);
-/*
+    /*
     if (eEXCEPTMODE_IGNORE != g_eExceptionMode)
     {
         assert(tb);
@@ -316,42 +268,41 @@ Py::Object PythonDebugExcept::excepthook(const Py::Tuple& args)
 
 // -----------------------------------------------------
 
-namespace Gui {
-class PythonDebuggerPy : public Py::PythonExtension<PythonDebuggerPy>
+namespace Gui
+{
+class PythonDebuggerPy: public Py::PythonExtension<PythonDebuggerPy>
 {
 public:
-    PythonDebuggerPy(PythonDebugger* d) : dbg(d), depth(0) { }
+    PythonDebuggerPy(PythonDebugger *d) : dbg(d), depth(0) {}
     ~PythonDebuggerPy() override {}
-    PythonDebugger* dbg;
+    PythonDebugger *dbg;
     int depth;
 };
 
 class RunningState
 {
 public:
-    RunningState(bool& s) : state(s)
-    { state = true; }
-    ~RunningState()
-    { state = false; }
+    RunningState(bool &s) : state(s) { state = true; }
+    ~RunningState() { state = false; }
+
 private:
-    bool& state;
+    bool &state;
 };
 
 struct PythonDebuggerP {
-    PyObject* out_o;
-    PyObject* err_o;
-    PyObject* exc_o;
-    PyObject* out_n;
-    PyObject* err_n;
-    PyObject* exc_n;
-    PythonDebugExcept* pypde;
+    PyObject *out_o;
+    PyObject *err_o;
+    PyObject *exc_o;
+    PyObject *out_n;
+    PyObject *err_n;
+    PyObject *exc_n;
+    PythonDebugExcept *pypde;
     bool init, trystop, running;
     QEventLoop loop;
-    PyObject* pydbg;
+    PyObject *pydbg;
     std::vector<Breakpoint> bps;
 
-    PythonDebuggerP(PythonDebugger* that) :
-        init(false), trystop(false), running(false)
+    PythonDebuggerP(PythonDebugger *that) : init(false), trystop(false), running(false)
     {
         out_o = nullptr;
         err_o = nullptr;
@@ -374,30 +325,22 @@ struct PythonDebuggerP {
         Py_DECREF(pydbg);
     }
 };
-}
+} // namespace Gui
 
-PythonDebugger::PythonDebugger()
-  : d(new PythonDebuggerP(this))
-{
-}
+PythonDebugger::PythonDebugger() : d(new PythonDebuggerP(this)) {}
 
-PythonDebugger::~PythonDebugger()
-{
-    delete d;
-}
+PythonDebugger::~PythonDebugger() { delete d; }
 
-Breakpoint PythonDebugger::getBreakpoint(const QString& fn) const
+Breakpoint PythonDebugger::getBreakpoint(const QString &fn) const
 {
     for (std::vector<Breakpoint>::const_iterator it = d->bps.begin(); it != d->bps.end(); ++it) {
-        if (fn == it->filename()) {
-            return *it;
-        }
+        if (fn == it->filename()) { return *it; }
     }
 
     return Breakpoint();
 }
 
-bool PythonDebugger::toggleBreakpoint(int line, const QString& fn)
+bool PythonDebugger::toggleBreakpoint(int line, const QString &fn)
 {
     for (std::vector<Breakpoint>::iterator it = d->bps.begin(); it != d->bps.end(); ++it) {
         if (fn == it->filename()) {
@@ -419,19 +362,18 @@ bool PythonDebugger::toggleBreakpoint(int line, const QString& fn)
     return true;
 }
 
-void PythonDebugger::runFile(const QString& fn)
+void PythonDebugger::runFile(const QString &fn)
 {
     try {
         RunningState state(d->running);
         QByteArray pxFileName = fn.toUtf8();
 #ifdef FC_OS_WIN32
-        Base::FileInfo fi((const char*)pxFileName);
-        FILE *fp = _wfopen(fi.toStdWString().c_str(),L"r");
+        Base::FileInfo fi((const char *)pxFileName);
+        FILE *fp = _wfopen(fi.toStdWString().c_str(), L"r");
 #else
-        FILE *fp = fopen((const char*)pxFileName,"r");
+        FILE *fp = fopen((const char *)pxFileName, "r");
 #endif
-        if (!fp)
-            return;
+        if (!fp) return;
 
         Base::PyGILStateLocker locker;
         PyObject *module, *dict;
@@ -439,7 +381,7 @@ void PythonDebugger::runFile(const QString& fn)
         dict = PyModule_GetDict(module);
         dict = PyDict_Copy(dict);
         if (!PyDict_GetItemString(dict, "__file__")) {
-            PyObject *pyObj = PyUnicode_FromString((const char*)pxFileName);
+            PyObject *pyObj = PyUnicode_FromString((const char *)pxFileName);
             if (!pyObj) {
                 fclose(fp);
                 return;
@@ -452,16 +394,15 @@ void PythonDebugger::runFile(const QString& fn)
             Py_DECREF(pyObj);
         }
 
-        PyObject *result = PyRun_File(fp, (const char*)pxFileName, Py_file_input, dict, dict);
+        PyObject *result = PyRun_File(fp, (const char *)pxFileName, Py_file_input, dict, dict);
         fclose(fp);
         Py_DECREF(dict);
 
-        if (!result)
-            PyErr_Print();
+        if (!result) PyErr_Print();
         else
             Py_DECREF(result);
     }
-    catch (const Base::PyException&/* e*/) {
+    catch (const Base::PyException & /* e*/) {
         //PySys_WriteStderr("Exception: %s\n", e.what());
     }
     catch (...) {
@@ -469,15 +410,11 @@ void PythonDebugger::runFile(const QString& fn)
     }
 }
 
-bool PythonDebugger::isRunning() const
-{
-    return d->running;
-}
+bool PythonDebugger::isRunning() const { return d->running; }
 
 bool PythonDebugger::start()
 {
-    if (d->init)
-        return false;
+    if (d->init) return false;
     d->init = true;
     d->trystop = false;
     Base::PyGILStateLocker lock;
@@ -495,8 +432,7 @@ bool PythonDebugger::start()
 
 bool PythonDebugger::stop()
 {
-    if (!d->init)
-        return false;
+    if (!d->init) return false;
     Base::PyGILStateLocker lock;
     PyEval_SetTrace(nullptr, nullptr);
     PySys_SetObject("stdout", d->out_o);
@@ -512,29 +448,19 @@ void PythonDebugger::tryStop()
     Q_EMIT signalNextStep();
 }
 
-void PythonDebugger::stepOver()
-{
-    Q_EMIT signalNextStep();
-}
+void PythonDebugger::stepOver() { Q_EMIT signalNextStep(); }
 
-void PythonDebugger::stepInto()
-{
-    Q_EMIT signalNextStep();
-}
+void PythonDebugger::stepInto() { Q_EMIT signalNextStep(); }
 
-void PythonDebugger::stepRun()
-{
-    Q_EMIT signalNextStep();
-}
+void PythonDebugger::stepRun() { Q_EMIT signalNextStep(); }
 
-void PythonDebugger::showDebugMarker(const QString& fn, int line)
+void PythonDebugger::showDebugMarker(const QString &fn, int line)
 {
-    PythonEditorView* edit = nullptr;
-    QList<QWidget*> mdis = getMainWindow()->windows();
-    for (const auto & mdi : mdis) {
-        edit = qobject_cast<PythonEditorView*>(mdi);
-        if (edit && edit->fileName() == fn)
-            break;
+    PythonEditorView *edit = nullptr;
+    QList<QWidget *> mdis = getMainWindow()->windows();
+    for (const auto &mdi : mdis) {
+        edit = qobject_cast<PythonEditorView *>(mdi);
+        if (edit && edit->fileName() == fn) break;
     }
 
     if (!edit) {
@@ -550,12 +476,12 @@ void PythonDebugger::showDebugMarker(const QString& fn, int line)
     edit->showDebugMarker(line);
 }
 
-void PythonDebugger::hideDebugMarker(const QString& fn)
+void PythonDebugger::hideDebugMarker(const QString &fn)
 {
-    PythonEditorView* edit = nullptr;
-    QList<QWidget*> mdis = getMainWindow()->windows();
-    for (const auto & mdi : mdis) {
-        edit = qobject_cast<PythonEditorView*>(mdi);
+    PythonEditorView *edit = nullptr;
+    QList<QWidget *> mdis = getMainWindow()->windows();
+    for (const auto &mdi : mdis) {
+        edit = qobject_cast<PythonEditorView *>(mdi);
         if (edit && edit->fileName() == fn) {
             edit->hideDebugMarker();
             break;
@@ -564,7 +490,7 @@ void PythonDebugger::hideDebugMarker(const QString& fn)
 }
 
 #if PY_VERSION_HEX < 0x030900B1
-static PyCodeObject* PyFrame_GetCode(PyFrameObject *frame)
+static PyCodeObject *PyFrame_GetCode(PyFrameObject *frame)
 {
     Py_INCREF(frame->f_code);
     return frame->f_code;
@@ -575,34 +501,30 @@ static PyCodeObject* PyFrame_GetCode(PyFrameObject *frame)
 // http://code.google.com/p/idapython/source/browse/trunk/python.cpp
 // http://www.koders.com/cpp/fid191F7B13CF73133935A7A2E18B7BF43ACC6D1784.aspx?s=PyEval_SetTrace
 // http://stuff.mit.edu/afs/sipb/project/python/src/python2.2-2.2.2/Modules/_hotshot.c
-int PythonDebugger::tracer_callback(PyObject *obj, PyFrameObject *frame, int what, PyObject * /*arg*/)
+int PythonDebugger::tracer_callback(PyObject *obj, PyFrameObject *frame, int what,
+                                    PyObject * /*arg*/)
 {
-    auto self = static_cast<PythonDebuggerPy*>(obj);
-    PythonDebugger* dbg = self->dbg;
-    if (dbg->d->trystop)
-        PyErr_SetInterrupt();
+    auto self = static_cast<PythonDebuggerPy *>(obj);
+    PythonDebugger *dbg = self->dbg;
+    if (dbg->d->trystop) PyErr_SetInterrupt();
     QCoreApplication::processEvents();
     //int no;
 
     //no = frame->f_tstate->recursion_depth;
     //std::string funcname = PyString_AsString(frame->f_code->co_name);
-    PyCodeObject* code = PyFrame_GetCode(frame);
+    PyCodeObject *code = PyFrame_GetCode(frame);
     QString file = QString::fromUtf8(PyUnicode_AsUTF8(code->co_filename));
     Py_DECREF(code);
     switch (what) {
-    case PyTrace_CALL:
-        self->depth++;
-        return 0;
-    case PyTrace_RETURN:
-        if (self->depth > 0)
-            self->depth--;
-        return 0;
-    case PyTrace_LINE:
-        {
+        case PyTrace_CALL: self->depth++; return 0;
+        case PyTrace_RETURN:
+            if (self->depth > 0) self->depth--;
+            return 0;
+        case PyTrace_LINE: {
             //PyObject *str;
             //str = PyObject_Str(frame->f_code->co_filename);
             //no = frame->f_lineno;
-            PyCodeObject* f_code = PyFrame_GetCode(frame);
+            PyCodeObject *f_code = PyFrame_GetCode(frame);
             int f_lasti = PyFrame_GetLineNumber(frame);
             int line = PyCode_Addr2Line(f_code, f_lasti);
             Py_DECREF(f_code);
@@ -610,7 +532,7 @@ int PythonDebugger::tracer_callback(PyObject *obj, PyFrameObject *frame, int wha
             //    Base::Console().Message("PROFILING: %s:%d\n", PyString_AsString(str), frame->f_lineno);
             //    Py_DECREF(str);
             //}
-    // For testing only
+            // For testing only
             if (!dbg->d->trystop) {
                 Breakpoint bp = dbg->getBreakpoint(file);
                 if (bp.checkLine(line)) {
@@ -623,17 +545,13 @@ int PythonDebugger::tracer_callback(PyObject *obj, PyFrameObject *frame, int wha
             }
             return 0;
         }
-    case PyTrace_EXCEPTION:
-        return 0;
-    case PyTrace_C_CALL:
-        return 0;
-    case PyTrace_C_EXCEPTION:
-        return 0;
-    case PyTrace_C_RETURN:
-        return 0;
-    default:
-        /* ignore PyTrace_EXCEPTION */
-        break;
+        case PyTrace_EXCEPTION: return 0;
+        case PyTrace_C_CALL: return 0;
+        case PyTrace_C_EXCEPTION: return 0;
+        case PyTrace_C_RETURN: return 0;
+        default:
+            /* ignore PyTrace_EXCEPTION */
+            break;
     }
     return 0;
 }

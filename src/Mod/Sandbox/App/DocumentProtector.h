@@ -27,106 +27,93 @@
 #include <string>
 #include <App/DocumentObserver.h>
 
-namespace App {
-    class Document;
-    class DocumentObject;
-}
+namespace App
+{
+class Document;
+class DocumentObject;
+} // namespace App
 
-namespace Sandbox {
+namespace Sandbox
+{
 
-class SandboxAppExport DocumentProtector : public App::DocumentObserver
+class SandboxAppExport DocumentProtector: public App::DocumentObserver
 {
 public:
-    DocumentProtector(App::Document*);
+    DocumentProtector(App::Document *);
     ~DocumentProtector();
 
     static void init();
 
-    App::DocumentObject *addObject(const std::string& type, const std::string& name="");
-    void removeObject(const std::string& name);
+    App::DocumentObject *addObject(const std::string &type, const std::string &name = "");
+    void removeObject(const std::string &name);
     void recompute();
 
 private:
     /** Checks if the given document is about to be closed */
-    void slotDeletedDocument(const App::Document& Doc);
+    void slotDeletedDocument(const App::Document &Doc);
     void validate();
 };
 
 class AbstractCallable
 {
 public:
-    AbstractCallable()
-    {
-    }
-    virtual ~AbstractCallable()
-    {
-    }
+    AbstractCallable() {}
+    virtual ~AbstractCallable() {}
 
     virtual void operator()() const = 0;
 };
 
-template <class T, void (T::*method)()>
-class Callable : public AbstractCallable
+template<class T, void (T::*method)()> class Callable: public AbstractCallable
 {
 public:
-    Callable(App::DocumentObject* o) : obj(o)
-    {
-    }
-    virtual ~Callable()
-    {
-    }
+    Callable(App::DocumentObject *o) : obj(o) {}
+    virtual ~Callable() {}
 
     virtual void operator()() const
     {
-        T* v = static_cast<T*>(obj);
+        T *v = static_cast<T *>(obj);
         (v->*method)();
     }
 
 private:
-    App::DocumentObject* obj;
+    App::DocumentObject *obj;
 };
 
-template <class T, class Arg, void (T::*method)(Arg)>
-class CallableWithArgs : public AbstractCallable
+template<class T, class Arg, void (T::*method)(Arg)> class CallableWithArgs: public AbstractCallable
 {
 public:
-    CallableWithArgs(App::DocumentObject* o, Arg a) : obj(o), arg(a)
-    {
-    }
-    virtual ~CallableWithArgs()
-    {
-    }
+    CallableWithArgs(App::DocumentObject *o, Arg a) : obj(o), arg(a) {}
+    virtual ~CallableWithArgs() {}
 
     virtual void operator()() const
     {
-        T* v = static_cast<T*>(obj);
+        T *v = static_cast<T *>(obj);
         (v->*method)(arg);
     }
 
 private:
-    App::DocumentObject* obj;
+    App::DocumentObject *obj;
     Arg arg;
 };
 
 class SandboxAppExport DocumentObjectProtector
 {
 public:
-    DocumentObjectProtector(App::DocumentObject*);
+    DocumentObjectProtector(App::DocumentObject *);
     ~DocumentObjectProtector();
 
-    App::DocumentObject* getObject() const;
-    bool setProperty(const std::string& name, const App::Property& p);
-    void execute(const AbstractCallable&);
+    App::DocumentObject *getObject() const;
+    bool setProperty(const std::string &name, const App::Property &p);
+    void execute(const AbstractCallable &);
     void purgeTouched();
 
 private:
     void validate();
 
 private:
-    App::DocumentObject* obj;
+    App::DocumentObject *obj;
 };
 
-}
+} // namespace Sandbox
 
 #endif // SANDBOX_DOCUMENTPROTECTOR_H
-

@@ -31,18 +31,18 @@
 using namespace SketcherGui;
 
 //---------- Geometry Extension
-TYPESYSTEM_SOURCE(SketcherGui::ViewProviderSketchGeometryExtension,Part::GeometryExtension)
+TYPESYSTEM_SOURCE(SketcherGui::ViewProviderSketchGeometryExtension, Part::GeometryExtension)
 
 
-ViewProviderSketchGeometryExtension::ViewProviderSketchGeometryExtension():RepresentationFactor(1.0)
-{
+ViewProviderSketchGeometryExtension::ViewProviderSketchGeometryExtension()
+    : RepresentationFactor(1.0)
+{}
 
-}
-
-void ViewProviderSketchGeometryExtension::copyAttributes(Part::GeometryExtension * cpy) const
+void ViewProviderSketchGeometryExtension::copyAttributes(Part::GeometryExtension *cpy) const
 {
     Part::GeometryExtension::copyAttributes(cpy);
-    static_cast<ViewProviderSketchGeometryExtension *>(cpy)->RepresentationFactor = this->RepresentationFactor;
+    static_cast<ViewProviderSketchGeometryExtension *>(cpy)->RepresentationFactor =
+        this->RepresentationFactor;
 }
 
 std::unique_ptr<Part::GeometryExtension> ViewProviderSketchGeometryExtension::copy() const
@@ -51,14 +51,15 @@ std::unique_ptr<Part::GeometryExtension> ViewProviderSketchGeometryExtension::co
 
     copyAttributes(cpy.get());
 
-#if defined (__GNUC__) && (__GNUC__ <=4)
+#if defined(__GNUC__) && (__GNUC__ <= 4)
     return std::move(cpy);
 #else
     return cpy;
 #endif
 }
 
-PyObject * ViewProviderSketchGeometryExtension::getPyObject()
+PyObject *ViewProviderSketchGeometryExtension::getPyObject()
 {
-    THROWM(Base::NotImplementedError, "ViewProviderSketchGeometryExtension does not have a Python counterpart");
+    THROWM(Base::NotImplementedError,
+           "ViewProviderSketchGeometryExtension does not have a Python counterpart");
 }

@@ -25,20 +25,24 @@
 
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
-# include "QGIVertex.h"
+#include "QGIVertex.h"
 
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGICMark : public QGIVertex
+class TechDrawGuiExport QGICMark: public QGIVertex
 {
 public:
     explicit QGICMark(int index);
     ~QGICMark() {}
 
-    enum {Type = QGraphicsItem::UserType + 171};
-    int type() const override { return Type;}
-    virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr ) override;
+    enum
+    {
+        Type = QGraphicsItem::UserType + 171
+    };
+    int type() const override { return Type; }
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr) override;
 
     virtual QRectF boundingRect() const override;
     virtual QPainterPath shape() const override;
@@ -59,6 +63,6 @@ private:
     float m_size;
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMCMARK_H

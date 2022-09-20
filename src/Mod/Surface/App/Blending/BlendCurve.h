@@ -42,7 +42,7 @@ public:
     *  Constructor
     *\param std::vector<BlendPoint>
     */
-    explicit BlendCurve(const std::vector<BlendPoint>& blendPointsList);
+    explicit BlendCurve(const std::vector<BlendPoint> &blendPointsList);
     ~BlendCurve() = default;
     /*!
     *  Perform the interpolate algorithm
@@ -57,7 +57,6 @@ public:
     */
     void setSize(int, double, bool);
 };
-}// namespace Surface
+} // namespace Surface
 
 #endif
-

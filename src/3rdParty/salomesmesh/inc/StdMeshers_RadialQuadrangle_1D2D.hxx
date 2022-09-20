@@ -40,39 +40,35 @@ class gp_Pnt;
 class STDMESHERS_EXPORT StdMeshers_RadialQuadrangle_1D2D: public SMESH_2D_Algo
 {
 public:
-  StdMeshers_RadialQuadrangle_1D2D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_RadialQuadrangle_1D2D();
+    StdMeshers_RadialQuadrangle_1D2D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_RadialQuadrangle_1D2D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh&                          aMesh,
-                               const TopoDS_Shape&                  aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
-  /*!
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
+    /*!
    * \brief Allow algo to do something after persistent restoration
     * \param subMesh - restored submesh
    *
    * This method is called only if a submesh has HYP_OK algo_state.
    */
-  virtual void SubmeshRestored(SMESH_subMesh* subMesh);
-  
-  static bool IsApplicable(const TopoDS_Shape & aShape, bool toCheckAll);
+    virtual void SubmeshRestored(SMESH_subMesh *subMesh);
+
+    static bool IsApplicable(const TopoDS_Shape &aShape, bool toCheckAll);
 
 protected:
-
-  bool computeLayerPositions(const gp_Pnt&      p1,
-                             const gp_Pnt&      p2,
-                             const TopoDS_Edge& linEdge=TopoDS_Edge(),
-                             bool*              linEdgeComputed = 0);
+    bool computeLayerPositions(const gp_Pnt &p1, const gp_Pnt &p2,
+                               const TopoDS_Edge &linEdge = TopoDS_Edge(),
+                               bool *linEdgeComputed = 0);
 
 
-  const StdMeshers_NumberOfLayers*    myNbLayerHypo;
-  const StdMeshers_LayerDistribution* myDistributionHypo;
-  SMESH_MesherHelper*                 myHelper;
-  std::vector< double >               myLayerPositions;
+    const StdMeshers_NumberOfLayers *myNbLayerHypo;
+    const StdMeshers_LayerDistribution *myDistributionHypo;
+    SMESH_MesherHelper *myHelper;
+    std::vector<double> myLayerPositions;
 };
 
 #endif

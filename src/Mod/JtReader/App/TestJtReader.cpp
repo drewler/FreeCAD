@@ -32,35 +32,26 @@
 #include "FcLodHandler.h"
 
 
-TestJtReader::TestJtReader()
-{
-}
+TestJtReader::TestJtReader() {}
 
 
-TestJtReader::~TestJtReader()
-{
-}
+TestJtReader::~TestJtReader() {}
 
 void TestJtReader::read(void)
 {
-	//const std::vector<TOC_Entry>& toc = readToc();
+    //const std::vector<TOC_Entry>& toc = readToc();
 
-	for (std::vector<TOC_Entry>::const_iterator i = TocEntries.begin(); i != TocEntries.end(); ++i){
-		int segType = i->getSegmentType();
+    for (std::vector<TOC_Entry>::const_iterator i = TocEntries.begin(); i != TocEntries.end();
+         ++i) {
+        int segType = i->getSegmentType();
 
-		if (segType == 7){
-			FcLodHandler handler;
+        if (segType == 7) {
+            FcLodHandler handler;
 
-			readLodSegment(*i, handler);
-
-
-		}
-			
-
-		Base::Console().Log(i->toString().c_str());
-	}
+            readLodSegment(*i, handler);
+        }
 
 
-
-
+        Base::Console().Log(i->toString().c_str());
+    }
 }

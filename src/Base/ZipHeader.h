@@ -35,7 +35,8 @@ namespace zipios
  * The class is similar to zipios' ZipFile class with the difference that instead of
  * a file a std::istream can be passed.
  */
-class BaseExport ZipHeader : public FileCollection {
+class BaseExport ZipHeader: public FileCollection
+{
 public:
     /** Opens the zip file name. If the zip "file" is
         embedded in a file that contains other data, e.g. a binary
@@ -64,9 +65,9 @@ public:
     std::istream *getInputStream(const string &entry_name, MatchPath matchpath = MATCH) override;
 
 private:
-    std::istream& _input;
+    std::istream &_input;
     VirtualSeeker _vs;
-    EndOfCentralDirectory  _eocd;
+    EndOfCentralDirectory _eocd;
 
     bool init(std::istream &_zipfile);
     bool readCentralDirectory(std::istream &_zipfile);
@@ -79,4 +80,3 @@ private:
 
 
 #endif // ZIPIOS_ZIP_HEADER_H
-

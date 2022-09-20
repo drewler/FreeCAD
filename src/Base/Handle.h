@@ -40,26 +40,24 @@ namespace Base
  *  Only able to instantiate with a class inheriting
  *  Base::Handled.
  */
-template <class T>
-class Reference
+template<class T> class Reference
 {
 public:
     //**************************************************************************
     // construction & destruction
 
     /** Pointer and default constructor */
-    Reference() : _toHandle(nullptr) {
-    }
+    Reference() : _toHandle(nullptr) {}
 
-    Reference(T* p) : _toHandle(p) {
-        if (_toHandle)
-            _toHandle->ref();
+    Reference(T *p) : _toHandle(p)
+    {
+        if (_toHandle) _toHandle->ref();
     }
 
     /** Copy constructor */
-    Reference(const Reference<T>& p) : _toHandle(p._toHandle) {
-        if (_toHandle)
-            _toHandle->ref();
+    Reference(const Reference<T> &p) : _toHandle(p._toHandle)
+    {
+        if (_toHandle) _toHandle->ref();
     }
 
     /** destructor
@@ -67,86 +65,66 @@ public:
      *  in case of the last one, the referenced object to
      *  be destructed!
      */
-    ~Reference() {
-        if (_toHandle)
-            _toHandle->unref();
+    ~Reference()
+    {
+        if (_toHandle) _toHandle->unref();
     }
 
     //**************************************************************************
     // operator implementation
 
     /** Assign operator from a pointer */
-    Reference <T>& operator=(T* p) {
+    Reference<T> &operator=(T *p)
+    {
         // check if we want to reassign the same object
-        if (_toHandle == p)
-            return *this;
-        if (_toHandle)
-            _toHandle->unref();
+        if (_toHandle == p) return *this;
+        if (_toHandle) _toHandle->unref();
         _toHandle = p;
-        if (_toHandle)
-            _toHandle->ref();
+        if (_toHandle) _toHandle->ref();
         return *this;
     }
 
     /** Assign operator from a handle */
-    Reference <T>& operator=(const Reference<T>& p) {
+    Reference<T> &operator=(const Reference<T> &p)
+    {
         // check if we want to reassign the same object
-        if (_toHandle == p._toHandle)
-            return *this;
-        if (_toHandle)
-            _toHandle->unref();
+        if (_toHandle == p._toHandle) return *this;
+        if (_toHandle) _toHandle->unref();
         _toHandle = p._toHandle;
-        if (_toHandle)
-            _toHandle->ref();
+        if (_toHandle) _toHandle->ref();
         return *this;
     }
 
     /** Dereference operator */
-    T& operator*() const {
-        return *_toHandle;
-    }
+    T &operator*() const { return *_toHandle; }
 
     /** Dereference operator */
-    T* operator->() const {
-        return _toHandle;
-    }
+    T *operator->() const { return _toHandle; }
 
-    operator T*() const {
-        return _toHandle;
-    }
+    operator T *() const { return _toHandle; }
 
     /** Lower operator, needed for sorting in maps and sets */
-    bool operator<(const Reference<T>& p) const {
-        return _toHandle < p._toHandle;
-    }
+    bool operator<(const Reference<T> &p) const { return _toHandle < p._toHandle; }
 
     /** Equal operator */
-    bool operator==(const Reference<T>& p) const {
-        return _toHandle == p._toHandle;
-    }
+    bool operator==(const Reference<T> &p) const { return _toHandle == p._toHandle; }
 
-    bool operator!=(const Reference<T>& p) const {
-        return _toHandle != p._toHandle;
-    }
+    bool operator!=(const Reference<T> &p) const { return _toHandle != p._toHandle; }
 
 
     //**************************************************************************
     // checking on the state
 
     /// Test if it handles something
-    bool isValid() const {
-        return _toHandle != nullptr;
-    }
+    bool isValid() const { return _toHandle != nullptr; }
 
     /// Test if it does not handle anything
-    bool isNull() const {
-        return _toHandle == nullptr;
-    }
+    bool isNull() const { return _toHandle == nullptr; }
 
     /// Get number of references on the object, including this one
-    int getRefCount() const {
-        if (_toHandle)
-            return _toHandle->getRefCount();
+    int getRefCount() const
+    {
+        if (_toHandle) return _toHandle->getRefCount();
         return 0;
     }
 
@@ -167,13 +145,13 @@ public:
     void unref() const;
 
     int getRefCount() const;
-    const Handled& operator = (const Handled&);
+    const Handled &operator=(const Handled &);
 
 private:
-    Handled(const Handled&);
+    Handled(const Handled &);
 
 private:
-    QAtomicInt* _lRefCount;
+    QAtomicInt *_lRefCount;
 };
 
 } // namespace Base

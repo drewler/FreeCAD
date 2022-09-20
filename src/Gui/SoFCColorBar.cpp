@@ -23,15 +23,15 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <boost/core/ignore_unused.hpp>
-# include <Inventor/actions/SoGetBoundingBoxAction.h>
-# include <Inventor/actions/SoGLRenderAction.h>
-# include <Inventor/events/SoMouseButtonEvent.h>
-# include <Inventor/nodes/SoEventCallback.h>
-# include <Inventor/nodes/SoOrthographicCamera.h>
-# include <Inventor/nodes/SoSwitch.h>
-# include <QApplication>
-# include <QMenu>
+#include <boost/core/ignore_unused.hpp>
+#include <Inventor/actions/SoGetBoundingBoxAction.h>
+#include <Inventor/actions/SoGLRenderAction.h>
+#include <Inventor/events/SoMouseButtonEvent.h>
+#include <Inventor/nodes/SoEventCallback.h>
+#include <Inventor/nodes/SoOrthographicCamera.h>
+#include <Inventor/nodes/SoSwitch.h>
+#include <QApplication>
+#include <QMenu>
 #endif
 
 #include "SoFCColorBar.h"
@@ -46,7 +46,7 @@ SO_NODE_ABSTRACT_SOURCE(SoFCColorBarBase)
 /*!
   Constructor.
 */
-SoFCColorBarBase::SoFCColorBarBase() : _boxWidth(-1.0f), _windowSize(0,0)
+SoFCColorBarBase::SoFCColorBarBase() : _boxWidth(-1.0f), _windowSize(0, 0)
 {
     SO_NODE_CONSTRUCTOR(SoFCColorBarBase);
 }
@@ -62,18 +62,15 @@ SoFCColorBarBase::~SoFCColorBarBase()
 // doc from parent
 void SoFCColorBarBase::initClass()
 {
-    SO_NODE_INIT_ABSTRACT_CLASS(SoFCColorBarBase,SoSeparator,"Separator");
+    SO_NODE_INIT_ABSTRACT_CLASS(SoFCColorBarBase, SoSeparator, "Separator");
 }
 
-void SoFCColorBarBase::finish()
-{
-    atexit_cleanup();
-}
+void SoFCColorBarBase::finish() { atexit_cleanup(); }
 
-void SoFCColorBarBase::GLRenderBelowPath(SoGLRenderAction *  action)
+void SoFCColorBarBase::GLRenderBelowPath(SoGLRenderAction *action)
 {
-    const SbViewportRegion& vp = action->getViewportRegion();
-    const SbVec2s&  size = vp.getWindowSize();
+    const SbViewportRegion &vp = action->getViewportRegion();
+    const SbVec2s &size = vp.getWindowSize();
     if (_windowSize != size) {
         _windowSize = size;
         setViewportSize(size);
@@ -81,22 +78,17 @@ void SoFCColorBarBase::GLRenderBelowPath(SoGLRenderAction *  action)
     SoSeparator::GLRenderBelowPath(action);
 }
 
-void SoFCColorBarBase::setModified()
-{
-    _boxWidth = -1.0f;
-}
+void SoFCColorBarBase::setModified() { _boxWidth = -1.0f; }
 
-float SoFCColorBarBase::getBoundingWidth(const SbVec2s& size)
+float SoFCColorBarBase::getBoundingWidth(const SbVec2s &size)
 {
     float fRatio = static_cast<float>(size[0]) / static_cast<float>(size[1]);
-    if (fRatio >= 1.0f && _boxWidth >= 0.0f) {
-        return _boxWidth;
-    }
+    if (fRatio >= 1.0f && _boxWidth >= 0.0f) { return _boxWidth; }
 
     // These are the same camera settings for front nodes as defined in the 3d view
     auto cam = new SoOrthographicCamera;
     cam->position = SbVec3f(0, 0, 5); // the 5 is just a value > 0
-    cam->height = 10; // sets the coordinate range of the screen to [-5, +5]
+    cam->height = 10;                 // sets the coordinate range of the screen to [-5, +5]
     cam->nearDistance = 0;
     cam->farDistance = 10;
 
@@ -118,7 +110,8 @@ float SoFCColorBarBase::getBoundingWidth(const SbVec2s& size)
     return boxWidth;
 }
 
-float SoFCColorBarBase::getBounds(const SbVec2s& size, float& fMinX, float&fMinY, float& fMaxX, float& fMaxY)
+float SoFCColorBarBase::getBounds(const SbVec2s &size, float &fMinX, float &fMinY, float &fMaxX,
+                                  float &fMaxY)
 {
     // ratio of window width / height
     float fRatio = static_cast<float>(size[0]) / static_cast<float>(size[1]);
@@ -152,13 +145,13 @@ float SoFCColorBarBase::getBounds(const SbVec2s& size, float& fMinX, float&fMinY
 
 // --------------------------------------------------------------------------
 
-namespace Gui {
+namespace Gui
+{
 // Proxy class that receives an asynchronous custom event
-class SoFCColorBarProxyObject : public QObject
+class SoFCColorBarProxyObject: public QObject
 {
 public:
-    SoFCColorBarProxyObject(SoFCColorBar* b)
-        : QObject(nullptr), bar(b) {}
+    SoFCColorBarProxyObject(SoFCColorBar *b) : QObject(nullptr), bar(b) {}
     ~SoFCColorBarProxyObject() override {}
     void customEvent(QEvent *) override
     {
@@ -167,9 +160,9 @@ public:
     }
 
 private:
-    SoFCColorBar* bar;
+    SoFCColorBar *bar;
 };
-}
+} // namespace Gui
 
 SO_NODE_SOURCE(SoFCColorBar)
 
@@ -180,18 +173,19 @@ SoFCColorBar::SoFCColorBar()
 {
     SO_NODE_CONSTRUCTOR(SoFCColorBar);
 
-//  SoEventCallback * cb = new SoEventCallback;
-//  cb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), eventCallback, this);
-//  insertChild(cb, 0);
+    //  SoEventCallback * cb = new SoEventCallback;
+    //  cb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), eventCallback, this);
+    //  insertChild(cb, 0);
 
     pColorMode = new SoSwitch;
     addChild(pColorMode);
 
-    _colorBars.push_back( new SoFCColorGradient );
-    _colorBars.push_back( new SoFCColorLegend );
+    _colorBars.push_back(new SoFCColorGradient);
+    _colorBars.push_back(new SoFCColorLegend);
 
-    for (std::vector<SoFCColorBarBase*>::const_iterator it = _colorBars.begin(); it != _colorBars.end(); ++it)
-        pColorMode->addChild( *it );
+    for (std::vector<SoFCColorBarBase *>::const_iterator it = _colorBars.begin();
+         it != _colorBars.end(); ++it)
+        pColorMode->addChild(*it);
     pColorMode->whichChild = 0;
 }
 
@@ -204,79 +198,57 @@ SoFCColorBar::~SoFCColorBar()
 }
 
 // doc from parent
-void SoFCColorBar::initClass()
-{
-    SO_NODE_INIT_CLASS(SoFCColorBar,SoFCColorBarBase,"Separator");
-}
+void SoFCColorBar::initClass() { SO_NODE_INIT_CLASS(SoFCColorBar, SoFCColorBarBase, "Separator"); }
 
-void SoFCColorBar::finish()
-{
-    atexit_cleanup();
-}
+void SoFCColorBar::finish() { atexit_cleanup(); }
 
-SoFCColorBarBase* SoFCColorBar::getActiveBar() const
+SoFCColorBarBase *SoFCColorBar::getActiveBar() const
 {
     int child = pColorMode->whichChild.getValue();
     return _colorBars[child];
 }
 
-void SoFCColorBar::setViewportSize( const SbVec2s& size )
-{
-    boost::ignore_unused(size);
-}
+void SoFCColorBar::setViewportSize(const SbVec2s &size) { boost::ignore_unused(size); }
 
-void SoFCColorBar::setRange( float fMin, float fMax, int prec )
+void SoFCColorBar::setRange(float fMin, float fMax, int prec)
 {
-    for (std::vector<SoFCColorBarBase*>::const_iterator it = _colorBars.begin(); it != _colorBars.end(); ++it)
+    for (std::vector<SoFCColorBarBase *>::const_iterator it = _colorBars.begin();
+         it != _colorBars.end(); ++it)
         (*it)->setRange(fMin, fMax, prec);
 }
 
-void SoFCColorBar::setOutsideGrayed (bool bVal)
+void SoFCColorBar::setOutsideGrayed(bool bVal)
 {
-    for (std::vector<SoFCColorBarBase*>::const_iterator it = _colorBars.begin(); it != _colorBars.end(); ++it)
+    for (std::vector<SoFCColorBarBase *>::const_iterator it = _colorBars.begin();
+         it != _colorBars.end(); ++it)
         (*it)->setOutsideGrayed(bVal);
 }
 
-bool SoFCColorBar::isVisible (float fVal) const
-{
-    return this->getActiveBar()->isVisible(fVal);
-}
+bool SoFCColorBar::isVisible(float fVal) const { return this->getActiveBar()->isVisible(fVal); }
 
-float SoFCColorBar::getMinValue () const
-{
-    return this->getActiveBar()->getMinValue();
-}
+float SoFCColorBar::getMinValue() const { return this->getActiveBar()->getMinValue(); }
 
-float SoFCColorBar::getMaxValue () const
-{
-    return this->getActiveBar()->getMaxValue();
-}
+float SoFCColorBar::getMaxValue() const { return this->getActiveBar()->getMaxValue(); }
 
-void SoFCColorBar::triggerChange(SoFCColorBarBase*)
-{
-    Notify(0);
-}
+void SoFCColorBar::triggerChange(SoFCColorBarBase *) { Notify(0); }
 
-void SoFCColorBar::customize(SoFCColorBarBase* child)
+void SoFCColorBar::customize(SoFCColorBarBase *child)
 {
     try {
         return child->customize(this);
     }
-    catch (const Base::ValueError& e) {
+    catch (const Base::ValueError &e) {
         e.ReportException();
     }
 }
 
-App::Color SoFCColorBar::getColor( float fVal ) const
-{
-    return this->getActiveBar()->getColor( fVal );
-}
+App::Color SoFCColorBar::getColor(float fVal) const { return this->getActiveBar()->getColor(fVal); }
 
-void SoFCColorBar::eventCallback(void * /*userdata*/, SoEventCallback * node)
+void SoFCColorBar::eventCallback(void * /*userdata*/, SoEventCallback *node)
 {
-    const SoEvent * event = node->getEvent();
+    const SoEvent *event = node->getEvent();
     if (event->getTypeId().isDerivedFrom(SoMouseButtonEvent::getClassTypeId())) {
-        const auto e = static_cast<const SoMouseButtonEvent*>(event);
+        const auto e = static_cast<const SoMouseButtonEvent *>(event);
         if ((e->getButton() == SoMouseButtonEvent::BUTTON2)) {
             if (e->getState() == SoButtonEvent::UP) {
                 // do nothing here
@@ -285,54 +257,50 @@ void SoFCColorBar::eventCallback(void * /*userdata*/, SoEventCallback * node)
     }
 }
 
-void SoFCColorBar::handleEvent (SoHandleEventAction *action)
+void SoFCColorBar::handleEvent(SoHandleEventAction *action)
 {
-    const SoEvent * event = action->getEvent();
+    const SoEvent *event = action->getEvent();
 
     // check for mouse button events
     if (event->getTypeId().isDerivedFrom(SoMouseButtonEvent::getClassTypeId())) {
-        const auto e = static_cast<const SoMouseButtonEvent*>(event);
+        const auto e = static_cast<const SoMouseButtonEvent *>(event);
 
         // check if the cursor is near to the color bar
-        if (!action->getPickedPoint())
-            return; // not inside the rectangle
+        if (!action->getPickedPoint()) return; // not inside the rectangle
 
         // left mouse pressed
         action->setHandled();
         if ((e->getButton() == SoMouseButtonEvent::BUTTON1)) {
             if (e->getState() == SoButtonEvent::DOWN) {
                 // double click event
-                if (!_timer.isValid()) {
-                    _timer.start();
-                }
+                if (!_timer.isValid()) { _timer.start(); }
                 else if (_timer.restart() < QApplication::doubleClickInterval()) {
-                    QApplication::postEvent(
-                        new SoFCColorBarProxyObject(this),
-                        new QEvent(QEvent::User));
+                    QApplication::postEvent(new SoFCColorBarProxyObject(this),
+                                            new QEvent(QEvent::User));
                 }
             }
         }
         // right mouse pressed
         else if ((e->getButton() == SoMouseButtonEvent::BUTTON2)) {
             if (e->getState() == SoButtonEvent::UP) {
-                SoFCColorBarBase* current = getActiveBar();
+                SoFCColorBarBase *current = getActiveBar();
                 QMenu menu;
-                int i=0;
-                for (std::vector<SoFCColorBarBase*>::const_iterator it = _colorBars.begin(); it != _colorBars.end(); ++it) {
-                    QAction* item = menu.addAction(QLatin1String((*it)->getColorBarName()));
+                int i = 0;
+                for (std::vector<SoFCColorBarBase *>::const_iterator it = _colorBars.begin();
+                     it != _colorBars.end(); ++it) {
+                    QAction *item = menu.addAction(QLatin1String((*it)->getColorBarName()));
                     item->setCheckable(true);
                     item->setChecked((*it) == current);
                     item->setData(QVariant(i++));
                 }
 
                 menu.addSeparator();
-                QAction* option = menu.addAction(QObject::tr("Options..."));
-                QAction* select = menu.exec(QCursor::pos());
+                QAction *option = menu.addAction(QObject::tr("Options..."));
+                QAction *select = menu.exec(QCursor::pos());
 
                 if (select == option) {
-                    QApplication::postEvent(
-                        new SoFCColorBarProxyObject(this),
-                        new QEvent(QEvent::User));
+                    QApplication::postEvent(new SoFCColorBarProxyObject(this),
+                                            new QEvent(QEvent::User));
                 }
                 else if (select) {
                     int id = select->data().toInt();

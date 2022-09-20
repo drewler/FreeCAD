@@ -68,12 +68,9 @@ using namespace TechDraw;
 using namespace TechDrawGui;
 
 //ctor for creation
-TaskActiveView::TaskActiveView(TechDraw::DrawPage* pageFeat) :
-    ui(new Ui_TaskActiveView),
-    m_pageFeat(pageFeat),
-    m_imageFeat(nullptr),
-    m_btnOK(nullptr),
-    m_btnCancel(nullptr)
+TaskActiveView::TaskActiveView(TechDraw::DrawPage *pageFeat)
+    : ui(new Ui_TaskActiveView), m_pageFeat(pageFeat), m_imageFeat(nullptr), m_btnOK(nullptr),
+      m_btnCancel(nullptr)
 {
     ui->setupUi(this);
 
@@ -83,38 +80,31 @@ TaskActiveView::TaskActiveView(TechDraw::DrawPage* pageFeat) :
     setUiPrimary();
 }
 
-TaskActiveView::~TaskActiveView()
-{
-}
+TaskActiveView::~TaskActiveView() {}
 
 void TaskActiveView::updateTask()
 {
-//    blockUpdate = true;
+    //    blockUpdate = true;
 
-//    blockUpdate = false;
+    //    blockUpdate = false;
 }
 
 void TaskActiveView::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
 }
 
 void TaskActiveView::setUiPrimary()
 {
-//    Base::Console().Message("TAV::setUiPrimary()\n");
+    //    Base::Console().Message("TAV::setUiPrimary()\n");
     setWindowTitle(QObject::tr("ActiveView to TD View"));
 }
 
-void TaskActiveView::blockButtons(bool b)
-{
-    Q_UNUSED(b);
-}
+void TaskActiveView::blockButtons(bool b) { Q_UNUSED(b); }
 
-TechDraw::DrawViewImage* TaskActiveView::createActiveView()
+TechDraw::DrawViewImage *TaskActiveView::createActiveView()
 {
-//    Base::Console().Message("TAV::createActiveView()\n");
+    //    Base::Console().Message("TAV::createActiveView()\n");
 
     //make sure there is an 3D MDI to grab!!
     if (!Gui::getMainWindow()) {
@@ -122,12 +112,12 @@ TechDraw::DrawViewImage* TaskActiveView::createActiveView()
                              QObject::tr("Can not find the main window"));
         return nullptr;
     }
-    View3DInventor* view3d = qobject_cast<View3DInventor*>(Gui::getMainWindow()->activeWindow());
+    View3DInventor *view3d = qobject_cast<View3DInventor *>(Gui::getMainWindow()->activeWindow());
     if (!view3d) {
         //the active window is not a 3D view, so try to find one
         auto mdiWindows = Gui::getMainWindow()->windows();
-        for (auto& mdi : mdiWindows) {
-            auto mdiView = qobject_cast<View3DInventor*>(mdi);
+        for (auto &mdi : mdiWindows) {
+            auto mdiView = qobject_cast<View3DInventor *>(mdi);
             if (mdiView) {
                 view3d = mdiView;
                 break;
@@ -145,27 +135,26 @@ TechDraw::DrawViewImage* TaskActiveView::createActiveView()
 
     std::string pageName = m_pageFeat->getNameInDocument();
 
-    Command::doCommand(Command::Doc,"App.activeDocument().addObject('%s','%s')",
-                       imageType.c_str(),imageName.c_str());
-    Command::doCommand(Command::Doc,"App.activeDocument().%s.addView(App.activeDocument().%s)",
+    Command::doCommand(Command::Doc, "App.activeDocument().addObject('%s','%s')", imageType.c_str(),
+                       imageName.c_str());
+    Command::doCommand(Command::Doc, "App.activeDocument().%s.addView(App.activeDocument().%s)",
                        pageName.c_str(), imageName.c_str());
 
-    App::Document* doc = m_pageFeat->getDocument();
+    App::Document *doc = m_pageFeat->getDocument();
     std::string special = "/" + imageName + "image.png";
     std::string dir = doc->TransientDir.getValue();
     std::string fileSpec = dir + special;
 
     QColor bg = ui->ccBgColor->color();
-    if (ui->cbUse3d->isChecked()) {
-        bg = QColor();
-    } else if (ui->cbNoBG->isChecked()) {
+    if (ui->cbUse3d->isChecked()) { bg = QColor(); }
+    else if (ui->cbNoBG->isChecked()) {
         bg = QColor(Qt::transparent);
     }
 
-    QImage image(100, 100, QImage::Format_RGB32);  //arbitrary initial image size. quickView will use
-                                                   //MdiView size in pixels
+    QImage image(100, 100, QImage::Format_RGB32); //arbitrary initial image size. quickView will use
+                                                  //MdiView size in pixels
     image.fill(QColor(Qt::transparent));
-    Grabber3d:: quickView(bg, image);
+    Grabber3d::quickView(bg, image);
     bool success = image.save(Base::Tools::fromStdString(fileSpec));
 
     if (!success) {
@@ -174,24 +163,24 @@ TechDraw::DrawViewImage* TaskActiveView::createActiveView()
     //backslashes in windows fileSpec upsets python
     std::regex rxBackslash("\\\\");
     std::string noBackslash = std::regex_replace(fileSpec, rxBackslash, "/");
-    Command::doCommand(Command::Doc,"App.activeDocument().%s.ImageFile = '%s'",imageName.c_str(), noBackslash.c_str());
-    Command::doCommand(Command::Doc,"App.activeDocument().%s.Width = %.5f",imageName.c_str(), ui->qsbWidth->rawValue());
-    Command::doCommand(Command::Doc,"App.activeDocument().%s.Height = %.5f",imageName.c_str(), ui->qsbHeight->rawValue());
+    Command::doCommand(Command::Doc, "App.activeDocument().%s.ImageFile = '%s'", imageName.c_str(),
+                       noBackslash.c_str());
+    Command::doCommand(Command::Doc, "App.activeDocument().%s.Width = %.5f", imageName.c_str(),
+                       ui->qsbWidth->rawValue());
+    Command::doCommand(Command::Doc, "App.activeDocument().%s.Height = %.5f", imageName.c_str(),
+                       ui->qsbHeight->rawValue());
 
-    App::DocumentObject* newObj = m_pageFeat->getDocument()->getObject(imageName.c_str());
-    TechDraw::DrawViewImage* newImg = dynamic_cast<TechDraw::DrawViewImage*>(newObj);
-    if ( (newObj == nullptr) ||
-         (newImg == nullptr) ) {
+    App::DocumentObject *newObj = m_pageFeat->getDocument()->getObject(imageName.c_str());
+    TechDraw::DrawViewImage *newImg = dynamic_cast<TechDraw::DrawViewImage *>(newObj);
+    if ((newObj == nullptr) || (newImg == nullptr)) {
         throw Base::RuntimeError("TaskActiveView - new image object not found");
     }
-    Gui::Document* guiDoc = Gui::Application::Instance->getDocument(newImg->getDocument());
+    Gui::Document *guiDoc = Gui::Application::Instance->getDocument(newImg->getDocument());
     if (guiDoc) {
-        Gui::ViewProvider* vp = guiDoc->getViewProvider(newImg);
+        Gui::ViewProvider *vp = guiDoc->getViewProvider(newImg);
         if (vp) {
-            auto vpImage = dynamic_cast<ViewProviderImage*>(vp);
-            if (vpImage) {
-                vpImage->Crop.setValue(ui->cbCrop->isChecked());
-            }
+            auto vpImage = dynamic_cast<ViewProviderImage *>(vp);
+            if (vpImage) { vpImage->Crop.setValue(ui->cbCrop->isChecked()); }
         }
     }
 
@@ -201,8 +190,7 @@ TechDraw::DrawViewImage* TaskActiveView::createActiveView()
 
 //******************************************************************************
 
-void TaskActiveView::saveButtons(QPushButton* btnOK,
-                             QPushButton* btnCancel)
+void TaskActiveView::saveButtons(QPushButton *btnOK, QPushButton *btnCancel)
 {
     m_btnOK = btnOK;
     m_btnCancel = btnCancel;
@@ -218,13 +206,11 @@ void TaskActiveView::enableTaskButtons(bool b)
 
 bool TaskActiveView::accept()
 {
-//    Base::Console().Message("TAV::accept()\n");
+    //    Base::Console().Message("TAV::accept()\n");
     Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Create ActiveView"));
     m_imageFeat = createActiveView();
-//    m_imageFeat->requestPaint();
-    if (m_imageFeat) {
-        m_imageFeat->recomputeFeature();
-    }
+    //    m_imageFeat->requestPaint();
+    if (m_imageFeat) { m_imageFeat->recomputeFeature(); }
     Gui::Command::updateActive();
     Gui::Command::commitCommand();
 
@@ -235,8 +221,8 @@ bool TaskActiveView::accept()
 
 bool TaskActiveView::reject()
 {
-//    Base::Console().Message("TAV::reject()\n");
-      //nothing to remove.
+    //    Base::Console().Message("TAV::reject()\n");
+    //nothing to remove.
 
     Gui::Command::doCommand(Gui::Command::Gui, "App.activeDocument().recompute()");
     Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
@@ -244,40 +230,33 @@ bool TaskActiveView::reject()
     return false;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-TaskDlgActiveView::TaskDlgActiveView(TechDraw::DrawPage* page)
-    : TaskDialog()
+TaskDlgActiveView::TaskDlgActiveView(TechDraw::DrawPage *page) : TaskDialog()
 {
-    widget  = new TaskActiveView(page);
+    widget = new TaskActiveView(page);
     taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("actions/TechDraw_ActiveView"),
-                                             widget->windowTitle(), true, nullptr);
+                                         widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
 
-TaskDlgActiveView::~TaskDlgActiveView()
-{
-}
+TaskDlgActiveView::~TaskDlgActiveView() {}
 
 void TaskDlgActiveView::update()
 {
-//    widget->updateTask();
+    //    widget->updateTask();
 }
 
-void TaskDlgActiveView::modifyStandardButtons(QDialogButtonBox* box)
+void TaskDlgActiveView::modifyStandardButtons(QDialogButtonBox *box)
 {
-    QPushButton* btnOK = box->button(QDialogButtonBox::Ok);
-    QPushButton* btnCancel = box->button(QDialogButtonBox::Cancel);
+    QPushButton *btnOK = box->button(QDialogButtonBox::Ok);
+    QPushButton *btnCancel = box->button(QDialogButtonBox::Cancel);
     widget->saveButtons(btnOK, btnCancel);
 }
 
 //==== calls from the TaskView ===============================================================
-void TaskDlgActiveView::open()
-{
-}
+void TaskDlgActiveView::open() {}
 
-void TaskDlgActiveView::clicked(int)
-{
-}
+void TaskDlgActiveView::clicked(int) {}
 
 bool TaskDlgActiveView::accept()
 {

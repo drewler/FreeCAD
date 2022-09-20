@@ -31,7 +31,8 @@
 class QPushButton;
 class Ui_TaskWeldingSymbol;
 
-namespace App {
+namespace App
+{
 class DocumentObject;
 }
 
@@ -43,7 +44,7 @@ class DrawLeaderLine;
 class DrawWeldSymbol;
 class DrawTileWeld;
 class DrawTile;
-}
+} // namespace TechDraw
 
 namespace TechDraw
 {
@@ -75,7 +76,8 @@ public:
     std::string symbolPath;
     std::string symbolString;
     std::string tileName;
-    void init() {
+    void init()
+    {
         toBeSaved = false;
         arrowSide = true;
         row = 0;
@@ -87,27 +89,25 @@ public:
         symbolString.clear();
         tileName.clear();
     }
-
 };
 
-class TechDrawGuiExport TaskWeldingSymbol : public QWidget
+class TechDrawGuiExport TaskWeldingSymbol: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskWeldingSymbol(TechDraw::DrawLeaderLine* leadFeat);
-    TaskWeldingSymbol(TechDraw::DrawWeldSymbol* weldFeat);
+    TaskWeldingSymbol(TechDraw::DrawLeaderLine *leadFeat);
+    TaskWeldingSymbol(TechDraw::DrawWeldSymbol *weldFeat);
     ~TaskWeldingSymbol();
 
     virtual bool accept();
     virtual bool reject();
     void updateTask();
-    void saveButtons(QPushButton* btnOK,
-                     QPushButton* btnCancel);
+    void saveButtons(QPushButton *btnOK, QPushButton *btnCancel);
     void enableTaskButtons(bool enable);
 
 public Q_SLOTS:
-    void symbolDialog(const char* source);
+    void symbolDialog(const char *source);
     void onArrowSymbolCreateClicked();
     void onArrowSymbolClicked();
     void onOtherSymbolCreateClicked();
@@ -119,7 +119,7 @@ public Q_SLOTS:
     void onArrowTextChanged();
     void onOtherTextChanged();
     void onWeldingChanged();
-    void onDirectorySelected(const QString& newDir);
+    void onDirectorySelected(const QString &newDir);
     void onSymbolSelected(QString symbolPath, QString source);
 
 protected:
@@ -127,7 +127,7 @@ protected:
     void setUiPrimary(void);
     void setUiEdit();
 
-    TechDraw::DrawWeldSymbol* createWeldingSymbol(void);
+    TechDraw::DrawWeldSymbol *createWeldingSymbol(void);
     void updateWeldingSymbol(void);
 
     void getTileFeats(void);
@@ -143,10 +143,10 @@ protected:
 private:
     std::unique_ptr<Ui_TaskWeldingSymbol> ui;
 
-    TechDraw::DrawLeaderLine* m_leadFeat;
-    TechDraw::DrawWeldSymbol* m_weldFeat;
-    TechDraw::DrawTileWeld*   m_arrowFeat;
-    TechDraw::DrawTileWeld*   m_otherFeat;
+    TechDraw::DrawLeaderLine *m_leadFeat;
+    TechDraw::DrawWeldSymbol *m_weldFeat;
+    TechDraw::DrawTileWeld *m_arrowFeat;
+    TechDraw::DrawTileWeld *m_otherFeat;
 
     TileImage m_arrowOut;
     TileImage m_otherOut;
@@ -156,21 +156,21 @@ private:
     QString m_arrowSymbol;
     QString m_otherSymbol;
 
-    QPushButton* m_btnOK;
-    QPushButton* m_btnCancel;
+    QPushButton *m_btnOK;
+    QPushButton *m_btnCancel;
 
     bool m_createMode;
     bool m_otherDirty;
 };
 
 
-class TaskDlgWeldingSymbol : public Gui::TaskView::TaskDialog
+class TaskDlgWeldingSymbol: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskDlgWeldingSymbol(TechDraw::DrawLeaderLine* leader);
-    explicit TaskDlgWeldingSymbol(TechDraw::DrawWeldSymbol* weld);
+    explicit TaskDlgWeldingSymbol(TechDraw::DrawLeaderLine *leader);
+    explicit TaskDlgWeldingSymbol(TechDraw::DrawWeldSymbol *weld);
     ~TaskDlgWeldingSymbol() override;
 
     /// is called the TaskView when the dialog is opened
@@ -182,16 +182,14 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    bool isAllowedAlterDocument() const override
-                        { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
     void update();
 
-    void modifyStandardButtons(QDialogButtonBox* box) override;
+    void modifyStandardButtons(QDialogButtonBox *box) override;
 
 private:
-    TaskWeldingSymbol* widget;
-    Gui::TaskView::TaskBox* taskbox;
-
+    TaskWeldingSymbol *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

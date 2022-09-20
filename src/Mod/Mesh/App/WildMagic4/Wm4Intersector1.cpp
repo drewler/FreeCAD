@@ -20,8 +20,7 @@
 namespace Wm4
 {
 //----------------------------------------------------------------------------
-template <class Real>
-Intersector1<Real>::Intersector1 (Real fU0, Real fU1, Real fV0, Real fV1)
+template<class Real> Intersector1<Real>::Intersector1(Real fU0, Real fU1, Real fV0, Real fV1)
 {
     assert(fU0 <= fU1 && fV0 <= fV1);
     m_afU[0] = fU0;
@@ -33,12 +32,10 @@ Intersector1<Real>::Intersector1 (Real fU0, Real fU1, Real fV0, Real fV1)
     m_iQuantity = 0;
 }
 //----------------------------------------------------------------------------
-template <class Real>
-Intersector1<Real>::Intersector1 (Real afU[2], Real afV[2])
+template<class Real> Intersector1<Real>::Intersector1(Real afU[2], Real afV[2])
 {
     assert(afU[0] <= afU[1] && afV[0] <= afV[1]);
-    for (int i = 0; i < 2; i++)
-    {
+    for (int i = 0; i < 2; i++) {
         m_afU[i] = afU[i];
         m_afV[i] = afV[i];
     }
@@ -47,57 +44,42 @@ Intersector1<Real>::Intersector1 (Real afU[2], Real afV[2])
     m_iQuantity = 0;
 }
 //----------------------------------------------------------------------------
-template <class Real>
-Intersector1<Real>::~Intersector1 ()
-{
-}
+template<class Real> Intersector1<Real>::~Intersector1() {}
 //----------------------------------------------------------------------------
-template <class Real>
-Real Intersector1<Real>::GetU (int i) const
+template<class Real> Real Intersector1<Real>::GetU(int i) const
 {
     assert(0 <= i && i < 2);
     return m_afU[i];
 }
 //----------------------------------------------------------------------------
-template <class Real>
-Real Intersector1<Real>::GetV (int i) const
+template<class Real> Real Intersector1<Real>::GetV(int i) const
 {
     assert(0 <= i && i < 2);
     return m_afV[i];
 }
 //----------------------------------------------------------------------------
-template <class Real>
-bool Intersector1<Real>::Test ()
+template<class Real> bool Intersector1<Real>::Test()
 {
     return m_afU[0] <= m_afV[1] && m_afU[1] >= m_afV[0];
 }
 //----------------------------------------------------------------------------
-template <class Real>
-bool Intersector1<Real>::Find ()
+template<class Real> bool Intersector1<Real>::Find()
 {
-    if (m_afU[1] < m_afV[0] || m_afU[0] > m_afV[1])
-    {
-        m_iQuantity = 0;
-    }
-    else if (m_afU[1] > m_afV[0])
-    {
-        if (m_afU[0] < m_afV[1])
-        {
+    if (m_afU[1] < m_afV[0] || m_afU[0] > m_afV[1]) { m_iQuantity = 0; }
+    else if (m_afU[1] > m_afV[0]) {
+        if (m_afU[0] < m_afV[1]) {
             m_iQuantity = 2;
             m_afOverlap[0] = (m_afU[0] < m_afV[0] ? m_afV[0] : m_afU[0]);
             m_afOverlap[1] = (m_afU[1] > m_afV[1] ? m_afV[1] : m_afU[1]);
-            if (m_afOverlap[0] == m_afOverlap[1])
-            {
-                m_iQuantity = 1;
-            }
+            if (m_afOverlap[0] == m_afOverlap[1]) { m_iQuantity = 1; }
         }
-        else  // m_afU[0] == m_afV[1]
+        else // m_afU[0] == m_afV[1]
         {
             m_iQuantity = 1;
             m_afOverlap[0] = m_afU[0];
         }
     }
-    else  // m_afU[1] == m_afV[0]
+    else // m_afU[1] == m_afV[0]
     {
         m_iQuantity = 1;
         m_afOverlap[0] = m_afU[1];
@@ -106,61 +88,48 @@ bool Intersector1<Real>::Find ()
     return m_iQuantity > 0;
 }
 //----------------------------------------------------------------------------
-template <class Real>
-bool Intersector1<Real>::Test (Real fTMax, Real fSpeedU, Real fSpeedV)
+template<class Real> bool Intersector1<Real>::Test(Real fTMax, Real fSpeedU, Real fSpeedV)
 {
     Real fDiffSpeed, fInvDiffSpeed, fDiffPos;
 
-    if (m_afU[1] < m_afV[0])
-    {
+    if (m_afU[1] < m_afV[0]) {
         // [u0,u1] initially to the left of [v0,v1]
         fDiffSpeed = fSpeedU - fSpeedV;
-        if (fDiffSpeed > (Real)0.0)
-        {
+        if (fDiffSpeed > (Real)0.0) {
             // the intervals must move towards each other
             fDiffPos = m_afV[0] - m_afU[1];
-            if (fDiffPos <= fTMax*fDiffSpeed)
-            {
+            if (fDiffPos <= fTMax * fDiffSpeed) {
                 // the intervals intersect within the specified time
-                fInvDiffSpeed = ((Real)1.0)/fDiffSpeed;
-                m_fFirstTime = fDiffPos*fInvDiffSpeed;
-                m_fLastTime = (m_afV[1] - m_afU[0])*fInvDiffSpeed;
+                fInvDiffSpeed = ((Real)1.0) / fDiffSpeed;
+                m_fFirstTime = fDiffPos * fInvDiffSpeed;
+                m_fLastTime = (m_afV[1] - m_afU[0]) * fInvDiffSpeed;
                 return true;
             }
         }
     }
-    else if (m_afU[0] > m_afV[1])
-    {
+    else if (m_afU[0] > m_afV[1]) {
         // [u0,u1] initially to the right of [v0,v1]
         fDiffSpeed = fSpeedV - fSpeedU;
-        if ( fDiffSpeed > (Real)0.0 )
-        {
+        if (fDiffSpeed > (Real)0.0) {
             // the intervals must move towards each other
             fDiffPos = m_afU[0] - m_afV[1];
-            if (fDiffPos <= fTMax*fDiffSpeed)
-            {
+            if (fDiffPos <= fTMax * fDiffSpeed) {
                 // the intervals intersect within the specified time
-                fInvDiffSpeed = ((Real)1.0)/fDiffSpeed;
-                m_fFirstTime = fDiffPos*fInvDiffSpeed;
-                m_fLastTime = (m_afU[1] - m_afV[0])*fInvDiffSpeed;
+                fInvDiffSpeed = ((Real)1.0) / fDiffSpeed;
+                m_fFirstTime = fDiffPos * fInvDiffSpeed;
+                m_fLastTime = (m_afU[1] - m_afV[0]) * fInvDiffSpeed;
                 return true;
             }
         }
     }
-    else
-    {
+    else {
         // the intervals are initially intersecting
         m_fFirstTime = 0.0f;
-        if (fSpeedV > fSpeedU)
-        {
-            m_fLastTime = (m_afU[1] - m_afV[0])/(fSpeedV - fSpeedU);
+        if (fSpeedV > fSpeedU) { m_fLastTime = (m_afU[1] - m_afV[0]) / (fSpeedV - fSpeedU); }
+        else if (fSpeedV < fSpeedU) {
+            m_fLastTime = (m_afV[1] - m_afU[0]) / (fSpeedU - fSpeedV);
         }
-        else if (fSpeedV < fSpeedU)
-        {
-            m_fLastTime = (m_afV[1] - m_afU[0])/(fSpeedU - fSpeedV);
-        }
-        else
-        {
+        else {
             m_fLastTime = Math<Real>::MAX_REAL;
         }
 
@@ -170,83 +139,68 @@ bool Intersector1<Real>::Test (Real fTMax, Real fSpeedU, Real fSpeedV)
     return false;
 }
 //----------------------------------------------------------------------------
-template <class Real>
-bool Intersector1<Real>::Find (Real fTMax, Real fSpeedU, Real fSpeedV)
+template<class Real> bool Intersector1<Real>::Find(Real fTMax, Real fSpeedU, Real fSpeedV)
 {
     Real fDiffSpeed, fInvDiffSpeed, fDiffPos;
 
-    if (m_afU[1] < m_afV[0])
-    {
+    if (m_afU[1] < m_afV[0]) {
         // [u0,u1] initially to the left of [v0,v1]
         fDiffSpeed = fSpeedU - fSpeedV;
-        if (fDiffSpeed > (Real)0.0)
-        {
+        if (fDiffSpeed > (Real)0.0) {
             // the intervals must move towards each other
             fDiffPos = m_afV[0] - m_afU[1];
-            if (fDiffPos <= fTMax*fDiffSpeed)
-            {
+            if (fDiffPos <= fTMax * fDiffSpeed) {
                 // the intervals intersect within the specified time
-                fInvDiffSpeed = ((Real)1.0)/fDiffSpeed;
-                m_fFirstTime = fDiffPos*fInvDiffSpeed;
-                m_fLastTime = (m_afV[1] - m_afU[0])*fInvDiffSpeed;
+                fInvDiffSpeed = ((Real)1.0) / fDiffSpeed;
+                m_fFirstTime = fDiffPos * fInvDiffSpeed;
+                m_fLastTime = (m_afV[1] - m_afU[0]) * fInvDiffSpeed;
                 m_iQuantity = 1;
-                m_afOverlap[0] = m_afU[0] + m_fFirstTime*fSpeedU;
+                m_afOverlap[0] = m_afU[0] + m_fFirstTime * fSpeedU;
                 return true;
             }
         }
     }
-    else if (m_afU[0] > m_afV[1])
-    {
+    else if (m_afU[0] > m_afV[1]) {
         // [u0,u1] initially to the right of [v0,v1]
         fDiffSpeed = fSpeedV - fSpeedU;
-        if (fDiffSpeed > (Real)0.0)
-        {
+        if (fDiffSpeed > (Real)0.0) {
             // the intervals must move towards each other
             fDiffPos = m_afU[0] - m_afV[1];
-            if (fDiffPos <= fTMax*fDiffSpeed)
-            {
+            if (fDiffPos <= fTMax * fDiffSpeed) {
                 // the intervals intersect within the specified time
-                fInvDiffSpeed = ((Real)1.0)/fDiffSpeed;
-                m_fFirstTime = fDiffPos*fInvDiffSpeed;
-                m_fLastTime = (m_afU[1] - m_afV[0])*fInvDiffSpeed;
+                fInvDiffSpeed = ((Real)1.0) / fDiffSpeed;
+                m_fFirstTime = fDiffPos * fInvDiffSpeed;
+                m_fLastTime = (m_afU[1] - m_afV[0]) * fInvDiffSpeed;
                 m_iQuantity = 1;
-                m_afOverlap[0] = m_afV[1] + m_fFirstTime*fSpeedV;
+                m_afOverlap[0] = m_afV[1] + m_fFirstTime * fSpeedV;
                 return true;
             }
         }
     }
-    else
-    {
+    else {
         // the intervals are initially intersecting
         m_fFirstTime = 0.0f;
-        if (fSpeedV > fSpeedU)
-        {
-            m_fLastTime = (m_afU[1] - m_afV[0])/(fSpeedV - fSpeedU);
+        if (fSpeedV > fSpeedU) { m_fLastTime = (m_afU[1] - m_afV[0]) / (fSpeedV - fSpeedU); }
+        else if (fSpeedV < fSpeedU) {
+            m_fLastTime = (m_afV[1] - m_afU[0]) / (fSpeedU - fSpeedV);
         }
-        else if (fSpeedV < fSpeedU)
-        {
-            m_fLastTime = (m_afV[1] - m_afU[0])/(fSpeedU - fSpeedV);
-        }
-        else
-        {
+        else {
             m_fLastTime = Math<Real>::MAX_REAL;
         }
 
-        if (m_afU[1] > m_afV[0])
-        {
-            if (m_afU[0] < m_afV[1])
-            {
+        if (m_afU[1] > m_afV[0]) {
+            if (m_afU[0] < m_afV[1]) {
                 m_iQuantity = 2;
                 m_afOverlap[0] = (m_afU[0] < m_afV[0] ? m_afV[0] : m_afU[0]);
                 m_afOverlap[1] = (m_afU[1] > m_afV[1] ? m_afV[1] : m_afU[1]);
             }
-            else  // m_afU[0] == m_afV[1]
+            else // m_afU[0] == m_afV[1]
             {
                 m_iQuantity = 1;
                 m_afOverlap[0] = m_afU[0];
             }
         }
-        else  // m_afU[1] == m_afV[0]
+        else // m_afU[1] == m_afV[0]
         {
             m_iQuantity = 1;
             m_afOverlap[0] = m_afU[1];
@@ -258,26 +212,13 @@ bool Intersector1<Real>::Find (Real fTMax, Real fSpeedU, Real fSpeedV)
     return false;
 }
 //----------------------------------------------------------------------------
-template <class Real>
-Real Intersector1<Real>::GetFirstTime () const
-{
-    return m_fFirstTime;
-}
+template<class Real> Real Intersector1<Real>::GetFirstTime() const { return m_fFirstTime; }
 //----------------------------------------------------------------------------
-template <class Real>
-Real Intersector1<Real>::GetLastTime () const
-{
-    return m_fLastTime;
-}
+template<class Real> Real Intersector1<Real>::GetLastTime() const { return m_fLastTime; }
 //----------------------------------------------------------------------------
-template <class Real>
-int Intersector1<Real>::GetQuantity () const
-{
-    return m_iQuantity;
-}
+template<class Real> int Intersector1<Real>::GetQuantity() const { return m_iQuantity; }
 //----------------------------------------------------------------------------
-template <class Real>
-Real Intersector1<Real>::GetOverlap (int i) const
+template<class Real> Real Intersector1<Real>::GetOverlap(int i) const
 {
     assert(0 <= i && i < m_iQuantity);
     return m_afOverlap[i];
@@ -287,10 +228,8 @@ Real Intersector1<Real>::GetOverlap (int i) const
 //----------------------------------------------------------------------------
 // explicit instantiation
 //----------------------------------------------------------------------------
-template WM4_FOUNDATION_ITEM
-class Intersector1<float>;
+template WM4_FOUNDATION_ITEM class Intersector1<float>;
 
-template WM4_FOUNDATION_ITEM
-class Intersector1<double>;
+template WM4_FOUNDATION_ITEM class Intersector1<double>;
 //----------------------------------------------------------------------------
-}
+} // namespace Wm4

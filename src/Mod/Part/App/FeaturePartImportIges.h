@@ -29,7 +29,7 @@
 namespace Part
 {
 
-class ImportIges :public Part::Feature
+class ImportIges: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::FeaturePartImportIges);
 
@@ -44,13 +44,11 @@ public:
     App::DocumentObjectExecReturn *execute(void) override;
     short mustExecute() const override;
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName(void) const override {
-        return "PartGui::ViewProviderImport";
-    }
+    const char *getViewProviderName(void) const override { return "PartGui::ViewProviderImport"; }
     //@}
 };
 
-}
+} // namespace Part
 
 
 #endif // PART_FEATUREPARTIMPORTIGES_H

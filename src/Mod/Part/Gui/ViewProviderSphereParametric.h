@@ -26,9 +26,10 @@
 
 #include "ViewProviderPrimitive.h"
 
-namespace PartGui {
+namespace PartGui
+{
 
-class PartGuiExport ViewProviderSphereParametric : public ViewProviderPrimitive
+class PartGuiExport ViewProviderSphereParametric: public ViewProviderPrimitive
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderSphereParametric);
 
@@ -41,10 +42,9 @@ public:
     std::vector<std::string> getDisplayModes(void) const override;
 
 protected:
-
 };
 
-class PartGuiExport ViewProviderEllipsoid : public ViewProviderPrimitive
+class PartGuiExport ViewProviderEllipsoid: public ViewProviderPrimitive
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderEllipsoid);
 
@@ -60,4 +60,3 @@ public:
 
 
 #endif // PARTGUI_VIEWPROVIDERSPHEREPARAMETRIC_H
-

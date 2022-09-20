@@ -25,9 +25,9 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# ifdef FC_OS_WIN32
-#  include <windows.h>
-# endif
+#ifdef FC_OS_WIN32
+#include <windows.h>
+#endif
 #endif
 
 #include <App/DocumentObject.h>
@@ -46,11 +46,9 @@ ViewProviderViewClip::ViewProviderViewClip()
     DisplayMode.setStatus(App::Property::ReadOnly, true);
 }
 
-ViewProviderViewClip::~ViewProviderViewClip()
-{
-}
+ViewProviderViewClip::~ViewProviderViewClip() {}
 
-std::vector<App::DocumentObject*> ViewProviderViewClip::claimChildren() const
+std::vector<App::DocumentObject *> ViewProviderViewClip::claimChildren() const
 {
     // Collect any child views
     // for Clip, valid children are any View in Views
@@ -61,27 +59,24 @@ std::vector<App::DocumentObject*> ViewProviderViewClip::claimChildren() const
 void ViewProviderViewClip::show()
 {
     //TODO: not sure that clip members need to be touched when hiding clip group
-    App::DocumentObject* obj = getObject();
-    if (!obj || obj->isRestoring())
-        return;
+    App::DocumentObject *obj = getObject();
+    if (!obj || obj->isRestoring()) return;
     if (obj->getTypeId().isDerivedFrom(TechDraw::DrawViewClip::getClassTypeId())) {
-        std::vector<App::DocumentObject*> inp = obj->getInList();
-        for (std::vector<App::DocumentObject*>::iterator it = inp.begin(); it != inp.end(); ++it)
+        std::vector<App::DocumentObject *> inp = obj->getInList();
+        for (std::vector<App::DocumentObject *>::iterator it = inp.begin(); it != inp.end(); ++it)
             (*it)->touch();
     }
     ViewProviderDrawingView::show();
-
 }
 
 void ViewProviderViewClip::hide()
 {
     //TODO: not sure that clip members need to be touched when hiding clip group
-    App::DocumentObject* obj = getObject();
-    if (!obj || obj->isRestoring())
-        return;
+    App::DocumentObject *obj = getObject();
+    if (!obj || obj->isRestoring()) return;
     if (obj->getTypeId().isDerivedFrom(TechDraw::DrawViewClip::getClassTypeId())) {
-        std::vector<App::DocumentObject*> inp = obj->getInList();
-        for (std::vector<App::DocumentObject*>::iterator it = inp.begin(); it != inp.end(); ++it)
+        std::vector<App::DocumentObject *> inp = obj->getInList();
+        for (std::vector<App::DocumentObject *>::iterator it = inp.begin(); it != inp.end(); ++it)
             (*it)->touch();
     }
     ViewProviderDrawingView::hide();
@@ -95,12 +90,9 @@ bool ViewProviderViewClip::canDelete(App::DocumentObject *obj) const
     return true;
 }
 
-TechDraw::DrawViewClip* ViewProviderViewClip::getViewObject() const
+TechDraw::DrawViewClip *ViewProviderViewClip::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawViewClip*>(pcObject);
+    return dynamic_cast<TechDraw::DrawViewClip *>(pcObject);
 }
 
-TechDraw::DrawViewClip* ViewProviderViewClip::getObject() const
-{
-    return getViewObject();
-}
+TechDraw::DrawViewClip *ViewProviderViewClip::getObject() const { return getViewObject(); }

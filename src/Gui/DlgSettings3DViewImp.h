@@ -29,8 +29,10 @@
 
 class QDoubleSpinBox;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgSettings3DView;
 
 /**
@@ -38,12 +40,12 @@ class Ui_DlgSettings3DView;
  * for the Inventor viewer.
  * \author Jürgen Riegel
  */
-class DlgSettings3DViewImp : public PreferencePage
+class DlgSettings3DViewImp: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettings3DViewImp(QWidget* parent = nullptr);
+    explicit DlgSettings3DViewImp(QWidget *parent = nullptr);
     ~DlgSettings3DViewImp() override;
 
     void saveSettings() override;

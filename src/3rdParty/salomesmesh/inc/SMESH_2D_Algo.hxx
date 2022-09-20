@@ -34,16 +34,14 @@
 #include "SMESH_subMesh.hxx"
 #include "TopoDS_Wire.hxx"
 
-class SMESH_EXPORT SMESH_2D_Algo:
-  public SMESH_Algo
+class SMESH_EXPORT SMESH_2D_Algo: public SMESH_Algo
 {
 public:
-  SMESH_2D_Algo(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~SMESH_2D_Algo();
+    SMESH_2D_Algo(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~SMESH_2D_Algo();
 
-  int NumberOfWires(const TopoDS_Shape& S);
-  int NumberOfPoints(SMESH_Mesh& aMesh,const TopoDS_Wire& W);
-
+    int NumberOfWires(const TopoDS_Shape &S);
+    int NumberOfPoints(SMESH_Mesh &aMesh, const TopoDS_Wire &W);
 };
 
 #endif

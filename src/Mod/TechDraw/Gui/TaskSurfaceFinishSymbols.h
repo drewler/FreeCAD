@@ -32,7 +32,8 @@ class QComboBox;
 class QLineEdit;
 class QGraphicsScene;
 
-namespace App {
+namespace App
+{
 class DocumentObject;
 }
 
@@ -43,7 +44,7 @@ class DrawView;
 class DrawViewPart;
 class CosmeticEdge;
 class LineFormat;
-}
+} // namespace TechDraw
 
 namespace TechDraw
 {
@@ -64,7 +65,6 @@ class SvgString
     std::stringstream svgStream;
 
 public:
-
     SvgString(int width, int height);
     void addLine(int xStart, int yStart, int xEnd, int yEnd);
     void addCircle(int xCenter, int yCenter, int radius);
@@ -73,12 +73,12 @@ public:
 
 }; // SvgString
 
-class TaskSurfaceFinishSymbols : public QWidget
+class TaskSurfaceFinishSymbols: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TaskSurfaceFinishSymbols(TechDraw::DrawViewPart* view);
+    explicit TaskSurfaceFinishSymbols(TechDraw::DrawViewPart *view);
     ~TaskSurfaceFinishSymbols() = default;
 
     virtual bool accept();
@@ -90,13 +90,20 @@ protected:
     void setUiEdit();
 
 private:
-    enum symbolType {anyMethod=0, removeProhibit, removeRequired,
-                     anyMethodAll, removeProhibitAll, removeRequiredAll};
+    enum symbolType
+    {
+        anyMethod = 0,
+        removeProhibit,
+        removeRequired,
+        anyMethodAll,
+        removeProhibitAll,
+        removeRequiredAll
+    };
     QPixmap baseSymbol(symbolType type);
     std::string completeSymbol();
-    TechDraw::DrawViewPart* selectedView;
-    QGraphicsScene* symbolScene;     //note this is not QGSPage, but another scene only used to
-                                     //display symbols in this task's ui
+    TechDraw::DrawViewPart *selectedView;
+    QGraphicsScene *symbolScene; //note this is not QGSPage, but another scene only used to
+                                 //display symbols in this task's ui
     std::vector<std::string> raValues, laySymbols, roughGrades;
     QGraphicsProxyWidget *proxyRA, *proxySamLength, *proxyMinRough, *proxyMaxRough;
     QLineEdit *leMethod, *leSamLength, *leAddition;
@@ -112,12 +119,12 @@ private Q_SLOTS:
 
 }; // class TaskSurfaceFinishSymbols
 
-class TaskDlgSurfaceFinishSymbols : public Gui::TaskView::TaskDialog
+class TaskDlgSurfaceFinishSymbols: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskDlgSurfaceFinishSymbols(TechDraw::DrawViewPart* view);
+    explicit TaskDlgSurfaceFinishSymbols(TechDraw::DrawViewPart *view);
     ~TaskDlgSurfaceFinishSymbols() override;
 
     /// is called the TaskView when the dialog is opened
@@ -129,13 +136,12 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    bool isAllowedAlterDocument() const override
-                        { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
     void update();
 
 private:
-    TaskSurfaceFinishSymbols* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskSurfaceFinishSymbols *widget;
+    Gui::TaskView::TaskBox *taskbox;
 }; // class TaskDlgSurfaceFinishSymbols
 
 } // namespace TechDrawGui

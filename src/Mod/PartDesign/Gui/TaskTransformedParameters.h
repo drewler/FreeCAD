@@ -38,15 +38,18 @@
 
 class QListWidget;
 
-namespace Part {
+namespace Part
+{
 class Feature;
 }
 
-namespace PartDesign {
+namespace PartDesign
+{
 class Transformed;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 class TaskMultiTransformParameters;
 
@@ -65,8 +68,17 @@ public:
      * will go out of sync, and crashes may result.
      */
     explicit ComboLinks(QComboBox &combo);
-    ComboLinks() {_combo = nullptr; doc = nullptr;}
-    void setCombo(QComboBox &combo) {assert(!_combo); this->_combo = &combo; _combo->clear();}
+    ComboLinks()
+    {
+        _combo = nullptr;
+        doc = nullptr;
+    }
+    void setCombo(QComboBox &combo)
+    {
+        assert(!_combo);
+        this->_combo = &combo;
+        _combo->clear();
+    }
 
     /**
      * @brief addLink adds an item to the combo. Doesn't check for duplicates.
@@ -75,9 +87,9 @@ public:
      * @return
      */
     int addLink(const App::PropertyLinkSub &lnk, QString itemText);
-    int addLink(App::DocumentObject* linkObj, std::string linkSubname, QString itemText);
+    int addLink(App::DocumentObject *linkObj, std::string linkSubname, QString itemText);
     void clear();
-    App::PropertyLinkSub& getLink(int index) const;
+    App::PropertyLinkSub &getLink(int index) const;
 
     /**
      * @brief getCurrentLink
@@ -86,7 +98,7 @@ public:
      * Otherwise, the link is automatically tested for validity (oif an object
      * doesn't exist in the document, an exception will be thrown.)
      */
-    App::PropertyLinkSub& getCurrentLink() const;
+    App::PropertyLinkSub &getCurrentLink() const;
 
     /**
      * @brief setCurrentLink selects the item with the link that matches the
@@ -98,13 +110,22 @@ public:
      */
     int setCurrentLink(const App::PropertyLinkSub &lnk);
 
-    QComboBox& combo(void) const {assert(_combo); return *_combo;}
+    QComboBox &combo(void) const
+    {
+        assert(_combo);
+        return *_combo;
+    }
 
-    ~ComboLinks() {_combo = nullptr; clear();}
+    ~ComboLinks()
+    {
+        _combo = nullptr;
+        clear();
+    }
+
 private:
-    QComboBox* _combo;
-    App::Document* doc;
-    std::vector<App::PropertyLinkSub*> linksInList;
+    QComboBox *_combo;
+    App::Document *doc;
+    std::vector<App::PropertyLinkSub *> linksInList;
 };
 
 /**
@@ -115,28 +136,29 @@ private:
   Because in the second case there is no ViewProvider, some special methods are required to
   access the underlying FeatureTransformed object in two different ways.
   **/
-class TaskTransformedParameters : public Gui::TaskView::TaskBox,
-                                  public Gui::SelectionObserver,
-                                  public Gui::DocumentObserver
+class TaskTransformedParameters: public Gui::TaskView::TaskBox,
+                                 public Gui::SelectionObserver,
+                                 public Gui::DocumentObserver
 {
     Q_OBJECT
 
 public:
     /// Constructor for task with ViewProvider
-    explicit TaskTransformedParameters(ViewProviderTransformed *TransformedView, QWidget *parent = nullptr);
+    explicit TaskTransformedParameters(ViewProviderTransformed *TransformedView,
+                                       QWidget *parent = nullptr);
     /// Constructor for task with parent task (MultiTransform mode)
     explicit TaskTransformedParameters(TaskMultiTransformParameters *parentTask);
     ~TaskTransformedParameters() override;
 
     /// Returns the originals property of associated top feeature object
-    const std::vector<App::DocumentObject*> & getOriginals(void) const;
+    const std::vector<App::DocumentObject *> &getOriginals(void) const;
 
     /// Get the TransformedFeature object associated with this task
     // Either through the ViewProvider or the currently active subFeature of the parentTask
     App::DocumentObject *getBaseObject() const;
 
     /// Get the sketch object of the first original either of the object associated with this feature or with the parent feature (MultiTransform mode)
-    App::DocumentObject* getSketchObject() const;
+    App::DocumentObject *getSketchObject() const;
 
     void exitSelectionMode();
 
@@ -152,9 +174,7 @@ public:
     bool isEnabledTransaction() const;
     void setupTransaction();
 
-    int getTransactionID() const {
-        return transactionID;
-    }
+    int getTransactionID() const { return transactionID; }
 
 protected:
     /**
@@ -162,21 +182,21 @@ protected:
      * For stand alone features it will be view provider associated with this object
      * For features inside multitransform it will be the view provider of the multitransform object
      */
-    PartDesignGui::ViewProviderTransformed *getTopTransformedView () const;
+    PartDesignGui::ViewProviderTransformed *getTopTransformedView() const;
 
     /**
      * Returns the base transformed object
      * For stand alone features it will be objects associated with this object
      * For features inside multitransform it will be the base multitransform object
      */
-    PartDesign::Transformed *getTopTransformedObject () const;
+    PartDesign::Transformed *getTopTransformedObject() const;
 
 protected Q_SLOTS:
     /// Connect the subTask OK button to the MultiTransform task
     virtual void onSubTaskButtonOK() {}
     void onButtonAddFeature(const bool checked);
     void onButtonRemoveFeature(const bool checked);
-    virtual void onFeatureDeleted(void)=0;
+    virtual void onFeatureDeleted(void) = 0;
     void indexesMoved();
 
 protected:
@@ -185,9 +205,9 @@ protected:
      * For stand alone features it will be objects associated with the view provider
      * For features inside multitransform it will be the parent's multitransform object
      */
-    PartDesign::Transformed *getObject () const;
+    PartDesign::Transformed *getObject() const;
 
-    bool originalSelected(const Gui::SelectionChanges& msg);
+    bool originalSelected(const Gui::SelectionChanges &msg);
 
     /// Recompute either this feature or the parent feature (MultiTransform mode)
     void recomputeFeature();
@@ -205,29 +225,35 @@ protected:
     void checkVisibility();
 
 protected:
-    virtual void addObject(App::DocumentObject*);
-    virtual void removeObject(App::DocumentObject*);
+    virtual void addObject(App::DocumentObject *);
+    virtual void removeObject(App::DocumentObject *);
     /** Notifies when the object is about to be removed. */
-    void slotDeletedObject(const Gui::ViewProviderDocumentObject& Obj) override;
+    void slotDeletedObject(const Gui::ViewProviderDocumentObject &Obj) override;
     void changeEvent(QEvent *e) override = 0;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override = 0;
-    virtual void clearButtons()=0;
-    static void removeItemFromListWidget(QListWidget* widget, const QString& itemstr);
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override = 0;
+    virtual void clearButtons() = 0;
+    static void removeItemFromListWidget(QListWidget *widget, const QString &itemstr);
 
     void fillAxisCombo(ComboLinks &combolinks, Part::Part2DObject *sketch);
     void fillPlanesCombo(ComboLinks &combolinks, Part::Part2DObject *sketch);
 
 protected:
-    QWidget* proxy;
+    QWidget *proxy;
     ViewProviderTransformed *TransformedView;
     int transactionID = 0;
     bool enableTransaction = true;
 
-    enum selectionModes { none, addFeature, removeFeature, reference };
+    enum selectionModes
+    {
+        none,
+        addFeature,
+        removeFeature,
+        reference
+    };
     selectionModes selectionMode;
 
     /// The MultiTransform parent task of this task
-    TaskMultiTransformParameters* parentTask;
+    TaskMultiTransformParameters *parentTask;
     /// Flag indicating whether this object is a container for MultiTransform
     bool insideMultiTransform;
     /// Lock updateUI(), applying changes to the underlying feature and calling recomputeFeature()
@@ -235,7 +261,7 @@ protected:
 };
 
 /// simulation dialog for the TaskView
-class TaskDlgTransformedParameters : public PartDesignGui::TaskDlgFeatureParameters
+class TaskDlgTransformedParameters: public PartDesignGui::TaskDlgFeatureParameters
 {
     Q_OBJECT
 
@@ -243,17 +269,20 @@ public:
     explicit TaskDlgTransformedParameters(ViewProviderTransformed *TransformedView);
     ~TaskDlgTransformedParameters() override {}
 
-    ViewProviderTransformed* getTransformedView() const
-    { return static_cast<ViewProviderTransformed*>(vp); }
+    ViewProviderTransformed *getTransformedView() const
+    {
+        return static_cast<ViewProviderTransformed *>(vp);
+    }
 
 public:
     /// is called by the framework if the dialog is accepted (Ok)
     bool accept() override;
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
+
 protected:
-    TaskTransformedParameters  *parameter;
-    TaskTransformedMessages  *message;
+    TaskTransformedParameters *parameter;
+    TaskTransformedMessages *message;
 };
 
 } //namespace PartDesignGui

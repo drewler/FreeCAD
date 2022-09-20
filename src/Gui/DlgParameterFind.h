@@ -28,25 +28,27 @@
 
 class QTreeWidgetItem;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 
 class Ui_DlgParameterFind;
 class DlgParameterImp;
 
-class GuiExport DlgParameterFind : public QDialog
+class GuiExport DlgParameterFind: public QDialog
 {
     Q_OBJECT
 
 public:
-    DlgParameterFind(DlgParameterImp* parent);
+    DlgParameterFind(DlgParameterImp *parent);
     ~DlgParameterFind();
 
     void accept();
     void reject();
 
 private Q_SLOTS:
-    void on_lineEdit_textChanged(const QString&);
+    void on_lineEdit_textChanged(const QString &);
     void on_checkGroups_toggled(bool);
     void on_checkNames_toggled(bool);
     void on_checkValues_toggled(bool);
@@ -59,12 +61,12 @@ private:
         bool value = true;
         bool match = false;
     };
-    QTreeWidgetItem* findItem(QTreeWidgetItem* root, const Options& opt) const;
-    bool matches(QTreeWidgetItem* item, const Options& opt) const;
+    QTreeWidgetItem *findItem(QTreeWidgetItem *root, const Options &opt) const;
+    bool matches(QTreeWidgetItem *item, const Options &opt) const;
 
 private:
-    Ui_DlgParameterFind* ui;
-    DlgParameterImp* dialog;
+    Ui_DlgParameterFind *ui;
+    DlgParameterImp *dialog;
 };
 
 } // namespace Dialog

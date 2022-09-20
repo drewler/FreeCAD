@@ -45,14 +45,13 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_FixedPoints1D::StdMeshers_FixedPoints1D(int hypId, int studyId,
-                                                   SMESH_Gen * gen)
-  :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_FixedPoints1D::StdMeshers_FixedPoints1D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "FixedPoints1D";
-  _param_algo_dim = 1; 
-  _nbsegs.reserve( 1 );
-  _nbsegs.push_back( 1 );
+    _name = "FixedPoints1D";
+    _param_algo_dim = 1;
+    _nbsegs.reserve(1);
+    _nbsegs.push_back(1);
 }
 
 //=============================================================================
@@ -61,9 +60,7 @@ StdMeshers_FixedPoints1D::StdMeshers_FixedPoints1D(int hypId, int studyId,
  */
 //=============================================================================
 
-StdMeshers_FixedPoints1D::~StdMeshers_FixedPoints1D()
-{
-}
+StdMeshers_FixedPoints1D::~StdMeshers_FixedPoints1D() {}
 
 //=============================================================================
 /*!
@@ -71,37 +68,10 @@ StdMeshers_FixedPoints1D::~StdMeshers_FixedPoints1D()
  */
 //=============================================================================
 
-void StdMeshers_FixedPoints1D::SetPoints(std::vector<double>& listParams)
+void StdMeshers_FixedPoints1D::SetPoints(std::vector<double> &listParams)
 {
-  _params = listParams;
-  NotifySubMeshesHypothesisModification();
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-void StdMeshers_FixedPoints1D::SetNbSegments(std::vector<int>& listNbSeg) 
-{
-  _nbsegs = listNbSeg;
-  NotifySubMeshesHypothesisModification();
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-void StdMeshers_FixedPoints1D::SetReversedEdges( std::vector<int>& ids )
-{
-  if ( ids != _edgeIDs ) {
-    _edgeIDs = ids;
-
+    _params = listParams;
     NotifySubMeshesHypothesisModification();
-  }
 }
 
 //=============================================================================
@@ -110,30 +80,10 @@ void StdMeshers_FixedPoints1D::SetReversedEdges( std::vector<int>& ids )
  */
 //=============================================================================
 
-ostream & StdMeshers_FixedPoints1D::SaveTo(ostream & save)
+void StdMeshers_FixedPoints1D::SetNbSegments(std::vector<int> &listNbSeg)
 {
-  int listSize = _params.size();
-  save << listSize;
-  if ( listSize > 0 ) {
-    for ( int i = 0; i < listSize; i++) save << " " << _params[i];
-  }
-
-  listSize = _nbsegs.size();
-  save << " " << listSize;
-  if ( listSize > 0 ) {
-    for ( int i = 0; i < listSize; i++) save << " " << _nbsegs[i];
-  }
-
-  listSize = _edgeIDs.size();
-  save << " " << listSize;
-  if ( listSize > 0 ) {
-    for ( int i = 0; i < listSize; i++)
-      save << " " << _edgeIDs[i];
-  }
-
-  save << " " << _objEntry;
-
-  return save;
+    _nbsegs = listNbSeg;
+    NotifySubMeshesHypothesisModification();
 }
 
 //=============================================================================
@@ -142,45 +92,13 @@ ostream & StdMeshers_FixedPoints1D::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_FixedPoints1D::LoadFrom(istream & load)
+void StdMeshers_FixedPoints1D::SetReversedEdges(std::vector<int> &ids)
 {
-  bool isOK = true;
-  int intVal;
-  double dblVal;
+    if (ids != _edgeIDs) {
+        _edgeIDs = ids;
 
-  isOK = (bool)(load >> intVal);
-  if (isOK && intVal > 0) {
-    _params.clear();
-    _params.reserve( intVal );
-    for (int i = 0; i < _params.capacity() && isOK; i++) {
-      isOK = (bool)(load >> dblVal);
-      if ( isOK ) _params.push_back( dblVal );
+        NotifySubMeshesHypothesisModification();
     }
-  }
-
-  isOK = (bool)(load >> intVal);
-  if (isOK && intVal > 0) {
-    _nbsegs.clear();
-    _nbsegs.reserve( intVal );
-    for (int i = 0; i < _nbsegs.capacity() && isOK; i++) {
-      isOK = (bool)(load >> intVal);
-      if ( isOK ) _nbsegs.push_back( intVal );
-    }
-  }
-
-  isOK = (bool)(load >> intVal);
-  if (isOK && intVal > 0) {
-    _edgeIDs.clear();
-    _edgeIDs.reserve( intVal );
-    for (int i = 0; i < _edgeIDs.capacity() && isOK; i++) {
-      isOK = (bool)(load >> intVal);
-      if ( isOK ) _edgeIDs.push_back( intVal );
-    }
-  }
-
-  isOK = (bool)(load >> _objEntry);
-
-  return load;
 }
 
 //=============================================================================
@@ -189,9 +107,29 @@ istream & StdMeshers_FixedPoints1D::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_FixedPoints1D & hyp)
+ostream &StdMeshers_FixedPoints1D::SaveTo(ostream &save)
 {
-  return hyp.SaveTo( save );
+    int listSize = _params.size();
+    save << listSize;
+    if (listSize > 0) {
+        for (int i = 0; i < listSize; i++) save << " " << _params[i];
+    }
+
+    listSize = _nbsegs.size();
+    save << " " << listSize;
+    if (listSize > 0) {
+        for (int i = 0; i < listSize; i++) save << " " << _nbsegs[i];
+    }
+
+    listSize = _edgeIDs.size();
+    save << " " << listSize;
+    if (listSize > 0) {
+        for (int i = 0; i < listSize; i++) save << " " << _edgeIDs[i];
+    }
+
+    save << " " << _objEntry;
+
+    return save;
 }
 
 //=============================================================================
@@ -200,10 +138,62 @@ ostream & operator <<(ostream & save, StdMeshers_FixedPoints1D & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_FixedPoints1D & hyp)
+istream &StdMeshers_FixedPoints1D::LoadFrom(istream &load)
 {
-  return hyp.LoadFrom( load );
+    bool isOK = true;
+    int intVal;
+    double dblVal;
+
+    isOK = (bool)(load >> intVal);
+    if (isOK && intVal > 0) {
+        _params.clear();
+        _params.reserve(intVal);
+        for (int i = 0; i < _params.capacity() && isOK; i++) {
+            isOK = (bool)(load >> dblVal);
+            if (isOK) _params.push_back(dblVal);
+        }
+    }
+
+    isOK = (bool)(load >> intVal);
+    if (isOK && intVal > 0) {
+        _nbsegs.clear();
+        _nbsegs.reserve(intVal);
+        for (int i = 0; i < _nbsegs.capacity() && isOK; i++) {
+            isOK = (bool)(load >> intVal);
+            if (isOK) _nbsegs.push_back(intVal);
+        }
+    }
+
+    isOK = (bool)(load >> intVal);
+    if (isOK && intVal > 0) {
+        _edgeIDs.clear();
+        _edgeIDs.reserve(intVal);
+        for (int i = 0; i < _edgeIDs.capacity() && isOK; i++) {
+            isOK = (bool)(load >> intVal);
+            if (isOK) _edgeIDs.push_back(intVal);
+        }
+    }
+
+    isOK = (bool)(load >> _objEntry);
+
+    return load;
 }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &operator<<(ostream &save, StdMeshers_FixedPoints1D &hyp) { return hyp.SaveTo(save); }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+istream &operator>>(istream &load, StdMeshers_FixedPoints1D &hyp) { return hyp.LoadFrom(load); }
 
 //================================================================================
 /*!
@@ -214,15 +204,14 @@ istream & operator >>(istream & load, StdMeshers_FixedPoints1D & hyp)
  */
 //================================================================================
 
-bool StdMeshers_FixedPoints1D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                   const TopoDS_Shape& theShape)
+bool StdMeshers_FixedPoints1D::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                   const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _nbsegs.reserve( 1 );
-  _nbsegs.push_back( 1 );
-  return true;
+    _nbsegs.reserve(1);
+    _nbsegs.push_back(1);
+    return true;
 }
 
 //================================================================================
@@ -232,11 +221,10 @@ bool StdMeshers_FixedPoints1D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
  */
 //================================================================================
 
-bool StdMeshers_FixedPoints1D::SetParametersByDefaults(const TDefaults&  dflts,
-                                                       const SMESH_Mesh* /*mesh*/)
+bool StdMeshers_FixedPoints1D::SetParametersByDefaults(const TDefaults &dflts,
+                                                       const SMESH_Mesh * /*mesh*/)
 {
-  _nbsegs.reserve( 1 );
-  _nbsegs.push_back( 1 );
-  return true;
+    _nbsegs.reserve(1);
+    _nbsegs.push_back(1);
+    return true;
 }
-

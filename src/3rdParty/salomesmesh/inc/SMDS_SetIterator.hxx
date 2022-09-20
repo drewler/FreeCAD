@@ -30,43 +30,37 @@
 
 #include "SMDS_Iterator.hxx"
 
-namespace SMDS {
+namespace SMDS
+{
 
-  ///////////////////////////////////////////////////////////////////////////////
-  /// Accessors to value pointed by iterator
-  ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/// Accessors to value pointed by iterator
+///////////////////////////////////////////////////////////////////////////////
 
-  template<typename VALUE,typename VALUE_SET_ITERATOR>
-  struct SimpleAccessor {
-    static VALUE value(VALUE_SET_ITERATOR it) { return (VALUE) *it; }
-  };
+template<typename VALUE, typename VALUE_SET_ITERATOR> struct SimpleAccessor {
+    static VALUE value(VALUE_SET_ITERATOR it) { return (VALUE)*it; }
+};
 
-  template<typename VALUE,typename VALUE_SET_ITERATOR>
-  struct KeyAccessor {
-    static VALUE value(VALUE_SET_ITERATOR it) { return (VALUE) it->first; }
-  };
+template<typename VALUE, typename VALUE_SET_ITERATOR> struct KeyAccessor {
+    static VALUE value(VALUE_SET_ITERATOR it) { return (VALUE)it->first; }
+};
 
-  template<typename VALUE,typename VALUE_SET_ITERATOR>
-  struct ValueAccessor {
-    static VALUE value(VALUE_SET_ITERATOR it) { return (VALUE) it->second; }
-  };
+template<typename VALUE, typename VALUE_SET_ITERATOR> struct ValueAccessor {
+    static VALUE value(VALUE_SET_ITERATOR it) { return (VALUE)it->second; }
+};
 
-  ///////////////////////////////////////////////////////////////////////////////
-  /// Filters of value pointed by iterator
-  ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/// Filters of value pointed by iterator
+///////////////////////////////////////////////////////////////////////////////
 
-  template <typename VALUE>
-  struct PassAllValueFilter
-  {
-    bool operator()(const VALUE& t ) { return true; }
-  };
+template<typename VALUE> struct PassAllValueFilter {
+    bool operator()(const VALUE &t) { return true; }
+};
 
-  template <typename VALUE>
-  struct NonNullFilter
-  {
-    bool operator()(const VALUE& t ) { return bool( t ); }
-  };
-}
+template<typename VALUE> struct NonNullFilter {
+    bool operator()(const VALUE &t) { return bool(t); }
+};
+} // namespace SMDS
 
 ///////////////////////////////////////////////////////////////////////////////
 /// SMDS_Iterator iterating over abstract set of values like STL containers
@@ -75,45 +69,40 @@ namespace SMDS {
 ///
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename VALUE,
-         typename VALUE_SET_ITERATOR,
-         typename ACCESSOR =SMDS::SimpleAccessor<VALUE,VALUE_SET_ITERATOR>,
-         typename VALUE_FILTER=SMDS::PassAllValueFilter<VALUE> >
-class SMDS_SetIterator : public SMDS_Iterator<VALUE>
+template<typename VALUE, typename VALUE_SET_ITERATOR,
+         typename ACCESSOR = SMDS::SimpleAccessor<VALUE, VALUE_SET_ITERATOR>,
+         typename VALUE_FILTER = SMDS::PassAllValueFilter<VALUE>>
+class SMDS_SetIterator: public SMDS_Iterator<VALUE>
 {
 protected:
-  VALUE_SET_ITERATOR _beg, _end;
-  VALUE_FILTER _filter;
-public:
-  SMDS_SetIterator(const VALUE_SET_ITERATOR & begin,
-                   const VALUE_SET_ITERATOR & end,
-                   const VALUE_FILTER&        filter=VALUE_FILTER())
-  { init ( begin, end, filter ); }
+    VALUE_SET_ITERATOR _beg, _end;
+    VALUE_FILTER _filter;
 
-  /// Initialization
-  virtual void init(const VALUE_SET_ITERATOR & begin,
-                    const VALUE_SET_ITERATOR & end,
-                    const VALUE_FILTER&        filter=VALUE_FILTER())
-  {
-    _beg = begin;
-    _end = end;
-    _filter = filter;
-    if ( more() && !_filter(ACCESSOR::value( _beg )))
-      next();
-  }
-  /// Return true iff there are other object in this iterator
-  virtual bool more()
-  {
-    return _beg != _end;
-  }
-  /// Return the current object and step to the next one
-  virtual VALUE next()
-  {
-    VALUE ret = ACCESSOR::value( _beg++ );
-    while ( more() && !_filter(ACCESSOR::value( _beg )))
-      ++_beg;
-    return ret;
-  }
+public:
+    SMDS_SetIterator(const VALUE_SET_ITERATOR &begin, const VALUE_SET_ITERATOR &end,
+                     const VALUE_FILTER &filter = VALUE_FILTER())
+    {
+        init(begin, end, filter);
+    }
+
+    /// Initialization
+    virtual void init(const VALUE_SET_ITERATOR &begin, const VALUE_SET_ITERATOR &end,
+                      const VALUE_FILTER &filter = VALUE_FILTER())
+    {
+        _beg = begin;
+        _end = end;
+        _filter = filter;
+        if (more() && !_filter(ACCESSOR::value(_beg))) next();
+    }
+    /// Return true iff there are other object in this iterator
+    virtual bool more() { return _beg != _end; }
+    /// Return the current object and step to the next one
+    virtual VALUE next()
+    {
+        VALUE ret = ACCESSOR::value(_beg++);
+        while (more() && !_filter(ACCESSOR::value(_beg))) ++_beg;
+        return ret;
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -125,50 +114,53 @@ public:
  * \brief iterator on values of a map
  */
 template<typename M>
-struct SMDS_mapIterator : public SMDS_SetIterator< typename M::mapped_type, typename M::const_iterator,
-                                                   SMDS::ValueAccessor<typename M::mapped_type,
-                                                                       typename M::const_iterator> > {
-  typedef SMDS_SetIterator< typename M::mapped_type, typename M::const_iterator,
-                            SMDS::ValueAccessor<typename M::mapped_type,
-                                                typename M::const_iterator> > parent_type;
-  SMDS_mapIterator(const M& m):parent_type(m.begin(),m.end()) {}
+struct SMDS_mapIterator
+    : public SMDS_SetIterator<
+          typename M::mapped_type, typename M::const_iterator,
+          SMDS::ValueAccessor<typename M::mapped_type, typename M::const_iterator>> {
+    typedef SMDS_SetIterator<
+        typename M::mapped_type, typename M::const_iterator,
+        SMDS::ValueAccessor<typename M::mapped_type, typename M::const_iterator>>
+        parent_type;
+    SMDS_mapIterator(const M &m) : parent_type(m.begin(), m.end()) {}
 };
 /*!
  * \brief reverse iterator on values of a map
  */
 template<typename M>
-struct SMDS_mapReverseIterator : public SMDS_SetIterator< typename M::mapped_type,
-                                                          typename M::const_reverse_iterator,
-                                                          SMDS::ValueAccessor<typename M::mapped_type,
-                                                                              typename M::const_reverse_iterator> > {
-  typedef SMDS_SetIterator< typename M::mapped_type, typename M::const_reverse_iterator,
-                            SMDS::ValueAccessor<typename M::mapped_type,
-                                                typename M::const_reverse_iterator> > parent_type;
-  SMDS_mapReverseIterator(const M& m):parent_type(m.rbegin(),m.rend()) {}
+struct SMDS_mapReverseIterator
+    : public SMDS_SetIterator<
+          typename M::mapped_type, typename M::const_reverse_iterator,
+          SMDS::ValueAccessor<typename M::mapped_type, typename M::const_reverse_iterator>> {
+    typedef SMDS_SetIterator<
+        typename M::mapped_type, typename M::const_reverse_iterator,
+        SMDS::ValueAccessor<typename M::mapped_type, typename M::const_reverse_iterator>>
+        parent_type;
+    SMDS_mapReverseIterator(const M &m) : parent_type(m.rbegin(), m.rend()) {}
 };
 /*!
  * \brief iterator on keys of a map
  */
 template<typename M>
-struct SMDS_mapKeyIterator : public SMDS_SetIterator< typename M::key_type, typename M::const_iterator,
-                                                      SMDS::KeyAccessor<typename M::key_type,
-                                                                        typename M::const_iterator> > {
-  typedef SMDS_SetIterator< typename M::key_type, typename M::const_iterator,
-                            SMDS::KeyAccessor<typename M::key_type,
-                                              typename M::const_iterator> > parent_type;
-  SMDS_mapKeyIterator(const M& m):parent_type(m.begin(),m.end()) {}
+struct SMDS_mapKeyIterator
+    : public SMDS_SetIterator<typename M::key_type, typename M::const_iterator,
+                              SMDS::KeyAccessor<typename M::key_type, typename M::const_iterator>> {
+    typedef SMDS_SetIterator<typename M::key_type, typename M::const_iterator,
+                             SMDS::KeyAccessor<typename M::key_type, typename M::const_iterator>>
+        parent_type;
+    SMDS_mapKeyIterator(const M &m) : parent_type(m.begin(), m.end()) {}
 };
 /*!
  * \brief reverse iterator on keys of a map
  */
 template<typename M>
-struct SMDS_mapKeyReverseIterator : public SMDS_SetIterator< typename M::key_type, typename M::const_iterator,
-                                                            SMDS::KeyAccessor<typename M::key_type,
-                                                                              typename M::const_iterator> > {
-  typedef SMDS_SetIterator< typename M::key_type, typename M::const_iterator,
-                            SMDS::KeyAccessor<typename M::key_type,
-                                              typename M::const_iterator> > parent_type;
-  SMDS_mapKeyReverseIterator(const M& m):parent_type(m.rbegin(),m.rend()) {}
+struct SMDS_mapKeyReverseIterator
+    : public SMDS_SetIterator<typename M::key_type, typename M::const_iterator,
+                              SMDS::KeyAccessor<typename M::key_type, typename M::const_iterator>> {
+    typedef SMDS_SetIterator<typename M::key_type, typename M::const_iterator,
+                             SMDS::KeyAccessor<typename M::key_type, typename M::const_iterator>>
+        parent_type;
+    SMDS_mapKeyReverseIterator(const M &m) : parent_type(m.rbegin(), m.rend()) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -180,34 +172,31 @@ struct SMDS_mapKeyReverseIterator : public SMDS_SetIterator< typename M::key_typ
 class SMDS_MeshElement;
 class SMDS_MeshNode;
 
-typedef const SMDS_MeshElement* SMDS_pElement;
-typedef const SMDS_MeshNode*    SMDS_pNode;
+typedef const SMDS_MeshElement *SMDS_pElement;
+typedef const SMDS_MeshNode *SMDS_pNode;
 
 // element iterators
 
-typedef SMDS_SetIterator< SMDS_pElement, std::vector< SMDS_pElement >::const_iterator>
-SMDS_ElementVectorIterator;
+typedef SMDS_SetIterator<SMDS_pElement, std::vector<SMDS_pElement>::const_iterator>
+    SMDS_ElementVectorIterator;
 
 
-typedef SMDS_SetIterator< SMDS_pElement, SMDS_pElement const *>
-SMDS_ElementArrayIterator;
+typedef SMDS_SetIterator<SMDS_pElement, SMDS_pElement const *> SMDS_ElementArrayIterator;
 
 
-typedef SMDS_SetIterator< SMDS_pElement, std::vector< SMDS_pNode >::const_iterator>
-SMDS_NodeVectorElemIterator;
+typedef SMDS_SetIterator<SMDS_pElement, std::vector<SMDS_pNode>::const_iterator>
+    SMDS_NodeVectorElemIterator;
 
 
-typedef SMDS_SetIterator< SMDS_pElement, SMDS_pNode const * >
-SMDS_NodeArrayElemIterator;
+typedef SMDS_SetIterator<SMDS_pElement, SMDS_pNode const *> SMDS_NodeArrayElemIterator;
 
 // node iterators
 
-typedef SMDS_SetIterator< SMDS_pNode, std::vector< SMDS_pNode >::const_iterator >
-SMDS_NodeVectorIterator;
+typedef SMDS_SetIterator<SMDS_pNode, std::vector<SMDS_pNode>::const_iterator>
+    SMDS_NodeVectorIterator;
 
 
-typedef SMDS_SetIterator< SMDS_pNode, SMDS_pNode const * >
-SMDS_NodeArrayIterator;
+typedef SMDS_SetIterator<SMDS_pNode, SMDS_pNode const *> SMDS_NodeArrayIterator;
 
 
 #endif

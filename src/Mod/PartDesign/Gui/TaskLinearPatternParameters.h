@@ -30,25 +30,29 @@
 class QTimer;
 class Ui_TaskLinearPatternParameters;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 class TaskMultiTransformParameters;
 
-class TaskLinearPatternParameters : public TaskTransformedParameters
+class TaskLinearPatternParameters: public TaskTransformedParameters
 {
     Q_OBJECT
 
 public:
     /// Constructor for task with ViewProvider
-    explicit TaskLinearPatternParameters(ViewProviderTransformed *TransformedView, QWidget *parent = nullptr);
+    explicit TaskLinearPatternParameters(ViewProviderTransformed *TransformedView,
+                                         QWidget *parent = nullptr);
     /// Constructor for task with parent task (MultiTransform mode)
     TaskLinearPatternParameters(TaskMultiTransformParameters *parentTask, QLayout *layout);
     ~TaskLinearPatternParameters() override;
@@ -65,12 +69,12 @@ private Q_SLOTS:
     void onFeatureDeleted() override;
 
 protected:
-    void addObject(App::DocumentObject*) override;
-    void removeObject(App::DocumentObject*) override;
+    void addObject(App::DocumentObject *) override;
+    void removeObject(App::DocumentObject *) override;
     void changeEvent(QEvent *e) override;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     void clearButtons() override;
-    void getDirection(App::DocumentObject*& obj, std::vector<std::string>& sub) const;
+    void getDirection(App::DocumentObject *&obj, std::vector<std::string> &sub) const;
     bool getReverse() const;
     double getLength() const;
     unsigned getOccurrences() const;
@@ -83,14 +87,14 @@ private:
 
 private:
     std::unique_ptr<Ui_TaskLinearPatternParameters> ui;
-    QTimer* updateViewTimer;
+    QTimer *updateViewTimer;
 
     ComboLinks dirLinks;
 };
 
 
 /// simulation dialog for the TaskView
-class TaskDlgLinearPatternParameters : public TaskDlgTransformedParameters
+class TaskDlgLinearPatternParameters: public TaskDlgTransformedParameters
 {
     Q_OBJECT
 

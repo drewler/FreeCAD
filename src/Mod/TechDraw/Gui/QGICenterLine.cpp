@@ -46,7 +46,7 @@ QGICenterLine::QGICenterLine()
     setWidth(0.0);
     setStyle(getCenterStyle());
     setColor(getCenterColor());
-    m_isintersection = false;              //Coverity CID 174669
+    m_isintersection = false; //Coverity CID 174669
 }
 
 void QGICenterLine::draw()
@@ -71,28 +71,31 @@ void QGICenterLine::setBounds(double x1, double y1, double x2, double y2)
     m_end = QPointF(x2, y2);
 }
 
-QColor QGICenterLine::getCenterColor()
-{
-    return PreferencesGui::centerQColor();
-}
+QColor QGICenterLine::getCenterColor() { return PreferencesGui::centerQColor(); }
 
 Qt::PenStyle QGICenterLine::getCenterStyle()
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp")->
-                                         GetGroup("Preferences")->GetGroup("Mod/TechDraw/Decorations");
-    Qt::PenStyle centerStyle = static_cast<Qt::PenStyle> (hGrp->GetInt("CenterLine", 2));
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Decorations");
+    Qt::PenStyle centerStyle = static_cast<Qt::PenStyle>(hGrp->GetInt("CenterLine", 2));
     return centerStyle;
 }
 
-void QGICenterLine::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGICenterLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                          QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
     setTools();
-    QGIDecoration::paint (painter, &myOption, widget);
+    QGIDecoration::paint(painter, &myOption, widget);
 }
 
-void QGICenterLine::setIntersection(bool isIntersecting) {
+void QGICenterLine::setIntersection(bool isIntersecting)
+{
     /**
      * Set the intersection style for the centerline.
      * If isIntersecting is set to true, the middle of the centerline
@@ -108,7 +111,7 @@ void QGICenterLine::setTools()
 {
     if (m_styleCurrent == Qt::DashDotLine) {
         QVector<qreal> dashes;
-        qreal space = 4;  // in unit width
+        qreal space = 4; // in unit width
         qreal dash = 16;
         // dot must be really small when using CapStyle RoundCap but > 0
         // for CapStyle FlatCap you would need to set it to 1
@@ -123,7 +126,8 @@ void QGICenterLine::setTools()
         // count here!
         if (m_isintersection) {
             m_pen.setDashOffset(dashlen - fmod(l_len, dashlen) + space + dash / 2);
-        } else {
+        }
+        else {
             m_pen.setDashOffset(dashlen - fmod(l_len, dashlen));
         }
 

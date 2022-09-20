@@ -28,14 +28,15 @@
 
 #include "QGVNavStyle.h"
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 class QGVPage;
 
-class TechDrawGuiExport QGVNavStyleMaya : public QGVNavStyle
+class TechDrawGuiExport QGVNavStyleMaya: public QGVNavStyle
 {
 public:
-    explicit QGVNavStyleMaya(QGVPage* qgvp);
+    explicit QGVNavStyleMaya(QGVPage *qgvp);
     ~QGVNavStyleMaya() override;
 
     void handleKeyReleaseEvent(QKeyEvent *event) override;
@@ -47,8 +48,7 @@ public:
 
 protected:
 private:
-
 };
 
-}
+} // namespace TechDrawGui
 #endif // TECHDRAW_MAYANAVSTYLE_H

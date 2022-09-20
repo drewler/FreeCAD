@@ -40,7 +40,7 @@ namespace TechDraw
 {
 class DrawPage;
 
-class TechDrawExport DrawViewSymbol : public TechDraw::DrawView
+class TechDrawExport DrawViewSymbol: public TechDraw::DrawView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawViewSymbol);
 
@@ -49,8 +49,8 @@ public:
     DrawViewSymbol();
     ~DrawViewSymbol() override;
 
-    App::PropertyString       Symbol;
-    App::PropertyStringList   EditableTexts;
+    App::PropertyString Symbol;
+    App::PropertyStringList EditableTexts;
 
     /** @name methods override Feature */
     //@{
@@ -59,22 +59,20 @@ public:
     //@}
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderSymbol";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderSymbol"; }
     QRectF getRect() const override;
-    bool checkFit(TechDraw::DrawPage* p) const override;
+    bool checkFit(TechDraw::DrawPage *p) const override;
 
     //return PyObject as DrawViewSymbolPy
     PyObject *getPyObject() override;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     Base::BoundBox3d bbox;
 
     std::vector<std::string> getEditableFields();
     void updateFieldsInSymbol();
-    bool loadQDomDocument(QDomDocument& symbolDocument);
+    bool loadQDomDocument(QDomDocument &symbolDocument);
 };
 
 using DrawViewSymbolPython = App::FeaturePythonT<DrawViewSymbol>;

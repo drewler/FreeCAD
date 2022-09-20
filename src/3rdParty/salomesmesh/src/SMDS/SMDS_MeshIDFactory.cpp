@@ -33,82 +33,66 @@ using namespace std;
 
 //=======================================================================
 //function : SMDS_MeshIDFactory
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-SMDS_MeshIDFactory::SMDS_MeshIDFactory():myMaxID(0), myMesh(0)
-{
-}
+SMDS_MeshIDFactory::SMDS_MeshIDFactory() : myMaxID(0), myMesh(0) {}
 
 int SMDS_MeshIDFactory::GetFreeID()
 {
-        int newid;
-        if (myPoolOfID.empty())
-        {
-            newid = ++myMaxID;
-            //MESSAGE("GetFreeID new " << newid);
-        }
-        else
-        {
-                set<int>::iterator i = myPoolOfID.begin();
-                newid = *i;//myPoolOfID.top();
-                myPoolOfID.erase( i );//myPoolOfID.pop();
-                //MESSAGE("GetFreeID pool " << newid);
-        }
+    int newid;
+    if (myPoolOfID.empty()) {
+        newid = ++myMaxID;
+        //MESSAGE("GetFreeID new " << newid);
+    }
+    else {
+        set<int>::iterator i = myPoolOfID.begin();
+        newid = *i;          //myPoolOfID.top();
+        myPoolOfID.erase(i); //myPoolOfID.pop();
+                             //MESSAGE("GetFreeID pool " << newid);
+    }
     return newid;
 }
 
 //=======================================================================
 //function : ReleaseID
-//purpose  : 
+//purpose  :
 //=======================================================================
 void SMDS_MeshIDFactory::ReleaseID(int ID, int vtkId)
 {
-  if ( ID > 0 )
-  {
-    if ( ID < myMaxID )
-    {
-      myPoolOfID.insert(ID);
-    }
-    else if ( ID == myMaxID )
-    {
-      --myMaxID;
-      if ( !myPoolOfID.empty() ) // assure that myMaxID is not in myPoolOfID
-      {
-        set<int>::iterator i = --myPoolOfID.end();
-        while ( i != myPoolOfID.begin() && myMaxID == *i ) {
-          --myMaxID; --i;
+    if (ID > 0) {
+        if (ID < myMaxID) { myPoolOfID.insert(ID); }
+        else if (ID == myMaxID) {
+            --myMaxID;
+            if (!myPoolOfID.empty()) // assure that myMaxID is not in myPoolOfID
+            {
+                set<int>::iterator i = --myPoolOfID.end();
+                while (i != myPoolOfID.begin() && myMaxID == *i) {
+                    --myMaxID;
+                    --i;
+                }
+                if (myMaxID == *i) --myMaxID; // begin of myPoolOfID reached
+                else
+                    ++i;
+                myPoolOfID.erase(i, myPoolOfID.end());
+            }
         }
-        if ( myMaxID == *i )
-          --myMaxID; // begin of myPoolOfID reached
-        else
-          ++i;
-        myPoolOfID.erase( i, myPoolOfID.end() );
-      }
     }
-  }
 }
 
 void SMDS_MeshIDFactory::Clear()
 {
-        myMaxID = 0;
-        myPoolOfID.clear();
+    myMaxID = 0;
+    myPoolOfID.clear();
 }
 
-void SMDS_MeshIDFactory::SetMesh(SMDS_Mesh *mesh)
-{
-        myMesh = mesh;
-}
+void SMDS_MeshIDFactory::SetMesh(SMDS_Mesh *mesh) { myMesh = mesh; }
 
-SMDS_Mesh* SMDS_MeshIDFactory::GetMesh()
-{
-        return myMesh;
-}
+SMDS_Mesh *SMDS_MeshIDFactory::GetMesh() { return myMesh; }
 
 void SMDS_MeshIDFactory::emptyPool(int maxId)
 {
-        MESSAGE("SMDS_MeshIDFactory::emptyPool " << myMaxID << " --> " << maxId);
-        myMaxID = maxId;
-        myPoolOfID.clear();
+    MESSAGE("SMDS_MeshIDFactory::emptyPool " << myMaxID << " --> " << maxId);
+    myMaxID = maxId;
+    myPoolOfID.clear();
 }
-

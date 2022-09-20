@@ -28,33 +28,32 @@
 #include "ViewProvider.h"
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 class TaskDlgDressUpParameters;
 
-class PartDesignGuiExport ViewProviderDressUp : public ViewProvider
+class PartDesignGuiExport ViewProviderDressUp: public ViewProvider
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderDressUp);
 
 public:
     /// constructor
-    ViewProviderDressUp()
-        {}
+    ViewProviderDressUp() {}
     /// destructor
-    ~ViewProviderDressUp() override
-        {}
+    ~ViewProviderDressUp() override {}
 
     /// grouping handling
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
     /// Highlight the references that have been selected
     void highlightReferences(const bool on);
-    
+
     /** 
      * Returns the feature Name associated with the view provider.
      * Should be reimplemented in the successor.
      */
-    virtual const std::string & featureName() const;
+    virtual const std::string &featureName() const;
     QString menuName;
 
 protected:
@@ -63,9 +62,7 @@ protected:
 private:
     std::vector<App::Color> originalFaceColors;
     std::vector<App::Color> originalLineColors;
-
 };
-
 
 
 } // namespace PartDesignGui

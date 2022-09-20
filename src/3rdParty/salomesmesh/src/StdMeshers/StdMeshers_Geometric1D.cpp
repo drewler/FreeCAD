@@ -42,12 +42,12 @@
  */
 //=============================================================================
 
-StdMeshers_Geometric1D::StdMeshers_Geometric1D(int hypId, int studyId, SMESH_Gen * gen)
-  :StdMeshers_Reversible1D(hypId, studyId, gen)
+StdMeshers_Geometric1D::StdMeshers_Geometric1D(int hypId, int studyId, SMESH_Gen *gen)
+    : StdMeshers_Reversible1D(hypId, studyId, gen)
 {
-  _begLength = 1.;
-  _ratio = 1.;
-  _name = "GeometricProgression";
+    _begLength = 1.;
+    _ratio = 1.;
+    _name = "GeometricProgression";
 }
 
 //=============================================================================
@@ -58,13 +58,11 @@ StdMeshers_Geometric1D::StdMeshers_Geometric1D(int hypId, int studyId, SMESH_Gen
 
 void StdMeshers_Geometric1D::SetStartLength(double length)
 {
-  if ( _begLength != length )
-  {
-    if (length <= 0)
-      throw SALOME_Exception(LOCALIZED("length must be positive"));
-    _begLength = length;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (_begLength != length) {
+        if (length <= 0) throw SALOME_Exception(LOCALIZED("length must be positive"));
+        _begLength = length;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -75,13 +73,11 @@ void StdMeshers_Geometric1D::SetStartLength(double length)
 
 void StdMeshers_Geometric1D::SetCommonRatio(double factor)
 {
-  if ( _ratio != factor )
-  {
-    if (factor == 0)
-      throw SALOME_Exception(LOCALIZED("Zero factor is not allowed"));
-    _ratio = factor;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (_ratio != factor) {
+        if (factor == 0) throw SALOME_Exception(LOCALIZED("Zero factor is not allowed"));
+        _ratio = factor;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -90,10 +86,7 @@ void StdMeshers_Geometric1D::SetCommonRatio(double factor)
  */
 //=============================================================================
 
-double StdMeshers_Geometric1D::GetStartLength() const
-{
-  return _begLength;
-}
+double StdMeshers_Geometric1D::GetStartLength() const { return _begLength; }
 
 //=============================================================================
 /*!
@@ -101,9 +94,21 @@ double StdMeshers_Geometric1D::GetStartLength() const
  */
 //=============================================================================
 
-double StdMeshers_Geometric1D::GetCommonRatio() const
+double StdMeshers_Geometric1D::GetCommonRatio() const { return _ratio; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &StdMeshers_Geometric1D::SaveTo(ostream &save)
 {
-  return _ratio;
+    save << _begLength << " " << _ratio << " ";
+
+    StdMeshers_Reversible1D::SaveTo(save);
+
+    return save;
 }
 
 //=============================================================================
@@ -112,31 +117,15 @@ double StdMeshers_Geometric1D::GetCommonRatio() const
  */
 //=============================================================================
 
-ostream & StdMeshers_Geometric1D::SaveTo(ostream & save)
+istream &StdMeshers_Geometric1D::LoadFrom(istream &load)
 {
-  save << _begLength << " " << _ratio << " ";
+    bool isOK = true;
+    isOK = (bool)(load >> _begLength);
+    isOK = (bool)(load >> _ratio);
 
-  StdMeshers_Reversible1D::SaveTo( save );
+    if (isOK) StdMeshers_Reversible1D::LoadFrom(load);
 
-  return save;
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-istream & StdMeshers_Geometric1D::LoadFrom(istream & load)
-{
-  bool isOK = true;
-  isOK = (bool)(load >> _begLength);
-  isOK = (bool)(load >> _ratio);
-
-  if (isOK)
-    StdMeshers_Reversible1D::LoadFrom( load );
-
-  return load;
+    return load;
 }
 
 //================================================================================
@@ -148,43 +137,40 @@ istream & StdMeshers_Geometric1D::LoadFrom(istream & load)
  */
 //================================================================================
 
-bool StdMeshers_Geometric1D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                 const TopoDS_Shape& theShape)
+bool StdMeshers_Geometric1D::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                 const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _begLength = _ratio = 0.;
+    _begLength = _ratio = 0.;
 
-  int nbEdges = 0;
-  TopTools_IndexedMapOfShape edgeMap;
-  TopExp::MapShapes( theShape, TopAbs_EDGE, edgeMap );
-  for ( int i = 1; i <= edgeMap.Extent(); ++i )
-  {
-    const TopoDS_Edge& edge = TopoDS::Edge( edgeMap( i ));
-    BRepAdaptor_Curve C( edge );
+    int nbEdges = 0;
+    TopTools_IndexedMapOfShape edgeMap;
+    TopExp::MapShapes(theShape, TopAbs_EDGE, edgeMap);
+    for (int i = 1; i <= edgeMap.Extent(); ++i) {
+        const TopoDS_Edge &edge = TopoDS::Edge(edgeMap(i));
+        BRepAdaptor_Curve C(edge);
 
-    vector< double > params;
-    if ( SMESH_Algo::GetNodeParamOnEdge( theMesh->GetMeshDS(), edge, params ))
-    {
-      nbEdges++;
-      double l1 = GCPnts_AbscissaPoint::Length( C, params[0], params[1] );
-      _begLength += l1;
-      if ( params.size() > 2 && l1 > 1e-100 )
-        _ratio += GCPnts_AbscissaPoint::Length( C, params[1], params[2]) / l1;
-      else
-        _ratio += 1;
+        vector<double> params;
+        if (SMESH_Algo::GetNodeParamOnEdge(theMesh->GetMeshDS(), edge, params)) {
+            nbEdges++;
+            double l1 = GCPnts_AbscissaPoint::Length(C, params[0], params[1]);
+            _begLength += l1;
+            if (params.size() > 2 && l1 > 1e-100)
+                _ratio += GCPnts_AbscissaPoint::Length(C, params[1], params[2]) / l1;
+            else
+                _ratio += 1;
+        }
     }
-  }
-  if ( nbEdges ) {
-    _begLength /= nbEdges;
-    _ratio     /= nbEdges;
-  }
-  else {
-    _begLength = 1;
-    _ratio     = 1;
-  }
-  return nbEdges;
+    if (nbEdges) {
+        _begLength /= nbEdges;
+        _ratio /= nbEdges;
+    }
+    else {
+        _begLength = 1;
+        _ratio = 1;
+    }
+    return nbEdges;
 }
 
 //================================================================================
@@ -194,9 +180,8 @@ bool StdMeshers_Geometric1D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
  */
 //================================================================================
 
-bool StdMeshers_Geometric1D::SetParametersByDefaults(const TDefaults&  dflts,
-                                                     const SMESH_Mesh* /*mesh*/)
+bool StdMeshers_Geometric1D::SetParametersByDefaults(const TDefaults &dflts,
+                                                     const SMESH_Mesh * /*mesh*/)
 {
-  return ( _begLength = dflts._elemLength );
+    return (_begLength = dflts._elemLength);
 }
-

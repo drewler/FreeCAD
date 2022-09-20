@@ -32,10 +32,11 @@
 
 #include "QGIDecoration.h"
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawTile;
 class DrawTileWeld;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -43,14 +44,17 @@ class QGCustomSvg;
 class QGCustomText;
 class QGIWeldSymbol;
 
-class TechDrawGuiExport QGITile : public QGIDecoration
+class TechDrawGuiExport QGITile: public QGIDecoration
 {
 public:
-    explicit QGITile(TechDraw::DrawTileWeld*);
+    explicit QGITile(TechDraw::DrawTileWeld *);
     ~QGITile(void);
 
-    enum {Type = QGraphicsItem::UserType + 325};
-    int type(void) const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 325
+    };
+    int type(void) const { return Type; }
 
     virtual QRectF boundingRect() const;
 
@@ -89,28 +93,28 @@ protected:
 
 
 private:
-    QGCustomText*      m_qgTextL;
-    QGCustomText*      m_qgTextR;
-    QGCustomText*      m_qgTextC;
-    QGCustomSvg*       m_qgSvg;
-  //QGraphicsColorizeEffect* m_effect;
-    QString            m_svgPath;
-    QString            m_textL;
-    QString            m_textR;
-    QString            m_textC;
-    QString            m_fontName;
-    QFont              m_font;
-    QPointF            m_origin;
-    double             m_wide;
-    double             m_high;
-    double             m_scale;
-    int                m_row;
-    int                m_col;
-    bool               m_tailRight;
-    bool               m_altWeld;
-    TechDraw::DrawTileWeld* m_tileFeat;
+    QGCustomText *m_qgTextL;
+    QGCustomText *m_qgTextR;
+    QGCustomText *m_qgTextC;
+    QGCustomSvg *m_qgSvg;
+    //QGraphicsColorizeEffect* m_effect;
+    QString m_svgPath;
+    QString m_textL;
+    QString m_textR;
+    QString m_textC;
+    QString m_fontName;
+    QFont m_font;
+    QPointF m_origin;
+    double m_wide;
+    double m_high;
+    double m_scale;
+    int m_row;
+    int m_col;
+    bool m_tailRight;
+    bool m_altWeld;
+    TechDraw::DrawTileWeld *m_tileFeat;
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // TECHDRAWGUI_QGITILE_H

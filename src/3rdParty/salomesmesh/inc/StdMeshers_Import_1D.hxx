@@ -39,43 +39,34 @@ class StdMeshers_ImportSource1D;
 class STDMESHERS_EXPORT StdMeshers_Import_1D: public SMESH_1D_Algo
 {
 public:
-  StdMeshers_Import_1D(int hypId, int studyId, SMESH_Gen* gen);
+    StdMeshers_Import_1D(int hypId, int studyId, SMESH_Gen *gen);
 
-  virtual bool CheckHypothesis(SMESH_Mesh& aMesh,
-                               const TopoDS_Shape& aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute (SMESH_Mesh & aMesh, const TopoDS_Shape & aShape);
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
-  virtual void SetEventListener(SMESH_subMesh* subMesh);
-  virtual void SubmeshRestored(SMESH_subMesh* subMesh);
+    virtual void SetEventListener(SMESH_subMesh *subMesh);
+    virtual void SubmeshRestored(SMESH_subMesh *subMesh);
 
-  // internal utilities
+    // internal utilities
 
-  typedef std::map<const SMDS_MeshNode*,   const SMDS_MeshNode*,   TIDCompare> TNodeNodeMap;
-  typedef std::map<const SMDS_MeshElement*,const SMDS_MeshElement*,TIDCompare> TElemElemMap;
+    typedef std::map<const SMDS_MeshNode *, const SMDS_MeshNode *, TIDCompare> TNodeNodeMap;
+    typedef std::map<const SMDS_MeshElement *, const SMDS_MeshElement *, TIDCompare> TElemElemMap;
 
-  static void getMaps(const SMESH_Mesh* srcMesh,
-                      SMESH_Mesh*       tgtMesh,
-                      TNodeNodeMap*&    n2n,
-                      TElemElemMap*&    e2e);
+    static void getMaps(const SMESH_Mesh *srcMesh, SMESH_Mesh *tgtMesh, TNodeNodeMap *&n2n,
+                        TElemElemMap *&e2e);
 
-  static void importMesh(const SMESH_Mesh*          srcMesh,
-                         SMESH_Mesh &               tgtMesh,
-                         StdMeshers_ImportSource1D* srcHyp,
-                         const TopoDS_Shape&        tgtShape);
+    static void importMesh(const SMESH_Mesh *srcMesh, SMESH_Mesh &tgtMesh,
+                           StdMeshers_ImportSource1D *srcHyp, const TopoDS_Shape &tgtShape);
 
-  static void setEventListener( SMESH_subMesh*             subMesh,
-                                StdMeshers_ImportSource1D* sourceHyp );
+    static void setEventListener(SMESH_subMesh *subMesh, StdMeshers_ImportSource1D *sourceHyp);
 
-  static SMESH_subMesh* getSubMeshOfCopiedMesh( SMESH_Mesh& tgtMesh,
-                                                SMESH_Mesh& srcMesh );
+    static SMESH_subMesh *getSubMeshOfCopiedMesh(SMESH_Mesh &tgtMesh, SMESH_Mesh &srcMesh);
 
- private:
-  
-  StdMeshers_ImportSource1D* _sourceHyp;
+private:
+    StdMeshers_ImportSource1D *_sourceHyp;
 };
 
 #endif

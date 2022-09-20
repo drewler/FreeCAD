@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QUuid>
+#include <QUuid>
 #endif
 
 #include <stdexcept>
@@ -42,10 +42,7 @@ using namespace Base;
  * A constructor.
  * A more elaborate description of the constructor.
  */
-Uuid::Uuid()
-{
-    _uuid = createUuid();
-}
+Uuid::Uuid() { _uuid = createUuid(); }
 
 /**
  * A destructor.
@@ -67,12 +64,11 @@ std::string Uuid::createUuid()
     return Uuid;
 }
 
-void Uuid::setValue(const char* sString)
+void Uuid::setValue(const char *sString)
 {
     if (sString) {
         QUuid uuid(QString::fromLatin1(sString));
-        if (uuid.isNull())
-            throw std::runtime_error("invalid uuid");
+        if (uuid.isNull()) throw std::runtime_error("invalid uuid");
         // remove curly braces
         QString id = uuid.toString();
         id = id.mid(1);
@@ -81,12 +77,6 @@ void Uuid::setValue(const char* sString)
     }
 }
 
-void Uuid::setValue(const std::string &sString)
-{
-    setValue(sString.c_str());
-}
+void Uuid::setValue(const std::string &sString) { setValue(sString.c_str()); }
 
-const std::string& Uuid::getValue() const
-{
-    return _uuid;
-}
+const std::string &Uuid::getValue() const { return _uuid; }

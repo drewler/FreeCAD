@@ -36,8 +36,9 @@ using namespace std;
 // ---------------------------------------------------------------------------
 //  StdInputStream: Constructors and Destructor
 // ---------------------------------------------------------------------------
-StdInputStream::StdInputStream( std::istream& Stream, XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager* const manager )
-  : stream(Stream), fMemoryManager(manager)
+StdInputStream::StdInputStream(std::istream &Stream,
+                               XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager *const manager)
+    : stream(Stream), fMemoryManager(manager)
 {
     state.flags |= QTextCodec::IgnoreHeader;
     state.flags |= QTextCodec::ConvertInvalidToNull;
@@ -50,50 +51,48 @@ StdInputStream::~StdInputStream() = default;
 // ---------------------------------------------------------------------------
 //  StdInputStream: Implementation of the input stream interface
 // ---------------------------------------------------------------------------
-XMLFilePos StdInputStream::curPos() const
+XMLFilePos StdInputStream::curPos() const { return static_cast<XMLFilePos>(stream.tellg()); }
+
+XMLSize_t StdInputStream::readBytes(XMLByte *const toFill, const XMLSize_t maxToRead)
 {
-  return static_cast<XMLFilePos>(stream.tellg());
-}
+    //
+    //  Read up to the maximum bytes requested. We return the number
+    //  actually read.
+    //
 
-XMLSize_t StdInputStream::readBytes(XMLByte* const  toFill, const XMLSize_t maxToRead)
-{
-  //
-  //  Read up to the maximum bytes requested. We return the number
-  //  actually read.
-  //
+    stream.read(reinterpret_cast<char *>(toFill), static_cast<std::streamsize>(maxToRead));
+    std::streamsize len = stream.gcount();
 
-  stream.read(reinterpret_cast<char *>(toFill), static_cast<std::streamsize>(maxToRead));
-  std::streamsize len = stream.gcount();
+    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+    const QString text =
+        codec->toUnicode(reinterpret_cast<char *>(toFill), static_cast<int>(len), &state);
+    if (state.invalidChars > 0) {
+        // In case invalid characters were found decode back to 'utf-8' and replace
+        // them with '?'
+        // First, Qt replaces invalid characters with '\0' (see ConvertInvalidToNull)
+        // but Xerces doesn't like this because it handles this as termination. Thus,
+        // we have to go through the array and replace '\0' with '?'.
+        std::streamsize pos = 0;
+        QByteArray ba = codec->fromUnicode(text);
+        for (int i = 0; i < ba.length(); i++, pos++) {
+            if (pos < len && ba[i] == '\0') toFill[i] = '?';
+        }
+    }
 
-  QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-  const QString text = codec->toUnicode(reinterpret_cast<char *>(toFill), static_cast<int>(len), &state);
-  if (state.invalidChars > 0) {
-      // In case invalid characters were found decode back to 'utf-8' and replace
-      // them with '?'
-      // First, Qt replaces invalid characters with '\0' (see ConvertInvalidToNull)
-      // but Xerces doesn't like this because it handles this as termination. Thus,
-      // we have to go through the array and replace '\0' with '?'.
-      std::streamsize pos = 0;
-      QByteArray ba = codec->fromUnicode(text);
-      for (int i=0; i<ba.length(); i++, pos++) {
-          if (pos < len && ba[i] == '\0')
-              toFill[i] = '?';
-      }
-  }
-
-  return static_cast<XMLSize_t>(len);
+    return static_cast<XMLSize_t>(len);
 }
 
 
 // ---------------------------------------------------------------------------
 //  StdInputSource: Constructors and Destructor
 // ---------------------------------------------------------------------------
-StdInputSource::StdInputSource ( std::istream& Stream, const char* filePath, XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager* const manager )
-  : InputSource(manager),stream(Stream)
+StdInputSource::StdInputSource(std::istream &Stream, const char *filePath,
+                               XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager *const manager)
+    : InputSource(manager), stream(Stream)
 {
-  // we have to set the file name in case an error occurs
-  XStr tmpBuf(filePath);
-  setSystemId(tmpBuf.unicodeForm());
+    // we have to set the file name in case an error occurs
+    XStr tmpBuf(filePath);
+    setSystemId(tmpBuf.unicodeForm());
 }
 
 
@@ -103,9 +102,8 @@ StdInputSource::~StdInputSource() = default;
 // ---------------------------------------------------------------------------
 //  StdInputSource: InputSource interface implementation
 // ---------------------------------------------------------------------------
-BinInputStream* StdInputSource::makeStream() const
+BinInputStream *StdInputSource::makeStream() const
 {
-  StdInputStream* retStrm = new StdInputStream(stream /*, getMemoryManager()*/);
-  return retStrm;
+    StdInputStream *retStrm = new StdInputStream(stream /*, getMemoryManager()*/);
+    return retStrm;
 }
-

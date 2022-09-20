@@ -29,16 +29,18 @@
 #include <fstream>
 
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport SoSVGVectorOutput : public SoVectorOutput {
+class GuiExport SoSVGVectorOutput: public SoVectorOutput
+{
 public:
     SoSVGVectorOutput();
     virtual ~SoSVGVectorOutput();
 
-    virtual SbBool openFile (const char *filename);
-    virtual void closeFile ();
-    std::fstream& getFileStream();
+    virtual SbBool openFile(const char *filename);
+    virtual void closeFile();
+    std::fstream &getFileStream();
 
 private:
     std::fstream file;
@@ -48,7 +50,8 @@ private:
  * @author Werner Mayer
  */
 class SoFCVectorizeSVGActionP;
-class GuiExport SoFCVectorizeSVGAction : public SoVectorizeAction {
+class GuiExport SoFCVectorizeSVGAction: public SoVectorizeAction
+{
     using inherited = SoReplacedElement;
 
     SO_ACTION_HEADER(SoFCVectorizeSVGAction);
@@ -58,7 +61,7 @@ public:
     virtual ~SoFCVectorizeSVGAction();
 
     static void initClass();
-    SoSVGVectorOutput * getSVGOutput() const;
+    SoSVGVectorOutput *getSVGOutput() const;
 
     virtual void setBackgroundState(bool b) { m_backgroundState = b; }
     virtual bool getBackgroundState(void) const { return m_backgroundState; }
@@ -71,11 +74,11 @@ protected:
     virtual void printHeader() const;
     virtual void printFooter() const;
     virtual void printBackground() const;
-    virtual void printItem(const SoVectorizeItem * item) const;
+    virtual void printItem(const SoVectorizeItem *item) const;
     virtual void printViewport() const;
 
 private:
-    SoFCVectorizeSVGActionP* p;
+    SoFCVectorizeSVGActionP *p;
     friend class SoFCVectorizeSVGActionP;
     bool m_backgroundState;
     double m_lineWidth;

@@ -29,65 +29,50 @@
 
 using namespace App;
 
-PyObject *MaterialPy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *MaterialPy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     // create a new instance of MaterialPy and the Twin object
     return new MaterialPy(new Material);
 }
 
 // constructor method
-int MaterialPy::PyInit(PyObject* args, PyObject* kwds)
+int MaterialPy::PyInit(PyObject *args, PyObject *kwds)
 {
-    PyObject* diffuse = nullptr;
-    PyObject* ambient = nullptr;
-    PyObject* specular = nullptr;
-    PyObject* emissive = nullptr;
-    PyObject* shininess = nullptr;
-    PyObject* transparency = nullptr;
-    static char* kwds_colors[] = { "DiffuseColor", "AmbientColor", "SpecularColor", "EmissiveColor", "Shininess", "Transparency", nullptr };
+    PyObject *diffuse = nullptr;
+    PyObject *ambient = nullptr;
+    PyObject *specular = nullptr;
+    PyObject *emissive = nullptr;
+    PyObject *shininess = nullptr;
+    PyObject *transparency = nullptr;
+    static char *kwds_colors[] = {"DiffuseColor", "AmbientColor", "SpecularColor", "EmissiveColor",
+                                  "Shininess",    "Transparency", nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OOOOOO", kwds_colors,
-        &diffuse, &ambient, &specular, &emissive, &shininess, &transparency))
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OOOOOO", kwds_colors, &diffuse, &ambient,
+                                     &specular, &emissive, &shininess, &transparency))
         return -1;
 
-    if (diffuse) {
-        setDiffuseColor(Py::Tuple(diffuse));
-    }
+    if (diffuse) { setDiffuseColor(Py::Tuple(diffuse)); }
 
-    if (ambient) {
-        setAmbientColor(Py::Tuple(ambient));
-    }
+    if (ambient) { setAmbientColor(Py::Tuple(ambient)); }
 
-    if (specular) {
-        setSpecularColor(Py::Tuple(specular));
-    }
+    if (specular) { setSpecularColor(Py::Tuple(specular)); }
 
-    if (emissive) {
-        setEmissiveColor(Py::Tuple(emissive));
-    }
+    if (emissive) { setEmissiveColor(Py::Tuple(emissive)); }
 
-    if (shininess) {
-        setShininess(Py::Float(shininess));
-    }
+    if (shininess) { setShininess(Py::Float(shininess)); }
 
-    if (transparency) {
-        setTransparency(Py::Float(transparency));
-    }
+    if (transparency) { setTransparency(Py::Float(transparency)); }
 
     return 0;
 }
 
 // returns a string which represents the object e.g. when printed in python
-std::string MaterialPy::representation() const
-{
-    return std::string("<Material object>");
-}
+std::string MaterialPy::representation() const { return std::string("<Material object>"); }
 
-PyObject* MaterialPy::set(PyObject * args)
+PyObject *MaterialPy::set(PyObject *args)
 {
     char *pstr;
-    if (!PyArg_ParseTuple(args, "s", &pstr))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "s", &pstr)) return nullptr;
 
     getMaterialPtr()->set(pstr);
 
@@ -110,8 +95,7 @@ void MaterialPy::setAmbientColor(Py::Tuple arg)
     c.r = (float)Py::Float(arg.getItem(0));
     c.g = (float)Py::Float(arg.getItem(1));
     c.b = (float)Py::Float(arg.getItem(2));
-    if (arg.size() == 4)
-    c.a = (float)Py::Float(arg.getItem(3));
+    if (arg.size() == 4) c.a = (float)Py::Float(arg.getItem(3));
     getMaterialPtr()->ambientColor = c;
 }
 
@@ -131,8 +115,7 @@ void MaterialPy::setDiffuseColor(Py::Tuple arg)
     c.r = (float)Py::Float(arg.getItem(0));
     c.g = (float)Py::Float(arg.getItem(1));
     c.b = (float)Py::Float(arg.getItem(2));
-    if (arg.size() == 4)
-    c.a = (float)Py::Float(arg.getItem(3));
+    if (arg.size() == 4) c.a = (float)Py::Float(arg.getItem(3));
     getMaterialPtr()->diffuseColor = c;
 }
 
@@ -152,8 +135,7 @@ void MaterialPy::setEmissiveColor(Py::Tuple arg)
     c.r = (float)Py::Float(arg.getItem(0));
     c.g = (float)Py::Float(arg.getItem(1));
     c.b = (float)Py::Float(arg.getItem(2));
-    if (arg.size() == 4)
-    c.a = (float)Py::Float(arg.getItem(3));
+    if (arg.size() == 4) c.a = (float)Py::Float(arg.getItem(3));
     getMaterialPtr()->emissiveColor = c;
 }
 
@@ -173,37 +155,18 @@ void MaterialPy::setSpecularColor(Py::Tuple arg)
     c.r = (float)Py::Float(arg.getItem(0));
     c.g = (float)Py::Float(arg.getItem(1));
     c.b = (float)Py::Float(arg.getItem(2));
-    if (arg.size() == 4)
-    c.a = (float)Py::Float(arg.getItem(3));
+    if (arg.size() == 4) c.a = (float)Py::Float(arg.getItem(3));
     getMaterialPtr()->specularColor = c;
 }
 
-Py::Float MaterialPy::getShininess() const
-{
-    return Py::Float(getMaterialPtr()->shininess);
-}
+Py::Float MaterialPy::getShininess() const { return Py::Float(getMaterialPtr()->shininess); }
 
-void MaterialPy::setShininess(Py::Float arg)
-{
-    getMaterialPtr()->shininess = (float)arg;
-}
+void MaterialPy::setShininess(Py::Float arg) { getMaterialPtr()->shininess = (float)arg; }
 
-Py::Float MaterialPy::getTransparency() const
-{
-    return Py::Float(getMaterialPtr()->transparency);
-}
+Py::Float MaterialPy::getTransparency() const { return Py::Float(getMaterialPtr()->transparency); }
 
-void MaterialPy::setTransparency(Py::Float arg)
-{
-    getMaterialPtr()->transparency = (float)arg;
-}
+void MaterialPy::setTransparency(Py::Float arg) { getMaterialPtr()->transparency = (float)arg; }
 
-PyObject *MaterialPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *MaterialPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int MaterialPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int MaterialPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

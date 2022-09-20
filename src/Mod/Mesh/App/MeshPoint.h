@@ -44,16 +44,17 @@ class MeshObject;
  * convenient access to the Mesh data structure. This class should not be used for
  * programming algorithms in C++. Use Mesh Core classes instead!
  */
-class MeshExport MeshPoint : public Vector3d
+class MeshExport MeshPoint: public Vector3d
 {
 
 public:
     /// simple constructor
-    explicit MeshPoint(const Vector3d& vec = Vector3d(), const MeshObject* obj = nullptr, unsigned int index = UINT_MAX)
-        :Vector3d(vec),Index(index),Mesh(obj)
+    explicit MeshPoint(const Vector3d &vec = Vector3d(), const MeshObject *obj = nullptr,
+                       unsigned int index = UINT_MAX)
+        : Vector3d(vec), Index(index), Mesh(obj)
     {}
 
-    bool isBound() const {return Index != UINT_MAX;}
+    bool isBound() const { return Index != UINT_MAX; }
 
     unsigned int Index;
     Base::Reference<const MeshObject> Mesh;

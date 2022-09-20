@@ -39,25 +39,28 @@ class SoRayPickAction;
 class SoPickedPoint;
 class SbVec3s;
 
-namespace Base {
-    template< typename T >
-    class Vector3;
+namespace Base
+{
+template<typename T> class Vector3;
 
-    class Vector2d;
+class Vector2d;
 
-    class Placement;
+class Placement;
+} // namespace Base
+
+namespace Part
+{
+class Geometry;
 }
 
-namespace Part {
-    class Geometry;
-}
+namespace Sketcher
+{
+class Constraint;
+class PropertyConstraintList;
+}; // namespace Sketcher
 
-namespace Sketcher {
-    class Constraint;
-    class PropertyConstraintList;
-};
-
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class ViewProviderSketch;
 class EditModeConstraintCoinManager;
@@ -83,19 +86,18 @@ class SketcherGuiExport EditModeGeometryCoinManager
 {
 
 public:
-    explicit EditModeGeometryCoinManager(   ViewProviderSketch &vp,
-                                            DrawingParameters & drawingParams,
-                                            GeometryLayerParameters & geometryLayerParams,
-                                            AnalysisResults & analysisResultStruct,
-                                            EditModeScenegraphNodes & editModeScenegraph,
-                                            CoinMapping & coinMap);
+    explicit EditModeGeometryCoinManager(ViewProviderSketch &vp, DrawingParameters &drawingParams,
+                                         GeometryLayerParameters &geometryLayerParams,
+                                         AnalysisResults &analysisResultStruct,
+                                         EditModeScenegraphNodes &editModeScenegraph,
+                                         CoinMapping &coinMap);
     ~EditModeGeometryCoinManager();
 
 
     // This function populates the coin nodes with the information of the current geometry
-    void processGeometry(const GeoListFacade & geolistfacade);
+    void processGeometry(const GeoListFacade &geolistfacade);
 
-    void updateGeometryColor(const GeoListFacade & geolistfacade, bool issketchinvalid);
+    void updateGeometryColor(const GeoListFacade &geolistfacade, bool issketchinvalid);
 
     /** @name coin nodes creation*/
     void createEditModeInventorNodes();
@@ -103,16 +105,15 @@ public:
 
 
 private:
-    ViewProviderSketch & viewProvider;
+    ViewProviderSketch &viewProvider;
 
-    DrawingParameters & drawingParameters;
-    GeometryLayerParameters & geometryLayerParameters;
-    AnalysisResults & analysisResults;
+    DrawingParameters &drawingParameters;
+    GeometryLayerParameters &geometryLayerParameters;
+    AnalysisResults &analysisResults;
 
-    EditModeScenegraphNodes & editModeScenegraphNodes;
+    EditModeScenegraphNodes &editModeScenegraphNodes;
 
-    CoinMapping & coinMapping;
-
+    CoinMapping &coinMapping;
 };
 
 
@@ -120,4 +121,3 @@ private:
 
 
 #endif // SKETCHERGUI_EditModeGeometryCoinManager_H
-

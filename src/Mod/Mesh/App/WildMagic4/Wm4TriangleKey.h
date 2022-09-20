@@ -26,13 +26,13 @@ namespace Wm4
 class WM4_FOUNDATION_ITEM TriangleKey
 {
 public:
-    TriangleKey (int iV0 = -1, int iV1 = -1, int iV2 = -1);
-    bool operator< (const TriangleKey& rkKey) const;
-    operator size_t () const;
+    TriangleKey(int iV0 = -1, int iV1 = -1, int iV2 = -1);
+    bool operator<(const TriangleKey &rkKey) const;
+    operator size_t() const;
     int V[3];
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4TriangleKey.inl"
 

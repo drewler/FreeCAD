@@ -31,7 +31,8 @@ using namespace SurfaceGui;
 
 PROPERTY_SOURCE(SurfaceGui::ViewProviderExtend, PartGui::ViewProviderSpline)
 
-namespace SurfaceGui {
+namespace SurfaceGui
+{
 
 QIcon ViewProviderExtend::getIcon(void) const
 {

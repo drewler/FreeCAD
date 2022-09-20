@@ -33,41 +33,35 @@
 
 #include <iostream>
 
-class SMDS_EXPORT SMDS_FaceOfNodes:public SMDS_MeshFace
+class SMDS_EXPORT SMDS_FaceOfNodes: public SMDS_MeshFace
 {
-  public:
-        void Print(std::ostream & OS) const;
-        SMDS_FaceOfNodes(const SMDS_MeshNode* node1,
-                         const SMDS_MeshNode* node2,
-                         const SMDS_MeshNode* node3);
-        SMDS_FaceOfNodes(const SMDS_MeshNode* node1,
-                         const SMDS_MeshNode* node2,
-                         const SMDS_MeshNode* node3,
-                         const SMDS_MeshNode* node4);
-        bool ChangeNodes(const SMDS_MeshNode* nodes[],
-                         const int            nbNodes);
-        int NbEdges() const;
-        int NbFaces() const;
-        int NbNodes() const;
+public:
+    void Print(std::ostream &OS) const;
+    SMDS_FaceOfNodes(const SMDS_MeshNode *node1, const SMDS_MeshNode *node2,
+                     const SMDS_MeshNode *node3);
+    SMDS_FaceOfNodes(const SMDS_MeshNode *node1, const SMDS_MeshNode *node2,
+                     const SMDS_MeshNode *node3, const SMDS_MeshNode *node4);
+    bool ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes);
+    int NbEdges() const;
+    int NbFaces() const;
+    int NbNodes() const;
 
-  /*!
+    /*!
    * \brief Return node by its index
     * \param ind - node index
     * \retval const SMDS_MeshNode* - the node
    */
-  virtual const SMDS_MeshNode* GetNode(const int ind) const;
+    virtual const SMDS_MeshNode *GetNode(const int ind) const;
 
-  virtual SMDSAbs_EntityType   GetEntityType() const;
-  virtual SMDSAbs_GeometryType GetGeomType() const;
+    virtual SMDSAbs_EntityType GetEntityType() const;
+    virtual SMDSAbs_GeometryType GetGeomType() const;
 
-  protected:
-        SMDS_ElemIteratorPtr
-                elementsIterator(SMDSAbs_ElementType type) const;
+protected:
+    SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
 
-  private:
-        const SMDS_MeshNode* myNodes[4];
-        int                  myNbNodes;
-
+private:
+    const SMDS_MeshNode *myNodes[4];
+    int myNbNodes;
 };
 
 #endif

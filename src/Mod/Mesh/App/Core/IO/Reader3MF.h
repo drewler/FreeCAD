@@ -64,23 +64,19 @@ public:
      */
     bool Load();
     std::vector<int> GetMeshIds() const;
-    const MeshKernel& GetMesh(int id) const {
-        return meshes.at(id).first;
-    }
-    const Base::Matrix4D& GetTransform(int id) const {
-        return meshes.at(id).second;
-    }
+    const MeshKernel &GetMesh(int id) const { return meshes.at(id).first; }
+    const Base::Matrix4D &GetTransform(int id) const { return meshes.at(id).second; }
 
 private:
-    bool LoadModel(std::istream&);
-    bool LoadModel(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument&);
-    bool LoadResources(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList*);
-    bool LoadBuild(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList*);
-    bool LoadItems(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList*);
-    bool LoadObjects(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList*);
-    void LoadMesh(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList*, int id);
-    void LoadVertices(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList*, MeshPointArray&);
-    void LoadTriangles(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList*, MeshFacetArray&);
+    bool LoadModel(std::istream &);
+    bool LoadModel(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument &);
+    bool LoadResources(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *);
+    bool LoadBuild(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *);
+    bool LoadItems(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *);
+    bool LoadObjects(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *);
+    void LoadMesh(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *, int id);
+    void LoadVertices(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *, MeshPointArray &);
+    void LoadTriangles(XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *, MeshFacetArray &);
 
 private:
     using MeshKernelAndTransform = std::pair<MeshKernel, Base::Matrix4D>;
@@ -91,4 +87,4 @@ private:
 } // namespace MeshCore
 
 
-#endif  // MESH_IO_READER_3MF_H
+#endif // MESH_IO_READER_3MF_H

@@ -32,22 +32,17 @@
 
 using namespace TechDrawGui;
 
-namespace TechDrawGui {
-
-QGVNavStyleCAD::QGVNavStyleCAD(QGVPage* qgvp) :
-    QGVNavStyle(qgvp)
+namespace TechDrawGui
 {
-}
 
-QGVNavStyleCAD::~QGVNavStyleCAD()
-{
-}
+QGVNavStyleCAD::QGVNavStyleCAD(QGVPage *qgvp) : QGVNavStyle(qgvp) {}
+
+QGVNavStyleCAD::~QGVNavStyleCAD() {}
 
 void QGVNavStyleCAD::handleKeyReleaseEvent(QKeyEvent *event)
 {
     //zoom mode 2
-    if ( ((event->key() == Qt::Key_Control) ||
-          (event->key() == Qt::Key_Shift)) && zoomingActive) {
+    if (((event->key() == Qt::Key_Control) || (event->key() == Qt::Key_Shift)) && zoomingActive) {
         stopZoom();
         event->accept();
     }
@@ -61,29 +56,27 @@ void QGVNavStyleCAD::handleKeyReleaseEvent(QKeyEvent *event)
 
 void QGVNavStyleCAD::handleMousePressEvent(QMouseEvent *event)
 {
-//    Base::Console().Message("QGVNSCAD::handleMousePressEvent() - button: %d\n", event->button());
+    //    Base::Console().Message("QGVNSCAD::handleMousePressEvent() - button: %d\n", event->button());
     if (event->button() == Qt::MiddleButton) {
-        startClick(Qt::MiddleButton);   //for MMB center view
+        startClick(Qt::MiddleButton); //for MMB center view
     }
 
     //zoom mode 2 Control + Shift + RMB click
-    if ((event->button() == Qt::RightButton) &&
-        QApplication::keyboardModifiers() == (Qt::ControlModifier | Qt::ShiftModifier)) {
+    if ((event->button() == Qt::RightButton)
+        && QApplication::keyboardModifiers() == (Qt::ControlModifier | Qt::ShiftModifier)) {
         startClick(Qt::RightButton);
     }
 
     //pan mode 2 Control + RMB click
-    if ((event->button() == Qt::RightButton) &&
-        QApplication::keyboardModifiers() == Qt::ControlModifier) {
+    if ((event->button() == Qt::RightButton)
+        && QApplication::keyboardModifiers() == Qt::ControlModifier) {
         startClick(Qt::RightButton);
     }
 }
 
 void QGVNavStyleCAD::handleMouseMoveEvent(QMouseEvent *event)
 {
-    if (getViewer()->isBalloonPlacing()) {
-        getViewer()->setBalloonCursorPos(event->pos());
-    }
+    if (getViewer()->isBalloonPlacing()) { getViewer()->setBalloonCursorPos(event->pos()); }
 
     //if the mouse moves between press and release, then it isn't a click
     if (m_clickPending) {
@@ -96,32 +89,31 @@ void QGVNavStyleCAD::handleMouseMoveEvent(QMouseEvent *event)
         if (panningActive) {
             pan(event->pos());
             event->accept();
-        } else {
+        }
+        else {
             startPan(event->pos());
             event->accept();
         }
     }
 
     //pan mode 2 - CNTL + RMB click + move
-    if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-        panningActive) {
+    if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) && panningActive) {
         pan(event->pos());
         event->accept();
-    } else if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-        m_panPending) {
+    }
+    else if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) && m_panPending) {
         startPan(event->pos());
         event->accept();
     }
 
     //zoom mode 2 - CNTL + SHIFT + RMB click + move
-    if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-        QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier) &&
-        zoomingActive) {
+    if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
+        && QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier) && zoomingActive) {
         zoom(mouseZoomFactor(event->pos()));
         event->accept();
-    } else if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-        QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier) &&
-        m_zoomPending) {
+    }
+    else if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
+             && QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier) && m_zoomPending) {
         startZoom(event->pos());
         event->accept();
     }
@@ -129,10 +121,8 @@ void QGVNavStyleCAD::handleMouseMoveEvent(QMouseEvent *event)
 
 void QGVNavStyleCAD::handleMouseReleaseEvent(QMouseEvent *event)
 {
-//    Base::Console().Message("QGVNSCAD::handleMouseReleaseEvent() - button: %d\n", event->button());
-    if (getViewer()->isBalloonPlacing()) {
-        placeBalloon(event->pos());
-    }
+    //    Base::Console().Message("QGVNSCAD::handleMouseReleaseEvent() - button: %d\n", event->button());
+    if (getViewer()->isBalloonPlacing()) { placeBalloon(event->pos()); }
 
     if (event->button() == Qt::MiddleButton) {
         if (m_clickPending && (m_clickButton == Qt::MiddleButton)) {
@@ -148,11 +138,10 @@ void QGVNavStyleCAD::handleMouseReleaseEvent(QMouseEvent *event)
     }
 
     //zoom mode 2 Control + Shift + RMB click
-    if ((event->button() == Qt::RightButton) &&
-         QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-         QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier) &&
-         m_clickPending &&
-        (m_clickButton == Qt::RightButton)) {
+    if ((event->button() == Qt::RightButton)
+        && QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
+        && QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier) && m_clickPending
+        && (m_clickButton == Qt::RightButton)) {
         stopClick();
         m_zoomPending = true;
         event->accept();
@@ -160,10 +149,9 @@ void QGVNavStyleCAD::handleMouseReleaseEvent(QMouseEvent *event)
     }
 
     //pan mode 2 starts with Control + RMB click
-    if ((event->button() == Qt::RightButton) &&
-         QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-         m_clickPending &&
-        (m_clickButton == Qt::RightButton)) {
+    if ((event->button() == Qt::RightButton)
+        && QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) && m_clickPending
+        && (m_clickButton == Qt::RightButton)) {
         stopClick();
         m_panPending = true;
         event->accept();
@@ -172,12 +160,12 @@ void QGVNavStyleCAD::handleMouseReleaseEvent(QMouseEvent *event)
 
 bool QGVNavStyleCAD::allowContextMenu(QContextMenuEvent *event)
 {
-//    Base::Console().Message("QGVNSCAD::allowContextMenu()\n");
+    //    Base::Console().Message("QGVNSCAD::allowContextMenu()\n");
     if (event->reason() == QContextMenuEvent::Mouse) {
         //must check for a button combination involving context menu button
-        if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) ||
-            (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier) &&
-             QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) ) {
+        if (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
+            || (QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
+                && QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier))) {
             //CNTL or CNTL+Shift down - don't allow context menu
             return false;
         }
@@ -185,4 +173,4 @@ bool QGVNavStyleCAD::allowContextMenu(QContextMenuEvent *event)
     return true;
 }
 
-}  // namespace TechDrawGui
+} // namespace TechDrawGui

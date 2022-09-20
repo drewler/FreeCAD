@@ -29,19 +29,19 @@ class WM4_FOUNDATION_ITEM ETManifoldMesh
 public:
     // edge data types
     class Edge;
-    typedef Edge* EPtr;
-    typedef const Edge* ECPtr;
-    typedef EPtr (*ECreator)(int,int);
-    typedef std::map<EdgeKey,Edge*> EMap;
+    typedef Edge *EPtr;
+    typedef const Edge *ECPtr;
+    typedef EPtr (*ECreator)(int, int);
+    typedef std::map<EdgeKey, Edge *> EMap;
     typedef EMap::iterator EMapIterator;
     typedef EMap::const_iterator EMapCIterator;
 
     // triangle data types
     class Triangle;
-    typedef Triangle* TPtr;
-    typedef const Triangle* TCPtr;
-    typedef TPtr (*TCreator)(int,int,int);
-    typedef std::map<TriangleKey,Triangle*> TMap;
+    typedef Triangle *TPtr;
+    typedef const Triangle *TCPtr;
+    typedef TPtr (*TCreator)(int, int, int);
+    typedef std::map<TriangleKey, Triangle *> TMap;
     typedef TMap::iterator TMapIterator;
     typedef TMap::const_iterator TMapCIterator;
 
@@ -49,8 +49,8 @@ public:
     class WM4_FOUNDATION_ITEM Edge
     {
     public:
-        Edge (int iV0, int iV1);
-        virtual ~Edge ();
+        Edge(int iV0, int iV1);
+        virtual ~Edge();
 
         int V[2];
         TPtr T[2];
@@ -60,8 +60,8 @@ public:
     class WM4_FOUNDATION_ITEM Triangle
     {
     public:
-        Triangle (int iV0, int iV1, int iV2);
-        virtual ~Triangle ();
+        Triangle(int iV0, int iV1, int iV2);
+        virtual ~Triangle();
 
         // vertices, listed in counterclockwise order (V[0],V[1],V[2])
         int V[3];
@@ -81,30 +81,30 @@ public:
 
 
     // construction and destruction
-    ETManifoldMesh (ECreator oECreator = nullptr, TCreator oTCreator = nullptr);
-    virtual ~ETManifoldMesh ();
+    ETManifoldMesh(ECreator oECreator = nullptr, TCreator oTCreator = nullptr);
+    virtual ~ETManifoldMesh();
 
     // member access
-    const EMap& GetEdges () const;
-    const TMap& GetTriangles () const;
+    const EMap &GetEdges() const;
+    const TMap &GetTriangles() const;
 
     // mesh manipulation
-    TPtr InsertTriangle (int iV0, int iV1, int iV2);
-    bool RemoveTriangle (int iV0, int iV1, int iV2);
+    TPtr InsertTriangle(int iV0, int iV1, int iV2);
+    bool RemoveTriangle(int iV0, int iV1, int iV2);
 
     // manifold mesh is closed if each edge is shared twice
-    bool IsClosed () const;
+    bool IsClosed() const;
 
-    void Print (const char* acFilename);
+    void Print(const char *acFilename);
 
 protected:
     // edges
-    static EPtr CreateEdge (int iV0, int iV1);
+    static EPtr CreateEdge(int iV0, int iV1);
     ECreator m_oECreator;
     EMap m_kEMap;
 
     // triangles
-    static TPtr CreateTriangle (int iV0, int iV1, int iV2);
+    static TPtr CreateTriangle(int iV0, int iV1, int iV2);
     TCreator m_oTCreator;
     TMap m_kTMap;
 };

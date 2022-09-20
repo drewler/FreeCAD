@@ -31,20 +31,20 @@ class SMESH_File;
 
 class MESHDRIVERSTL_EXPORT DriverSTL_R_SMDS_Mesh: public Driver_SMDS_Mesh
 {
- public:
-  DriverSTL_R_SMDS_Mesh();
-  virtual Status Perform();
-  void           SetIsCreateFaces( const bool theIsCreate = true );
-  
- private:
-  // PRIVATE METHODS
-  Status           readAscii (SMESH_File& file) const;
-  Status           readBinary(SMESH_File& file) const;
-  
- private:
-  // PRIVATE FIELDS
-  bool myIsCreateFaces;
-  bool myIsAscii;
+public:
+    DriverSTL_R_SMDS_Mesh();
+    virtual Status Perform();
+    void SetIsCreateFaces(const bool theIsCreate = true);
+
+private:
+    // PRIVATE METHODS
+    Status readAscii(SMESH_File &file) const;
+    Status readBinary(SMESH_File &file) const;
+
+private:
+    // PRIVATE FIELDS
+    bool myIsCreateFaces;
+    bool myIsAscii;
 };
 
 #endif

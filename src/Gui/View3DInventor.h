@@ -34,24 +34,22 @@
 class QPrinter;
 class QStackedWidget;
 
-namespace Gui {
+namespace Gui
+{
 
 class Document;
 class View3DInventorViewer;
 class View3DPy;
 
-class GuiExport GLOverlayWidget : public QWidget
+class GuiExport GLOverlayWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit GLOverlayWidget(QWidget* parent=nullptr) : QWidget(parent)
-    {}
-    ~GLOverlayWidget() override
-    {}
-    virtual void setImage(const QImage& img)
-    { image = img; }
-    void paintEvent(QPaintEvent*) override;
+    explicit GLOverlayWidget(QWidget *parent = nullptr) : QWidget(parent) {}
+    ~GLOverlayWidget() override {}
+    virtual void setImage(const QImage &img) { image = img; }
+    void paintEvent(QPaintEvent *) override;
 
 protected:
     QImage image;
@@ -61,22 +59,24 @@ protected:
  *  It consists out of the 3D view
  *  \author Juergen Riegel
  */
-class GuiExport View3DInventor : public MDIView, public ParameterGrp::ObserverType
+class GuiExport View3DInventor: public MDIView, public ParameterGrp::ObserverType
 {
     Q_OBJECT
 
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
 public:
-    View3DInventor(Gui::Document* pcDocument, QWidget* parent, const QtGLWidget* sharewidget = nullptr, Qt::WindowFlags wflags=Qt::WindowFlags());
+    View3DInventor(Gui::Document *pcDocument, QWidget *parent,
+                   const QtGLWidget *sharewidget = nullptr,
+                   Qt::WindowFlags wflags = Qt::WindowFlags());
     ~View3DInventor() override;
 
     /// Message handler
-    bool onMsg(const char* pMsg, const char** ppReturn) override;
-    bool onHasMsg(const char* pMsg) const override;
+    bool onMsg(const char *pMsg, const char **ppReturn) override;
+    bool onHasMsg(const char *pMsg) const override;
     void deleteSelf() override;
     /// Observer message from the ParameterGrp
-    void OnChange(ParameterGrp::SubjectType &rCaller,ParameterGrp::MessageType Reason) override;
+    void OnChange(ParameterGrp::SubjectType &rCaller, ParameterGrp::MessageType Reason) override;
     /// get called when the document is updated
     void onRename(Gui::Document *pDoc) override;
     void onUpdate() override;
@@ -87,7 +87,7 @@ public:
     void print() override;
     void printPdf() override;
     void printPreview() override;
-    void print(QPrinter*) override;
+    void print(QPrinter *) override;
 
     PyObject *getPyObject() override;
     /**
@@ -98,48 +98,48 @@ public:
      * GL widget to get all key events in \a TopLevel or \a Fullscreen mode.
      */
     void setCurrentViewMode(ViewMode b) override;
-    bool setCamera(const char* pCamera);
+    bool setCamera(const char *pCamera);
     void toggleClippingPlane();
     bool hasClippingPlane() const;
 
-    void setOverlayWidget(QWidget*);
+    void setOverlayWidget(QWidget *);
     void removeOverlayWidget();
 
-    View3DInventorViewer *getViewer() const {return _viewer;}
-    bool containsViewProvider(const ViewProvider*) const override;
+    View3DInventorViewer *getViewer() const { return _viewer; }
+    bool containsViewProvider(const ViewProvider *) const override;
 
 public Q_SLOTS:
     /// override the cursor in this view
-    void setOverrideCursor(const QCursor&) override;
+    void setOverrideCursor(const QCursor &) override;
     void restoreOverrideCursor() override;
 
-    void dump(const char* filename, bool onlyVisible=false);
+    void dump(const char *filename, bool onlyVisible = false);
 
 protected Q_SLOTS:
     void stopAnimating();
 
 public:
-    bool eventFilter(QObject*, QEvent* ) override;
+    bool eventFilter(QObject *, QEvent *) override;
 
 protected:
-    void windowStateChanged(MDIView* ) override;
-    void dropEvent        (QDropEvent      * e) override;
-    void dragEnterEvent   (QDragEnterEvent * e) override;
-    void keyPressEvent    (QKeyEvent       * e) override;
-    void keyReleaseEvent  (QKeyEvent       * e) override;
-    void focusInEvent     (QFocusEvent     * e) override;
-    void customEvent      (QEvent          * e) override;
-    void contextMenuEvent (QContextMenuEvent*e) override;
+    void windowStateChanged(MDIView *) override;
+    void dropEvent(QDropEvent *e) override;
+    void dragEnterEvent(QDragEnterEvent *e) override;
+    void keyPressEvent(QKeyEvent *e) override;
+    void keyReleaseEvent(QKeyEvent *e) override;
+    void focusInEvent(QFocusEvent *e) override;
+    void customEvent(QEvent *e) override;
+    void contextMenuEvent(QContextMenuEvent *e) override;
 
     /// handle to the viewer parameter group
     ParameterGrp::handle hGrp;
     ParameterGrp::handle hGrpNavi;
 
 private:
-    View3DInventorViewer * _viewer;
+    View3DInventorViewer *_viewer;
     PyObject *_viewerPy;
-    QTimer * stopSpinTimer;
-    QStackedWidget* stack;
+    QTimer *stopSpinTimer;
+    QStackedWidget *stack;
 
     // friends
     friend class View3DPy;
@@ -147,5 +147,4 @@ private:
 
 } // namespace Gui
 
-#endif  // GUI_VIEW3DINVENTOR_H
-
+#endif // GUI_VIEW3DINVENTOR_H

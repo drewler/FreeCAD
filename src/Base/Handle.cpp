@@ -25,8 +25,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <cassert>
-# include <iostream>
+#include <cassert>
+#include <iostream>
 #endif
 
 #include <QAtomicInt>
@@ -39,10 +39,7 @@ using namespace Base;
 //**************************************************************************
 // Construction/Destruction
 
-Handled::Handled()
-  : _lRefCount(new QAtomicInt(0))
-{
-}
+Handled::Handled() : _lRefCount(new QAtomicInt(0)) {}
 
 Handled::~Handled()
 {
@@ -51,25 +48,17 @@ Handled::~Handled()
     delete _lRefCount;
 }
 
-void Handled::ref() const
-{
-    _lRefCount->ref();
-}
+void Handled::ref() const { _lRefCount->ref(); }
 
 void Handled::unref() const
 {
     assert(*_lRefCount > 0);
-    if (!_lRefCount->deref()) {
-        delete this;
-    }
+    if (!_lRefCount->deref()) { delete this; }
 }
 
-int Handled::getRefCount() const
-{
-    return static_cast<int>(*_lRefCount);
-}
+int Handled::getRefCount() const { return static_cast<int>(*_lRefCount); }
 
-const Handled& Handled::operator = (const Handled&)
+const Handled &Handled::operator=(const Handled &)
 {
     // we must not assign _lRefCount
     return *this;

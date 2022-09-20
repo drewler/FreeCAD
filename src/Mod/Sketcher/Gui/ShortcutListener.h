@@ -27,11 +27,13 @@
 #include <QObject>
 
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class ViewProviderSketch;
 
-class ViewProviderSketchShortcutListenerAttorney {
+class ViewProviderSketchShortcutListenerAttorney
+{
 private:
     static inline void deleteSelected(ViewProviderSketch &vp);
 
@@ -44,17 +46,16 @@ class ShortcutListener: public QObject
     //Q_OBJECT
 
 public:
-    explicit ShortcutListener(ViewProviderSketch * vp);
+    explicit ShortcutListener(ViewProviderSketch *vp);
     ~ShortcutListener() override;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
-    ViewProviderSketch * pViewProvider;
+    ViewProviderSketch *pViewProvider;
 };
 
 } // namespace SketcherGui
 
 
 #endif // SKETCHERGUI_SHORTCUTLISTENER_H
-

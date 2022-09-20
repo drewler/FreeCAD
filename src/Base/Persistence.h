@@ -33,17 +33,17 @@ class Writer;
 class XMLReader;
 
 /// Persistence class and root of the type system
-class BaseExport Persistence : public BaseClass
+class BaseExport Persistence: public BaseClass
 {
 
-  TYPESYSTEM_HEADER();
+    TYPESYSTEM_HEADER();
 
 public:
     /** This method is used to get the size of objects
      * It is not meant to have the exact size, it is more or less an estimation
      * which runs fast! Is it two bytes or a GB?
      */
-    virtual unsigned int getMemSize () const = 0;
+    virtual unsigned int getMemSize() const = 0;
     /** This method is used to save properties to an XML document.
      * A good example you'll find in PropertyStandard.cpp, e.g. the vector:
      * \code
@@ -60,7 +60,7 @@ public:
      * is written. This means closing tags and writing UTF-8.
      * @see Base::Writer
      */
-    virtual void Save (Writer &/*writer*/) const = 0;
+    virtual void Save(Writer & /*writer*/) const = 0;
     /** This method is used to restore properties from an XML document.
      * It uses the XMLReader class, which bases on SAX, to read the in Save()
      * written information. Again the Vector as an example:
@@ -76,7 +76,7 @@ public:
      * }
      * \endcode
      */
-    virtual void Restore(XMLReader &/*reader*/) = 0;
+    virtual void Restore(XMLReader & /*reader*/) = 0;
     /** This method is used to save large amounts of data to a binary file.
      * Sometimes it makes no sense to write property data as XML. In case the
      * amount of data is too big or the data type has a more effective way to
@@ -110,7 +110,7 @@ public:
      * \endcode
      * In this method you can simply stream your content to the file (Base::Writer inheriting from ostream).
      */
-    virtual void SaveDocFile (Writer &/*writer*/) const;
+    virtual void SaveDocFile(Writer & /*writer*/) const;
     /** This method is used to restore large amounts of data from a file
      * In this method you simply stream in your SaveDocFile() saved data.
      * Again you have to apply for the call of this method in the Restore() call:
@@ -140,15 +140,15 @@ public:
      * \endcode
      * @see Base::Reader,Base::XMLReader
      */
-    virtual void RestoreDocFile(Reader &/*reader*/);
+    virtual void RestoreDocFile(Reader & /*reader*/);
     /// Encodes an attribute upon saving.
-    static std::string encodeAttribute(const std::string&);
+    static std::string encodeAttribute(const std::string &);
 
     //dump the binary persistence data into into the stream
-    void dumpToStream(std::ostream& stream, int compression);
+    void dumpToStream(std::ostream &stream, int compression);
 
     //restore the binary persistence data from a stream. Must have the format used by dumpToStream
-    void restoreFromStream(std::istream& stream);
+    void restoreFromStream(std::istream &stream);
 
 private:
     /** This method is used at the end of restoreFromStream()

@@ -7,64 +7,64 @@
 
 #include "fcoll.h"
 
-namespace zipios {
+namespace zipios
+{
 
-using std::find_if ;
+using std::find_if;
 
 // FIXME: make InvalidStateException message customized for
 // subclasses. maybe make an InvalidStateException factory ;-)
 
-ConstEntries FileCollection::entries() const {
-  if ( ! _valid )
-    throw InvalidStateException( "Attempt to get entries from an invalid FileCollection" ) ;
+ConstEntries FileCollection::entries() const
+{
+    if (!_valid)
+        throw InvalidStateException("Attempt to get entries from an invalid FileCollection");
 
-  // The constructor below is not in all vector impl. (not those
-  // without member templates)
-  // ConstEntries ( _entries.begin(), _entries.end() ) ;
-  // Instead of using that we copy the vector manually
-  ConstEntries cep_vec ;
-  cep_vec.reserve( _entries.size() ) ;
-  Entries::const_iterator cit ;
-  for ( cit = _entries.begin() ; cit != _entries.end() ; ++cit )
-    cep_vec.push_back( *cit ) ;
+    // The constructor below is not in all vector impl. (not those
+    // without member templates)
+    // ConstEntries ( _entries.begin(), _entries.end() ) ;
+    // Instead of using that we copy the vector manually
+    ConstEntries cep_vec;
+    cep_vec.reserve(_entries.size());
+    Entries::const_iterator cit;
+    for (cit = _entries.begin(); cit != _entries.end(); ++cit) cep_vec.push_back(*cit);
 
-  return cep_vec ;
+    return cep_vec;
 }
 
-ConstEntryPointer FileCollection::getEntry( const string &name, 
-					   MatchPath matchpath ) const {
-  if ( ! _valid )
-    throw InvalidStateException( "Attempt to get an entry from an invalid FileCollection" ) ;
+ConstEntryPointer FileCollection::getEntry(const string &name, MatchPath matchpath) const
+{
+    if (!_valid)
+        throw InvalidStateException("Attempt to get an entry from an invalid FileCollection");
 
-  Entries::const_iterator iter ;
-  if ( matchpath == MATCH )
-    iter = find_if( _entries.begin(), _entries.end(), FileEntry::MatchName( name ) ) ;
-  else
-    iter = find_if( _entries.begin(), _entries.end(), FileEntry::MatchFileName( name ) ) ;
-  if ( iter == _entries.end() )
-    return nullptr ;
-  else
-    return *iter ; 
+    Entries::const_iterator iter;
+    if (matchpath == MATCH)
+        iter = find_if(_entries.begin(), _entries.end(), FileEntry::MatchName(name));
+    else
+        iter = find_if(_entries.begin(), _entries.end(), FileEntry::MatchFileName(name));
+    if (iter == _entries.end()) return nullptr;
+    else
+        return *iter;
 }
 
-string FileCollection::getName() const {
-  if ( ! _valid )
-    throw InvalidStateException( "Attempt to get the name of an invalid FileCollection" ) ;
-  return _filename ;
-}
-
-
-int FileCollection::size() const {
-  if ( ! _valid )
-    throw InvalidStateException( "Attempt to get size of an invalid FileCollection" ) ;
-  return _entries.size() ;
-}
-
-FileCollection::~FileCollection() {
+string FileCollection::getName() const
+{
+    if (!_valid)
+        throw InvalidStateException("Attempt to get the name of an invalid FileCollection");
+    return _filename;
 }
 
 
-} // namespace
+int FileCollection::size() const
+{
+    if (!_valid) throw InvalidStateException("Attempt to get size of an invalid FileCollection");
+    return _entries.size();
+}
+
+FileCollection::~FileCollection() {}
+
+
+} // namespace zipios
 
 /** \file
     Implementation of FileCollection.

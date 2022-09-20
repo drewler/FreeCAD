@@ -41,13 +41,11 @@ protected:
 public:
     /// Constructor
     Path() = default;
-    explicit Path(const std::vector<Base::Persistence *> & PathVector);
+    explicit Path(const std::vector<Base::Persistence *> &PathVector);
 
     virtual ~Path() = default;
 
-    const std::vector<Base::Persistence *> & getVector() const {
-        return _PathVector;
-    }
+    const std::vector<Base::Persistence *> &getVector() const { return _PathVector; }
 };
 
 } //namespace App

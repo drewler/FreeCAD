@@ -39,26 +39,27 @@ using GLuint = unsigned int;
 using GLint = int;
 using GLfloat = float;
 
-namespace MeshGui {
+namespace MeshGui
+{
 
 class MeshRenderer
 {
 public:
     MeshRenderer();
     ~MeshRenderer();
-    void generateGLArrays(SoGLRenderAction*, SoMaterialBindingElement::Binding binding,
-        std::vector<float>& vertex, std::vector<int32_t>& index);
+    void generateGLArrays(SoGLRenderAction *, SoMaterialBindingElement::Binding binding,
+                          std::vector<float> &vertex, std::vector<int32_t> &index);
     void renderFacesGLArray(SoGLRenderAction *action);
     void renderCoordsGLArray(SoGLRenderAction *action);
     bool canRenderGLArray(SoGLRenderAction *action) const;
-    bool matchMaterial(SoState*) const;
+    bool matchMaterial(SoState *) const;
     void update();
     bool needUpdate(SoGLRenderAction *action);
     static bool shouldRenderDirectly(bool);
 
 private:
     class Private;
-    Private* p;
+    Private *p;
 };
 
 /**
@@ -68,7 +69,7 @@ private:
  *
  * @author Werner Mayer
  */
-class MeshGuiExport SoFCMaterialEngine : public SoEngine
+class MeshGuiExport SoFCMaterialEngine: public SoEngine
 {
     SO_ENGINE_HEADER(SoFCMaterialEngine);
 
@@ -92,7 +93,8 @@ private:
  *
  * @author Werner Mayer
  */
-class MeshGuiExport SoFCIndexedFaceSet : public SoIndexedFaceSet {
+class MeshGuiExport SoFCIndexedFaceSet: public SoIndexedFaceSet
+{
     using inherited = SoIndexedFaceSet;
 
     SO_NODE_HEADER(SoFCIndexedFaceSet);
@@ -111,28 +113,22 @@ protected:
     ~SoFCIndexedFaceSet() override {}
     void GLRender(SoGLRenderAction *action) override;
     void drawFaces(SoGLRenderAction *action);
-    void drawCoords(const SoGLCoordinateElement * const vertexlist,
-                    const int32_t *vertexindices,
-                    int numindices,
-                    const SbVec3f *normals,
-                    const int32_t *normalindices,
-                    SoMaterialBundle *materials,
-                    const int32_t *matindices,
-                    const int32_t binding,
-                    const SoTextureCoordinateBundle * const texcoords,
-                    const int32_t *texindices);
+    void drawCoords(const SoGLCoordinateElement *const vertexlist, const int32_t *vertexindices,
+                    int numindices, const SbVec3f *normals, const int32_t *normalindices,
+                    SoMaterialBundle *materials, const int32_t *matindices, const int32_t binding,
+                    const SoTextureCoordinateBundle *const texcoords, const int32_t *texindices);
 
-    void doAction(SoAction * action) override;
+    void doAction(SoAction *action) override;
 
 private:
-    void startSelection(SoAction * action);
-    void stopSelection(SoAction * action);
+    void startSelection(SoAction *action);
+    void stopSelection(SoAction *action);
     void renderSelectionGeometry(const SbVec3f *);
-    void startVisibility(SoAction * action);
-    void stopVisibility(SoAction * action);
+    void startVisibility(SoAction *action);
+    void stopVisibility(SoAction *action);
     void renderVisibleFaces(const SbVec3f *);
 
-    void generateGLArrays(SoGLRenderAction * action);
+    void generateGLArrays(SoGLRenderAction *action);
 
 private:
     MeshRenderer render;
@@ -143,4 +139,3 @@ private:
 
 
 #endif // MESHGUI_SOFCINDEXEDFACESET_H
-

@@ -25,10 +25,9 @@
 #define GUI_VIEW3DINVENTOREXAMPLES_H
 
 
-void Texture3D(SoSeparator * root);
-void LightManip(SoSeparator * root);
-void AnimationTexture(SoSeparator * root);
+void Texture3D(SoSeparator *root);
+void LightManip(SoSeparator *root);
+void AnimationTexture(SoSeparator *root);
 
 
-#endif  //GUI_VIEW3DINVENTOREXAMPLES_H
-
+#endif //GUI_VIEW3DINVENTOREXAMPLES_H

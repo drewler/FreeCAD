@@ -28,20 +28,23 @@
 #include <memory>
 #include <vector>
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 
-namespace Dialog {
+namespace Dialog
+{
 class Ui_DlgMaterialProperties;
 
-class DlgMaterialPropertiesImp : public QDialog
+class DlgMaterialPropertiesImp: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DlgMaterialPropertiesImp(const std::string& mat, QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit DlgMaterialPropertiesImp(const std::string &mat, QWidget *parent = nullptr,
+                                      Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgMaterialPropertiesImp() override;
-    void setViewProviders(const std::vector<Gui::ViewProvider*>&);
+    void setViewProviders(const std::vector<Gui::ViewProvider *> &);
     QColor diffuseColor() const;
 
 public Q_SLOTS:
@@ -54,11 +57,10 @@ public Q_SLOTS:
 private:
     std::unique_ptr<Ui_DlgMaterialProperties> ui;
     std::string material;
-    std::vector<Gui::ViewProvider*> Objects;
+    std::vector<Gui::ViewProvider *> Objects;
 };
 
 } // namespace Dialog
 } // namespace Gui
 
 #endif // GUI_DIALOG_DLGMATERIALPROPERTIES_IMP_H
-

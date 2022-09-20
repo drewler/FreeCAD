@@ -23,10 +23,10 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-  #include <QGraphicsSceneMouseEvent>
-  #include <QInputDialog>
-  #include <QLineEdit>
-  #include <QTextDocument>
+#include <QGraphicsSceneMouseEvent>
+#include <QInputDialog>
+#include <QLineEdit>
+#include <QTextDocument>
 #endif // #ifndef _PreCmp_
 
 #include <Base/Console.h>
@@ -37,28 +37,24 @@
 
 using namespace TechDrawGui;
 
-TemplateTextField::TemplateTextField(QGraphicsItem *parent,
-                                     TechDraw::DrawTemplate *myTmplte,
+TemplateTextField::TemplateTextField(QGraphicsItem *parent, TechDraw::DrawTemplate *myTmplte,
                                      const std::string &myFieldName)
-    : QGraphicsRectItem(parent),
-      tmplte(myTmplte),
-      fieldNameStr(myFieldName)
+    : QGraphicsRectItem(parent), tmplte(myTmplte), fieldNameStr(myFieldName)
 {
     setToolTip(QObject::tr("Click to update text"));
- }
+}
 
 void TemplateTextField::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if ( tmplte && rect().contains(event->pos()) ) {
-        event->accept();
-    } else {
+    if (tmplte && rect().contains(event->pos())) { event->accept(); }
+    else {
         QGraphicsRectItem::mousePressEvent(event);
     }
 }
 
 void TemplateTextField::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if ( tmplte && rect().contains(event->pos()) ) {
+    if (tmplte && rect().contains(event->pos())) {
         event->accept();
 
         DlgTemplateField ui;
@@ -67,17 +63,16 @@ void TemplateTextField::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         ui.setFieldContent(tmplte->EditableTexts[fieldNameStr]);
 
         if (ui.exec() == QDialog::Accepted) {
-        //WF: why is this escaped?
-        //    "<" is converted elsewhere and no other characters cause problems.
-        //    escaping causes "&" to appear as "&amp;" etc
-//            QString qsClean = ui.getFieldContent().toHtmlEscaped();
+            //WF: why is this escaped?
+            //    "<" is converted elsewhere and no other characters cause problems.
+            //    escaping causes "&" to appear as "&amp;" etc
+            //            QString qsClean = ui.getFieldContent().toHtmlEscaped();
             QString qsClean = ui.getFieldContent();
             std::string utf8Content = qsClean.toUtf8().constData();
             tmplte->EditableTexts.setValue(fieldNameStr, utf8Content);
         }
-
-    } else {
+    }
+    else {
         QGraphicsRectItem::mouseReleaseEvent(event);
     }
 }
-

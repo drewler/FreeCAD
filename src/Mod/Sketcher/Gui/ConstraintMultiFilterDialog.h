@@ -27,12 +27,13 @@
 
 #include "ConstraintFilters.h"
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 using namespace ConstraintFilter;
 
 class Ui_ConstraintMultiFilterDialog;
-class ConstraintMultiFilterDialog : public QDialog
+class ConstraintMultiFilterDialog: public QDialog
 {
     Q_OBJECT
 
@@ -40,20 +41,21 @@ public:
     ConstraintMultiFilterDialog();
     ~ConstraintMultiFilterDialog() override;
 
-    void setMultiFilter(const FilterValueBitset & bitset);
+    void setMultiFilter(const FilterValueBitset &bitset);
     FilterValueBitset getMultiFilter();
 
 public Q_SLOTS:
-    void on_listMultiFilter_itemChanged(QListWidgetItem * item);
+    void on_listMultiFilter_itemChanged(QListWidgetItem *item);
     void on_checkAllButton_clicked(bool);
     void on_uncheckAllButton_clicked(bool);
 
 protected:
     void setCheckStateAll(Qt::CheckState);
+
 private:
     std::unique_ptr<Ui_ConstraintMultiFilterDialog> ui;
 };
 
-}
+} // namespace SketcherGui
 
 #endif // SKETCHERGUI_ConstraintMultiFilter_H

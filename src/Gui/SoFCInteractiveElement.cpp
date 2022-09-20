@@ -23,7 +23,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <Inventor/elements/SoOverrideElement.h>
+#include <Inventor/elements/SoOverrideElement.h>
 #endif
 
 #include "SoFCInteractiveElement.h"
@@ -34,39 +34,31 @@ SO_ELEMENT_SOURCE(SoFCInteractiveElement)
 
 void SoFCInteractiveElement::initClass()
 {
-  SO_ELEMENT_INIT_CLASS(SoFCInteractiveElement, inherited);
-  SO_ENABLE(SoGLRenderAction, SoFCInteractiveElement);
+    SO_ELEMENT_INIT_CLASS(SoFCInteractiveElement, inherited);
+    SO_ENABLE(SoGLRenderAction, SoFCInteractiveElement);
 }
 
-void SoFCInteractiveElement::init(SoState * /*state*/)
+void SoFCInteractiveElement::init(SoState * /*state*/) { this->interactiveMode = false; }
+
+SoFCInteractiveElement::~SoFCInteractiveElement() {}
+
+void SoFCInteractiveElement::set(SoState *const state, SoNode *const node, SbBool mode)
 {
-  this->interactiveMode = false;
+    auto elem =
+        (SoFCInteractiveElement *)SoReplacedElement::getElement(state, classStackIndex, node);
+    elem->setElt(mode);
 }
 
-SoFCInteractiveElement::~SoFCInteractiveElement()
+SbBool SoFCInteractiveElement::get(SoState *const state)
 {
+    return SoFCInteractiveElement::getInstance(state)->interactiveMode;
 }
 
-void SoFCInteractiveElement::set(SoState * const state, SoNode * const node, SbBool mode)
-{
-    auto elem = (SoFCInteractiveElement *)
-    SoReplacedElement::getElement(state, classStackIndex, node);
-  elem->setElt(mode);
-}
+void SoFCInteractiveElement::setElt(SbBool mode) { this->interactiveMode = mode; }
 
-SbBool SoFCInteractiveElement::get(SoState * const state)
+const SoFCInteractiveElement *SoFCInteractiveElement::getInstance(SoState *state)
 {
-  return SoFCInteractiveElement::getInstance(state)->interactiveMode;
-}
-
-void SoFCInteractiveElement::setElt(SbBool mode)
-{
-  this->interactiveMode = mode;
-}
-
-const SoFCInteractiveElement * SoFCInteractiveElement::getInstance(SoState * state)
-{
-  return (const SoFCInteractiveElement *) SoElement::getConstElement(state, classStackIndex);
+    return (const SoFCInteractiveElement *)SoElement::getConstElement(state, classStackIndex);
 }
 
 // ---------------------------------
@@ -75,54 +67,42 @@ SO_ELEMENT_SOURCE(SoGLWidgetElement)
 
 void SoGLWidgetElement::initClass()
 {
-  SO_ELEMENT_INIT_CLASS(SoGLWidgetElement, inherited);
-  SO_ENABLE(SoGLRenderAction, SoGLWidgetElement);
-  SO_ENABLE(SoHandleEventAction, SoGLWidgetElement);
+    SO_ELEMENT_INIT_CLASS(SoGLWidgetElement, inherited);
+    SO_ENABLE(SoGLRenderAction, SoGLWidgetElement);
+    SO_ENABLE(SoHandleEventAction, SoGLWidgetElement);
 }
 
-void SoGLWidgetElement::init(SoState * state)
+void SoGLWidgetElement::init(SoState *state)
 {
-  inherited::init(state);
-  this->window = nullptr;
+    inherited::init(state);
+    this->window = nullptr;
 }
 
-SoGLWidgetElement::~SoGLWidgetElement()
+SoGLWidgetElement::~SoGLWidgetElement() {}
+
+void SoGLWidgetElement::set(SoState *state, QtGLWidget *window)
 {
+    auto elem = static_cast<SoGLWidgetElement *>(SoElement::getElement(state, classStackIndex));
+    elem->window = window;
 }
 
-void SoGLWidgetElement::set(SoState * state, QtGLWidget * window)
+void SoGLWidgetElement::get(SoState *state, QtGLWidget *&window)
 {
-    auto elem = static_cast<SoGLWidgetElement *>
-        (SoElement::getElement(state, classStackIndex));
-  elem->window = window;
-}
-
-void SoGLWidgetElement::get(SoState * state, QtGLWidget *& window)
-{
-    const auto that =  static_cast<const SoGLWidgetElement *>
-        (SoElement::getConstElement(state, classStackIndex));
+    const auto that =
+        static_cast<const SoGLWidgetElement *>(SoElement::getConstElement(state, classStackIndex));
     window = that->window;
 }
 
-void SoGLWidgetElement::push(SoState * state)
-{
-    inherited::push(state);
-}
+void SoGLWidgetElement::push(SoState *state) { inherited::push(state); }
 
-void SoGLWidgetElement::pop(SoState * state, const SoElement * prevTopElement)
+void SoGLWidgetElement::pop(SoState *state, const SoElement *prevTopElement)
 {
     inherited::pop(state, prevTopElement);
 }
 
-SbBool SoGLWidgetElement::matches(const SoElement * /*element*/) const
-{
-    return true;
-}
+SbBool SoGLWidgetElement::matches(const SoElement * /*element*/) const { return true; }
 
-SoElement * SoGLWidgetElement::copyMatchInfo() const
-{
-    return nullptr;
-}
+SoElement *SoGLWidgetElement::copyMatchInfo() const { return nullptr; }
 
 // ---------------------------------
 
@@ -130,54 +110,43 @@ SO_ELEMENT_SOURCE(SoGLRenderActionElement)
 
 void SoGLRenderActionElement::initClass()
 {
-  SO_ELEMENT_INIT_CLASS(SoGLRenderActionElement, inherited);
-  SO_ENABLE(SoGLRenderAction, SoGLRenderActionElement);
-  SO_ENABLE(SoHandleEventAction, SoGLRenderActionElement);
+    SO_ELEMENT_INIT_CLASS(SoGLRenderActionElement, inherited);
+    SO_ENABLE(SoGLRenderAction, SoGLRenderActionElement);
+    SO_ENABLE(SoHandleEventAction, SoGLRenderActionElement);
 }
 
-void SoGLRenderActionElement::init(SoState * state)
+void SoGLRenderActionElement::init(SoState *state)
 {
-  inherited::init(state);
-  this->glRenderAction = nullptr;
+    inherited::init(state);
+    this->glRenderAction = nullptr;
 }
 
-SoGLRenderActionElement::~SoGLRenderActionElement()
+SoGLRenderActionElement::~SoGLRenderActionElement() {}
+
+void SoGLRenderActionElement::set(SoState *state, SoGLRenderAction *action)
 {
+    auto elem =
+        static_cast<SoGLRenderActionElement *>(SoElement::getElement(state, classStackIndex));
+    elem->glRenderAction = action;
 }
 
-void SoGLRenderActionElement::set(SoState * state, SoGLRenderAction * action)
+void SoGLRenderActionElement::get(SoState *state, SoGLRenderAction *&action)
 {
-    auto elem = static_cast<SoGLRenderActionElement *>
-        (SoElement::getElement(state, classStackIndex));
-  elem->glRenderAction = action;
-}
-
-void SoGLRenderActionElement::get(SoState * state, SoGLRenderAction * & action)
-{
-    const auto that =  static_cast<const SoGLRenderActionElement *>
-        (SoElement::getConstElement(state, classStackIndex));
+    const auto that = static_cast<const SoGLRenderActionElement *>(
+        SoElement::getConstElement(state, classStackIndex));
     action = that->glRenderAction;
 }
 
-void SoGLRenderActionElement::push(SoState * state)
-{
-    inherited::push(state);
-}
+void SoGLRenderActionElement::push(SoState *state) { inherited::push(state); }
 
-void SoGLRenderActionElement::pop(SoState * state, const SoElement * prevTopElement)
+void SoGLRenderActionElement::pop(SoState *state, const SoElement *prevTopElement)
 {
     inherited::pop(state, prevTopElement);
 }
 
-SbBool SoGLRenderActionElement::matches(const SoElement * /*element*/) const
-{
-    return true;
-}
+SbBool SoGLRenderActionElement::matches(const SoElement * /*element*/) const { return true; }
 
-SoElement * SoGLRenderActionElement::copyMatchInfo() const
-{
-    return nullptr;
-}
+SoElement *SoGLRenderActionElement::copyMatchInfo() const { return nullptr; }
 
 // ---------------------------------
 
@@ -186,17 +155,12 @@ SO_NODE_SOURCE(SoGLWidgetNode)
 /*!
   Constructor.
 */
-SoGLWidgetNode::SoGLWidgetNode() : window(nullptr)
-{
-    SO_NODE_CONSTRUCTOR(SoGLWidgetNode);
-}
+SoGLWidgetNode::SoGLWidgetNode() : window(nullptr) { SO_NODE_CONSTRUCTOR(SoGLWidgetNode); }
 
 /*!
   Destructor.
 */
-SoGLWidgetNode::~SoGLWidgetNode()
-{
-}
+SoGLWidgetNode::~SoGLWidgetNode() {}
 
 // Doc from superclass.
 void SoGLWidgetNode::initClass()
@@ -207,16 +171,13 @@ void SoGLWidgetNode::initClass()
 }
 
 // Doc from superclass.
-void SoGLWidgetNode::doAction(SoAction * action)
+void SoGLWidgetNode::doAction(SoAction *action)
 {
     SoGLWidgetElement::set(action->getState(), this->window);
 }
 
 // Doc from superclass.
-void SoGLWidgetNode::GLRender(SoGLRenderAction * action)
-{
-    SoGLWidgetNode::doAction(action);
-}
+void SoGLWidgetNode::GLRender(SoGLRenderAction *action) { SoGLWidgetNode::doAction(action); }
 
 // ---------------------------------
 
@@ -224,61 +185,48 @@ SO_ELEMENT_SOURCE(SoGLVBOActivatedElement)
 
 void SoGLVBOActivatedElement::initClass()
 {
-  SO_ELEMENT_INIT_CLASS(SoGLVBOActivatedElement, inherited);
-  SO_ENABLE(SoGLRenderAction, SoGLVBOActivatedElement);
-  SO_ENABLE(SoHandleEventAction, SoGLVBOActivatedElement);
+    SO_ELEMENT_INIT_CLASS(SoGLVBOActivatedElement, inherited);
+    SO_ENABLE(SoGLRenderAction, SoGLVBOActivatedElement);
+    SO_ENABLE(SoHandleEventAction, SoGLVBOActivatedElement);
 }
 
-void SoGLVBOActivatedElement::init(SoState * state)
+void SoGLVBOActivatedElement::init(SoState *state)
 {
-  inherited::init(state);
-  this->active = false;
+    inherited::init(state);
+    this->active = false;
 }
 
-SoGLVBOActivatedElement::~SoGLVBOActivatedElement()
+SoGLVBOActivatedElement::~SoGLVBOActivatedElement() {}
+
+void SoGLVBOActivatedElement::set(SoState *state, SbBool active)
 {
+    auto elem =
+        static_cast<SoGLVBOActivatedElement *>(SoElement::getElement(state, classStackIndex));
+    elem->active = active;
 }
 
-void SoGLVBOActivatedElement::set(SoState * state, SbBool active)
+void SoGLVBOActivatedElement::get(SoState *state, SbBool &active)
 {
-    auto elem = static_cast<SoGLVBOActivatedElement *>
-        (SoElement::getElement(state, classStackIndex));
-  elem->active = active;
-}
-
-void SoGLVBOActivatedElement::get(SoState * state, SbBool& active)
-{
-    const auto self =  static_cast<const SoGLVBOActivatedElement *>
-        (SoElement::getConstElement(state, classStackIndex));
+    const auto self = static_cast<const SoGLVBOActivatedElement *>(
+        SoElement::getConstElement(state, classStackIndex));
     active = self->active;
-    if(active) {
+    if (active) {
         uint32_t flags = SoOverrideElement::getFlags(state);
-        if(flags & (SoOverrideElement::COLOR_INDEX|
-                    SoOverrideElement::DIFFUSE_COLOR|
-                    SoOverrideElement::MATERIAL_BINDING|
-                    SoOverrideElement::TRANSPARENCY|
-                    SoOverrideElement::NORMAL_VECTOR|
-                    SoOverrideElement::NORMAL_BINDING))
+        if (flags
+            & (SoOverrideElement::COLOR_INDEX | SoOverrideElement::DIFFUSE_COLOR
+               | SoOverrideElement::MATERIAL_BINDING | SoOverrideElement::TRANSPARENCY
+               | SoOverrideElement::NORMAL_VECTOR | SoOverrideElement::NORMAL_BINDING))
             active = false;
     }
 }
 
-void SoGLVBOActivatedElement::push(SoState * state)
-{
-    inherited::push(state);
-}
+void SoGLVBOActivatedElement::push(SoState *state) { inherited::push(state); }
 
-void SoGLVBOActivatedElement::pop(SoState * state, const SoElement * prevTopElement)
+void SoGLVBOActivatedElement::pop(SoState *state, const SoElement *prevTopElement)
 {
     inherited::pop(state, prevTopElement);
 }
 
-SbBool SoGLVBOActivatedElement::matches(const SoElement * /*element*/) const
-{
-    return true;
-}
+SbBool SoGLVBOActivatedElement::matches(const SoElement * /*element*/) const { return true; }
 
-SoElement * SoGLVBOActivatedElement::copyMatchInfo() const
-{
-    return nullptr;
-}
+SoElement *SoGLVBOActivatedElement::copyMatchInfo() const { return nullptr; }

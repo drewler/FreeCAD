@@ -36,9 +36,8 @@ using namespace Gui::Dialog;
  *  Constructs a DlgSettingsMacroImp which is a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'
  */
-DlgSettingsMacroImp::DlgSettingsMacroImp( QWidget* parent )
-  : PreferencePage( parent )
-  , ui(new Ui_DlgSettingsMacro)
+DlgSettingsMacroImp::DlgSettingsMacroImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsMacro)
 {
     ui->setupUi(this);
 
@@ -67,7 +66,8 @@ void DlgSettingsMacroImp::setRecentMacroSize()
 {
     auto recent = getMainWindow()->findChild<RecentMacrosAction *>(QLatin1String("recentMacros"));
     if (recent) {
-        ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("RecentMacros");
+        ParameterGrp::handle hGrp =
+            WindowParameter::getDefaultParameter()->GetGroup("RecentMacros");
         recent->resizeList(hGrp->GetInt("RecentMacros", 4));
     }
 }
@@ -99,7 +99,8 @@ void DlgSettingsMacroImp::loadSettings()
     ui->MacroPath_2->onRestore();
     ui->RecentMacros->onRestore();
     ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("RecentMacros");
-    ui->ShortcutModifiers->setText(QString::fromStdString(hGrp->GetASCII("ShortcutModifiers", "Ctrl+Shift+")));
+    ui->ShortcutModifiers->setText(
+        QString::fromStdString(hGrp->GetASCII("ShortcutModifiers", "Ctrl+Shift+")));
     ui->ShortcutCount->onRestore();
 }
 
@@ -108,9 +109,7 @@ void DlgSettingsMacroImp::loadSettings()
  */
 void DlgSettingsMacroImp::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }

@@ -38,16 +38,16 @@
  *        GIBI can do it if the global number of nodes is even (DALL operator).
  *        See PAL10467
  */
-class STDMESHERS_EXPORT StdMeshers_QuadranglePreference:public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_QuadranglePreference: public SMESH_Hypothesis
 {
- public:
-  StdMeshers_QuadranglePreference(int hypId, int studyId, SMESH_Gen * gen);
-  virtual ~ StdMeshers_QuadranglePreference();
-  
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
+public:
+    StdMeshers_QuadranglePreference(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_QuadranglePreference();
 
-  /*!
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+
+    /*!
    * \brief Initialize my parameter values by the mesh built on the geometry
     * \param theMesh - the built mesh
     * \param theShape - the geometry of interest
@@ -55,14 +55,13 @@ class STDMESHERS_EXPORT StdMeshers_QuadranglePreference:public SMESH_Hypothesis
     *
     * Just return false as this hypothesis does not have parameters values
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
-
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 };
 
 #endif

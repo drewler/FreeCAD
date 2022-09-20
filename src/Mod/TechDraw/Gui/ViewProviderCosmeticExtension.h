@@ -30,7 +30,7 @@
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport ViewProviderCosmeticExtension : public Gui::ViewProviderExtension
+class TechDrawGuiExport ViewProviderCosmeticExtension: public Gui::ViewProviderExtension
 {
     EXTENSION_PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderCosmeticExtension);
 
@@ -39,10 +39,11 @@ public:
     ViewProviderCosmeticExtension(void);
     virtual ~ViewProviderCosmeticExtension() = default;
 
-    virtual QIcon extensionMergeGreyableOverlayIcons(const QIcon & orig) const override;
+    virtual QIcon extensionMergeGreyableOverlayIcons(const QIcon &orig) const override;
 };
 
-using ViewProviderCosmeticExtensionPython = Gui::ViewProviderExtensionPythonT<TechDrawGui::ViewProviderCosmeticExtension>;
+using ViewProviderCosmeticExtensionPython =
+    Gui::ViewProviderExtensionPythonT<TechDrawGui::ViewProviderCosmeticExtension>;
 
 } //namespace TechDrawGui
 

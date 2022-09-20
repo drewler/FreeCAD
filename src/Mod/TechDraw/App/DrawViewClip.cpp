@@ -33,7 +33,7 @@
 #include "DrawViewClip.h"
 #include "DrawPage.h"
 
-#include <Mod/TechDraw/App/DrawViewClipPy.h>  // generated from DrawViewClipPy.xml
+#include <Mod/TechDraw/App/DrawViewClipPy.h> // generated from DrawViewClipPy.xml
 
 using namespace TechDraw;
 using namespace std;
@@ -50,10 +50,13 @@ DrawViewClip::DrawViewClip()
     static const char *group = "Clip Group";
     //App::PropertyType hidden = (App::PropertyType)(App::Prop_Hidden);
 
-    ADD_PROPERTY_TYPE(Height     ,(100), group, App::Prop_None, "The height of the view area of this clip");
-    ADD_PROPERTY_TYPE(Width      ,(100), group, App::Prop_None, "The width of the view area of this clip");
-    ADD_PROPERTY_TYPE(ShowFrame  ,(0) ,group, App::Prop_None, "Specifies if the clip frame appears on the page or not");
-    ADD_PROPERTY_TYPE(Views      ,(nullptr) ,group, App::Prop_None, "The Views in this Clip group");
+    ADD_PROPERTY_TYPE(Height, (100), group, App::Prop_None,
+                      "The height of the view area of this clip");
+    ADD_PROPERTY_TYPE(Width, (100), group, App::Prop_None,
+                      "The width of the view area of this clip");
+    ADD_PROPERTY_TYPE(ShowFrame, (0), group, App::Prop_None,
+                      "Specifies if the clip frame appears on the page or not");
+    ADD_PROPERTY_TYPE(Views, (nullptr), group, App::Prop_None, "The Views in this Clip group");
     Views.setScope(App::LinkScope::Global);
 
     // hide N/A properties
@@ -63,12 +66,9 @@ DrawViewClip::DrawViewClip()
     Scale.setStatus(App::Property::Hidden, true);
 }
 
-void DrawViewClip::onChanged(const App::Property* prop)
+void DrawViewClip::onChanged(const App::Property *prop)
 {
-    if ((prop == &Height) ||
-        (prop == &Width) ||
-        (prop == &ShowFrame) ||
-        (prop == &Views)) {
+    if ((prop == &Height) || (prop == &Width) || (prop == &ShowFrame) || (prop == &Views)) {
         requestPaint();
     }
     DrawView::onChanged(prop);
@@ -76,13 +76,13 @@ void DrawViewClip::onChanged(const App::Property* prop)
 
 void DrawViewClip::addView(DrawView *view)
 {
-    const std::vector<App::DocumentObject*> currViews = Views.getValues();
+    const std::vector<App::DocumentObject *> currViews = Views.getValues();
     std::vector<App::DocumentObject *> newViews(currViews);
     newViews.push_back(view);
     Views.setValues(newViews);
-    view->X.setValue(0.0);                   //position in centre of clip group frame
+    view->X.setValue(0.0); //position in centre of clip group frame
     view->Y.setValue(0.0);
-    auto page = findParentPage();             //get Page to release child relationship in tree
+    auto page = findParentPage(); //get Page to release child relationship in tree
     page->Views.touch();
 }
 
@@ -90,24 +90,21 @@ void DrawViewClip::removeView(DrawView *view)
 {
     std::vector<App::DocumentObject *> currViews = Views.getValues();
     std::vector<App::DocumentObject *> newViews;
-    std::vector<App::DocumentObject*>::iterator it = currViews.begin();
+    std::vector<App::DocumentObject *>::iterator it = currViews.begin();
     for (; it != currViews.end(); it++) {
         std::string viewName = view->getNameInDocument();
-        if (viewName.compare((*it)->getNameInDocument()) != 0) {
-            newViews.push_back((*it));
-        }
+        if (viewName.compare((*it)->getNameInDocument()) != 0) { newViews.push_back((*it)); }
     }
     Views.setValues(newViews);
 }
 
 App::DocumentObjectExecReturn *DrawViewClip::execute()
 {
-    if (!keepUpdated()) {
-        return App::DocumentObject::StdReturn;
-    }
+    if (!keepUpdated()) { return App::DocumentObject::StdReturn; }
 
-    std::vector<App::DocumentObject*> children = Views.getValues();
-    for (std::vector<App::DocumentObject*>::iterator it = children.begin(); it != children.end(); ++it) {
+    std::vector<App::DocumentObject *> children = Views.getValues();
+    for (std::vector<App::DocumentObject *>::iterator it = children.begin(); it != children.end();
+         ++it) {
         if ((*it)->getTypeId().isDerivedFrom(DrawView::getClassTypeId())) {
             TechDraw::DrawView *view = static_cast<TechDraw::DrawView *>(*it);
             view->requestPaint();
@@ -123,11 +120,7 @@ App::DocumentObjectExecReturn *DrawViewClip::execute()
 short DrawViewClip::mustExecute() const
 {
     if (!isRestoring()) {
-        if (Height.isTouched() ||
-            Width.isTouched() ||
-            Views.isTouched()) {
-            return 1;
-        }
+        if (Height.isTouched() || Width.isTouched() || Views.isTouched()) { return 1; }
     }
     return TechDraw::DrawView::mustExecute();
 }
@@ -135,8 +128,9 @@ short DrawViewClip::mustExecute() const
 std::vector<std::string> DrawViewClip::getChildViewNames()
 {
     std::vector<std::string> childNames;
-    std::vector<App::DocumentObject*> children = Views.getValues();
-    for (std::vector<App::DocumentObject*>::iterator it = children.begin(); it != children.end(); ++it) {
+    std::vector<App::DocumentObject *> children = Views.getValues();
+    for (std::vector<App::DocumentObject *>::iterator it = children.begin(); it != children.end();
+         ++it) {
         if ((*it)->getTypeId().isDerivedFrom(DrawView::getClassTypeId())) {
             std::string name = (*it)->getNameInDocument();
             childNames.push_back(name);
@@ -145,13 +139,12 @@ std::vector<std::string> DrawViewClip::getChildViewNames()
     return childNames;
 }
 
-bool DrawViewClip::isViewInClip(App::DocumentObject* view)
+bool DrawViewClip::isViewInClip(App::DocumentObject *view)
 {
-    std::vector<App::DocumentObject*> children = Views.getValues();
-    for (std::vector<App::DocumentObject*>::iterator it = children.begin(); it != children.end(); ++it) {
-        if ((*it) == view) {
-            return true;
-        }
+    std::vector<App::DocumentObject *> children = Views.getValues();
+    for (std::vector<App::DocumentObject *>::iterator it = children.begin(); it != children.end();
+         ++it) {
+        if ((*it) == view) { return true; }
     }
     return false;
 }
@@ -168,14 +161,16 @@ PyObject *DrawViewClip::getPyObject()
 
 // Python Drawing feature ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(TechDraw::DrawViewClipPython, TechDraw::DrawViewClip)
-template<> const char* TechDraw::DrawViewClipPython::getViewProviderName() const {
+template<> const char *TechDraw::DrawViewClipPython::getViewProviderName() const
+{
     return "TechDrawGui::ViewProviderViewClip";
 }
 /// @endcond
 
 // explicit template instantiation
 template class TechDrawExport FeaturePythonT<TechDraw::DrawViewClip>;
-}
+} // namespace App

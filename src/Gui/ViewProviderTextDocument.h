@@ -29,10 +29,13 @@
 
 class QPlainTextEdit;
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport ViewProviderTextDocument : public ViewProviderDocumentObject {
+class GuiExport ViewProviderTextDocument: public ViewProviderDocumentObject
+{
     PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderTextDocument);
+
 public:
     ViewProviderTextDocument();
     ~ViewProviderTextDocument() override {}
@@ -43,10 +46,10 @@ public:
     App::PropertyEnumeration SyntaxHighlighter;
 
     bool doubleClicked() override;
-    void setupContextMenu(QMenu* menu, QObject* receiver, const char* member) override;
+    void setupContextMenu(QMenu *menu, QObject *receiver, const char *member) override;
     bool isShow() const override { return true; }
 
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
 
     MDIView *getMDIView() const override;
 
@@ -55,10 +58,9 @@ private:
 
 private:
     QPointer<QPlainTextEdit> editorWidget;
-    static const char* SyntaxEnums[];
+    static const char *SyntaxEnums[];
 };
 
-}
+} // namespace Gui
 
 #endif
-

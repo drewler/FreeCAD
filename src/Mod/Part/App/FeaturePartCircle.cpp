@@ -22,9 +22,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepBuilderAPI_MakeEdge.hxx>
-# include <gp_Circ.hxx>
-# include <TopoDS_Edge.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <gp_Circ.hxx>
+#include <TopoDS_Edge.hxx>
 #endif
 
 #include <Base/Tools.h>
@@ -34,30 +34,25 @@
 
 using namespace Part;
 
-App::PropertyQuantityConstraint::Constraints Circle::angleRange = {0.0,360.0,1.0};
+App::PropertyQuantityConstraint::Constraints Circle::angleRange = {0.0, 360.0, 1.0};
 
 PROPERTY_SOURCE(Part::Circle, Part::Primitive)
 
 
 Circle::Circle()
 {
-    ADD_PROPERTY(Radius,(2.0f));
-    ADD_PROPERTY(Angle1,(0.0f));
+    ADD_PROPERTY(Radius, (2.0f));
+    ADD_PROPERTY(Angle1, (0.0f));
     Angle1.setConstraints(&angleRange);
-    ADD_PROPERTY(Angle2,(360.0f));
+    ADD_PROPERTY(Angle2, (360.0f));
     Angle2.setConstraints(&angleRange);
 }
 
-Circle::~Circle()
-{
-}
+Circle::~Circle() {}
 
 short Circle::mustExecute() const
 {
-    if (Angle1.isTouched() ||
-        Angle2.isTouched() ||
-        Radius.isTouched())
-        return 1;
+    if (Angle1.isTouched() || Angle2.isTouched() || Radius.isTouched()) return 1;
     return Part::Primitive::mustExecute();
 }
 
@@ -65,18 +60,18 @@ App::DocumentObjectExecReturn *Circle::execute(void)
 {
     gp_Circ circle;
     circle.SetRadius(this->Radius.getValue());
-    
+
     BRepBuilderAPI_MakeEdge clMakeEdge(circle, Base::toRadians<double>(this->Angle1.getValue()),
-                                               Base::toRadians<double>(this->Angle2.getValue()));
-    const TopoDS_Edge& edge = clMakeEdge.Edge();
+                                       Base::toRadians<double>(this->Angle2.getValue()));
+    const TopoDS_Edge &edge = clMakeEdge.Edge();
     this->Shape.setValue(edge);
     return Primitive::execute();
 }
 
-void Circle::onChanged(const App::Property* prop)
+void Circle::onChanged(const App::Property *prop)
 {
     if (!isRestoring()) {
-        if (prop == &Radius || prop == &Angle1 || prop == &Angle2){
+        if (prop == &Radius || prop == &Angle1 || prop == &Angle2) {
             try {
                 App::DocumentObjectExecReturn *ret = recompute();
                 delete ret;
@@ -90,7 +85,8 @@ void Circle::onChanged(const App::Property* prop)
 
 void Circle::Restore(Base::XMLReader &reader)
 {
-    Base::ObjectStatusLocker<App::Property::Status, App::Property> lock(App::Property::User1, &Angle2, false);
+    Base::ObjectStatusLocker<App::Property::Status, App::Property> lock(App::Property::User1,
+                                                                        &Angle2, false);
     Primitive::Restore(reader);
 
     if (Angle2.testStatus(App::Property::User1)) {
@@ -100,7 +96,8 @@ void Circle::Restore(Base::XMLReader &reader)
     }
 }
 
-void Circle::handleChangedPropertyName(Base::XMLReader &reader, const char * TypeName, const char *PropName)
+void Circle::handleChangedPropertyName(Base::XMLReader &reader, const char *TypeName,
+                                       const char *PropName)
 {
     Base::Type type = Base::Type::fromName(TypeName);
     if (Angle2.getTypeId() == type && strcmp(PropName, "Angle0") == 0) {

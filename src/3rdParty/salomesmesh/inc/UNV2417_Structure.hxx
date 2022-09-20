@@ -25,28 +25,29 @@
 
 #include <map>
 #include <vector>
-#include <fstream>      
-#include <string>       
+#include <fstream>
+#include <string>
 
 
-namespace UNV2417{
+namespace UNV2417
+{
 
-  typedef std::vector<int> TListOfId; // Nodal connectivitiesList of Id
+typedef std::vector<int> TListOfId; // Nodal connectivitiesList of Id
 
-  struct TRecord{
-    std::string    GroupName;
+struct TRecord {
+    std::string GroupName;
     TListOfId NodeList;
     TListOfId ElementList;
-  };
-
-  typedef int TGroupId; // type of element label
-  typedef std::map<TGroupId, TRecord> TDataSet;
-
-  void Read(std::ifstream& in_stream, TDataSet& theDataSet);
-  void ReadGroup(const std::string& myGroupLabel, std::ifstream& in_stream, TDataSet& theDataSet);
-
-  void Write(std::ofstream& out_stream, const TDataSet& theDataSet);
 };
+
+typedef int TGroupId; // type of element label
+typedef std::map<TGroupId, TRecord> TDataSet;
+
+void Read(std::ifstream &in_stream, TDataSet &theDataSet);
+void ReadGroup(const std::string &myGroupLabel, std::ifstream &in_stream, TDataSet &theDataSet);
+
+void Write(std::ofstream &out_stream, const TDataSet &theDataSet);
+}; // namespace UNV2417
 
 
 #endif

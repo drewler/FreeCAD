@@ -29,11 +29,12 @@
 #include "ViewProviderDocumentObject.h"
 
 
-namespace Gui {
+namespace Gui
+{
 
 class Document;
 
-class GuiExport ViewProviderOrigin : public ViewProviderDocumentObject
+class GuiExport ViewProviderOrigin: public ViewProviderDocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderOrigin);
 
@@ -48,14 +49,14 @@ public:
 
     /// @name Override methods
     ///@{
-    std::vector<App::DocumentObject*> claimChildren() const override;
-    std::vector<App::DocumentObject*> claimChildren3D() const override;
+    std::vector<App::DocumentObject *> claimChildren() const override;
+    std::vector<App::DocumentObject *> claimChildren3D() const override;
 
-    SoGroup* getChildRoot() const override {return pcGroupChildren;}
+    SoGroup *getChildRoot() const override { return pcGroupChildren; }
 
-    void attach(App::DocumentObject* pcObject) override;
+    void attach(App::DocumentObject *pcObject) override;
     std::vector<std::string> getDisplayModes() const override;
-    void setDisplayMode(const char* ModeName) override;
+    void setDisplayMode(const char *ModeName) override;
     ///@}
 
     /** @name Temporary visibility mode
@@ -63,30 +64,28 @@ public:
      */
     ///@{
     /// Set temporary visibility of some of origin's objects e.g. while rotating or mirroring
-    void setTemporaryVisibility (bool axis, bool planes);
+    void setTemporaryVisibility(bool axis, bool planes);
     /// Returns true if the origin in temporary visibility mode
-    bool isTemporaryVisibility ();
+    bool isTemporaryVisibility();
     /// Reset the visibility
-    void resetTemporaryVisibility ();
+    void resetTemporaryVisibility();
     ///@}
 
-    bool canDragObjects() const override {
-        return false;
-    }
+    bool canDragObjects() const override { return false; }
 
     /// Returns default size. Use this if it is not possible to determine appropriate size by other means
     static double defaultSize();
+
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     bool onDelete(const std::vector<std::string> &) override;
 
 private:
     SoGroup *pcGroupChildren;
 
-    std::map<Gui::ViewProvider*, bool> tempVisMap;
+    std::map<Gui::ViewProvider *, bool> tempVisMap;
 };
 
 } // namespace Gui
 
 #endif // GUI_VIEWPROVIDER_ViewProviderOrigin_H
-

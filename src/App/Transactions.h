@@ -42,7 +42,7 @@ class TransactionalObject;
 
 /** Represents a atomic transaction of the document
  */
-class AppExport Transaction : public Base::Persistence
+class AppExport Transaction: public Base::Persistence
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -60,13 +60,13 @@ public:
     ~Transaction() override;
 
     /// apply the content to the document
-    void apply(Document &Doc,bool forward);
+    void apply(Document &Doc, bool forward);
 
     // the utf-8 name of the transaction
     std::string Name;
 
-    unsigned int getMemSize () const override;
-    void Save (Base::Writer &writer) const override;
+    unsigned int getMemSize() const override;
+    void Save(Base::Writer &writer) const override;
     /// This method is used to restore properties from an XML document.
     void Restore(Base::XMLReader &reader) override;
 
@@ -81,7 +81,7 @@ public:
     bool isEmpty() const;
     /// check if this object is used in a transaction
     bool hasObject(const TransactionalObject *Obj) const;
-    void addOrRemoveProperty(TransactionalObject *Obj, const Property* pcProp, bool add);
+    void addOrRemoveProperty(TransactionalObject *Obj, const Property *pcProp, bool add);
 
     void addObjectNew(TransactionalObject *Obj);
     void addObjectDel(const TransactionalObject *Obj);
@@ -89,21 +89,18 @@ public:
 
 private:
     int transID;
-    using Info = std::pair<const TransactionalObject*, TransactionObject*>;
+    using Info = std::pair<const TransactionalObject *, TransactionObject *>;
     bmi::multi_index_container<
         Info,
         bmi::indexed_by<
             bmi::sequenced<>,
-            bmi::hashed_unique<
-                bmi::member<Info, const TransactionalObject*, &Info::first>
-            >
-        >
-    > _Objects;
+            bmi::hashed_unique<bmi::member<Info, const TransactionalObject *, &Info::first>>>>
+        _Objects;
 };
 
 /** Represents an entry for an object in a Transaction
  */
-class AppExport TransactionObject : public Base::Persistence
+class AppExport TransactionObject: public Base::Persistence
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -117,20 +114,25 @@ public:
     virtual void applyDel(Document &Doc, TransactionalObject *pcObj);
     virtual void applyChn(Document &Doc, TransactionalObject *pcObj, bool Forward);
 
-    void setProperty(const Property* pcProp);
-    void addOrRemoveProperty(const Property* pcProp, bool add);
+    void setProperty(const Property *pcProp);
+    void addOrRemoveProperty(const Property *pcProp, bool add);
 
-    unsigned int getMemSize () const override;
-    void Save (Base::Writer &writer) const override;
+    unsigned int getMemSize() const override;
+    void Save(Base::Writer &writer) const override;
     /// This method is used to restore properties from an XML document.
     void Restore(Base::XMLReader &reader) override;
 
     friend class Transaction;
 
 protected:
-    enum Status {New,Del,Chn} status;
+    enum Status
+    {
+        New,
+        Del,
+        Chn
+    } status;
 
-    struct PropData : DynamicProperty::PropData {
+    struct PropData: DynamicProperty::PropData {
         Base::Type propertyType;
         const Property *propertyOrig = nullptr;
     };
@@ -141,7 +143,7 @@ protected:
 
 /** Represents an entry for a document object in a transaction
  */
-class AppExport TransactionDocumentObject : public TransactionObject
+class AppExport TransactionDocumentObject: public TransactionObject
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -158,41 +160,36 @@ public:
 class AppExport TransactionFactory
 {
 public:
-    static TransactionFactory& instance();
-    static void destruct ();
+    static TransactionFactory &instance();
+    static void destruct();
 
-    TransactionObject* createTransaction (const Base::Type& type) const;
-    void addProducer (const Base::Type& type, Base::AbstractProducer *producer);
+    TransactionObject *createTransaction(const Base::Type &type) const;
+    void addProducer(const Base::Type &type, Base::AbstractProducer *producer);
 
 private:
-    static TransactionFactory* self;
-    std::map<Base::Type, Base::AbstractProducer*> producers;
+    static TransactionFactory *self;
+    std::map<Base::Type, Base::AbstractProducer *> producers;
 
     TransactionFactory() = default;
     ~TransactionFactory() = default;
 };
 
-template <class CLASS>
-class TransactionProducer : public Base::AbstractProducer
+template<class CLASS> class TransactionProducer: public Base::AbstractProducer
 {
 public:
-    explicit TransactionProducer (const Base::Type& type)
+    explicit TransactionProducer(const Base::Type &type)
     {
         TransactionFactory::instance().addProducer(type, this);
     }
 
-    ~TransactionProducer () override = default;
+    ~TransactionProducer() override = default;
 
     /**
      * Creates an instance of the specified transaction object.
      */
-    void* Produce () const override
-    {
-        return (new CLASS);
-    }
+    void *Produce() const override { return (new CLASS); }
 };
 
 } //namespace App
 
 #endif // APP_TRANSACTION_H
-

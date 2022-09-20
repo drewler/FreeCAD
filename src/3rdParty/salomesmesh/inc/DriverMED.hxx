@@ -32,15 +32,15 @@ typedef boost::shared_ptr<DriverMED_Family> DriverMED_FamilyPtr;
 
 namespace DriverMED
 {
-  // Implemetation is in DriverMED_W_Field.cxx
+// Implemetation is in DriverMED_W_Field.cxx
 
-  /*
+/*
    * Returns MED element geom type (MED::EGeometrieElement) by SMDS type
    */
-  MESHDRIVERMED_EXPORT int GetMedGeoType( SMDSAbs_EntityType smdsType );
-  
-  /*
+MESHDRIVERMED_EXPORT int GetMedGeoType(SMDSAbs_EntityType smdsType);
+
+/*
    * Returns SMDS element geom type by MED type (MED::EGeometrieElement)
    */
-  MESHDRIVERMED_EXPORT SMDSAbs_EntityType GetSMDSType( int medType );
-}
+MESHDRIVERMED_EXPORT SMDSAbs_EntityType GetSMDSType(int medType);
+} // namespace DriverMED

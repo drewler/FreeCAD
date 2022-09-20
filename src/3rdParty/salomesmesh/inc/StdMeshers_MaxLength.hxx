@@ -31,40 +31,40 @@
 
 class STDMESHERS_EXPORT StdMeshers_MaxLength: public SMESH_Hypothesis
 {
- public:
-  StdMeshers_MaxLength(int hypId, int studyId, SMESH_Gen * gen);
-  virtual ~ StdMeshers_MaxLength();
+public:
+    StdMeshers_MaxLength(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_MaxLength();
 
-  void SetLength(double length);
-  double GetLength() const;
+    void SetLength(double length);
+    double GetLength() const;
 
-  bool HavePreestimatedLength() const  { return _preestimated > 0.; }
-  double GetPreestimatedLength() const { return _preestimated; }
-  void SetPreestimatedLength(double length);
+    bool HavePreestimatedLength() const { return _preestimated > 0.; }
+    double GetPreestimatedLength() const { return _preestimated; }
+    void SetPreestimatedLength(double length);
 
-  void SetUsePreestimatedLength(bool toUse);
-  bool GetUsePreestimatedLength() const;
+    void SetUsePreestimatedLength(bool toUse);
+    bool GetUsePreestimatedLength() const;
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
 
-  /*!
+    /*!
    * \brief Initialize segment length by the mesh built on the geometry
    * \param theMesh - the built mesh
    * \param theShape - the geometry of interest
    * \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
- protected:
-  double _length, _preestimated;
-  bool   _preestimation;
+protected:
+    double _length, _preestimated;
+    bool _preestimation;
 };
 
 #endif

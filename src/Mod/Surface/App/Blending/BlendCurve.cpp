@@ -39,18 +39,14 @@
 
 using namespace Surface;
 
-BlendCurve::BlendCurve(const std::vector<BlendPoint>& blendPointsList)
+BlendCurve::BlendCurve(const std::vector<BlendPoint> &blendPointsList)
 {
     // Retrieve number of blendPoints and push them into blendPoints.
     size_t nb_pts = blendPointsList.size();
 
-    if (nb_pts > 2) {
-        throw Base::NotImplementedError("Not implemented");
-    }
+    if (nb_pts > 2) { throw Base::NotImplementedError("Not implemented"); }
 
-    if (nb_pts < 2) {
-        throw Base::ValueError("Need two points for working");
-    }
+    if (nb_pts < 2) { throw Base::ValueError("Need two points for working"); }
 
     blendPoints = blendPointsList;
 }
@@ -61,17 +57,13 @@ Handle(Geom_BezierCurve) BlendCurve::compute()
     try {
         // Uniform Parametrization
         TColStd_Array1OfReal params(1, nb_pts);
-        for (size_t i = 0; i < nb_pts; ++i) {
-            params(i + 1) = (double)i / ((double)nb_pts - 1);
-        }
+        for (size_t i = 0; i < nb_pts; ++i) { params(i + 1) = (double)i / ((double)nb_pts - 1); }
 
         int num_poles = 0;
-        for (size_t i = 0; i < nb_pts; ++i) {
-            num_poles += blendPoints[i].nbVectors();
-        }
+        for (size_t i = 0; i < nb_pts; ++i) { num_poles += blendPoints[i].nbVectors(); }
 
         Handle(Geom_BezierCurve) curve;
-        if (num_poles > (curve->MaxDegree() + 1))// use Geom_BezierCurve max degree
+        if (num_poles > (curve->MaxDegree() + 1)) // use Geom_BezierCurve max degree
             Standard_Failure::Raise("number of constraints exceeds bezier curve capacity");
 
         TColStd_Array1OfReal knots(1, 2 * num_poles);
@@ -89,7 +81,9 @@ Handle(Geom_BezierCurve) BlendCurve::compute()
         for (size_t i = 0; i < nb_pts; ++i) {
             math_Matrix bezier_eval(1, blendPoints[i].nbVectors(), 1, num_poles, 0.0);
             Standard_Integer first_non_zero;
-            BSplCLib::EvalBsplineBasis(blendPoints[i].nbVectors() - 1, num_poles, knots, params(cons_idx), first_non_zero, bezier_eval, Standard_False);
+            BSplCLib::EvalBsplineBasis(blendPoints[i].nbVectors() - 1, num_poles, knots,
+                                       params(cons_idx), first_non_zero, bezier_eval,
+                                       Standard_False);
             int idx2 = 1;
             for (int it2 = 0; it2 < blendPoints[i].nbVectors(); ++it2) {
                 OCCmatrix.SetRow(row_idx, bezier_eval.Row(idx2));
@@ -104,14 +98,11 @@ Handle(Geom_BezierCurve) BlendCurve::compute()
         }
         math_Gauss gauss(OCCmatrix);
         gauss.Solve(res_x);
-        if (!gauss.IsDone())
-            Standard_Failure::Raise("Failed to solve equations");
+        if (!gauss.IsDone()) Standard_Failure::Raise("Failed to solve equations");
         gauss.Solve(res_y);
-        if (!gauss.IsDone())
-            Standard_Failure::Raise("Failed to solve equations");
+        if (!gauss.IsDone()) Standard_Failure::Raise("Failed to solve equations");
         gauss.Solve(res_z);
-        if (!gauss.IsDone())
-            Standard_Failure::Raise("Failed to solve equations");
+        if (!gauss.IsDone()) Standard_Failure::Raise("Failed to solve equations");
 
         TColgp_Array1OfPnt poles(1, num_poles);
         for (int idx = 1; idx <= num_poles; ++idx) {

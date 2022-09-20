@@ -28,7 +28,8 @@
 #include <zipios++/zipoutputstream.h>
 #include <Mod/Mesh/MeshGlobal.h>
 
-namespace Base {
+namespace Base
+{
 class Matrix4D;
 }
 
@@ -69,12 +70,12 @@ public:
      * \param mat The placement of the mesh object
      * \return true if the added mesh could be written successfully, false otherwise.
      */
-    bool AddMesh(const MeshKernel& mesh, const Base::Matrix4D& mat);
+    bool AddMesh(const MeshKernel &mesh, const Base::Matrix4D &mat);
     /*!
      * \brief AddResource
      * Add an additional resource to the 3MF file.
      */
-    void AddResource(const Resource3MF&);
+    void AddResource(const Resource3MF &);
     /*!
      * \brief After having added the mesh objects with \ref AddMesh save the meta-information
      * to the 3MF file.
@@ -85,10 +86,10 @@ public:
 private:
     void Initialize(std::ostream &str);
     void Finish(std::ostream &str);
-    std::string GetType(const MeshKernel& mesh) const;
-    void SaveBuildItem(int id, const Base::Matrix4D& mat);
-    std::string DumpMatrix(const Base::Matrix4D& mat) const;
-    bool SaveObject(std::ostream &str, int id, const MeshKernel& mesh) const;
+    std::string GetType(const MeshKernel &mesh) const;
+    void SaveBuildItem(int id, const Base::Matrix4D &mat);
+    std::string DumpMatrix(const Base::Matrix4D &mat) const;
+    bool SaveObject(std::ostream &str, int id, const MeshKernel &mesh) const;
     bool SaveRels(std::ostream &str) const;
     bool SaveContent(std::ostream &str) const;
 
@@ -102,4 +103,4 @@ private:
 } // namespace MeshCore
 
 
-#endif  // MESH_IO_WRITER_3MF_H
+#endif // MESH_IO_WRITER_3MF_H

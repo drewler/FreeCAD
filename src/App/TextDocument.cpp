@@ -33,24 +33,18 @@ PROPERTY_SOURCE(App::TextDocument, App::DocumentObject)
 
 TextDocument::TextDocument()
 {
-    ADD_PROPERTY_TYPE(
-            Text, (""), 0, App::Prop_Hidden,
-            "Content of the document.");
+    ADD_PROPERTY_TYPE(Text, (""), 0, App::Prop_Hidden, "Content of the document.");
 }
 
-void TextDocument::onChanged(const Property* prop)
+void TextDocument::onChanged(const Property *prop)
 {
-    if (prop == &Text)
-        textChanged();
+    if (prop == &Text) textChanged();
     else if (prop == &Label)
         labelChanged();
     DocumentObject::onChanged(prop);
 }
 
-const char* TextDocument::getViewProviderName() const
-{
-    return "Gui::ViewProviderTextDocument";
-}
+const char *TextDocument::getViewProviderName() const { return "Gui::ViewProviderTextDocument"; }
 
 boost::signals2::connection TextDocument::connectText(const TextSlot &sub)
 {

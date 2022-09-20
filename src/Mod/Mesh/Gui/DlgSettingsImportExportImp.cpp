@@ -30,8 +30,8 @@
 
 using namespace MeshGui;
 
-DlgSettingsImportExport::DlgSettingsImportExport(QWidget* parent)
-  : PreferencePage(parent), ui(new Ui_DlgSettingsImportExport)
+DlgSettingsImportExport::DlgSettingsImportExport(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsImportExport)
 {
     ui->setupUi(this);
     ui->exportAmfCompressed->setToolTip(tr("This parameter indicates whether ZIP compression\n"
@@ -46,11 +46,11 @@ DlgSettingsImportExport::~DlgSettingsImportExport()
 
 void DlgSettingsImportExport::saveSettings()
 {
-    ParameterGrp::handle handle = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/Mod/Mesh");
+    ParameterGrp::handle handle = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Mod/Mesh");
     double value = ui->maxDeviationExport->value().getValue();
     handle->SetFloat("MaxDeviationExport", value);
-    
+
     ui->exportAmfCompressed->onSave();
 
     ParameterGrp::handle asy = handle->GetGroup("Asymptote");
@@ -63,12 +63,12 @@ void DlgSettingsImportExport::saveSettings()
 
 void DlgSettingsImportExport::loadSettings()
 {
-    ParameterGrp::handle handle = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/Mod/Mesh");
+    ParameterGrp::handle handle = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Mod/Mesh");
     double value = ui->maxDeviationExport->value().getValue();
     value = handle->GetFloat("MaxDeviationExport", value);
     ui->maxDeviationExport->setValue(value);
-    
+
     ui->exportAmfCompressed->onRestore();
 
     ParameterGrp::handle asy = handle->GetGroup("Asymptote");
@@ -81,13 +81,10 @@ void DlgSettingsImportExport::loadSettings()
  */
 void DlgSettingsImportExport::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }
 }
 
 #include "moc_DlgSettingsImportExportImp.cpp"
-

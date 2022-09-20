@@ -30,10 +30,11 @@
 #include "ViewProviderDrawingView.h"
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 
-class TechDrawGuiExport ViewProviderImage : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderImage: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderImage);
 
@@ -43,14 +44,14 @@ public:
     /// destructor
     ~ViewProviderImage() override;
 
-    App::PropertyBool  Crop;              //crop to feature width x height
+    App::PropertyBool Crop; //crop to feature width x height
 
-    bool useNewSelectionModel() const override {return false;}
+    bool useNewSelectionModel() const override { return false; }
     /// returns a list of all possible modes
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
     void onChanged(const App::Property *prop) override;
 
-    TechDraw::DrawViewImage* getViewObject() const override;
+    TechDraw::DrawViewImage *getViewObject() const override;
 };
 
 

@@ -34,7 +34,7 @@ namespace App
 
 /** Base class of all geometric document objects.
  */
-class AppExport GeoFeature : public App::DocumentObject
+class AppExport GeoFeature: public App::DocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(App::GeoFeature);
 
@@ -59,21 +59,22 @@ public:
      * a mesh object the Mesh property and so on.
      * The default implementation returns null.
      */
-    virtual const PropertyComplexGeoData* getPropertyOfGeometry() const;
+    virtual const PropertyComplexGeoData *getPropertyOfGeometry() const;
     /**
      * @brief getPyObject returns the Python binding object
      * @return the Python binding object
      */
-    PyObject* getPyObject() override;
+    PyObject *getPyObject() override;
 
-    /// Specify the type of element name to return when calling getElementName() 
-    enum ElementNameType {
+    /// Specify the type of element name to return when calling getElementName()
+    enum ElementNameType
+    {
         /// Normal usage
-        Normal=0,
+        Normal = 0,
         /// For importing
-        Import=1,
+        Import = 1,
         /// For exporting
-        Export=2,
+        Export = 2,
     };
     /** Return the new and old style sub-element name
      *
@@ -85,8 +86,8 @@ public:
      * This function currently is does nothing. The new style element name
      * generation will be added in the next batch of patches.
      */
-    virtual std::pair<std::string,std::string> getElementName(
-            const char *name, ElementNameType type=Normal) const;
+    virtual std::pair<std::string, std::string> getElementName(const char *name,
+                                                               ElementNameType type = Normal) const;
 
     /** Resolve both the new and old style element name
      *
@@ -102,10 +103,12 @@ public:
      *
      * @return Return the owner object of the element
      */
-    static DocumentObject *resolveElement(App::DocumentObject *obj, 
-            const char *subname, std::pair<std::string,std::string> &elementName, 
-            bool append=false, ElementNameType type=Normal,
-            const DocumentObject *filter=nullptr,const char **element=nullptr, GeoFeature **geo=nullptr);
+    static DocumentObject *resolveElement(App::DocumentObject *obj, const char *subname,
+                                          std::pair<std::string, std::string> &elementName,
+                                          bool append = false, ElementNameType type = Normal,
+                                          const DocumentObject *filter = nullptr,
+                                          const char **element = nullptr,
+                                          GeoFeature **geo = nullptr);
 
     /**
      * @brief Calculates the placement in the global reference coordinate system

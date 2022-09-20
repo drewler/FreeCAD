@@ -28,28 +28,27 @@
 
 class QListWidgetItem;
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 class Ui_SymbolChooser;
-class TechDrawGuiExport SymbolChooser : public QDialog
+class TechDrawGuiExport SymbolChooser: public QDialog
 {
     Q_OBJECT
 
 public:
-    SymbolChooser(QWidget *parent = nullptr,
-                  QString startDir = QString(),
+    SymbolChooser(QWidget *parent = nullptr, QString startDir = QString(),
                   QString source = QString());
     ~SymbolChooser();
 
 public Q_SLOTS:
     void onOKClicked();
     void onCancelClicked();
-    void onItemClicked(QListWidgetItem* item);
-    void onDirectoryChanged(const QString& newDir);
+    void onItemClicked(QListWidgetItem *item);
+    void onDirectoryChanged(const QString &newDir);
 
 Q_SIGNALS:
-    void symbolSelected(QString symbolPath,
-                        QString source);
+    void symbolSelected(QString symbolPath, QString source);
 
 protected:
     void setUiPrimary(void);
@@ -62,6 +61,5 @@ private:
     QString m_source;
 };
 
-}
+} // namespace TechDrawGui
 #endif // #ifndef TECHDRAWGUI_SYMBOLCHOOSER_H
-

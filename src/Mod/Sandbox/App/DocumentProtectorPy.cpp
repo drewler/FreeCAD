@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <memory>
+#include <memory>
 #endif
 
 #include "DocumentProtectorPy.h"
@@ -47,8 +47,8 @@ void DocumentProtectorPy::init_type()
     behaviors().supportGetattr();
     behaviors().supportSetattr();
 
-    add_varargs_method("addObject",&DocumentProtectorPy::addObject,"addObject(type,name)");
-    add_varargs_method("recompute",&DocumentProtectorPy::recompute,"recompute()");
+    add_varargs_method("addObject", &DocumentProtectorPy::addObject, "addObject(type,name)");
+    add_varargs_method("recompute", &DocumentProtectorPy::recompute, "recompute()");
 }
 
 DocumentProtectorPy::DocumentProtectorPy(App::DocumentPy *doc)
@@ -56,40 +56,37 @@ DocumentProtectorPy::DocumentProtectorPy(App::DocumentPy *doc)
     _dp = new DocumentProtector(doc->getDocumentPtr());
 }
 
-DocumentProtectorPy::~DocumentProtectorPy()
-{
-    delete _dp;
-}
+DocumentProtectorPy::~DocumentProtectorPy() { delete _dp; }
 
 Py::Object DocumentProtectorPy::repr()
 {
     std::string s;
     std::ostringstream s_out;
-    if (!_dp)
-        throw Py::RuntimeError("Cannot print representation of deleted object");
+    if (!_dp) throw Py::RuntimeError("Cannot print representation of deleted object");
     s_out << "Document protector";
     return Py::String(s_out.str());
 }
 
 DocumentProtectorPy::method_varargs_handler DocumentProtectorPy::pycxx_handler = 0;
 
-PyObject *DocumentProtectorPy::method_varargs_ext_handler(PyObject *_self_and_name_tuple, PyObject *_args)
+PyObject *DocumentProtectorPy::method_varargs_ext_handler(PyObject *_self_and_name_tuple,
+                                                          PyObject *_args)
 {
     try {
         return pycxx_handler(_self_and_name_tuple, _args);
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         throw Py::RuntimeError(e.what());
     }
-    catch (const std::exception& e) {
+    catch (const std::exception &e) {
         throw Py::RuntimeError(e.what());
     }
-    catch(...) {
+    catch (...) {
         throw Py::RuntimeError("Unknown C++ exception");
     }
 }
 
-Py::Object DocumentProtectorPy::getattr(const char * attr)
+Py::Object DocumentProtectorPy::getattr(const char *attr)
 {
     if (!_dp) {
         std::string s;
@@ -100,16 +97,15 @@ Py::Object DocumentProtectorPy::getattr(const char * attr)
     else {
         Py::Object obj = Py::PythonExtension<DocumentProtectorPy>::getattr(attr);
         if (PyCFunction_Check(obj.ptr())) {
-            PyCFunctionObject* op = reinterpret_cast<PyCFunctionObject*>(obj.ptr());
-            if (!pycxx_handler)
-                pycxx_handler = op->m_ml->ml_meth;
+            PyCFunctionObject *op = reinterpret_cast<PyCFunctionObject *>(obj.ptr());
+            if (!pycxx_handler) pycxx_handler = op->m_ml->ml_meth;
             op->m_ml->ml_meth = method_varargs_ext_handler;
         }
         return obj;
     }
 }
 
-int DocumentProtectorPy::setattr(const char * attr, const Py::Object & value)
+int DocumentProtectorPy::setattr(const char *attr, const Py::Object &value)
 {
     if (!_dp) {
         std::string s;
@@ -123,16 +119,14 @@ int DocumentProtectorPy::setattr(const char * attr, const Py::Object & value)
     }
 }
 
-Py::Object DocumentProtectorPy::addObject(const Py::Tuple& args)
+Py::Object DocumentProtectorPy::addObject(const Py::Tuple &args)
 {
-    char* type;
-    char* name=0;
-    if (!PyArg_ParseTuple(args.ptr(), "s|s",&type, &name))
-        throw Py::Exception();
+    char *type;
+    char *name = 0;
+    if (!PyArg_ParseTuple(args.ptr(), "s|s", &type, &name)) throw Py::Exception();
     Base::PyGILStateRelease unlock;
-    if (!name)
-        name = type;
-    App::DocumentObject* obj = _dp->addObject(type, name);
+    if (!name) name = type;
+    App::DocumentObject *obj = _dp->addObject(type, name);
     if (!obj) {
         std::string s;
         std::ostringstream s_out;
@@ -143,10 +137,9 @@ Py::Object DocumentProtectorPy::addObject(const Py::Tuple& args)
     return Py::asObject(new DocumentObjectProtectorPy(obj));
 }
 
-Py::Object DocumentProtectorPy::recompute(const Py::Tuple& args)
+Py::Object DocumentProtectorPy::recompute(const Py::Tuple &args)
 {
-    if (!PyArg_ParseTuple(args.ptr(), ""))
-        throw Py::Exception();
+    if (!PyArg_ParseTuple(args.ptr(), "")) throw Py::Exception();
     Base::PyGILStateRelease unlock;
     _dp->recompute();
     return Py::None();
@@ -163,7 +156,7 @@ void DocumentObjectProtectorPy::init_type()
     behaviors().supportGetattr();
     behaviors().supportSetattr();
 
-    add_varargs_method("purgeTouched",&DocumentObjectProtectorPy::purgeTouched,"purgeTouched()");
+    add_varargs_method("purgeTouched", &DocumentObjectProtectorPy::purgeTouched, "purgeTouched()");
 }
 
 DocumentObjectProtectorPy::DocumentObjectProtectorPy(App::DocumentObject *obj)
@@ -176,15 +169,12 @@ DocumentObjectProtectorPy::DocumentObjectProtectorPy(App::DocumentObjectPy *obj)
     _dp = new DocumentObjectProtector(obj->getDocumentObjectPtr());
 }
 
-DocumentObjectProtectorPy::~DocumentObjectProtectorPy()
-{
-    delete _dp;
-}
+DocumentObjectProtectorPy::~DocumentObjectProtectorPy() { delete _dp; }
 
 Py::Object DocumentObjectProtectorPy::getObject() const
 {
-    App::DocumentObject* obj = _dp->getObject();
-    PyObject* py = obj->getPyObject();
+    App::DocumentObject *obj = _dp->getObject();
+    PyObject *py = obj->getPyObject();
     return Py::Object(py, true);
 }
 
@@ -192,13 +182,12 @@ Py::Object DocumentObjectProtectorPy::repr()
 {
     std::string s;
     std::ostringstream s_out;
-    if (!_dp)
-        throw Py::RuntimeError("Cannot print representation of deleted object");
+    if (!_dp) throw Py::RuntimeError("Cannot print representation of deleted object");
     s_out << "Document object protector";
     return Py::String(s_out.str());
 }
 
-Py::Object DocumentObjectProtectorPy::getattr(const char * attr)
+Py::Object DocumentObjectProtectorPy::getattr(const char *attr)
 {
     if (!_dp) {
         std::string s;
@@ -207,8 +196,8 @@ Py::Object DocumentObjectProtectorPy::getattr(const char * attr)
         throw Py::RuntimeError(s_out.str());
     }
     else {
-        App::DocumentObject* obj = _dp->getObject();
-        App::Property* prop = obj->getPropertyByName(attr);
+        App::DocumentObject *obj = _dp->getObject();
+        App::Property *prop = obj->getPropertyByName(attr);
         if (!prop) {
             return Py::PythonExtension<DocumentObjectProtectorPy>::getattr(attr);
             //std::string s;
@@ -221,7 +210,7 @@ Py::Object DocumentObjectProtectorPy::getattr(const char * attr)
     }
 }
 
-int DocumentObjectProtectorPy::setattr(const char * attr, const Py::Object & value)
+int DocumentObjectProtectorPy::setattr(const char *attr, const Py::Object &value)
 {
     if (!_dp) {
         std::string s;
@@ -230,8 +219,8 @@ int DocumentObjectProtectorPy::setattr(const char * attr, const Py::Object & val
         throw Py::RuntimeError(s_out.str());
     }
     else {
-        App::DocumentObject* obj = _dp->getObject();
-        App::Property* prop = obj->getPropertyByName(attr);
+        App::DocumentObject *obj = _dp->getObject();
+        App::Property *prop = obj->getPropertyByName(attr);
         if (!prop) {
             std::string s;
             std::ostringstream s_out;
@@ -239,10 +228,11 @@ int DocumentObjectProtectorPy::setattr(const char * attr, const Py::Object & val
             throw Py::AttributeError(s_out.str());
         }
         Base::PyGILStateRelease unlock;
-        std::unique_ptr<App::Property> copy(static_cast<App::Property*>
-            (prop->getTypeId().createInstance()));
+        std::unique_ptr<App::Property> copy(
+            static_cast<App::Property *>(prop->getTypeId().createInstance()));
         if (PyObject_TypeCheck(value.ptr(), DocumentObjectProtectorPy::type_object())) {
-            copy->setPyObject(static_cast<const DocumentObjectProtectorPy*>(value.ptr())->getObject().ptr());
+            copy->setPyObject(
+                static_cast<const DocumentObjectProtectorPy *>(value.ptr())->getObject().ptr());
         }
         else {
             copy->setPyObject(value.ptr());
@@ -251,7 +241,7 @@ int DocumentObjectProtectorPy::setattr(const char * attr, const Py::Object & val
     }
 }
 
-Py::Object DocumentObjectProtectorPy::purgeTouched(const Py::Tuple&)
+Py::Object DocumentObjectProtectorPy::purgeTouched(const Py::Tuple &)
 {
     _dp->purgeTouched();
     return Py::None();

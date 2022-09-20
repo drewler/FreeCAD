@@ -39,48 +39,50 @@
 #include <Inventor/fields/SoSFImage.h>
 #include <Mod/Sketcher/SketcherGlobal.h>
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
-class SketcherGuiExport SoDatumLabel : public SoShape {
+class SketcherGuiExport SoDatumLabel: public SoShape
+{
     using inherited = SoShape;
 
     SO_NODE_HEADER(SoDatumLabel);
 
 public:
-  enum Type
-  {
-  ANGLE,
-  DISTANCE,
-  DISTANCEX,
-  DISTANCEY,
-  RADIUS,
-  DIAMETER,
-  SYMMETRIC
-  };
+    enum Type
+    {
+        ANGLE,
+        DISTANCE,
+        DISTANCEX,
+        DISTANCEY,
+        RADIUS,
+        DIAMETER,
+        SYMMETRIC
+    };
 
     static void initClass();
     SoDatumLabel();
 
     SoMFString string;
-    SoSFColor  textColor;
-    SoSFEnum   datumtype;
-    SoSFName   name;
-    SoSFInt32  size;
-    SoSFFloat  param1;
-    SoSFFloat  param2;
-    SoSFFloat  param3;
-    SoMFVec3f  pnts;
-    SoSFVec3f  norm;
-    SoSFImage  image;
-    SoSFFloat  lineWidth;
-    bool       useAntialiasing;
+    SoSFColor textColor;
+    SoSFEnum datumtype;
+    SoSFName name;
+    SoSFInt32 size;
+    SoSFFloat param1;
+    SoSFFloat param2;
+    SoSFFloat param3;
+    SoMFVec3f pnts;
+    SoSFVec3f norm;
+    SoSFImage image;
+    SoSFFloat lineWidth;
+    bool useAntialiasing;
 
 protected:
     ~SoDatumLabel() override {};
     void GLRender(SoGLRenderAction *action) override;
     void computeBBox(SoAction *, SbBox3f &box, SbVec3f &center) override;
-    void generatePrimitives(SoAction * action) override;
-    void notify(SoNotList * l) override;
+    void generatePrimitives(SoAction *action) override;
+    void notify(SoNotList *l) override;
 
 private:
     void drawImage();
@@ -90,7 +92,7 @@ private:
     bool glimagevalid;
 };
 
-}
+} // namespace SketcherGui
 
 
 #endif // SKETCHERGUI_SODATUMLABEL_H

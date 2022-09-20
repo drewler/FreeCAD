@@ -30,7 +30,8 @@
 class QDockWidget;
 class QWidget;
 
-namespace Gui {
+namespace Gui
+{
 
 struct DockWindowItem {
     QString name;
@@ -45,11 +46,11 @@ public:
     DockWindowItems();
     ~DockWindowItems();
 
-    void addDockWidget(const char* name, Qt::DockWidgetArea pos, bool visibility, bool tabbed);
-    void setDockingArea(const char* name, Qt::DockWidgetArea pos);
-    void setVisibility(const char* name, bool v);
+    void addDockWidget(const char *name, Qt::DockWidgetArea pos, bool visibility, bool tabbed);
+    void setDockingArea(const char *name, Qt::DockWidgetArea pos);
+    void setVisibility(const char *name, bool v);
     void setVisibility(bool v);
-    const QList<DockWindowItem>& dockWidgets() const;
+    const QList<DockWindowItem> &dockWidgets() const;
 
 private:
     QList<DockWindowItem> _items;
@@ -59,59 +60,59 @@ private:
  * Class that manages the widgets inside a QDockWidget.
  * \author Werner Mayer
  */
-class GuiExport DockWindowManager : public QObject
+class GuiExport DockWindowManager: public QObject
 {
     Q_OBJECT
 
 public:
     /** Creates the only instance of the DockWindowManager. */
-    static DockWindowManager* instance();
+    static DockWindowManager *instance();
     static void destruct();
 
-    bool registerDockWindow(const char* name, QWidget* widget);
-    QWidget* unregisterDockWindow(const char* name);
-    void setup(DockWindowItems*);
+    bool registerDockWindow(const char *name, QWidget *widget);
+    QWidget *unregisterDockWindow(const char *name);
+    void setup(DockWindowItems *);
 
     /// Adds a QDockWidget to the main window and sets \a widget as its widget
-    QDockWidget* addDockWindow(const char* name, QWidget* widget,
-                 Qt::DockWidgetArea pos = Qt::AllDockWidgetAreas);
+    QDockWidget *addDockWindow(const char *name, QWidget *widget,
+                               Qt::DockWidgetArea pos = Qt::AllDockWidgetAreas);
     /// Removes and destroys the QDockWidget and returns the widget
     /// with name \a name added with @ref addDockWindow.
-    QWidget* removeDockWindow(const char* name);
+    QWidget *removeDockWindow(const char *name);
     /// Removes and destroys the QDockWidget that contains \a dock. \a dock
     /// does not get destroyed.
-    void removeDockWindow(QWidget* dock);
+    void removeDockWindow(QWidget *dock);
     /// Returns the widget with name \a name added with @ref addDockWindow.
     /// @note The returned widget is not the QDockWidget instance
     /// returned from @ref addDockWindow. If you want to access the QDockWidget
     /// you get it with parentWidget() of the returned widget.
-    QWidget* getDockWindow(const char* name) const;
+    QWidget *getDockWindow(const char *name) const;
     /// Returns a list of all widgets which set to a QDockWidget.
-    QList<QWidget*> getDockWindows() const;
+    QList<QWidget *> getDockWindows() const;
     /// If the corresponding dock widget isn't visible then activate it
-    void activate(QWidget* widget);
+    void activate(QWidget *widget);
 
     void saveState();
     void loadState();
     void retranslate();
 
 private Q_SLOTS:
-   /**
+    /**
     * \internal
     */
-    void onDockWidgetDestroyed(QObject*);
-   /**
+    void onDockWidgetDestroyed(QObject *);
+    /**
     * \internal
     */
-    void onWidgetDestroyed(QObject*);
+    void onWidgetDestroyed(QObject *);
 
 private:
-    QDockWidget* findDockWidget(const QList<QDockWidget*>&, const QString&) const;
+    QDockWidget *findDockWidget(const QList<QDockWidget *> &, const QString &) const;
 
     DockWindowManager();
     ~DockWindowManager() override;
-    static DockWindowManager* _instance;
-    struct DockWindowManagerP* d;
+    static DockWindowManager *_instance;
+    struct DockWindowManagerP *d;
 };
 
 } // namespace Gui

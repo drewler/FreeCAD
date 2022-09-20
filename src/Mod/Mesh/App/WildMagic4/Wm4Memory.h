@@ -40,35 +40,34 @@ class WM4_FOUNDATION_ITEM Memory
 public:
     // The memory chunks have information prepended of the following data
     // type.  The blocks are inserted and removed from a doubly linked list.
-    struct Block
-    {
+    struct Block {
         size_t Size;
-        const char* File;
+        const char *File;
         unsigned int Line;
         bool IsArray;
-        Block* Prev;
-        Block* Next;
+        Block *Prev;
+        Block *Next;
     };
 
     // read-write members
-    static size_t& MaxAllowedBytes ();
-    static bool& TrackSizes ();
+    static size_t &MaxAllowedBytes();
+    static bool &TrackSizes();
 
     // read-only members
-    static size_t GetNumNewCalls ();
-    static size_t GetNumDeleteCalls ();
-    static size_t GetNumBlocks ();
-    static size_t GetNumBytes ();
-    static size_t GetMaxAllocatedBytes ();
-    static size_t GetMaxBlockSize ();
-    static size_t GetHistogram (int i);
+    static size_t GetNumNewCalls();
+    static size_t GetNumDeleteCalls();
+    static size_t GetNumBlocks();
+    static size_t GetNumBytes();
+    static size_t GetMaxAllocatedBytes();
+    static size_t GetMaxBlockSize();
+    static size_t GetHistogram(int i);
 
     // For iteration over the current list of memory blocks.
-    static const Block* GetHead ();
-    static const Block* GetTail ();
+    static const Block *GetHead();
+    static const Block *GetTail();
 
     // Generate a report about the current list memory blocks.
-    static void GenerateReport (const char* acFilename);
+    static void GenerateReport(const char *acFilename);
 
 private:
     // Count the number of times the memory allocation/deallocation system
@@ -89,8 +88,8 @@ private:
     static size_t ms_uiNumBytes;
 
     // Doubly linked list of headers for the memory blocks.
-    static Block* ms_pkHead;
-    static Block* ms_pkTail;
+    static Block *ms_pkHead;
+    static Block *ms_pkTail;
 
     // Set this variable to 'true' if you want the ms_uiMaxBlockSize and
     // ms_auiHistogram[] elements to be computed.  The default is 'false'.
@@ -110,30 +109,29 @@ private:
     // pow(2,i-1) < N <= pow(2,i).
     static size_t ms_auiHistogram[32];
 
-// internal use
+    // internal use
 public:
-    static void* Allocate (size_t uiSize, char* acFile, unsigned int uiLine,
-        bool bIsArray);
-    static void Deallocate (char* pcAddr, bool bIsArray);
-    static void InsertBlock (Block* pkBlock);
-    static void RemoveBlock (Block* pkBlock);
+    static void *Allocate(size_t uiSize, char *acFile, unsigned int uiLine, bool bIsArray);
+    static void Deallocate(char *pcAddr, bool bIsArray);
+    static void InsertBlock(Block *pkBlock);
+    static void RemoveBlock(Block *pkBlock);
 };
 
 } //namespace Wm4
 
 #include "Wm4Memory.inl"
 
-#define WM4_NEW new(__FILE__,__LINE__)
+#define WM4_NEW new (__FILE__, __LINE__)
 #define WM4_DELETE delete
 
-void* operator new (size_t uiSize);
-void* operator new[](size_t uiSize);
-void* operator new (size_t uiSize, char* acFile, unsigned int uiLine);
-void* operator new[] (size_t uiSize, char* acFile, unsigned int uiLine);
-void operator delete (void* pvAddr);
-void operator delete[] (void* pvAddr);
-void operator delete (void* pvAddr, char* acFile, unsigned int uiLine);
-void operator delete[] (void* pvAddr, char* acFile, unsigned int uiLine);
+void *operator new(size_t uiSize);
+void *operator new[](size_t uiSize);
+void *operator new(size_t uiSize, char *acFile, unsigned int uiLine);
+void *operator new[](size_t uiSize, char *acFile, unsigned int uiLine);
+void operator delete(void *pvAddr);
+void operator delete[](void *pvAddr);
+void operator delete(void *pvAddr, char *acFile, unsigned int uiLine);
+void operator delete[](void *pvAddr, char *acFile, unsigned int uiLine);
 
 #endif
 #endif

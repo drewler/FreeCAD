@@ -34,20 +34,18 @@
 // ======================================================
 // NETGEN 2D algorithm
 // ======================================================
-class NETGENPlugin_NETGEN_2D_ONLY_i:
-  public virtual POA_NETGENPlugin::NETGENPlugin_NETGEN_2D_ONLY,
-  public virtual SMESH_2D_Algo_i
+class NETGENPlugin_NETGEN_2D_ONLY_i: public virtual POA_NETGENPlugin::NETGENPlugin_NETGEN_2D_ONLY,
+                                     public virtual SMESH_2D_Algo_i
 {
 public:
-  // Constructor
-  NETGENPlugin_NETGEN_2D_ONLY_i( PortableServer::POA_ptr thePOA,
-                                 int                     theStudyId,
-                                 ::SMESH_Gen*            theGenImpl );
-  // Destructor
-  virtual ~NETGENPlugin_NETGEN_2D_ONLY_i();
- 
-  // Get implementation
-  ::NETGENPlugin_NETGEN_2D_ONLY* GetImpl();
+    // Constructor
+    NETGENPlugin_NETGEN_2D_ONLY_i(PortableServer::POA_ptr thePOA, int theStudyId,
+                                  ::SMESH_Gen *theGenImpl);
+    // Destructor
+    virtual ~NETGENPlugin_NETGEN_2D_ONLY_i();
+
+    // Get implementation
+    ::NETGENPlugin_NETGEN_2D_ONLY *GetImpl();
 };
 
 #endif

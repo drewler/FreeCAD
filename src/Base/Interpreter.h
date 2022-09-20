@@ -24,11 +24,11 @@
 #ifndef BASE_INTERPRETER_H
 #define BASE_INTERPRETER_H
 
-#if defined (_POSIX_C_SOURCE)
-#   undef  _POSIX_C_SOURCE
+#if defined(_POSIX_C_SOURCE)
+#undef _POSIX_C_SOURCE
 #endif // (re-)defined in pyconfig.h
-#if defined (_XOPEN_SOURCE)
-#   undef _XOPEN_SOURCE
+#if defined(_XOPEN_SOURCE)
+#undef _XOPEN_SOURCE
 #endif // (re-)defined in pyconfig.h
 
 #ifdef FC_OS_MACOSX
@@ -55,15 +55,14 @@
  *
  *  See FeaturePythonImp::init() for example usage
  */
-#define FC_PY_GetCallable(_pyobj,_name,_var) \
-    do {\
-        _var = Py::Object();\
-        if(PyObject_HasAttrString(_pyobj, _name)) {\
-            Py::Object _obj(PyObject_GetAttrString (_pyobj, _name), true);\
-            if(_obj.isCallable())\
-                _var = _obj;\
-        }\
-    }while(0)
+#define FC_PY_GetCallable(_pyobj, _name, _var)                                                     \
+    do {                                                                                           \
+        _var = Py::Object();                                                                       \
+        if (PyObject_HasAttrString(_pyobj, _name)) {                                               \
+            Py::Object _obj(PyObject_GetAttrString(_pyobj, _name), true);                          \
+            if (_obj.isCallable()) _var = _obj;                                                    \
+        }                                                                                          \
+    } while (0)
 
 /** Helper macro to obtain attribute from an object
  *
@@ -73,21 +72,22 @@
  *
  *  See FeaturePythonImp::init() for example usage
  */
-#define FC_PY_GetObject(_pyobj,_name,_var) \
-    do {\
-        _var = Py::Object();\
-        if(PyObject_HasAttrString(_pyobj, _name))\
-            _var = Py::asObject(PyObject_GetAttrString (_pyobj, _name));\
-    }while(0)
+#define FC_PY_GetObject(_pyobj, _name, _var)                                                       \
+    do {                                                                                           \
+        _var = Py::Object();                                                                       \
+        if (PyObject_HasAttrString(_pyobj, _name))                                                 \
+            _var = Py::asObject(PyObject_GetAttrString(_pyobj, _name));                            \
+    } while (0)
 
 
-namespace Base {
+namespace Base
+{
 
-    using std::string;
-    using std::vector;
+using std::string;
+using std::vector;
 
 
-class BaseExport PyException : public Exception
+class BaseExport PyException: public Exception
 {
 public:
     /// constructor does the whole job
@@ -103,10 +103,10 @@ public:
     static void ThrowException();
 
     ///  this function returns the stack trace
-    const std::string &getStackTrace() const {return _stackTrace;}
-    const std::string &getErrorType() const {return _errorType;}
-    PyObject *getPyExceptionType() const override {return _exceptionType;}
-    void ReportException () const override;
+    const std::string &getStackTrace() const { return _stackTrace; }
+    const std::string &getErrorType() const { return _errorType; }
+    PyObject *getPyExceptionType() const override { return _exceptionType; }
+    void ReportException() const override;
     /// Sets the Python error indicator and an error message
     void setPyException() const override;
 
@@ -116,17 +116,17 @@ protected:
     PyObject *_exceptionType;
 };
 
-inline Py::Object pyCall(PyObject *callable, PyObject *args=nullptr) {
+inline Py::Object pyCall(PyObject *callable, PyObject *args = nullptr)
+{
     PyObject *result = PyObject_CallObject(callable, args);
-    if(!result)
-        throw Py::Exception();
+    if (!result) throw Py::Exception();
     return Py::asObject(result);
 }
 
-inline Py::Object pyCallWithKeywords(PyObject *callable, PyObject *args, PyObject *kwds=nullptr) {
+inline Py::Object pyCallWithKeywords(PyObject *callable, PyObject *args, PyObject *kwds = nullptr)
+{
     PyObject *result = PyObject_Call(callable, args, kwds);
-    if(!result)
-        throw Py::Exception();
+    if (!result) throw Py::Exception();
     return Py::asObject(result);
 }
 
@@ -135,12 +135,12 @@ inline Py::Object pyCallWithKeywords(PyObject *callable, PyObject *args, PyObjec
  * was thrown.
  * @author Werner Mayer
  */
-class BaseExport SystemExitException : public Exception
+class BaseExport SystemExitException: public Exception
 {
 public:
     SystemExitException();
     ~SystemExitException() throw() override = default;
-    long getExitCode() const { return _exitCode;}
+    long getExitCode() const { return _exitCode; }
 
 protected:
     long _exitCode;
@@ -156,14 +156,8 @@ protected:
 class BaseExport PyGILStateLocker
 {
 public:
-    PyGILStateLocker()
-    {
-        gstate = PyGILState_Ensure();
-    }
-    ~PyGILStateLocker()
-    {
-        PyGILState_Release(gstate);
-    }
+    PyGILStateLocker() { gstate = PyGILState_Ensure(); }
+    ~PyGILStateLocker() { PyGILState_Release(gstate); }
 
 private:
     PyGILState_STATE gstate;
@@ -193,7 +187,7 @@ public:
     }
 
 private:
-    PyThreadState* state;
+    PyThreadState *state;
 };
 
 
@@ -213,23 +207,23 @@ public:
     /// Run a statement on the python interpreter and gives back a string with the representation of the result.
     std::string runString(const char *psCmd);
     /// Run a statement on the python interpreter with a key for exchanging strings
-    std::string runStringWithKey(const char *psCmd, const char *key, const char *key_initial_value="");
+    std::string runStringWithKey(const char *psCmd, const char *key,
+                                 const char *key_initial_value = "");
     /// Run a statement on the python interpreter and return back the result object.
     Py::Object runStringObject(const char *sCmd);
     /// Run a statement on the python interpreter and gives back a string with the representation of the result.
     void runInteractiveString(const char *psCmd);
     /// Run file (script) on the python interpreter
-    void runFile(const char*pxFileName, bool local);
+    void runFile(const char *pxFileName, bool local);
     /// Run a statement with arguments on the python interpreter
-    void runStringArg(const char * psCom,...);
+    void runStringArg(const char *psCom, ...);
     /// runs a python object method with no return value and no arguments
     void runMethodVoid(PyObject *pobject, const char *method);
     /// runs a python object method which returns a arbitrary object
-    PyObject* runMethodObject(PyObject *pobject, const char *method);
+    PyObject *runMethodObject(PyObject *pobject, const char *method);
     /// runs a python method with arbitrary params
-    void runMethod(PyObject *pobject, const char *method,
-                   const char *resfmt=nullptr,   void *cresult=nullptr,
-                   const char *argfmt="()",   ...  );
+    void runMethod(PyObject *pobject, const char *method, const char *resfmt = nullptr,
+                   void *cresult = nullptr, const char *argfmt = "()", ...);
     //@}
 
     /** @name Module handling
@@ -237,12 +231,12 @@ public:
     //@{
     /* Loads a module
      */
-    bool loadModule(const char* psModName);
+    bool loadModule(const char *psModName);
     /// Add an additional python path
-    void addPythonPath(const char* Path);
-    static void addType(PyTypeObject* Type,PyObject* Module, const char * Name);
+    void addPythonPath(const char *Path);
+    static void addType(PyTypeObject *Type, PyObject *Module, const char *Name);
     /// Add a module and return a PyObject to it
-    PyObject* addModule(Py::ExtensionModuleBase*);
+    PyObject *addModule(Py::ExtensionModuleBase *);
     /// Clean-up registered modules
     void cleanupModules();
     //@}
@@ -267,8 +261,8 @@ public:
      */
     //@{
     /// init the interpreter and returns the module search path
-    const char* init(int argc,char *argv[]);
-    int  runCommandLine(const char *prompt);
+    const char *init(int argc, char *argv[]);
+    int runCommandLine(const char *prompt);
     void replaceStdOutput();
     static InterpreterSingleton &Instance();
     static void Destruct();
@@ -280,17 +274,19 @@ public:
      */
     //@{
     /// generate a SWIG object
-    PyObject* createSWIGPointerObj(const char* Modole, const char* TypeName, void* Pointer, int own);
-    bool convertSWIGPointerObj(const char* Module, const char* TypeName, PyObject* obj, void** ptr, int flags);
-    void cleanupSWIG(const char* TypeName);
-    PyTypeObject* getSWIGPointerTypeObj(const char* Module, const char* TypeName);
+    PyObject *createSWIGPointerObj(const char *Modole, const char *TypeName, void *Pointer,
+                                   int own);
+    bool convertSWIGPointerObj(const char *Module, const char *TypeName, PyObject *obj, void **ptr,
+                               int flags);
+    void cleanupSWIG(const char *TypeName);
+    PyTypeObject *getSWIGPointerTypeObj(const char *Module, const char *TypeName);
     //@}
 
     /** @name methods for debugging facility
      */
     //@{
     /// sets the file name which should be debugged
-    void dbgObserveFile(const char* sFileName="");
+    void dbgObserveFile(const char *sFileName = "");
     /// sets a break point to a special line number in the current file
     void dbgSetBreakPoint(unsigned int uiLineNumber);
     /// unsets a break point to a special line number in the current file
@@ -304,8 +300,11 @@ public:
      */
     //@{
     /// replaces all char with escapes for usage in python console
-    static const std::string strToPython(const char* Str);
-    static const std::string strToPython(const std::string &Str){return strToPython(Str.c_str());}
+    static const std::string strToPython(const char *Str);
+    static const std::string strToPython(const std::string &Str)
+    {
+        return strToPython(Str.c_str());
+    }
     //@}
 
     PyObject *getValue(const char *key, const char *result_var);
@@ -316,8 +315,8 @@ protected:
 
 private:
     std::string _cDebugFileName;
-    PyThreadState* _global;
-    std::list<Py::ExtensionModuleBase*> _modules;
+    PyThreadState *_global;
+    std::list<Py::ExtensionModuleBase *> _modules;
 };
 
 
@@ -325,10 +324,7 @@ private:
  *  This method is used to gain access to the one and only instance of
  *  the InterpreterSingleton class.
  */
-inline InterpreterSingleton &Interpreter()
-{
-    return InterpreterSingleton::Instance();
-}
+inline InterpreterSingleton &Interpreter() { return InterpreterSingleton::Instance(); }
 
 } //namespace Base
 

@@ -36,72 +36,78 @@
 
 class SoMaterialBundle;
 
-namespace Mesh {
+namespace Mesh
+{
 class Feature;
 }
 
-namespace MeshGui {
+namespace MeshGui
+{
 
-class MeshGuiExport SoSFMeshFacetArray : public SoSField {
-  using inherited = SoSField;
+class MeshGuiExport SoSFMeshFacetArray: public SoSField
+{
+    using inherited = SoSField;
 
-  SO_SFIELD_HEADER(SoSFMeshFacetArray, MeshCore::MeshFacetArray*, MeshCore::MeshFacetArray*)
+    SO_SFIELD_HEADER(SoSFMeshFacetArray, MeshCore::MeshFacetArray *, MeshCore::MeshFacetArray *)
 
 public:
-  static void initClass(void);
-  void setValue(const MeshCore::MeshFacetArray& p);
+    static void initClass(void);
+    void setValue(const MeshCore::MeshFacetArray &p);
 
 protected:
-  SbBool readBinaryValues(SoInput * in, unsigned long numarg);
-  SbBool read1Value(SoInput * in, unsigned long idx);
-  void writeBinaryValues(SoOutput * out) const;
-  void write1Value(SoOutput * out, unsigned long idx) const;
-  int getNumValuesPerLine() const;
+    SbBool readBinaryValues(SoInput *in, unsigned long numarg);
+    SbBool read1Value(SoInput *in, unsigned long idx);
+    void writeBinaryValues(SoOutput *out) const;
+    void write1Value(SoOutput *out, unsigned long idx) const;
+    int getNumValuesPerLine() const;
 };
 
 // -------------------------------------------------------
 
-class MeshGuiExport SoFCMeshFacetElement : public SoReplacedElement {
-  using inherited = SoReplacedElement;
+class MeshGuiExport SoFCMeshFacetElement: public SoReplacedElement
+{
+    using inherited = SoReplacedElement;
 
-  SO_ELEMENT_HEADER(SoFCMeshFacetElement);
+    SO_ELEMENT_HEADER(SoFCMeshFacetElement);
 
 public:
-  static void initClass(void);
+    static void initClass(void);
 
-  virtual void init(SoState * state);
-  static void set(SoState * const state, SoNode * const node, const MeshCore::MeshFacetArray * const coords);
-  static const MeshCore::MeshFacetArray * get(SoState * const state);
-  static const SoFCMeshFacetElement * getInstance(SoState * state);
-  virtual void print(FILE * file) const;
+    virtual void init(SoState *state);
+    static void set(SoState *const state, SoNode *const node,
+                    const MeshCore::MeshFacetArray *const coords);
+    static const MeshCore::MeshFacetArray *get(SoState *const state);
+    static const SoFCMeshFacetElement *getInstance(SoState *state);
+    virtual void print(FILE *file) const;
 
 protected:
-  virtual ~SoFCMeshFacetElement();
-  const MeshCore::MeshFacetArray *coordIndex;
+    virtual ~SoFCMeshFacetElement();
+    const MeshCore::MeshFacetArray *coordIndex;
 };
 
 // -------------------------------------------------------
 
-class MeshGuiExport SoFCMeshFacet : public SoNode {
-  using inherited = SoSField;
+class MeshGuiExport SoFCMeshFacet: public SoNode
+{
+    using inherited = SoSField;
 
-  SO_NODE_HEADER(SoFCMeshFacet);
+    SO_NODE_HEADER(SoFCMeshFacet);
 
 public:
-  static void initClass(void);
-  SoFCMeshFacet(void);
+    static void initClass(void);
+    SoFCMeshFacet(void);
 
-  SoSFMeshFacetArray coordIndex;
+    SoSFMeshFacetArray coordIndex;
 
-  virtual void doAction(SoAction * action);
-  virtual void GLRender(SoGLRenderAction * action);
-  virtual void callback(SoCallbackAction * action);
-  virtual void getBoundingBox(SoGetBoundingBoxAction * action);
-  virtual void pick(SoPickAction * action);
-  virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);
+    virtual void doAction(SoAction *action);
+    virtual void GLRender(SoGLRenderAction *action);
+    virtual void callback(SoCallbackAction *action);
+    virtual void getBoundingBox(SoGetBoundingBoxAction *action);
+    virtual void pick(SoPickAction *action);
+    virtual void getPrimitiveCount(SoGetPrimitiveCountAction *action);
 
 protected:
-  virtual ~SoFCMeshFacet();
+    virtual ~SoFCMeshFacet();
 };
 
 // -------------------------------------------------------
@@ -118,79 +124,82 @@ protected:
  * The actual data is only hold and written by SoFCMeshVertex and SoFCMeshFaceSet. Normally, no shape nodes have to save further data to the file.
  * @author Werner Mayer
  */
-class MeshGuiExport SoFCMeshFaceSet : public SoShape {
-  using inherited = SoShape;
+class MeshGuiExport SoFCMeshFaceSet: public SoShape
+{
+    using inherited = SoShape;
 
-  SO_NODE_HEADER(SoFCMeshFaceSet);
-    
+    SO_NODE_HEADER(SoFCMeshFaceSet);
+
 public:
-  static void initClass();
-  SoFCMeshFaceSet();
+    static void initClass();
+    SoFCMeshFaceSet();
 
-  unsigned int MaximumTriangles;
+    unsigned int MaximumTriangles;
 
 protected:
-  virtual void GLRender(SoGLRenderAction *action);
-  virtual void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center);
-  virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);
-  virtual void  rayPick (SoRayPickAction *action);
-  virtual void generatePrimitives(SoAction *action);
-  virtual SoDetail * createTriangleDetail(SoRayPickAction * action,
-                                          const SoPrimitiveVertex * v1,
-                                          const SoPrimitiveVertex * v2,
-                                          const SoPrimitiveVertex * v3,
-                                          SoPickedPoint * pp);
+    virtual void GLRender(SoGLRenderAction *action);
+    virtual void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center);
+    virtual void getPrimitiveCount(SoGetPrimitiveCountAction *action);
+    virtual void rayPick(SoRayPickAction *action);
+    virtual void generatePrimitives(SoAction *action);
+    virtual SoDetail *createTriangleDetail(SoRayPickAction *action, const SoPrimitiveVertex *v1,
+                                           const SoPrimitiveVertex *v2, const SoPrimitiveVertex *v3,
+                                           SoPickedPoint *pp);
 
 private:
-  enum Binding {
-    OVERALL = 0,
-    PER_FACE_INDEXED,
-    PER_VERTEX_INDEXED,
-    NONE = OVERALL
-  };
+    enum Binding
+    {
+        OVERALL = 0,
+        PER_FACE_INDEXED,
+        PER_VERTEX_INDEXED,
+        NONE = OVERALL
+    };
 
 private:
-  // Force using the reference count mechanism.
-  virtual ~SoFCMeshFaceSet() {}
-  virtual void notify(SoNotList * list);
-  Binding findMaterialBinding(SoState * const state) const;
-  // Draw faces
-  void drawFaces(const MeshCore::MeshPointArray *, const MeshCore::MeshFacetArray*, SoMaterialBundle* mb, Binding bind, 
-                 SbBool needNormals, SbBool ccw) const;
-  void drawPoints(const MeshCore::MeshPointArray *, const MeshCore::MeshFacetArray*, SbBool needNormals, SbBool ccw) const;
-  unsigned int countTriangles(SoAction * action) const;
-  void createProxyModel(const MeshCore::MeshPointArray *, const MeshCore::MeshFacetArray*, SbBool simplest);
+    // Force using the reference count mechanism.
+    virtual ~SoFCMeshFaceSet() {}
+    virtual void notify(SoNotList *list);
+    Binding findMaterialBinding(SoState *const state) const;
+    // Draw faces
+    void drawFaces(const MeshCore::MeshPointArray *, const MeshCore::MeshFacetArray *,
+                   SoMaterialBundle *mb, Binding bind, SbBool needNormals, SbBool ccw) const;
+    void drawPoints(const MeshCore::MeshPointArray *, const MeshCore::MeshFacetArray *,
+                    SbBool needNormals, SbBool ccw) const;
+    unsigned int countTriangles(SoAction *action) const;
+    void createProxyModel(const MeshCore::MeshPointArray *, const MeshCore::MeshFacetArray *,
+                          SbBool simplest);
 
 private:
-  bool meshChanged;
-  SoMFVec3f point;
-  SoMFInt32 coordIndex;
+    bool meshChanged;
+    SoMFVec3f point;
+    SoMFInt32 coordIndex;
 };
 
 // ------------------------------------------------------------
 
-class MeshGuiExport SoFCMeshOpenEdgeSet : public SoShape {
-  using inherited = SoShape;
+class MeshGuiExport SoFCMeshOpenEdgeSet: public SoShape
+{
+    using inherited = SoShape;
 
-  SO_NODE_HEADER(SoFCMeshOpenEdgeSet);
-    
+    SO_NODE_HEADER(SoFCMeshOpenEdgeSet);
+
 public:
-  static void initClass();
-  SoFCMeshOpenEdgeSet();
+    static void initClass();
+    SoFCMeshOpenEdgeSet();
 
 protected:
-  virtual void GLRender(SoGLRenderAction *action);
-  virtual void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center);
-  virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);
-  virtual void generatePrimitives(SoAction *action);
+    virtual void GLRender(SoGLRenderAction *action);
+    virtual void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center);
+    virtual void getPrimitiveCount(SoGetPrimitiveCountAction *action);
+    virtual void generatePrimitives(SoAction *action);
+
 private:
-  // Force using the reference count mechanism.
-  virtual ~SoFCMeshOpenEdgeSet() {}
-  void drawLines(const MeshCore::MeshPointArray *, const MeshCore::MeshFacetArray*) const ;
+    // Force using the reference count mechanism.
+    virtual ~SoFCMeshOpenEdgeSet() {}
+    void drawLines(const MeshCore::MeshPointArray *, const MeshCore::MeshFacetArray *) const;
 };
 
 } // namespace MeshGui
 
 
 #endif // MESHGUI_SOFC_MESHFACESET_H
-

@@ -33,11 +33,13 @@
 
 #include <Base/Type.h>
 
-namespace App {
+namespace App
+{
 class DocumentObject;
 }
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawView;
 class DrawViewPart;
 class DrawProjGroup;
@@ -53,7 +55,7 @@ class DrawLeaderLine;
 class DrawViewBalloon;
 class DrawRichAnno;
 class DrawWeldSymbol;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -69,41 +71,46 @@ class QGIRichAnno;
 class QGITile;
 class QGVNavStyle;
 
-class TechDrawGuiExport QGVPage : public QGraphicsView
+class TechDrawGuiExport QGVPage: public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    enum RendererType { Native, OpenGL, Image };
+    enum RendererType
+    {
+        Native,
+        OpenGL,
+        Image
+    };
 
-    QGVPage(ViewProviderPage *vpPage, QGSPage* scenePage, QWidget *parent = nullptr);
+    QGVPage(ViewProviderPage *vpPage, QGSPage *scenePage, QWidget *parent = nullptr);
     ~QGVPage();
 
     void setRenderer(RendererType type = Native);
     void drawBackground(QPainter *painter, const QRectF &rect) override;
 
-    QGSPage* getScene() {return m_scene; }
+    QGSPage *getScene() { return m_scene; }
 
     void startBalloonPlacing();
     void cancelBalloonPlacing();
 
-    TechDraw::DrawPage * getDrawPage();
+    TechDraw::DrawPage *getDrawPage();
 
     void setExporting(bool enable);
 
     void makeGrid(int width, int height, double step);
-    void showGrid(bool state) {m_showGrid = state;}
-    void updateViewport() {viewport()->repaint();}
+    void showGrid(bool state) { m_showGrid = state; }
+    void updateViewport() { viewport()->repaint(); }
 
-    bool isBalloonPlacing() const {return balloonPlacing; }
-    void setBalloonPlacing(bool isPlacing) {balloonPlacing = isPlacing;}
+    bool isBalloonPlacing() const { return balloonPlacing; }
+    void setBalloonPlacing(bool isPlacing) { balloonPlacing = isPlacing; }
 
-    QLabel* getBalloonCursor() const {return balloonCursor;}
-    void setBalloonCursor(QLabel* label) {balloonCursor = label;}
+    QLabel *getBalloonCursor() const { return balloonCursor; }
+    void setBalloonCursor(QLabel *label) { balloonCursor = label; }
 
     void kbPanScroll(int xMove = 1, int yMove = 1);
-    QPointF getBalloonCursorPos() const {return balloonCursorPos;}
-    void setBalloonCursorPos(QPoint pos) { balloonCursorPos = pos;}
+    QPointF getBalloonCursorPos() const { return balloonCursorPos; }
+    void setBalloonCursorPos(QPoint pos) { balloonCursorPos = pos; }
 
     void activateCursor(QCursor cursor);
     void resetCursor();
@@ -149,7 +156,7 @@ private:
     RendererType m_renderer;
 
     bool drawBkg;
-    QBrush* bkgBrush;
+    QBrush *bkgBrush;
     QImage m_image;
     ViewProviderPage *m_vpPage;
 
@@ -159,7 +166,7 @@ private:
     int m_reversePan;
     int m_reverseScroll;
 
-    QGSPage* m_scene;
+    QGSPage *m_scene;
     bool balloonPlacing;
     QLabel *balloonCursor;
     QPoint balloonCursorPos;
@@ -171,7 +178,7 @@ private:
     bool m_showGrid;
     QPainterPath m_gridPath;
 
-    QGVNavStyle* m_navStyle;
+    QGVNavStyle *m_navStyle;
 
     class Private;
     std::unique_ptr<Private> d;
@@ -179,10 +186,10 @@ private:
     QCursor panCursor;
     QCursor zoomCursor;
 
-    MDIViewPage* m_parentMDI;
-    QContextMenuEvent* m_saveContextEvent;
+    MDIViewPage *m_parentMDI;
+    QContextMenuEvent *m_saveContextEvent;
 };
 
-} // namespace
+} // namespace TechDrawGui
 
 #endif // TECHDRAWGUI_QGVIEW_H

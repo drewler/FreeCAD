@@ -43,8 +43,9 @@ void loadMeshPartResource()
     Gui::Translator::instance()->refresh();
 }
 
-namespace MeshPartGui {
-class Module : public Py::ExtensionModule<Module>
+namespace MeshPartGui
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("MeshPartGui")
@@ -57,10 +58,7 @@ public:
 private:
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace MeshPartGui
 
@@ -73,15 +71,15 @@ PyMOD_INIT_FUNC(MeshPartGui)
         PyMOD_Return(nullptr);
     }
 
-    PyObject* mod = MeshPartGui::initModule();
+    PyObject *mod = MeshPartGui::initModule();
     Base::Console().Log("Loading GUI of MeshPart module... done\n");
 
     // instantiating the commands
     CreateMeshPartCommands();
-    MeshPartGui::Workbench                  ::init();
-    MeshPartGui::ViewProviderCurveOnMesh    ::init();
+    MeshPartGui::Workbench ::init();
+    MeshPartGui::ViewProviderCurveOnMesh ::init();
 
-     // add resources and reloads the translators
+    // add resources and reloads the translators
     loadMeshPartResource();
 
     PyMOD_Return(mod);

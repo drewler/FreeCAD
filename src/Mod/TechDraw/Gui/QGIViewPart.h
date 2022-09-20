@@ -32,32 +32,34 @@
 #include "QGIView.h"
 
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawViewPart;
 class DrawViewSection;
 class DrawHatch;
 class DrawGeomHatch;
 class DrawViewDetail;
 class DrawView;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
 class QGIFace;
 class QGIEdge;
 
-class TechDrawGuiExport QGIViewPart : public QGIView
+class TechDrawGuiExport QGIViewPart: public QGIView
 {
 public:
-
     explicit QGIViewPart();
     ~QGIViewPart() override;
 
-    enum {Type = QGraphicsItem::UserType + 102};
-    int type() const override { return Type;}
-    void paint( QPainter * painter,
-                        const QStyleOptionGraphicsItem * option,
-                        QWidget * widget = nullptr ) override;
+    enum
+    {
+        Type = QGraphicsItem::UserType + 102
+    };
+    int type() const override { return Type; }
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget = nullptr) override;
 
 
     void toggleCache(bool state) override;
@@ -67,9 +69,9 @@ public:
     void tidy();
     QRectF boundingRect() const override;
     virtual void drawAllSectionLines();
-    virtual void drawSectionLine(TechDraw::DrawViewSection* s, bool b);
+    virtual void drawSectionLine(TechDraw::DrawViewSection *s, bool b);
     virtual void drawCenterLines(bool b);
-    virtual void drawHighlight(TechDraw::DrawViewDetail* viewDetail, bool b);
+    virtual void drawHighlight(TechDraw::DrawViewDetail *viewDetail, bool b);
     virtual void drawMatting();
     bool showSection;
 
@@ -82,44 +84,44 @@ public:
     /*!
      * x_axis_rotation is in radian
      */
-    static void pathArcSegment(QPainterPath &path, double xc, double yc, double th0,
-                        double th1, double rx, double ry, double xAxisRotation);
+    static void pathArcSegment(QPainterPath &path, double xc, double yc, double th0, double th1,
+                               double rx, double ry, double xAxisRotation);
 
     /// Draws an arc using QPainterPath path
     /*!
      * x_axis_rotation is in radian
      */
     static void pathArc(QPainterPath &path, double rx, double ry, double x_axis_rotation,
-                                     bool large_arc_flag, bool sweep_flag,
-                                     double x, double y,
-                                     double curx, double cury);
+                        bool large_arc_flag, bool sweep_flag, double x, double y, double curx,
+                        double cury);
     void setExporting(bool b) { m_isExporting = b; }
     bool getExporting() { return m_isExporting; }
 
 protected:
     QPainterPath drawPainterPath(TechDraw::BaseGeomPtr baseGeom) const;
     void drawViewPart();
-    QGIFace* drawFace(TechDraw::FacePtr f, int idx);
+    QGIFace *drawFace(TechDraw::FacePtr f, int idx);
 
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
-    TechDraw::DrawHatch* faceIsHatched(int i, std::vector<TechDraw::DrawHatch*> hatchObjs) const;
-    TechDraw::DrawGeomHatch* faceIsGeomHatched(int i, std::vector<TechDraw::DrawGeomHatch*> geomObjs) const;
-    void dumpPath(const char* text, QPainterPath path);
+    TechDraw::DrawHatch *faceIsHatched(int i, std::vector<TechDraw::DrawHatch *> hatchObjs) const;
+    TechDraw::DrawGeomHatch *
+    faceIsGeomHatched(int i, std::vector<TechDraw::DrawGeomHatch *> geomObjs) const;
+    void dumpPath(const char *text, QPainterPath path);
     void removePrimitives();
     void removeDecorations();
     bool prefFaceEdges();
     bool prefPrintCenters();
 
-    bool formatGeomFromCosmetic(std::string cTag, QGIEdge* item);
-    bool formatGeomFromCenterLine(std::string cTag, QGIEdge* item);
+    bool formatGeomFromCosmetic(std::string cTag, QGIEdge *item);
+    bool formatGeomFromCenterLine(std::string cTag, QGIEdge *item);
 
     bool m_isExporting;
 
 private:
-    QList<QGraphicsItem*> deleteItems;
+    QList<QGraphicsItem *> deleteItems;
 };
 
-} // namespace
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMVIEWPART_H

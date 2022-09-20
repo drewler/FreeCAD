@@ -11,7 +11,7 @@
 //              be removed so the indices are in the range 1..Extent.
 //              See  the  class   Map   from NCollection   for   a
 //              discussion about the number of buckets.
-//              
+//
 
 #ifndef SMESH_DefineIndexedMap_HeaderFile
 #define SMESH_DefineIndexedMap_HeaderFile
@@ -21,12 +21,12 @@
 
 #ifdef WNT
 // Disable the warning "operator new unmatched by delete"
-#pragma warning (disable:4291)
+#pragma warning(disable : 4291)
 #endif
 
 // *********************************************** Class IndexedMap ***********
 
-#define SMESH_DEFINE_INDEXEDMAP(_ClassName_, _BaseCollection_, TheKeyType)           \
-        typedef SMESH_IndexedMap <TheKeyType > _ClassName_;
+#define SMESH_DEFINE_INDEXEDMAP(_ClassName_, _BaseCollection_, TheKeyType)                         \
+    typedef SMESH_IndexedMap<TheKeyType> _ClassName_;
 
 #endif

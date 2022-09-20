@@ -22,13 +22,13 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepFilletAPI_MakeFillet.hxx>
-# include <Precision.hxx>
-# include <TopExp.hxx>
-# include <TopExp_Explorer.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Edge.hxx>
-# include <TopTools_IndexedMapOfShape.hxx>
+#include <BRepFilletAPI_MakeFillet.hxx>
+#include <Precision.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #endif
 
 #include <Base/Exception.h>
@@ -40,20 +40,17 @@ using namespace Part;
 
 PROPERTY_SOURCE(Part::Fillet, Part::FilletBase)
 
-Fillet::Fillet()
-{
-}
+Fillet::Fillet() {}
 
 App::DocumentObjectExecReturn *Fillet::execute()
 {
-    App::DocumentObject* link = Base.getValue();
-    if (!link)
-        return new App::DocumentObjectExecReturn("No object linked");
+    App::DocumentObject *link = Base.getValue();
+    if (!link) return new App::DocumentObjectExecReturn("No object linked");
 
     auto baseShape = Feature::getShape(link);
 
     try {
-#if defined(__GNUC__) && defined (FC_OS_LINUX)
+#if defined(__GNUC__) && defined(FC_OS_LINUX)
         Base::SignalException se;
 #endif
         BRepFilletAPI_MakeFillet mkFillet(baseShape);
@@ -65,23 +62,20 @@ App::DocumentObjectExecReturn *Fillet::execute()
             int id = it->edgeid;
             double radius1 = it->radius1;
             double radius2 = it->radius2;
-            const TopoDS_Edge& edge = TopoDS::Edge(mapOfShape.FindKey(id));
+            const TopoDS_Edge &edge = TopoDS::Edge(mapOfShape.FindKey(id));
             mkFillet.Add(radius1, radius2, edge);
         }
 
         TopoDS_Shape shape = mkFillet.Shape();
-        if (shape.IsNull())
-            return new App::DocumentObjectExecReturn("Resulting shape is null");
+        if (shape.IsNull()) return new App::DocumentObjectExecReturn("Resulting shape is null");
 
         //shapefix re #4285
         //https://www.forum.freecadweb.org/viewtopic.php?f=3&t=43890&sid=dae2fa6fda71670863a103b42739e47f
-        TopoShape* ts = new TopoShape(shape);
+        TopoShape *ts = new TopoShape(shape);
         double minTol = 2.0 * Precision::Confusion();
         double maxTol = 4.0 * Precision::Confusion();
         bool rc = ts->fix(Precision::Confusion(), minTol, maxTol);
-        if (rc) {
-            shape = ts->getShape();
-        }
+        if (rc) { shape = ts->getShape(); }
         delete ts;
 
         ShapeHistory history = buildHistory(mkFillet, TopAbs_FACE, shape, baseShape);
@@ -95,7 +89,7 @@ App::DocumentObjectExecReturn *Fillet::execute()
 
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
         return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
     catch (...) {

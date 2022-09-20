@@ -38,24 +38,32 @@
 
 class QEvent;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
 class QuarterWidget;
 
-class FocusHandler : public QObject {
-  Q_OBJECT
+class FocusHandler: public QObject
+{
+    Q_OBJECT
 public:
-  FocusHandler(QObject * parent);
-  virtual ~FocusHandler();
+    FocusHandler(QObject *parent);
+    virtual ~FocusHandler();
 
 protected:
-  virtual bool eventFilter(QObject *, QEvent * event);
+    virtual bool eventFilter(QObject *, QEvent *event);
 
 private:
-  void focusEvent(const SbName & focusevent);
-  QuarterWidget * quarterwidget;
+    void focusEvent(const SbName &focusevent);
+    QuarterWidget *quarterwidget;
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_FOCUSHANDLER_H

@@ -32,15 +32,16 @@
 
 class TopoDS_Shape;
 
-namespace PartGui {
+namespace PartGui
+{
 
 class Ui_DlgExtrusion;
-class DlgExtrusion : public QDialog, public Gui::SelectionObserver
+class DlgExtrusion: public QDialog, public Gui::SelectionObserver
 {
     Q_OBJECT
 
 public:
-    DlgExtrusion(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    DlgExtrusion(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~DlgExtrusion() override;
     void accept() override;
     void apply();
@@ -54,19 +55,19 @@ public:
 
     void getAxisLink(App::PropertyLinkSub &lnk) const;
     void setAxisLink(const App::PropertyLinkSub &lnk);
-    void setAxisLink(const char* objname, const char* subname);
+    void setAxisLink(const char *objname, const char *subname);
 
-    std::vector<App::DocumentObject*> getShapesToExtrude() const;
+    std::vector<App::DocumentObject *> getShapesToExtrude() const;
 
     bool validate();
 
-    void writeParametersToFeature(App::DocumentObject& feature, App::DocumentObject* base) const;
+    void writeParametersToFeature(App::DocumentObject &feature, App::DocumentObject *base) const;
 
 protected:
     void findShapes();
-    bool canExtrude(const TopoDS_Shape&) const;
+    bool canExtrude(const TopoDS_Shape &) const;
     void changeEvent(QEvent *e) override;
-    void keyPressEvent(QKeyEvent*) override;
+    void keyPressEvent(QKeyEvent *) override;
 
 private Q_SLOTS:
     void on_rbDirModeCustom_toggled(bool on);
@@ -82,9 +83,9 @@ private Q_SLOTS:
 private:
     ///updates enabling of controls
     void on_DirMode_changed();
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     ///returns link to any of selected source shapes. Throws if nothing is selected for extrusion.
-    App::DocumentObject& getShapeToExtrude() const;
+    App::DocumentObject &getShapeToExtrude() const;
     ///if dirMode is not custom, it tries to compute the actual extrusion direction. Also, it does some auto-magic manipulation of length value.
     void fetchDir();
 
@@ -95,10 +96,10 @@ private:
     std::unique_ptr<Ui_DlgExtrusion> ui;
     std::string document, label;
     class EdgeSelection;
-    EdgeSelection* filter;
+    EdgeSelection *filter;
 };
 
-class TaskExtrusion : public Gui::TaskView::TaskDialog
+class TaskExtrusion: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -112,11 +113,13 @@ public:
     void clicked(int) override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Close; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Close;
+    }
 
 private:
-    DlgExtrusion* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    DlgExtrusion *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } // namespace PartGui

@@ -39,133 +39,119 @@
 
 using namespace SIM::Coin3D::Quarter;
 
-ContextMenu::ContextMenu(QuarterWidget * quarterwidget)
-  : quarterwidget(quarterwidget)
+ContextMenu::ContextMenu(QuarterWidget *quarterwidget) : quarterwidget(quarterwidget)
 {
-  this->contextmenu = new QMenu;
-  this->functionsmenu = new QMenu("Functions");
-  this->rendermenu = new QMenu("Render Mode");
-  this->stereomenu = new QMenu("Stereo Mode");
-  this->transparencymenu = new QMenu("Transparency Type");
+    this->contextmenu = new QMenu;
+    this->functionsmenu = new QMenu("Functions");
+    this->rendermenu = new QMenu("Render Mode");
+    this->stereomenu = new QMenu("Stereo Mode");
+    this->transparencymenu = new QMenu("Transparency Type");
 
-  this->contextmenu->addMenu(functionsmenu);
-  this->contextmenu->addMenu(rendermenu);
-  this->contextmenu->addMenu(stereomenu);
-  this->contextmenu->addMenu(transparencymenu);
+    this->contextmenu->addMenu(functionsmenu);
+    this->contextmenu->addMenu(rendermenu);
+    this->contextmenu->addMenu(stereomenu);
+    this->contextmenu->addMenu(transparencymenu);
 
-  SoRenderManager * sorendermanager = quarterwidget->getSoRenderManager();
+    SoRenderManager *sorendermanager = quarterwidget->getSoRenderManager();
 
-  QActionGroup * rendermodegroup = nullptr;
-  QActionGroup * stereomodegroup = nullptr;
-  QActionGroup * transparencytypegroup = nullptr;
+    QActionGroup *rendermodegroup = nullptr;
+    QActionGroup *stereomodegroup = nullptr;
+    QActionGroup *transparencytypegroup = nullptr;
 
-  foreach (QAction * action, quarterwidget->renderModeActions()) {
-    if (!rendermodegroup) {
-      rendermodegroup = action->actionGroup();
-    } else {
-      assert(rendermodegroup && rendermodegroup == action->actionGroup());
+    foreach (QAction *action, quarterwidget->renderModeActions()) {
+        if (!rendermodegroup) { rendermodegroup = action->actionGroup(); }
+        else {
+            assert(rendermodegroup && rendermodegroup == action->actionGroup());
+        }
+
+        int rendermode = static_cast<QuarterWidget::RenderMode>(sorendermanager->getRenderMode());
+        int data = static_cast<QuarterWidget::RenderMode>(action->data().toInt());
+        action->setChecked(rendermode == data);
+        rendermenu->addAction(action);
     }
 
-    int rendermode = static_cast<QuarterWidget::RenderMode>(sorendermanager->getRenderMode());
-    int data = static_cast<QuarterWidget::RenderMode>(action->data().toInt());
-    action->setChecked(rendermode == data);
-    rendermenu->addAction(action);
-  }
+    foreach (QAction *action, quarterwidget->stereoModeActions()) {
+        if (!stereomodegroup) { stereomodegroup = action->actionGroup(); }
+        else {
+            assert(stereomodegroup && stereomodegroup == action->actionGroup());
+        }
 
-  foreach (QAction * action, quarterwidget->stereoModeActions()) {
-    if (!stereomodegroup) {
-      stereomodegroup = action->actionGroup();
-    } else {
-      assert(stereomodegroup && stereomodegroup == action->actionGroup());
+        int stereomode = static_cast<QuarterWidget::StereoMode>(sorendermanager->getStereoMode());
+        int data = static_cast<QuarterWidget::StereoMode>(action->data().toInt());
+        action->setChecked(stereomode == data);
+        stereomenu->addAction(action);
     }
 
-    int stereomode = static_cast<QuarterWidget::StereoMode>(sorendermanager->getStereoMode());
-    int data = static_cast<QuarterWidget::StereoMode>(action->data().toInt());
-    action->setChecked(stereomode == data);
-    stereomenu->addAction(action);
-  }
+    foreach (QAction *action, quarterwidget->transparencyTypeActions()) {
+        if (!transparencytypegroup) { transparencytypegroup = action->actionGroup(); }
+        else {
+            assert(transparencytypegroup && transparencytypegroup == action->actionGroup());
+        }
 
-  foreach (QAction * action, quarterwidget->transparencyTypeActions()) {
-    if (!transparencytypegroup) {
-      transparencytypegroup = action->actionGroup();
-    } else {
-      assert(transparencytypegroup && transparencytypegroup == action->actionGroup());
+        SoGLRenderAction *renderaction = sorendermanager->getGLRenderAction();
+        int transparencytype =
+            static_cast<SoGLRenderAction::TransparencyType>(renderaction->getTransparencyType());
+        int data = static_cast<SoGLRenderAction::TransparencyType>(action->data().toInt());
+        action->setChecked(transparencytype == data);
+        transparencymenu->addAction(action);
     }
 
-    SoGLRenderAction * renderaction = sorendermanager->getGLRenderAction();
-    int transparencytype = static_cast<SoGLRenderAction::TransparencyType>(renderaction->getTransparencyType());
-    int data = static_cast<SoGLRenderAction::TransparencyType>(action->data().toInt());
-    action->setChecked(transparencytype == data);
-    transparencymenu->addAction(action);
-  }
+    QAction *viewall = new QAction("View All", quarterwidget);
+    QAction *seek = new QAction("Seek", quarterwidget);
+    functionsmenu->addAction(viewall);
+    functionsmenu->addAction(seek);
 
-  QAction * viewall = new QAction("View All", quarterwidget);
-  QAction * seek = new QAction("Seek", quarterwidget);
-  functionsmenu->addAction(viewall);
-  functionsmenu->addAction(seek);
+    QObject::connect(seek, SIGNAL(triggered()), this->quarterwidget, SLOT(seek()));
 
-  QObject::connect(seek, SIGNAL(triggered()),
-                   this->quarterwidget, SLOT(seek()));
+    QObject::connect(viewall, SIGNAL(triggered()), this->quarterwidget, SLOT(viewAll()));
 
-  QObject::connect(viewall, SIGNAL(triggered()),
-                   this->quarterwidget, SLOT(viewAll()));
+    // FIXME: It would be ideal to expose these actiongroups to Qt
+    // Designer and be able to connect them to the appropriate slots on
+    // QuarterWidget, but this is not possible in Qt. Exposing every
+    // single action is supposed to work, but it doesn't at the
+    // moment. (20081215 frodo)
+    QObject::connect(rendermodegroup, SIGNAL(triggered(QAction *)), this,
+                     SLOT(changeRenderMode(QAction *)));
 
-  // FIXME: It would be ideal to expose these actiongroups to Qt
-  // Designer and be able to connect them to the appropriate slots on
-  // QuarterWidget, but this is not possible in Qt. Exposing every
-  // single action is supposed to work, but it doesn't at the
-  // moment. (20081215 frodo)
-  QObject::connect(rendermodegroup, SIGNAL(triggered(QAction *)),
-                   this, SLOT(changeRenderMode(QAction *)));
+    QObject::connect(stereomodegroup, SIGNAL(triggered(QAction *)), this,
+                     SLOT(changeStereoMode(QAction *)));
 
-  QObject::connect(stereomodegroup, SIGNAL(triggered(QAction *)),
-                   this, SLOT(changeStereoMode(QAction *)));
-
-  QObject::connect(transparencytypegroup, SIGNAL(triggered(QAction *)),
-                   this, SLOT(changeTransparencyType(QAction *)));
+    QObject::connect(transparencytypegroup, SIGNAL(triggered(QAction *)), this,
+                     SLOT(changeTransparencyType(QAction *)));
 }
 
 ContextMenu::~ContextMenu()
 {
-  delete this->functionsmenu;
-  delete this->rendermenu;
-  delete this->stereomenu;
-  delete this->transparencymenu;
-  delete this->contextmenu;
+    delete this->functionsmenu;
+    delete this->rendermenu;
+    delete this->stereomenu;
+    delete this->transparencymenu;
+    delete this->contextmenu;
 }
 
-QMenu *
-ContextMenu::getMenu() const
+QMenu *ContextMenu::getMenu() const { return this->contextmenu; }
+
+void ContextMenu::changeRenderMode(QAction *action)
 {
-  return this->contextmenu;
+    QuarterWidget::RenderMode mode = static_cast<QuarterWidget::RenderMode>(action->data().toInt());
+
+    this->quarterwidget->setRenderMode(mode);
+    this->quarterwidget->getSoRenderManager()->scheduleRedraw();
 }
 
-void
-ContextMenu::changeRenderMode(QAction * action)
+void ContextMenu::changeStereoMode(QAction *action)
 {
-  QuarterWidget::RenderMode mode =
-    static_cast<QuarterWidget::RenderMode>(action->data().toInt());
+    QuarterWidget::StereoMode mode = static_cast<QuarterWidget::StereoMode>(action->data().toInt());
 
-  this->quarterwidget->setRenderMode(mode);
-  this->quarterwidget->getSoRenderManager()->scheduleRedraw();
+    this->quarterwidget->setStereoMode(mode);
+    this->quarterwidget->getSoRenderManager()->scheduleRedraw();
 }
 
-void
-ContextMenu::changeStereoMode(QAction * action)
+void ContextMenu::changeTransparencyType(QAction *action)
 {
-  QuarterWidget::StereoMode mode =
-    static_cast<QuarterWidget::StereoMode>(action->data().toInt());
+    QuarterWidget::TransparencyType type =
+        static_cast<QuarterWidget::TransparencyType>(action->data().toInt());
 
-  this->quarterwidget->setStereoMode(mode);
-  this->quarterwidget->getSoRenderManager()->scheduleRedraw();
-}
-
-void
-ContextMenu::changeTransparencyType(QAction * action)
-{
-  QuarterWidget::TransparencyType type =
-    static_cast<QuarterWidget::TransparencyType>(action->data().toInt());
-
-  this->quarterwidget->setTransparencyType(type);
-  this->quarterwidget->getSoRenderManager()->scheduleRedraw();
+    this->quarterwidget->setTransparencyType(type);
+    this->quarterwidget->getSoRenderManager()->scheduleRedraw();
 }

@@ -25,9 +25,9 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QAction>
-# include <QColor>
-# include <QMenu>
+#include <QAction>
+#include <QColor>
+#include <QMenu>
 #endif
 
 #include <Base/Parameter.h>
@@ -47,11 +47,11 @@
 using namespace TechDrawGui;
 using namespace TechDraw;
 
-const char *ViewProviderDimension::StandardAndStyleEnums[]=
-    { "ISO Oriented", "ISO Referencing", "ASME Inlined", "ASME Referencing", nullptr };
+const char *ViewProviderDimension::StandardAndStyleEnums[] = {
+    "ISO Oriented", "ISO Referencing", "ASME Inlined", "ASME Referencing", nullptr};
 
-const char *ViewProviderDimension::RenderingExtentEnums[]=
-    { "None", "Minimal", "Confined", "Reduced", "Normal", "Expanded", nullptr };
+const char *ViewProviderDimension::RenderingExtentEnums[] = {
+    "None", "Minimal", "Confined", "Reduced", "Normal", "Expanded", nullptr};
 
 PROPERTY_SOURCE(TechDrawGui::ViewProviderDimension, TechDrawGui::ViewProviderDrawingView)
 
@@ -64,35 +64,32 @@ ViewProviderDimension::ViewProviderDimension()
 
     static const char *group = "Dimension Format";
 
-    ADD_PROPERTY_TYPE(Font, (Preferences::labelFont().c_str()),
-                                              group, App::Prop_None, "The name of the font to use");
-    ADD_PROPERTY_TYPE(Fontsize, (Preferences::dimFontSizeMM()),
-    								 group, (App::PropertyType)(App::Prop_None),
-                                                                     "Dimension text size in units");
+    ADD_PROPERTY_TYPE(Font, (Preferences::labelFont().c_str()), group, App::Prop_None,
+                      "The name of the font to use");
+    ADD_PROPERTY_TYPE(Fontsize, (Preferences::dimFontSizeMM()), group,
+                      (App::PropertyType)(App::Prop_None), "Dimension text size in units");
     ADD_PROPERTY_TYPE(LineWidth, (prefWeight()), group, (App::PropertyType)(App::Prop_None),
-                                                        "Dimension line width");
+                      "Dimension line width");
     ADD_PROPERTY_TYPE(Color, (prefColor()), group, App::Prop_None, "Color of the dimension");
     ADD_PROPERTY_TYPE(StandardAndStyle, (prefStandardAndStyle()), group, App::Prop_None,
-                                        "Standard and style according to which dimension is drawn");
+                      "Standard and style according to which dimension is drawn");
     StandardAndStyle.setEnums(StandardAndStyleEnums);
 
     ADD_PROPERTY_TYPE(RenderingExtent, (REND_EXTENT_NORMAL), group, App::Prop_None,
-                                         "Select the rendering mode by space requirements");
+                      "Select the rendering mode by space requirements");
     RenderingExtent.setEnums(RenderingExtentEnums);
     ADD_PROPERTY_TYPE(FlipArrowheads, (false), group, App::Prop_None,
-                                          "Reverses usual direction of dimension line terminators");
+                      "Reverses usual direction of dimension line terminators");
     ADD_PROPERTY_TYPE(GapFactorISO, (Preferences::GapISO()), group, App::Prop_None,
                       "Adjusts the gap between dimension point and extension line");
     ADD_PROPERTY_TYPE(GapFactorASME, (Preferences::GapASME()), group, App::Prop_None,
                       "Adjusts the gap between dimension point and extension line");
 
     //Dimensions take their stacking order from the parent View
-    StackOrder.setStatus(App::Property::Hidden,true);
+    StackOrder.setStatus(App::Property::Hidden, true);
 }
 
-ViewProviderDimension::~ViewProviderDimension()
-{
-}
+ViewProviderDimension::~ViewProviderDimension() {}
 
 void ViewProviderDimension::attach(App::DocumentObject *pcFeat)
 {
@@ -111,10 +108,11 @@ bool ViewProviderDimension::doubleClicked()
     return true;
 }
 
-void ViewProviderDimension::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderDimension::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
-    Gui::ActionFunction* func = new Gui::ActionFunction(menu);
-    QAction* act = menu->addAction(QObject::tr("Edit %1").arg(QString::fromUtf8(getObject()->Label.getValue())));
+    Gui::ActionFunction *func = new Gui::ActionFunction(menu);
+    QAction *act = menu->addAction(
+        QObject::tr("Edit %1").arg(QString::fromUtf8(getObject()->Label.getValue())));
     act->setData(QVariant((int)ViewProvider::Default));
     func->trigger(act, std::bind(&ViewProviderDimension::startDefaultEditMode, this));
 
@@ -123,100 +121,80 @@ void ViewProviderDimension::setupContextMenu(QMenu* menu, QObject* receiver, con
 
 bool ViewProviderDimension::setEdit(int ModNum)
 {
-    if (ModNum != ViewProvider::Default) {
-        return ViewProviderDrawingView::setEdit(ModNum);
-    }
+    if (ModNum != ViewProvider::Default) { return ViewProviderDrawingView::setEdit(ModNum); }
     if (Gui::Control().activeDialog()) { // if TaskPanel already open
         return false;
     }
     // clear the selection (convenience)
     Gui::Selection().clearSelection();
-    auto qgivDimension(dynamic_cast<QGIViewDimension*>(getQView()));
-    if (qgivDimension) {
-        Gui::Control().showDialog(new TaskDlgDimension(qgivDimension, this));
-    }
+    auto qgivDimension(dynamic_cast<QGIViewDimension *>(getQView()));
+    if (qgivDimension) { Gui::Control().showDialog(new TaskDlgDimension(qgivDimension, this)); }
     return true;
 }
 
-void ViewProviderDimension::updateData(const App::Property* p)
+void ViewProviderDimension::updateData(const App::Property *p)
 {
     if (p == &(getViewObject()->Type)) {
         if (getViewObject()->Type.isValue("DistanceX")) {
             sPixmap = "TechDraw_HorizontalDimension";
-        } else if (getViewObject()->Type.isValue("DistanceY")) {
+        }
+        else if (getViewObject()->Type.isValue("DistanceY")) {
             sPixmap = "TechDraw_VerticalDimension";
-        } else if (getViewObject()->Type.isValue("Radius")) {
+        }
+        else if (getViewObject()->Type.isValue("Radius")) {
             sPixmap = "TechDraw_RadiusDimension";
-        } else if (getViewObject()->Type.isValue("Diameter")) {
+        }
+        else if (getViewObject()->Type.isValue("Diameter")) {
             sPixmap = "TechDraw_DiameterDimension";
-        } else if (getViewObject()->Type.isValue("Angle")) {
+        }
+        else if (getViewObject()->Type.isValue("Angle")) {
             sPixmap = "TechDraw_AngleDimension";
-        } else if (getViewObject()->Type.isValue("Angle3Pt")) {
+        }
+        else if (getViewObject()->Type.isValue("Angle3Pt")) {
             sPixmap = "TechDraw_3PtAngleDimension";
         }
     }
 
     //Dimension handles X, Y updates differently that other QGIView
     //call QGIViewDimension::updateView
-    if (p == &(getViewObject()->X)  ||
-        p == &(getViewObject()->Y) ){
-        QGIView* qgiv = getQView();
-        if (qgiv) {
-            qgiv->updateView(true);
-        }
+    if (p == &(getViewObject()->X) || p == &(getViewObject()->Y)) {
+        QGIView *qgiv = getQView();
+        if (qgiv) { qgiv->updateView(true); }
     }
 
     //Skip QGIView X, Y processing - do not call ViewProviderDrawingView
     Gui::ViewProviderDocumentObject::updateData(p);
 }
 
-void ViewProviderDimension::onChanged(const App::Property* p)
+void ViewProviderDimension::onChanged(const App::Property *p)
 {
-    if ((p == &Font)  ||
-        (p == &Fontsize) ||
-        (p == &LineWidth) ||
-        (p == &StandardAndStyle) ||
-        (p == &RenderingExtent) ||
-        (p == &FlipArrowheads) ||
-        (p == &GapFactorASME) ||
-        (p == &GapFactorISO))  {
-        QGIView* qgiv = getQView();
-        if (qgiv) {
-            qgiv->updateView(true);
-        }
+    if ((p == &Font) || (p == &Fontsize) || (p == &LineWidth) || (p == &StandardAndStyle)
+        || (p == &RenderingExtent) || (p == &FlipArrowheads) || (p == &GapFactorASME)
+        || (p == &GapFactorISO)) {
+        QGIView *qgiv = getQView();
+        if (qgiv) { qgiv->updateView(true); }
     }
     if (p == &Color) {
-        QGIView* qgiv = getQView();
+        QGIView *qgiv = getQView();
         if (qgiv) {
-            QGIViewDimension* qgivd = dynamic_cast<QGIViewDimension*>(qgiv);
-            if (qgivd) {
-                qgivd->setNormalColorAll();
-            }
+            QGIViewDimension *qgivd = dynamic_cast<QGIViewDimension *>(qgiv);
+            if (qgivd) { qgivd->setNormalColorAll(); }
         }
     }
 
     ViewProviderDrawingView::onChanged(p);
 }
 
-TechDraw::DrawViewDimension* ViewProviderDimension::getViewObject() const
+TechDraw::DrawViewDimension *ViewProviderDimension::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawViewDimension*>(pcObject);
+    return dynamic_cast<TechDraw::DrawViewDimension *>(pcObject);
 }
 
-App::Color ViewProviderDimension::prefColor() const
-{
-   return PreferencesGui::dimColor();
-}
+App::Color ViewProviderDimension::prefColor() const { return PreferencesGui::dimColor(); }
 
-std::string ViewProviderDimension::prefFont() const
-{
-    return Preferences::labelFont();
-}
+std::string ViewProviderDimension::prefFont() const { return Preferences::labelFont(); }
 
-double ViewProviderDimension::prefFontSize() const
-{
-    return Preferences::dimFontSizeMM();
-}
+double ViewProviderDimension::prefFontSize() const { return Preferences::dimFontSizeMM(); }
 
 double ViewProviderDimension::prefWeight() const
 {
@@ -225,14 +203,17 @@ double ViewProviderDimension::prefWeight() const
 
 int ViewProviderDimension::prefStandardAndStyle() const
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-                                        .GetGroup("BaseApp")->GetGroup("Preferences")->
-                                         GetGroup("Mod/TechDraw/Dimensions");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Dimensions");
     int standardStyle = hGrp->GetInt("StandardAndStyle", STD_STYLE_ISO_ORIENTED);
     return standardStyle;
 }
 
-void ViewProviderDimension::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property *prop)
+void ViewProviderDimension::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                                      App::Property *prop)
 // transforms properties that had been changed
 {
     // property LineWidth had the App::PropertyFloat and was changed to App::PropertyLength

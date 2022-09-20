@@ -38,7 +38,8 @@
 #include <FCGlobal.h>
 #endif
 
-namespace Base {
+namespace Base
+{
 
 class Vector2d;
 class BoundBox2d;
@@ -50,35 +51,34 @@ class Polygon2d;
 /**
  * 3D line class.
  */
-template <class float_type>
-class Line3
+template<class float_type> class Line3
 {
 public:
     Vector3<float_type> p1, p2;
 
     Line3() = default;
     ~Line3() = default;
-    Line3(const Line3& line);
-    Line3(Line3&& line);
-    Line3(const Vector3<float_type>& p1, const Vector3<float_type>& p2);
+    Line3(const Line3 &line);
+    Line3(Line3 &&line);
+    Line3(const Vector3<float_type> &p1, const Vector3<float_type> &p2);
 
     // operators
-    Line3& operator= (const Line3& line);
-    Line3& operator= (Line3&& line);
-    bool operator== (const Line3& line) const;
+    Line3 &operator=(const Line3 &line);
+    Line3 &operator=(Line3 &&line);
+    bool operator==(const Line3 &line) const;
 
     // methods
-    double Length () const;
-    double SqrLength () const;
+    double Length() const;
+    double SqrLength() const;
     BoundBox3<float_type> CalcBoundBox() const;
     Vector3<float_type> GetBase() const;
     Vector3<float_type> GetDirection() const;
-    void Transform(const Base::Matrix4D&);
-    void Transform(const Base::Placement&);
-    void Transform(const Base::Rotation&);
-    Line3 Transformed(const Base::Matrix4D&) const;
-    Line3 Transformed(const Base::Placement&) const;
-    Line3 Transformed(const Base::Rotation&) const;
+    void Transform(const Base::Matrix4D &);
+    void Transform(const Base::Placement &);
+    void Transform(const Base::Rotation &);
+    Line3 Transformed(const Base::Matrix4D &) const;
+    Line3 Transformed(const Base::Placement &) const;
+    Line3 Transformed(const Base::Rotation &) const;
 
     /*!
      * \brief Contains
@@ -86,7 +86,7 @@ public:
      * \param p
      * \return
      */
-    bool Contains(const Vector3<float_type>& p) const;
+    bool Contains(const Vector3<float_type> &p) const;
     /*!
      * \brief Contains
      * Checks if the distance of point \a p to the line segment is
@@ -95,8 +95,8 @@ public:
      * \param eps
      * \return
      */
-    bool Contains(const Vector3<float_type>& p, float_type eps) const;
-    Vector3<float_type> FromPos (float_type distance) const;
+    bool Contains(const Vector3<float_type> &p, float_type eps) const;
+    Vector3<float_type> FromPos(float_type distance) const;
 };
 
 /** Polygon3 ********************************************/
@@ -104,33 +104,32 @@ public:
 /**
  * 3D polygon class.
  */
-template <class float_type>
-class Polygon3
+template<class float_type> class Polygon3
 {
 public:
     Polygon3() = default;
     ~Polygon3() = default;
-    Polygon3(const Polygon3<float_type>& poly) = default;
+    Polygon3(const Polygon3<float_type> &poly) = default;
 
-    Polygon3& operator = (const Polygon3<float_type>& poly) = default;
+    Polygon3 &operator=(const Polygon3<float_type> &poly) = default;
 
     size_t GetSize() const;
-    void Add (const Vector3<float_type>& p);
-    const Vector3<float_type>& operator[] (size_t pos) const;
-    const Vector3<float_type>& At (size_t pos) const;
-    Vector3<float_type>& operator[] (size_t pos);
-    Vector3<float_type>& At (size_t pos);
+    void Add(const Vector3<float_type> &p);
+    const Vector3<float_type> &operator[](size_t pos) const;
+    const Vector3<float_type> &At(size_t pos) const;
+    Vector3<float_type> &operator[](size_t pos);
+    Vector3<float_type> &At(size_t pos);
     bool Remove(size_t pos);
     void Clear();
 
     // misc
     BoundBox3<float_type> CalcBoundBox() const;
-    void Transform(const Base::Matrix4D&);
-    void Transform(const Base::Placement&);
-    void Transform(const Base::Rotation&);
-    Polygon3 Transformed(const Base::Matrix4D&) const;
-    Polygon3 Transformed(const Base::Placement&) const;
-    Polygon3 Transformed(const Base::Rotation&) const;
+    void Transform(const Base::Matrix4D &);
+    void Transform(const Base::Placement &);
+    void Transform(const Base::Rotation &);
+    Polygon3 Transformed(const Base::Matrix4D &) const;
+    Polygon3 Transformed(const Base::Placement &) const;
+    Polygon3 Transformed(const Base::Rotation &) const;
 
 private:
     std::vector<Vector3<float_type>> points;

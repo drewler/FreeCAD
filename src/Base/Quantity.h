@@ -27,23 +27,26 @@
 #include "Unit.h"
 #include <QString>
 
-#ifndef  DOUBLE_MAX
-# define DOUBLE_MAX 1.7976931348623157E+308    /* max decimal value of a "double"*/
+#ifndef DOUBLE_MAX
+#define DOUBLE_MAX 1.7976931348623157E+308 /* max decimal value of a "double"*/
 #endif
-#ifndef  DOUBLE_MIN
-# define DOUBLE_MIN 2.2250738585072014E-308    /* min decimal value of a "double"*/
+#ifndef DOUBLE_MIN
+#define DOUBLE_MIN 2.2250738585072014E-308 /* min decimal value of a "double"*/
 #endif
 
-namespace Base {
+namespace Base
+{
 class UnitsSchema;
 
 struct BaseExport QuantityFormat {
-    enum NumberOption {
+    enum NumberOption
+    {
         None = 0x00,
         OmitGroupSeparator = 0x01,
         RejectGroupSeparator = 0x02
     };
-    enum NumberFormat {
+    enum NumberFormat
+    {
         Default = 0,
         Fixed = 1,
         Scientific = 2
@@ -59,47 +62,33 @@ struct BaseExport QuantityFormat {
     // schemas.
     static int defaultDenominator; // i.e 8 for 1/8"
 
-    static inline int getDefaultDenominator() {
-        return defaultDenominator;
-    }
+    static inline int getDefaultDenominator() { return defaultDenominator; }
 
-    static inline void setDefaultDenominator(int denom) {
-        defaultDenominator = denom;
-    }
+    static inline void setDefaultDenominator(int denom) { defaultDenominator = denom; }
 
-    inline int getDenominator() const {
-        return denominator;
-    }
+    inline int getDenominator() const { return denominator; }
 
-    inline void setDenominator(int denom) {
-        denominator = denom;
-    }
+    inline void setDenominator(int denom) { denominator = denom; }
     QuantityFormat();
-    QuantityFormat(NumberFormat format, int decimals=-1);
-    inline char toFormat() const {
+    QuantityFormat(NumberFormat format, int decimals = -1);
+    inline char toFormat() const
+    {
         switch (format) {
-        case Fixed:
-            return 'f';
-        case Scientific:
-            return 'e';
-        default:
-            return 'g';
+            case Fixed: return 'f';
+            case Scientific: return 'e';
+            default: return 'g';
         }
     }
-    static inline NumberFormat toFormat(char c, bool* ok = nullptr) {
-        if (ok)
-            *ok = true;
+    static inline NumberFormat toFormat(char c, bool *ok = nullptr)
+    {
+        if (ok) *ok = true;
         switch (c) {
-        case 'f':
-            return Fixed;
-        case 'e':
-            return Scientific;
-        case 'g':
-            return Default;
-        default:
-            if (ok)
-                *ok = false;
-            return Default;
+            case 'f': return Fixed;
+            case 'e': return Scientific;
+            case 'g': return Default;
+            default:
+                if (ok) *ok = false;
+                return Default;
         }
     }
 };
@@ -112,70 +101,67 @@ class BaseExport Quantity
 public:
     /// default constructor
     Quantity();
-    Quantity(const Quantity&);
-    explicit Quantity(double value, const Unit& unit=Unit());
-    explicit Quantity(double value, const QString& unit);
+    Quantity(const Quantity &);
+    explicit Quantity(double value, const Unit &unit = Unit());
+    explicit Quantity(double value, const QString &unit);
     /// Destruction
-    ~Quantity () = default;
+    ~Quantity() = default;
 
     /** Operators. */
     //@{
-    Quantity operator *(const Quantity &p) const;
-    Quantity operator *(double p) const;
-    Quantity operator +(const Quantity &p) const;
-    Quantity& operator +=(const Quantity &p);
-    Quantity operator -(const Quantity &p) const;
-    Quantity& operator -=(const Quantity &p);
-    Quantity operator -() const;
-    Quantity operator /(const Quantity &p) const;
-    Quantity operator /(double p) const;
-    bool operator ==(const Quantity&) const;
-    bool operator < (const Quantity&) const;
-    bool operator > (const Quantity&) const;
-    bool operator <= (const Quantity&) const;
-    bool operator >= (const Quantity&) const;
-    Quantity& operator =(const Quantity&);
-    Quantity pow(const Quantity&)const;
-    Quantity pow(double)const;
+    Quantity operator*(const Quantity &p) const;
+    Quantity operator*(double p) const;
+    Quantity operator+(const Quantity &p) const;
+    Quantity &operator+=(const Quantity &p);
+    Quantity operator-(const Quantity &p) const;
+    Quantity &operator-=(const Quantity &p);
+    Quantity operator-() const;
+    Quantity operator/(const Quantity &p) const;
+    Quantity operator/(double p) const;
+    bool operator==(const Quantity &) const;
+    bool operator<(const Quantity &) const;
+    bool operator>(const Quantity &) const;
+    bool operator<=(const Quantity &) const;
+    bool operator>=(const Quantity &) const;
+    Quantity &operator=(const Quantity &);
+    Quantity pow(const Quantity &) const;
+    Quantity pow(double) const;
     //@}
 
-    const QuantityFormat& getFormat() const {
-        return _Format;
-    }
-    void setFormat(const QuantityFormat& f) {
-        _Format = f;
-    }
+    const QuantityFormat &getFormat() const { return _Format; }
+    void setFormat(const QuantityFormat &f) { _Format = f; }
     /// transfer to user preferred unit/potence
     QString getUserString(double &factor, QString &unitString) const;
-    QString getUserString() const { // to satisfy GCC
-        double  dummy1;
+    QString getUserString() const
+    { // to satisfy GCC
+        double dummy1;
         QString dummy2;
-        return getUserString(dummy1,dummy2);
+        return getUserString(dummy1, dummy2);
     }
-    QString getUserString(UnitsSchema* schema, double &factor, QString &unitString) const;
+    QString getUserString(UnitsSchema *schema, double &factor, QString &unitString) const;
 
     static Quantity parse(const QString &string);
 
     /// returns the unit of the quantity
-    const Unit & getUnit() const{return _Unit;}
+    const Unit &getUnit() const { return _Unit; }
     /// set the unit of the quantity
-    void setUnit(const Unit &un){_Unit = un;}
+    void setUnit(const Unit &un) { _Unit = un; }
     /// get the Value of the quantity
-    double getValue() const{return _Value;}
+    double getValue() const { return _Value; }
     /// set the value of the quantity
-    void setValue(double val){_Value = val;}
+    void setValue(double val) { _Value = val; }
     /** get the Value in a special unit given as quantity.
       * One can use one of the predifeined quantity units in this class
       */
-    double getValueAs(const Quantity &)const;
+    double getValueAs(const Quantity &) const;
 
 
     /// true if it has a number without a unit
-    bool isDimensionless()const;
+    bool isDimensionless() const;
     /// true if it has a number and a valid unit
-    bool isQuantity()const;
+    bool isQuantity() const;
     /// true if it has a number with or without a unit
-    bool isValid()const;
+    bool isValid() const;
     /// sets the quantity invalid
     void setInvalid();
 
@@ -330,8 +316,8 @@ public:
 
 
 protected:
-    double         _Value;
-    Unit           _Unit;
+    double _Value;
+    Unit _Unit;
     QuantityFormat _Format;
 };
 

@@ -27,8 +27,10 @@
 #include "PropertyPage.h"
 #include <memory>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgCustomToolbars;
 
 /** This class implements the creation of user defined toolbars.
@@ -39,14 +41,18 @@ class Ui_DlgCustomToolbars;
  *
  * \author Werner Mayer
  */
-class DlgCustomToolbars : public CustomizeActionPage
+class DlgCustomToolbars: public CustomizeActionPage
 {
     Q_OBJECT
 
 protected:
-    enum Type { Toolbar, Toolboxbar };
+    enum Type
+    {
+        Toolbar,
+        Toolboxbar
+    };
 
-    explicit DlgCustomToolbars(Type, QWidget* parent = nullptr);
+    explicit DlgCustomToolbars(Type, QWidget *parent = nullptr);
     ~DlgCustomToolbars() override;
 
 protected Q_SLOTS:
@@ -59,27 +65,28 @@ protected Q_SLOTS:
     void on_newButton_clicked();
     void on_renameButton_clicked();
     void on_deleteButton_clicked();
-    void onAddMacroAction(const QByteArray&) override;
-    void onRemoveMacroAction(const QByteArray&) override;
-    void onModifyMacroAction(const QByteArray&) override;
+    void onAddMacroAction(const QByteArray &) override;
+    void onRemoveMacroAction(const QByteArray &) override;
+    void onModifyMacroAction(const QByteArray &) override;
 
 protected:
     void changeEvent(QEvent *e) override;
-    void hideEvent(QHideEvent * event) override;
-    virtual void addCustomToolbar(const QString&);
-    virtual void removeCustomToolbar(const QString&);
-    virtual void renameCustomToolbar(const QString&, const QString&);
-    virtual void addCustomCommand(const QString&, const QByteArray&);
-    virtual void removeCustomCommand(const QString&, const QByteArray&);
-    virtual void moveUpCustomCommand(const QString&, const QByteArray&);
-    virtual void moveDownCustomCommand(const QString&, const QByteArray&);
+    void hideEvent(QHideEvent *event) override;
+    virtual void addCustomToolbar(const QString &);
+    virtual void removeCustomToolbar(const QString &);
+    virtual void renameCustomToolbar(const QString &, const QString &);
+    virtual void addCustomCommand(const QString &, const QByteArray &);
+    virtual void removeCustomCommand(const QString &, const QByteArray &);
+    virtual void moveUpCustomCommand(const QString &, const QByteArray &);
+    virtual void moveDownCustomCommand(const QString &, const QByteArray &);
 
 private:
-    void importCustomToolbars(const QByteArray&);
-    void exportCustomToolbars(const QByteArray&);
+    void importCustomToolbars(const QByteArray &);
+    void exportCustomToolbars(const QByteArray &);
 
 protected:
     std::unique_ptr<Ui_DlgCustomToolbars> ui;
+
 private:
     Type type;
 };
@@ -89,27 +96,27 @@ private:
  * @see DlgCustomCmdbarsImp
  * \author Werner Mayer
  */
-class DlgCustomToolbarsImp : public DlgCustomToolbars
+class DlgCustomToolbarsImp: public DlgCustomToolbars
 {
     Q_OBJECT
 
 public:
-    explicit DlgCustomToolbarsImp(QWidget* parent = nullptr);
+    explicit DlgCustomToolbarsImp(QWidget *parent = nullptr);
     ~DlgCustomToolbarsImp() override;
 
 protected:
     void changeEvent(QEvent *e) override;
-    void addCustomToolbar(const QString&) override;
-    void removeCustomToolbar(const QString&) override;
-    void renameCustomToolbar(const QString&, const QString&) override;
-    void addCustomCommand(const QString&, const QByteArray&) override;
-    void removeCustomCommand(const QString&, const QByteArray&) override;
-    void moveUpCustomCommand(const QString&, const QByteArray&) override;
-    void moveDownCustomCommand(const QString&, const QByteArray&) override;
+    void addCustomToolbar(const QString &) override;
+    void removeCustomToolbar(const QString &) override;
+    void renameCustomToolbar(const QString &, const QString &) override;
+    void addCustomCommand(const QString &, const QByteArray &) override;
+    void removeCustomCommand(const QString &, const QByteArray &) override;
+    void moveUpCustomCommand(const QString &, const QByteArray &) override;
+    void moveDownCustomCommand(const QString &, const QByteArray &) override;
 
 private:
-    QList<QAction*> getActionGroup(QAction*);
-    void setActionGroup(QAction*, const QList<QAction*>& group);
+    QList<QAction *> getActionGroup(QAction *);
+    void setActionGroup(QAction *, const QList<QAction *> &group);
 };
 
 /** This class implements the creation of user defined toolbox bars.
@@ -121,12 +128,12 @@ private:
  * @see DlgCustomToolbarsImp
  * \author Werner Mayer
  */
-class DlgCustomToolBoxbarsImp : public DlgCustomToolbars
+class DlgCustomToolBoxbarsImp: public DlgCustomToolbars
 {
     Q_OBJECT
 
 public:
-    explicit DlgCustomToolBoxbarsImp(QWidget* parent = nullptr);
+    explicit DlgCustomToolBoxbarsImp(QWidget *parent = nullptr);
     ~DlgCustomToolBoxbarsImp() override;
 
 protected:

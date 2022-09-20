@@ -43,37 +43,32 @@ class gp_Pnt;
 class STDMESHERS_EXPORT StdMeshers_RadialPrism_3D: public SMESH_3D_Algo
 {
 public:
-  StdMeshers_RadialPrism_3D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_RadialPrism_3D();
+    StdMeshers_RadialPrism_3D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_RadialPrism_3D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh&                          aMesh,
-                               const TopoDS_Shape&                  aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
-  static bool IsApplicable(const TopoDS_Shape & aShape, bool toCheckAll);
+    static bool IsApplicable(const TopoDS_Shape &aShape, bool toCheckAll);
 
 protected:
+    typedef std::vector<const SMDS_MeshNode *> TNodeColumn;
+    typedef std::map<const SMDS_MeshNode *, TNodeColumn> TNode2ColumnMap;
 
-  typedef std::vector<const SMDS_MeshNode* >            TNodeColumn;
-  typedef std::map< const SMDS_MeshNode*, TNodeColumn > TNode2ColumnMap;
+    TNodeColumn *makeNodeColumn(TNode2ColumnMap &n2ColMap, const SMDS_MeshNode *outNode,
+                                const SMDS_MeshNode *inNode);
 
-  TNodeColumn* makeNodeColumn( TNode2ColumnMap&     n2ColMap,
-                               const SMDS_MeshNode* outNode,
-                               const SMDS_MeshNode* inNode);
-
-  bool computeLayerPositions(const gp_Pnt& pIn,
-                             const gp_Pnt& pOut);
+    bool computeLayerPositions(const gp_Pnt &pIn, const gp_Pnt &pOut);
 
 
-  const StdMeshers_NumberOfLayers*    myNbLayerHypo;
-  const StdMeshers_LayerDistribution* myDistributionHypo;
-  SMESH_MesherHelper*                 myHelper;
-  std::vector< double >               myLayerPositions;
+    const StdMeshers_NumberOfLayers *myNbLayerHypo;
+    const StdMeshers_LayerDistribution *myDistributionHypo;
+    SMESH_MesherHelper *myHelper;
+    std::vector<double> myLayerPositions;
 };
 
 #endif

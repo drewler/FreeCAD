@@ -32,23 +32,26 @@
 
 class Ui_TaskBooleanParameters;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class TaskBooleanParameters : public Gui::TaskView::TaskBox, public Gui::SelectionObserver
+class TaskBooleanParameters: public Gui::TaskView::TaskBox, public Gui::SelectionObserver
 {
     Q_OBJECT
 
 public:
-    explicit TaskBooleanParameters(ViewProviderBoolean *BooleanView, QWidget *parent=nullptr);
+    explicit TaskBooleanParameters(ViewProviderBoolean *BooleanView, QWidget *parent = nullptr);
     ~TaskBooleanParameters() override;
 
     const std::vector<std::string> getBodies() const;
@@ -65,20 +68,24 @@ protected:
 
 protected:
     void changeEvent(QEvent *e) override;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
 
 private:
-    QWidget* proxy;
+    QWidget *proxy;
     std::unique_ptr<Ui_TaskBooleanParameters> ui;
     ViewProviderBoolean *BooleanView;
 
-    enum selectionModes { none, bodyAdd, bodyRemove };
+    enum selectionModes
+    {
+        none,
+        bodyAdd,
+        bodyRemove
+    };
     selectionModes selectionMode;
-
 };
 
 /// simulation dialog for the TaskView
-class TaskDlgBooleanParameters : public Gui::TaskView::TaskDialog
+class TaskDlgBooleanParameters: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -86,8 +93,7 @@ public:
     explicit TaskDlgBooleanParameters(ViewProviderBoolean *BooleanView);
     ~TaskDlgBooleanParameters() override;
 
-    ViewProviderBoolean* getBooleanView() const
-    { return BooleanView; }
+    ViewProviderBoolean *getBooleanView() const { return BooleanView; }
 
 
 public:
@@ -100,17 +106,18 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    bool isAllowedAlterDocument() const override
-    { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
 
     /// returns for Close and Help button
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok|QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 protected:
-    ViewProviderBoolean   *BooleanView;
+    ViewProviderBoolean *BooleanView;
 
-    TaskBooleanParameters  *parameter;
+    TaskBooleanParameters *parameter;
 };
 
 } //namespace PartDesignGui

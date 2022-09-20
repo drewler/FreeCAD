@@ -26,23 +26,17 @@
 //   iLog = L
 //   iInt = I
 
-#define WM4_SCALED_FLOAT_TO_INT(fFloat,iLog,iInt)\
-{ \
-    int iShift = 150 - iLog - ((*(int*)(&fFloat) >> 23) & 0xFF); \
-    if ( iShift < 24 ) \
-    { \
-        iInt = ((*(int*)(&fFloat) & 0x007FFFFF) | \
-            0x00800000) >> iShift; \
-        if ( iInt == (1 << iLog) ) \
-        { \
-            iInt--; \
-        } \
-    } \
-    else \
-    { \
-        iInt = 0; \
-    } \
-}
+#define WM4_SCALED_FLOAT_TO_INT(fFloat, iLog, iInt)                                                \
+    {                                                                                              \
+        int iShift = 150 - iLog - ((*(int *)(&fFloat) >> 23) & 0xFF);                              \
+        if (iShift < 24) {                                                                         \
+            iInt = ((*(int *)(&fFloat) & 0x007FFFFF) | 0x00800000) >> iShift;                      \
+            if (iInt == (1 << iLog)) { iInt--; }                                                   \
+        }                                                                                          \
+        else {                                                                                     \
+            iInt = 0;                                                                              \
+        }                                                                                          \
+    }
 
 //----------------------------------------------------------------------------
 

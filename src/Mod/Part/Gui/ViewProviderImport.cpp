@@ -30,26 +30,14 @@ using namespace PartGui;
 //**************************************************************************
 // Construction/Destruction
 
-PROPERTY_SOURCE(PartGui::ViewProviderImport,PartGui::ViewProviderPart)
+PROPERTY_SOURCE(PartGui::ViewProviderImport, PartGui::ViewProviderPart)
 
-ViewProviderImport::ViewProviderImport()
-{
-    sPixmap = "Part_FeatureImport";
-}
+ViewProviderImport::ViewProviderImport() { sPixmap = "Part_FeatureImport"; }
 
-ViewProviderImport::~ViewProviderImport()
-{
-
-}
+ViewProviderImport::~ViewProviderImport() {}
 
 // **********************************************************************************
 
-bool ViewProviderImport::setEdit(int ModNum)
-{
-    return ViewProviderPart::setEdit(ModNum);
-}
+bool ViewProviderImport::setEdit(int ModNum) { return ViewProviderPart::setEdit(ModNum); }
 
-void ViewProviderImport::unsetEdit(int ModNum)
-{
-    ViewProviderPart::unsetEdit(ModNum);
-}
+void ViewProviderImport::unsetEdit(int ModNum) { ViewProviderPart::unsetEdit(ModNum); }

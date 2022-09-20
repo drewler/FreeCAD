@@ -23,8 +23,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QAction>
-# include <QMenu>
+#include <QAction>
+#include <QMenu>
 #endif
 
 #include <Gui/ActionFunction.h>
@@ -45,15 +45,13 @@ ViewProviderPrimitive::ViewProviderPrimitive()
     extension.setIgnoreOverlayIcon(true);
 }
 
-ViewProviderPrimitive::~ViewProviderPrimitive()
-{
+ViewProviderPrimitive::~ViewProviderPrimitive() {}
 
-}
-
-void ViewProviderPrimitive::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderPrimitive::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
-    Gui::ActionFunction* func = new Gui::ActionFunction(menu);
-    QAction* act = menu->addAction(QObject::tr("Edit %1").arg(QString::fromUtf8(getObject()->Label.getValue())));
+    Gui::ActionFunction *func = new Gui::ActionFunction(menu);
+    QAction *act = menu->addAction(
+        QObject::tr("Edit %1").arg(QString::fromUtf8(getObject()->Label.getValue())));
     act->setData(QVariant((int)ViewProvider::Default));
     func->trigger(act, std::bind(&ViewProviderPrimitive::startDefaultEditMode, this));
 
@@ -63,10 +61,9 @@ void ViewProviderPrimitive::setupContextMenu(QMenu* menu, QObject* receiver, con
 bool ViewProviderPrimitive::setEdit(int ModNum)
 {
     if (ModNum == ViewProvider::Default) {
-        if (Gui::Control().activeDialog())
-            return false;
-        PartGui::TaskPrimitivesEdit* dlg
-            = new PartGui::TaskPrimitivesEdit(dynamic_cast<Part::Primitive*>(getObject()));
+        if (Gui::Control().activeDialog()) return false;
+        PartGui::TaskPrimitivesEdit *dlg =
+            new PartGui::TaskPrimitivesEdit(dynamic_cast<Part::Primitive *>(getObject()));
         Gui::Control().showDialog(dlg);
         return true;
     }
@@ -78,9 +75,7 @@ bool ViewProviderPrimitive::setEdit(int ModNum)
 
 void ViewProviderPrimitive::unsetEdit(int ModNum)
 {
-    if (ModNum == ViewProvider::Default) {
-        Gui::Control().closeDialog();
-    }
+    if (ModNum == ViewProvider::Default) { Gui::Control().closeDialog(); }
     else {
         ViewProviderPart::unsetEdit(ModNum);
     }

@@ -28,7 +28,8 @@
 
 #include "QGIView.h"
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawViewAnnotation;
 }
 
@@ -36,17 +37,19 @@ namespace TechDrawGui
 {
 class QGCustomText;
 
-class TechDrawGuiExport QGIViewAnnotation : public QGIView
+class TechDrawGuiExport QGIViewAnnotation: public QGIView
 {
 public:
-
     explicit QGIViewAnnotation();
 
     /// m_textItem belongs to this group and will be deleted by Qt
     ~QGIViewAnnotation() override = default;
 
-    enum {Type = QGraphicsItem::UserType + 120};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 120
+    };
+    int type() const override { return Type; }
 
     void updateView(bool update = false) override;
     void setViewAnnoFeature(TechDraw::DrawViewAnnotation *obj);

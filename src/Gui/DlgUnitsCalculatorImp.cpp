@@ -23,9 +23,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QApplication>
-# include <QClipboard>
-# include <QLocale>
+#include <QApplication>
+#include <QClipboard>
+#include <QLocale>
 #endif
 
 #include "DlgUnitsCalculatorImp.h"
@@ -43,8 +43,8 @@ using namespace Gui::Dialog;
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  true to construct a modal dialog.
  */
-DlgUnitsCalculator::DlgUnitsCalculator( QWidget* parent, Qt::WindowFlags fl )
-  : QDialog(parent, fl), ui(new Ui_DlgUnitCalculator)
+DlgUnitsCalculator::DlgUnitsCalculator(QWidget *parent, Qt::WindowFlags fl)
+    : QDialog(parent, fl), ui(new Ui_DlgUnitCalculator)
 {
     // create widgets
     ui->setupUi(this);
@@ -52,12 +52,15 @@ DlgUnitsCalculator::DlgUnitsCalculator( QWidget* parent, Qt::WindowFlags fl )
 
     ui->comboBoxScheme->addItem(QString::fromLatin1("Preference system"), static_cast<int>(-1));
     int num = static_cast<int>(Base::UnitSystem::NumUnitSystemTypes);
-    for (int i=0; i<num; i++) {
-        QString item = qApp->translate("Gui::Dialog::DlgSettingsUnits", Base::UnitsApi::getDescription(static_cast<Base::UnitSystem>(i)));
+    for (int i = 0; i < num; i++) {
+        QString item =
+            qApp->translate("Gui::Dialog::DlgSettingsUnits",
+                            Base::UnitsApi::getDescription(static_cast<Base::UnitSystem>(i)));
         ui->comboBoxScheme->addItem(item, i);
     }
 
-    connect(ui->ValueInput, SIGNAL(valueChanged(Base::Quantity)), this, SLOT(valueChanged(Base::Quantity)));
+    connect(ui->ValueInput, SIGNAL(valueChanged(Base::Quantity)), this,
+            SLOT(valueChanged(Base::Quantity)));
     connect(ui->ValueInput, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
     connect(ui->UnitInput, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
     connect(ui->UnitInput, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
@@ -72,41 +75,19 @@ DlgUnitsCalculator::DlgUnitsCalculator( QWidget* parent, Qt::WindowFlags fl )
     ui->ValueInput->setText(QString::fromLatin1("1 cm"));
     ui->UnitInput->setText(QString::fromLatin1("in"));
 
-    units << Base::Unit::Acceleration
-          << Base::Unit::AmountOfSubstance
-          << Base::Unit::Angle
-          << Base::Unit::Area
-          << Base::Unit::Density
-          << Base::Unit::ElectricalCapacitance
-          << Base::Unit::ElectricalInductance
-          << Base::Unit::ElectricalConductance
-          << Base::Unit::ElectricalResistance
-          << Base::Unit::ElectricalConductivity
-          << Base::Unit::ElectricCharge
-          << Base::Unit::ElectricCurrent
-          << Base::Unit::ElectricPotential
-          << Base::Unit::Frequency
-          << Base::Unit::Force
-          << Base::Unit::Stiffness
-          << Base::Unit::HeatFlux
-          << Base::Unit::Length
-          << Base::Unit::LuminousIntensity
-          << Base::Unit::Mass
-          << Base::Unit::MagneticFieldStrength
-          << Base::Unit::MagneticFlux
-          << Base::Unit::MagneticFluxDensity
-          << Base::Unit::Pressure
-          << Base::Unit::Power
-          << Base::Unit::SpecificHeat
-          << Base::Unit::Stress
-          << Base::Unit::Temperature
-          << Base::Unit::ThermalConductivity
-          << Base::Unit::ThermalExpansionCoefficient
-          << Base::Unit::ThermalTransferCoefficient
-          << Base::Unit::TimeSpan
-          << Base::Unit::Velocity
-          << Base::Unit::Volume
-          << Base::Unit::Work;
+    units << Base::Unit::Acceleration << Base::Unit::AmountOfSubstance << Base::Unit::Angle
+          << Base::Unit::Area << Base::Unit::Density << Base::Unit::ElectricalCapacitance
+          << Base::Unit::ElectricalInductance << Base::Unit::ElectricalConductance
+          << Base::Unit::ElectricalResistance << Base::Unit::ElectricalConductivity
+          << Base::Unit::ElectricCharge << Base::Unit::ElectricCurrent
+          << Base::Unit::ElectricPotential << Base::Unit::Frequency << Base::Unit::Force
+          << Base::Unit::Stiffness << Base::Unit::HeatFlux << Base::Unit::Length
+          << Base::Unit::LuminousIntensity << Base::Unit::Mass << Base::Unit::MagneticFieldStrength
+          << Base::Unit::MagneticFlux << Base::Unit::MagneticFluxDensity << Base::Unit::Pressure
+          << Base::Unit::Power << Base::Unit::SpecificHeat << Base::Unit::Stress
+          << Base::Unit::Temperature << Base::Unit::ThermalConductivity
+          << Base::Unit::ThermalExpansionCoefficient << Base::Unit::ThermalTransferCoefficient
+          << Base::Unit::TimeSpan << Base::Unit::Velocity << Base::Unit::Volume << Base::Unit::Work;
     for (QList<Base::Unit>::iterator it = units.begin(); it != units.end(); ++it) {
         ui->unitsBox->addItem(it->getTypeString());
     }
@@ -117,19 +98,11 @@ DlgUnitsCalculator::DlgUnitsCalculator( QWidget* parent, Qt::WindowFlags fl )
 }
 
 /** Destroys the object and frees any allocated resources */
-DlgUnitsCalculator::~DlgUnitsCalculator()
-{
-}
+DlgUnitsCalculator::~DlgUnitsCalculator() {}
 
-void DlgUnitsCalculator::accept()
-{
-    QDialog::accept();
-}
+void DlgUnitsCalculator::accept() { QDialog::accept(); }
 
-void DlgUnitsCalculator::reject()
-{
-    QDialog::reject();
-}
+void DlgUnitsCalculator::reject() { QDialog::reject(); }
 
 void DlgUnitsCalculator::textChanged(QString unit)
 {
@@ -137,22 +110,26 @@ void DlgUnitsCalculator::textChanged(QString unit)
     valueChanged(actValue);
 }
 
-void DlgUnitsCalculator::valueChanged(const Base::Quantity& quant)
+void DlgUnitsCalculator::valueChanged(const Base::Quantity &quant)
 {
     // first check the unit, if it is invalid, getTypeString() outputs an empty string
     // explicitly check for "ee" like in "eeV" because this would trigger an exception in Base::Unit
     // since it expects then a scientific notation number like "1e3"
-    if ( (ui->UnitInput->text().mid(0, 2) == QString::fromLatin1("ee")) ||
-        Base::Unit(ui->UnitInput->text()).getTypeString().isEmpty()) {
-        ui->ValueOutput->setText(QString::fromLatin1("%1 %2").arg(tr("unknown unit:"), ui->UnitInput->text()));
+    if ((ui->UnitInput->text().mid(0, 2) == QString::fromLatin1("ee"))
+        || Base::Unit(ui->UnitInput->text()).getTypeString().isEmpty()) {
+        ui->ValueOutput->setText(
+            QString::fromLatin1("%1 %2").arg(tr("unknown unit:"), ui->UnitInput->text()));
         ui->pushButton_Copy->setEnabled(false);
-    } else { // the unit is valid
+    }
+    else { // the unit is valid
         // we can only convert units of the same type, thus check
         if (Base::Unit(ui->UnitInput->text()).getTypeString() != quant.getUnit().getTypeString()) {
             ui->ValueOutput->setText(tr("unit mismatch"));
             ui->pushButton_Copy->setEnabled(false);
-        } else { // the unit is valid and has the same type
-            double convertValue = Base::Quantity::parse(QString::fromLatin1("1") + ui->UnitInput->text()).getValue();
+        }
+        else { // the unit is valid and has the same type
+            double convertValue =
+                Base::Quantity::parse(QString::fromLatin1("1") + ui->UnitInput->text()).getValue();
             // we got now e.g. for "1 in" the value '25.4' because 1 in = 25.4 mm
             // the result is now just quant / convertValue because the input is always in a base unit
             // (an input of "1 cm" will immediately be converted to "10 mm" by Gui::InputField of the dialog)
@@ -174,7 +151,7 @@ void DlgUnitsCalculator::valueChanged(const Base::Quantity& quant)
     actValue = quant;
 }
 
-void DlgUnitsCalculator::parseError(const QString& errorText)
+void DlgUnitsCalculator::parseError(const QString &errorText)
 {
     ui->pushButton_Copy->setEnabled(false);
     ui->ValueOutput->setText(errorText);
@@ -189,7 +166,8 @@ void DlgUnitsCalculator::copy()
 void DlgUnitsCalculator::returnPressed()
 {
     if (ui->pushButton_Copy->isEnabled()) {
-        ui->textEdit->append(ui->ValueInput->text() + QString::fromLatin1(" = ") + ui->ValueOutput->text());
+        ui->textEdit->append(ui->ValueInput->text() + QString::fromLatin1(" = ")
+                             + ui->ValueOutput->text());
         ui->ValueInput->pushToHistory();
     }
 }
@@ -204,14 +182,13 @@ void DlgUnitsCalculator::on_unitsBox_activated(int index)
 
     Base::Unit unit = units[index];
     int32_t len = unit.getSignature().Length;
-    ui->quantitySpinBox->setValue(Base::Quantity(value * std::pow(10.0, 3*(len-old)), unit));
+    ui->quantitySpinBox->setValue(Base::Quantity(value * std::pow(10.0, 3 * (len - old)), unit));
 }
 
 void DlgUnitsCalculator::on_comboBoxScheme_activated(int index)
 {
     int item = ui->comboBoxScheme->itemData(index).toInt();
-    if (item > 0)
-        ui->quantitySpinBox->setSchema(static_cast<Base::UnitSystem>(item));
+    if (item > 0) ui->quantitySpinBox->setSchema(static_cast<Base::UnitSystem>(item));
     else
         ui->quantitySpinBox->clearSchema();
 }

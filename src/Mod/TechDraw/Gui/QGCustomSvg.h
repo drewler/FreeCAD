@@ -40,18 +40,20 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGCustomSvg : public QGraphicsSvgItem
+class TechDrawGuiExport QGCustomSvg: public QGraphicsSvgItem
 {
 public:
     explicit QGCustomSvg(void);
     ~QGCustomSvg();
 
-    enum {Type = QGraphicsItem::UserType + 131};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 131
+    };
+    int type() const override { return Type; }
 
-    virtual void paint( QPainter *painter,
-                        const QStyleOptionGraphicsItem *option,
-                        QWidget *widget = nullptr ) override;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr) override;
     virtual void centerAt(QPointF centerPos);
     virtual void centerAt(double cX, double cY);
     virtual bool load(QByteArray *svgString);

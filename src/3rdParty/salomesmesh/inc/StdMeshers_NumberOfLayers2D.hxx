@@ -38,15 +38,13 @@
 // =========================================================
 // =========================================================
 
-class STDMESHERS_EXPORT StdMeshers_NumberOfLayers2D
-                          : public StdMeshers_NumberOfLayers
+class STDMESHERS_EXPORT StdMeshers_NumberOfLayers2D: public StdMeshers_NumberOfLayers
 {
 public:
-  // Constructor
-  StdMeshers_NumberOfLayers2D(int hypId, int studyId, SMESH_Gen* gen);
-  // Destructor
-  virtual ~StdMeshers_NumberOfLayers2D();
+    // Constructor
+    StdMeshers_NumberOfLayers2D(int hypId, int studyId, SMESH_Gen *gen);
+    // Destructor
+    virtual ~StdMeshers_NumberOfLayers2D();
 };
 
 #endif
-

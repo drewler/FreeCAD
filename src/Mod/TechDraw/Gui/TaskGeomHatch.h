@@ -45,17 +45,18 @@ namespace TechDrawGui
 class Ui_TaskGeomHatch;
 class ViewProviderGeomHatch;
 
-class TaskGeomHatch : public QWidget
+class TaskGeomHatch: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskGeomHatch(TechDraw::DrawGeomHatch* inHatch, TechDrawGui::ViewProviderGeomHatch* inVp, bool mode);
+    TaskGeomHatch(TechDraw::DrawGeomHatch *inHatch, TechDrawGui::ViewProviderGeomHatch *inVp,
+                  bool mode);
     ~TaskGeomHatch() = default;
 
     virtual bool accept();
     virtual bool reject();
-    void setCreateMode(bool mode) { m_createMode = mode;}
+    void setCreateMode(bool mode) { m_createMode = mode; }
     bool getCreateMode() const { return m_createMode; }
 
 protected:
@@ -70,9 +71,9 @@ protected Q_SLOTS:
 
 private:
     std::unique_ptr<Ui_TaskGeomHatch> ui;
-    TechDraw::DrawGeomHatch* m_hatch;
-    TechDrawGui::ViewProviderGeomHatch* m_Vp;
-    App::DocumentObject* m_source;
+    TechDraw::DrawGeomHatch *m_hatch;
+    TechDrawGui::ViewProviderGeomHatch *m_Vp;
+    App::DocumentObject *m_source;
     std::string m_file;
     std::string m_name;
     double m_scale;
@@ -87,21 +88,21 @@ private:
     bool m_createMode;
 
 private Q_SLOTS:
-        void onNameChanged();
-        void onScaleChanged();
-        void onLineWeightChanged();
-        void onColorChanged();
-
+    void onNameChanged();
+    void onScaleChanged();
+    void onLineWeightChanged();
+    void onColorChanged();
 };
 
-class TaskDlgGeomHatch : public Gui::TaskView::TaskDialog
+class TaskDlgGeomHatch: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    TaskDlgGeomHatch(TechDraw::DrawGeomHatch* inHatch, TechDrawGui::ViewProviderGeomHatch* inVp, bool mode);
+    TaskDlgGeomHatch(TechDraw::DrawGeomHatch *inHatch, TechDrawGui::ViewProviderGeomHatch *inVp,
+                     bool mode);
     ~TaskDlgGeomHatch() override;
-    const ViewProviderGeomHatch * getViewProvider() const { return viewProvider; }
+    const ViewProviderGeomHatch *getViewProvider() const { return viewProvider; }
 
     /// is called the TaskView when the dialog is opened
     void open() override;
@@ -111,16 +112,15 @@ public:
     bool accept() override;
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
-    bool isAllowedAlterDocument() const override
-    { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
     void setCreateMode(bool mode);
 
     void update();
 
 private:
     const ViewProviderGeomHatch *viewProvider;
-    TaskGeomHatch * widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskGeomHatch *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

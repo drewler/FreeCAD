@@ -31,9 +31,10 @@
 #include "ViewProviderDrawingView.h"
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderSymbol : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderSymbol: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderSymbol);
 
@@ -43,13 +44,13 @@ public:
     /// destructor
     ~ViewProviderSymbol() override;
 
-    bool useNewSelectionModel() const override {return false;}
-    void updateData(const App::Property*) override;
+    bool useNewSelectionModel() const override { return false; }
+    void updateData(const App::Property *) override;
 
-    TechDraw::DrawViewSymbol* getViewObject() const override;
+    TechDraw::DrawViewSymbol *getViewObject() const override;
 };
 
-class TechDrawGuiExport ViewProviderDraft : public ViewProviderSymbol
+class TechDrawGuiExport ViewProviderDraft: public ViewProviderSymbol
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderDraft);
 
@@ -60,7 +61,7 @@ public:
     ~ViewProviderDraft() override;
 };
 
-class TechDrawGuiExport ViewProviderArch : public ViewProviderSymbol
+class TechDrawGuiExport ViewProviderArch: public ViewProviderSymbol
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderArch);
 

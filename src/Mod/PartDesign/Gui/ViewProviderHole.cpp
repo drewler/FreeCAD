@@ -24,8 +24,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMenu>
-# include <QMessageBox>
+#include <QMenu>
+#include <QMessageBox>
 #endif
 
 #include <Gui/Application.h>
@@ -39,34 +39,30 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderHole,PartDesignGui::ViewProvider)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderHole, PartDesignGui::ViewProvider)
 
-ViewProviderHole::ViewProviderHole()
-{
-    sPixmap = "PartDesign_Hole.svg";
-}
+ViewProviderHole::ViewProviderHole() { sPixmap = "PartDesign_Hole.svg"; }
 
-ViewProviderHole::~ViewProviderHole()
-{
-}
+ViewProviderHole::~ViewProviderHole() {}
 
-std::vector<App::DocumentObject*> ViewProviderHole::claimChildren()const
+std::vector<App::DocumentObject *> ViewProviderHole::claimChildren() const
 {
-    std::vector<App::DocumentObject*> temp;
-    temp.push_back(static_cast<PartDesign::Hole*>(getObject())->Profile.getValue());
+    std::vector<App::DocumentObject *> temp;
+    temp.push_back(static_cast<PartDesign::Hole *>(getObject())->Profile.getValue());
 
     return temp;
 }
 
-void ViewProviderHole::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderHole::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     addDefaultAction(menu, QObject::tr("Edit hole"));
-    PartGui::ViewProviderPart::setupContextMenu(menu, receiver, member); // clazy:exclude=skipped-base-method
+    PartGui::ViewProviderPart::setupContextMenu(menu, receiver,
+                                                member); // clazy:exclude=skipped-base-method
 }
 
 bool ViewProviderHole::setEdit(int ModNum)
 {
-    if (ModNum == ViewProvider::Default ) {
+    if (ModNum == ViewProvider::Default) {
         // When double-clicking on the item for this hole the
         // object unsets and sets its edit mode without closing
         // the task panel
@@ -81,8 +77,7 @@ bool ViewProviderHole::setEdit(int ModNum)
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
             msgBox.setDefaultButton(QMessageBox::Yes);
             int ret = msgBox.exec();
-            if (ret == QMessageBox::Yes)
-                Gui::Control().closeDialog();
+            if (ret == QMessageBox::Yes) Gui::Control().closeDialog();
             else
                 return false;
         }
@@ -94,8 +89,7 @@ bool ViewProviderHole::setEdit(int ModNum)
         oldWb = Gui::Command::assureWorkbench("PartDesignWorkbench");
 
         // start the edit dialog
-        if (holeDlg)
-            Gui::Control().showDialog(holeDlg);
+        if (holeDlg) Gui::Control().showDialog(holeDlg);
         else
             Gui::Control().showDialog(new TaskDlgHoleParameters(this));
 
@@ -109,10 +103,10 @@ bool ViewProviderHole::setEdit(int ModNum)
 bool ViewProviderHole::onDelete(const std::vector<std::string> &s)
 {
     // get the Sketch
-    PartDesign::Hole* pcHole = static_cast<PartDesign::Hole*>(getObject());
+    PartDesign::Hole *pcHole = static_cast<PartDesign::Hole *>(getObject());
     Sketcher::SketchObject *pcSketch = nullptr;
     if (pcHole->Profile.getValue())
-        pcSketch = static_cast<Sketcher::SketchObject*>(pcHole->Profile.getValue());
+        pcSketch = static_cast<Sketcher::SketchObject *>(pcHole->Profile.getValue());
 
     // if abort command deleted the object the sketch is visible again
     if (pcSketch && Gui::Application::Instance->getViewProvider(pcSketch))

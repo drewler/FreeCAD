@@ -32,7 +32,8 @@
 #include <Inventor/nodes/SoShape.h>
 
 
-namespace Gui {
+namespace Gui
+{
 
 /**
  * A subclass of SoShape used to create an axis aligned wire frame box based
@@ -44,7 +45,8 @@ namespace Gui {
  * @date November 12th, 2001
  * @author Josh Grant
  */
-class GuiExport SoFCBoundingBox : public SoShape {
+class GuiExport SoFCBoundingBox: public SoShape
+{
     using inherited = SoShape;
 
     SO_NODE_HEADER(Gui::SoFCBoundingBox);
@@ -55,29 +57,30 @@ public:
 
 public:
     SoFCBoundingBox();
-    SoSFVec3f minBounds; /**< minimum box coordinates */
-    SoSFVec3f maxBounds; /**< maximum box coordinates */
-    SoSFBool coordsOn; /**< If true, the coordinates are displayed at each vertex */
+    SoSFVec3f minBounds;   /**< minimum box coordinates */
+    SoSFVec3f maxBounds;   /**< maximum box coordinates */
+    SoSFBool coordsOn;     /**< If true, the coordinates are displayed at each vertex */
     SoSFBool dimensionsOn; /**< If true, the dimensions are displayed in x,y and z direction */
 
 
 protected:
     virtual ~SoFCBoundingBox();
     virtual void GLRender(SoGLRenderAction *action);
-    virtual void generatePrimitives (SoAction *action);
+    virtual void generatePrimitives(SoAction *action);
     virtual void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center);
 
 private:
-    SoSeparator        *root, *textSep, *dimSep;
-    SoCoordinate3      *bboxCoords;
-    SoIndexedLineSet   *bboxLines;
+    SoSeparator *root, *textSep, *dimSep;
+    SoCoordinate3 *bboxCoords;
+    SoIndexedLineSet *bboxLines;
 };
 
 /**
  * This is a special group node which must be defined to ignore bounding box actions.
  * @author Werner Mayer
  */
-class GuiExport SoSkipBoundingGroup : public SoGroup {
+class GuiExport SoSkipBoundingGroup: public SoGroup
+{
     using inherited = SoGroup;
 
     SO_NODE_HEADER(Gui::SoSkipBoundingGroup);
@@ -87,8 +90,10 @@ public:
     static void finish();
     SoSkipBoundingGroup();
 
-    enum Modes {
-        INCLUDE_BBOX, EXCLUDE_BBOX
+    enum Modes
+    {
+        INCLUDE_BBOX,
+        EXCLUDE_BBOX
     };
 
     SoSFEnum mode;

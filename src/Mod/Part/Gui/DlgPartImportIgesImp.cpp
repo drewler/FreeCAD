@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <qlineedit.h>
+#include <qlineedit.h>
 #endif
 
 #include <Gui/FileDialog.h>
@@ -43,9 +43,8 @@ using namespace PartGui;
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  true to construct a modal dialog.
  */
-DlgPartImportIgesImp::DlgPartImportIgesImp(QWidget* parent, Qt::WindowFlags fl)
-    : QDialog(parent, fl)
-    , ui(new Ui_DlgPartImportIges)
+DlgPartImportIgesImp::DlgPartImportIgesImp(QWidget *parent, Qt::WindowFlags fl)
+    : QDialog(parent, fl), ui(new Ui_DlgPartImportIges)
 {
     ui->setupUi(this);
 }
@@ -63,21 +62,17 @@ DlgPartImportIgesImp::~DlgPartImportIgesImp()
  */
 void DlgPartImportIgesImp::OnApply()
 {
-    qWarning( "DlgPartImportIgesImp::OnApply() not yet implemented!" ); 
+    qWarning("DlgPartImportIgesImp::OnApply() not yet implemented!");
 }
 
 void DlgPartImportIgesImp::onChooseFileName()
 {
-    QString fn = Gui::FileDialog::getOpenFileName(Gui::getMainWindow(), QString(), QString(),
-        QString::fromLatin1("%1 (*.igs *.iges);;%2 (*.*)"))
-        .arg(tr("IGES"),
-             tr("All Files"));
-    if (!fn.isEmpty()) {
-        ui->FileName->setText(fn);
-    }
+    QString fn =
+        Gui::FileDialog::getOpenFileName(Gui::getMainWindow(), QString(), QString(),
+                                         QString::fromLatin1("%1 (*.igs *.iges);;%2 (*.*)"))
+            .arg(tr("IGES"), tr("All Files"));
+    if (!fn.isEmpty()) { ui->FileName->setText(fn); }
 }
-
-
 
 
 #include "moc_DlgPartImportIgesImp.cpp"

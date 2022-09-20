@@ -42,7 +42,7 @@ namespace TechDrawGui
  * Embed the panel into a task dialog.
  */
 class Ui_TaskProjection;
-class TaskProjection : public QWidget
+class TaskProjection: public QWidget
 {
     Q_OBJECT
 
@@ -54,16 +54,14 @@ public:
     bool accept();
     bool reject();
 
-    virtual bool isAllowedAlterDocument() const
-    { return true; }
+    virtual bool isAllowedAlterDocument() const { return true; }
 
 private:
     std::unique_ptr<Ui_TaskProjection> ui;
-
 };
 
 
-class TaskDlgProjection : public Gui::TaskView::TaskDialog
+class TaskDlgProjection: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -81,19 +79,17 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    void helpRequested() override { return;}
+    void helpRequested() override { return; }
 
     void update();
 
 protected:
-
 private:
-    TaskProjection* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskProjection *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui
-
 
 
 #endif // TECHDRAWGUI_TASKDIALOG

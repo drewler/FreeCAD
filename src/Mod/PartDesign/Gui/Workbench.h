@@ -27,20 +27,22 @@
 #include <Gui/Workbench.h>
 #include <Mod/PartDesign/PartDesignGlobal.h>
 
-namespace Gui {
+namespace Gui
+{
 
 class MenuItem;
 class Document;
 class ViewProviderDocumentObject;
 
-}
+} // namespace Gui
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 /**
  * @author Werner Mayer
  */
-class PartDesignGuiExport Workbench : public Gui::StdWorkbench
+class PartDesignGuiExport Workbench: public Gui::StdWorkbench
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -48,38 +50,38 @@ public:
     Workbench();
     ~Workbench() override;
 
-      /** Run some actions when the workbench gets activated. */
+    /** Run some actions when the workbench gets activated. */
     void activated() override;
     /** Run some actions when the workbench gets deactivated. */
     void deactivated() override;
 
     /// Add custom entries to the context menu
-    void setupContextMenu(const char* recipient, Gui::MenuItem*) const override;
+    void setupContextMenu(const char *recipient, Gui::MenuItem *) const override;
 
 protected:
-  Gui::MenuItem* setupMenuBar() const override;
-  Gui::ToolBarItem* setupToolBars() const override;
-  Gui::ToolBarItem* setupCommandBars() const override;
+    Gui::MenuItem *setupMenuBar() const override;
+    Gui::ToolBarItem *setupToolBars() const override;
+    Gui::ToolBarItem *setupCommandBars() const override;
 
 private:
-   /// Refresh the Body's highlighting when a document becomes active
-   void slotActiveDocument(const Gui::Document&);
-   /// Refresh the highlighting. Migrate legacy documents on loading
-   void slotFinishRestoreDocument(const App::Document&);
-   /// Ensure that there are base planes and a body in a new document
-   void slotNewDocument(const App::Document&);
-   /// Update the ActivePartObject etc. when a document is closed
-   void slotDeleteDocument(const App::Document&);
-   // Add new objects to the body, if appropriate
-   //void slotNewObject(const App::DocumentObject& obj);
+    /// Refresh the Body's highlighting when a document becomes active
+    void slotActiveDocument(const Gui::Document &);
+    /// Refresh the highlighting. Migrate legacy documents on loading
+    void slotFinishRestoreDocument(const App::Document &);
+    /// Ensure that there are base planes and a body in a new document
+    void slotNewDocument(const App::Document &);
+    /// Update the ActivePartObject etc. when a document is closed
+    void slotDeleteDocument(const App::Document &);
+    // Add new objects to the body, if appropriate
+    //void slotNewObject(const App::DocumentObject& obj);
 
-   void _switchToDocument(const App::Document* doc);
+    void _switchToDocument(const App::Document *doc);
 
 private:
-   boost::signals2::connection activeDoc;
-   boost::signals2::connection createDoc;
-   boost::signals2::connection finishDoc;
-   boost::signals2::connection deleteDoc;
+    boost::signals2::connection activeDoc;
+    boost::signals2::connection createDoc;
+    boost::signals2::connection finishDoc;
+    boost::signals2::connection deleteDoc;
 };
 
 } // namespace PartDesignGui

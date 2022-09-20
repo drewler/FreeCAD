@@ -35,37 +35,29 @@
 #include <iostream>
 
 
-class SMDS_EXPORT SMDS_VolumeOfFaces:public SMDS_MeshVolume
+class SMDS_EXPORT SMDS_VolumeOfFaces: public SMDS_MeshVolume
 {
-        
-  public:
-        SMDS_VolumeOfFaces(const SMDS_MeshFace * face1,
-                           const SMDS_MeshFace * face2,
-                           const SMDS_MeshFace * face3,
-                           const SMDS_MeshFace * face4);
-        SMDS_VolumeOfFaces(const SMDS_MeshFace * face1,
-                           const SMDS_MeshFace * face2,
-                           const SMDS_MeshFace * face3,
-                           const SMDS_MeshFace * face4,
-                           const SMDS_MeshFace * face5);
-        SMDS_VolumeOfFaces(const SMDS_MeshFace * face1,
-                           const SMDS_MeshFace * face2,
-                           const SMDS_MeshFace * face3,
-                           const SMDS_MeshFace * face4,
-                           const SMDS_MeshFace * face5,
-                           const SMDS_MeshFace * face6);
 
-        virtual SMDSAbs_EntityType GetEntityType() const;
-        virtual SMDSAbs_GeometryType GetGeomType() const;
-        virtual bool ChangeNodes(const SMDS_MeshNode* nodes[],
-                                 const int            nbNodes) {return false;}
-        virtual void Print(std::ostream & OS) const;
+public:
+    SMDS_VolumeOfFaces(const SMDS_MeshFace *face1, const SMDS_MeshFace *face2,
+                       const SMDS_MeshFace *face3, const SMDS_MeshFace *face4);
+    SMDS_VolumeOfFaces(const SMDS_MeshFace *face1, const SMDS_MeshFace *face2,
+                       const SMDS_MeshFace *face3, const SMDS_MeshFace *face4,
+                       const SMDS_MeshFace *face5);
+    SMDS_VolumeOfFaces(const SMDS_MeshFace *face1, const SMDS_MeshFace *face2,
+                       const SMDS_MeshFace *face3, const SMDS_MeshFace *face4,
+                       const SMDS_MeshFace *face5, const SMDS_MeshFace *face6);
 
-        virtual int NbFaces() const;
+    virtual SMDSAbs_EntityType GetEntityType() const;
+    virtual SMDSAbs_GeometryType GetGeomType() const;
+    virtual bool ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes) { return false; }
+    virtual void Print(std::ostream &OS) const;
 
-  protected:
-        virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
-        const SMDS_MeshFace * myFaces[6];
-        int                   myNbFaces;
+    virtual int NbFaces() const;
+
+protected:
+    virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
+    const SMDS_MeshFace *myFaces[6];
+    int myNbFaces;
 };
 #endif

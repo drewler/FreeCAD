@@ -36,7 +36,7 @@
 namespace TechDraw
 {
 
-class TechDrawExport DrawViewImage : public TechDraw::DrawView
+class TechDrawExport DrawViewImage: public TechDraw::DrawView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawViewImage);
 
@@ -45,10 +45,10 @@ public:
     DrawViewImage();
     ~DrawViewImage() = default;
 
-    App::PropertyFile         ImageFile;
+    App::PropertyFile ImageFile;
     App::PropertyFileIncluded ImageIncluded;
-    App::PropertyFloat        Width;
-    App::PropertyFloat        Height;
+    App::PropertyFloat Width;
+    App::PropertyFloat Height;
 
     /** @name methods override Feature */
     //@{
@@ -59,16 +59,14 @@ public:
     short mustExecute() const override;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderImage";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderImage"; }
     QRectF getRect() const override;
 
 protected:
     void setupImageIncluded();
     void replaceImageIncluded(std::string newFileName);
 
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     Base::BoundBox3d bbox;
 };
 

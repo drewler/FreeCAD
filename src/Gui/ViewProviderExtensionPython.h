@@ -27,35 +27,35 @@
 #include "ViewProviderExtension.h"
 #include <App/PropertyPythonObject.h>
 
-namespace Gui {
+namespace Gui
+{
 
 /**
  * Generic Python extension class which allows to behave every extension
  * derived class as Python extension -- simply by subclassing.
  */
-template <class ExtensionT>
-class ViewProviderExtensionPythonT : public ExtensionT
+template<class ExtensionT> class ViewProviderExtensionPythonT: public ExtensionT
 {
     EXTENSION_PROPERTY_HEADER(Gui::ViewProviderExtensionPythonT<ExtensionT>);
 
 public:
     using Inherited = ExtensionT;
 
-    ViewProviderExtensionPythonT() {
+    ViewProviderExtensionPythonT()
+    {
         ExtensionT::m_isPythonExtension = true;
         ExtensionT::initExtensionType(ViewProviderExtensionPythonT::getExtensionClassTypeId());
     }
-    virtual ~ViewProviderExtensionPythonT() {
-    }
+    virtual ~ViewProviderExtensionPythonT() {}
 
-    ViewProviderExtensionPythonT(const ViewProviderExtensionPythonT&) = delete;
-    ViewProviderExtensionPythonT(ViewProviderExtensionPythonT&&) = delete;
-    ViewProviderExtensionPythonT& operator= (const ViewProviderExtensionPythonT&) = delete;
-    ViewProviderExtensionPythonT& operator= (ViewProviderExtensionPythonT&&) = delete;
+    ViewProviderExtensionPythonT(const ViewProviderExtensionPythonT &) = delete;
+    ViewProviderExtensionPythonT(ViewProviderExtensionPythonT &&) = delete;
+    ViewProviderExtensionPythonT &operator=(const ViewProviderExtensionPythonT &) = delete;
+    ViewProviderExtensionPythonT &operator=(ViewProviderExtensionPythonT &&) = delete;
 };
 
 using ViewProviderExtensionPython = ViewProviderExtensionPythonT<Gui::ViewProviderExtension>;
 
-} //Gui
+} // namespace Gui
 
 #endif // GUI_VIEWPROVIDEREXTENSIONPYTHON_H

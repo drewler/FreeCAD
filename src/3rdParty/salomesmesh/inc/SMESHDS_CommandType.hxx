@@ -27,40 +27,41 @@
 #ifndef _SMESHDS_CommandType_HeaderFile
 #define _SMESHDS_CommandType_HeaderFile
 
-enum SMESHDS_CommandType { 
-  SMESHDS_AddNode,
-  SMESHDS_AddEdge,
-  SMESHDS_AddTriangle,
-  SMESHDS_AddQuadrangle,
-  SMESHDS_AddPolygon,
-  SMESHDS_AddTetrahedron,
-  SMESHDS_AddPyramid,
-  SMESHDS_AddPrism,
-  SMESHDS_AddHexahedron,
-  SMESHDS_AddPolyhedron,
-  SMESHDS_RemoveNode,
-  SMESHDS_RemoveElement,
-  SMESHDS_MoveNode,
-  SMESHDS_ChangeElementNodes,
-  SMESHDS_ChangePolyhedronNodes,
-  SMESHDS_Renumber,
-  SMESHDS_ClearAll,
-  // quadratic elements
-  SMESHDS_AddQuadEdge,
-  SMESHDS_AddQuadTriangle,
-  SMESHDS_AddQuadQuadrangle,
-  SMESHDS_AddQuadPolygon,
-  SMESHDS_AddQuadTetrahedron,
-  SMESHDS_AddQuadPyramid,
-  SMESHDS_AddQuadPentahedron,
-  SMESHDS_AddQuadHexahedron,
-  //
-  SMESHDS_Add0DElement,
-  SMESHDS_AddBiQuadTriangle,
-  SMESHDS_AddBiQuadQuadrangle,
-  SMESHDS_AddTriQuadHexa,
-  SMESHDS_AddHexagonalPrism,
-  SMESHDS_AddBall
+enum SMESHDS_CommandType
+{
+    SMESHDS_AddNode,
+    SMESHDS_AddEdge,
+    SMESHDS_AddTriangle,
+    SMESHDS_AddQuadrangle,
+    SMESHDS_AddPolygon,
+    SMESHDS_AddTetrahedron,
+    SMESHDS_AddPyramid,
+    SMESHDS_AddPrism,
+    SMESHDS_AddHexahedron,
+    SMESHDS_AddPolyhedron,
+    SMESHDS_RemoveNode,
+    SMESHDS_RemoveElement,
+    SMESHDS_MoveNode,
+    SMESHDS_ChangeElementNodes,
+    SMESHDS_ChangePolyhedronNodes,
+    SMESHDS_Renumber,
+    SMESHDS_ClearAll,
+    // quadratic elements
+    SMESHDS_AddQuadEdge,
+    SMESHDS_AddQuadTriangle,
+    SMESHDS_AddQuadQuadrangle,
+    SMESHDS_AddQuadPolygon,
+    SMESHDS_AddQuadTetrahedron,
+    SMESHDS_AddQuadPyramid,
+    SMESHDS_AddQuadPentahedron,
+    SMESHDS_AddQuadHexahedron,
+    //
+    SMESHDS_Add0DElement,
+    SMESHDS_AddBiQuadTriangle,
+    SMESHDS_AddBiQuadQuadrangle,
+    SMESHDS_AddTriQuadHexa,
+    SMESHDS_AddHexagonalPrism,
+    SMESHDS_AddBall
 };
 
 

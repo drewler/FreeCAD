@@ -34,21 +34,22 @@
 #endif
 
 
-namespace Base {
+namespace Base
+{
 
-class BaseExport Translate : public Py::ExtensionModule<Translate>
+class BaseExport Translate: public Py::ExtensionModule<Translate>
 {
 public:
     Translate();
     ~Translate() override;
 
 private:
-    Py::Object translate(const Py::Tuple& args);
-    Py::Object translateNoop(const Py::Tuple& args);
-    Py::Object translateNoop3(const Py::Tuple& args);
-    Py::Object trNoop(const Py::Tuple& args);
-    Py::Object installTranslator(const Py::Tuple& args);
-    Py::Object removeTranslators(const Py::Tuple& args);
+    Py::Object translate(const Py::Tuple &args);
+    Py::Object translateNoop(const Py::Tuple &args);
+    Py::Object translateNoop3(const Py::Tuple &args);
+    Py::Object trNoop(const Py::Tuple &args);
+    Py::Object installTranslator(const Py::Tuple &args);
+    Py::Object removeTranslators(const Py::Tuple &args);
 
 private:
     std::list<std::shared_ptr<QTranslator>> translators;

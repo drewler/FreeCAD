@@ -41,35 +41,34 @@
  * - descendant*    newChild() const; // a new child instance
  * - void           buildChildrenData(); // Fill in data of the children
  */
-class SMESHUtils_EXPORT SMESH_Octree : public SMESH_Tree< Bnd_B3d, 8 >
+class SMESHUtils_EXPORT SMESH_Octree: public SMESH_Tree<Bnd_B3d, 8>
 {
 public:
-  typedef SMESH_Tree< Bnd_B3d, 8> TBaseTree;
+    typedef SMESH_Tree<Bnd_B3d, 8> TBaseTree;
 
-  // Constructor. limit must be provided at tree root construction.
-  // limit will be deleted by SMESH_Octree
-  SMESH_Octree (SMESH_TreeLimit* limit=0);
-  virtual ~SMESH_Octree() {};
+    // Constructor. limit must be provided at tree root construction.
+    // limit will be deleted by SMESH_Octree
+    SMESH_Octree(SMESH_TreeLimit *limit = 0);
+    virtual ~SMESH_Octree() {};
 
-  // Compute the bigger dimension of my box
-  double                 maxSize() const;
+    // Compute the bigger dimension of my box
+    double maxSize() const;
 
-  // Return index of a child the given point is in
-  inline static int      getChildIndex(double x, double y, double z, const gp_XYZ& boxMiddle);
+    // Return index of a child the given point is in
+    inline static int getChildIndex(double x, double y, double z, const gp_XYZ &boxMiddle);
 
- protected:
-
-  // Allocate a bndbox according to childIndex. childIndex is zero based
-  virtual Bnd_B3d*       newChildBox(int childIndex) const;
+protected:
+    // Allocate a bndbox according to childIndex. childIndex is zero based
+    virtual Bnd_B3d *newChildBox(int childIndex) const;
 };
 
 //================================================================================
 /*!
  * \brief Return index of a child the given point is in
  */
-inline int SMESH_Octree::getChildIndex(double x, double y, double z, const gp_XYZ& mid)
+inline int SMESH_Octree::getChildIndex(double x, double y, double z, const gp_XYZ &mid)
 {
-  return (x > mid.X()) + ( y > mid.Y())*2 + (z > mid.Z())*4;
+    return (x > mid.X()) + (y > mid.Y()) * 2 + (z > mid.Z()) * 4;
 }
 
 #endif

@@ -33,9 +33,7 @@
  */
 //===========================================================================
 
-SMESH_Quadtree::SMESH_Quadtree (SMESH_TreeLimit* limit): TBaseTree( limit )
-{
-}
+SMESH_Quadtree::SMESH_Quadtree(SMESH_TreeLimit *limit) : TBaseTree(limit) {}
 
 //=================================================================
 /*!
@@ -43,17 +41,16 @@ SMESH_Quadtree::SMESH_Quadtree (SMESH_TreeLimit* limit): TBaseTree( limit )
  */
 //=================================================================
 
-Bnd_B2d* SMESH_Quadtree::newChildBox(int childIndex) const
+Bnd_B2d *SMESH_Quadtree::newChildBox(int childIndex) const
 {
-  gp_XY min = getBox()->CornerMin();
-  gp_XY max = getBox()->CornerMax();
-  gp_XY HSize = (max - min)/2.;
-  gp_XY childHsize = HSize/2.;
+    gp_XY min = getBox()->CornerMin();
+    gp_XY max = getBox()->CornerMax();
+    gp_XY HSize = (max - min) / 2.;
+    gp_XY childHsize = HSize / 2.;
 
-  gp_XY minChild( min.X() + childIndex%2     * HSize.X(),
-                  min.Y() + ( childIndex<2 ) * HSize.Y());
+    gp_XY minChild(min.X() + childIndex % 2 * HSize.X(), min.Y() + (childIndex < 2) * HSize.Y());
 
-  return new Bnd_B2d(minChild+childHsize,childHsize);
+    return new Bnd_B2d(minChild + childHsize, childHsize);
 }
 
 //===========================================================================
@@ -64,13 +61,12 @@ Bnd_B2d* SMESH_Quadtree::newChildBox(int childIndex) const
 
 double SMESH_Quadtree::maxSize() const
 {
-  if ( getBox() && !getBox()->IsVoid() )
-  {
-    gp_XY min = getBox()->CornerMin();
-    gp_XY max = getBox()->CornerMax();
-    gp_XY Size = (max - min);
-    double returnVal = (Size.X()>Size.Y())?Size.X():Size.Y();
-    return returnVal;
-  }
-  return 0.;
+    if (getBox() && !getBox()->IsVoid()) {
+        gp_XY min = getBox()->CornerMin();
+        gp_XY max = getBox()->CornerMax();
+        gp_XY Size = (max - min);
+        double returnVal = (Size.X() > Size.Y()) ? Size.X() : Size.Y();
+        return returnVal;
+    }
+    return 0.;
 }

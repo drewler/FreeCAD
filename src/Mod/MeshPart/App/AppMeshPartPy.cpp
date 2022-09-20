@@ -23,8 +23,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepBuilderAPI_MakePolygon.hxx>
-# include <TopoDS.hxx>
+#include <BRepBuilderAPI_MakePolygon.hxx>
+#include <TopoDS.hxx>
 #endif
 
 #include <CXX/Extensions.hxx>
@@ -47,30 +47,31 @@
 #include "MeshAlgos.h"
 #include "Mesher.h"
 
-namespace MeshPart {
-class Module : public Py::ExtensionModule<Module>
+namespace MeshPart
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("MeshPart")
     {
-        add_varargs_method("loftOnCurve",&Module::loftOnCurve,
-            "Creates a mesh loft based on a curve and an up vector\n"
-            "\n"
-            "loftOnCurve(curve, poly, upVector, MaxSize)\n"
-            "\n"
-            "Args:\n"
-            "    curve (topology):\n"
-            "    poly (list of (x, y z) or (x, y) tuples of floats):\n"
-            "    upVector ((x, y, z) tuple):\n"
-            "    MaxSize (float):\n"
-        );
-        add_varargs_method("findSectionParameters",&Module::findSectionParameters,
+        add_varargs_method("loftOnCurve", &Module::loftOnCurve,
+                           "Creates a mesh loft based on a curve and an up vector\n"
+                           "\n"
+                           "loftOnCurve(curve, poly, upVector, MaxSize)\n"
+                           "\n"
+                           "Args:\n"
+                           "    curve (topology):\n"
+                           "    poly (list of (x, y z) or (x, y) tuples of floats):\n"
+                           "    upVector ((x, y, z) tuple):\n"
+                           "    MaxSize (float):\n");
+        add_varargs_method(
+            "findSectionParameters", &Module::findSectionParameters,
             "Find the parameters of the edge where when projecting the corresponding point\n"
             "will lie on an edge of the mesh\n"
             "\n"
-            "findSectionParameters(Edge, Mesh, Vector) -> list\n"
-        );
-        add_keyword_method("projectShapeOnMesh",&Module::projectShapeOnMesh,
+            "findSectionParameters(Edge, Mesh, Vector) -> list\n");
+        add_keyword_method(
+            "projectShapeOnMesh", &Module::projectShapeOnMesh,
             "Projects a shape onto a mesh with a given maximum distance\n"
             "projectShapeOnMesh(Shape, Mesh, float) -> polygon\n"
             "or projects the shape in a given direction\n"
@@ -79,20 +80,18 @@ public:
             "\n"
             "projectShapeOnMesh(Shape, Mesh, float) -> list of polygons\n"
             "projectShapeOnMesh(Shape, Mesh, Vector) -> list of polygons\n"
-            "projectShapeOnMesh(list of polygons, Mesh, Vector) -> list of polygons\n"
-        );
-        add_varargs_method("projectPointsOnMesh",&Module::projectPointsOnMesh,
+            "projectShapeOnMesh(list of polygons, Mesh, Vector) -> list of polygons\n");
+        add_varargs_method(
+            "projectPointsOnMesh", &Module::projectPointsOnMesh,
             "Projects points onto a mesh with a given direction\n"
             "and tolerance."
-            "projectPointsOnMesh(list of points, Mesh, Vector, [float]) -> list of points\n"
-        );
-        add_varargs_method("wireFromSegment",&Module::wireFromSegment,
-            "Create wire(s) from boundary of a mesh segment\n"
-        );
-        add_varargs_method("wireFromMesh",&Module::wireFromMesh,
-            "Create wire(s) from boundary of a mesh\n"
-        );
-        add_keyword_method("meshFromShape",&Module::meshFromShape,
+            "projectPointsOnMesh(list of points, Mesh, Vector, [float]) -> list of points\n");
+        add_varargs_method("wireFromSegment", &Module::wireFromSegment,
+                           "Create wire(s) from boundary of a mesh segment\n");
+        add_varargs_method("wireFromMesh", &Module::wireFromMesh,
+                           "Create wire(s) from boundary of a mesh\n");
+        add_keyword_method(
+            "meshFromShape", &Module::meshFromShape,
             "Create surface mesh from shape\n"
             "\n"
             "Multiple signatures are available:\n"
@@ -139,8 +138,7 @@ public:
             "    AllowQuad (optional, integer boolean)\n"
             "    GrowthRate (optional, float)\n"
             "    SegPerEdge (optional, float)\n"
-            "    SegPerRadius (optional, float)\n"
-        );
+            "    SegPerRadius (optional, float)\n");
         initialize("This module is the MeshPart module."); // register with Python
     }
 
@@ -157,8 +155,10 @@ private:
             Standard_CString msg = e.GetMessageString();
             str += typeid(e).name();
             str += " ";
-            if (msg) {str += msg;}
-            else     {str += "No OCCT Exception Message";}
+            if (msg) { str += msg; }
+            else {
+                str += "No OCCT Exception Message";
+            }
             Base::Console().Error("%s\n", str.c_str());
             throw Py::Exception(Base::PyExc_FC_GeneralError, str);
         }
@@ -180,64 +180,60 @@ private:
         }
     }
 
-    Py::Object loftOnCurve(const Py::Tuple& args)
+    Py::Object loftOnCurve(const Py::Tuple &args)
     {
-        Part::TopoShapePy   *pcObject;
-        PyObject *pcTopoObj,*pcListObj;
-        float x=0.0f,y=0.0f,z=1.0f,size = 0.1f;
+        Part::TopoShapePy *pcObject;
+        PyObject *pcTopoObj, *pcListObj;
+        float x = 0.0f, y = 0.0f, z = 1.0f, size = 0.1f;
 
-        if (!PyArg_ParseTuple(args.ptr(), "O!O(fff)f", &(Part::TopoShapePy::Type), &pcTopoObj,&pcListObj,&x,&y,&z,&size))
-//      if (!PyArg_ParseTuple(args, "O!O!", &(App::TopoShapePy::Type), &pcTopoObj,&PyList_Type,&pcListObj,x,y,z,size))
+        if (!PyArg_ParseTuple(args.ptr(), "O!O(fff)f", &(Part::TopoShapePy::Type), &pcTopoObj,
+                              &pcListObj, &x, &y, &z, &size))
+            //      if (!PyArg_ParseTuple(args, "O!O!", &(App::TopoShapePy::Type), &pcTopoObj,&PyList_Type,&pcListObj,x,y,z,size))
             throw Py::Exception();
 
-        pcObject = static_cast<Part::TopoShapePy*>(pcTopoObj);
+        pcObject = static_cast<Part::TopoShapePy *>(pcTopoObj);
         MeshCore::MeshKernel M;
 
         std::vector<Base::Vector3f> poly;
-        auto exText( "List of Tuples of three or two floats needed as second parameter!" );
+        auto exText("List of Tuples of three or two floats needed as second parameter!");
 
-        if (!PyList_Check(pcListObj))
-            throw Py::TypeError(exText);
+        if (!PyList_Check(pcListObj)) throw Py::TypeError(exText);
 
         int nSize = PyList_Size(pcListObj);
-        for (int i=0; i<nSize;++i) {
-            PyObject* item = PyList_GetItem(pcListObj, i);
-            if (!PyTuple_Check(item))
-                throw Py::TypeError(exText);
+        for (int i = 0; i < nSize; ++i) {
+            PyObject *item = PyList_GetItem(pcListObj, i);
+            if (!PyTuple_Check(item)) throw Py::TypeError(exText);
 
             int nTSize = PyTuple_Size(item);
-            if (nTSize != 2 && nTSize != 3)
-                throw Py::ValueError(exText);
+            if (nTSize != 2 && nTSize != 3) throw Py::ValueError(exText);
 
-            Base::Vector3f vec(0,0,0);
+            Base::Vector3f vec(0, 0, 0);
 
-            for(int l = 0; l < nTSize;l++) {
-                PyObject* item2 = PyTuple_GetItem(item, l);
-                if (!PyFloat_Check(item2))
-                    throw Py::TypeError(exText);
+            for (int l = 0; l < nTSize; l++) {
+                PyObject *item2 = PyTuple_GetItem(item, l);
+                if (!PyFloat_Check(item2)) throw Py::TypeError(exText);
                 vec[l] = (float)PyFloat_AS_DOUBLE(item2);
             }
             poly.push_back(vec);
         }
 
         TopoDS_Shape aShape = pcObject->getTopoShapePtr()->getShape();
-        // use the MeshAlgos 
-        MeshPart::MeshAlgos::LoftOnCurve(M,aShape,poly,Base::Vector3f(x,y,z),size);
+        // use the MeshAlgos
+        MeshPart::MeshAlgos::LoftOnCurve(M, aShape, poly, Base::Vector3f(x, y, z), size);
         return Py::asObject(new Mesh::MeshPy(new Mesh::MeshObject(M)));
     }
-    Py::Object findSectionParameters(const Py::Tuple& args)
+    Py::Object findSectionParameters(const Py::Tuple &args)
     {
         PyObject *e, *m, *v;
         if (!PyArg_ParseTuple(args.ptr(), "O!O!O!", &(Part::TopoShapeEdgePy::Type), &e,
-                                                    &(Mesh::MeshPy::Type), &m,
-                                                    &(Base::VectorPy::Type),&v))
+                              &(Mesh::MeshPy::Type), &m, &(Base::VectorPy::Type), &v))
             throw Py::Exception();
 
-        TopoDS_Shape shape = static_cast<Part::TopoShapePy*>(e)->getTopoShapePtr()->getShape();
-        const Mesh::MeshObject* mesh = static_cast<Mesh::MeshPy*>(m)->getMeshObjectPtr();
+        TopoDS_Shape shape = static_cast<Part::TopoShapePy *>(e)->getTopoShapePtr()->getShape();
+        const Mesh::MeshObject *mesh = static_cast<Mesh::MeshPy *>(m)->getMeshObjectPtr();
         MeshCore::MeshKernel kernel(mesh->getKernel());
         kernel.Transform(mesh->getTransform());
-        Base::Vector3d* vec = static_cast<Base::VectorPy*>(v)->getVectorPtr();
+        Base::Vector3d *vec = static_cast<Base::VectorPy *>(v)->getVectorPtr();
         Base::Vector3f dir = Base::convertTo<Base::Vector3f>(*vec);
 
         MeshProjection proj(kernel);
@@ -252,18 +248,16 @@ private:
 
         return list;
     }
-    Py::Object projectShapeOnMesh(const Py::Tuple& args, const Py::Dict& kwds)
+    Py::Object projectShapeOnMesh(const Py::Tuple &args, const Py::Dict &kwds)
     {
-        static char* kwds_maxdist[] = {"Shape", "Mesh", "MaxDistance", nullptr};
+        static char *kwds_maxdist[] = {"Shape", "Mesh", "MaxDistance", nullptr};
         PyObject *s, *m;
         double maxDist;
-        if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(),
-                                        "O!O!d", kwds_maxdist,
-                                        &Part::TopoShapePy::Type, &s,
-                                        &Mesh::MeshPy::Type, &m,
+        if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!O!d", kwds_maxdist,
+                                        &Part::TopoShapePy::Type, &s, &Mesh::MeshPy::Type, &m,
                                         &maxDist)) {
-            TopoDS_Shape shape = static_cast<Part::TopoShapePy*>(s)->getTopoShapePtr()->getShape();
-            const Mesh::MeshObject* mesh = static_cast<Mesh::MeshPy*>(m)->getMeshObjectPtr();
+            TopoDS_Shape shape = static_cast<Part::TopoShapePy *>(s)->getTopoShapePtr()->getShape();
+            const Mesh::MeshObject *mesh = static_cast<Mesh::MeshPy *>(m)->getMeshObjectPtr();
             MeshCore::MeshKernel kernel(mesh->getKernel());
             kernel.Transform(mesh->getTransform());
 
@@ -272,7 +266,7 @@ private:
             proj.projectToMesh(shape, maxDist, polylines);
 
             Py::List list;
-            for (const auto& it : polylines) {
+            for (const auto &it : polylines) {
                 Py::List poly;
                 for (auto jt : it.points) {
                     Py::Vector v(jt);
@@ -284,17 +278,15 @@ private:
             return list;
         }
 
-        static char* kwds_dir[] = {"Shape", "Mesh", "Direction", nullptr};
+        static char *kwds_dir[] = {"Shape", "Mesh", "Direction", nullptr};
         PyErr_Clear();
         PyObject *v;
-        if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(),
-                                        "O!O!O!", kwds_dir,
-                                        &Part::TopoShapePy::Type, &s,
-                                        &Mesh::MeshPy::Type, &m,
+        if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!O!O!", kwds_dir,
+                                        &Part::TopoShapePy::Type, &s, &Mesh::MeshPy::Type, &m,
                                         &Base::VectorPy::Type, &v)) {
-            TopoDS_Shape shape = static_cast<Part::TopoShapePy*>(s)->getTopoShapePtr()->getShape();
-            const Mesh::MeshObject* mesh = static_cast<Mesh::MeshPy*>(m)->getMeshObjectPtr();
-            Base::Vector3d* vec = static_cast<Base::VectorPy*>(v)->getVectorPtr();
+            TopoDS_Shape shape = static_cast<Part::TopoShapePy *>(s)->getTopoShapePtr()->getShape();
+            const Mesh::MeshObject *mesh = static_cast<Mesh::MeshPy *>(m)->getMeshObjectPtr();
+            Base::Vector3d *vec = static_cast<Base::VectorPy *>(v)->getVectorPtr();
             Base::Vector3f dir = Base::convertTo<Base::Vector3f>(*vec);
 
             MeshCore::MeshKernel kernel(mesh->getKernel());
@@ -304,7 +296,7 @@ private:
             std::vector<MeshProjection::PolyLine> polylines;
             proj.projectParallelToMesh(shape, dir, polylines);
             Py::List list;
-            for (const auto& it : polylines) {
+            for (const auto &it : polylines) {
                 Py::List poly;
                 for (auto jt : it.points) {
                     Py::Vector v(jt);
@@ -316,14 +308,11 @@ private:
             return list;
         }
 
-        static char* kwds_poly[] = {"Polygons", "Mesh", "Direction", nullptr};
+        static char *kwds_poly[] = {"Polygons", "Mesh", "Direction", nullptr};
         PyErr_Clear();
         PyObject *seq;
-        if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(),
-                                        "OO!O!", kwds_poly,
-                                        &seq,
-                                        &Mesh::MeshPy::Type, &m,
-                                        &Base::VectorPy::Type, &v)) {
+        if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "OO!O!", kwds_poly, &seq,
+                                        &Mesh::MeshPy::Type, &m, &Base::VectorPy::Type, &v)) {
             std::vector<MeshProjection::PolyLine> polylinesIn;
             Py::Sequence edges(seq);
             polylinesIn.reserve(edges.size());
@@ -342,8 +331,8 @@ private:
                 polylinesIn.push_back(poly);
             }
 
-            const Mesh::MeshObject* mesh = static_cast<Mesh::MeshPy*>(m)->getMeshObjectPtr();
-            Base::Vector3d* vec = static_cast<Base::VectorPy*>(v)->getVectorPtr();
+            const Mesh::MeshObject *mesh = static_cast<Mesh::MeshPy *>(m)->getMeshObjectPtr();
+            Base::Vector3d *vec = static_cast<Base::VectorPy *>(v)->getVectorPtr();
             Base::Vector3f dir = Base::convertTo<Base::Vector3f>(*vec);
 
             MeshCore::MeshKernel kernel(mesh->getKernel());
@@ -354,7 +343,7 @@ private:
             proj.projectParallelToMesh(polylinesIn, dir, polylines);
 
             Py::List list;
-            for (const auto& it : polylines) {
+            for (const auto &it : polylines) {
                 Py::List poly;
                 for (auto jt : it.points) {
                     Py::Vector v(jt);
@@ -371,15 +360,12 @@ private:
                             "Shape, Mesh, Vector or\n"
                             "Polygons, Mesh, Vector\n");
     }
-    Py::Object projectPointsOnMesh(const Py::Tuple& args)
+    Py::Object projectPointsOnMesh(const Py::Tuple &args)
     {
         PyObject *seq, *m, *v;
         double precision = -1;
-        if (PyArg_ParseTuple(args.ptr(), "OO!O!|d",
-                                        &seq,
-                                        &Mesh::MeshPy::Type, &m,
-                                        &Base::VectorPy::Type, &v,
-                                        &precision)) {
+        if (PyArg_ParseTuple(args.ptr(), "OO!O!|d", &seq, &Mesh::MeshPy::Type, &m,
+                             &Base::VectorPy::Type, &v, &precision)) {
             std::vector<Base::Vector3f> pointsIn;
             Py::Sequence points(seq);
             pointsIn.reserve(points.size());
@@ -390,8 +376,8 @@ private:
                 pointsIn.push_back(Base::convertTo<Base::Vector3f>(pnt.toVector()));
             }
 
-            const Mesh::MeshObject* mesh = static_cast<Mesh::MeshPy*>(m)->getMeshObjectPtr();
-            Base::Vector3d* vec = static_cast<Base::VectorPy*>(v)->getVectorPtr();
+            const Mesh::MeshObject *mesh = static_cast<Mesh::MeshPy *>(m)->getMeshObjectPtr();
+            Base::Vector3d *vec = static_cast<Base::VectorPy *>(v)->getVectorPtr();
             Base::Vector3f dir = Base::convertTo<Base::Vector3f>(*vec);
 
             MeshCore::MeshKernel kernel(mesh->getKernel());
@@ -412,85 +398,86 @@ private:
 
         throw Py::Exception();
     }
-    Py::Object wireFromSegment(const Py::Tuple& args)
+    Py::Object wireFromSegment(const Py::Tuple &args)
     {
         PyObject *o, *m;
-        if (!PyArg_ParseTuple(args.ptr(), "O!O!", &(Mesh::MeshPy::Type), &m,&PyList_Type,&o))
+        if (!PyArg_ParseTuple(args.ptr(), "O!O!", &(Mesh::MeshPy::Type), &m, &PyList_Type, &o))
             throw Py::Exception();
 
         Py::List list(o);
-        Mesh::MeshObject* mesh = static_cast<Mesh::MeshPy*>(m)->getMeshObjectPtr();
+        Mesh::MeshObject *mesh = static_cast<Mesh::MeshPy *>(m)->getMeshObjectPtr();
         std::vector<MeshCore::FacetIndex> segm;
         segm.reserve(list.size());
-        for (Py_ssize_t i=0; i<list.size(); i++) {
-            segm.push_back((long)Py::Long(list[i]));
-        }
+        for (Py_ssize_t i = 0; i < list.size(); i++) { segm.push_back((long)Py::Long(list[i])); }
 
-        std::list<std::vector<Base::Vector3f> > bounds;
+        std::list<std::vector<Base::Vector3f>> bounds;
         MeshCore::MeshAlgorithm algo(mesh->getKernel());
         algo.GetFacetBorders(segm, bounds);
 
         Py::List wires;
-        std::list<std::vector<Base::Vector3f> >::iterator bt;
+        std::list<std::vector<Base::Vector3f>>::iterator bt;
 
         for (bt = bounds.begin(); bt != bounds.end(); ++bt) {
             BRepBuilderAPI_MakePolygon mkPoly;
-            for (std::vector<Base::Vector3f>::reverse_iterator it = bt->rbegin(); it != bt->rend(); ++it) {
-                mkPoly.Add(gp_Pnt(it->x,it->y,it->z));
+            for (std::vector<Base::Vector3f>::reverse_iterator it = bt->rbegin(); it != bt->rend();
+                 ++it) {
+                mkPoly.Add(gp_Pnt(it->x, it->y, it->z));
             }
             if (mkPoly.IsDone()) {
-                PyObject* wire = new Part::TopoShapeWirePy(new Part::TopoShape(mkPoly.Wire()));
+                PyObject *wire = new Part::TopoShapeWirePy(new Part::TopoShape(mkPoly.Wire()));
                 wires.append(Py::Object(wire, true));
             }
         }
 
         return wires;
     }
-    Py::Object wireFromMesh(const Py::Tuple& args)
+    Py::Object wireFromMesh(const Py::Tuple &args)
     {
         PyObject *m;
-        if (!PyArg_ParseTuple(args.ptr(), "O!", &(Mesh::MeshPy::Type), &m))
-            throw Py::Exception();
+        if (!PyArg_ParseTuple(args.ptr(), "O!", &(Mesh::MeshPy::Type), &m)) throw Py::Exception();
 
-        Mesh::MeshObject* mesh = static_cast<Mesh::MeshPy*>(m)->getMeshObjectPtr();
+        Mesh::MeshObject *mesh = static_cast<Mesh::MeshPy *>(m)->getMeshObjectPtr();
 
-        std::list<std::vector<Base::Vector3f> > bounds;
+        std::list<std::vector<Base::Vector3f>> bounds;
         MeshCore::MeshAlgorithm algo(mesh->getKernel());
         algo.GetMeshBorders(bounds);
 
         Py::List wires;
-        std::list<std::vector<Base::Vector3f> >::iterator bt;
+        std::list<std::vector<Base::Vector3f>>::iterator bt;
 
         for (bt = bounds.begin(); bt != bounds.end(); ++bt) {
             BRepBuilderAPI_MakePolygon mkPoly;
-            for (std::vector<Base::Vector3f>::reverse_iterator it = bt->rbegin(); it != bt->rend(); ++it) {
-                mkPoly.Add(gp_Pnt(it->x,it->y,it->z));
+            for (std::vector<Base::Vector3f>::reverse_iterator it = bt->rbegin(); it != bt->rend();
+                 ++it) {
+                mkPoly.Add(gp_Pnt(it->x, it->y, it->z));
             }
             if (mkPoly.IsDone()) {
-                PyObject* wire = new Part::TopoShapeWirePy(new Part::TopoShape(mkPoly.Wire()));
+                PyObject *wire = new Part::TopoShapeWirePy(new Part::TopoShape(mkPoly.Wire()));
                 wires.append(Py::Object(wire, true));
             }
         }
 
         return wires;
     }
-    Py::Object meshFromShape(const Py::Tuple& args, const Py::Dict& kwds)
+    Py::Object meshFromShape(const Py::Tuple &args, const Py::Dict &kwds)
     {
         PyObject *shape;
 
-        static char* kwds_lindeflection[] = {"Shape", "LinearDeflection", "AngularDeflection",
-                                             "Relative", "Segments", "GroupColors", nullptr};
+        static char *kwds_lindeflection[] = {"Shape",    "LinearDeflection", "AngularDeflection",
+                                             "Relative", "Segments",         "GroupColors",
+                                             nullptr};
         PyErr_Clear();
-        double lindeflection=0;
-        double angdeflection=0.5;
-        PyObject* relative = Py_False;
-        PyObject* segment = Py_False;
-        PyObject* groupColors = nullptr;
+        double lindeflection = 0;
+        double angdeflection = 0.5;
+        PyObject *relative = Py_False;
+        PyObject *segment = Py_False;
+        PyObject *groupColors = nullptr;
         if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!d|dO!O!O", kwds_lindeflection,
                                         &(Part::TopoShapePy::Type), &shape, &lindeflection,
-                                        &angdeflection, &(PyBool_Type), &relative,
-                                        &(PyBool_Type), &segment, &groupColors)) {
-            MeshPart::Mesher mesher(static_cast<Part::TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+                                        &angdeflection, &(PyBool_Type), &relative, &(PyBool_Type),
+                                        &segment, &groupColors)) {
+            MeshPart::Mesher mesher(
+                static_cast<Part::TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
             mesher.setMethod(MeshPart::Mesher::Standard);
             mesher.setDeflection(lindeflection);
             mesher.setAngularDeflection(angdeflection);
@@ -506,8 +493,7 @@ private:
                     Py::Float r(t[0]);
                     Py::Float g(t[1]);
                     Py::Float b(t[2]);
-                    App::Color c(static_cast<float>(r),
-                                 static_cast<float>(g),
+                    App::Color c(static_cast<float>(r), static_cast<float>(g),
                                  static_cast<float>(b));
                     colors.push_back(c.getPackedValue());
                 }
@@ -516,74 +502,81 @@ private:
             return Py::asObject(new Mesh::MeshPy(mesher.createMesh()));
         }
 
-        static char* kwds_maxLength[] = {"Shape", "MaxLength",nullptr};
+        static char *kwds_maxLength[] = {"Shape", "MaxLength", nullptr};
         PyErr_Clear();
-        double maxLength=0;
+        double maxLength = 0;
         if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!d", kwds_maxLength,
                                         &(Part::TopoShapePy::Type), &shape, &maxLength)) {
-            MeshPart::Mesher mesher(static_cast<Part::TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+            MeshPart::Mesher mesher(
+                static_cast<Part::TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
             mesher.setMethod(MeshPart::Mesher::Mefisto);
             mesher.setMaxLength(maxLength);
             mesher.setRegular(true);
             return Py::asObject(new Mesh::MeshPy(mesher.createMesh()));
         }
 
-        static char* kwds_maxArea[] = {"Shape", "MaxArea",nullptr};
+        static char *kwds_maxArea[] = {"Shape", "MaxArea", nullptr};
         PyErr_Clear();
-        double maxArea=0;
+        double maxArea = 0;
         if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!d", kwds_maxArea,
                                         &(Part::TopoShapePy::Type), &shape, &maxArea)) {
-            MeshPart::Mesher mesher(static_cast<Part::TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+            MeshPart::Mesher mesher(
+                static_cast<Part::TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
             mesher.setMethod(MeshPart::Mesher::Mefisto);
             mesher.setMaxArea(maxArea);
             mesher.setRegular(true);
             return Py::asObject(new Mesh::MeshPy(mesher.createMesh()));
         }
 
-        static char* kwds_localLen[] = {"Shape", "LocalLength",nullptr};
+        static char *kwds_localLen[] = {"Shape", "LocalLength", nullptr};
         PyErr_Clear();
-        double localLen=0;
+        double localLen = 0;
         if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!d", kwds_localLen,
                                         &(Part::TopoShapePy::Type), &shape, &localLen)) {
-            MeshPart::Mesher mesher(static_cast<Part::TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+            MeshPart::Mesher mesher(
+                static_cast<Part::TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
             mesher.setMethod(MeshPart::Mesher::Mefisto);
             mesher.setLocalLength(localLen);
             mesher.setRegular(true);
             return Py::asObject(new Mesh::MeshPy(mesher.createMesh()));
         }
 
-        static char* kwds_deflection[] = {"Shape", "Deflection",nullptr};
+        static char *kwds_deflection[] = {"Shape", "Deflection", nullptr};
         PyErr_Clear();
-        double deflection=0;
+        double deflection = 0;
         if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!d", kwds_deflection,
                                         &(Part::TopoShapePy::Type), &shape, &deflection)) {
-            MeshPart::Mesher mesher(static_cast<Part::TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+            MeshPart::Mesher mesher(
+                static_cast<Part::TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
             mesher.setMethod(MeshPart::Mesher::Mefisto);
             mesher.setDeflection(deflection);
             mesher.setRegular(true);
             return Py::asObject(new Mesh::MeshPy(mesher.createMesh()));
         }
 
-        static char* kwds_minmaxLen[] = {"Shape", "MinLength","MaxLength",nullptr};
+        static char *kwds_minmaxLen[] = {"Shape", "MinLength", "MaxLength", nullptr};
         PyErr_Clear();
-        double minLen=0, maxLen=0;
+        double minLen = 0, maxLen = 0;
         if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!dd", kwds_minmaxLen,
                                         &(Part::TopoShapePy::Type), &shape, &minLen, &maxLen)) {
-            MeshPart::Mesher mesher(static_cast<Part::TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+            MeshPart::Mesher mesher(
+                static_cast<Part::TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
             mesher.setMethod(MeshPart::Mesher::Mefisto);
             mesher.setMinMaxLengths(minLen, maxLen);
             mesher.setRegular(true);
             return Py::asObject(new Mesh::MeshPy(mesher.createMesh()));
         }
 
-        static char* kwds_fineness[] = {"Shape", "Fineness", "SecondOrder", "Optimize", "AllowQuad", "MinLength", "MaxLength", nullptr};
+        static char *kwds_fineness[] = {"Shape",     "Fineness",  "SecondOrder", "Optimize",
+                                        "AllowQuad", "MinLength", "MaxLength",   nullptr};
         PyErr_Clear();
-        int fineness=0, secondOrder=0, optimize=1, allowquad=0;
+        int fineness = 0, secondOrder = 0, optimize = 1, allowquad = 0;
         if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!i|iiidd", kwds_fineness,
-                                        &(Part::TopoShapePy::Type), &shape, &fineness,
-                                        &secondOrder, &optimize, &allowquad, &minLen, &maxLen)) {
-#if defined (HAVE_NETGEN)
-            MeshPart::Mesher mesher(static_cast<Part::TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+                                        &(Part::TopoShapePy::Type), &shape, &fineness, &secondOrder,
+                                        &optimize, &allowquad, &minLen, &maxLen)) {
+#if defined(HAVE_NETGEN)
+            MeshPart::Mesher mesher(
+                static_cast<Part::TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
             mesher.setMethod(MeshPart::Mesher::Netgen);
             mesher.setFineness(fineness);
             mesher.setSecondOrder(secondOrder != 0);
@@ -596,16 +589,18 @@ private:
 #endif
         }
 
-        static char* kwds_user[] = {"Shape", "GrowthRate", "SegPerEdge", "SegPerRadius", "SecondOrder",
-                                    "Optimize", "AllowQuad", "MinLength", "MaxLength", nullptr };
+        static char *kwds_user[] = {"Shape",       "GrowthRate", "SegPerEdge", "SegPerRadius",
+                                    "SecondOrder", "Optimize",   "AllowQuad",  "MinLength",
+                                    "MaxLength",   nullptr};
         PyErr_Clear();
-        double growthRate=0, nbSegPerEdge=0, nbSegPerRadius=0;
+        double growthRate = 0, nbSegPerEdge = 0, nbSegPerRadius = 0;
         if (PyArg_ParseTupleAndKeywords(args.ptr(), kwds.ptr(), "O!|dddiiidd", kwds_user,
-                                        &(Part::TopoShapePy::Type), &shape,
-                                        &growthRate, &nbSegPerEdge, &nbSegPerRadius,
-                                        &secondOrder, &optimize, &allowquad, &minLen, &maxLen)) {
-#if defined (HAVE_NETGEN)
-            MeshPart::Mesher mesher(static_cast<Part::TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
+                                        &(Part::TopoShapePy::Type), &shape, &growthRate,
+                                        &nbSegPerEdge, &nbSegPerRadius, &secondOrder, &optimize,
+                                        &allowquad, &minLen, &maxLen)) {
+#if defined(HAVE_NETGEN)
+            MeshPart::Mesher mesher(
+                static_cast<Part::TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
             mesher.setMethod(MeshPart::Mesher::Netgen);
             mesher.setGrowthRate(growthRate);
             mesher.setNbSegPerEdge(nbSegPerEdge);
@@ -622,8 +617,9 @@ private:
 
         PyErr_Clear();
         if (PyArg_ParseTuple(args.ptr(), "O!", &(Part::TopoShapePy::Type), &shape)) {
-            MeshPart::Mesher mesher(static_cast<Part::TopoShapePy*>(shape)->getTopoShapePtr()->getShape());
-#if defined (HAVE_NETGEN)
+            MeshPart::Mesher mesher(
+                static_cast<Part::TopoShapePy *>(shape)->getTopoShapePtr()->getShape());
+#if defined(HAVE_NETGEN)
             mesher.setMethod(MeshPart::Mesher::Netgen);
 #else
             mesher.setMethod(MeshPart::Mesher::Mefisto);
@@ -636,9 +632,6 @@ private:
     }
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace MeshPart

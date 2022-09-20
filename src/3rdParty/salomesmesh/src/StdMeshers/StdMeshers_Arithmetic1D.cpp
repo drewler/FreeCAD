@@ -48,13 +48,13 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_Arithmetic1D::StdMeshers_Arithmetic1D(int hypId, int studyId, SMESH_Gen * gen)
-  :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_Arithmetic1D::StdMeshers_Arithmetic1D(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _begLength = 1.;
-  _endLength = 10.;
-  _name = "Arithmetic1D";
-  _param_algo_dim = 1; 
+    _begLength = 1.;
+    _endLength = 10.;
+    _name = "Arithmetic1D";
+    _param_algo_dim = 1;
 }
 
 //=============================================================================
@@ -63,9 +63,7 @@ StdMeshers_Arithmetic1D::StdMeshers_Arithmetic1D(int hypId, int studyId, SMESH_G
  */
 //=============================================================================
 
-StdMeshers_Arithmetic1D::~StdMeshers_Arithmetic1D()
-{
-}
+StdMeshers_Arithmetic1D::~StdMeshers_Arithmetic1D() {}
 
 //=============================================================================
 /*!
@@ -75,16 +73,14 @@ StdMeshers_Arithmetic1D::~StdMeshers_Arithmetic1D()
 
 void StdMeshers_Arithmetic1D::SetLength(double length, bool isStartLength)
 {
-  if ( (isStartLength ? _begLength : _endLength) != length ) {
-    if (length <= 0)
-      throw SALOME_Exception(LOCALIZED("length must be positive"));
-    if ( isStartLength )
-      _begLength = length;
-    else
-      _endLength = length;
+    if ((isStartLength ? _begLength : _endLength) != length) {
+        if (length <= 0) throw SALOME_Exception(LOCALIZED("length must be positive"));
+        if (isStartLength) _begLength = length;
+        else
+            _endLength = length;
 
-    NotifySubMeshesHypothesisModification();
-  }
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -95,7 +91,7 @@ void StdMeshers_Arithmetic1D::SetLength(double length, bool isStartLength)
 
 double StdMeshers_Arithmetic1D::GetLength(bool isStartLength) const
 {
-  return isStartLength ? _begLength : _endLength;
+    return isStartLength ? _begLength : _endLength;
 }
 
 //=============================================================================
@@ -104,64 +100,13 @@ double StdMeshers_Arithmetic1D::GetLength(bool isStartLength) const
  */
 //=============================================================================
 
-void StdMeshers_Arithmetic1D::SetReversedEdges( std::vector<int>& ids )
+void StdMeshers_Arithmetic1D::SetReversedEdges(std::vector<int> &ids)
 {
-  if ( ids != _edgeIDs ) {
-    _edgeIDs = ids;
+    if (ids != _edgeIDs) {
+        _edgeIDs = ids;
 
-    NotifySubMeshesHypothesisModification();
-  }
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-ostream & StdMeshers_Arithmetic1D::SaveTo(ostream & save)
-{
-  int listSize = _edgeIDs.size();
-  save << _begLength << " " << _endLength << " " << listSize;
-
-  if ( listSize > 0 ) {
-    for ( int i = 0; i < listSize; i++)
-      save << " " << _edgeIDs[i];
-    save << " " << _objEntry;
-  }
-
-  return save;
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-istream & StdMeshers_Arithmetic1D::LoadFrom(istream & load)
-{
-  bool isOK = true;
-  int intVal;
-  isOK = (bool)(load >> _begLength);
-  if (!isOK)
-    load.clear(ios::badbit | load.rdstate());
-  isOK = (bool)(load >> _endLength);
-
-  if (!isOK)
-    load.clear(ios::badbit | load.rdstate());
-
-  isOK = (bool)(load >> intVal);
-  if (isOK && intVal > 0) {
-    _edgeIDs.reserve( intVal );
-    for (int i = 0; i < _edgeIDs.capacity() && isOK; i++) {
-      isOK = (bool)(load >> intVal);
-      if ( isOK ) _edgeIDs.push_back( intVal );
+        NotifySubMeshesHypothesisModification();
     }
-    isOK = (bool)(load >> _objEntry);
-  }
-
-  return load;
 }
 
 //=============================================================================
@@ -170,9 +115,17 @@ istream & StdMeshers_Arithmetic1D::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_Arithmetic1D & hyp)
+ostream &StdMeshers_Arithmetic1D::SaveTo(ostream &save)
 {
-  return hyp.SaveTo( save );
+    int listSize = _edgeIDs.size();
+    save << _begLength << " " << _endLength << " " << listSize;
+
+    if (listSize > 0) {
+        for (int i = 0; i < listSize; i++) save << " " << _edgeIDs[i];
+        save << " " << _objEntry;
+    }
+
+    return save;
 }
 
 //=============================================================================
@@ -181,10 +134,44 @@ ostream & operator <<(ostream & save, StdMeshers_Arithmetic1D & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_Arithmetic1D & hyp)
+istream &StdMeshers_Arithmetic1D::LoadFrom(istream &load)
 {
-  return hyp.LoadFrom( load );
+    bool isOK = true;
+    int intVal;
+    isOK = (bool)(load >> _begLength);
+    if (!isOK) load.clear(ios::badbit | load.rdstate());
+    isOK = (bool)(load >> _endLength);
+
+    if (!isOK) load.clear(ios::badbit | load.rdstate());
+
+    isOK = (bool)(load >> intVal);
+    if (isOK && intVal > 0) {
+        _edgeIDs.reserve(intVal);
+        for (int i = 0; i < _edgeIDs.capacity() && isOK; i++) {
+            isOK = (bool)(load >> intVal);
+            if (isOK) _edgeIDs.push_back(intVal);
+        }
+        isOK = (bool)(load >> _objEntry);
+    }
+
+    return load;
 }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &operator<<(ostream &save, StdMeshers_Arithmetic1D &hyp) { return hyp.SaveTo(save); }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+istream &operator>>(istream &load, StdMeshers_Arithmetic1D &hyp) { return hyp.LoadFrom(load); }
 
 //================================================================================
 /*!
@@ -195,41 +182,38 @@ istream & operator >>(istream & load, StdMeshers_Arithmetic1D & hyp)
  */
 //================================================================================
 
-bool StdMeshers_Arithmetic1D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                  const TopoDS_Shape& theShape)
+bool StdMeshers_Arithmetic1D::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                  const TopoDS_Shape &theShape)
 {
-  if ( !theMesh || theShape.IsNull() )
-    return false;
+    if (!theMesh || theShape.IsNull()) return false;
 
-  _begLength = _endLength = 0.;
+    _begLength = _endLength = 0.;
 
-  Standard_Real UMin, UMax;
-  TopLoc_Location L;
+    Standard_Real UMin, UMax;
+    TopLoc_Location L;
 
-  int nbEdges = 0;
-  TopTools_IndexedMapOfShape edgeMap;
-  TopExp::MapShapes( theShape, TopAbs_EDGE, edgeMap );
-  for ( int i = 1; i <= edgeMap.Extent(); ++i )
-  {
-    const TopoDS_Edge& edge = TopoDS::Edge( edgeMap( i ));
-    Handle(Geom_Curve) C = BRep_Tool::Curve(edge, L, UMin, UMax);
-    GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
+    int nbEdges = 0;
+    TopTools_IndexedMapOfShape edgeMap;
+    TopExp::MapShapes(theShape, TopAbs_EDGE, edgeMap);
+    for (int i = 1; i <= edgeMap.Extent(); ++i) {
+        const TopoDS_Edge &edge = TopoDS::Edge(edgeMap(i));
+        Handle(Geom_Curve) C = BRep_Tool::Curve(edge, L, UMin, UMax);
+        GeomAdaptor_Curve AdaptCurve(C, UMin, UMax);
 
-    vector< double > params;
-    SMESHDS_Mesh* aMeshDS = const_cast< SMESH_Mesh* >( theMesh )->GetMeshDS();
-    if ( SMESH_Algo::GetNodeParamOnEdge( aMeshDS, edge, params ))
-    {
-      nbEdges++;
-      _begLength += GCPnts_AbscissaPoint::Length( AdaptCurve, params[0], params[1]);
-      int nb = params.size();
-      _endLength += GCPnts_AbscissaPoint::Length( AdaptCurve, params[nb-2], params[nb-1]);
+        vector<double> params;
+        SMESHDS_Mesh *aMeshDS = const_cast<SMESH_Mesh *>(theMesh)->GetMeshDS();
+        if (SMESH_Algo::GetNodeParamOnEdge(aMeshDS, edge, params)) {
+            nbEdges++;
+            _begLength += GCPnts_AbscissaPoint::Length(AdaptCurve, params[0], params[1]);
+            int nb = params.size();
+            _endLength += GCPnts_AbscissaPoint::Length(AdaptCurve, params[nb - 2], params[nb - 1]);
+        }
     }
-  }
-  if ( nbEdges ) {
-    _begLength /= nbEdges;
-    _endLength /= nbEdges;
-  }
-  return nbEdges;
+    if (nbEdges) {
+        _begLength /= nbEdges;
+        _endLength /= nbEdges;
+    }
+    return nbEdges;
 }
 
 //================================================================================
@@ -239,9 +223,8 @@ bool StdMeshers_Arithmetic1D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
  */
 //================================================================================
 
-bool StdMeshers_Arithmetic1D::SetParametersByDefaults(const TDefaults&  dflts,
-                                                      const SMESH_Mesh* /*mesh*/)
+bool StdMeshers_Arithmetic1D::SetParametersByDefaults(const TDefaults &dflts,
+                                                      const SMESH_Mesh * /*mesh*/)
 {
-  return ( _begLength = _endLength = dflts._elemLength );
+    return (_begLength = _endLength = dflts._elemLength);
 }
-

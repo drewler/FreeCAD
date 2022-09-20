@@ -26,14 +26,16 @@
 
 #include "ViewProviderAddSub.h"
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderLoft : public ViewProviderAddSub
+class PartDesignGuiExport ViewProviderLoft: public ViewProviderAddSub
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderLoft);
 
 public:
-    enum Reference {
+    enum Reference
+    {
         Profile,
         Section,
         Both
@@ -44,23 +46,23 @@ public:
     /// destructor
     ~ViewProviderLoft() override;
 
-    /// grouping handling 
-    std::vector<App::DocumentObject*> claimChildren(void)const override;
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    /// grouping handling
+    std::vector<App::DocumentObject *> claimChildren(void) const override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
     bool onDelete(const std::vector<std::string> &) override;
     void highlightProfile(bool on);
     void highlightSection(bool on);
     void highlightReferences(Reference mode, bool on);
-    
+
 protected:
     QIcon getIcon(void) const override;
     bool setEdit(int ModNum) override;
     void unsetEdit(int ModNum) override;
-    TaskDlgFeatureParameters* getEditDialog() override;
+    TaskDlgFeatureParameters *getEditDialog() override;
 
 private:
-    void highlightReferences(Part::Feature*, const std::vector<std::string>&, bool);
+    void highlightReferences(Part::Feature *, const std::vector<std::string> &, bool);
 
 private:
     std::map<long, std::vector<App::Color>> originalLineColors;

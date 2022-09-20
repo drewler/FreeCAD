@@ -29,8 +29,10 @@
 
 class QCheckBox;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgSettingsLazyLoaded;
 
 
@@ -39,19 +41,19 @@ class Ui_DlgSettingsLazyLoaded;
  * the remaining preference pages aren't loaded yet, and to help the user do so on demand.
  * \author Jürgen Riegel
  */
-class DlgSettingsLazyLoadedImp : public PreferencePage
+class DlgSettingsLazyLoadedImp: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsLazyLoadedImp( QWidget* parent = nullptr );
+    explicit DlgSettingsLazyLoadedImp(QWidget *parent = nullptr);
     ~DlgSettingsLazyLoadedImp() override;
 
     void saveSettings() override;
     void loadSettings() override;
 
 protected Q_SLOTS:
-    void onLoadClicked(const QString& wbName);
+    void onLoadClicked(const QString &wbName);
 
 protected:
     void buildUnloadedWorkbenchList();
@@ -63,7 +65,7 @@ private:
 
     std::vector<std::string> _backgroundAutoloadedModules;
     std::string _startupModule;
-    std::map<QString, QCheckBox*> _autoloadCheckboxes;
+    std::map<QString, QCheckBox *> _autoloadCheckboxes;
 };
 
 } // namespace Dialog

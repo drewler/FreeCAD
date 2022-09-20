@@ -36,7 +36,7 @@
 namespace TechDraw
 {
 
-class TechDrawExport DrawViewDraft : public TechDraw::DrawViewSymbol
+class TechDrawExport DrawViewDraft: public TechDraw::DrawViewSymbol
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawViewDraft);
 
@@ -45,14 +45,14 @@ public:
     DrawViewDraft();
     ~DrawViewDraft() = default;
 
-    App::PropertyLink         Source;
-    App::PropertyFloat        LineWidth;
-    App::PropertyFloat        FontSize;
-    App::PropertyVector       Direction;
-    App::PropertyColor        Color;
-    App::PropertyString       LineStyle;
-    App::PropertyFloat        LineSpacing;
-    App::PropertyBool         OverrideStyle;
+    App::PropertyLink Source;
+    App::PropertyFloat LineWidth;
+    App::PropertyFloat FontSize;
+    App::PropertyVector Direction;
+    App::PropertyColor Color;
+    App::PropertyString LineStyle;
+    App::PropertyFloat LineSpacing;
+    App::PropertyBool OverrideStyle;
 
     /** @name methods override Feature */
     //@{
@@ -61,14 +61,12 @@ public:
     //@}
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderDraft";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderDraft"; }
 
     short mustExecute() const override;
 
 protected:
-/*    virtual void onChanged(const App::Property* prop) override;*/
+    /*    virtual void onChanged(const App::Property* prop) override;*/
     Base::BoundBox3d bbox;
     std::string getSVGHead();
     std::string getSVGTail();

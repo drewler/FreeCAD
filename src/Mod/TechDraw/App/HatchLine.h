@@ -51,17 +51,17 @@ class DrawUtil;
 class TechDrawExport DashSpec
 {
 public:
-      DashSpec() {}
-      explicit DashSpec(std::vector<double> p) { m_parms = p; }
-      ~DashSpec() = default;
+    DashSpec() {}
+    explicit DashSpec(std::vector<double> p) { m_parms = p; }
+    ~DashSpec() = default;
 
-      double              get(int i)  {return m_parms.at(i); }
-      std::vector<double> get()   {return m_parms;}
-      bool                empty() {return m_parms.empty();}
-      int                 size()  {return m_parms.size();}
-      double              length();
-      void                dump(const char* title);
-      DashSpec            reversed();
+    double get(int i) { return m_parms.at(i); }
+    std::vector<double> get() { return m_parms; }
+    bool empty() { return m_parms.empty(); }
+    int size() { return m_parms.size(); }
+    double length();
+    void dump(const char *title);
+    DashSpec reversed();
 
 private:
     std::vector<double> m_parms;
@@ -72,29 +72,30 @@ class TechDrawExport PATLineSpec
 {
 public:
     PATLineSpec();
-    explicit PATLineSpec(std::string& lineSpec);
+    explicit PATLineSpec(std::string &lineSpec);
     ~PATLineSpec();
 
-    void load(std::string& lineSpec);
+    void load(std::string &lineSpec);
 
-    double getAngle()  {return m_angle;}
-    Base::Vector3d getOrigin() {return m_origin;}
-    double getInterval() {return m_interval;}
+    double getAngle() { return m_angle; }
+    Base::Vector3d getOrigin() { return m_origin; }
+    double getInterval() { return m_interval; }
     double getIntervalX();
     double getIntervalY();
-    double getOffset()  {return m_offset;}
+    double getOffset() { return m_offset; }
     double getSlope();
-    double getLength() {return m_dashParms.length(); }
-    DashSpec getDashParms() {return m_dashParms;}
+    double getLength() { return m_dashParms.length(); }
+    DashSpec getDashParms() { return m_dashParms; }
 
-    static std::vector<PATLineSpec> getSpecsForPattern(std::string& parmFile, std::string& parmName);
-    static bool  findPatternStart(std::ifstream& inFile, std::string& parmName);
-    static std::vector<std::string> loadPatternDef(std::ifstream& inFile);
-    static std::vector<std::string> getPatternList(std::string& parmFile);
+    static std::vector<PATLineSpec> getSpecsForPattern(std::string &parmFile,
+                                                       std::string &parmName);
+    static bool findPatternStart(std::ifstream &inFile, std::string &parmName);
+    static std::vector<std::string> loadPatternDef(std::ifstream &inFile);
+    static std::vector<std::string> getPatternList(std::string &parmFile);
 
     bool isDashed();
 
-    void dump(const char* title);
+    void dump(const char *title);
 
 private:
     void init();
@@ -114,33 +115,35 @@ public:
     LineSet() {}
     ~LineSet() = default;
 
-    void setPATLineSpec(const PATLineSpec& s) { m_hatchLine = s; }
-    void setEdges(std::vector<TopoDS_Edge> e) {m_edges = e;}
-    void setGeoms(std::vector<TechDraw::BaseGeomPtr>  g) {m_geoms = g;}
-    void setBBox(const Bnd_Box& bb) {m_box = bb;}
+    void setPATLineSpec(const PATLineSpec &s) { m_hatchLine = s; }
+    void setEdges(std::vector<TopoDS_Edge> e) { m_edges = e; }
+    void setGeoms(std::vector<TechDraw::BaseGeomPtr> g) { m_geoms = g; }
+    void setBBox(const Bnd_Box &bb) { m_box = bb; }
 
-    std::vector<TopoDS_Edge>    getEdges() { return m_edges; }
-    TopoDS_Edge                 getEdge(int i) {return m_edges.at(i);}
+    std::vector<TopoDS_Edge> getEdges() { return m_edges; }
+    TopoDS_Edge getEdge(int i) { return m_edges.at(i); }
     std::vector<TechDraw::BaseGeomPtr> getGeoms() { return m_geoms; }
 
-    PATLineSpec       getPATLineSpec() { return m_hatchLine; }
-    double            getOffset() { return m_hatchLine.getOffset(); }      //delta X offset
-    double            getAngle()  { return m_hatchLine.getAngle(); }
-    Base::Vector3d    getOrigin() { return m_hatchLine.getOrigin(); }
-    double            getInterval() {return m_hatchLine.getInterval(); }   //space between lines
-    double            getIntervalX() { return m_hatchLine.getIntervalX(); }      //interval X-component
-    double            getIntervalY() { return m_hatchLine.getIntervalY(); }      //interval Y-component
-    double            getSlope()  { return m_hatchLine.getSlope(); }
-    double            getPatternLength() { return m_hatchLine.getLength(); }
-    Base::Vector3d    getUnitDir();
-    Base::Vector3d    getUnitOrtho();
-    DashSpec          getDashSpec() { return m_hatchLine.getDashParms();}
-    Base::Vector3d    calcApparentStart(TechDraw::BaseGeomPtr g);
-    Base::Vector3d    findAtomStart();
-    Base::Vector3d    getLineOrigin();                              //point corresponding to pattern origin for this line (O + n*intervalX)
-    Base::Vector3d    getPatternStartPoint(TechDraw::BaseGeomPtr g, double &offset, double scale = 1.0);
+    PATLineSpec getPATLineSpec() { return m_hatchLine; }
+    double getOffset() { return m_hatchLine.getOffset(); } //delta X offset
+    double getAngle() { return m_hatchLine.getAngle(); }
+    Base::Vector3d getOrigin() { return m_hatchLine.getOrigin(); }
+    double getInterval() { return m_hatchLine.getInterval(); }   //space between lines
+    double getIntervalX() { return m_hatchLine.getIntervalX(); } //interval X-component
+    double getIntervalY() { return m_hatchLine.getIntervalY(); } //interval Y-component
+    double getSlope() { return m_hatchLine.getSlope(); }
+    double getPatternLength() { return m_hatchLine.getLength(); }
+    Base::Vector3d getUnitDir();
+    Base::Vector3d getUnitOrtho();
+    DashSpec getDashSpec() { return m_hatchLine.getDashParms(); }
+    Base::Vector3d calcApparentStart(TechDraw::BaseGeomPtr g);
+    Base::Vector3d findAtomStart();
+    Base::Vector3d
+    getLineOrigin(); //point corresponding to pattern origin for this line (O + n*intervalX)
+    Base::Vector3d getPatternStartPoint(TechDraw::BaseGeomPtr g, double &offset,
+                                        double scale = 1.0);
 
-    Bnd_Box getBBox() {return m_box;}
+    Bnd_Box getBBox() { return m_box; }
     double getMinX();
     double getMaxX();
     double getMinY();
@@ -156,6 +159,6 @@ private:
 };
 
 
-} //end namespace
+} // namespace TechDraw
 
 #endif

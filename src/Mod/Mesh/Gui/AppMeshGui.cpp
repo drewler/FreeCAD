@@ -23,11 +23,11 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Inventor/SoDB.h>
-# include <Inventor/SoInput.h>
-# include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/annex/ForeignFiles/SoSTLFileKit.h>
-# include <QApplication>
+#include <Inventor/SoDB.h>
+#include <Inventor/SoInput.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/annex/ForeignFiles/SoSTLFileKit.h>
+#include <QApplication>
 #endif
 
 #include <Base/Interpreter.h>
@@ -74,26 +74,25 @@ void loadMeshResource()
     Gui::Translator::instance()->refresh();
 }
 
-namespace MeshGui {
-class Module : public Py::ExtensionModule<Module>
+namespace MeshGui
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("MeshGui")
     {
-        add_varargs_method("convertToSTL",&Module::convertToSTL,
-            "Convert a scene into an STL."
-        );
+        add_varargs_method("convertToSTL", &Module::convertToSTL, "Convert a scene into an STL.");
         initialize("This module is the MeshGui module."); // register with Python
     }
 
     ~Module() override {}
 
 private:
-    Py::Object convertToSTL(const Py::Tuple& args)
+    Py::Object convertToSTL(const Py::Tuple &args)
     {
-        char* inname;
-        char* outname;
-        if (!PyArg_ParseTuple(args.ptr(), "etet","utf-8",&inname,"utf-8",&outname))
+        char *inname;
+        char *outname;
+        if (!PyArg_ParseTuple(args.ptr(), "etet", "utf-8", &inname, "utf-8", &outname))
             throw Py::Exception();
         std::string inputName = std::string(inname);
         PyMem_Free(inname);
@@ -103,10 +102,10 @@ private:
         bool ok = false;
         SoInput in;
         if (in.openFile(inputName.c_str())) {
-            SoSeparator * node = SoDB::readAll(&in);
+            SoSeparator *node = SoDB::readAll(&in);
             if (node) {
                 node->ref();
-                SoSTLFileKit* stlKit = new SoSTLFileKit();
+                SoSTLFileKit *stlKit = new SoSTLFileKit();
                 stlKit->ref();
                 ok = stlKit->readScene(node);
                 stlKit->writeFile(outputName.c_str());
@@ -119,10 +118,7 @@ private:
     }
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace MeshGui
 
@@ -138,11 +134,11 @@ PyMOD_INIT_FUNC(MeshGui)
     try {
         Base::Interpreter().loadModule("Mesh");
     }
-    catch(const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         PyErr_SetString(PyExc_ImportError, e.what());
         PyMOD_Return(nullptr);
     }
-    PyObject* mod = MeshGui::initModule();
+    PyObject *mod = MeshGui::initModule();
     Base::Console().Log("Loading GUI of Mesh module... done\n");
 
     // Register icons
@@ -150,58 +146,57 @@ PyMOD_INIT_FUNC(MeshGui)
 
     // instantiating the commands
     CreateMeshCommands();
-    if (qApp) {
-        (void)new MeshGui::CleanupHandler;
-    }
-    
+    if (qApp) { (void)new MeshGui::CleanupHandler; }
+
     // try to instantiate flat-mesh commands
-    try{
+    try {
         Base::Interpreter().runString("import MeshFlatteningCommand");
-    } catch (Base::PyException &err){
+    }
+    catch (Base::PyException &err) {
         err.ReportException();
     }
 
     // register preferences pages
-    (void)new Gui::PrefPageProducer<MeshGui::DlgSettingsMeshView> ("Display");
-    (void)new Gui::PrefPageProducer<MeshGui::DlgSettingsImportExport>     ( QT_TRANSLATE_NOOP("QObject", "Import-Export") );
+    (void)new Gui::PrefPageProducer<MeshGui::DlgSettingsMeshView>("Display");
+    (void)new Gui::PrefPageProducer<MeshGui::DlgSettingsImportExport>(
+        QT_TRANSLATE_NOOP("QObject", "Import-Export"));
 
     Mesh::Extension3MFFactory::addProducer(new MeshGui::ThumbnailExtensionProducer);
 
-    MeshGui::SoFCMeshObjectElement              ::initClass();
-    MeshGui::SoSFMeshObject                     ::initClass();
-    MeshGui::SoFCMeshObjectNode                 ::initClass();
-    MeshGui::SoFCMeshObjectShape                ::initClass();
-    MeshGui::SoFCMeshSegmentShape               ::initClass();
-    MeshGui::SoFCMeshObjectBoundary             ::initClass();
-    MeshGui::SoFCMaterialEngine                 ::initClass();
-    MeshGui::SoFCIndexedFaceSet                 ::initClass();
-    MeshGui::SoFCMeshPickNode                   ::initClass();
-    MeshGui::SoFCMeshGridNode                   ::initClass();
-    MeshGui::SoPolygon                          ::initClass();
-    MeshGui::PropertyMeshKernelItem             ::init();
-    MeshGui::ViewProviderMesh                   ::init();
-    MeshGui::ViewProviderMeshObject             ::init();
-    MeshGui::ViewProviderIndexedFaceSet         ::init();
-    MeshGui::ViewProviderMeshFaceSet            ::init();
-    MeshGui::ViewProviderPython                 ::init();
-    MeshGui::ViewProviderExport                 ::init();
-    MeshGui::ViewProviderMeshCurvature          ::init();
-    MeshGui::ViewProviderMeshTransform          ::init();
+    MeshGui::SoFCMeshObjectElement ::initClass();
+    MeshGui::SoSFMeshObject ::initClass();
+    MeshGui::SoFCMeshObjectNode ::initClass();
+    MeshGui::SoFCMeshObjectShape ::initClass();
+    MeshGui::SoFCMeshSegmentShape ::initClass();
+    MeshGui::SoFCMeshObjectBoundary ::initClass();
+    MeshGui::SoFCMaterialEngine ::initClass();
+    MeshGui::SoFCIndexedFaceSet ::initClass();
+    MeshGui::SoFCMeshPickNode ::initClass();
+    MeshGui::SoFCMeshGridNode ::initClass();
+    MeshGui::SoPolygon ::initClass();
+    MeshGui::PropertyMeshKernelItem ::init();
+    MeshGui::ViewProviderMesh ::init();
+    MeshGui::ViewProviderMeshObject ::init();
+    MeshGui::ViewProviderIndexedFaceSet ::init();
+    MeshGui::ViewProviderMeshFaceSet ::init();
+    MeshGui::ViewProviderPython ::init();
+    MeshGui::ViewProviderExport ::init();
+    MeshGui::ViewProviderMeshCurvature ::init();
+    MeshGui::ViewProviderMeshTransform ::init();
     MeshGui::ViewProviderMeshTransformDemolding ::init();
-    MeshGui::ViewProviderMeshDefects            ::init();
-    MeshGui::ViewProviderMeshOrientation        ::init();
-    MeshGui::ViewProviderMeshNonManifolds       ::init();
-    MeshGui::ViewProviderMeshNonManifoldPoints  ::init();
-    MeshGui::ViewProviderMeshDuplicatedFaces    ::init();
-    MeshGui::ViewProviderMeshDuplicatedPoints   ::init();
-    MeshGui::ViewProviderMeshDegenerations      ::init();
-    MeshGui::ViewProviderMeshIndices            ::init();
-    MeshGui::ViewProviderMeshSelfIntersections  ::init();
-    MeshGui::ViewProviderMeshFolds              ::init();
-    MeshGui::Workbench                          ::init();
-    Gui::ViewProviderBuilder::add(
-        Mesh::PropertyMeshKernel::getClassTypeId(),
-        MeshGui::ViewProviderMeshFaceSet::getClassTypeId());
+    MeshGui::ViewProviderMeshDefects ::init();
+    MeshGui::ViewProviderMeshOrientation ::init();
+    MeshGui::ViewProviderMeshNonManifolds ::init();
+    MeshGui::ViewProviderMeshNonManifoldPoints ::init();
+    MeshGui::ViewProviderMeshDuplicatedFaces ::init();
+    MeshGui::ViewProviderMeshDuplicatedPoints ::init();
+    MeshGui::ViewProviderMeshDegenerations ::init();
+    MeshGui::ViewProviderMeshIndices ::init();
+    MeshGui::ViewProviderMeshSelfIntersections ::init();
+    MeshGui::ViewProviderMeshFolds ::init();
+    MeshGui::Workbench ::init();
+    Gui::ViewProviderBuilder::add(Mesh::PropertyMeshKernel::getClassTypeId(),
+                                  MeshGui::ViewProviderMeshFaceSet::getClassTypeId());
 
     // add resources and reloads the translators
     loadMeshResource();

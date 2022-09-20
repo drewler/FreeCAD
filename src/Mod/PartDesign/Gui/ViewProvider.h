@@ -30,14 +30,16 @@
 
 #include <Mod/Part/Gui/ViewProviderAttachExtension.h>
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 class TaskDlgFeatureParameters;
 
 /**
  * A common base class for all part design features view providers
  */
-class PartDesignGuiExport ViewProvider : public PartGui::ViewProviderPart, PartGui::ViewProviderAttachExtension
+class PartDesignGuiExport ViewProvider: public PartGui::ViewProviderPart,
+                                        PartGui::ViewProviderAttachExtension
 {
     using inherited = PartGui::ViewProviderPart;
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProvider);
@@ -49,8 +51,8 @@ public:
     ~ViewProvider() override;
 
     bool doubleClicked(void) override;
-    void updateData(const App::Property*) override;
-    void onChanged(const App::Property* prop) override;
+    void updateData(const App::Property *) override;
+    void onChanged(const App::Property *prop) override;
 
     void setTipIcon(bool onoff);
 
@@ -66,14 +68,14 @@ public:
     void makeTemporaryVisible(bool);
 
     //Returns the ViewProvider of the body the feature belongs to, or NULL, if not in a body
-    ViewProviderBody* getBodyViewProvider();
+    ViewProviderBody *getBodyViewProvider();
 
-    PyObject* getPyObject(void) override;
+    PyObject *getPyObject(void) override;
 
-    QIcon mergeColorfulOverlayIcons (const QIcon & orig) const override;
+    QIcon mergeColorfulOverlayIcons(const QIcon &orig) const override;
 
 protected:
-    void setupContextMenu(QMenu* menu, QObject* receiver, const char* member) override;
+    void setupContextMenu(QMenu *menu, QObject *receiver, const char *member) override;
     bool setEdit(int ModNum) override;
     void unsetEdit(int ModNum) override;
 
@@ -86,7 +88,7 @@ protected:
     virtual TaskDlgFeatureParameters *getEditDialog();
 
     std::string oldWb;
-    App::DocumentObject* oldTip;
+    App::DocumentObject *oldTip;
     bool isSetTipIcon;
 };
 

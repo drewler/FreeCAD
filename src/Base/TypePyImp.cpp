@@ -39,63 +39,57 @@ std::string TypePy::representation() const
     return str.str();
 }
 
-PyObject* TypePy::fromName (PyObject *args)
+PyObject *TypePy::fromName(PyObject *args)
 {
     const char *name;
-    if (!PyArg_ParseTuple(args, "s", &name))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "s", &name)) return nullptr;
 
     Base::Type type = Base::Type::fromName(name);
     return new TypePy(new Base::Type(type));
 }
 
-PyObject* TypePy::fromKey (PyObject *args)
+PyObject *TypePy::fromKey(PyObject *args)
 {
     unsigned int index;
-    if (!PyArg_ParseTuple(args, "I", &index))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "I", &index)) return nullptr;
 
     Base::Type type = Base::Type::fromKey(index);
     return new TypePy(new Base::Type(type));
 }
 
-PyObject* TypePy::getNumTypes (PyObject *args)
+PyObject *TypePy::getNumTypes(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     int num = Base::Type::getNumTypes();
     return PyLong_FromLong(num);
 }
 
-PyObject* TypePy::getBadType (PyObject *args)
+PyObject *TypePy::getBadType(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     Base::Type type = Base::Type::badType();
     return new TypePy(new Base::Type(type));
 }
 
-PyObject*  TypePy::getParent(PyObject *args)
+PyObject *TypePy::getParent(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     Base::Type type = getBaseTypePtr()->getParent();
     return new TypePy(new Base::Type(type));
 }
 
-PyObject*  TypePy::isBad(PyObject *args)
+PyObject *TypePy::isBad(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     bool v = getBaseTypePtr()->isBad();
     return PyBool_FromLong(v ? 1 : 0);
 }
 
-PyObject*  TypePy::isDerivedFrom(PyObject *args)
+PyObject *TypePy::isDerivedFrom(PyObject *args)
 {
     Base::Type type;
 
@@ -107,22 +101,21 @@ PyObject*  TypePy::isDerivedFrom(PyObject *args)
         }
 
         PyErr_Clear();
-        PyObject* t;
+        PyObject *t;
         if (PyArg_ParseTuple(args, "O!", &TypePy::Type, &t)) {
-            type = *static_cast<TypePy*>(t)->getBaseTypePtr();
+            type = *static_cast<TypePy *>(t)->getBaseTypePtr();
             break;
         }
 
         PyErr_SetString(PyExc_TypeError, "TypeId or str expected");
         return nullptr;
-    }
-    while (false);
+    } while (false);
 
     bool v = (type != Base::Type::badType() && getBaseTypePtr()->isDerivedFrom(type));
     return PyBool_FromLong(v ? 1 : 0);
 }
 
-PyObject*  TypePy::getAllDerivedFrom(PyObject *args)
+PyObject *TypePy::getAllDerivedFrom(PyObject *args)
 {
     Base::Type type;
 
@@ -134,16 +127,15 @@ PyObject*  TypePy::getAllDerivedFrom(PyObject *args)
         }
 
         PyErr_Clear();
-        PyObject* t;
+        PyObject *t;
         if (PyArg_ParseTuple(args, "O!", &TypePy::Type, &t)) {
-            type = *static_cast<TypePy*>(t)->getBaseTypePtr();
+            type = *static_cast<TypePy *>(t)->getBaseTypePtr();
             break;
         }
 
         PyErr_SetString(PyExc_TypeError, "TypeId or str expected");
         return nullptr;
-    }
-    while (false);
+    } while (false);
 
     std::vector<Base::Type> ary;
     Base::Type::getAllDerivedFrom(type, ary);
@@ -154,10 +146,9 @@ PyObject*  TypePy::getAllDerivedFrom(PyObject *args)
     return Py::new_reference_to(res);
 }
 
-PyObject*  TypePy::getAllDerived(PyObject *args)
+PyObject *TypePy::getAllDerived(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     Base::Type type = Base::Type::fromName(getBaseTypePtr()->getName());
     std::vector<Base::Type> ary;
@@ -169,11 +160,12 @@ PyObject*  TypePy::getAllDerived(PyObject *args)
     return Py::new_reference_to(res);
 }
 
-namespace {
-static void deallocPyObject(PyObject* py)
+namespace
 {
-    Base::PyObjectBase* pybase = static_cast<Base::PyObjectBase*>(py);
-    Base::BaseClass* base = static_cast<Base::BaseClass*>(pybase->getTwinPointer());
+static void deallocPyObject(PyObject *py)
+{
+    Base::PyObjectBase *pybase = static_cast<Base::PyObjectBase *>(py);
+    Base::BaseClass *base = static_cast<Base::BaseClass *>(pybase->getTwinPointer());
     if (Base::BindingManager::instance().retrieveWrapper(base) == py) {
         Base::BindingManager::instance().releaseWrapper(base, py);
         delete base;
@@ -182,14 +174,14 @@ static void deallocPyObject(PyObject* py)
     Base::PyObjectBase::PyDestructor(py);
 }
 
-static PyObject* createPyObject(Base::BaseClass* base)
+static PyObject *createPyObject(Base::BaseClass *base)
 {
-    PyObject* py = base->getPyObject();
+    PyObject *py = base->getPyObject();
 
     if (PyObject_TypeCheck(py, &Base::PyObjectBase::Type)) {
         // if the Python wrapper is a sub-class of PyObjectBase then
         // check if the C++ object must be added to the list of tracked objects
-        Base::PyObjectBase* pybase = static_cast<Base::PyObjectBase*>(py);
+        Base::PyObjectBase *pybase = static_cast<Base::PyObjectBase *>(py);
         if (base == pybase->getTwinPointer()) {
             // steal a reference because at this point the counter is at 2
             Py_DECREF(py);
@@ -209,12 +201,11 @@ static PyObject* createPyObject(Base::BaseClass* base)
     return py;
 }
 
-}
+} // namespace
 
-PyObject* TypePy::createInstance (PyObject *args)
+PyObject *TypePy::createInstance(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     Py::String name(getBaseTypePtr()->getName());
     Py::TupleN tuple(name);
@@ -222,56 +213,41 @@ PyObject* TypePy::createInstance (PyObject *args)
     return createInstanceByName(tuple.ptr());
 }
 
-PyObject* TypePy::createInstanceByName (PyObject *args)
+PyObject *TypePy::createInstanceByName(PyObject *args)
 {
-    const char* name;
-    PyObject* load = Py_False;
-    if (!PyArg_ParseTuple(args, "s|O!", &name, &PyBool_Type, &load))
-        return nullptr;
+    const char *name;
+    PyObject *load = Py_False;
+    if (!PyArg_ParseTuple(args, "s|O!", &name, &PyBool_Type, &load)) return nullptr;
 
     bool bLoad = Base::asBoolean(load);
-    Base::Type type = Base::Type::getTypeIfDerivedFrom(name, Base::BaseClass::getClassTypeId(), bLoad);
-    if (type.isBad())
-        Py_Return;
+    Base::Type type =
+        Base::Type::getTypeIfDerivedFrom(name, Base::BaseClass::getClassTypeId(), bLoad);
+    if (type.isBad()) Py_Return;
 
-    void* typeInstance = type.createInstance();
-    if (!typeInstance)
-        Py_Return;
+    void *typeInstance = type.createInstance();
+    if (!typeInstance) Py_Return;
 
-    Base::BaseClass* base = static_cast<Base::BaseClass*>(typeInstance);
+    Base::BaseClass *base = static_cast<Base::BaseClass *>(typeInstance);
 
     return createPyObject(base);
 }
 
-Py::String TypePy::getName() const
-{
-    return Py::String(std::string(getBaseTypePtr()->getName()));
-}
+Py::String TypePy::getName() const { return Py::String(std::string(getBaseTypePtr()->getName())); }
 
-Py::Long TypePy::getKey() const
-{
-    return Py::Long(static_cast<long>(getBaseTypePtr()->getKey()));
-}
+Py::Long TypePy::getKey() const { return Py::Long(static_cast<long>(getBaseTypePtr()->getKey())); }
 
 Py::String TypePy::getModule() const
 {
     std::string module(getBaseTypePtr()->getName());
     std::string::size_type pos = module.find_first_of("::");
 
-    if (pos != std::string::npos)
-        module = std::string(module, 0, pos);
+    if (pos != std::string::npos) module = std::string(module, 0, pos);
     else
         module.clear();
 
     return Py::String(module);
 }
 
-PyObject *TypePy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *TypePy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int TypePy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int TypePy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

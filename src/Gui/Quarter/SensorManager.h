@@ -37,34 +37,43 @@
 
 class QTimer;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
 class SignalThread;
 
-class SensorManager : public QObject {
-  Q_OBJECT
-  typedef QObject inherited;
+class SensorManager: public QObject
+{
+    Q_OBJECT
+    typedef QObject inherited;
+
 public:
-  SensorManager();
-  ~SensorManager();
+    SensorManager();
+    ~SensorManager();
 
 public Q_SLOTS:
-  void idleTimeout();
-  void delayTimeout();
-  void timerQueueTimeout();
-  void sensorQueueChanged();
-  void setTimerEpsilon(double sec);
+    void idleTimeout();
+    void delayTimeout();
+    void timerQueueTimeout();
+    void sensorQueueChanged();
+    void setTimerEpsilon(double sec);
 
 private:
-  static void sensorQueueChangedCB(void * closure);
-  QTimer * idletimer;
-  QTimer * delaytimer;
-  QTimer * timerqueuetimer;
-  unsigned long mainthreadid;
-  SignalThread * signalthread;
-  double timerEpsilon;
+    static void sensorQueueChangedCB(void *closure);
+    QTimer *idletimer;
+    QTimer *delaytimer;
+    QTimer *timerqueuetimer;
+    unsigned long mainthreadid;
+    SignalThread *signalthread;
+    double timerEpsilon;
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_SENSORMANAGER_H

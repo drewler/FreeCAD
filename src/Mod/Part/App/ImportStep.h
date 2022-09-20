@@ -27,7 +27,8 @@
 #include <Base/Parameter.h>
 
 
-namespace App {
+namespace App
+{
 class Document;
 }
 
@@ -37,7 +38,8 @@ namespace Part
 class PartExport ImportExportSettings
 {
 public:
-    enum class ImportMode {
+    enum class ImportMode
+    {
         SingleDocument = 0,
         GroupPerDocument = 1,
         GroupPerDirectory = 2,
@@ -81,9 +83,10 @@ private:
 
 /** The part shape property
  */
-PartExport int ImportStepParts(App::Document *pcDoc, const char* Name);
+PartExport int ImportStepParts(App::Document *pcDoc, const char *Name);
 
-inline std::list<std::string> supportedSTEPSchemes() {
+inline std::list<std::string> supportedSTEPSchemes()
+{
     std::list<std::string> schemes;
     schemes.emplace_back("AP203");
     schemes.emplace_back("AP214CD");
@@ -94,7 +97,6 @@ inline std::list<std::string> supportedSTEPSchemes() {
 }
 
 } //namespace Part
-
 
 
 #endif

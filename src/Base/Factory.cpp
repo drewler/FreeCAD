@@ -25,7 +25,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-#	include <list>
+#include <list>
 #endif
 
 #include "Factory.h"
@@ -35,76 +35,72 @@
 using namespace Base;
 
 
-Factory::~Factory ()
+Factory::~Factory()
 {
-  for (std::map<const std::string, AbstractProducer*>::iterator pI = _mpcProducers.begin(); pI != _mpcProducers.end(); ++pI)
-    delete pI->second;
+    for (std::map<const std::string, AbstractProducer *>::iterator pI = _mpcProducers.begin();
+         pI != _mpcProducers.end(); ++pI)
+        delete pI->second;
 }
 
-void* Factory::Produce (const char *sClassName) const
+void *Factory::Produce(const char *sClassName) const
 {
-  std::map<const std::string, AbstractProducer*>::const_iterator pProd;
+    std::map<const std::string, AbstractProducer *>::const_iterator pProd;
 
-  pProd = _mpcProducers.find(sClassName);
-  if (pProd != _mpcProducers.end())
-    return pProd->second->Produce();
-  else
-    return nullptr;
+    pProd = _mpcProducers.find(sClassName);
+    if (pProd != _mpcProducers.end()) return pProd->second->Produce();
+    else
+        return nullptr;
 }
 
-void Factory::AddProducer (const char *sClassName, AbstractProducer *pcProducer)
+void Factory::AddProducer(const char *sClassName, AbstractProducer *pcProducer)
 {
-  _mpcProducers[sClassName] = pcProducer;
+    _mpcProducers[sClassName] = pcProducer;
 }
 
-bool Factory::CanProduce(const char* sClassName) const
+bool Factory::CanProduce(const char *sClassName) const
 {
-  return (_mpcProducers.find(sClassName) != _mpcProducers.end());
+    return (_mpcProducers.find(sClassName) != _mpcProducers.end());
 }
 
 std::list<std::string> Factory::CanProduce() const
 {
-  std::list<std::string> lObjects;
+    std::list<std::string> lObjects;
 
-  for (std::map<const std::string, AbstractProducer*>::const_iterator pI = _mpcProducers.begin(); pI != _mpcProducers.end(); ++pI)
-  {
-    lObjects.push_back(pI->first);
-  }
+    for (std::map<const std::string, AbstractProducer *>::const_iterator pI = _mpcProducers.begin();
+         pI != _mpcProducers.end(); ++pI) {
+        lObjects.push_back(pI->first);
+    }
 
-  return lObjects;
+    return lObjects;
 }
 
 // ----------------------------------------------------
 
-ScriptFactorySingleton* ScriptFactorySingleton::_pcSingleton = nullptr;
+ScriptFactorySingleton *ScriptFactorySingleton::_pcSingleton = nullptr;
 
 
-
-ScriptFactorySingleton& ScriptFactorySingleton::Instance()
+ScriptFactorySingleton &ScriptFactorySingleton::Instance()
 {
-  if (!_pcSingleton)
-    _pcSingleton = new ScriptFactorySingleton;
-  return *_pcSingleton;
+    if (!_pcSingleton) _pcSingleton = new ScriptFactorySingleton;
+    return *_pcSingleton;
 }
 
-void ScriptFactorySingleton::Destruct ()
+void ScriptFactorySingleton::Destruct()
 {
-  if (_pcSingleton)
-    delete _pcSingleton;
-  _pcSingleton = nullptr;
+    if (_pcSingleton) delete _pcSingleton;
+    _pcSingleton = nullptr;
 }
 
-const char* ScriptFactorySingleton::ProduceScript (const char* sScriptName) const
+const char *ScriptFactorySingleton::ProduceScript(const char *sScriptName) const
 {
-  const char* script = static_cast<const char*>(Produce(sScriptName));
+    const char *script = static_cast<const char *>(Produce(sScriptName));
 
-  if ( !script )
-  {
+    if (!script) {
 #ifdef FC_DEBUG
-    Console().Warning("\"%s\" is not registered\n", sScriptName);
+        Console().Warning("\"%s\" is not registered\n", sScriptName);
 #endif
-    return ""; // no data
-  }
+        return ""; // no data
+    }
 
-  return script;
+    return script;
 }

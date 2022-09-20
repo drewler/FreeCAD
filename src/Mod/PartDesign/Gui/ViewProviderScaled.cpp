@@ -28,8 +28,9 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderScaled,PartDesignGui::ViewProviderTransformed)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderScaled, PartDesignGui::ViewProviderTransformed)
 
-TaskDlgFeatureParameters *ViewProviderScaled::getEditDialog() {
-    return new TaskDlgScaledParameters (this);
+TaskDlgFeatureParameters *ViewProviderScaled::getEditDialog()
+{
+    return new TaskDlgScaledParameters(this);
 }

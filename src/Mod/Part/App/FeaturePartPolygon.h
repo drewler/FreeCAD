@@ -31,7 +31,7 @@
 namespace Part
 {
 
-class Polygon : public Part::Feature
+class Polygon: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::Polygon);
 
@@ -40,7 +40,7 @@ public:
     ~Polygon() override;
 
     App::PropertyVectorList Nodes;
-    App::PropertyBool       Close;
+    App::PropertyBool Close;
 
     /** @name methods override Feature */
     //@{

@@ -22,9 +22,9 @@
 #include "DriverDAT_R_SMDS_Mesh.h"
 #include "DriverDAT_W_SMDS_Mesh.h"
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  DriverDAT_R_SMDS_Mesh aR;
-  DriverDAT_W_SMDS_Mesh aW;
-  return 1;
+    DriverDAT_R_SMDS_Mesh aR;
+    DriverDAT_W_SMDS_Mesh aW;
+    return 1;
 }

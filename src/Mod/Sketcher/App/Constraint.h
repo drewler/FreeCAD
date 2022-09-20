@@ -40,7 +40,8 @@ namespace Sketcher
  This is mandatory in order to keep the handling of constraint types upward compatible which means that
  this program version ignores later introduced constraint types when reading them from a project file.
  */
-enum ConstraintType : int {
+enum ConstraintType : int
+{
     None = 0,
     Coincident = 1,
     Horizontal = 2,
@@ -64,22 +65,23 @@ enum ConstraintType : int {
     NumConstraintTypes // must be the last item!
 };
 
-enum InternalAlignmentType {
-    Undef                   = 0,
-    EllipseMajorDiameter    = 1,
-    EllipseMinorDiameter    = 2,
-    EllipseFocus1           = 3,
-    EllipseFocus2           = 4,
-    HyperbolaMajor          = 5,
-    HyperbolaMinor          = 6,
-    HyperbolaFocus          = 7,
-    ParabolaFocus           = 8,
-    BSplineControlPoint     = 9,
-    BSplineKnotPoint        = 10,
+enum InternalAlignmentType
+{
+    Undef = 0,
+    EllipseMajorDiameter = 1,
+    EllipseMinorDiameter = 2,
+    EllipseFocus1 = 3,
+    EllipseFocus2 = 4,
+    HyperbolaMajor = 5,
+    HyperbolaMinor = 6,
+    HyperbolaFocus = 7,
+    ParabolaFocus = 8,
+    BSplineControlPoint = 9,
+    BSplineKnotPoint = 10,
     NumInternalAlignmentType // must be the last item!
 };
 
-class SketcherExport Constraint : public Base::Persistence
+class SketcherExport Constraint: public Base::Persistence
 {
     TYPESYSTEM_HEADER_WITH_OVERRIDE();
 
@@ -89,63 +91,65 @@ public:
 
     // Constraints objects explicitly not copiable with standard methods
     // Copy constructor is private for internal use only
-    Constraint &operator =(const Constraint &a) = delete;
+    Constraint &operator=(const Constraint &a) = delete;
 
     // Constraints objects explicitly not movable
-    Constraint(Constraint&&) = delete;
-    Constraint& operator=(Constraint&&) = delete;
+    Constraint(Constraint &&) = delete;
+    Constraint &operator=(Constraint &&) = delete;
 
     ~Constraint() override = default;
 
-    Constraint *clone() const; // does copy the tag, it will be treated as a rename by the expression engine.
+    Constraint *
+    clone() const; // does copy the tag, it will be treated as a rename by the expression engine.
     Constraint *copy() const; // does not copy the tag, but generates a new one
 
     // from base class
     unsigned int getMemSize() const override;
-    void Save(Base::Writer &/*writer*/) const override;
-    void Restore(Base::XMLReader &/*reader*/) override;
+    void Save(Base::Writer & /*writer*/) const override;
+    void Restore(Base::XMLReader & /*reader*/) override;
 
     PyObject *getPyObject() override;
 
     Base::Quantity getPresentationValue() const;
-    inline void setValue(double newValue) {
-        Value = newValue;
-    }
-    inline double getValue() const {
-        return Value;
-    }
+    inline void setValue(double newValue) { Value = newValue; }
+    inline double getValue() const { return Value; }
 
-    inline bool isDimensional() const {
-        return Type == Distance || Type == DistanceX || Type == DistanceY ||
-               Type == Radius || Type == Diameter || Type == Angle || Type == SnellsLaw || Type == Weight;
+    inline bool isDimensional() const
+    {
+        return Type == Distance || Type == DistanceX || Type == DistanceY || Type == Radius
+            || Type == Diameter || Type == Angle || Type == SnellsLaw || Type == Weight;
     }
 
     /// utility function to swap the index in First/Second/Third of the provided constraint from the fromGeoId GeoId to toGeoId
     void substituteIndex(int fromGeoId, int toGeoId);
 
-    std::string typeToString() const {return typeToString(Type);}
+    std::string typeToString() const { return typeToString(Type); }
     static std::string typeToString(ConstraintType type);
 
-    std::string internalAlignmentTypeToString() const {return internalAlignmentTypeToString(AlignmentType);}
+    std::string internalAlignmentTypeToString() const
+    {
+        return internalAlignmentTypeToString(AlignmentType);
+    }
     static std::string internalAlignmentTypeToString(InternalAlignmentType alignment);
 
     friend class PropertyConstraintList;
 
 private:
-    Constraint(const Constraint&) = default; // only for internal use
+    Constraint(const Constraint &) = default; // only for internal use
 
 private:
     double Value;
 
-    constexpr static std::array<const char *,ConstraintType::NumConstraintTypes> type2str {
-        {   "None", "Horizontal", "Vertical","Parallel", "Tangent", "Distance", "DistanceX", "DistanceY", "Angle", "Perpendicular", "Radius",
-            "Equal", "PointOnObject", "Symmetric", "InternalAlignment", "SnellsLaw", "Block", "Diameter", "Weight"}
-    };
+    constexpr static std::array<const char *, ConstraintType::NumConstraintTypes> type2str {
+        {"None", "Horizontal", "Vertical", "Parallel", "Tangent", "Distance", "DistanceX",
+         "DistanceY", "Angle", "Perpendicular", "Radius", "Equal", "PointOnObject", "Symmetric",
+         "InternalAlignment", "SnellsLaw", "Block", "Diameter", "Weight"}};
 
-    constexpr static std::array<const char *,InternalAlignmentType::NumInternalAlignmentType> internalAlignmentType2str {
-        {   "Undef", "EllipseMajorDiameter", "EllipseMinorDiameter", "EllipseFocus1", "EllipseFocus2", "HyperbolaMajor", "HyperbolaMinor",
-            "HyperbolaFocus", "ParabolaFocus", "BSplineControlPoint", "BSplineKnotPoint"}
-    };
+    constexpr static std::array<const char *, InternalAlignmentType::NumInternalAlignmentType>
+        internalAlignmentType2str {{"Undef", "EllipseMajorDiameter", "EllipseMinorDiameter",
+                                    "EllipseFocus1", "EllipseFocus2", "HyperbolaMajor",
+                                    "HyperbolaMinor", "HyperbolaFocus", "ParabolaFocus",
+                                    "BSplineControlPoint", "BSplineKnotPoint"}};
 
 public:
     ConstraintType Type;

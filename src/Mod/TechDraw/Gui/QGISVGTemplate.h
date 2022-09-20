@@ -33,7 +33,8 @@ class QFile;
 class QString;
 QT_END_NAMESPACE
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawSVGTemplate;
 }
 
@@ -43,15 +44,18 @@ namespace TechDrawGui
 {
 class QGSPage;
 
-class TechDrawGuiExport QGISVGTemplate : public QGITemplate
+class TechDrawGuiExport QGISVGTemplate: public QGITemplate
 {
     Q_OBJECT
 
 public:
-    explicit QGISVGTemplate(QGSPage* scene);
+    explicit QGISVGTemplate(QGSPage *scene);
     virtual ~QGISVGTemplate();
 
-    enum {Type = QGraphicsItem::UserType + 153};
+    enum
+    {
+        Type = QGraphicsItem::UserType + 153
+    };
     int type() const { return Type; }
 
     void draw();
@@ -61,15 +65,15 @@ public:
 
 protected:
     void openFile(const QFile &file);
-    void load (const QString & fileName);
+    void load(const QString &fileName);
     void createClickHandles(void);
 
 protected:
     bool firstTime;
     QGraphicsSvgItem *m_svgItem;
     QSvgRenderer *m_svgRender;
-};  // class QGISVGTemplate
+}; // class QGISVGTemplate
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMSVGTEMPLATE_H

@@ -32,7 +32,8 @@ QT_BEGIN_NAMESPACE
 class QGraphicsScene;
 QT_END_NAMESPACE
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawTemplate;
 }
 
@@ -41,7 +42,7 @@ namespace TechDrawGui
 class TemplateTextField;
 class QGSPage;
 
-class TechDrawGuiExport QGITemplate : public QObject, public QGraphicsItemGroup
+class TechDrawGuiExport QGITemplate: public QObject, public QGraphicsItemGroup
 {
     Q_OBJECT
 
@@ -49,13 +50,16 @@ public:
     QGITemplate(QGSPage *);
     ~QGITemplate();
 
-    enum {Type = QGraphicsItem::UserType + 150};
-    int type() const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 150
+    };
+    int type() const { return Type; }
 
     void clearContents();
 
     void setTemplate(TechDraw::DrawTemplate *obj);
-    TechDraw::DrawTemplate * getTemplate() { return pageTemplate; }
+    TechDraw::DrawTemplate *getTemplate() { return pageTemplate; }
 
     inline qreal getY() { return y() * -1; }
 
@@ -70,6 +74,6 @@ protected:
     std::vector<TemplateTextField *> textFields;
 };
 
-} // namespace
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMTEMPLATE_H

@@ -33,36 +33,38 @@
 class Ui_TaskDatumParameters;
 class QLineEdit;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui { 
+namespace PartDesignGui
+{
 
 
-
-class TaskDatumParameters : public PartGui::TaskAttacher
+class TaskDatumParameters: public PartGui::TaskAttacher
 {
     Q_OBJECT
 
 public:
-    explicit TaskDatumParameters(ViewProviderDatum *DatumView,QWidget *parent = nullptr);
+    explicit TaskDatumParameters(ViewProviderDatum *DatumView, QWidget *parent = nullptr);
     ~TaskDatumParameters() override;
 };
 
 /// simulation dialog for the TaskView
-class TaskDlgDatumParameters : public PartGui::TaskDlgAttacher
+class TaskDlgDatumParameters: public PartGui::TaskDlgAttacher
 {
     Q_OBJECT
 
 public:
     explicit TaskDlgDatumParameters(ViewProviderDatum *DatumView);
     ~TaskDlgDatumParameters() override;
-    
+
     bool accept() override;
     bool reject() override;
 };

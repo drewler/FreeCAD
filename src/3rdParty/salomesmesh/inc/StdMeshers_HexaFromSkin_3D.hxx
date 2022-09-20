@@ -31,24 +31,20 @@
  * \brief algorithm generating hexahedral mesh from 2D skin of block
  */
 
-class STDMESHERS_EXPORT StdMeshers_HexaFromSkin_3D : public SMESH_3D_Algo
+class STDMESHERS_EXPORT StdMeshers_HexaFromSkin_3D: public SMESH_3D_Algo
 {
 public:
-  StdMeshers_HexaFromSkin_3D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_HexaFromSkin_3D();
+    StdMeshers_HexaFromSkin_3D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_HexaFromSkin_3D();
 
-  virtual bool Compute(SMESH_Mesh & aMesh, SMESH_MesherHelper* aHelper);
+    virtual bool Compute(SMESH_Mesh &aMesh, SMESH_MesherHelper *aHelper);
 
-  virtual bool CheckHypothesis(SMESH_Mesh& aMesh,
-                               const TopoDS_Shape& aShape,
-                               Hypothesis_Status& aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh& aMesh, const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Evaluate(SMESH_Mesh &         aMesh,
-                        const TopoDS_Shape & aShape,
-                        MapShapeNbElems&     aResMap);
-  
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 };
 
 #endif

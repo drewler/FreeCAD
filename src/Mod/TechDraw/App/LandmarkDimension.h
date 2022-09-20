@@ -25,8 +25,8 @@
 
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
-# include <App/DocumentObject.h>
-# include <App/PropertyStandard.h>
+#include <App/DocumentObject.h>
+#include <App/PropertyStandard.h>
 
 #include "DrawViewDimension.h"
 
@@ -34,14 +34,15 @@
 class TopoDS_Shape;
 class gp_Ax2;
 
-namespace Measure {
+namespace Measure
+{
 class Measurement;
 }
 namespace TechDraw
 {
 class DrawViewPart;
 
-class TechDrawExport LandmarkDimension : public TechDraw::DrawViewDimension
+class TechDrawExport LandmarkDimension: public TechDraw::DrawViewDimension
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::LandmarkDimension);
 
@@ -50,30 +51,32 @@ public:
     LandmarkDimension();
     ~LandmarkDimension() override;
 
-    App::PropertyStringList  ReferenceTags;     //tags of 2d vertices in DVP
+    App::PropertyStringList ReferenceTags; //tags of 2d vertices in DVP
 
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     void unsetupObject() override;
 
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderDimension"; }
-/*    virtual PyObject *getPyObject(void) override;*/
+    const char *getViewProviderName() const override
+    {
+        return "TechDrawGui::ViewProviderDimension";
+    }
+    /*    virtual PyObject *getPyObject(void) override;*/
 
     bool checkReferences2D() const override;
     bool has2DReferences() const override;
     pointPair getPointsTwoVerts() override;
     std::vector<Base::Vector3d> get2DPoints() const;
-    DrawViewPart* getViewPart() const override;
+    DrawViewPart *getViewPart() const override;
     int getRefType() const override;
 
     gp_Ax2 getProjAxis() const;
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
     void onDocumentRestored() override;
 
-    Base::Vector3d projectPoint(const Base::Vector3d& pt, DrawViewPart* dvp) const;
+    Base::Vector3d projectPoint(const Base::Vector3d &pt, DrawViewPart *dvp) const;
 
 private:
 };

@@ -35,7 +35,7 @@
 namespace Base
 {
 class Matrix4D;
-template <class _Precision> class Vector3;
+template<class _Precision> class Vector3;
 using Vector3f = Vector3<float>;
 
 /** A Builder class for 3D representations on App level
@@ -66,73 +66,84 @@ using Vector3f = Vector3<float>;
 class BaseExport Builder3D
 {
 public:
-  /// Construction
-  Builder3D();
-  /// Destruction
-  virtual ~Builder3D();
+    /// Construction
+    Builder3D();
+    /// Destruction
+    virtual ~Builder3D();
 
-  /** @name point set handling */
-  //@{
-  /// starts a point set
-  void startPoints(short pointSize=2, float color_r=1.0,float color_g=0.0,float color_b=0.0);
-  /// insert a point in an point set
-  void addPoint(float x, float y, float z);
-  /// add a vector to a point set
-  void addPoint(const Vector3f &vec);
-  /// ends the points set operation
-  void endPoints();
-  /// add a singular point (without startPoints() & endPoints() )
-  void addSinglePoint(float x, float y, float z, short pointSize=2, float color_r=1.0,float color_g=1.0,float color_b=1.0);
-  /// add a singular point (without startPoints() & endPoints() )
-  void addSinglePoint(const Base::Vector3f &vec, short pointSize=2, float color_r=1.0,float color_g=1.0,float color_b=1.0);
-  //@}
+    /** @name point set handling */
+    //@{
+    /// starts a point set
+    void startPoints(short pointSize = 2, float color_r = 1.0, float color_g = 0.0,
+                     float color_b = 0.0);
+    /// insert a point in an point set
+    void addPoint(float x, float y, float z);
+    /// add a vector to a point set
+    void addPoint(const Vector3f &vec);
+    /// ends the points set operation
+    void endPoints();
+    /// add a singular point (without startPoints() & endPoints() )
+    void addSinglePoint(float x, float y, float z, short pointSize = 2, float color_r = 1.0,
+                        float color_g = 1.0, float color_b = 1.0);
+    /// add a singular point (without startPoints() & endPoints() )
+    void addSinglePoint(const Base::Vector3f &vec, short pointSize = 2, float color_r = 1.0,
+                        float color_g = 1.0, float color_b = 1.0);
+    //@}
 
-  /** @name line/direction handling */
-  //@{
-  /// add a line defined by 2 Vector3D
-  void addSingleLine(const Vector3f& pt1, const Vector3f& pt2, short lineSize=2, float color_r=1.0,float color_g=1.0,float color_b=1.0, unsigned short linePattern = 0xffff);
-  /// add a arrow (directed line) by 2 Vector3D. The arrow shows in direction of point 2.
-  void addSingleArrow(const Vector3f& pt1, const Vector3f& pt2, short lineSize=2, float color_r=1.0,float color_g=1.0,float color_b=1.0, unsigned short linePattern = 0xffff);
-  //@}
+    /** @name line/direction handling */
+    //@{
+    /// add a line defined by 2 Vector3D
+    void addSingleLine(const Vector3f &pt1, const Vector3f &pt2, short lineSize = 2,
+                       float color_r = 1.0, float color_g = 1.0, float color_b = 1.0,
+                       unsigned short linePattern = 0xffff);
+    /// add a arrow (directed line) by 2 Vector3D. The arrow shows in direction of point 2.
+    void addSingleArrow(const Vector3f &pt1, const Vector3f &pt2, short lineSize = 2,
+                        float color_r = 1.0, float color_g = 1.0, float color_b = 1.0,
+                        unsigned short linePattern = 0xffff);
+    //@}
 
-  /** @name triangle handling */
-  //@{
-  /// add a (filled) triangle defined by 3 vectors
-  void addSingleTriangle(const Vector3f& pt0, const Vector3f& pt1, const Vector3f& pt2, bool filled = true, short lineSize=2, float color_r=1.0,float color_g=1.0,float color_b=1.0);
-  //@}
+    /** @name triangle handling */
+    //@{
+    /// add a (filled) triangle defined by 3 vectors
+    void addSingleTriangle(const Vector3f &pt0, const Vector3f &pt1, const Vector3f &pt2,
+                           bool filled = true, short lineSize = 2, float color_r = 1.0,
+                           float color_g = 1.0, float color_b = 1.0);
+    //@}
 
-  /** @name Transformation */
-  //@{
-  /// adds a transformation
-  void addTransformation(const Base::Matrix4D&);
-  void addTransformation(const Base::Vector3f& translation, const Base::Vector3f& rotationaxis, float fAngle);
-  //@}
+    /** @name Transformation */
+    //@{
+    /// adds a transformation
+    void addTransformation(const Base::Matrix4D &);
+    void addTransformation(const Base::Vector3f &translation, const Base::Vector3f &rotationaxis,
+                           float fAngle);
+    //@}
 
-  /** @name text handling */
-  //@{
-  /// add a text
-  void addText(float pos_x, float pos_y , float pos_z,const char * text, float color_r=1.0,float color_g=1.0,float color_b=1.0);
-  /// add a text
-  void addText(const Base::Vector3f &vec,const char * text, float color_r=1.0,float color_g=1.0,float color_b=1.0);
-  //@}
+    /** @name text handling */
+    //@{
+    /// add a text
+    void addText(float pos_x, float pos_y, float pos_z, const char *text, float color_r = 1.0,
+                 float color_g = 1.0, float color_b = 1.0);
+    /// add a text
+    void addText(const Base::Vector3f &vec, const char *text, float color_r = 1.0,
+                 float color_g = 1.0, float color_b = 1.0);
+    //@}
 
-  /// clear the string buffer
-  void clear ();
+    /// clear the string buffer
+    void clear();
 
-  /** @name write the result */
-  //@{
-  /// sends the result to the log and gui
-  void saveToLog();
-  /// save the result to a file (*.iv)
-  void saveToFile(const char* FileName);
-  //@}
+    /** @name write the result */
+    //@{
+    /// sends the result to the log and gui
+    void saveToLog();
+    /// save the result to a file (*.iv)
+    void saveToFile(const char *FileName);
+    //@}
 
 private:
-  /// the result string
-  std::stringstream result;
+    /// the result string
+    std::stringstream result;
 
-  bool bStartEndOpen;
-
+    bool bStartEndOpen;
 };
 
 /**
@@ -151,7 +162,7 @@ public:
      * This automatically opens a separator node.
      * \param str - stream to write the content into
      */
-    InventorBuilder(std::ostream& str);
+    InventorBuilder(std::ostream &str);
     /*!
      * \brief Destruction of an InventorBuilder instance
      */
@@ -174,12 +185,12 @@ public:
      * \brief Sets an info node.
      * \param str - text set to the info node
      */
-    void addInfo(const char* str);
+    void addInfo(const char *str);
     /*!
      * \brief Sets a label node.
      * \param str - text set to the label node
      */
-    void addLabel(const char* str);
+    void addLabel(const char *str);
     /** @name Appearance handling */
     //@{
     /*!
@@ -188,7 +199,7 @@ public:
      * \param color_g - green color
      * \param color_b - blue color
      */
-    void addBaseColor(float color_r,float color_g,float color_b);
+    void addBaseColor(float color_r, float color_g, float color_b);
     /*!
      * \brief Sets a material node. The colors are in the range [0, 1].
      * \param color_r - red color
@@ -196,7 +207,7 @@ public:
      * \param color_b - blue color
      * \param color_a - transparency
      */
-    void addMaterial(float color_r,float color_g,float color_b,float color_a=0);
+    void addMaterial(float color_r, float color_g, float color_b, float color_a = 0);
     /*!
      * \brief Starts a material node. The node must be closed with \ref endMaterial
      * and the colors must be added with \ref addColor().
@@ -212,14 +223,14 @@ public:
      * \param color_g - green color
      * \param color_b - blue color
      */
-    void addColor(float color_r,float color_g,float color_b);
+    void addColor(float color_r, float color_g, float color_b);
     /*!
      * \brief Sets a material binding node.
      * \param binding - binding of the material. Allowed values are:
      * OVERALL, PER_PART, PER_PART_INDEXED, PER_FACE, PER_FACE_INDEXED, PER_VERTEX,
      * PER_VERTEX_INDEXED and DEFAULT.
      */
-    void addMaterialBinding(const char* binding = "OVERALL");
+    void addMaterialBinding(const char *binding = "OVERALL");
     /*!
      * \brief Sets a draw style node.
      * \param pointSize - the point size
@@ -227,13 +238,13 @@ public:
      * \param linePattern - the line pattern
      * \param style - the draw style
      */
-    void addDrawStyle(short pointSize, short lineWidth,
-        unsigned short linePattern = 0xffff, const char* style="FILLED");
+    void addDrawStyle(short pointSize, short lineWidth, unsigned short linePattern = 0xffff,
+                      const char *style = "FILLED");
     /*!
      * \brief Sets a shape hints node.
      * \param crease - the crease angle in radians
      */
-    void addShapeHints(float crease=0.0f);
+    void addShapeHints(float crease = 0.0f);
     /*!
      * \brief Sets a polygon offset node.
      * \param factor - Offset multiplication factor.
@@ -241,7 +252,8 @@ public:
      * \param styles - Can be FILLED, LINES or POINTS.
      * \param on - Whether the offset is on or off.
      */
-    void addPolygonOffset(float factor=1.0f, float units=1.0f, const char* styles="FILLED", bool on=true);
+    void addPolygonOffset(float factor = 1.0f, float units = 1.0f, const char *styles = "FILLED",
+                          bool on = true);
     //@}
 
     /** @name Add coordinates */
@@ -271,20 +283,22 @@ public:
     /// ends the points set operation
     void endNormal();
     /// add normal binding node
-    void addNormalBinding(const char*);
+    void addNormalBinding(const char *);
     //@}
 
     /** @name Line/Direction handling */
     //@{
     /// add a line defined by 2 Vector3D
-    void addSingleLine(const Vector3f& pt1, const Vector3f& pt2, short lineSize=2,
-                       float color_r=1.0,float color_g=1.0,float color_b=1.0, unsigned short linePattern = 0xffff);
+    void addSingleLine(const Vector3f &pt1, const Vector3f &pt2, short lineSize = 2,
+                       float color_r = 1.0, float color_g = 1.0, float color_b = 1.0,
+                       unsigned short linePattern = 0xffff);
     /// add a arrow (directed line) by 2 Vector3D. The arrow shows in direction of point 2.
-    void addSingleArrow(const Vector3f& pt1, const Vector3f& pt2, short lineSize=2,
-                        float color_r=1.0,float color_g=1.0,float color_b=1.0, unsigned short linePattern = 0xffff);
+    void addSingleArrow(const Vector3f &pt1, const Vector3f &pt2, short lineSize = 2,
+                        float color_r = 1.0, float color_g = 1.0, float color_b = 1.0,
+                        unsigned short linePattern = 0xffff);
     /// add a line defined by a list of points whereat always a pair (i.e. a point and the following point) builds a line.
-    void addLineSet(const std::vector<Vector3f>& points, short lineSize=2,
-                    float color_r=1.0,float color_g=1.0,float color_b=1.0, unsigned short linePattern = 0xffff);
+    void addLineSet(const std::vector<Vector3f> &points, short lineSize = 2, float color_r = 1.0,
+                    float color_g = 1.0, float color_b = 1.0, unsigned short linePattern = 0xffff);
     /// add an SoLineSet node
     void addLineSet();
     //@}
@@ -292,51 +306,54 @@ public:
     /** @name Triangle handling */
     //@{
     /// add a (filled) triangle defined by 3 vectors
-    void addSingleTriangle(const Vector3f& pt0, const Vector3f& pt1, const Vector3f& pt2, bool filled = true, short lineSize=2,
-                           float color_r=1.0,float color_g=1.0,float color_b=1.0);
-    void addSinglePlane(const Vector3f& base, const Vector3f& eX, const Vector3f& eY, float length, float width, bool filled = true,
-                        short lineSize=2, float color_r=1.0,float color_g=1.0,float color_b=1.0);
-    void addIndexedFaceSet(const std::vector<int>& indices);
-    void addFaceSet(const std::vector<int>& vertices);
+    void addSingleTriangle(const Vector3f &pt0, const Vector3f &pt1, const Vector3f &pt2,
+                           bool filled = true, short lineSize = 2, float color_r = 1.0,
+                           float color_g = 1.0, float color_b = 1.0);
+    void addSinglePlane(const Vector3f &base, const Vector3f &eX, const Vector3f &eY, float length,
+                        float width, bool filled = true, short lineSize = 2, float color_r = 1.0,
+                        float color_g = 1.0, float color_b = 1.0);
+    void addIndexedFaceSet(const std::vector<int> &indices);
+    void addFaceSet(const std::vector<int> &vertices);
     //@}
 
     /** @name Surface handling */
     //@{
-    void addNurbsSurface(const std::vector<Base::Vector3f>& controlPoints,
-        int numUControlPoints, int numVControlPoints,
-        const std::vector<float>& uKnots, const std::vector<float>& vKnots);
+    void addNurbsSurface(const std::vector<Base::Vector3f> &controlPoints, int numUControlPoints,
+                         int numVControlPoints, const std::vector<float> &uKnots,
+                         const std::vector<float> &vKnots);
     void addCylinder(float radius, float height);
     void addSphere(float radius);
     //@}
 
     /** @name Bounding Box handling */
     //@{
-    void addBoundingBox(const Vector3f& pt1, const Vector3f& pt2, short lineWidth=2,
-                        float color_r=1.0,float color_g=1.0,float color_b=1.0);
+    void addBoundingBox(const Vector3f &pt1, const Vector3f &pt2, short lineWidth = 2,
+                        float color_r = 1.0, float color_g = 1.0, float color_b = 1.0);
     //@}
 
     /** @name Transformation */
     //@{
     /// adds a transformation
-    void addTransformation(const Matrix4D&);
-    void addTransformation(const Vector3f& translation, const Vector3f& rotationaxis, float fAngle);
+    void addTransformation(const Matrix4D &);
+    void addTransformation(const Vector3f &translation, const Vector3f &rotationaxis, float fAngle);
     //@}
 
     /** @name Text handling */
     //@{
     /// add a text
-    void addText(float pos_x, float pos_y , float pos_z,const char * text,
-                 float color_r=1.0,float color_g=1.0,float color_b=1.0);
+    void addText(float pos_x, float pos_y, float pos_z, const char *text, float color_r = 1.0,
+                 float color_g = 1.0, float color_b = 1.0);
     /// add a text
-    void addText(const Vector3f &vec,const char * text, float color_r=1.0,float color_g=1.0,float color_b=1.0);
+    void addText(const Vector3f &vec, const char *text, float color_r = 1.0, float color_g = 1.0,
+                 float color_b = 1.0);
     //@}
 
 private:
-    InventorBuilder (const InventorBuilder&);
-    void operator = (const InventorBuilder&);
+    InventorBuilder(const InventorBuilder &);
+    void operator=(const InventorBuilder &);
 
 private:
-    std::ostream& result;
+    std::ostream &result;
     int indent;
 };
 
@@ -344,16 +361,15 @@ private:
  * Loads an OpenInventor file.
  * @author Werner Mayer
  */
-class BaseExport InventorLoader {
+class BaseExport InventorLoader
+{
 public:
     struct Face {
-        Face(int32_t p1, int32_t p2, int32_t p3)
-            : p1(p1), p2(p2), p3(p3) {}
+        Face(int32_t p1, int32_t p2, int32_t p3) : p1(p1), p2(p2), p3(p3) {}
         int32_t p1, p2, p3;
     };
 
-    explicit InventorLoader(std::istream &inp) : inp(inp) {
-    }
+    explicit InventorLoader(std::istream &inp) : inp(inp) {}
 
     /// Start the read process. Returns true if successful and false otherwise.
     /// The obtained data can be accessed with the appropriate getter functions.
@@ -364,36 +380,27 @@ public:
 
     /// Returns true if the data come from a non-indexed node as SoFaceSet.
     /// This means that the read points contain duplicates.
-    bool isNonIndexed() const {
-        return isnonindexed;
-    }
+    bool isNonIndexed() const { return isnonindexed; }
 
     /// Return the vectors of an SoNormal node
-    const std::vector<Vector3f>& getVector() {
-        return vector;
-    }
+    const std::vector<Vector3f> &getVector() { return vector; }
 
     /// Return the points of an SoCoordinate3 node
-    const std::vector<Vector3f>& getPoints() {
-        return points;
-    }
+    const std::vector<Vector3f> &getPoints() { return points; }
 
     /// Return the faces of an SoIndexedFaceSet node
-    const std::vector<Face>& getFaces() {
-        return faces;
-    }
+    const std::vector<Face> &getFaces() { return faces; }
 
 private:
     void readNormals();
     void readCoords();
     void readIndexedFaceSet();
     void readFaceSet();
-    template<typename T>
-    std::vector<T> readData(const char*) const;
-    std::vector<Vector3f> convert(const std::vector<float>&) const;
-    std::vector<Face> convert(const std::vector<int32_t>&) const;
-    std::vector<Face> convert(const std::vector<std::vector<int32_t>>&) const;
-    static std::vector<std::vector<int32_t>> split(const std::vector<int32_t>&);
+    template<typename T> std::vector<T> readData(const char *) const;
+    std::vector<Vector3f> convert(const std::vector<float> &) const;
+    std::vector<Face> convert(const std::vector<int32_t> &) const;
+    std::vector<Face> convert(const std::vector<std::vector<int32_t>> &) const;
+    static std::vector<std::vector<int32_t>> split(const std::vector<int32_t> &);
 
 private:
     bool isnonindexed = false;

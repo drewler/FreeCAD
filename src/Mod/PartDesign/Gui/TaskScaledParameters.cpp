@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QAction>
+#include <QAction>
 #endif
 
 #include <App/DocumentObject.h>
@@ -44,9 +44,9 @@ using namespace Gui;
 
 /* TRANSLATOR PartDesignGui::TaskScaledParameters */
 
-TaskScaledParameters::TaskScaledParameters(ViewProviderTransformed *TransformedView,QWidget *parent)
-    : TaskTransformedParameters(TransformedView, parent)
-    , ui(new Ui_TaskScaledParameters)
+TaskScaledParameters::TaskScaledParameters(ViewProviderTransformed *TransformedView,
+                                           QWidget *parent)
+    : TaskTransformedParameters(TransformedView, parent), ui(new Ui_TaskScaledParameters)
 {
     // we need a separate container widget to add all controls to
     proxy = new QWidget(this);
@@ -58,17 +58,18 @@ TaskScaledParameters::TaskScaledParameters(ViewProviderTransformed *TransformedV
     ui->buttonOK->hide();
     ui->checkBoxUpdateView->setEnabled(true);
 
-    blockUpdate = false; // Hack, sometimes it is NOT false although set to false in Transformed::Transformed()!!
+    blockUpdate =
+        false; // Hack, sometimes it is NOT false although set to false in Transformed::Transformed()!!
     setupUI();
 }
 
-TaskScaledParameters::TaskScaledParameters(TaskMultiTransformParameters *parentTask, QLayout *layout)
-        : TaskTransformedParameters(parentTask), ui(new Ui_TaskScaledParameters)
+TaskScaledParameters::TaskScaledParameters(TaskMultiTransformParameters *parentTask,
+                                           QLayout *layout)
+    : TaskTransformedParameters(parentTask), ui(new Ui_TaskScaledParameters)
 {
     proxy = new QWidget(parentTask);
     ui->setupUi(proxy);
-    connect(ui->buttonOK, SIGNAL(pressed()),
-            parentTask, SLOT(onSubTaskButtonOK()));
+    connect(ui->buttonOK, SIGNAL(pressed()), parentTask, SLOT(onSubTaskButtonOK()));
     QMetaObject::connectSlotsByName(this);
 
     layout->addWidget(proxy);
@@ -79,17 +80,19 @@ TaskScaledParameters::TaskScaledParameters(TaskMultiTransformParameters *parentT
     ui->listWidgetFeatures->hide();
     ui->checkBoxUpdateView->hide();
 
-    blockUpdate = false; // Hack, sometimes it is NOT false although set to false in Transformed::Transformed()!!
+    blockUpdate =
+        false; // Hack, sometimes it is NOT false although set to false in Transformed::Transformed()!!
     setupUI();
 }
 
 void TaskScaledParameters::setupUI()
 {
     connect(ui->buttonAddFeature, SIGNAL(toggled(bool)), this, SLOT(onButtonAddFeature(bool)));
-    connect(ui->buttonRemoveFeature, SIGNAL(toggled(bool)), this, SLOT(onButtonRemoveFeature(bool)));
+    connect(ui->buttonRemoveFeature, SIGNAL(toggled(bool)), this,
+            SLOT(onButtonRemoveFeature(bool)));
 
     // Create context menu
-    QAction* action = new QAction(tr("Remove"), this);
+    QAction *action = new QAction(tr("Remove"), this);
     action->setShortcut(QKeySequence::Delete);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     // display shortcut behind the context menu entry
@@ -99,22 +102,20 @@ void TaskScaledParameters::setupUI()
     connect(action, SIGNAL(triggered()), this, SLOT(onFeatureDeleted()));
     ui->listWidgetFeatures->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    connect(ui->spinFactor, SIGNAL(valueChanged(double)),
-            this, SLOT(onFactor(double)));
-    connect(ui->spinOccurrences, SIGNAL(valueChanged(uint)),
-            this, SLOT(onOccurrences(uint)));
-    connect(ui->checkBoxUpdateView, SIGNAL(toggled(bool)),
-            this, SLOT(onUpdateView(bool)));
+    connect(ui->spinFactor, SIGNAL(valueChanged(double)), this, SLOT(onFactor(double)));
+    connect(ui->spinOccurrences, SIGNAL(valueChanged(uint)), this, SLOT(onOccurrences(uint)));
+    connect(ui->checkBoxUpdateView, SIGNAL(toggled(bool)), this, SLOT(onUpdateView(bool)));
 
     // Get the feature data
-    PartDesign::Scaled* pcScaled = static_cast<PartDesign::Scaled*>(getObject());
-    std::vector<App::DocumentObject*> originals = pcScaled->Originals.getValues();
+    PartDesign::Scaled *pcScaled = static_cast<PartDesign::Scaled *>(getObject());
+    std::vector<App::DocumentObject *> originals = pcScaled->Originals.getValues();
 
     // Fill data into dialog elements
-    for (std::vector<App::DocumentObject*>::const_iterator i = originals.begin(); i != originals.end(); ++i) {
-        const App::DocumentObject* obj = *i;
+    for (std::vector<App::DocumentObject *>::const_iterator i = originals.begin();
+         i != originals.end(); ++i) {
+        const App::DocumentObject *obj = *i;
         if (obj) {
-            QListWidgetItem* item = new QListWidgetItem();
+            QListWidgetItem *item = new QListWidgetItem();
             item->setText(QString::fromUtf8(obj->Label.getValue()));
             item->setData(Qt::UserRole, QString::fromLatin1(obj->getNameInDocument()));
             ui->listWidgetFeatures->addItem(item);
@@ -134,11 +135,10 @@ void TaskScaledParameters::setupUI()
 
 void TaskScaledParameters::updateUI()
 {
-    if (blockUpdate)
-        return;
+    if (blockUpdate) return;
     blockUpdate = true;
 
-    PartDesign::Scaled* pcScaled = static_cast<PartDesign::Scaled*>(getObject());
+    PartDesign::Scaled *pcScaled = static_cast<PartDesign::Scaled *>(getObject());
 
     double factor = pcScaled->Factor.getValue();
     unsigned occurrences = pcScaled->Occurrences.getValue();
@@ -149,18 +149,18 @@ void TaskScaledParameters::updateUI()
     blockUpdate = false;
 }
 
-void TaskScaledParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
+void TaskScaledParameters::onSelectionChanged(const Gui::SelectionChanges &msg)
 {
     if (originalSelected(msg)) {
         Gui::SelectionObject selObj(msg);
-        App::DocumentObject* obj = selObj.getObject();
+        App::DocumentObject *obj = selObj.getObject();
         Q_ASSERT(obj);
 
         QString label = QString::fromUtf8(obj->Label.getValue());
         QString objectName = QString::fromLatin1(msg.pObjectName);
 
         if (selectionMode == addFeature) {
-            QListWidgetItem* item = new QListWidgetItem();
+            QListWidgetItem *item = new QListWidgetItem();
             item->setText(label);
             item->setData(Qt::UserRole, objectName);
             ui->listWidgetFeatures->addItem(item);
@@ -180,18 +180,16 @@ void TaskScaledParameters::clearButtons()
 
 void TaskScaledParameters::onFactor(const double f)
 {
-    if (blockUpdate)
-        return;
-    PartDesign::Scaled* pcScaled = static_cast<PartDesign::Scaled*>(getObject());
+    if (blockUpdate) return;
+    PartDesign::Scaled *pcScaled = static_cast<PartDesign::Scaled *>(getObject());
     pcScaled->Factor.setValue(f);
     recomputeFeature();
 }
 
 void TaskScaledParameters::onOccurrences(const uint n)
 {
-    if (blockUpdate)
-        return;
-    PartDesign::Scaled* pcScaled = static_cast<PartDesign::Scaled*>(getObject());
+    if (blockUpdate) return;
+    PartDesign::Scaled *pcScaled = static_cast<PartDesign::Scaled *>(getObject());
     pcScaled->Occurrences.setValue(n);
     recomputeFeature();
 }
@@ -201,7 +199,7 @@ void TaskScaledParameters::onUpdateView(bool on)
     blockUpdate = !on;
     if (on) {
         // Do the same like in TaskDlgScaledParameters::accept() but without doCommand
-        PartDesign::Scaled* pcScaled = static_cast<PartDesign::Scaled*>(getObject());
+        PartDesign::Scaled *pcScaled = static_cast<PartDesign::Scaled *>(getObject());
         pcScaled->Factor.setValue(getFactor());
         pcScaled->Occurrences.setValue(getOccurrences());
         recomputeFeature();
@@ -210,8 +208,8 @@ void TaskScaledParameters::onUpdateView(bool on)
 
 void TaskScaledParameters::onFeatureDeleted(void)
 {
-    PartDesign::Transformed* pcTransformed = getObject();
-    std::vector<App::DocumentObject*> originals = pcTransformed->Originals.getValues();
+    PartDesign::Transformed *pcTransformed = getObject();
+    std::vector<App::DocumentObject *> originals = pcTransformed->Originals.getValues();
     int currentRow = ui->listWidgetFeatures->currentRow();
     if (currentRow < 0) {
         Base::Console().Error("PartDesign ScaledPattern: No feature selected for removing.\n");
@@ -223,35 +221,27 @@ void TaskScaledParameters::onFeatureDeleted(void)
     recomputeFeature();
 }
 
-double TaskScaledParameters::getFactor(void) const
-{
-    return ui->spinFactor->value().getValue();
-}
+double TaskScaledParameters::getFactor(void) const { return ui->spinFactor->value().getValue(); }
 
-unsigned TaskScaledParameters::getOccurrences(void) const
-{
-    return ui->spinOccurrences->value();
-}
+unsigned TaskScaledParameters::getOccurrences(void) const { return ui->spinOccurrences->value(); }
 
 TaskScaledParameters::~TaskScaledParameters()
 {
-    if (proxy)
-        delete proxy;
+    if (proxy) delete proxy;
 }
 
 void TaskScaledParameters::changeEvent(QEvent *e)
 {
     TaskBox::changeEvent(e);
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(proxy);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(proxy); }
 }
 
 void TaskScaledParameters::apply()
 {
     std::string name = TransformedView->getObject()->getNameInDocument();
 
-    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Factor = %f",name.c_str(), getFactor());
+    Gui::Command::doCommand(Gui::Command::Doc, "App.ActiveDocument.%s.Factor = %f", name.c_str(),
+                            getFactor());
     ui->spinOccurrences->apply();
 }
 
@@ -272,7 +262,7 @@ TaskDlgScaledParameters::TaskDlgScaledParameters(ViewProviderScaled *ScaledView)
 bool TaskDlgScaledParameters::accept()
 {
 
-        parameter->apply();
+    parameter->apply();
 
     return TaskDlgTransformedParameters::accept();
 }

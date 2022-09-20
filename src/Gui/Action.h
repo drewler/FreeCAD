@@ -40,47 +40,45 @@ class Command;
  * methods in the class @ref MainWindow.
  * @author Werner Mayer
  */
-class GuiExport Action : public QObject
+class GuiExport Action: public QObject
 {
     Q_OBJECT
 
 public:
-    Action (Command* pcCmd, QObject * parent = nullptr);
+    Action(Command *pcCmd, QObject *parent = nullptr);
     /// Action takes ownership of the 'action' object.
-    Action (Command* pcCmd, QAction* action, QObject * parent);
+    Action(Command *pcCmd, QAction *action, QObject *parent);
     virtual ~Action();
 
-    virtual void addTo (QWidget * w);
+    virtual void addTo(QWidget *w);
     virtual void setEnabled(bool);
     virtual void setVisible(bool);
 
     void setCheckable(bool);
-    void setChecked (bool, bool no_signal=false);
+    void setChecked(bool, bool no_signal = false);
     bool isChecked() const;
 
-    void setShortcut (const QString &);
+    void setShortcut(const QString &);
     QKeySequence shortcut() const;
-    void setIcon (const QIcon &);
+    void setIcon(const QIcon &);
     QIcon icon() const;
-    void setStatusTip (const QString &);
+    void setStatusTip(const QString &);
     QString statusTip() const;
-    void setText (const QString &);
+    void setText(const QString &);
     QString text() const;
-    void setToolTip (const QString &);
+    void setToolTip(const QString &);
     QString toolTip() const;
-    void setWhatsThis (const QString &);
+    void setWhatsThis(const QString &);
     QString whatsThis() const;
     void setMenuRole(QAction::MenuRole menuRole);
-    QAction *action() const {
-        return _action;
-    }
+    QAction *action() const { return _action; }
 
 public Q_SLOTS:
-    virtual void onActivated ();
-    virtual void onToggled   (bool);
+    virtual void onActivated();
+    virtual void onToggled(bool);
 
 protected:
-    QAction* _action;
+    QAction *_action;
     Command *_pcCmd;
 };
 
@@ -93,37 +91,37 @@ protected:
  * of toggable actions where e.g. one is set exclusive.
  * @author Werner Mayer
  */
-class GuiExport ActionGroup : public Action
+class GuiExport ActionGroup: public Action
 {
     Q_OBJECT
 
 public:
-    ActionGroup (Command* pcCmd, QObject * parent = nullptr);
+    ActionGroup(Command *pcCmd, QObject *parent = nullptr);
     virtual ~ActionGroup();
 
-    void addTo (QWidget * w);
-    void setEnabled (bool);
-    void setDisabled (bool);
-    void setExclusive (bool);
+    void addTo(QWidget *w);
+    void setEnabled(bool);
+    void setDisabled(bool);
+    void setExclusive(bool);
     bool isExclusive() const;
-    void setVisible (bool);
+    void setVisible(bool);
     void setIsMode(bool b) { _isMode = b; }
 
     void setDropDownMenu(bool b) { _dropDown = b; }
-    QAction* addAction(QAction*);
-    QAction* addAction(const QString&);
-    QList<QAction*> actions() const;
+    QAction *addAction(QAction *);
+    QAction *addAction(const QString &);
+    QList<QAction *> actions() const;
     int checkedAction() const;
     void setCheckedAction(int);
 
 public Q_SLOTS:
-    void onActivated ();
+    void onActivated();
     void onToggled(bool);
-    void onActivated (QAction*);
-    void onHovered   (QAction*);
+    void onActivated(QAction *);
+    void onHovered(QAction *);
 
 protected:
-    QActionGroup* _group;
+    QActionGroup *_group;
     bool _dropDown;
     bool _external;
     bool _toggle;
@@ -133,27 +131,27 @@ protected:
 // --------------------------------------------------------------------
 
 class WorkbenchGroup;
-class GuiExport WorkbenchComboBox : public QComboBox
+class GuiExport WorkbenchComboBox: public QComboBox
 {
     Q_OBJECT
 
 public:
-    WorkbenchComboBox(WorkbenchGroup* wb, QWidget* parent=nullptr);
+    WorkbenchComboBox(WorkbenchGroup *wb, QWidget *parent = nullptr);
     virtual ~WorkbenchComboBox();
     void showPopup();
 
 public Q_SLOTS:
     void onActivated(int);
-    void onActivated(QAction*);
+    void onActivated(QAction *);
 
 protected Q_SLOTS:
-    void onWorkbenchActivated(const QString&);
+    void onWorkbenchActivated(const QString &);
 
 protected:
-    void actionEvent (QActionEvent*);
+    void actionEvent(QActionEvent *);
 
 private:
-    WorkbenchGroup* group;
+    WorkbenchGroup *group;
 };
 
 /**
@@ -161,7 +159,7 @@ private:
  * to a menu a submenu gets created, if added to a toolbar a combo box gets created.
  * @author Werner Mayer
  */
-class GuiExport WorkbenchGroup : public ActionGroup
+class GuiExport WorkbenchGroup: public ActionGroup
 {
     Q_OBJECT
 
@@ -170,20 +168,20 @@ public:
      * Creates an action for the command \a pcCmd to load the workbench \a name
      * when it gets activated.
      */
-    WorkbenchGroup (Command* pcCmd, QObject * parent);
+    WorkbenchGroup(Command *pcCmd, QObject *parent);
     virtual ~WorkbenchGroup();
-    void addTo (QWidget * w);
+    void addTo(QWidget *w);
     void refreshWorkbenchList();
 
-    void slotActivateWorkbench(const char*);
-    void slotAddWorkbench(const char*);
-    void slotRemoveWorkbench(const char*);
+    void slotActivateWorkbench(const char *);
+    void slotAddWorkbench(const char *);
+    void slotRemoveWorkbench(const char *);
 
 protected:
-    void customEvent(QEvent* e);
+    void customEvent(QEvent *e);
 
 private:
-    void setWorkbenchData(int i, const QString& wb);
+    void setWorkbenchData(int i, const QString &wb);
 };
 
 // --------------------------------------------------------------------
@@ -192,20 +190,20 @@ private:
  * The RecentFilesAction class holds a menu listed with the recent files.
  * @author Werner Mayer
  */
-class GuiExport RecentFilesAction : public ActionGroup
+class GuiExport RecentFilesAction: public ActionGroup
 {
     Q_OBJECT
 
 public:
-    RecentFilesAction (Command* pcCmd, QObject * parent = nullptr);
+    RecentFilesAction(Command *pcCmd, QObject *parent = nullptr);
     virtual ~RecentFilesAction();
 
-    void appendFile(const QString&);
+    void appendFile(const QString &);
     void activateFile(int);
     void resizeList(int);
 
 private:
-    void setFiles(const QStringList&);
+    void setFiles(const QStringList &);
     QStringList files() const;
     void restore();
     void save();
@@ -225,29 +223,29 @@ private:
  * The RecentMacrosAction class holds a menu listed with the recent macros
  * that were executed, edited, or created
  */
-class GuiExport RecentMacrosAction : public ActionGroup
+class GuiExport RecentMacrosAction: public ActionGroup
 {
     Q_OBJECT
 
 public:
-    RecentMacrosAction (Command* pcCmd, QObject * parent = nullptr);
+    RecentMacrosAction(Command *pcCmd, QObject *parent = nullptr);
     virtual ~RecentMacrosAction();
 
-    void appendFile(const QString&);
+    void appendFile(const QString &);
     void activateFile(int);
     void resizeList(int);
 
 private:
-    void setFiles(const QStringList&);
+    void setFiles(const QStringList &);
     QStringList files() const;
     void restore();
     void save();
 
 private:
-    int visibleItems; /**< Number of visible items */
-    int maximumItems; /**< Number of maximum items */
+    int visibleItems;               /**< Number of visible items */
+    int maximumItems;               /**< Number of maximum items */
     std::string shortcut_modifiers; /**< default = "Ctrl+Shift+" */
-    int shortcut_count; /**< Number of dynamic shortcuts to create -- default = 3*/
+    int shortcut_count;             /**< Number of dynamic shortcuts to create -- default = 3*/
 };
 
 
@@ -258,14 +256,14 @@ private:
  * appearing when the button with the arrow is clicked.
  * @author Werner Mayer
  */
-class GuiExport UndoAction : public Action
+class GuiExport UndoAction: public Action
 {
     Q_OBJECT
 
 public:
-    UndoAction (Command* pcCmd,QObject * parent = nullptr);
+    UndoAction(Command *pcCmd, QObject *parent = nullptr);
     ~UndoAction();
-    void addTo (QWidget * w);
+    void addTo(QWidget *w);
     void setEnabled(bool);
     void setVisible(bool);
 
@@ -273,7 +271,7 @@ private Q_SLOTS:
     void actionChanged();
 
 private:
-    QAction* _toolAction;
+    QAction *_toolAction;
 };
 
 // --------------------------------------------------------------------
@@ -283,14 +281,14 @@ private:
  * appearing when the button with the arrow is clicked.
  * @author Werner Mayer
  */
-class GuiExport RedoAction : public Action
+class GuiExport RedoAction: public Action
 {
     Q_OBJECT
 
 public:
-    RedoAction (Command* pcCmd,QObject * parent = nullptr);
+    RedoAction(Command *pcCmd, QObject *parent = nullptr);
     ~RedoAction();
-    void addTo ( QWidget * w );
+    void addTo(QWidget *w);
     void setEnabled(bool);
     void setVisible(bool);
 
@@ -298,7 +296,7 @@ private Q_SLOTS:
     void actionChanged();
 
 private:
-    QAction* _toolAction;
+    QAction *_toolAction;
 };
 
 // --------------------------------------------------------------------
@@ -307,17 +305,17 @@ private:
  * Special action to show all dockable views -- except of toolbars -- in an own popup menu.
  * @author Werner Mayer
  */
-class GuiExport DockWidgetAction : public Action
+class GuiExport DockWidgetAction: public Action
 {
     Q_OBJECT
 
 public:
-    DockWidgetAction (Command* pcCmd, QObject * parent = nullptr);
+    DockWidgetAction(Command *pcCmd, QObject *parent = nullptr);
     virtual ~DockWidgetAction();
-    void addTo (QWidget * w);
+    void addTo(QWidget *w);
 
 private:
-    QMenu* _menu;
+    QMenu *_menu;
 };
 
 // --------------------------------------------------------------------
@@ -326,17 +324,17 @@ private:
  * Special action to show all toolbars in an own popup menu.
  * @author Werner Mayer
  */
-class GuiExport ToolBarAction : public Action
+class GuiExport ToolBarAction: public Action
 {
     Q_OBJECT
 
 public:
-    ToolBarAction (Command* pcCmd, QObject * parent = nullptr);
+    ToolBarAction(Command *pcCmd, QObject *parent = nullptr);
     virtual ~ToolBarAction();
-    void addTo (QWidget * w);
+    void addTo(QWidget *w);
 
 private:
-    QMenu* _menu;
+    QMenu *_menu;
 };
 
 // --------------------------------------------------------------------
@@ -344,17 +342,17 @@ private:
 /**
  * @author Werner Mayer
  */
-class GuiExport WindowAction : public ActionGroup
+class GuiExport WindowAction: public ActionGroup
 {
     Q_OBJECT
 
 public:
-    WindowAction (Command* pcCmd, QObject * parent = nullptr);
+    WindowAction(Command *pcCmd, QObject *parent = nullptr);
     virtual ~WindowAction();
-    void addTo (QWidget * w);
+    void addTo(QWidget *w);
 
 private:
-    QMenu* _menu;
+    QMenu *_menu;
 };
 
 } // namespace Gui

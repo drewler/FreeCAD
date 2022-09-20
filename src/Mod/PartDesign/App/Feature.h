@@ -40,11 +40,11 @@ using TopoShape = Part::TopoShape;
 
 class Body;
 
- /** PartDesign feature
+/** PartDesign feature
  *   Base class of all PartDesign features.
  *   This kind of features only produce solids or fail.
  */
-class PartDesignExport Feature : public Part::Feature
+class PartDesignExport Feature: public Part::Feature
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Feature);
 
@@ -52,48 +52,45 @@ public:
     Feature();
 
     /// Base feature which this feature will be fused into or cut out of
-    App::PropertyLink   BaseFeature;
+    App::PropertyLink BaseFeature;
     App::PropertyLinkHidden _Body;
 
     short mustExecute() const override;
 
     /// Check whether the given feature is a datum feature
-    static bool isDatum(const App::DocumentObject* feature);
+    static bool isDatum(const App::DocumentObject *feature);
 
     /// Returns the body the feature is in, or none
-    Body* getFeatureBody() const;
-    
+    Body *getFeatureBody() const;
+
     /**
      * Returns the BaseFeature property's object (if any)
      * @param silent if couldn't determine the base feature and silent == true,
      *               silently return a nullptr, otherwise throw Base::Exception.
      *               Default is false.
      */
-    virtual Part::Feature* getBaseObject(bool silent=false) const;
+    virtual Part::Feature *getBaseObject(bool silent = false) const;
     /// Returns the BaseFeature property's shape (if any)
-    virtual const TopoDS_Shape& getBaseShape() const;
+    virtual const TopoDS_Shape &getBaseShape() const;
     /// Returns the BaseFeature property's TopoShape (if any)
-    Part::TopoShape getBaseTopoShape(bool silent=false) const;
+    Part::TopoShape getBaseTopoShape(bool silent = false) const;
 
-    PyObject* getPyObject() override;
+    PyObject *getPyObject() override;
 
-    const char* getViewProviderName() const override {
-        return "PartDesignGui::ViewProvider";
-    }
+    const char *getViewProviderName() const override { return "PartDesignGui::ViewProvider"; }
 
 protected:
-
     /**
      * Get a solid of the given shape. If no solid is found an exception is raised.
      */
-    static TopoDS_Shape getSolid(const TopoDS_Shape&);    
-    static int countSolids(const TopoDS_Shape&, TopAbs_ShapeEnum type = TopAbs_SOLID );    
+    static TopoDS_Shape getSolid(const TopoDS_Shape &);
+    static int countSolids(const TopoDS_Shape &, TopAbs_ShapeEnum type = TopAbs_SOLID);
 
     /// Grab any point from the given face
-    static const gp_Pnt getPointFromFace(const TopoDS_Face& f);    
+    static const gp_Pnt getPointFromFace(const TopoDS_Face &f);
     /// Make a shape from a base plane (convenience method)
-    static gp_Pln makePlnFromPlane(const App::DocumentObject* obj);
-    static TopoDS_Shape makeShapeFromPlane(const App::DocumentObject* obj);
+    static gp_Pln makePlnFromPlane(const App::DocumentObject *obj);
+    static TopoDS_Shape makeShapeFromPlane(const App::DocumentObject *obj);
 };
 
 using FeaturePython = App::FeaturePythonT<Feature>;

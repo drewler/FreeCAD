@@ -60,18 +60,17 @@
 
 using namespace MeshCore;
 
-namespace MeshCore {
-
-std::string& ltrim(std::string& str)
+namespace MeshCore
 {
-    std::string::size_type pos=0;
+
+std::string &ltrim(std::string &str)
+{
+    std::string::size_type pos = 0;
     for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
-        if (*it != 0x20 && *it != 0x09)
-            break;
+        if (*it != 0x20 && *it != 0x09) break;
         pos++;
     }
-    if (pos > 0)
-        str = str.substr(pos);
+    if (pos > 0) str = str.substr(pos);
     return str;
 }
 
@@ -88,26 +87,27 @@ int numDigits(int number)
 }
 
 /* Usage by CMeshNastran, CMeshCadmouldFE. Added by Sergey Sukhov (26.04.2002)*/
-struct NODE {float x, y, z;};
-struct TRIA {int iV[3];};
-struct QUAD {int iV[4];};
+struct NODE {
+    float x, y, z;
+};
+struct TRIA {
+    int iV[3];
+};
+struct QUAD {
+    int iV[4];
+};
 
-struct Color_Less
-{
-    bool operator()(const App::Color& x,
-                    const App::Color& y) const
+struct Color_Less {
+    bool operator()(const App::Color &x, const App::Color &y) const
     {
-        if (x.r != y.r)
-            return x.r < y.r;
-        if (x.g != y.g)
-            return x.g < y.g;
-        if (x.b != y.b)
-            return x.b < y.b;
+        if (x.r != y.r) return x.r < y.r;
+        if (x.g != y.g) return x.g < y.g;
+        if (x.b != y.b) return x.b < y.b;
         return false; // equal colors
     }
 };
 
-}
+} // namespace MeshCore
 
 // --------------------------------------------------------------
 
@@ -126,43 +126,39 @@ std::vector<std::string> MeshInput::supportedMeshFormats()
     return fmt;
 }
 
-MeshIO::Format MeshInput::getFormat(const char* FileName)
+MeshIO::Format MeshInput::getFormat(const char *FileName)
 {
-     Base::FileInfo fi(FileName);
-     if (fi.hasExtension("bms")) {
-         return MeshIO::Format::BMS;
-     }
-     else if (fi.hasExtension("ply")) {
-         return MeshIO::Format::PLY;
-     }
-     else if (fi.hasExtension("stl")) {
-         return MeshIO::Format::STL;
-     }
-     else if (fi.hasExtension("ast")) {
-         return MeshIO::Format::ASTL;
-     }
-     else if (fi.hasExtension("obj")) {
-         return MeshIO::Format::OBJ;
-     }
-     else if (fi.hasExtension("off")) {
-         return MeshIO::Format::OFF;
-     }
-     else if (fi.hasExtension("smf")) {
-         return MeshIO::Format::SMF;
-     }
-     else {
-         throw Base::FileException("File extension not supported", FileName);
-     }
+    Base::FileInfo fi(FileName);
+    if (fi.hasExtension("bms")) { return MeshIO::Format::BMS; }
+    else if (fi.hasExtension("ply")) {
+        return MeshIO::Format::PLY;
+    }
+    else if (fi.hasExtension("stl")) {
+        return MeshIO::Format::STL;
+    }
+    else if (fi.hasExtension("ast")) {
+        return MeshIO::Format::ASTL;
+    }
+    else if (fi.hasExtension("obj")) {
+        return MeshIO::Format::OBJ;
+    }
+    else if (fi.hasExtension("off")) {
+        return MeshIO::Format::OFF;
+    }
+    else if (fi.hasExtension("smf")) {
+        return MeshIO::Format::SMF;
+    }
+    else {
+        throw Base::FileException("File extension not supported", FileName);
+    }
 }
 
-bool MeshInput::LoadAny(const char* FileName)
+bool MeshInput::LoadAny(const char *FileName)
 {
     // ask for read permission
     Base::FileInfo fi(FileName);
-    if (!fi.exists() || !fi.isFile())
-        throw Base::FileException("File does not exist", FileName);
-    if (!fi.isReadable())
-        throw Base::FileException("No permission on the file", FileName);
+    if (!fi.exists() || !fi.isFile()) throw Base::FileException("File does not exist", FileName);
+    if (!fi.isReadable()) throw Base::FileException("No permission on the file", FileName);
 
     Base::ifstream str(fi, std::ios::in | std::ios::binary);
 
@@ -173,31 +169,29 @@ bool MeshInput::LoadAny(const char* FileName)
     else {
         // read file
         bool ok = false;
-        if (fi.hasExtension("stl") || fi.hasExtension("ast")) {
-            ok = LoadSTL(str);
-        }
+        if (fi.hasExtension("stl") || fi.hasExtension("ast")) { ok = LoadSTL(str); }
         else if (fi.hasExtension("iv")) {
-            ok = LoadInventor( str );
+            ok = LoadInventor(str);
             if (ok && _rclMesh.CountFacets() == 0)
                 Base::Console().Warning("No usable mesh found in file '%s'", FileName);
         }
         else if (fi.hasExtension("nas") || fi.hasExtension("bdf")) {
-            ok = LoadNastran( str );
+            ok = LoadNastran(str);
         }
         else if (fi.hasExtension("obj")) {
-            ok = LoadOBJ( str );
+            ok = LoadOBJ(str);
         }
         else if (fi.hasExtension("smf")) {
-            ok = LoadSMF( str );
+            ok = LoadSMF(str);
         }
         else if (fi.hasExtension("3mf")) {
-            ok = Load3MF( str );
+            ok = Load3MF(str);
         }
         else if (fi.hasExtension("off")) {
-            ok = LoadOFF( str );
+            ok = LoadOFF(str);
         }
         else if (fi.hasExtension("ply")) {
-            ok = LoadPLY( str );
+            ok = LoadPLY(str);
         }
         else {
             throw Base::FileException("File extension not supported", FileName);
@@ -207,71 +201,55 @@ bool MeshInput::LoadAny(const char* FileName)
     }
 }
 
-bool  MeshInput::LoadFormat(std::istream &str, MeshIO::Format fmt)
+bool MeshInput::LoadFormat(std::istream &str, MeshIO::Format fmt)
 {
     switch (fmt) {
-    case MeshIO::BMS:
-        _rclMesh.Read(str);
-        return true;
-    case MeshIO::APLY:
-    case MeshIO::PLY:
-        return LoadPLY(str);
-    case MeshIO::ASTL:
-        return LoadAsciiSTL(str);
-    case MeshIO::BSTL:
-        return LoadBinarySTL(str);
-    case MeshIO::STL:
-        return LoadSTL(str);
-    case MeshIO::OBJ:
-        return LoadOBJ(str);
-    case MeshIO::SMF:
-        return LoadSMF(str);
-    case MeshIO::ThreeMF:
-        return Load3MF(str);
-    case MeshIO::OFF:
-        return LoadOFF(str);
-    case MeshIO::IV:
-        return LoadInventor(str);
-    case MeshIO::NAS:
-        return LoadNastran(str);
-    default:
-        throw Base::FileException("Unsupported file format");
+        case MeshIO::BMS: _rclMesh.Read(str); return true;
+        case MeshIO::APLY:
+        case MeshIO::PLY: return LoadPLY(str);
+        case MeshIO::ASTL: return LoadAsciiSTL(str);
+        case MeshIO::BSTL: return LoadBinarySTL(str);
+        case MeshIO::STL: return LoadSTL(str);
+        case MeshIO::OBJ: return LoadOBJ(str);
+        case MeshIO::SMF: return LoadSMF(str);
+        case MeshIO::ThreeMF: return Load3MF(str);
+        case MeshIO::OFF: return LoadOFF(str);
+        case MeshIO::IV: return LoadInventor(str);
+        case MeshIO::NAS: return LoadNastran(str);
+        default: throw Base::FileException("Unsupported file format");
     }
 }
 
 /** Loads an STL file either in binary or ASCII format.
  * Therefore the file header gets checked to decide if the file is binary or not.
  */
-bool MeshInput::LoadSTL (std::istream &rstrIn)
+bool MeshInput::LoadSTL(std::istream &rstrIn)
 {
     char szBuf[200];
 
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
 
     // Read in 50 characters from position 80 on and check for keywords like 'SOLID', 'FACET', 'NORMAL',
     // 'VERTEX', 'ENDFACET' or 'ENDLOOP'.
     // As the file can be binary with one triangle only we must not read in more than (max.) 54 bytes because
     // the file size has only 134 bytes in this case. On the other hand we must overread the first 80 bytes
     // because it can happen that the file is binary but contains one of these keywords.
-    std::streambuf* buf = rstrIn.rdbuf();
-    if (!buf)
-        return false;
+    std::streambuf *buf = rstrIn.rdbuf();
+    if (!buf) return false;
     buf->pubseekoff(80, std::ios::beg, std::ios::in);
-    uint32_t ulCt, ulBytes=50;
-    rstrIn.read((char*)&ulCt, sizeof(ulCt));
+    uint32_t ulCt, ulBytes = 50;
+    rstrIn.read((char *)&ulCt, sizeof(ulCt));
     // if we have a binary STL with a single triangle we can only read-in 50 bytes
-    if (ulCt > 1)
-        ulBytes = 100;
+    if (ulCt > 1) ulBytes = 100;
     // Either it's really an invalid STL file or it's just empty. In this case the number of facets must be 0.
-    if (!rstrIn.read(szBuf, ulBytes))
-        return (ulCt==0);
+    if (!rstrIn.read(szBuf, ulBytes)) return (ulCt == 0);
     szBuf[ulBytes] = 0;
     boost::algorithm::to_upper(szBuf);
 
     try {
-        if (!strstr(szBuf, "SOLID") && !strstr(szBuf, "FACET") && !strstr(szBuf, "NORMAL") &&
-            !strstr(szBuf, "VERTEX") && !strstr(szBuf, "ENDFACET") && !strstr(szBuf, "ENDLOOP")) {
+        if (!strstr(szBuf, "SOLID") && !strstr(szBuf, "FACET") && !strstr(szBuf, "NORMAL")
+            && !strstr(szBuf, "VERTEX") && !strstr(szBuf, "ENDFACET")
+            && !strstr(szBuf, "ENDLOOP")) {
             // probably binary STL
             buf->pubseekoff(0, std::ios::beg, std::ios::in);
             return LoadBinarySTL(rstrIn);
@@ -282,17 +260,17 @@ bool MeshInput::LoadSTL (std::istream &rstrIn)
             return LoadAsciiSTL(rstrIn);
         }
     }
-    catch (const Base::MemoryException&) {
+    catch (const Base::MemoryException &) {
         _rclMesh.Clear();
         throw; // Throw the same instance of Base::MemoryException
     }
-    catch (const Base::AbortException&) {
+    catch (const Base::AbortException &) {
         _rclMesh.Clear();
         return false;
     }
-    catch (const Base::Exception&) {
+    catch (const Base::Exception &) {
         _rclMesh.Clear();
-        throw;  // Throw the same instance of Base::Exception
+        throw; // Throw the same instance of Base::Exception
     }
     catch (...) {
         _rclMesh.Clear();
@@ -303,48 +281,46 @@ bool MeshInput::LoadSTL (std::istream &rstrIn)
 }
 
 /** Loads an OBJ file. */
-bool MeshInput::LoadOBJ (std::istream &rstrIn)
+bool MeshInput::LoadOBJ(std::istream &rstrIn)
 {
     boost::regex rx_m("^mtllib\\s+(.+)\\s*$");
     boost::regex rx_u("^usemtl\\s+([\\x21-\\x7E]+)\\s*$");
     boost::regex rx_g("^g\\s+([\\x21-\\x7E]+)\\s*$");
     boost::regex rx_p("^v\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*$");
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*$");
     boost::regex rx_c("^v\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+(\\d{1,3})\\s+(\\d{1,3})\\s+(\\d{1,3})\\s*$");
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                      "\\s+(\\d{1,3})\\s+(\\d{1,3})\\s+(\\d{1,3})\\s*$");
     boost::regex rx_t("^v\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*$");
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*$");
     boost::regex rx_f3("^f\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*"
-                         "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*"
-                         "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*\\s*$");
+                       "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*"
+                       "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*\\s*$");
     boost::regex rx_f4("^f\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*"
-                         "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*"
-                         "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*"
-                         "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*\\s*$");
+                       "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*"
+                       "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*"
+                       "\\s+([-+]?[0-9]+)/?[-+]?[0-9]*/?[-+]?[0-9]*\\s*$");
     boost::cmatch what;
 
-    unsigned long segment=0;
+    unsigned long segment = 0;
     MeshPointArray meshPoints;
     MeshFacetArray meshFacets;
 
     std::string line;
     float fX, fY, fZ;
-    int  i1=1, i2=1, i3=1, i4=1;
+    int i1 = 1, i2 = 1, i3 = 1, i4 = 1;
     MeshFacet item;
 
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
 
-    std::streambuf* buf = rstrIn.rdbuf();
-    if (!buf)
-        return false;
+    std::streambuf *buf = rstrIn.rdbuf();
+    if (!buf) return false;
 
     MeshIO::Binding rgb_value = MeshIO::OVERALL;
     bool new_segment = true;
@@ -368,7 +344,7 @@ bool MeshInput::LoadOBJ (std::istream &rstrIn)
             float b = std::min<int>(std::atof(what[12].first), 255) / 255.0f;
             meshPoints.push_back(MeshPoint(Base::Vector3f(fX, fY, fZ)));
 
-            App::Color c(r,g,b);
+            App::Color c(r, g, b);
             unsigned long prop = static_cast<uint32_t>(c.getPackedValue());
             meshPoints.back().SetProperty(prop);
             rgb_value = MeshIO::PER_VERTEX;
@@ -382,7 +358,7 @@ bool MeshInput::LoadOBJ (std::istream &rstrIn)
             float b = static_cast<float>(std::atof(what[16].first));
             meshPoints.push_back(MeshPoint(Base::Vector3f(fX, fY, fZ)));
 
-            App::Color c(r,g,b);
+            App::Color c(r, g, b);
             unsigned long prop = static_cast<uint32_t>(c.getPackedValue());
             meshPoints.back().SetProperty(prop);
             rgb_value = MeshIO::PER_VERTEX;
@@ -392,8 +368,7 @@ bool MeshInput::LoadOBJ (std::istream &rstrIn)
             groupName = Base::Tools::escapedUnicodeToUtf8(what[1].first);
         }
         else if (boost::regex_match(line.c_str(), what, rx_m)) {
-            if (_material)
-                _material->library = Base::Tools::escapedUnicodeToUtf8(what[1].first);
+            if (_material) _material->library = Base::Tools::escapedUnicodeToUtf8(what[1].first);
         }
         else if (boost::regex_match(line.c_str(), what, rx_u)) {
             if (!materialName.empty()) {
@@ -415,12 +390,12 @@ bool MeshInput::LoadOBJ (std::istream &rstrIn)
 
             // 3-vertex face
             i1 = std::atoi(what[1].first);
-            i1 = i1 > 0 ? i1-1 : i1+static_cast<int>(meshPoints.size());
+            i1 = i1 > 0 ? i1 - 1 : i1 + static_cast<int>(meshPoints.size());
             i2 = std::atoi(what[2].first);
-            i2 = i2 > 0 ? i2-1 : i2+static_cast<int>(meshPoints.size());
+            i2 = i2 > 0 ? i2 - 1 : i2 + static_cast<int>(meshPoints.size());
             i3 = std::atoi(what[3].first);
-            i3 = i3 > 0 ? i3-1 : i3+static_cast<int>(meshPoints.size());
-            item.SetVertices(i1,i2,i3);
+            i3 = i3 > 0 ? i3 - 1 : i3 + static_cast<int>(meshPoints.size());
+            item.SetVertices(i1, i2, i3);
             item.SetProperty(segment);
             meshFacets.push_back(item);
             countMaterialFacets++;
@@ -438,20 +413,20 @@ bool MeshInput::LoadOBJ (std::istream &rstrIn)
 
             // 4-vertex face
             i1 = std::atoi(what[1].first);
-            i1 = i1 > 0 ? i1-1 : i1+static_cast<int>(meshPoints.size());
+            i1 = i1 > 0 ? i1 - 1 : i1 + static_cast<int>(meshPoints.size());
             i2 = std::atoi(what[2].first);
-            i2 = i2 > 0 ? i2-1 : i2+static_cast<int>(meshPoints.size());
+            i2 = i2 > 0 ? i2 - 1 : i2 + static_cast<int>(meshPoints.size());
             i3 = std::atoi(what[3].first);
-            i3 = i3 > 0 ? i3-1 : i3+static_cast<int>(meshPoints.size());
+            i3 = i3 > 0 ? i3 - 1 : i3 + static_cast<int>(meshPoints.size());
             i4 = std::atoi(what[4].first);
-            i4 = i4 > 0 ? i4-1 : i4+static_cast<int>(meshPoints.size());
+            i4 = i4 > 0 ? i4 - 1 : i4 + static_cast<int>(meshPoints.size());
 
-            item.SetVertices(i1,i2,i3);
+            item.SetVertices(i1, i2, i3);
             item.SetProperty(segment);
             meshFacets.push_back(item);
             countMaterialFacets++;
 
-            item.SetVertices(i3,i4,i1);
+            item.SetVertices(i3, i4, i1);
             item.SetProperty(segment);
             meshFacets.push_back(item);
             countMaterialFacets++;
@@ -459,9 +434,7 @@ bool MeshInput::LoadOBJ (std::istream &rstrIn)
     }
 
     // Add the last added material name
-    if (!materialName.empty()) {
-        _materialNames.emplace_back(materialName, countMaterialFacets);
-    }
+    if (!materialName.empty()) { _materialNames.emplace_back(materialName, countMaterialFacets); }
 
     // now get back the colors from the vertex property
     if (rgb_value == MeshIO::PER_VERTEX) {
@@ -489,17 +462,16 @@ bool MeshInput::LoadOBJ (std::istream &rstrIn)
     this->_rclMesh.Clear(); // remove all data before
 
     MeshCleanup meshCleanup(meshPoints, meshFacets);
-    if (_material)
-        meshCleanup.SetMaterial(_material);
+    if (_material) meshCleanup.SetMaterial(_material);
     meshCleanup.RemoveInvalids();
-    MeshPointFacetAdjacency meshAdj(meshPoints.size(),meshFacets);
+    MeshPointFacetAdjacency meshAdj(meshPoints.size(), meshFacets);
     meshAdj.SetFacetNeighbourhood();
-    this->_rclMesh.Adopt(meshPoints,meshFacets);
+    this->_rclMesh.Adopt(meshPoints, meshFacets);
 
     return true;
 }
 
-bool MeshInput::LoadMTL (std::istream &rstrIn)
+bool MeshInput::LoadMTL(std::istream &rstrIn)
 {
     boost::regex rx_n("^newmtl\\s+([\\x21-\\x7E]+)\\s*$");
     boost::regex rx_Kd("^\\s*Kd\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
@@ -509,15 +481,12 @@ bool MeshInput::LoadMTL (std::istream &rstrIn)
 
     std::string line;
 
-    if (!_material)
-        return false;
+    if (!_material) return false;
 
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
 
-    std::streambuf* buf = rstrIn.rdbuf();
-    if (!buf)
-        return false;
+    std::streambuf *buf = rstrIn.rdbuf();
+    if (!buf) return false;
 
     std::map<std::string, App::Color> materials;
     std::string materialName;
@@ -531,7 +500,7 @@ bool MeshInput::LoadMTL (std::istream &rstrIn)
             float r = static_cast<float>(std::atof(what[1].first));
             float g = static_cast<float>(std::atof(what[4].first));
             float b = static_cast<float>(std::atof(what[7].first));
-            materials[materialName] = App::Color(r,g,b);
+            materials[materialName] = App::Color(r, g, b);
         }
     }
 
@@ -556,31 +525,29 @@ bool MeshInput::LoadMTL (std::istream &rstrIn)
 }
 
 /** Loads an SMF file. */
-bool MeshInput::LoadSMF (std::istream &rstrIn)
+bool MeshInput::LoadSMF(std::istream &rstrIn)
 {
     boost::regex rx_p("^v\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                        "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*$");
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                      "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*$");
     boost::regex rx_f3("^f\\s+([-+]?[0-9]+)"
-                         "\\s+([-+]?[0-9]+)"
-                         "\\s+([-+]?[0-9]+)\\s*$");
+                       "\\s+([-+]?[0-9]+)"
+                       "\\s+([-+]?[0-9]+)\\s*$");
     boost::cmatch what;
 
-    unsigned long segment=0;
+    unsigned long segment = 0;
     MeshPointArray meshPoints;
     MeshFacetArray meshFacets;
 
     std::string line;
     float fX, fY, fZ;
-    int  i1=1,i2=1,i3=1;
+    int i1 = 1, i2 = 1, i3 = 1;
     MeshFacet item;
 
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
 
-    std::streambuf* buf = rstrIn.rdbuf();
-    if (!buf)
-        return false;
+    std::streambuf *buf = rstrIn.rdbuf();
+    if (!buf) return false;
 
     while (std::getline(rstrIn, line)) {
         if (boost::regex_match(line.c_str(), what, rx_p)) {
@@ -592,12 +559,12 @@ bool MeshInput::LoadSMF (std::istream &rstrIn)
         else if (boost::regex_match(line.c_str(), what, rx_f3)) {
             // 3-vertex face
             i1 = std::atoi(what[1].first);
-            i1 = i1 > 0 ? i1-1 : i1+static_cast<int>(meshPoints.size());
+            i1 = i1 > 0 ? i1 - 1 : i1 + static_cast<int>(meshPoints.size());
             i2 = std::atoi(what[2].first);
-            i2 = i2 > 0 ? i2-1 : i2+static_cast<int>(meshPoints.size());
+            i2 = i2 > 0 ? i2 - 1 : i2 + static_cast<int>(meshPoints.size());
             i3 = std::atoi(what[3].first);
-            i3 = i3 > 0 ? i3-1 : i3+static_cast<int>(meshPoints.size());
-            item.SetVertices(i1,i2,i3);
+            i3 = i3 > 0 ? i3 - 1 : i3 + static_cast<int>(meshPoints.size());
+            item.SetVertices(i1, i2, i3);
             item.SetProperty(segment);
             meshFacets.push_back(item);
         }
@@ -605,17 +572,17 @@ bool MeshInput::LoadSMF (std::istream &rstrIn)
 
     this->_rclMesh.Clear(); // remove all data before
 
-    MeshCleanup meshCleanup(meshPoints,meshFacets);
+    MeshCleanup meshCleanup(meshPoints, meshFacets);
     meshCleanup.RemoveInvalids();
-    MeshPointFacetAdjacency meshAdj(meshPoints.size(),meshFacets);
+    MeshPointFacetAdjacency meshAdj(meshPoints.size(), meshFacets);
     meshAdj.SetFacetNeighbourhood();
-    this->_rclMesh.Adopt(meshPoints,meshFacets);
+    this->_rclMesh.Adopt(meshPoints, meshFacets);
 
     return true;
 }
 
 /** Loads an OFF file. */
-bool MeshInput::LoadOFF (std::istream &rstrIn)
+bool MeshInput::LoadOFF(std::istream &rstrIn)
 {
     // http://edutechwiki.unige.ch/en/3D_file_format
     boost::regex rx_n("^\\s*([0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s*$");
@@ -629,12 +596,10 @@ bool MeshInput::LoadOFF (std::istream &rstrIn)
     std::string line;
     MeshFacet item;
 
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
 
-    std::streambuf* buf = rstrIn.rdbuf();
-    if (!buf)
-        return false;
+    std::streambuf *buf = rstrIn.rdbuf();
+    if (!buf) return false;
 
     std::getline(rstrIn, line);
     boost::algorithm::to_lower(line);
@@ -647,7 +612,7 @@ bool MeshInput::LoadOFF (std::istream &rstrIn)
     }
 
     // get number of vertices and faces
-    int numPoints=0, numFaces=0;
+    int numPoints = 0, numFaces = 0;
 
     while (true) {
         std::getline(rstrIn, line);
@@ -659,25 +624,21 @@ bool MeshInput::LoadOFF (std::istream &rstrIn)
         }
     }
 
-    if (numPoints == 0 || numFaces == 0)
-        return false;
+    if (numPoints == 0 || numFaces == 0) return false;
 
     meshPoints.reserve(numPoints);
     meshFacets.reserve(numFaces);
-    if (colorPerVertex)
-        diffuseColor.reserve(numPoints);
+    if (colorPerVertex) diffuseColor.reserve(numPoints);
     else
         diffuseColor.reserve(numFaces);
 
     int cntPoints = 0;
     while (cntPoints < numPoints) {
-        if (!std::getline(rstrIn, line))
-            break;
+        if (!std::getline(rstrIn, line)) break;
         std::istringstream str(line);
         str.unsetf(std::ios_base::skipws);
         str >> std::ws;
-        if (str.eof())
-            continue; // empty line
+        if (str.eof()) continue; // empty line
 
         float fX, fY, fZ;
         str >> fX >> std::ws >> fY >> std::ws >> fZ;
@@ -688,19 +649,18 @@ bool MeshInput::LoadOFF (std::istream &rstrIn)
             if (colorPerVertex) {
                 std::size_t pos = std::size_t(str.tellg());
                 if (line.size() > pos) {
-                    float r,g,b,a;
+                    float r, g, b, a;
                     str >> std::ws >> r >> std::ws >> g >> std::ws >> b;
                     if (str) {
                         str >> std::ws >> a;
                         // no transparency
-                        if (!str)
-                            a = 0.0f;
+                        if (!str) a = 0.0f;
 
                         if (r > 1.0f || g > 1.0f || b > 1.0f || a > 1.0f) {
-                            r = static_cast<float>(r)/255.0f;
-                            g = static_cast<float>(g)/255.0f;
-                            b = static_cast<float>(b)/255.0f;
-                            a = static_cast<float>(a)/255.0f;
+                            r = static_cast<float>(r) / 255.0f;
+                            g = static_cast<float>(g) / 255.0f;
+                            b = static_cast<float>(b) / 255.0f;
+                            a = static_cast<float>(a) / 255.0f;
                         }
                         diffuseColor.emplace_back(r, g, b, a);
                     }
@@ -711,13 +671,11 @@ bool MeshInput::LoadOFF (std::istream &rstrIn)
 
     int cntFaces = 0;
     while (cntFaces < numFaces) {
-        if (!std::getline(rstrIn, line))
-            break;
+        if (!std::getline(rstrIn, line)) break;
         std::istringstream str(line);
         str.unsetf(std::ios_base::skipws);
         str >> std::ws;
-        if (str.eof())
-            continue; // empty line
+        if (str.eof()) continue; // empty line
         int count, index;
         str >> count;
         if (count >= 3) {
@@ -730,31 +688,28 @@ bool MeshInput::LoadOFF (std::istream &rstrIn)
                 faces.push_back(index);
             }
 
-            for (int i = 0; i < count-2; i++) {
-                item.SetVertices(faces[0],faces[i+1],faces[i+2]);
+            for (int i = 0; i < count - 2; i++) {
+                item.SetVertices(faces[0], faces[i + 1], faces[i + 2]);
                 meshFacets.push_back(item);
             }
             cntFaces++;
 
             std::size_t pos = std::size_t(str.tellg());
             if (line.size() > pos) {
-                float r,g,b,a;
+                float r, g, b, a;
                 str >> std::ws >> r >> std::ws >> g >> std::ws >> b;
                 if (str) {
                     str >> std::ws >> a;
                     // no transparency
-                    if (!str)
-                        a = 0.0f;
+                    if (!str) a = 0.0f;
 
                     if (r > 1.0f || g > 1.0f || b > 1.0f || a > 1.0f) {
-                        r = static_cast<float>(r)/255.0f;
-                        g = static_cast<float>(g)/255.0f;
-                        b = static_cast<float>(b)/255.0f;
-                        a = static_cast<float>(a)/255.0f;
+                        r = static_cast<float>(r) / 255.0f;
+                        g = static_cast<float>(g) / 255.0f;
+                        b = static_cast<float>(b) / 255.0f;
+                        a = static_cast<float>(a) / 255.0f;
                     }
-                    for (int i = 0; i < count-2; i++) {
-                        diffuseColor.emplace_back(r, g, b, a);
-                    }
+                    for (int i = 0; i < count - 2; i++) { diffuseColor.emplace_back(r, g, b, a); }
                 }
             }
         }
@@ -776,66 +731,73 @@ bool MeshInput::LoadOFF (std::istream &rstrIn)
     }
     this->_rclMesh.Clear(); // remove all data before
 
-    MeshCleanup meshCleanup(meshPoints,meshFacets);
-    if (_material)
-        meshCleanup.SetMaterial(_material);
+    MeshCleanup meshCleanup(meshPoints, meshFacets);
+    if (_material) meshCleanup.SetMaterial(_material);
     meshCleanup.RemoveInvalids();
-    MeshPointFacetAdjacency meshAdj(meshPoints.size(),meshFacets);
+    MeshPointFacetAdjacency meshAdj(meshPoints.size(), meshFacets);
     meshAdj.SetFacetNeighbourhood();
-    this->_rclMesh.Adopt(meshPoints,meshFacets);
+    this->_rclMesh.Adopt(meshPoints, meshFacets);
 
     return true;
 }
 
-namespace MeshCore {
-    namespace Ply {
-        enum Number {
-            int8, uint8, int16, uint16, int32, uint32, float32, float64
-        };
-        struct Property
-        {
-            using first_argument_type = std::pair<std::string, int>;
-            using second_argument_type = std::string;
-            using result_type = bool;
+namespace MeshCore
+{
+namespace Ply
+{
+enum Number
+{
+    int8,
+    uint8,
+    int16,
+    uint16,
+    int32,
+    uint32,
+    float32,
+    float64
+};
+struct Property {
+    using first_argument_type = std::pair<std::string, int>;
+    using second_argument_type = std::string;
+    using result_type = bool;
 
-            bool operator()(const std::pair<std::string, int>& x,
-                            const std::string& y) const
-            {
-                return x.first == y;
-            }
-        };
+    bool operator()(const std::pair<std::string, int> &x, const std::string &y) const
+    {
+        return x.first == y;
     }
-    using namespace Ply;
-}
+};
+} // namespace Ply
+using namespace Ply;
+} // namespace MeshCore
 
-bool MeshInput::LoadPLY (std::istream &inp)
+bool MeshInput::LoadPLY(std::istream &inp)
 {
     // http://local.wasp.uwa.edu.au/~pbourke/dataformats/ply/
-    std::size_t v_count=0, f_count=0;
+    std::size_t v_count = 0, f_count = 0;
     MeshPointArray meshPoints;
     MeshFacetArray meshFacets;
 
-    enum {
-        unknown, ascii, binary_little_endian, binary_big_endian
+    enum
+    {
+        unknown,
+        ascii,
+        binary_little_endian,
+        binary_big_endian
     } format = unknown;
 
-    if (!inp || inp.bad())
-        return false;
+    if (!inp || inp.bad()) return false;
 
-    std::streambuf* buf = inp.rdbuf();
-    if (!buf)
-        return false;
+    std::streambuf *buf = inp.rdbuf();
+    if (!buf) return false;
 
     // read in the first three characters
     char ply[3];
     inp.read(ply, 3);
     inp.ignore(1);
-    if (!inp)
-        return false;
-    if ((ply[0] != 'p') || (ply[1] != 'l') || (ply[2] != 'y'))
-        return false; // wrong header
+    if (!inp) return false;
+    if ((ply[0] != 'p') || (ply[1] != 'l') || (ply[2] != 'y')) return false; // wrong header
 
-    std::vector<std::pair<std::string, Ply::Number> > vertex_props;
+    std::vector<std::pair<std::string, Ply::Number>> vertex_props;
     std::vector<Ply::Number> face_props;
     std::string line, element;
 
@@ -844,24 +806,19 @@ bool MeshInput::LoadPLY (std::istream &inp)
         std::istringstream str(line);
         str.unsetf(std::ios_base::skipws);
         str >> std::ws;
-        if (str.eof())
-            continue; // empty line
+        if (str.eof()) continue; // empty line
         std::string kw;
         str >> kw;
         if (kw == "format") {
             std::string format_string, version;
             char space_format_string, space_format_version;
-            str >> space_format_string >> std::ws
-                >> format_string >> space_format_version
+            str >> space_format_string >> std::ws >> format_string >> space_format_version
                 >> std::ws >> version;
             if (/*!str || !str.eof() ||*/
-                !std::isspace(space_format_string) ||
-                !std::isspace(space_format_version)) {
+                !std::isspace(space_format_string) || !std::isspace(space_format_version)) {
                 return false;
             }
-            if (format_string == "ascii") {
-                format = ascii;
-            }
+            if (format_string == "ascii") { format = ascii; }
             else if (format_string == "binary_big_endian") {
                 format = binary_big_endian;
             }
@@ -881,12 +838,9 @@ bool MeshInput::LoadPLY (std::istream &inp)
             std::string name;
             std::size_t count;
             char space_element_name, space_name_count;
-            str >> space_element_name >> std::ws
-                >> name >> space_name_count >> std::ws
-                >> count;
+            str >> space_element_name >> std::ws >> name >> space_name_count >> std::ws >> count;
             if (/*!str || !str.eof() ||*/
-                !std::isspace(space_element_name) ||
-                !std::isspace(space_name_count)) {
+                !std::isspace(space_element_name) || !std::isspace(space_name_count)) {
                 return false;
             }
             else if (name == "vertex") {
@@ -907,13 +861,10 @@ bool MeshInput::LoadPLY (std::istream &inp)
             std::string type, name;
             char space;
             if (element == "vertex") {
-                str >> space >> std::ws
-                    >> type >> space >> std::ws >> name >> std::ws;
+                str >> space >> std::ws >> type >> space >> std::ws >> name >> std::ws;
 
                 Ply::Number number;
-                if (type == "char" || type == "int8") {
-                    number = int8;
-                }
+                if (type == "char" || type == "int8") { number = int8; }
                 else if (type == "uchar" || type == "uint8") {
                     number = uint8;
                 }
@@ -945,11 +896,9 @@ bool MeshInput::LoadPLY (std::istream &inp)
             }
             else if (element == "face") {
                 std::string list, uchr;
-                str >> space >> std::ws
-                    >> list >> std::ws;
+                str >> space >> std::ws >> list >> std::ws;
                 if (list == "list") {
-                    str >> uchr >> std::ws
-                        >> type >> std::ws >> name >> std::ws;
+                    str >> uchr >> std::ws >> type >> std::ws >> name >> std::ws;
                 }
                 else {
                     // not a 'list'
@@ -958,9 +907,7 @@ bool MeshInput::LoadPLY (std::istream &inp)
                 }
                 if (name != "vertex_indices" && name != "vertex_index") {
                     Number number;
-                    if (type == "char" || type == "int8") {
-                        number = int8;
-                    }
+                    if (type == "char" || type == "int8") { number = int8; }
                     else if (type == "uchar" || type == "uint8") {
                         number = uint8;
                     }
@@ -999,25 +946,24 @@ bool MeshInput::LoadPLY (std::istream &inp)
 
     // check if valid 3d points
     Property property;
-    std::size_t num_x = std::count_if(vertex_props.begin(), vertex_props.end(),
-                    [&property](const std::pair<std::string, int>& p) { return property(p, "x"); });
-    if (num_x != 1)
-        return false;
+    std::size_t num_x = std::count_if(
+        vertex_props.begin(), vertex_props.end(),
+        [&property](const std::pair<std::string, int> &p) { return property(p, "x"); });
+    if (num_x != 1) return false;
 
-    std::size_t num_y = std::count_if(vertex_props.begin(), vertex_props.end(),
-                    [&property](const std::pair<std::string, int>& p) { return property(p, "y"); });
-    if (num_y != 1)
-        return false;
+    std::size_t num_y = std::count_if(
+        vertex_props.begin(), vertex_props.end(),
+        [&property](const std::pair<std::string, int> &p) { return property(p, "y"); });
+    if (num_y != 1) return false;
 
-    std::size_t num_z = std::count_if(vertex_props.begin(), vertex_props.end(),
-                    [&property](const std::pair<std::string, int>& p) { return property(p, "z"); });
-    if (num_z != 1)
-        return false;
+    std::size_t num_z = std::count_if(
+        vertex_props.begin(), vertex_props.end(),
+        [&property](const std::pair<std::string, int> &p) { return property(p, "z"); });
+    if (num_z != 1) return false;
 
-    for (std::vector<std::pair<std::string, Ply::Number> >::iterator it =
-        vertex_props.begin(); it != vertex_props.end(); ++it) {
-        if (it->first == "diffuse_red")
-            it->first = "red";
+    for (std::vector<std::pair<std::string, Ply::Number>>::iterator it = vertex_props.begin();
+         it != vertex_props.end(); ++it) {
+        if (it->first == "diffuse_red") it->first = "red";
         else if (it->first == "diffuse_green")
             it->first = "green";
         else if (it->first == "diffuse_blue")
@@ -1025,15 +971,17 @@ bool MeshInput::LoadPLY (std::istream &inp)
     }
 
     // check if valid colors are set
-    std::size_t num_r = std::count_if(vertex_props.begin(), vertex_props.end(),
-                    [&property](const std::pair<std::string, int>& p) { return property(p, "red"); });
-    std::size_t num_g = std::count_if(vertex_props.begin(), vertex_props.end(),
-                    [&property](const std::pair<std::string, int>& p) { return property(p, "green"); });
-    std::size_t num_b = std::count_if(vertex_props.begin(), vertex_props.end(),
-                    [&property](const std::pair<std::string, int>& p) { return property(p, "blue"); });
+    std::size_t num_r = std::count_if(
+        vertex_props.begin(), vertex_props.end(),
+        [&property](const std::pair<std::string, int> &p) { return property(p, "red"); });
+    std::size_t num_g = std::count_if(
+        vertex_props.begin(), vertex_props.end(),
+        [&property](const std::pair<std::string, int> &p) { return property(p, "green"); });
+    std::size_t num_b = std::count_if(
+        vertex_props.begin(), vertex_props.end(),
+        [&property](const std::pair<std::string, int> &p) { return property(p, "blue"); });
     std::size_t rgb_colors = num_r + num_g + num_b;
-    if (rgb_colors != 0 && rgb_colors != 3)
-        return false;
+    if (rgb_colors != 0 && rgb_colors != 3) return false;
 
     // only if set per vertex
     if (rgb_colors == 3) {
@@ -1054,12 +1002,12 @@ bool MeshInput::LoadPLY (std::istream &inp)
         for (std::size_t i = 0; i < v_count && std::getline(inp, line); i++) {
             // go through the vertex properties
             std::map<std::string, float> prop_values;
-            for (std::vector<std::pair<std::string, Number> >::iterator it = vertex_props.begin(); it != vertex_props.end(); ++it) {
+            for (std::vector<std::pair<std::string, Number>>::iterator it = vertex_props.begin();
+                 it != vertex_props.end(); ++it) {
                 switch (it->second) {
-                case int8:
-                case int16:
-                case int32:
-                    {
+                    case int8:
+                    case int16:
+                    case int32: {
                         if (boost::regex_search(line, what, rx_s)) {
                             int v;
                             v = boost::lexical_cast<int>(what[1]);
@@ -1070,10 +1018,9 @@ bool MeshInput::LoadPLY (std::istream &inp)
                             return false;
                         }
                     } break;
-                case uint8:
-                case uint16:
-                case uint32:
-                    {
+                    case uint8:
+                    case uint16:
+                    case uint32: {
                         if (boost::regex_search(line, what, rx_u)) {
                             int v;
                             v = boost::lexical_cast<int>(what[1]);
@@ -1084,9 +1031,8 @@ bool MeshInput::LoadPLY (std::istream &inp)
                             return false;
                         }
                     } break;
-                case float32:
-                case float64:
-                    {
+                    case float32:
+                    case float64: {
                         if (boost::regex_search(line, what, rx_d)) {
                             double v;
                             v = boost::lexical_cast<double>(what[1]);
@@ -1097,8 +1043,7 @@ bool MeshInput::LoadPLY (std::istream &inp)
                             return false;
                         }
                     } break;
-                default:
-                    return false;
+                    default: return false;
                 }
             }
 
@@ -1122,65 +1067,64 @@ bool MeshInput::LoadPLY (std::istream &inp)
                 f1 = boost::lexical_cast<int>(what[1]);
                 f2 = boost::lexical_cast<int>(what[2]);
                 f3 = boost::lexical_cast<int>(what[3]);
-                meshFacets.push_back(MeshFacet(f1,f2,f3));
+                meshFacets.push_back(MeshFacet(f1, f2, f3));
             }
         }
     }
     // binary
     else {
         Base::InputStream is(inp);
-        if (format == binary_little_endian)
-            is.setByteOrder(Base::Stream::LittleEndian);
+        if (format == binary_little_endian) is.setByteOrder(Base::Stream::LittleEndian);
         else
             is.setByteOrder(Base::Stream::BigEndian);
 
         for (std::size_t i = 0; i < v_count; i++) {
             // go through the vertex properties
             std::map<std::string, float> prop_values;
-            for (std::vector<std::pair<std::string, Number> >::iterator it = vertex_props.begin(); it != vertex_props.end(); ++it) {
+            for (std::vector<std::pair<std::string, Number>>::iterator it = vertex_props.begin();
+                 it != vertex_props.end(); ++it) {
                 switch (it->second) {
-                case int8:
-                    {
-                        int8_t v; is >> v;
+                    case int8: {
+                        int8_t v;
+                        is >> v;
                         prop_values[it->first] = static_cast<float>(v);
                     } break;
-                case uint8:
-                    {
-                        uint8_t v; is >> v;
+                    case uint8: {
+                        uint8_t v;
+                        is >> v;
                         prop_values[it->first] = static_cast<float>(v);
                     } break;
-                case int16:
-                    {
-                        int16_t v; is >> v;
+                    case int16: {
+                        int16_t v;
+                        is >> v;
                         prop_values[it->first] = static_cast<float>(v);
                     } break;
-                case uint16:
-                    {
-                        uint16_t v; is >> v;
+                    case uint16: {
+                        uint16_t v;
+                        is >> v;
                         prop_values[it->first] = static_cast<float>(v);
                     } break;
-                case int32:
-                    {
-                        int32_t v; is >> v;
+                    case int32: {
+                        int32_t v;
+                        is >> v;
                         prop_values[it->first] = static_cast<float>(v);
                     } break;
-                case uint32:
-                    {
-                        uint32_t v; is >> v;
+                    case uint32: {
+                        uint32_t v;
+                        is >> v;
                         prop_values[it->first] = static_cast<float>(v);
                     } break;
-                case float32:
-                    {
-                        float v; is >> v;
+                    case float32: {
+                        float v;
+                        is >> v;
                         prop_values[it->first] = v;
                     } break;
-                case float64:
-                    {
-                        double v; is >> v;
+                    case float64: {
+                        double v;
+                        is >> v;
                         prop_values[it->first] = static_cast<float>(v);
                     } break;
-                default:
-                    return false;
+                    default: return false;
                 }
             }
 
@@ -1202,52 +1146,48 @@ bool MeshInput::LoadPLY (std::istream &inp)
         uint32_t f1, f2, f3;
         for (std::size_t i = 0; i < f_count; i++) {
             is >> n;
-            if (n==3) {
+            if (n == 3) {
                 is >> f1 >> f2 >> f3;
                 if (f1 < v_count && f2 < v_count && f3 < v_count)
-                    meshFacets.push_back(MeshFacet(f1,f2,f3));
-                for (std::vector<Number>::iterator it = face_props.begin(); it != face_props.end(); ++it) {
+                    meshFacets.push_back(MeshFacet(f1, f2, f3));
+                for (std::vector<Number>::iterator it = face_props.begin(); it != face_props.end();
+                     ++it) {
                     switch (*it) {
-                    case int8:
-                        {
-                            int8_t v; is >> v;
+                        case int8: {
+                            int8_t v;
+                            is >> v;
                         } break;
-                    case uint8:
-                        {
-                            uint8_t v; is >> v;
+                        case uint8: {
+                            uint8_t v;
+                            is >> v;
                         } break;
-                    case int16:
-                        {
-                            int16_t v; is >> v;
+                        case int16: {
+                            int16_t v;
+                            is >> v;
                         } break;
-                    case uint16:
-                        {
-                            uint16_t v; is >> v;
+                        case uint16: {
+                            uint16_t v;
+                            is >> v;
                         } break;
-                    case int32:
-                        {
-                            int32_t v; is >> v;
+                        case int32: {
+                            int32_t v;
+                            is >> v;
                         } break;
-                    case uint32:
-                        {
-                            uint32_t v; is >> v;
+                        case uint32: {
+                            uint32_t v;
+                            is >> v;
                         } break;
-                    case float32:
-                        {
+                        case float32: {
                             is >> n;
                             float v;
-                            for (unsigned char j=0; j<n; j++)
-                                is >> v;
+                            for (unsigned char j = 0; j < n; j++) is >> v;
                         } break;
-                    case float64:
-                        {
+                        case float64: {
                             is >> n;
                             double v;
-                            for (unsigned char j=0; j<n; j++)
-                                is >> v;
+                            for (unsigned char j = 0; j < n; j++) is >> v;
                         } break;
-                    default:
-                        return false;
+                        default: return false;
                     }
                 }
             }
@@ -1256,18 +1196,17 @@ bool MeshInput::LoadPLY (std::istream &inp)
 
     this->_rclMesh.Clear(); // remove all data before
 
-    MeshCleanup meshCleanup(meshPoints,meshFacets);
-    if (_material)
-        meshCleanup.SetMaterial(_material);
+    MeshCleanup meshCleanup(meshPoints, meshFacets);
+    if (_material) meshCleanup.SetMaterial(_material);
     meshCleanup.RemoveInvalids();
-    MeshPointFacetAdjacency meshAdj(meshPoints.size(),meshFacets);
+    MeshPointFacetAdjacency meshAdj(meshPoints.size(), meshFacets);
     meshAdj.SetFacetNeighbourhood();
-    this->_rclMesh.Adopt(meshPoints,meshFacets);
+    this->_rclMesh.Adopt(meshPoints, meshFacets);
 
     return true;
 }
 
-bool MeshInput::LoadMeshNode (std::istream &rstrIn)
+bool MeshInput::LoadMeshNode(std::istream &rstrIn)
 {
     boost::regex rx_p("^v\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
                       "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
@@ -1281,15 +1220,13 @@ bool MeshInput::LoadMeshNode (std::istream &rstrIn)
 
     std::string line;
     float fX, fY, fZ;
-    unsigned int  i1=1,i2=1,i3=1;
+    unsigned int i1 = 1, i2 = 1, i3 = 1;
     MeshGeomFacet clFacet;
 
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
 
-    std::streambuf* buf = rstrIn.rdbuf();
-    if (!buf)
-        return false;
+    std::streambuf *buf = rstrIn.rdbuf();
+    if (!buf) return false;
 
     while (std::getline(rstrIn, line)) {
         boost::algorithm::to_lower(line);
@@ -1303,7 +1240,7 @@ bool MeshInput::LoadMeshNode (std::istream &rstrIn)
             i1 = std::atoi(what[1].first);
             i2 = std::atoi(what[2].first);
             i3 = std::atoi(what[3].first);
-            meshFacets.push_back(MeshFacet(i1-1,i2-1,i3-1));
+            meshFacets.push_back(MeshFacet(i1 - 1, i2 - 1, i3 - 1));
         }
         else if (boost::regex_match(line.c_str(), what, rx_e)) {
             break;
@@ -1312,17 +1249,17 @@ bool MeshInput::LoadMeshNode (std::istream &rstrIn)
 
     this->_rclMesh.Clear(); // remove all data before
 
-    MeshCleanup meshCleanup(meshPoints,meshFacets);
+    MeshCleanup meshCleanup(meshPoints, meshFacets);
     meshCleanup.RemoveInvalids();
-    MeshPointFacetAdjacency meshAdj(meshPoints.size(),meshFacets);
+    MeshPointFacetAdjacency meshAdj(meshPoints.size(), meshFacets);
     meshAdj.SetFacetNeighbourhood();
-    this->_rclMesh.Adopt(meshPoints,meshFacets);
+    this->_rclMesh.Adopt(meshPoints, meshFacets);
 
     return true;
 }
 
 /** Loads an ASCII STL file. */
-bool MeshInput::LoadAsciiSTL (std::istream &rstrIn)
+bool MeshInput::LoadAsciiSTL(std::istream &rstrIn)
 {
     boost::regex rx_p("^\\s*VERTEX\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
                       "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
@@ -1334,14 +1271,13 @@ bool MeshInput::LoadAsciiSTL (std::istream &rstrIn)
 
     std::string line;
     float fX, fY, fZ;
-    unsigned long ulVertexCt, ulFacetCt=0;
+    unsigned long ulVertexCt, ulFacetCt = 0;
     MeshGeomFacet clFacet;
 
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
 
     std::streamoff ulSize = 0;
-    std::streambuf* buf = rstrIn.rdbuf();
+    std::streambuf *buf = rstrIn.rdbuf();
     ulSize = buf->pubseekoff(0, std::ios::end, std::ios::in);
     buf->pubseekoff(0, std::ios::beg, std::ios::in);
     ulSize -= 20;
@@ -1349,11 +1285,9 @@ bool MeshInput::LoadAsciiSTL (std::istream &rstrIn)
     // count facets
     while (std::getline(rstrIn, line)) {
         boost::algorithm::to_upper(line);
-        if (line.find("ENDFACET") != std::string::npos)
-            ulFacetCt++;
+        if (line.find("ENDFACET") != std::string::npos) ulFacetCt++;
         // prevent from reading EOF (as I don't know how to reread the file then)
-        if (rstrIn.tellg() > ulSize)
-            break;
+        if (rstrIn.tellg() > ulSize) break;
         else if (line.find("ENDSOLID") != std::string::npos)
             break;
     }
@@ -1395,27 +1329,25 @@ bool MeshInput::LoadAsciiSTL (std::istream &rstrIn)
 }
 
 /** Loads a binary STL file. */
-bool MeshInput::LoadBinarySTL (std::istream &rstrIn)
+bool MeshInput::LoadBinarySTL(std::istream &rstrIn)
 {
     char szInfo[80];
     Base::Vector3f clVects[4];
     uint16_t usAtt = 0;
     uint32_t ulCt = 0;
 
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
 
     // Header-Info ueberlesen
     rstrIn.read(szInfo, sizeof(szInfo));
 
     // Anzahl Facets
-    rstrIn.read((char*)&ulCt, sizeof(ulCt));
-    if (rstrIn.bad())
-        return false;
+    rstrIn.read((char *)&ulCt, sizeof(ulCt));
+    if (rstrIn.bad()) return false;
 
     // get file size and calculate the number of facets
     std::streamoff ulSize = 0;
-    std::streambuf* buf = rstrIn.rdbuf();
+    std::streambuf *buf = rstrIn.rdbuf();
     if (buf) {
         std::streamoff ulCurr;
         ulCurr = buf->pubseekoff(0, std::ios::cur, std::ios::in);
@@ -1426,8 +1358,7 @@ bool MeshInput::LoadBinarySTL (std::istream &rstrIn)
     uint32_t ulFac = (ulSize - (80 + sizeof(uint32_t))) / 50;
 
     // compare the calculated with the read value
-    if (ulCt > ulFac)
-        return false;// not a valid STL file
+    if (ulCt > ulFac) return false; // not a valid STL file
 
 #if 0
     MeshBuilder builder(this->_rclMesh);
@@ -1438,13 +1369,13 @@ bool MeshInput::LoadBinarySTL (std::istream &rstrIn)
 
     for (uint32_t i = 0; i < ulCt; i++) {
         // read normal, points
-        rstrIn.read((char*)&clVects, sizeof(clVects));
+        rstrIn.read((char *)&clVects, sizeof(clVects));
 
         std::swap(clVects[0], clVects[3]);
         builder.AddFacet(clVects);
 
         // overread 2 bytes attribute
-        rstrIn.read((char*)&usAtt, sizeof(usAtt));
+        rstrIn.read((char *)&usAtt, sizeof(usAtt));
     }
 
     builder.Finish();
@@ -1453,18 +1384,18 @@ bool MeshInput::LoadBinarySTL (std::istream &rstrIn)
 }
 
 /** Loads the mesh object from an XML file. */
-void MeshInput::LoadXML (Base::XMLReader &reader)
+void MeshInput::LoadXML(Base::XMLReader &reader)
 {
     MeshPointArray cPoints;
     MeshFacetArray cFacets;
 
-//  reader.readElement("Mesh");
+    //  reader.readElement("Mesh");
 
     reader.readElement("Points");
     int Cnt = reader.getAttributeAsInteger("Count");
 
     cPoints.resize(Cnt);
-    for (int i=0 ;i<Cnt ;i++) {
+    for (int i = 0; i < Cnt; i++) {
         reader.readElement("P");
         cPoints[i].x = (float)reader.getAttributeAsFloat("x");
         cPoints[i].y = (float)reader.getAttributeAsFloat("y");
@@ -1476,7 +1407,7 @@ void MeshInput::LoadXML (Base::XMLReader &reader)
     Cnt = reader.getAttributeAsInteger("Count");
 
     cFacets.resize(Cnt);
-    for (int i=0 ;i<Cnt ;i++) {
+    for (int i = 0; i < Cnt; i++) {
         reader.readElement("F");
         cFacets[i]._aulPoints[0] = reader.getAttributeAsInteger("p0");
         cFacets[i]._aulPoints[1] = reader.getAttributeAsInteger("p1");
@@ -1516,31 +1447,25 @@ bool MeshInput::Load3MF(std::istream &inp)
 }
 
 /** Loads an OpenInventor file. */
-bool MeshInput::LoadInventor (std::istream &inp)
+bool MeshInput::LoadInventor(std::istream &inp)
 {
     Base::InventorLoader loader(inp);
-    if (!loader.read())
-        return false;
+    if (!loader.read()) return false;
 
-    if (!loader.isValid())
-        return false;
+    if (!loader.isValid()) return false;
 
-    const auto& points = loader.getPoints();
-    const auto& faces = loader.getFaces();
+    const auto &points = loader.getPoints();
+    const auto &faces = loader.getFaces();
 
     MeshPointArray meshPoints;
     meshPoints.reserve(points.size());
     std::transform(points.begin(), points.end(), std::back_inserter(meshPoints),
-                   [](const Base::Vector3f& v) {
-        return MeshPoint(v);
-    });
+                   [](const Base::Vector3f &v) { return MeshPoint(v); });
 
     MeshFacetArray meshFacets;
     meshFacets.reserve(faces.size());
     std::transform(faces.begin(), faces.end(), std::back_inserter(meshFacets),
-                   [](const Base::InventorLoader::Face& f) {
-        return MeshFacet(f.p1, f.p2, f.p3);
-    });
+                   [](const Base::InventorLoader::Face &f) { return MeshFacet(f.p1, f.p2, f.p3); });
 
     MeshCleanup meshCleanup(meshPoints, meshFacets);
     meshCleanup.RemoveInvalids();
@@ -1558,10 +1483,9 @@ bool MeshInput::LoadInventor (std::istream &inp)
 }
 
 /** Loads a Nastran file. */
-bool MeshInput::LoadNastran (std::istream &rstrIn)
+bool MeshInput::LoadNastran(std::istream &rstrIn)
 {
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
 
     boost::regex rx_t("\\s*CTRIA3\\s+([0-9]+)\\s+([0-9]+)"
                       "\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s*");
@@ -1575,9 +1499,9 @@ bool MeshInput::LoadNastran (std::istream &rstrIn)
     MeshFacetArray vTriangle;
 
     int index;
-    std::map <int, NODE> mNode;
-    std::map <int, TRIA> mTria;
-    std::map <int, QUAD> mQuad;
+    std::map<int, NODE> mNode;
+    std::map<int, TRIA> mTria;
+    std::map<int, QUAD> mQuad;
 
     int badElementCounter = 0;
 
@@ -1603,19 +1527,19 @@ bool MeshInput::LoadNastran (std::istream &rstrIn)
             // GRID*  1                               0.1234567890120.
             // *      1.
             //
-            if (line.length() < 8 + 16 + 16 + 16 + 1) { // Element type(8), index(16), empty(16), x(16), y(>=1)
+            if (line.length()
+                < 8 + 16 + 16 + 16 + 1) { // Element type(8), index(16), empty(16), x(16), y(>=1)
                 badElementCounter++;
                 continue;
             }
             auto indexView = std::string_view(&line[8], 16);
             //auto blankView = std::string_view(&line[8+16], 16); // No data is needed here
-            auto xView = std::string_view(&line[8+16+16], 16);
-            auto yView = std::string_view(&line[8+16+16+16]);
+            auto xView = std::string_view(&line[8 + 16 + 16], 16);
+            auto yView = std::string_view(&line[8 + 16 + 16 + 16]);
 
             std::string line2;
             std::getline(rstrIn, line2);
-            if ((!line2.empty() && line2[0] != '*') ||
-                line2.length() < 9) {
+            if ((!line2.empty() && line2[0] != '*') || line2.length() < 9) {
                 badElementCounter++;
                 continue; // File format error: second line is not a continuation line
             }
@@ -1655,13 +1579,13 @@ bool MeshInput::LoadNastran (std::istream &rstrIn)
         else if (line.rfind("GRID", 0) == 0) {
 
             boost::regex rx_spaceDelimited("\\s*GRID\\s+([0-9]+)"
-                "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
-                "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*");
+                                           "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                                           "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)"
+                                           "\\s+([-+]?[0-9]*)\\.?([0-9]+([eE][-+]?[0-9]+)?)\\s*");
 
             if (boost::regex_match(line.c_str(), what, rx_spaceDelimited)) {
                 // insert the read-in vertex into a map to preserve the order
-                index = std::atol(what[1].first)-1;
+                index = std::atol(what[1].first) - 1;
                 mNode[index].x = (float)std::atof(what[2].first);
                 mNode[index].y = (float)std::atof(what[5].first);
                 mNode[index].z = (float)std::atof(what[8].first);
@@ -1673,7 +1597,8 @@ bool MeshInput::LoadNastran (std::istream &rstrIn)
                 // GRID    1               1.2345671.2345671.234567
                 // GRID    112             6.0000000.5000000.00E+00
 
-                if (line.length() < 41) { // Element type(8), id(8), cp(8), x(8), y(8), z(at least 1)
+                if (line.length()
+                    < 41) { // Element type(8), id(8), cp(8), x(8), y(8), z(at least 1)
                     badElementCounter++;
                     continue;
                 }
@@ -1694,7 +1619,8 @@ bool MeshInput::LoadNastran (std::istream &rstrIn)
                     badElementCounter++;
                     continue;
                 }
-                index = indexCheck.get() - 1; // Minus one so we are zero-indexed to match existing code
+                index =
+                    indexCheck.get() - 1; // Minus one so we are zero-indexed to match existing code
 
                 auto x = boost::convert<float>(xString, converter);
                 auto y = boost::convert<float>(yString, converter);
@@ -1714,20 +1640,20 @@ bool MeshInput::LoadNastran (std::istream &rstrIn)
         else if (line.rfind("CTRIA3 ", 0) == 0) {
             if (boost::regex_match(line.c_str(), what, rx_t)) {
                 // insert the read-in triangle into a map to preserve the order
-                index = std::atol(what[1].first)-1;
-                mTria[index].iV[0] = std::atol(what[3].first)-1;
-                mTria[index].iV[1] = std::atol(what[4].first)-1;
-                mTria[index].iV[2] = std::atol(what[5].first)-1;
+                index = std::atol(what[1].first) - 1;
+                mTria[index].iV[0] = std::atol(what[3].first) - 1;
+                mTria[index].iV[1] = std::atol(what[4].first) - 1;
+                mTria[index].iV[2] = std::atol(what[5].first) - 1;
             }
         }
         else if (line.rfind("CQUAD4", 0) == 0) {
             if (boost::regex_match(line.c_str(), what, rx_q)) {
                 // insert the read-in quadrangle into a map to preserve the order
-                index = std::atol(what[1].first)-1;
-                mQuad[index].iV[0] = std::atol(what[3].first)-1;
-                mQuad[index].iV[1] = std::atol(what[4].first)-1;
-                mQuad[index].iV[2] = std::atol(what[5].first)-1;
-                mQuad[index].iV[3] = std::atol(what[6].first)-1;
+                index = std::atol(what[1].first) - 1;
+                mQuad[index].iV[0] = std::atol(what[3].first) - 1;
+                mQuad[index].iV[1] = std::atol(what[4].first) - 1;
+                mQuad[index].iV[2] = std::atol(what[5].first) - 1;
+                mQuad[index].iV[3] = std::atol(what[6].first) - 1;
             }
         }
     }
@@ -1737,54 +1663,55 @@ bool MeshInput::LoadNastran (std::istream &rstrIn)
     }
 
     // Check the triangles to make sure the vertices they refer to actually exist:
-    for (const auto& tri : mTria) {
+    for (const auto &tri : mTria) {
         for (int i = 0; i < 3; ++i) {
             if (mNode.find(tri.second.iV[i]) == mNode.end()) {
-                Base::Console().Error("CTRIA3 element refers to a node that does not exist, or could not be read.\n");
+                Base::Console().Error(
+                    "CTRIA3 element refers to a node that does not exist, or could not be read.\n");
                 return false;
             }
         }
     }
 
     // Check the quads to make sure the vertices they refer to actually exist:
-    for (const auto& quad : mQuad) {
+    for (const auto &quad : mQuad) {
         for (int i = 0; i < 4; ++i) {
             if (mNode.find(quad.second.iV[i]) == mNode.end()) {
-                Base::Console().Error("CQUAD4 element refers to a node that does not exist, or could not be read.\n");
+                Base::Console().Error(
+                    "CQUAD4 element refers to a node that does not exist, or could not be read.\n");
                 return false;
             }
         }
     }
 
     float fLength[2];
-    if (mTria.empty())
-        index = 0;
+    if (mTria.empty()) index = 0;
     else
         index = mTria.rbegin()->first + 1;
-    for (std::map <int, QUAD>::iterator QI=mQuad.begin(); QI!=mQuad.end(); ++QI) {
+    for (std::map<int, QUAD>::iterator QI = mQuad.begin(); QI != mQuad.end(); ++QI) {
         for (int i = 0; i < 2; i++) {
-            float fDx = mNode[(*QI).second.iV[i+2]].x - mNode[(*QI).second.iV[i]].x;
-            float fDy = mNode[(*QI).second.iV[i+2]].y - mNode[(*QI).second.iV[i]].y;
-            float fDz = mNode[(*QI).second.iV[i+2]].z - mNode[(*QI).second.iV[i]].z;
-            fLength[i] = fDx*fDx + fDy*fDy + fDz*fDz;
+            float fDx = mNode[(*QI).second.iV[i + 2]].x - mNode[(*QI).second.iV[i]].x;
+            float fDy = mNode[(*QI).second.iV[i + 2]].y - mNode[(*QI).second.iV[i]].y;
+            float fDz = mNode[(*QI).second.iV[i + 2]].z - mNode[(*QI).second.iV[i]].z;
+            fLength[i] = fDx * fDx + fDy * fDy + fDz * fDz;
         }
         if (fLength[0] < fLength[1]) {
             mTria[index].iV[0] = (*QI).second.iV[0];
             mTria[index].iV[1] = (*QI).second.iV[1];
             mTria[index].iV[2] = (*QI).second.iV[2];
 
-            mTria[index+1].iV[0] = (*QI).second.iV[0];
-            mTria[index+1].iV[1] = (*QI).second.iV[2];
-            mTria[index+1].iV[2] = (*QI).second.iV[3];
+            mTria[index + 1].iV[0] = (*QI).second.iV[0];
+            mTria[index + 1].iV[1] = (*QI).second.iV[2];
+            mTria[index + 1].iV[2] = (*QI).second.iV[3];
         }
         else {
             mTria[index].iV[0] = (*QI).second.iV[0];
             mTria[index].iV[1] = (*QI).second.iV[1];
             mTria[index].iV[2] = (*QI).second.iV[3];
 
-            mTria[index+1].iV[0] = (*QI).second.iV[1];
-            mTria[index+1].iV[1] = (*QI).second.iV[2];
-            mTria[index+1].iV[2] = (*QI).second.iV[3];
+            mTria[index + 1].iV[0] = (*QI).second.iV[1];
+            mTria[index + 1].iV[1] = (*QI).second.iV[2];
+            mTria[index + 1].iV[2] = (*QI).second.iV[3];
         }
 
         index += 2;
@@ -1792,17 +1719,17 @@ bool MeshInput::LoadNastran (std::istream &rstrIn)
 
     // Applying the nodes
     vVertices.reserve(mNode.size());
-    for (std::map<int, NODE>::iterator MI=mNode.begin(); MI!=mNode.end(); ++MI) {
+    for (std::map<int, NODE>::iterator MI = mNode.begin(); MI != mNode.end(); ++MI) {
         vVertices.push_back(Base::Vector3f(MI->second.x, MI->second.y, MI->second.z));
     }
 
     // Converting data to Mesh. Negative conversion for right orientation of normal-vectors.
     vTriangle.reserve(mTria.size());
-    for (std::map<int, TRIA>::iterator MI=mTria.begin(); MI!=mTria.end(); ++MI) {
+    for (std::map<int, TRIA>::iterator MI = mTria.begin(); MI != mTria.end(); ++MI) {
         clMeshFacet._aulPoints[0] = (*MI).second.iV[1];
         clMeshFacet._aulPoints[1] = (*MI).second.iV[0];
         clMeshFacet._aulPoints[2] = (*MI).second.iV[2];
-        vTriangle.push_back (clMeshFacet);
+        vTriangle.push_back(clMeshFacet);
     }
 
     // make sure to add only vertices which are referenced by the triangles
@@ -1812,10 +1739,9 @@ bool MeshInput::LoadNastran (std::istream &rstrIn)
 }
 
 /** Loads a Cadmould FE file. */
-bool MeshInput::LoadCadmouldFE (std::ifstream &rstrIn)
+bool MeshInput::LoadCadmouldFE(std::ifstream &rstrIn)
 {
-    if (!rstrIn || rstrIn.bad())
-        return false;
+    if (!rstrIn || rstrIn.bad()) return false;
     assert(0);
     return false;
 }
@@ -1825,11 +1751,9 @@ bool MeshInput::LoadCadmouldFE (std::ifstream &rstrIn)
 std::string MeshOutput::stl_header = "MESH-MESH-MESH-MESH-MESH-MESH-MESH-MESH-"
                                      "MESH-MESH-MESH-MESH-MESH-MESH-MESH-MESH\n";
 
-void MeshOutput::SetSTLHeaderData(const std::string& header)
+void MeshOutput::SetSTLHeaderData(const std::string &header)
 {
-    if (header.size() > 80) {
-        stl_header = header.substr(0, 80);
-    }
+    if (header.size() > 80) { stl_header = header.substr(0, 80); }
     else if (header.size() < 80) {
         std::fill(stl_header.begin(), stl_header.end(), ' ');
         std::copy(header.begin(), header.end(), stl_header.begin());
@@ -1842,17 +1766,16 @@ void MeshOutput::SetSTLHeaderData(const std::string& header)
 std::string MeshOutput::asyWidth = "500";
 std::string MeshOutput::asyHeight = "500";
 
-void MeshOutput::SetAsymptoteSize(const std::string& w, const std::string& h)
+void MeshOutput::SetAsymptoteSize(const std::string &w, const std::string &h)
 {
     asyWidth = w;
     asyHeight = h;
 }
 
-void MeshOutput::Transform(const Base::Matrix4D& mat)
+void MeshOutput::Transform(const Base::Matrix4D &mat)
 {
     _transform = mat;
-    if (mat != Base::Matrix4D())
-        apply_transform = true;
+    if (mat != Base::Matrix4D()) apply_transform = true;
 }
 
 std::vector<std::string> MeshOutput::supportedMeshFormats()
@@ -1875,12 +1798,10 @@ std::vector<std::string> MeshOutput::supportedMeshFormats()
     return fmt;
 }
 
-MeshIO::Format MeshOutput::GetFormat(const char* FileName)
+MeshIO::Format MeshOutput::GetFormat(const char *FileName)
 {
     Base::FileInfo file(FileName);
-    if (file.hasExtension("bms")) {
-        return MeshIO::BMS;
-    }
+    if (file.hasExtension("bms")) { return MeshIO::BMS; }
     else if (file.hasExtension("stl")) {
         return MeshIO::BSTL;
     }
@@ -1944,34 +1865,28 @@ MeshIO::Format MeshOutput::GetFormat(const char* FileName)
 }
 
 /// Save in a file, format is decided by the extension if not explicitly given
-bool MeshOutput::SaveAny(const char* FileName, MeshIO::Format format) const
+bool MeshOutput::SaveAny(const char *FileName, MeshIO::Format format) const
 {
     // ask for write permission
     Base::FileInfo file(FileName);
     Base::FileInfo directory(file.dirPath());
     if ((file.exists() && !file.isWritable()) || !directory.exists() || !directory.isWritable())
-        throw Base::FileException("No write permission for file",FileName);
+        throw Base::FileException("No write permission for file", FileName);
 
     MeshIO::Format fileformat = format;
-    if (fileformat == MeshIO::Undefined) {
-        fileformat = GetFormat(FileName);
-    }
+    if (fileformat == MeshIO::Undefined) { fileformat = GetFormat(FileName); }
 
     Base::ofstream str(file, std::ios::out | std::ios::binary);
 
-    if (fileformat == MeshIO::BMS) {
-        _rclMesh.Write(str);
-    }
+    if (fileformat == MeshIO::BMS) { _rclMesh.Write(str); }
     else if (fileformat == MeshIO::BSTL) {
         MeshOutput aWriter(_rclMesh);
         aWriter.Transform(this->_transform);
 
         // write file
         bool ok = false;
-        ok = aWriter.SaveBinarySTL( str );
-        if (!ok)
-            throw Base::FileException("Export of STL mesh failed",FileName);
-
+        ok = aWriter.SaveBinarySTL(str);
+        if (!ok) throw Base::FileException("Export of STL mesh failed", FileName);
     }
     else if (fileformat == MeshIO::ASTL) {
         MeshOutput aWriter(_rclMesh);
@@ -1980,81 +1895,68 @@ bool MeshOutput::SaveAny(const char* FileName, MeshIO::Format format) const
 
         // write file
         bool ok = false;
-        ok = aWriter.SaveAsciiSTL( str );
-        if (!ok)
-            throw Base::FileException("Export of STL mesh failed",FileName);
+        ok = aWriter.SaveAsciiSTL(str);
+        if (!ok) throw Base::FileException("Export of STL mesh failed", FileName);
     }
     else if (fileformat == MeshIO::OBJ) {
         // write file
-        if (!SaveOBJ(str))
-            throw Base::FileException("Export of OBJ mesh failed",FileName);
+        if (!SaveOBJ(str)) throw Base::FileException("Export of OBJ mesh failed", FileName);
     }
     else if (fileformat == MeshIO::SMF) {
         // write file
-        if (!SaveSMF(str))
-            throw Base::FileException("Export of SMF mesh failed",FileName);
+        if (!SaveSMF(str)) throw Base::FileException("Export of SMF mesh failed", FileName);
     }
     else if (fileformat == MeshIO::OFF) {
         // write file
-        if (!SaveOFF(str))
-            throw Base::FileException("Export of OFF mesh failed",FileName);
+        if (!SaveOFF(str)) throw Base::FileException("Export of OFF mesh failed", FileName);
     }
     else if (fileformat == MeshIO::PLY) {
         // write file
-        if (!SaveBinaryPLY(str))
-            throw Base::FileException("Export of PLY mesh failed",FileName);
+        if (!SaveBinaryPLY(str)) throw Base::FileException("Export of PLY mesh failed", FileName);
     }
     else if (fileformat == MeshIO::APLY) {
         // write file
-        if (!SaveAsciiPLY(str))
-            throw Base::FileException("Export of PLY mesh failed",FileName);
+        if (!SaveAsciiPLY(str)) throw Base::FileException("Export of PLY mesh failed", FileName);
     }
     else if (fileformat == MeshIO::IDTF) {
         // write file
-        if (!SaveIDTF(str))
-            throw Base::FileException("Export of IDTF mesh failed",FileName);
+        if (!SaveIDTF(str)) throw Base::FileException("Export of IDTF mesh failed", FileName);
     }
     else if (fileformat == MeshIO::MGL) {
         // write file
-        if (!SaveMGL(str))
-            throw Base::FileException("Export of MGL mesh failed",FileName);
+        if (!SaveMGL(str)) throw Base::FileException("Export of MGL mesh failed", FileName);
     }
     else if (fileformat == MeshIO::IV) {
         // write file
         if (!SaveInventor(str))
-            throw Base::FileException("Export of Inventor mesh failed",FileName);
+            throw Base::FileException("Export of Inventor mesh failed", FileName);
     }
     else if (fileformat == MeshIO::X3D) {
         // write file
-        if (!SaveX3D(str))
-            throw Base::FileException("Export of X3D failed",FileName);
+        if (!SaveX3D(str)) throw Base::FileException("Export of X3D failed", FileName);
     }
     else if (fileformat == MeshIO::X3DZ) {
         // Compressed X3D is nothing else than a GZIP'ped X3D ascii file
         zipios::GZIPOutputStream gzip(str);
         // write file
         if (!SaveX3D(gzip))
-            throw Base::FileException("Export of compressed X3D mesh failed",FileName);
+            throw Base::FileException("Export of compressed X3D mesh failed", FileName);
     }
     else if (fileformat == MeshIO::X3DOM) {
         // write file
-        if (!SaveX3DOM(str))
-            throw Base::FileException("Export of X3DOM failed",FileName);
+        if (!SaveX3DOM(str)) throw Base::FileException("Export of X3DOM failed", FileName);
     }
     else if (fileformat == MeshIO::ThreeMF) {
         // write file
-        if (!Save3MF(str))
-            throw Base::FileException("Export of 3MF failed",FileName);
+        if (!Save3MF(str)) throw Base::FileException("Export of 3MF failed", FileName);
     }
     else if (fileformat == MeshIO::PY) {
         // write file
-        if (!SavePython(str))
-            throw Base::FileException("Export of Python mesh failed",FileName);
+        if (!SavePython(str)) throw Base::FileException("Export of Python mesh failed", FileName);
     }
     else if (fileformat == MeshIO::VRML) {
         // write file
-        if (!SaveVRML(str))
-            throw Base::FileException("Export of VRML mesh failed",FileName);
+        if (!SaveVRML(str)) throw Base::FileException("Export of VRML mesh failed", FileName);
     }
     else if (fileformat == MeshIO::WRZ) {
         // Compressed VRML is nothing else than a GZIP'ped VRML ascii file
@@ -2066,17 +1968,15 @@ bool MeshOutput::SaveAny(const char* FileName, MeshIO::Format format) const
         zipios::GZIPOutputStream gzip(str);
         // write file
         if (!SaveVRML(gzip))
-            throw Base::FileException("Export of compressed VRML mesh failed",FileName);
+            throw Base::FileException("Export of compressed VRML mesh failed", FileName);
     }
     else if (fileformat == MeshIO::NAS) {
         // write file
-        if (!SaveNastran(str))
-            throw Base::FileException("Export of NASTRAN mesh failed",FileName);
+        if (!SaveNastran(str)) throw Base::FileException("Export of NASTRAN mesh failed", FileName);
     }
     else if (fileformat == MeshIO::ASY) {
         // write file
-        if (!SaveAsymptote(str))
-            throw Base::FileException("Export of ASY mesh failed",FileName);
+        if (!SaveAsymptote(str)) throw Base::FileException("Export of ASY mesh failed", FileName);
     }
     else {
         throw Base::FileException("File format not supported", FileName);
@@ -2088,67 +1988,45 @@ bool MeshOutput::SaveAny(const char* FileName, MeshIO::Format format) const
 bool MeshOutput::SaveFormat(std::ostream &str, MeshIO::Format fmt) const
 {
     switch (fmt) {
-    case MeshIO::BMS:
-        _rclMesh.Write(str);
-        return true;
-    case MeshIO::ASTL:
-        return SaveAsciiSTL(str);
-    case MeshIO::BSTL:
-        return SaveBinarySTL(str);
-    case MeshIO::OBJ:
-        return SaveOBJ(str);
-    case MeshIO::SMF:
-        return SaveSMF(str);
-    case MeshIO::OFF:
-        return SaveOFF(str);
-    case MeshIO::IDTF:
-        return SaveIDTF(str);
-    case MeshIO::MGL:
-        return SaveMGL(str);
-    case MeshIO::IV:
-        return SaveInventor(str);
-    case MeshIO::X3D:
-        return SaveX3D(str);
-    case MeshIO::X3DOM:
-        return SaveX3DOM(str);
-    case MeshIO::VRML:
-        return SaveVRML(str);
-    case MeshIO::WRZ:
-        // it's up to the client to create the needed stream
-        return SaveVRML(str);
-    case MeshIO::ThreeMF:
-        return Save3MF(str);
-    case MeshIO::NAS:
-        return SaveNastran(str);
-    case MeshIO::PLY:
-        return SaveBinaryPLY(str);
-    case MeshIO::APLY:
-        return SaveAsciiPLY(str);
-    case MeshIO::PY:
-        return SavePython(str);
-    case MeshIO::ASY:
-        return SaveAsymptote(str);
-    default:
-        throw Base::FileException("Unsupported file format");
+        case MeshIO::BMS: _rclMesh.Write(str); return true;
+        case MeshIO::ASTL: return SaveAsciiSTL(str);
+        case MeshIO::BSTL: return SaveBinarySTL(str);
+        case MeshIO::OBJ: return SaveOBJ(str);
+        case MeshIO::SMF: return SaveSMF(str);
+        case MeshIO::OFF: return SaveOFF(str);
+        case MeshIO::IDTF: return SaveIDTF(str);
+        case MeshIO::MGL: return SaveMGL(str);
+        case MeshIO::IV: return SaveInventor(str);
+        case MeshIO::X3D: return SaveX3D(str);
+        case MeshIO::X3DOM: return SaveX3DOM(str);
+        case MeshIO::VRML: return SaveVRML(str);
+        case MeshIO::WRZ:
+            // it's up to the client to create the needed stream
+            return SaveVRML(str);
+        case MeshIO::ThreeMF: return Save3MF(str);
+        case MeshIO::NAS: return SaveNastran(str);
+        case MeshIO::PLY: return SaveBinaryPLY(str);
+        case MeshIO::APLY: return SaveAsciiPLY(str);
+        case MeshIO::PY: return SavePython(str);
+        case MeshIO::ASY: return SaveAsymptote(str);
+        default: throw Base::FileException("Unsupported file format");
     }
 }
 
 /** Saves the mesh object into an ASCII file. */
-bool MeshOutput::SaveAsciiSTL (std::ostream &rstrOut) const
+bool MeshOutput::SaveAsciiSTL(std::ostream &rstrOut) const
 {
     MeshFacetIterator clIter(_rclMesh), clEnd(_rclMesh);
     clIter.Transform(this->_transform);
     const MeshGeomFacet *pclFacet;
 
-    if (!rstrOut || rstrOut.bad() || _rclMesh.CountFacets() == 0)
-        return false;
+    if (!rstrOut || rstrOut.bad() || _rclMesh.CountFacets() == 0) return false;
 
     rstrOut.precision(6);
     rstrOut.setf(std::ios::fixed | std::ios::showpoint);
     Base::SequencerLauncher seq("saving...", _rclMesh.CountFacets() + 1);
 
-    if (this->objectName.empty())
-        rstrOut << "solid Mesh\n";
+    if (this->objectName.empty()) rstrOut << "solid Mesh\n";
     else
         rstrOut << "solid " << this->objectName << '\n';
 
@@ -2158,23 +2036,21 @@ bool MeshOutput::SaveAsciiSTL (std::ostream &rstrOut) const
         pclFacet = &(*clIter);
 
         // normal
-        rstrOut << "  facet normal " << pclFacet->GetNormal().x << " "
-                                     << pclFacet->GetNormal().y << " "
-                                     << pclFacet->GetNormal().z << '\n';
+        rstrOut << "  facet normal " << pclFacet->GetNormal().x << " " << pclFacet->GetNormal().y
+                << " " << pclFacet->GetNormal().z << '\n';
         rstrOut << "    outer loop\n";
 
         // vertices
         for (int i = 0; i < 3; i++) {
-            rstrOut << "      vertex "  << pclFacet->_aclPoints[i].x << " "
-                                        << pclFacet->_aclPoints[i].y << " "
-                                        << pclFacet->_aclPoints[i].z << '\n';
+            rstrOut << "      vertex " << pclFacet->_aclPoints[i].x << " "
+                    << pclFacet->_aclPoints[i].y << " " << pclFacet->_aclPoints[i].z << '\n';
         }
 
         rstrOut << "    endloop\n";
         rstrOut << "  endfacet\n";
 
         ++clIter;
-        seq.next(true);// allow to cancel
+        seq.next(true); // allow to cancel
     }
 
     rstrOut << "endsolid Mesh\n";
@@ -2183,7 +2059,7 @@ bool MeshOutput::SaveAsciiSTL (std::ostream &rstrOut) const
 }
 
 /** Saves the mesh object into a binary file. */
-bool MeshOutput::SaveBinarySTL (std::ostream &rstrOut) const
+bool MeshOutput::SaveBinarySTL(std::ostream &rstrOut) const
 {
     MeshFacetIterator clIter(_rclMesh), clEnd(_rclMesh);
     clIter.Transform(this->_transform);
@@ -2192,8 +2068,7 @@ bool MeshOutput::SaveBinarySTL (std::ostream &rstrOut) const
     uint16_t usAtt;
     char szInfo[81];
 
-    if (!rstrOut || rstrOut.bad() /*|| _rclMesh.CountFacets() == 0*/)
-        return false;
+    if (!rstrOut || rstrOut.bad() /*|| _rclMesh.CountFacets() == 0*/) return false;
 
     Base::SequencerLauncher seq("saving...", _rclMesh.CountFacets() + 1);
 
@@ -2202,7 +2077,7 @@ bool MeshOutput::SaveBinarySTL (std::ostream &rstrOut) const
     rstrOut.write(szInfo, std::strlen(szInfo));
 
     uint32_t uCtFts = (uint32_t)_rclMesh.CountFacets();
-    rstrOut.write((const char*)&uCtFts, sizeof(uCtFts));
+    rstrOut.write((const char *)&uCtFts, sizeof(uCtFts));
 
     usAtt = 0;
     clIter.Begin();
@@ -2211,19 +2086,19 @@ bool MeshOutput::SaveBinarySTL (std::ostream &rstrOut) const
         pclFacet = &(*clIter);
         // normal
         Base::Vector3f normal = pclFacet->GetNormal();
-        rstrOut.write((const char*)&(normal.x), sizeof(float));
-        rstrOut.write((const char*)&(normal.y), sizeof(float));
-        rstrOut.write((const char*)&(normal.z), sizeof(float));
+        rstrOut.write((const char *)&(normal.x), sizeof(float));
+        rstrOut.write((const char *)&(normal.y), sizeof(float));
+        rstrOut.write((const char *)&(normal.z), sizeof(float));
 
         // vertices
         for (i = 0; i < 3; i++) {
-            rstrOut.write((const char*)&(pclFacet->_aclPoints[i].x), sizeof(float));
-            rstrOut.write((const char*)&(pclFacet->_aclPoints[i].y), sizeof(float));
-            rstrOut.write((const char*)&(pclFacet->_aclPoints[i].z), sizeof(float));
+            rstrOut.write((const char *)&(pclFacet->_aclPoints[i].x), sizeof(float));
+            rstrOut.write((const char *)&(pclFacet->_aclPoints[i].y), sizeof(float));
+            rstrOut.write((const char *)&(pclFacet->_aclPoints[i].z), sizeof(float));
         }
 
         // attribute
-        rstrOut.write((const char*)&usAtt, sizeof(usAtt));
+        rstrOut.write((const char *)&usAtt, sizeof(usAtt));
 
         ++clIter;
         seq.next(true); // allow to cancel
@@ -2233,13 +2108,12 @@ bool MeshOutput::SaveBinarySTL (std::ostream &rstrOut) const
 }
 
 /** Saves an OBJ file. */
-bool MeshOutput::SaveOBJ (std::ostream &out) const
+bool MeshOutput::SaveOBJ(std::ostream &out) const
 {
-    const MeshPointArray& rPoints = _rclMesh.GetPoints();
-    const MeshFacetArray& rFacets = _rclMesh.GetFacets();
+    const MeshPointArray &rPoints = _rclMesh.GetPoints();
+    const MeshFacetArray &rFacets = _rclMesh.GetFacets();
 
-    if (!out || out.bad())
-        return false;
+    if (!out || out.bad()) return false;
 
     Base::SequencerLauncher seq("saving...", _rclMesh.CountPoints() + _rclMesh.CountFacets());
     bool exportColorPerVertex = false;
@@ -2248,7 +2122,8 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
     if (_material) {
         if (_material->binding == MeshIO::PER_FACE) {
             if (_material->diffuseColor.size() != rFacets.size()) {
-                Base::Console().Warning("Cannot export color information because there is a different number of faces and colors");
+                Base::Console().Warning("Cannot export color information because there is a "
+                                        "different number of faces and colors");
             }
             else {
                 exportColorPerFace = true;
@@ -2256,7 +2131,8 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
         }
         else if (_material->binding == MeshIO::PER_VERTEX) {
             if (_material->diffuseColor.size() != rPoints.size()) {
-                Base::Console().Warning("Cannot export color information because there is a different number of points and colors");
+                Base::Console().Warning("Cannot export color information because there is a "
+                                        "different number of points and colors");
             }
             else {
                 exportColorPerVertex = true;
@@ -2264,7 +2140,8 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
         }
         else if (_material->binding == MeshIO::OVERALL) {
             if (_material->diffuseColor.empty()) {
-                Base::Console().Warning("Cannot export color information because there is no color defined");
+                Base::Console().Warning(
+                    "Cannot export color information because there is no color defined");
             }
             else {
                 exportColorPerVertex = true;
@@ -2274,9 +2151,7 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
 
     // Header
     out << "# Created by FreeCAD <http://www.freecadweb.org>\n";
-    if (exportColorPerFace) {
-        out << "mtllib " << _material->library << '\n';
-    }
+    if (exportColorPerFace) { out << "mtllib " << _material->library << '\n'; }
 
     out.precision(6);
     out.setf(std::ios::fixed | std::ios::showpoint);
@@ -2285,18 +2160,14 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
     Base::Vector3f pt;
     std::size_t index = 0;
     for (MeshPointArray::_TConstIterator it = rPoints.begin(); it != rPoints.end(); ++it, ++index) {
-        if (this->apply_transform) {
-            pt = this->_transform * *it;
-        }
+        if (this->apply_transform) { pt = this->_transform * *it; }
         else {
             pt.Set(it->x, it->y, it->z);
         }
 
         if (exportColorPerVertex) {
             App::Color c;
-            if (_material->binding == MeshIO::PER_VERTEX) {
-                c = _material->diffuseColor[index];
-            }
+            if (_material->binding == MeshIO::PER_VERTEX) { c = _material->diffuseColor[index]; }
             else {
                 c = _material->diffuseColor.front();
             }
@@ -2305,7 +2176,8 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
             int g = static_cast<int>(c.g * 255.0f);
             int b = static_cast<int>(c.b * 255.0f);
 
-            out << "v " << pt.x << " " << pt.y << " " << pt.z << " " << r << " " << g << " " << b << '\n';
+            out << "v " << pt.x << " " << pt.y << " " << pt.z << " " << r << " " << g << " " << b
+                << '\n';
         }
         else {
             out << "v " << pt.x << " " << pt.y << " " << pt.z << '\n';
@@ -2314,15 +2186,14 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
     }
     // Export normals
     MeshFacetIterator clIter(_rclMesh), clEnd(_rclMesh);
-    const MeshGeomFacet* pclFacet;
+    const MeshGeomFacet *pclFacet;
 
     clIter.Begin();
     clEnd.End();
 
     while (clIter < clEnd) {
         pclFacet = &(*clIter);
-        out << "vn " << pclFacet->GetNormal().x << " "
-            << pclFacet->GetNormal().y << " "
+        out << "vn " << pclFacet->GetNormal().x << " " << pclFacet->GetNormal().y << " "
             << pclFacet->GetNormal().z << '\n';
         ++clIter;
         seq.next(true); // allow to cancel
@@ -2340,18 +2211,20 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
             std::size_t index = 0;
             App::Color prev;
             int faceIdx = 1;
-            const std::vector<App::Color>& Kd = _material->diffuseColor;
-            for (MeshFacetArray::_TConstIterator it = rFacets.begin(); it != rFacets.end(); ++it, index++) {
+            const std::vector<App::Color> &Kd = _material->diffuseColor;
+            for (MeshFacetArray::_TConstIterator it = rFacets.begin(); it != rFacets.end();
+                 ++it, index++) {
                 if (index == 0 || prev != Kd[index]) {
                     prev = Kd[index];
-                    std::vector<App::Color>::iterator c_it = std::find(colors.begin(), colors.end(), prev);
+                    std::vector<App::Color>::iterator c_it =
+                        std::find(colors.begin(), colors.end(), prev);
                     if (c_it != colors.end()) {
                         out << "usemtl material_" << (c_it - colors.begin()) << '\n';
                     }
                 }
-                out << "f " << it->_aulPoints[0]+1 << "//" << faceIdx << " "
-                            << it->_aulPoints[1]+1 << "//" << faceIdx << " "
-                            << it->_aulPoints[2]+1 << "//" << faceIdx << '\n';
+                out << "f " << it->_aulPoints[0] + 1 << "//" << faceIdx << " "
+                    << it->_aulPoints[1] + 1 << "//" << faceIdx << " " << it->_aulPoints[2] + 1
+                    << "//" << faceIdx << '\n';
                 seq.next(true); // allow to cancel
                 faceIdx++;
             }
@@ -2360,9 +2233,9 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
             // facet indices (no texture and normal indices)
             std::size_t faceIdx = 1;
             for (MeshFacetArray::_TConstIterator it = rFacets.begin(); it != rFacets.end(); ++it) {
-                out << "f " << it->_aulPoints[0]+1 << "//" << faceIdx << " "
-                            << it->_aulPoints[1]+1 << "//" << faceIdx << " "
-                            << it->_aulPoints[2]+1 << "//" << faceIdx << '\n';
+                out << "f " << it->_aulPoints[0] + 1 << "//" << faceIdx << " "
+                    << it->_aulPoints[1] + 1 << "//" << faceIdx << " " << it->_aulPoints[2] + 1
+                    << "//" << faceIdx << '\n';
                 seq.next(true); // allow to cancel
                 faceIdx++;
             }
@@ -2377,36 +2250,41 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
 
             bool first = true;
             App::Color prev;
-            const std::vector<App::Color>& Kd = _material->diffuseColor;
+            const std::vector<App::Color> &Kd = _material->diffuseColor;
 
-            for (std::vector<Group>::const_iterator gt = _groups.begin(); gt != _groups.end(); ++gt) {
+            for (std::vector<Group>::const_iterator gt = _groups.begin(); gt != _groups.end();
+                 ++gt) {
                 out << "g " << Base::Tools::escapedUnicodeFromUtf8(gt->name.c_str()) << '\n';
-                for (std::vector<FacetIndex>::const_iterator it = gt->indices.begin(); it != gt->indices.end(); ++it) {
-                    const MeshFacet& f = rFacets[*it];
+                for (std::vector<FacetIndex>::const_iterator it = gt->indices.begin();
+                     it != gt->indices.end(); ++it) {
+                    const MeshFacet &f = rFacets[*it];
                     if (first || prev != Kd[*it]) {
                         first = false;
                         prev = Kd[*it];
-                        std::vector<App::Color>::iterator c_it = std::find(colors.begin(), colors.end(), prev);
+                        std::vector<App::Color>::iterator c_it =
+                            std::find(colors.begin(), colors.end(), prev);
                         if (c_it != colors.end()) {
                             out << "usemtl material_" << (c_it - colors.begin()) << '\n';
                         }
                     }
 
-                    out << "f " << f._aulPoints[0]+1 << "//" << *it + 1 << " "
-                                << f._aulPoints[1]+1 << "//" << *it + 1 << " "
-                                << f._aulPoints[2]+1 << "//" << *it + 1 << '\n';
+                    out << "f " << f._aulPoints[0] + 1 << "//" << *it + 1 << " "
+                        << f._aulPoints[1] + 1 << "//" << *it + 1 << " " << f._aulPoints[2] + 1
+                        << "//" << *it + 1 << '\n';
                     seq.next(true); // allow to cancel
                 }
             }
         }
         else {
-            for (std::vector<Group>::const_iterator gt = _groups.begin(); gt != _groups.end(); ++gt) {
+            for (std::vector<Group>::const_iterator gt = _groups.begin(); gt != _groups.end();
+                 ++gt) {
                 out << "g " << Base::Tools::escapedUnicodeFromUtf8(gt->name.c_str()) << '\n';
-                for (std::vector<FacetIndex>::const_iterator it = gt->indices.begin(); it != gt->indices.end(); ++it) {
-                    const MeshFacet& f = rFacets[*it];
-                    out << "f " << f._aulPoints[0]+1 << "//" << *it + 1 << " "
-                                << f._aulPoints[1]+1 << "//" << *it + 1 << " "
-                                << f._aulPoints[2]+1 << "//" << *it + 1 << '\n';
+                for (std::vector<FacetIndex>::const_iterator it = gt->indices.begin();
+                     it != gt->indices.end(); ++it) {
+                    const MeshFacet &f = rFacets[*it];
+                    out << "f " << f._aulPoints[0] + 1 << "//" << *it + 1 << " "
+                        << f._aulPoints[1] + 1 << "//" << *it + 1 << " " << f._aulPoints[2] + 1
+                        << "//" << *it + 1 << '\n';
                     seq.next(true); // allow to cancel
                 }
             }
@@ -2418,8 +2296,7 @@ bool MeshOutput::SaveOBJ (std::ostream &out) const
 
 bool MeshOutput::SaveMTL(std::ostream &out) const
 {
-    if (!out || out.bad())
-        return false;
+    if (!out || out.bad()) return false;
 
     if (_material) {
         if (_material->binding == MeshIO::PER_FACE) {
@@ -2433,7 +2310,7 @@ bool MeshOutput::SaveMTL(std::ostream &out) const
             out << "# Created by FreeCAD <http://www.freecadweb.org>: 'None'\n";
             out << "# Material Count: " << Kd.size() << '\n';
 
-            for (std::size_t i=0; i<Kd.size(); i++) {
+            for (std::size_t i = 0; i < Kd.size(); i++) {
                 out << '\n';
                 out << "newmtl material_" << i << '\n';
                 out << "    Ns 10.000000" << '\n';
@@ -2451,14 +2328,13 @@ bool MeshOutput::SaveMTL(std::ostream &out) const
 }
 
 /** Saves an SMF file. */
-bool MeshOutput::SaveSMF (std::ostream &out) const
+bool MeshOutput::SaveSMF(std::ostream &out) const
 {
     // http://people.sc.fsu.edu/~jburkardt/data/smf/smf.txt
-    const MeshPointArray& rPoints = _rclMesh.GetPoints();
-    const MeshFacetArray& rFacets = _rclMesh.GetFacets();
+    const MeshPointArray &rPoints = _rclMesh.GetPoints();
+    const MeshFacetArray &rFacets = _rclMesh.GetFacets();
 
-    if (!out || out.bad())
-        return false;
+    if (!out || out.bad()) return false;
 
     Base::SequencerLauncher seq("saving...", _rclMesh.CountPoints() + _rclMesh.CountFacets());
 
@@ -2476,9 +2352,7 @@ bool MeshOutput::SaveSMF (std::ostream &out) const
     Base::Vector3f pt;
     std::size_t index = 0;
     for (MeshPointArray::_TConstIterator it = rPoints.begin(); it != rPoints.end(); ++it, ++index) {
-        if (this->apply_transform) {
-            pt = this->_transform * *it;
-        }
+        if (this->apply_transform) { pt = this->_transform * *it; }
         else {
             pt.Set(it->x, it->y, it->z);
         }
@@ -2489,9 +2363,8 @@ bool MeshOutput::SaveSMF (std::ostream &out) const
 
     // facet indices
     for (MeshFacetArray::_TConstIterator it = rFacets.begin(); it != rFacets.end(); ++it) {
-        out << "f " << it->_aulPoints[0]+1 << " "
-                    << it->_aulPoints[1]+1 << " "
-                    << it->_aulPoints[2]+1 << '\n';
+        out << "f " << it->_aulPoints[0] + 1 << " " << it->_aulPoints[1] + 1 << " "
+            << it->_aulPoints[2] + 1 << '\n';
         seq.next(true); // allow to cancel
     }
 
@@ -2509,8 +2382,7 @@ bool MeshOutput::SaveAsymptote(std::ostream &out) const
 
     if (!asyWidth.empty()) {
         out << "size(" << asyWidth;
-        if (!asyHeight.empty())
-            out << ", " << asyHeight;
+        if (!asyHeight.empty()) out << ", " << asyHeight;
         out << ");\n\n";
     }
 
@@ -2523,16 +2395,14 @@ bool MeshOutput::SaveAsymptote(std::ostream &out) const
     Base::Vector3f upvec(0.0f, 0.0f, 1.0f);
 
     out << "// CA:Camera, OB:Camera\n"
-        << "currentprojection = orthographic(camera = (" << camera.x << ", "
-                                                         << camera.y << ", "
-                                                         << camera.z << "),\n"
-        << "                                 target = (" << target.x << ", "
-                                                         << target.y << ", "
-                                                         << target.z << "),\n"
+        << "currentprojection = orthographic(camera = (" << camera.x << ", " << camera.y << ", "
+        << camera.z << "),\n"
+        << "                                 target = (" << target.x << ", " << target.y << ", "
+        << target.z
+        << "),\n"
            "                                 showtarget = false,\n"
-           "                                 up = (" << upvec.x << ", "
-                                                     << upvec.y << ", "
-                                                     << upvec.z << "));\n\n";
+           "                                 up = ("
+        << upvec.x << ", " << upvec.y << ", " << upvec.z << "));\n\n";
 
     //out << "// LA:Spot, OB:Lamp\n"
     //    << "// WO:World\n"
@@ -2548,16 +2418,15 @@ bool MeshOutput::SaveAsymptote(std::ostream &out) const
     clIter.Begin();
     clEnd.End();
 
-    const MeshPointArray& rPoints = _rclMesh.GetPoints();
-    const MeshFacetArray& rFacets = _rclMesh.GetFacets();
-    bool saveVertexColor = (_material && _material->binding == MeshIO::PER_VERTEX &&
-                            _material->diffuseColor.size() == rPoints.size());
-    bool saveFaceColor   = (_material && _material->binding == MeshIO::PER_FACE &&
-                            _material->diffuseColor.size() == rFacets.size());
+    const MeshPointArray &rPoints = _rclMesh.GetPoints();
+    const MeshFacetArray &rFacets = _rclMesh.GetFacets();
+    bool saveVertexColor = (_material && _material->binding == MeshIO::PER_VERTEX
+                            && _material->diffuseColor.size() == rPoints.size());
+    bool saveFaceColor = (_material && _material->binding == MeshIO::PER_FACE
+                          && _material->diffuseColor.size() == rFacets.size());
     // global mesh color
     App::Color mc(0.8f, 0.8f, 0.8f);
-    if (_material && _material->binding == MeshIO::OVERALL &&
-        _material->diffuseColor.size() == 1) {
+    if (_material && _material->binding == MeshIO::OVERALL && _material->diffuseColor.size() == 1) {
         mc = _material->diffuseColor[0];
     }
 
@@ -2570,26 +2439,24 @@ bool MeshOutput::SaveAsymptote(std::ostream &out) const
 
         // vertices
         for (int i = 0; i < 3; i++) {
-            out << '(' << pclFacet->_aclPoints[i].x << ", "
-                       << pclFacet->_aclPoints[i].y << ", "
-                       << pclFacet->_aclPoints[i].z << ")--";
+            out << '(' << pclFacet->_aclPoints[i].x << ", " << pclFacet->_aclPoints[i].y << ", "
+                << pclFacet->_aclPoints[i].z << ")--";
         }
 
         out << "cycle";
 
         if (saveVertexColor) {
-            const MeshFacet& face = rFacets[index];
+            const MeshFacet &face = rFacets[index];
             out << ",\n             new pen[] {";
             for (int i = 0; i < 3; i++) {
-                const App::Color& c = _material->diffuseColor[face._aulPoints[i]];
+                const App::Color &c = _material->diffuseColor[face._aulPoints[i]];
                 out << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")";
-                if (i < 2)
-                    out << ", ";
+                if (i < 2) out << ", ";
             }
             out << "}));\n";
         }
         else if (saveFaceColor) {
-            const App::Color& c = _material->diffuseColor[index];
+            const App::Color &c = _material->diffuseColor[index];
             out << "),\n     rgb(" << c.r << ", " << c.g << ", " << c.b << "));\n";
         }
         else {
@@ -2604,24 +2471,25 @@ bool MeshOutput::SaveAsymptote(std::ostream &out) const
 }
 
 /** Saves an OFF file. */
-bool MeshOutput::SaveOFF (std::ostream &out) const
+bool MeshOutput::SaveOFF(std::ostream &out) const
 {
-    const MeshPointArray& rPoints = _rclMesh.GetPoints();
-    const MeshFacetArray& rFacets = _rclMesh.GetFacets();
+    const MeshPointArray &rPoints = _rclMesh.GetPoints();
+    const MeshFacetArray &rFacets = _rclMesh.GetFacets();
 
-    if (!out || out.bad())
-        return false;
+    if (!out || out.bad()) return false;
 
     Base::SequencerLauncher seq("saving...", _rclMesh.CountPoints() + _rclMesh.CountFacets());
 
     bool exportColor = false;
     if (_material) {
         if (_material->binding == MeshIO::PER_FACE) {
-            Base::Console().Warning("Cannot export color information because it's defined per face");
+            Base::Console().Warning(
+                "Cannot export color information because it's defined per face");
         }
         else if (_material->binding == MeshIO::PER_VERTEX) {
             if (_material->diffuseColor.size() != rPoints.size()) {
-                Base::Console().Warning("Cannot export color information because there is a different number of points and colors");
+                Base::Console().Warning("Cannot export color information because there is a "
+                                        "different number of points and colors");
             }
             else {
                 exportColor = true;
@@ -2629,7 +2497,8 @@ bool MeshOutput::SaveOFF (std::ostream &out) const
         }
         else if (_material->binding == MeshIO::OVERALL) {
             if (_material->diffuseColor.empty()) {
-                Base::Console().Warning("Cannot export color information because there is no color defined");
+                Base::Console().Warning(
+                    "Cannot export color information because there is no color defined");
             }
             else {
                 exportColor = true;
@@ -2637,8 +2506,7 @@ bool MeshOutput::SaveOFF (std::ostream &out) const
         }
     }
 
-    if (exportColor)
-        out << "COFF\n";
+    if (exportColor) out << "COFF\n";
     else
         out << "OFF\n";
     out << rPoints.size() << " " << rFacets.size() << " 0\n";
@@ -2647,18 +2515,14 @@ bool MeshOutput::SaveOFF (std::ostream &out) const
     Base::Vector3f pt;
     std::size_t index = 0;
     for (MeshPointArray::_TConstIterator it = rPoints.begin(); it != rPoints.end(); ++it, ++index) {
-        if (this->apply_transform) {
-            pt = this->_transform * *it;
-        }
+        if (this->apply_transform) { pt = this->_transform * *it; }
         else {
             pt.Set(it->x, it->y, it->z);
         }
 
         if (exportColor) {
             App::Color c;
-            if (_material->binding == MeshIO::PER_VERTEX) {
-                c = _material->diffuseColor[index];
-            }
+            if (_material->binding == MeshIO::PER_VERTEX) { c = _material->diffuseColor[index]; }
             else {
                 c = _material->diffuseColor.front();
             }
@@ -2668,7 +2532,8 @@ bool MeshOutput::SaveOFF (std::ostream &out) const
             int b = static_cast<int>(c.b * 255.0f);
             int a = static_cast<int>(c.a * 255.0f);
 
-            out << pt.x << " " << pt.y << " " << pt.z << " " << r << " " << g << " " << b << " " << a << '\n';
+            out << pt.x << " " << pt.y << " " << pt.z << " " << r << " " << g << " " << b << " "
+                << a << '\n';
         }
         else {
             out << pt.x << " " << pt.y << " " << pt.z << '\n';
@@ -2678,25 +2543,23 @@ bool MeshOutput::SaveOFF (std::ostream &out) const
 
     // facet indices (no texture and normal indices)
     for (MeshFacetArray::_TConstIterator it = rFacets.begin(); it != rFacets.end(); ++it) {
-        out << "3 " << it->_aulPoints[0]
-            << " " << it->_aulPoints[1]
-            << " " << it->_aulPoints[2] << '\n';
+        out << "3 " << it->_aulPoints[0] << " " << it->_aulPoints[1] << " " << it->_aulPoints[2]
+            << '\n';
         seq.next(true); // allow to cancel
     }
 
     return true;
 }
 
-bool MeshOutput::SaveBinaryPLY (std::ostream &out) const
+bool MeshOutput::SaveBinaryPLY(std::ostream &out) const
 {
-    const MeshPointArray& rPoints = _rclMesh.GetPoints();
-    const MeshFacetArray& rFacets = _rclMesh.GetFacets();
+    const MeshPointArray &rPoints = _rclMesh.GetPoints();
+    const MeshFacetArray &rFacets = _rclMesh.GetFacets();
     std::size_t v_count = rPoints.size();
     std::size_t f_count = rFacets.size();
-    if (!out || out.bad())
-        return false;
+    if (!out || out.bad()) return false;
     bool saveVertexColor = (_material && _material->binding == MeshIO::PER_VERTEX
-        && _material->diffuseColor.size() == rPoints.size());
+                            && _material->diffuseColor.size() == rPoints.size());
     out << "ply\n"
         << "format binary_little_endian 1.0\n"
         << "comment Created by FreeCAD <http://www.freecadweb.org>\n"
@@ -2717,7 +2580,7 @@ bool MeshOutput::SaveBinaryPLY (std::ostream &out) const
     os.setByteOrder(Base::Stream::LittleEndian);
 
     for (std::size_t i = 0; i < v_count; i++) {
-        const MeshPoint& p = rPoints[i];
+        const MeshPoint &p = rPoints[i];
         if (this->apply_transform) {
             Base::Vector3f pt = this->_transform * p;
             os << pt.x << pt.y << pt.z;
@@ -2726,7 +2589,7 @@ bool MeshOutput::SaveBinaryPLY (std::ostream &out) const
             os << p.x << p.y << p.z;
         }
         if (saveVertexColor) {
-            const App::Color& c = _material->diffuseColor[i];
+            const App::Color &c = _material->diffuseColor[i];
             uint8_t r = uint8_t(255.0f * c.r);
             uint8_t g = uint8_t(255.0f * c.g);
             uint8_t b = uint8_t(255.0f * c.b);
@@ -2736,7 +2599,7 @@ bool MeshOutput::SaveBinaryPLY (std::ostream &out) const
     unsigned char n = 3;
     int f1, f2, f3;
     for (std::size_t i = 0; i < f_count; i++) {
-        const MeshFacet& f = rFacets[i];
+        const MeshFacet &f = rFacets[i];
         f1 = (int)f._aulPoints[0];
         f2 = (int)f._aulPoints[1];
         f3 = (int)f._aulPoints[2];
@@ -2747,17 +2610,16 @@ bool MeshOutput::SaveBinaryPLY (std::ostream &out) const
     return true;
 }
 
-bool MeshOutput::SaveAsciiPLY (std::ostream &out) const
+bool MeshOutput::SaveAsciiPLY(std::ostream &out) const
 {
-    const MeshPointArray& rPoints = _rclMesh.GetPoints();
-    const MeshFacetArray& rFacets = _rclMesh.GetFacets();
+    const MeshPointArray &rPoints = _rclMesh.GetPoints();
+    const MeshFacetArray &rFacets = _rclMesh.GetFacets();
     std::size_t v_count = rPoints.size();
     std::size_t f_count = rFacets.size();
-    if (!out || out.bad())
-        return false;
+    if (!out || out.bad()) return false;
 
     bool saveVertexColor = (_material && _material->binding == MeshIO::PER_VERTEX
-        && _material->diffuseColor.size() == rPoints.size());
+                            && _material->diffuseColor.size() == rPoints.size());
     out << "ply\n"
         << "format ascii 1.0\n"
         << "comment Created by FreeCAD <http://www.freecadweb.org>\n"
@@ -2778,7 +2640,7 @@ bool MeshOutput::SaveAsciiPLY (std::ostream &out) const
     out.setf(std::ios::fixed | std::ios::showpoint);
     if (saveVertexColor) {
         for (std::size_t i = 0; i < v_count; i++) {
-            const MeshPoint& p = rPoints[i];
+            const MeshPoint &p = rPoints[i];
             if (this->apply_transform) {
                 Base::Vector3f pt = this->_transform * p;
                 out << pt.x << " " << pt.y << " " << pt.z;
@@ -2787,7 +2649,7 @@ bool MeshOutput::SaveAsciiPLY (std::ostream &out) const
                 out << p.x << " " << p.y << " " << p.z;
             }
 
-            const App::Color& c = _material->diffuseColor[i];
+            const App::Color &c = _material->diffuseColor[i];
             int r = (int)(255.0f * c.r);
             int g = (int)(255.0f * c.g);
             int b = (int)(255.0f * c.b);
@@ -2796,7 +2658,7 @@ bool MeshOutput::SaveAsciiPLY (std::ostream &out) const
     }
     else {
         for (std::size_t i = 0; i < v_count; i++) {
-            const MeshPoint& p = rPoints[i];
+            const MeshPoint &p = rPoints[i];
             if (this->apply_transform) {
                 Base::Vector3f pt = this->_transform * p;
                 out << pt.x << " " << pt.y << " " << pt.z << '\n';
@@ -2810,7 +2672,7 @@ bool MeshOutput::SaveAsciiPLY (std::ostream &out) const
     unsigned int n = 3;
     int f1, f2, f3;
     for (std::size_t i = 0; i < f_count; i++) {
-        const MeshFacet& f = rFacets[i];
+        const MeshFacet &f = rFacets[i];
         f1 = (int)f._aulPoints[0];
         f2 = (int)f._aulPoints[1];
         f3 = (int)f._aulPoints[2];
@@ -2820,13 +2682,12 @@ bool MeshOutput::SaveAsciiPLY (std::ostream &out) const
     return true;
 }
 
-bool MeshOutput::SaveMeshNode (std::ostream &rstrOut)
+bool MeshOutput::SaveMeshNode(std::ostream &rstrOut)
 {
-    const MeshPointArray& rPoints = _rclMesh.GetPoints();
-    const MeshFacetArray& rFacets = _rclMesh.GetFacets();
+    const MeshPointArray &rPoints = _rclMesh.GetPoints();
+    const MeshFacetArray &rFacets = _rclMesh.GetFacets();
 
-    if (!rstrOut || rstrOut.bad())
-        return false;
+    if (!rstrOut || rstrOut.bad()) return false;
 
     // vertices
     rstrOut << "[" << '\n';
@@ -2844,9 +2705,8 @@ bool MeshOutput::SaveMeshNode (std::ostream &rstrOut)
     }
     // facet indices (no texture and normal indices)
     for (MeshFacetArray::_TConstIterator it = rFacets.begin(); it != rFacets.end(); ++it) {
-        rstrOut << "f " << it->_aulPoints[0]+1 << " "
-                        << it->_aulPoints[1]+1 << " "
-                        << it->_aulPoints[2]+1 << '\n';
+        rstrOut << "f " << it->_aulPoints[0] + 1 << " " << it->_aulPoints[1] + 1 << " "
+                << it->_aulPoints[2] + 1 << '\n';
     }
     rstrOut << "]" << '\n';
 
@@ -2854,35 +2714,34 @@ bool MeshOutput::SaveMeshNode (std::ostream &rstrOut)
 }
 
 /** Saves the mesh object into an XML file. */
-void MeshOutput::SaveXML (Base::Writer &writer) const
+void MeshOutput::SaveXML(Base::Writer &writer) const
 {
-    const MeshPointArray& rPoints = _rclMesh.GetPoints();
-    const MeshFacetArray& rFacets = _rclMesh.GetFacets();
+    const MeshPointArray &rPoints = _rclMesh.GetPoints();
+    const MeshFacetArray &rFacets = _rclMesh.GetFacets();
 
     //  writer << writer.ind() << "<Mesh>" << '\n';
 
     writer.incInd();
-    writer.Stream() << writer.ind() << "<Points Count=\"" << _rclMesh.CountPoints() << "\">" << '\n';
+    writer.Stream() << writer.ind() << "<Points Count=\"" << _rclMesh.CountPoints() << "\">"
+                    << '\n';
 
     writer.incInd();
     if (this->apply_transform) {
         Base::Vector3f pt;
         for (MeshPointArray::_TConstIterator itp = rPoints.begin(); itp != rPoints.end(); ++itp) {
             pt = this->_transform * *itp;
-            writer.Stream() <<  writer.ind() << "<P "
-                            << "x=\"" <<  pt.x << "\" "
-                            << "y=\"" <<  pt.y << "\" "
-                            << "z=\"" <<  pt.z << "\"/>"
-                            << '\n';
+            writer.Stream() << writer.ind() << "<P "
+                            << "x=\"" << pt.x << "\" "
+                            << "y=\"" << pt.y << "\" "
+                            << "z=\"" << pt.z << "\"/>" << '\n';
         }
     }
     else {
         for (MeshPointArray::_TConstIterator itp = rPoints.begin(); itp != rPoints.end(); ++itp) {
-            writer.Stream() <<  writer.ind() << "<P "
-                            << "x=\"" <<  itp->x << "\" "
-                            << "y=\"" <<  itp->y << "\" "
-                            << "z=\"" <<  itp->z << "\"/>"
-                            << '\n';
+            writer.Stream() << writer.ind() << "<P "
+                            << "x=\"" << itp->x << "\" "
+                            << "y=\"" << itp->y << "\" "
+                            << "z=\"" << itp->z << "\"/>" << '\n';
         }
     }
     writer.decInd();
@@ -2894,13 +2753,12 @@ void MeshOutput::SaveXML (Base::Writer &writer) const
     writer.incInd();
     for (MeshFacetArray::_TConstIterator it = rFacets.begin(); it != rFacets.end(); ++it) {
         writer.Stream() << writer.ind() << "<F "
-                        << "p0=\"" <<  it->_aulPoints[0] << "\" "
-                        << "p1=\"" <<  it->_aulPoints[1] << "\" "
-                        << "p2=\"" <<  it->_aulPoints[2] << "\" "
-                        << "n0=\"" <<  it->_aulNeighbours[0] << "\" "
-                        << "n1=\"" <<  it->_aulNeighbours[1] << "\" "
-                        << "n2=\"" <<  it->_aulNeighbours[2] << "\"/>"
-                        << '\n';
+                        << "p0=\"" << it->_aulPoints[0] << "\" "
+                        << "p1=\"" << it->_aulPoints[1] << "\" "
+                        << "p2=\"" << it->_aulPoints[2] << "\" "
+                        << "n0=\"" << it->_aulNeighbours[0] << "\" "
+                        << "n1=\"" << it->_aulNeighbours[1] << "\" "
+                        << "n2=\"" << it->_aulNeighbours[2] << "\"/>" << '\n';
     }
     writer.decInd();
     writer.Stream() << writer.ind() << "</Faces>" << '\n';
@@ -2918,16 +2776,14 @@ bool MeshOutput::Save3MF(std::ostream &str) const
 }
 
 /** Writes an IDTF file. */
-bool MeshOutput::SaveIDTF (std::ostream &str) const
+bool MeshOutput::SaveIDTF(std::ostream &str) const
 {
-    if (!str || str.bad() || (_rclMesh.CountFacets() == 0))
-        return false;
+    if (!str || str.bad() || (_rclMesh.CountFacets() == 0)) return false;
 
-    const MeshPointArray& pts = _rclMesh.GetPoints();
-    const MeshFacetArray& fts = _rclMesh.GetFacets();
+    const MeshPointArray &pts = _rclMesh.GetPoints();
+    const MeshFacetArray &fts = _rclMesh.GetFacets();
     std::string resource = objectName;
-    if (resource.empty())
-        resource = "Resource";
+    if (resource.empty()) resource = "Resource";
 
     str.precision(6);
     str.setf(std::ios::fixed | std::ios::showpoint);
@@ -2960,7 +2816,7 @@ bool MeshOutput::SaveIDTF (std::ostream &str) const
     str << Base::tabs(2) << "MESH {\n";
     str << Base::tabs(3) << "FACE_COUNT " << fts.size() << '\n';
     str << Base::tabs(3) << "MODEL_POSITION_COUNT " << pts.size() << '\n';
-    str << Base::tabs(3) << "MODEL_NORMAL_COUNT " << 3*fts.size() << '\n';
+    str << Base::tabs(3) << "MODEL_NORMAL_COUNT " << 3 * fts.size() << '\n';
     str << Base::tabs(3) << "MODEL_DIFFUSE_COLOR_COUNT 0\n";
     str << Base::tabs(3) << "MODEL_SPECULAR_COLOR_COUNT 0\n";
     str << Base::tabs(3) << "MODEL_TEXTURE_COORD_COUNT 0\n";
@@ -2974,7 +2830,8 @@ bool MeshOutput::SaveIDTF (std::ostream &str) const
     str << Base::tabs(3) << "}\n";
     str << Base::tabs(3) << "MESH_FACE_POSITION_LIST {\n";
     for (MeshFacetArray::_TConstIterator it = fts.begin(); it != fts.end(); ++it) {
-        str << Base::tabs(4) << it->_aulPoints[0] << " " << it->_aulPoints[1] << " " << it->_aulPoints[2] << '\n';
+        str << Base::tabs(4) << it->_aulPoints[0] << " " << it->_aulPoints[1] << " "
+            << it->_aulPoints[2] << '\n';
     }
     str << Base::tabs(3) << "}\n";
     str << Base::tabs(3) << "MESH_FACE_NORMAL_LIST {\n";
@@ -3012,9 +2869,9 @@ bool MeshOutput::SaveIDTF (std::ostream &str) const
 }
 
 /** Writes an MGL file. */
-bool MeshOutput::SaveMGL (std::ostream &str) const
+bool MeshOutput::SaveMGL(std::ostream &str) const
 {
-/*
+    /*
 light on
 list t 0 1 2 | 0 1 3 | 0 2 3 | 1 2 3
 list xt 1 1 0 0
@@ -3023,11 +2880,10 @@ list zt -1 -1 -1 1
 triplot t xt yt zt 'b'
 #triplot t xt yt zt '#k'
 */
-    if (!str || str.bad() || (_rclMesh.CountFacets() == 0))
-        return false;
+    if (!str || str.bad() || (_rclMesh.CountFacets() == 0)) return false;
 
-    const MeshPointArray& pts = _rclMesh.GetPoints();
-    const MeshFacetArray& fts = _rclMesh.GetFacets();
+    const MeshPointArray &pts = _rclMesh.GetPoints();
+    const MeshFacetArray &fts = _rclMesh.GetFacets();
 
     str.precision(2);
     str.setf(std::ios::fixed | std::ios::showpoint);
@@ -3064,16 +2920,15 @@ triplot t xt yt zt 'b'
 }
 
 /** Writes an OpenInventor file. */
-bool MeshOutput::SaveInventor (std::ostream &rstrOut) const
+bool MeshOutput::SaveInventor(std::ostream &rstrOut) const
 {
-    if (!rstrOut || rstrOut.bad() || (_rclMesh.CountFacets() == 0))
-        return false;
+    if (!rstrOut || rstrOut.bad() || (_rclMesh.CountFacets() == 0)) return false;
 
     MeshFacetIterator clIter(_rclMesh), clEnd(_rclMesh);
     clIter.Transform(this->_transform);
     MeshPointIterator clPtIter(_rclMesh), clPtEnd(_rclMesh);
     clPtIter.Transform(this->_transform);
-    const MeshGeomFacet* pclFacet;
+    const MeshGeomFacet *pclFacet;
 
     Base::SequencerLauncher seq("Saving...", _rclMesh.CountFacets() + 1);
     rstrOut.precision(6);
@@ -3084,11 +2939,8 @@ bool MeshOutput::SaveInventor (std::ostream &rstrOut) const
     builder.beginSeparator();
     builder.addInfo("Created by FreeCAD <http://www.freecadweb.org>");
     std::stringstream str;
-    str << "Triangle mesh contains "
-        << _rclMesh.CountPoints()
-        << " vertices and "
-        << _rclMesh.CountFacets()
-        << " faces";
+    str << "Triangle mesh contains " << _rclMesh.CountPoints() << " vertices and "
+        << _rclMesh.CountFacets() << " faces";
     builder.addLabel(str.str().c_str());
 
     // write out the normals of the facets
@@ -3124,9 +2976,9 @@ bool MeshOutput::SaveInventor (std::ostream &rstrOut) const
     builder.endPoints();
 
     // and finally the facets with their point indices
-    const MeshFacetArray& faces = _rclMesh.GetFacets();
+    const MeshFacetArray &faces = _rclMesh.GetFacets();
     std::vector<int> indices;
-    indices.reserve(4*faces.size());
+    indices.reserve(4 * faces.size());
     for (MeshFacetArray::_TConstIterator it = faces.begin(); it != faces.end(); ++it) {
         indices.push_back(static_cast<int>(it->_aulPoints[0]));
         indices.push_back(static_cast<int>(it->_aulPoints[1]));
@@ -3140,10 +2992,9 @@ bool MeshOutput::SaveInventor (std::ostream &rstrOut) const
 }
 
 /** Writes an X3D file. */
-bool MeshOutput::SaveX3D (std::ostream &out) const
+bool MeshOutput::SaveX3D(std::ostream &out) const
 {
-    if (!out || out.bad() || (_rclMesh.CountFacets() == 0))
-        return false;
+    if (!out || out.bad() || (_rclMesh.CountFacets() == 0)) return false;
 
     // XML header info
     out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -3152,26 +3003,23 @@ bool MeshOutput::SaveX3D (std::ostream &out) const
 }
 
 /** Writes an X3D file. */
-bool MeshOutput::SaveX3DContent (std::ostream &out, bool exportViewpoints) const
+bool MeshOutput::SaveX3DContent(std::ostream &out, bool exportViewpoints) const
 {
-    if (!out || out.bad() || (_rclMesh.CountFacets() == 0))
-        return false;
+    if (!out || out.bad() || (_rclMesh.CountFacets() == 0)) return false;
 
-    const MeshPointArray& pts = _rclMesh.GetPoints();
-    const MeshFacetArray& fts = _rclMesh.GetFacets();
+    const MeshPointArray &pts = _rclMesh.GetPoints();
+    const MeshFacetArray &fts = _rclMesh.GetFacets();
     Base::BoundBox3f bbox = _rclMesh.GetBoundBox();
-    if (apply_transform)
-        bbox = bbox.Transformed(_transform);
+    if (apply_transform) bbox = bbox.Transformed(_transform);
 
     App::Color mat(0.65f, 0.65f, 0.65f);
     if (_material && _material->binding == MeshIO::Binding::OVERALL) {
-        if (!_material->diffuseColor.empty())
-            mat = _material->diffuseColor.front();
+        if (!_material->diffuseColor.empty()) mat = _material->diffuseColor.front();
     }
-    bool saveVertexColor = (_material && _material->binding == MeshIO::PER_VERTEX &&
-                            _material->diffuseColor.size() == pts.size());
-    bool saveFaceColor   = (_material && _material->binding == MeshIO::PER_FACE &&
-                            _material->diffuseColor.size() == fts.size());
+    bool saveVertexColor = (_material && _material->binding == MeshIO::PER_VERTEX
+                            && _material->diffuseColor.size() == pts.size());
+    bool saveFaceColor = (_material && _material->binding == MeshIO::PER_FACE
+                          && _material->diffuseColor.size() == fts.size());
 
     Base::SequencerLauncher seq("Saving...", _rclMesh.CountFacets() + 1);
     out.precision(6);
@@ -3180,7 +3028,8 @@ bool MeshOutput::SaveX3DContent (std::ostream &out, bool exportViewpoints) const
     // Header info
     out << "<X3D profile=\"Immersive\" version=\"3.2\" xmlns:xsd="
         << "\"http://www.w3.org/2001/XMLSchema-instance\" xsd:noNamespaceSchemaLocation="
-        << "\"http://www.web3d.org/specifications/x3d-3.2.xsd\" width=\"1280px\"  height=\"1024px\">\n";
+        << "\"http://www.web3d.org/specifications/x3d-3.2.xsd\" width=\"1280px\"  "
+           "height=\"1024px\">\n";
     out << "  <head>\n"
         << "    <meta name=\"generator\" content=\"FreeCAD\"/>\n"
         << "    <meta name=\"author\" content=\"\"/> \n"
@@ -3191,13 +3040,13 @@ bool MeshOutput::SaveX3DContent (std::ostream &out, bool exportViewpoints) const
     out << "  <Scene>\n";
 
     if (exportViewpoints) {
-        auto viewpoint = [&out](const char* text, const Base::Vector3f& cnt,
-                                const Base::Vector3f& pos, const Base::Vector3f& axis, float angle) {
-            out << "    <Viewpoint id=\"" << text
-                << "\" centerOfRotation=\"" << cnt.x << " " << cnt.y << " " << cnt.z
-                << "\" position=\"" << pos.x << " " << pos.y << " " << pos.z
-                << "\" orientation=\"" << axis.x << " " << axis.y << " " << axis.z << " " << angle
-                << "\" description=\"camera\" fieldOfView=\"0.9\">"
+        auto viewpoint = [&out](const char *text, const Base::Vector3f &cnt,
+                                const Base::Vector3f &pos, const Base::Vector3f &axis,
+                                float angle) {
+            out << "    <Viewpoint id=\"" << text << "\" centerOfRotation=\"" << cnt.x << " "
+                << cnt.y << " " << cnt.z << "\" position=\"" << pos.x << " " << pos.y << " "
+                << pos.z << "\" orientation=\"" << axis.x << " " << axis.y << " " << axis.z << " "
+                << angle << "\" description=\"camera\" fieldOfView=\"0.9\">"
                 << "</Viewpoint>\n";
         };
 
@@ -3205,44 +3054,45 @@ bool MeshOutput::SaveX3DContent (std::ostream &out, bool exportViewpoints) const
         float dist = 1.2f * bbox.CalcDiagonalLength();
         float dist3 = 0.577350f * dist; // sqrt(1/3) * dist
 
-        viewpoint("Iso", cnt, Base::Vector3f(cnt.x + dist3, cnt.y - dist3, cnt.z + dist3), Base::Vector3f(0.742906f, 0.307722f, 0.594473f), 1.21712f);
-        viewpoint("Front", cnt, Base::Vector3f(cnt.x, cnt.y - dist, cnt.z), Base::Vector3f(1.0f, 0.0f, 0.0f), 1.5707964f);
-        viewpoint("Back", cnt, Base::Vector3f(cnt.x, cnt.y + dist, cnt.z), Base::Vector3f(0.0f, 0.707106f, 0.707106f), 3.141592f);
-        viewpoint("Right", cnt, Base::Vector3f(cnt.x + dist, cnt.y, cnt.z), Base::Vector3f(0.577350f, 0.577350f, 0.577350f), 2.094395f);
-        viewpoint("Left", cnt, Base::Vector3f(cnt.x - dist, cnt.y, cnt.z), Base::Vector3f(-0.577350f, 0.577350f, 0.577350f), 4.188790f);
-        viewpoint("Top", cnt, Base::Vector3f(cnt.x, cnt.y, cnt.z + dist), Base::Vector3f(0.0f, 0.0f, 1.0f), 0.0f);
-        viewpoint("Bottom", cnt, Base::Vector3f(cnt.x, cnt.y, cnt.z - dist), Base::Vector3f(1.0f, 0.0f, 0.0f), 3.141592f);
+        viewpoint("Iso", cnt, Base::Vector3f(cnt.x + dist3, cnt.y - dist3, cnt.z + dist3),
+                  Base::Vector3f(0.742906f, 0.307722f, 0.594473f), 1.21712f);
+        viewpoint("Front", cnt, Base::Vector3f(cnt.x, cnt.y - dist, cnt.z),
+                  Base::Vector3f(1.0f, 0.0f, 0.0f), 1.5707964f);
+        viewpoint("Back", cnt, Base::Vector3f(cnt.x, cnt.y + dist, cnt.z),
+                  Base::Vector3f(0.0f, 0.707106f, 0.707106f), 3.141592f);
+        viewpoint("Right", cnt, Base::Vector3f(cnt.x + dist, cnt.y, cnt.z),
+                  Base::Vector3f(0.577350f, 0.577350f, 0.577350f), 2.094395f);
+        viewpoint("Left", cnt, Base::Vector3f(cnt.x - dist, cnt.y, cnt.z),
+                  Base::Vector3f(-0.577350f, 0.577350f, 0.577350f), 4.188790f);
+        viewpoint("Top", cnt, Base::Vector3f(cnt.x, cnt.y, cnt.z + dist),
+                  Base::Vector3f(0.0f, 0.0f, 1.0f), 0.0f);
+        viewpoint("Bottom", cnt, Base::Vector3f(cnt.x, cnt.y, cnt.z - dist),
+                  Base::Vector3f(1.0f, 0.0f, 0.0f), 3.141592f);
     }
 
     if (apply_transform) {
         Base::Placement p(_transform);
-        const Base::Vector3d& v = p.getPosition();
-        const Base::Rotation& r = p.getRotation();
-        Base::Vector3d axis; double angle;
+        const Base::Vector3d &v = p.getPosition();
+        const Base::Rotation &r = p.getRotation();
+        Base::Vector3d axis;
+        double angle;
         r.getValue(axis, angle);
         out << "    <Transform "
-            << "translation='"
-            << v.x << " "
-            << v.y << " "
-            << v.z << "' "
-            << "rotation='"
-            << axis.x << " "
-            << axis.y << " "
-            << axis.z << " "
-            << angle << "'>\n";
+            << "translation='" << v.x << " " << v.y << " " << v.z << "' "
+            << "rotation='" << axis.x << " " << axis.y << " " << axis.z << " " << angle << "'>\n";
     }
     else {
         out << "    <Transform>\n";
     }
     out << "      <Shape>\n";
     out << "        <Appearance>\n"
-           "          <Material diffuseColor='" << mat.r << " " << mat.g << " " << mat.b << "' shininess='0.9' specularColor='1 1 1'></Material>\n"
+           "          <Material diffuseColor='"
+        << mat.r << " " << mat.g << " " << mat.b
+        << "' shininess='0.9' specularColor='1 1 1'></Material>\n"
            "        </Appearance>\n";
 
     out << "        <IndexedFaceSet solid=\"false\" ";
-    if (saveVertexColor) {
-        out << "colorPerVertex=\"true\" ";
-    }
+    if (saveVertexColor) { out << "colorPerVertex=\"true\" "; }
     else if (saveFaceColor) {
         out << "colorPerVertex=\"false\" ";
     }
@@ -3262,7 +3112,7 @@ bool MeshOutput::SaveX3DContent (std::ostream &out, bool exportViewpoints) const
     // write colors per vertex or face
     if (saveVertexColor || saveFaceColor) {
         out << "          <Color color=\"";
-        for (const auto& c : _material->diffuseColor) {
+        for (const auto &c : _material->diffuseColor) {
             out << c.r << " " << c.g << " " << c.b << ", ";
         }
         out << "\"/>\n";
@@ -3281,24 +3131,27 @@ bool MeshOutput::SaveX3DContent (std::ostream &out, bool exportViewpoints) const
 }
 
 /** Writes an X3DOM file. */
-bool MeshOutput::SaveX3DOM (std::ostream &out) const
+bool MeshOutput::SaveX3DOM(std::ostream &out) const
 {
-    if (!out || out.bad() || (_rclMesh.CountFacets() == 0))
-        return false;
+    if (!out || out.bad() || (_rclMesh.CountFacets() == 0)) return false;
 
     // See:
     // https://stackoverflow.com/questions/31976056/unable-to-color-faces-using-indexedfaceset-in-x3dom
     //
     out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
+        << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" "
+           "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
     out << "<html xmlns='http://www.w3.org/1999/xhtml'>\n"
         << "  <head>\n"
-        << "    <script type='text/javascript' src='http://www.x3dom.org/download/x3dom.js'> </script>\n"
-        << "    <link rel='stylesheet' type='text/css' href='http://www.x3dom.org/download/x3dom.css'></link>\n"
+        << "    <script type='text/javascript' src='http://www.x3dom.org/download/x3dom.js'> "
+           "</script>\n"
+        << "    <link rel='stylesheet' type='text/css' "
+           "href='http://www.x3dom.org/download/x3dom.css'></link>\n"
         << "  </head>\n";
 
-    auto onclick = [&out](const char* text) {
-        out << "  <button onclick=\"document.getElementById('" << text << "').setAttribute('set_bind','true');\">" << text << "</button>\n";
+    auto onclick = [&out](const char *text) {
+        out << "  <button onclick=\"document.getElementById('" << text
+            << "').setAttribute('set_bind','true');\">" << text << "</button>\n";
     };
 
     onclick("Iso");
@@ -3327,10 +3180,9 @@ bool MeshOutput::SaveX3DOM (std::ostream &out) const
 }
 
 /** Writes a Nastran file. */
-bool MeshOutput::SaveNastran (std::ostream &rstrOut) const
+bool MeshOutput::SaveNastran(std::ostream &rstrOut) const
 {
-    if (!rstrOut || rstrOut.bad() || (_rclMesh.CountFacets() == 0))
-        return false;
+    if (!rstrOut || rstrOut.bad() || (_rclMesh.CountFacets() == 0)) return false;
 
     MeshPointIterator clPIter(_rclMesh);
     clPIter.Transform(this->_transform);
@@ -3350,8 +3202,8 @@ bool MeshOutput::SaveNastran (std::ostream &rstrOut) const
 
         rstrOut << std::setfill(' ') << std::setw(12) << iIndx;
         rstrOut << std::setfill(' ') << std::setw(16) << x;
-        rstrOut << std::setfill(' ') << std::setw(8)  << y;
-        rstrOut << std::setfill(' ') << std::setw(8)  << z;
+        rstrOut << std::setfill(' ') << std::setw(8) << y;
+        rstrOut << std::setfill(' ') << std::setw(8) << z;
         rstrOut << '\n';
 
         iIndx++;
@@ -3364,9 +3216,9 @@ bool MeshOutput::SaveNastran (std::ostream &rstrOut) const
 
         rstrOut << std::setfill(' ') << std::setw(10) << iIndx;
         rstrOut << std::setfill(' ') << std::setw(8) << (int)0;
-        rstrOut << std::setfill(' ') << std::setw(8) << clTIter.GetIndices()._aulPoints[1]+1;
-        rstrOut << std::setfill(' ') << std::setw(8) << clTIter.GetIndices()._aulPoints[0]+1;
-        rstrOut << std::setfill(' ') << std::setw(8) << clTIter.GetIndices()._aulPoints[2]+1;
+        rstrOut << std::setfill(' ') << std::setw(8) << clTIter.GetIndices()._aulPoints[1] + 1;
+        rstrOut << std::setfill(' ') << std::setw(8) << clTIter.GetIndices()._aulPoints[0] + 1;
+        rstrOut << std::setfill(' ') << std::setw(8) << clTIter.GetIndices()._aulPoints[2] + 1;
         rstrOut << '\n';
 
         iIndx++;
@@ -3379,16 +3231,12 @@ bool MeshOutput::SaveNastran (std::ostream &rstrOut) const
 }
 
 /** Writes a Cadmould FE file. */
-bool MeshOutput::SaveCadmouldFE (std::ostream & /*rstrOut*/) const
-{
-    return false;
-}
+bool MeshOutput::SaveCadmouldFE(std::ostream & /*rstrOut*/) const { return false; }
 
 /** Writes a Python module */
-bool MeshOutput::SavePython (std::ostream &str) const
+bool MeshOutput::SavePython(std::ostream &str) const
 {
-    if (!str || str.bad() || (_rclMesh.CountFacets() == 0))
-        return false;
+    if (!str || str.bad() || (_rclMesh.CountFacets() == 0)) return false;
 
     MeshFacetIterator clIter(_rclMesh);
     clIter.Transform(this->_transform);
@@ -3397,12 +3245,10 @@ bool MeshOutput::SavePython (std::ostream &str) const
 
     str << "faces = [\n";
     for (clIter.Init(); clIter.More(); clIter.Next()) {
-        const MeshGeomFacet& rFacet = *clIter;
+        const MeshGeomFacet &rFacet = *clIter;
         for (int i = 0; i < 3; i++) {
-            str << "[" << rFacet._aclPoints[i].x
-                << "," << rFacet._aclPoints[i].y
-                << "," << rFacet._aclPoints[i].z
-                << "],";
+            str << "[" << rFacet._aclPoints[i].x << "," << rFacet._aclPoints[i].y << ","
+                << rFacet._aclPoints[i].z << "],";
         }
         str << '\n';
     }
@@ -3413,15 +3259,14 @@ bool MeshOutput::SavePython (std::ostream &str) const
 }
 
 /** Writes a VRML file. */
-bool MeshOutput::SaveVRML (std::ostream &rstrOut) const
+bool MeshOutput::SaveVRML(std::ostream &rstrOut) const
 {
-    if (!rstrOut || rstrOut.bad() || (_rclMesh.CountFacets() == 0))
-        return false;
+    if (!rstrOut || rstrOut.bad() || (_rclMesh.CountFacets() == 0)) return false;
 
     Base::BoundBox3f clBB = _rclMesh.GetBoundBox();
 
     Base::SequencerLauncher seq("Saving VRML file...",
-        _rclMesh.CountPoints() + _rclMesh.CountFacets());
+                                _rclMesh.CountPoints() + _rclMesh.CountFacets());
 
     rstrOut << "#VRML V2.0 utf8\n";
     rstrOut << "WorldInfo {\n"
@@ -3437,14 +3282,8 @@ bool MeshOutput::SaveVRML (std::ostream &rstrOut) const
             << "  scale 1 1 1\n"
             << "  rotation 0 0 1 0\n"
             << "  scaleOrientation 0 0 1 0\n"
-            << "  center "
-            << 0.0f << " "
-            << 0.0f << " "
-            << 0.0f << "\n"
-            << "  translation "
-            << 0.0f << " "
-            << 0.0f << " "
-            << 0.0f << "\n";
+            << "  center " << 0.0f << " " << 0.0f << " " << 0.0f << "\n"
+            << "  translation " << 0.0f << " " << 0.0f << " " << 0.0f << "\n";
 
     rstrOut << "  children\n";
     rstrOut << "    Shape { \n";
@@ -3457,10 +3296,7 @@ bool MeshOutput::SaveVRML (std::ostream &rstrOut) const
     if (_material && _material->binding == MeshIO::OVERALL) {
         if (!_material->diffuseColor.empty()) {
             App::Color c = _material->diffuseColor.front();
-            rstrOut << "          diffuseColor "
-                    << c.r << " "
-                    << c.g << " "
-                    << c.b << "\n";
+            rstrOut << "          diffuseColor " << c.r << " " << c.g << " " << c.b << "\n";
         }
         else {
             rstrOut << "          diffuseColor 0.8 0.8 0.8\n";
@@ -3487,19 +3323,15 @@ bool MeshOutput::SaveVRML (std::ostream &rstrOut) const
     rstrOut.precision(3);
     rstrOut.setf(std::ios::fixed | std::ios::showpoint);
     for (pPIter.Init(); pPIter.More(); pPIter.Next()) {
-        rstrOut << "            "
-                << pPIter->x << " "
-                << pPIter->y << " "
-                << pPIter->z;
-        if (i++ < (k-1))
-            rstrOut << ",\n";
+        rstrOut << "            " << pPIter->x << " " << pPIter->y << " " << pPIter->z;
+        if (i++ < (k - 1)) rstrOut << ",\n";
         else
             rstrOut << "\n";
 
         seq.next();
     }
 
-    rstrOut << "          ]\n        }\n";  // end write coord
+    rstrOut << "          ]\n        }\n"; // end write coord
 
     if (_material && _material->binding != MeshIO::OVERALL) {
         // write colors for each vertex
@@ -3507,20 +3339,16 @@ bool MeshOutput::SaveVRML (std::ostream &rstrOut) const
         rstrOut.precision(3);
         rstrOut.setf(std::ios::fixed | std::ios::showpoint);
         for (std::vector<App::Color>::const_iterator pCIter = _material->diffuseColor.begin();
-            pCIter != _material->diffuseColor.end(); ++pCIter) {
-            rstrOut << "          "
-                    << float(pCIter->r) << " "
-                    << float(pCIter->g) << " "
+             pCIter != _material->diffuseColor.end(); ++pCIter) {
+            rstrOut << "          " << float(pCIter->r) << " " << float(pCIter->g) << " "
                     << float(pCIter->b);
-            if (pCIter < (_material->diffuseColor.end() - 1))
-                rstrOut << ",\n";
+            if (pCIter < (_material->diffuseColor.end() - 1)) rstrOut << ",\n";
             else
                 rstrOut << "\n";
         }
 
         rstrOut << "      ]\n    }\n";
-        if (_material->binding == MeshIO::PER_VERTEX)
-            rstrOut << "    colorPerVertex TRUE\n";
+        if (_material->binding == MeshIO::PER_VERTEX) rstrOut << "    colorPerVertex TRUE\n";
         else
             rstrOut << "    colorPerVertex FALSE\n";
     }
@@ -3533,42 +3361,31 @@ bool MeshOutput::SaveVRML (std::ostream &rstrOut) const
 
     for (pFIter.Init(); pFIter.More(); pFIter.Next()) {
         MeshFacet clFacet = pFIter.GetIndices();
-        rstrOut << "          "
-                << clFacet._aulPoints[0] << ", "
-                << clFacet._aulPoints[1] << ", "
+        rstrOut << "          " << clFacet._aulPoints[0] << ", " << clFacet._aulPoints[1] << ", "
                 << clFacet._aulPoints[2] << ", -1";
-        if (i++ < (k-1))
-            rstrOut << ",\n";
+        if (i++ < (k - 1)) rstrOut << ",\n";
         else
             rstrOut << "\n";
 
         seq.next();
     }
 
-    rstrOut << "        ]\n      }\n";  // End IndexedFaceSet
-    rstrOut << "    }\n";  // End Shape
-    rstrOut << "}\n"; // close children and Transform
+    rstrOut << "        ]\n      }\n"; // End IndexedFaceSet
+    rstrOut << "    }\n";              // End Shape
+    rstrOut << "}\n";                  // close children and Transform
 
     return true;
 }
 
 // ----------------------------------------------------------------------------
 
-MeshCleanup::MeshCleanup(MeshPointArray& p, MeshFacetArray& f)
-  : pointArray(p)
-  , facetArray(f)
-  , materialArray(nullptr)
-{
-}
+MeshCleanup::MeshCleanup(MeshPointArray &p, MeshFacetArray &f)
+    : pointArray(p), facetArray(f), materialArray(nullptr)
+{}
 
-MeshCleanup::~MeshCleanup()
-{
-}
+MeshCleanup::~MeshCleanup() {}
 
-void MeshCleanup::SetMaterial(Material* mat)
-{
-    materialArray = mat;
-}
+void MeshCleanup::SetMaterial(Material *mat) { materialArray = mat; }
 
 void MeshCleanup::RemoveInvalids()
 {
@@ -3580,7 +3397,7 @@ void MeshCleanup::RemoveInvalids()
     // If a facet is valid all its referenced points are validated again
     // Points that are not referenced are still invalid and thus can be deleted
     for (MeshFacetArray::_TIterator it = facetArray.begin(); it != facetArray.end(); ++it) {
-        for (int i=0; i<3; i++) {
+        for (int i = 0; i < 3; i++) {
             // vertex index out of range
             if (it->_aulPoints[i] >= numPoints) {
                 it->SetInvalid();
@@ -3604,13 +3421,14 @@ void MeshCleanup::RemoveInvalids()
 void MeshCleanup::RemoveInvalidFacets()
 {
     MeshIsFlag<MeshFacet> flag;
-    std::size_t countInvalidFacets = std::count_if(facetArray.begin(), facetArray.end(),
-                    [flag](const MeshFacet& f) { return flag(f, MeshFacet::INVALID); });
+    std::size_t countInvalidFacets =
+        std::count_if(facetArray.begin(), facetArray.end(),
+                      [flag](const MeshFacet &f) { return flag(f, MeshFacet::INVALID); });
     if (countInvalidFacets > 0) {
 
         // adjust the material array if needed
-        if (materialArray && materialArray->binding == MeshIO::PER_FACE &&
-            materialArray->diffuseColor.size() == facetArray.size()) {
+        if (materialArray && materialArray->binding == MeshIO::PER_FACE
+            && materialArray->diffuseColor.size() == facetArray.size()) {
             std::vector<App::Color> colors;
             colors.reserve(facetArray.size() - countInvalidFacets);
             for (std::size_t index = 0; index < facetArray.size(); index++) {
@@ -3625,7 +3443,7 @@ void MeshCleanup::RemoveInvalidFacets()
         MeshFacetArray copy_facets(facetArray.size() - countInvalidFacets);
         // copy all valid facets to the new array
         std::remove_copy_if(facetArray.begin(), facetArray.end(), copy_facets.begin(),
-            [flag](const MeshFacet& f) { return flag(f, MeshFacet::INVALID); });
+                            [flag](const MeshFacet &f) { return flag(f, MeshFacet::INVALID); });
         facetArray.swap(copy_facets);
     }
 }
@@ -3633,8 +3451,9 @@ void MeshCleanup::RemoveInvalidFacets()
 void MeshCleanup::RemoveInvalidPoints()
 {
     MeshIsFlag<MeshPoint> flag;
-    std::size_t countInvalidPoints = std::count_if(pointArray.begin(), pointArray.end(),
-                    [flag](const MeshPoint& p) { return flag(p, MeshPoint::INVALID); });
+    std::size_t countInvalidPoints =
+        std::count_if(pointArray.begin(), pointArray.end(),
+                      [flag](const MeshPoint &p) { return flag(p, MeshPoint::INVALID); });
     if (countInvalidPoints > 0) {
         // generate array of decrements
         std::vector<PointIndex> decrements;
@@ -3643,10 +3462,10 @@ void MeshCleanup::RemoveInvalidPoints()
 
         MeshPointArray::_TIterator p_end = pointArray.end();
         std::vector<PointIndex>::iterator decr_it = decrements.begin();
-        for (MeshPointArray::_TIterator p_it = pointArray.begin(); p_it != p_end; ++p_it, ++decr_it) {
+        for (MeshPointArray::_TIterator p_it = pointArray.begin(); p_it != p_end;
+             ++p_it, ++decr_it) {
             *decr_it = decr;
-            if (!p_it->IsValid())
-                decr++;
+            if (!p_it->IsValid()) decr++;
         }
 
         // correct point indices of the facets
@@ -3661,8 +3480,8 @@ void MeshCleanup::RemoveInvalidPoints()
         std::size_t validPoints = pointArray.size() - countInvalidPoints;
 
         // adjust the material array if needed
-        if (materialArray && materialArray->binding == MeshIO::PER_VERTEX &&
-            materialArray->diffuseColor.size() == pointArray.size()) {
+        if (materialArray && materialArray->binding == MeshIO::PER_VERTEX
+            && materialArray->diffuseColor.size() == pointArray.size()) {
             std::vector<App::Color> colors;
             colors.reserve(validPoints);
             for (std::size_t index = 0; index < pointArray.size(); index++) {
@@ -3677,23 +3496,20 @@ void MeshCleanup::RemoveInvalidPoints()
         MeshPointArray copy_points(validPoints);
         // copy all valid facets to the new array
         std::remove_copy_if(pointArray.begin(), pointArray.end(), copy_points.begin(),
-            [flag](const MeshPoint& p) { return flag(p, MeshPoint::INVALID); });
+                            [flag](const MeshPoint &p) { return flag(p, MeshPoint::INVALID); });
         pointArray.swap(copy_points);
     }
 }
 
 // ----------------------------------------------------------------------------
 
-MeshPointFacetAdjacency::MeshPointFacetAdjacency(std::size_t p, MeshFacetArray& f)
-  : numPoints(p)
-  , facets(f)
+MeshPointFacetAdjacency::MeshPointFacetAdjacency(std::size_t p, MeshFacetArray &f)
+    : numPoints(p), facets(f)
 {
     Build();
 }
 
-MeshPointFacetAdjacency::~MeshPointFacetAdjacency()
-{
-}
+MeshPointFacetAdjacency::~MeshPointFacetAdjacency() {}
 
 void MeshPointFacetAdjacency::Build()
 {
@@ -3710,9 +3526,7 @@ void MeshPointFacetAdjacency::Build()
 
     std::size_t numFacets = facets.size();
     for (std::size_t i = 0; i < numFacets; i++) {
-        for (int j = 0; j < 3; j++) {
-            pointFacetAdjacency[facets[i]._aulPoints[j]].push_back(i);
-        }
+        for (int j = 0; j < 3; j++) { pointFacetAdjacency[facets[i]._aulPoints[j]].push_back(i); }
     }
 }
 
@@ -3720,16 +3534,17 @@ void MeshPointFacetAdjacency::SetFacetNeighbourhood()
 {
     std::size_t numFacets = facets.size();
     for (std::size_t index = 0; index < numFacets; index++) {
-        MeshFacet& facet1 = facets[index];
+        MeshFacet &facet1 = facets[index];
         for (int i = 0; i < 3; i++) {
             std::size_t n1 = facet1._aulPoints[i];
-            std::size_t n2 = facet1._aulPoints[(i+1)%3];
+            std::size_t n2 = facet1._aulPoints[(i + 1) % 3];
 
             bool success = false;
-            const std::vector<std::size_t>& refFacets = pointFacetAdjacency[n1];
-            for (std::vector<std::size_t>::const_iterator it = refFacets.begin(); it != refFacets.end(); ++it) {
+            const std::vector<std::size_t> &refFacets = pointFacetAdjacency[n1];
+            for (std::vector<std::size_t>::const_iterator it = refFacets.begin();
+                 it != refFacets.end(); ++it) {
                 if (*it != index) {
-                    MeshFacet& facet2 = facets[*it];
+                    MeshFacet &facet2 = facets[*it];
                     if (facet2.HasPoint(n2)) {
                         facet1._aulNeighbours[i] = *it;
                         success = true;
@@ -3738,9 +3553,7 @@ void MeshPointFacetAdjacency::SetFacetNeighbourhood()
                 }
             }
 
-            if (!success) {
-                facet1._aulNeighbours[i] = FACET_INDEX_MAX;
-            }
+            if (!success) { facet1._aulNeighbours[i] = FACET_INDEX_MAX; }
         }
     }
 }

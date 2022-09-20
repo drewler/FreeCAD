@@ -28,9 +28,9 @@
 
 // here get the warnings of too long specifiers disabled (needed for VC6)
 #ifdef _MSC_VER
-# pragma warning( disable : 4181 )
-# pragma warning( disable : 4305 )
-# pragma warning( disable : 4522 )
+#pragma warning(disable : 4181)
+#pragma warning(disable : 4305)
+#pragma warning(disable : 4522)
 #endif
 
 #ifdef _PreComp_
@@ -59,4 +59,3 @@
 #endif //_PreComp_
 
 #endif
-

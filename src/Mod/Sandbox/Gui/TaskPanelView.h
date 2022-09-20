@@ -21,17 +21,17 @@
  ***************************************************************************/
 
 
-
 #ifndef SANDBOXGUI_TASKPANELVIEW_H
 #define SANDBOXGUI_TASKPANELVIEW_H
 
 #include <QWidget>
 
-namespace SandboxGui {
+namespace SandboxGui
+{
 
 /** A test class. A more elaborate class description.
  */
-class TaskPanelView : public QWidget
+class TaskPanelView: public QWidget
 {
     //Q_OBJECT
 
@@ -40,7 +40,7 @@ public:
      * A constructor.
      * A more elaborate description of the constructor.
      */
-    TaskPanelView(QWidget *parent=0);
+    TaskPanelView(QWidget *parent = 0);
 
     /**
      * A destructor.
@@ -57,7 +57,7 @@ public:
     void on_rbAndroidScheme_toggled(bool b);
 
 private:
-    QWidget* actionGroup;
+    QWidget *actionGroup;
 };
 
 } // namespace SandboxGui

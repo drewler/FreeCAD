@@ -33,8 +33,8 @@
 // #include "stdafx.h"
 
 #include "CmdLine.h"
-#ifdef  Q_WS_WIN
-#	include "crtdbg.h"
+#ifdef Q_WS_WIN
+#include "crtdbg.h"
 #endif
 
 /*------------------------------------------------------
@@ -46,71 +46,57 @@
 ------------------------------------------------------*/
 int CCmdLine::SplitLine(int argc, char **argv)
 {
-   clear();
+    clear();
 
-   StringType curParam; // current argv[x]
+    StringType curParam; // current argv[x]
 
-   // skip the exe name (start with i = 1)
-   for (int i = 1; i < argc; i++)
-   {
-      // if it's a switch, start a new CCmdLine
-      if (IsSwitch(argv[i]))
-      {
-         curParam = argv[i];
+    // skip the exe name (start with i = 1)
+    for (int i = 1; i < argc; i++) {
+        // if it's a switch, start a new CCmdLine
+        if (IsSwitch(argv[i])) {
+            curParam = argv[i];
 
-         StringType arg;
+            StringType arg;
 
-         // look at next input string to see if it's a switch or an argument
-         if (i + 1 < argc)
-         {
-            if (!IsSwitch(argv[i + 1]))
-            {
-               // it's an argument, not a switch
-               arg = argv[i + 1];
+            // look at next input string to see if it's a switch or an argument
+            if (i + 1 < argc) {
+                if (!IsSwitch(argv[i + 1])) {
+                    // it's an argument, not a switch
+                    arg = argv[i + 1];
 
-               // skip to next
-               i++;
+                    // skip to next
+                    i++;
+                }
+                else {
+                    arg = "";
+                }
             }
-            else
-            {
-               arg = "";
+
+            // add it
+            CCmdParam cmd;
+
+            // only add non-empty args
+            if (arg != "") { cmd.m_strings.push_back(arg); }
+
+            // add the CCmdParam to 'this'
+            pair<CCmdLine::iterator, bool> res = insert(CCmdLine::value_type(curParam, cmd));
+        }
+        else {
+            // it's not a new switch, so it must be more stuff for the last switch
+
+            // ...let's add it
+            CCmdLine::iterator theIterator;
+
+            // get an iterator for the current param
+            theIterator = find(curParam);
+            if (theIterator != end()) { (*theIterator).second.m_strings.push_back(argv[i]); }
+            else {
+                // ??
             }
-         }
+        }
+    }
 
-         // add it
-         CCmdParam cmd;
-
-         // only add non-empty args
-         if (arg != "")
-         {
-            cmd.m_strings.push_back(arg);
-         }
-
-         // add the CCmdParam to 'this'
-         pair<CCmdLine::iterator, bool> res = insert(CCmdLine::value_type(curParam, cmd));
-
-      }
-      else
-      {
-         // it's not a new switch, so it must be more stuff for the last switch
-
-         // ...let's add it
- 	      CCmdLine::iterator theIterator;
-
-         // get an iterator for the current param
-         theIterator = find(curParam);
-	      if (theIterator!=end())
-         {
-            (*theIterator).second.m_strings.push_back(argv[i]);
-         }
-         else
-         {
-            // ??
-         }
-      }
-   }
-
-   return size();
+    return size();
 }
 
 /*------------------------------------------------------
@@ -126,32 +112,26 @@ int CCmdLine::SplitLine(int argc, char **argv)
 
 bool CCmdLine::IsSwitch(const char *pParam)
 {
-   if (pParam==NULL)
-      return false;
+    if (pParam == NULL) return false;
 
-   // switches must non-empty
-   // must have at least one character after the '-'
-   int len = strlen(pParam);
-   if (len <= 1)
-   {
-      return false;
-   }
+    // switches must non-empty
+    // must have at least one character after the '-'
+    int len = strlen(pParam);
+    if (len <= 1) { return false; }
 
-   // switches always start with '-'
-   if (pParam[0]=='-')
-   {
-      // allow negative numbers as arguments.
-      // ie., don't count them as switches
-#ifdef  Q_WS_WIN
-      return (!isdigit(pParam[1]));
+    // switches always start with '-'
+    if (pParam[0] == '-') {
+        // allow negative numbers as arguments.
+        // ie., don't count them as switches
+#ifdef Q_WS_WIN
+        return (!isdigit(pParam[1]));
 #else
-      return true;
+        return true;
 #endif
-   }
-   else
-   {
-      return false;
-   }
+    }
+    else {
+        return false;
+    }
 }
 
 /*------------------------------------------------------
@@ -169,9 +149,9 @@ bool CCmdLine::IsSwitch(const char *pParam)
 
 bool CCmdLine::HasSwitch(const char *pSwitch)
 {
-	CCmdLine::iterator theIterator;
-	theIterator = find(pSwitch);
-	return (theIterator!=end());
+    CCmdLine::iterator theIterator;
+    theIterator = find(pSwitch);
+    return (theIterator != end());
 }
 
 /*------------------------------------------------------
@@ -197,20 +177,17 @@ bool CCmdLine::HasSwitch(const char *pSwitch)
 
 StringType CCmdLine::GetSafeArgument(const char *pSwitch, int iIdx, const char *pDefault)
 {
-   StringType sRet;
-   
-   if (pDefault!=NULL)
-      sRet = pDefault;
+    StringType sRet;
 
-   try
-   {
-      sRet = GetArgument(pSwitch, iIdx);
-   }
-   catch (...)
-   {
-   }
+    if (pDefault != NULL) sRet = pDefault;
 
-   return sRet;
+    try {
+        sRet = GetArgument(pSwitch, iIdx);
+    }
+    catch (...) {
+    }
+
+    return sRet;
 }
 
 /*------------------------------------------------------
@@ -233,23 +210,20 @@ StringType CCmdLine::GetSafeArgument(const char *pSwitch, int iIdx, const char *
 
 StringType CCmdLine::GetArgument(const char *pSwitch, int iIdx)
 {
-   if (HasSwitch(pSwitch))
-   {
-	   CCmdLine::iterator theIterator;
+    if (HasSwitch(pSwitch)) {
+        CCmdLine::iterator theIterator;
 
-      theIterator = find(pSwitch);
-	   if (theIterator!=end())
-      {
-         if ((*theIterator).second.m_strings.size() > (unsigned)iIdx)
-         {
-            return (*theIterator).second.m_strings[iIdx];
-         }
-      }
-   }
+        theIterator = find(pSwitch);
+        if (theIterator != end()) {
+            if ((*theIterator).second.m_strings.size() > (unsigned)iIdx) {
+                return (*theIterator).second.m_strings[iIdx];
+            }
+        }
+    }
 
-   throw (int)0;
+    throw(int) 0;
 
-   return "";
+    return "";
 }
 
 /*------------------------------------------------------
@@ -263,18 +237,14 @@ StringType CCmdLine::GetArgument(const char *pSwitch, int iIdx)
 
 int CCmdLine::GetArgumentCount(const char *pSwitch)
 {
-   int iArgumentCount = -1;
+    int iArgumentCount = -1;
 
-   if (HasSwitch(pSwitch))
-   {
-	   CCmdLine::iterator theIterator;
+    if (HasSwitch(pSwitch)) {
+        CCmdLine::iterator theIterator;
 
-      theIterator = find(pSwitch);
-	   if (theIterator!=end())
-      {
-         iArgumentCount = (*theIterator).second.m_strings.size();
-      }
-   }
+        theIterator = find(pSwitch);
+        if (theIterator != end()) { iArgumentCount = (*theIterator).second.m_strings.size(); }
+    }
 
-   return iArgumentCount;
+    return iArgumentCount;
 }

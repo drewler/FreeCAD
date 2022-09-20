@@ -29,18 +29,21 @@
 #include <App/PropertyStandard.h>
 #include <Gui/ViewProviderDocumentObject.h>
 
-namespace App {
-    class DocumentObject;
+namespace App
+{
+class DocumentObject;
 }
 
-namespace TechDraw{
-    class DrawGeomHatch;
+namespace TechDraw
+{
+class DrawGeomHatch;
 }
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 
-class TechDrawGuiExport ViewProviderGeomHatch : public Gui::ViewProviderDocumentObject
+class TechDrawGuiExport ViewProviderGeomHatch: public Gui::ViewProviderDocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderGeomHatch);
 
@@ -50,19 +53,19 @@ public:
     /// destructor
     virtual ~ViewProviderGeomHatch();
 
-    App::PropertyFloat       WeightPattern;
-    App::PropertyColor       ColorPattern;
+    App::PropertyFloat WeightPattern;
+    App::PropertyColor ColorPattern;
 
-    virtual void updateData(const App::Property*) override;
+    virtual void updateData(const App::Property *) override;
     virtual void onChanged(const App::Property *prop) override;
     virtual bool setEdit(int ModNum) override;
     virtual bool doubleClicked(void) override;
-    virtual bool useNewSelectionModel(void) const override {return false;}
+    virtual bool useNewSelectionModel(void) const override { return false; }
     void updateGraphic(void);
     void getParameters(void);
-    virtual bool canDelete(App::DocumentObject* obj) const override;
+    virtual bool canDelete(App::DocumentObject *obj) const override;
 
-    TechDraw::DrawGeomHatch* getViewObject() const;
+    TechDraw::DrawGeomHatch *getViewObject() const;
 
     virtual Gui::MDIView *getMDIView() const override;
 };

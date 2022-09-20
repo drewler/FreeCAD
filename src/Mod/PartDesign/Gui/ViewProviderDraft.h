@@ -28,9 +28,10 @@
 #include "ViewProviderDressUp.h"
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderDraft : public ViewProviderDressUp
+class PartDesignGuiExport ViewProviderDraft: public ViewProviderDressUp
 {
     Q_DECLARE_TR_FUNCTIONS(PartDesignGui::ViewProviderDraft)
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderDraft);
@@ -38,11 +39,13 @@ class PartDesignGuiExport ViewProviderDraft : public ViewProviderDressUp
 public:
     /// constructor
     ViewProviderDraft()
-        { sPixmap = "PartDesign_Draft.svg";
-          menuName = tr("Draft parameters"); }
+    {
+        sPixmap = "PartDesign_Draft.svg";
+        menuName = tr("Draft parameters");
+    }
 
     /// return "Draft"
-    const std::string & featureName() const override;
+    const std::string &featureName() const override;
 
 protected:
     /// Returns a newly create dialog for the part to be placed in the task view

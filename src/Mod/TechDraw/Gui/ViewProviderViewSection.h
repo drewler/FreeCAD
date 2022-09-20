@@ -31,9 +31,10 @@
 #include "ViewProviderViewPart.h"
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderViewSection : public ViewProviderViewPart
+class TechDrawGuiExport ViewProviderViewSection: public ViewProviderViewPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderViewSection);
 
@@ -43,23 +44,23 @@ public:
     /// destructor
     ~ViewProviderViewSection() override;
 
-    App::PropertyBool   ShowCutSurface;        //obsolete - use CutSurfaceDisplay
-    App::PropertyColor  CutSurfaceColor;
-    App::PropertyBool   HatchCutSurface;       //obsolete - use CutSurfaceDisplay
-    App::PropertyColor  HatchColor;
-    App::PropertyColor  GeomHatchColor;
-    App::PropertyFloat  WeightPattern;
+    App::PropertyBool ShowCutSurface; //obsolete - use CutSurfaceDisplay
+    App::PropertyColor CutSurfaceColor;
+    App::PropertyBool HatchCutSurface; //obsolete - use CutSurfaceDisplay
+    App::PropertyColor HatchColor;
+    App::PropertyColor GeomHatchColor;
+    App::PropertyFloat WeightPattern;
 
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
     void onChanged(const App::Property *prop) override;
     bool setEdit(int ModNum) override;
     bool doubleClicked() override;
 
     void updateGraphic();
     void getParameters();
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
 
-    TechDraw::DrawViewSection* getViewObject() const override;
+    TechDraw::DrawViewSection *getViewObject() const override;
 };
 
 } // namespace TechDrawGui

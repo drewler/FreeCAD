@@ -25,8 +25,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMenu>
-# include <QMessageBox>
+#include <QMenu>
+#include <QMessageBox>
 #endif
 
 #include "ViewProviderBoolean.h"
@@ -40,9 +40,9 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE_WITH_EXTENSIONS(PartDesignGui::ViewProviderBoolean,PartDesignGui::ViewProvider)
+PROPERTY_SOURCE_WITH_EXTENSIONS(PartDesignGui::ViewProviderBoolean, PartDesignGui::ViewProvider)
 
-const char* PartDesignGui::ViewProviderBoolean::DisplayEnum[] = {"Result","Tools",nullptr};
+const char *PartDesignGui::ViewProviderBoolean::DisplayEnum[] = {"Result", "Tools", nullptr};
 
 
 ViewProviderBoolean::ViewProviderBoolean()
@@ -50,16 +50,14 @@ ViewProviderBoolean::ViewProviderBoolean()
     sPixmap = "PartDesign_Boolean.svg";
     Gui::ViewProviderGeoFeatureGroupExtension::initExtension(this);
 
-    ADD_PROPERTY(Display,((long)0));
+    ADD_PROPERTY(Display, ((long)0));
     Display.setEnums(DisplayEnum);
 }
 
-ViewProviderBoolean::~ViewProviderBoolean()
-{
-}
+ViewProviderBoolean::~ViewProviderBoolean() {}
 
 
-void ViewProviderBoolean::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderBoolean::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     addDefaultAction(menu, QObject::tr("Edit boolean"));
     PartDesignGui::ViewProvider::setupContextMenu(menu, receiver, member);
@@ -67,7 +65,7 @@ void ViewProviderBoolean::setupContextMenu(QMenu* menu, QObject* receiver, const
 
 bool ViewProviderBoolean::setEdit(int ModNum)
 {
-    if (ModNum == ViewProvider::Default ) {
+    if (ModNum == ViewProvider::Default) {
         // When double-clicking on the item for this fillet the
         // object unsets and sets its edit mode without closing
         // the task panel
@@ -82,8 +80,7 @@ bool ViewProviderBoolean::setEdit(int ModNum)
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
             msgBox.setDefaultButton(QMessageBox::Yes);
             int ret = msgBox.exec();
-            if (ret == QMessageBox::Yes)
-                Gui::Control().closeDialog();
+            if (ret == QMessageBox::Yes) Gui::Control().closeDialog();
             else
                 return false;
         }
@@ -95,8 +92,7 @@ bool ViewProviderBoolean::setEdit(int ModNum)
         oldWb = Gui::Command::assureWorkbench("PartDesignWorkbench");
 
         // start the edit dialog
-        if (booleanDlg)
-            Gui::Control().showDialog(booleanDlg);
+        if (booleanDlg) Gui::Control().showDialog(booleanDlg);
         else
             Gui::Control().showDialog(new TaskDlgBooleanParameters(this));
 
@@ -109,38 +105,41 @@ bool ViewProviderBoolean::setEdit(int ModNum)
 
 bool ViewProviderBoolean::onDelete(const std::vector<std::string> &s)
 {
-    PartDesign::Boolean* pcBoolean = static_cast<PartDesign::Boolean*>(getObject());
+    PartDesign::Boolean *pcBoolean = static_cast<PartDesign::Boolean *>(getObject());
 
     // if abort command deleted the object the bodies are visible again
-    std::vector<App::DocumentObject*> bodies = pcBoolean->Group.getValues();
-    for (std::vector<App::DocumentObject*>::const_iterator b = bodies.begin(); b != bodies.end(); b++) {
+    std::vector<App::DocumentObject *> bodies = pcBoolean->Group.getValues();
+    for (std::vector<App::DocumentObject *>::const_iterator b = bodies.begin(); b != bodies.end();
+         b++) {
         if (*b && Gui::Application::Instance->getViewProvider(*b))
-        Gui::Application::Instance->getViewProvider(*b)->show();
+            Gui::Application::Instance->getViewProvider(*b)->show();
     }
 
     return ViewProvider::onDelete(s);
 }
 
-void ViewProviderBoolean::attach(App::DocumentObject* obj) {
+void ViewProviderBoolean::attach(App::DocumentObject *obj)
+{
     PartGui::ViewProviderPartExt::attach(obj);
 
     //set default display mode to override the "Group" display mode
     setDisplayMode("Flat Lines");
 }
 
-void ViewProviderBoolean::onChanged(const App::Property* prop) {
+void ViewProviderBoolean::onChanged(const App::Property *prop)
+{
 
     PartDesignGui::ViewProvider::onChanged(prop);
 
-    if(prop == &Display) {
+    if (prop == &Display) {
 
-        if(Display.getValue() == 0) {
+        if (Display.getValue() == 0) {
             auto vp = getBodyViewProvider();
-            if(vp)
-                setDisplayMode(vp->DisplayMode.getValueAsString());
+            if (vp) setDisplayMode(vp->DisplayMode.getValueAsString());
             else
                 setDisplayMode("Flat Lines");
-        } else {
+        }
+        else {
             setDisplayMode("Group");
         }
     }

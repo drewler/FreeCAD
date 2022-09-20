@@ -42,17 +42,15 @@ std::string DrawProjGroupPy::representation() const
     return std::string("<DrawProjGroup object>");
 }
 
-PyObject* DrawProjGroupPy::addProjection(PyObject* args)
+PyObject *DrawProjGroupPy::addProjection(PyObject *args)
 {
-    char* projType;
+    char *projType;
 
-    if (!PyArg_ParseTuple(args, "s", &projType)) {
-        throw Py::Exception();
-    }
+    if (!PyArg_ParseTuple(args, "s", &projType)) { throw Py::Exception(); }
 
-    DrawProjGroup* projGroup = getDrawProjGroupPtr();
-    App::DocumentObject* docObj = projGroup->addProjection(projType);
-    TechDraw::DrawProjGroupItem* newProj = dynamic_cast<TechDraw::DrawProjGroupItem *>( docObj );
+    DrawProjGroup *projGroup = getDrawProjGroupPtr();
+    App::DocumentObject *docObj = projGroup->addProjection(projType);
+    TechDraw::DrawProjGroupItem *newProj = dynamic_cast<TechDraw::DrawProjGroupItem *>(docObj);
     if (!newProj) {
         PyErr_SetString(PyExc_TypeError, "wrong type for adding projection");
         return nullptr;
@@ -61,39 +59,35 @@ PyObject* DrawProjGroupPy::addProjection(PyObject* args)
     return new DrawProjGroupItemPy(newProj);
 }
 
-PyObject* DrawProjGroupPy::removeProjection(PyObject* args)
+PyObject *DrawProjGroupPy::removeProjection(PyObject *args)
 {
-    char* projType;
+    char *projType;
 
-    if (!PyArg_ParseTuple(args, "s", &projType)) {
-        throw Py::Exception();
-    }
+    if (!PyArg_ParseTuple(args, "s", &projType)) { throw Py::Exception(); }
 
-    DrawProjGroup* projGroup = getDrawProjGroupPtr();
+    DrawProjGroup *projGroup = getDrawProjGroupPtr();
     int i = projGroup->removeProjection(projType);
 
-    return PyLong_FromLong((long) i);
+    return PyLong_FromLong((long)i);
 }
 
-PyObject* DrawProjGroupPy::purgeProjections(PyObject* /*args*/)
+PyObject *DrawProjGroupPy::purgeProjections(PyObject * /*args*/)
 {
-    DrawProjGroup* projGroup = getDrawProjGroupPtr();
+    DrawProjGroup *projGroup = getDrawProjGroupPtr();
     int i = projGroup->purgeProjections();
 
-    return PyLong_FromLong((long) i);
+    return PyLong_FromLong((long)i);
 }
 
-PyObject* DrawProjGroupPy::getItemByLabel(PyObject* args)
+PyObject *DrawProjGroupPy::getItemByLabel(PyObject *args)
 {
-    char* projType;
+    char *projType;
 
-    if (!PyArg_ParseTuple(args, "s", &projType)) {
-        throw Py::Exception();
-    }
+    if (!PyArg_ParseTuple(args, "s", &projType)) { throw Py::Exception(); }
 
-    DrawProjGroup* projGroup = getDrawProjGroupPtr();
-    App::DocumentObject* docObj = projGroup->getProjObj(projType);
-    TechDraw::DrawProjGroupItem* newProj = dynamic_cast<TechDraw::DrawProjGroupItem *>( docObj );
+    DrawProjGroup *projGroup = getDrawProjGroupPtr();
+    App::DocumentObject *docObj = projGroup->getProjObj(projType);
+    TechDraw::DrawProjGroupItem *newProj = dynamic_cast<TechDraw::DrawProjGroupItem *>(docObj);
     if (!newProj) {
         PyErr_SetString(PyExc_TypeError, "wrong type for getting item");
         return nullptr;
@@ -102,27 +96,18 @@ PyObject* DrawProjGroupPy::getItemByLabel(PyObject* args)
     return new DrawProjGroupItemPy(newProj);
 }
 
-PyObject* DrawProjGroupPy::getXYPosition(PyObject* args)
+PyObject *DrawProjGroupPy::getXYPosition(PyObject *args)
 {
-    char* projType;
+    char *projType;
 
-    if (!PyArg_ParseTuple(args, "s", &projType)) {
-        throw Py::Exception();
-    }
+    if (!PyArg_ParseTuple(args, "s", &projType)) { throw Py::Exception(); }
 
-    DrawProjGroup* projGroup = getDrawProjGroupPtr();
+    DrawProjGroup *projGroup = getDrawProjGroupPtr();
     Base::Vector3d v = projGroup->getXYPosition(projType);
     return new Base::VectorPy(v);
 }
 
 
+PyObject *DrawProjGroupPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-PyObject *DrawProjGroupPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
-
-int DrawProjGroupPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
+int DrawProjGroupPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

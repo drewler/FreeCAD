@@ -29,9 +29,11 @@
 
 class QTreeWidgetItem;
 
-namespace Gui {
+namespace Gui
+{
 class Command;
-namespace Dialog {
+namespace Dialog
+{
 class Ui_DlgCustomCommands;
 
 /** Shows an overview of all available commands of all groups and modules.
@@ -41,20 +43,20 @@ class Ui_DlgCustomCommands;
  * customize your own toolbars or commandbars.
  * \author Werner Mayer
  */
-class DlgCustomCommandsImp : public CustomizeActionPage
+class DlgCustomCommandsImp: public CustomizeActionPage
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-    explicit DlgCustomCommandsImp(QWidget* parent = nullptr);
+    explicit DlgCustomCommandsImp(QWidget *parent = nullptr);
     ~DlgCustomCommandsImp() override;
 
 protected Q_SLOTS:
     void onGroupActivated(QTreeWidgetItem *i);
     void onDescription(QTreeWidgetItem *i);
-    void onAddMacroAction(const QByteArray&) override;
-    void onRemoveMacroAction(const QByteArray&) override;
-    void onModifyMacroAction(const QByteArray&) override;
+    void onAddMacroAction(const QByteArray &) override;
+    void onRemoveMacroAction(const QByteArray &) override;
+    void onModifyMacroAction(const QByteArray &) override;
 
 protected:
     void changeEvent(QEvent *e) override;

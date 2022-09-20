@@ -32,9 +32,11 @@
 
 class QTreeWidgetItem;
 
-namespace Gui {
+namespace Gui
+{
 
-namespace Dialog {
+namespace Dialog
+{
 
 class Ui_DlgCreateNewPreferencePack;
 
@@ -45,24 +47,24 @@ class Ui_DlgCreateNewPreferencePack;
  * 
  * \author Chris Hennes
  */
-class GuiExport DlgCreateNewPreferencePackImp : public QDialog
+class GuiExport DlgCreateNewPreferencePackImp: public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-
-    explicit DlgCreateNewPreferencePackImp(QWidget* parent = nullptr);
+    explicit DlgCreateNewPreferencePackImp(QWidget *parent = nullptr);
     ~DlgCreateNewPreferencePackImp() override;
 
-    void setPreferencePackTemplates(const std::vector<PreferencePackManager::TemplateFile> &availableTemplates);
-    void setPreferencePackNames(const std::vector<std::string>& usedNames);
+    void setPreferencePackTemplates(
+        const std::vector<PreferencePackManager::TemplateFile> &availableTemplates);
+    void setPreferencePackNames(const std::vector<std::string> &usedNames);
 
     std::vector<PreferencePackManager::TemplateFile> selectedTemplates() const;
     std::string preferencePackName() const;
 
 protected Q_SLOTS:
 
-    void onItemChanged(QTreeWidgetItem* item, int column);
+    void onItemChanged(QTreeWidgetItem *item, int column);
 
     void on_lineEdit_textEdited(const QString &text);
 
@@ -70,7 +72,7 @@ protected Q_SLOTS:
 
 private:
     std::unique_ptr<Ui_DlgCreateNewPreferencePack> ui;
-    std::map<std::string, QTreeWidgetItem*> _groups;
+    std::map<std::string, QTreeWidgetItem *> _groups;
     std::vector<PreferencePackManager::TemplateFile> _templates;
     QRegExpValidator _nameValidator;
     std::vector<std::string> _existingPackNames;

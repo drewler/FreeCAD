@@ -24,10 +24,10 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# ifdef _MSC_VER
-#  define _USE_MATH_DEFINES
-#  include <cmath>
-# endif //_MSC_VER
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#include <cmath>
+#endif //_MSC_VER
 #endif // _PreComp_
 
 #include <Gui/Application.h>
@@ -40,36 +40,35 @@ using namespace PartGui;
 
 PROPERTYITEM_SOURCE(PartGui::PropertyEnumAttacherItem)
 
-PropertyEnumAttacherItem::PropertyEnumAttacherItem()
-{
-}
+PropertyEnumAttacherItem::PropertyEnumAttacherItem() {}
 
-QWidget* PropertyEnumAttacherItem::createEditor(QWidget* parent, const QObject* receiver, const char* method) const
+QWidget *PropertyEnumAttacherItem::createEditor(QWidget *parent, const QObject *receiver,
+                                                const char *method) const
 {
-    Gui::LabelButton* modeEditor = new Gui::LabelButton(parent);
+    Gui::LabelButton *modeEditor = new Gui::LabelButton(parent);
     QObject::connect(modeEditor, SIGNAL(valueChanged(const QVariant &)), receiver, method);
     QObject::connect(modeEditor, SIGNAL(buttonClicked()), this, SLOT(openTask()));
     modeEditor->setDisabled(isReadOnly());
     return modeEditor;
 }
 
-void PropertyEnumAttacherItem::setEditorData(QWidget *editor, const QVariant& data) const
+void PropertyEnumAttacherItem::setEditorData(QWidget *editor, const QVariant &data) const
 {
-    Gui::LabelButton* modeEditor = qobject_cast<Gui::LabelButton*>(editor);
+    Gui::LabelButton *modeEditor = qobject_cast<Gui::LabelButton *>(editor);
     modeEditor->setValue(data);
 }
 
 QVariant PropertyEnumAttacherItem::editorData(QWidget *editor) const
 {
-    Gui::LabelButton* modeEditor = qobject_cast<Gui::LabelButton*>(editor);
+    Gui::LabelButton *modeEditor = qobject_cast<Gui::LabelButton *>(editor);
     return modeEditor->value();
 }
 
 void PropertyEnumAttacherItem::openTask()
 {
-    Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
-    TaskDlgAttacher* task;
-    task = qobject_cast<TaskDlgAttacher*>(dlg);
+    Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
+    TaskDlgAttacher *task;
+    task = qobject_cast<TaskDlgAttacher *>(dlg);
 
     if (dlg && !task) {
         // there is already another task dialog which must be closed first
@@ -77,22 +76,22 @@ void PropertyEnumAttacherItem::openTask()
         return;
     }
     if (!task) {
-        const App::Property* prop = getFirstProperty();
+        const App::Property *prop = getFirstProperty();
         if (prop) {
-            App::PropertyContainer* parent = prop->getContainer();
+            App::PropertyContainer *parent = prop->getContainer();
 
             if (parent->getTypeId().isDerivedFrom(App::DocumentObject::getClassTypeId())) {
-                App::DocumentObject* obj = static_cast<App::DocumentObject*>(parent);
-                Gui::ViewProvider* view = Gui::Application::Instance->getViewProvider(obj);
+                App::DocumentObject *obj = static_cast<App::DocumentObject *>(parent);
+                Gui::ViewProvider *view = Gui::Application::Instance->getViewProvider(obj);
 
-                if (view->getTypeId().isDerivedFrom(Gui::ViewProviderDocumentObject::getClassTypeId())) {
-                    task = new TaskDlgAttacher(static_cast<Gui::ViewProviderDocumentObject*>(view));
+                if (view->getTypeId().isDerivedFrom(
+                        Gui::ViewProviderDocumentObject::getClassTypeId())) {
+                    task =
+                        new TaskDlgAttacher(static_cast<Gui::ViewProviderDocumentObject *>(view));
                 }
             }
         }
-        if (!task) {
-            return;
-        }
+        if (!task) { return; }
     }
 
     Gui::Control().showDialog(task);

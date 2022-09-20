@@ -54,7 +54,8 @@ public:
     short mustExecute() const;
 
     /// returns the type name of the ViewProvider
-    virtual const char* getViewProviderName(void) const {
+    virtual const char *getViewProviderName(void) const
+    {
         return "TechDrawGui::ViewProviderTemplate";
     }
 
@@ -65,7 +66,7 @@ public:
     double getHeight() const;
 
 protected:
-    void onChanged(const App::Property* prop);
+    void onChanged(const App::Property *prop);
 
     /// Returns map with <editable name, default text>
     /*!
@@ -73,8 +74,7 @@ protected:
      */
     std::map<std::string, std::string> getEditableTextsFromTemplate();
 
-	QString processTemplate(QString fileSpec);
-
+    QString processTemplate(QString fileSpec);
 };
 
 using DrawSVGTemplatePython = App::FeaturePythonT<DrawSVGTemplate>;

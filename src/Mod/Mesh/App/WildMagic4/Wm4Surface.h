@@ -23,20 +23,19 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM Surface
+template<class Real> class WM4_FOUNDATION_ITEM Surface
 {
 public:
-    virtual ~Surface ();
+    virtual ~Surface();
 
 protected:
     // abstract base class
-    Surface ();
+    Surface();
 };
 
 typedef Surface<float> Surfacef;
 typedef Surface<double> Surfaced;
 
-}
+} // namespace Wm4
 
 #endif

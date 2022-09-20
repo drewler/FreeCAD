@@ -30,10 +30,11 @@
 #include "ViewProviderGeoFeatureGroupExtension.h"
 #include "ViewProviderPythonFeature.h"
 
-namespace Gui {
+namespace Gui
+{
 
-class GuiExport ViewProviderGeoFeatureGroup : public ViewProviderDocumentObject,
-                                              public ViewProviderGeoFeatureGroupExtension
+class GuiExport ViewProviderGeoFeatureGroup: public ViewProviderDocumentObject,
+                                             public ViewProviderGeoFeatureGroupExtension
 {
     PROPERTY_HEADER_WITH_EXTENSIONS(Gui::ViewProviderGeoFeatureGroup);
 
@@ -49,4 +50,3 @@ using ViewProviderGeoFeatureGroupPython = ViewProviderPythonFeatureT<ViewProvide
 } // namespace Gui
 
 #endif // GUI_VIEWPROVIDER_ViewProviderGeoFeatureGroup_H
-

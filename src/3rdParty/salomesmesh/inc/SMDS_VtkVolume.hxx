@@ -29,50 +29,48 @@
 class SMDS_EXPORT SMDS_VtkVolume: public SMDS_MeshVolume
 {
 public:
-  SMDS_VtkVolume();
-  SMDS_VtkVolume(const std::vector<vtkIdType>& nodeIds, SMDS_Mesh* mesh);
-  ~SMDS_VtkVolume();
-  void init(const std::vector<vtkIdType>& nodeIds, SMDS_Mesh* mesh);
-//#ifdef VTK_HAVE_POLYHEDRON
-  void initPoly(const std::vector<vtkIdType>& nodeIds,
-                const std::vector<int>& nbNodesPerFace, SMDS_Mesh* mesh);
-//#endif
-  virtual bool ChangeNodes(const SMDS_MeshNode* nodes[], const int nbNodes);
-  virtual bool vtkOrder(const SMDS_MeshNode* nodes[], const int nbNodes);
+    SMDS_VtkVolume();
+    SMDS_VtkVolume(const std::vector<vtkIdType> &nodeIds, SMDS_Mesh *mesh);
+    ~SMDS_VtkVolume();
+    void init(const std::vector<vtkIdType> &nodeIds, SMDS_Mesh *mesh);
+    //#ifdef VTK_HAVE_POLYHEDRON
+    void initPoly(const std::vector<vtkIdType> &nodeIds, const std::vector<int> &nbNodesPerFace,
+                  SMDS_Mesh *mesh);
+    //#endif
+    virtual bool ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes);
+    virtual bool vtkOrder(const SMDS_MeshNode *nodes[], const int nbNodes);
 
-  virtual void Print(std::ostream & OS) const;
-  virtual int NbFaces() const;
-  virtual int NbNodes() const;
-  virtual int NbEdges() const;
+    virtual void Print(std::ostream &OS) const;
+    virtual int NbFaces() const;
+    virtual int NbNodes() const;
+    virtual int NbEdges() const;
 
-  // 1 <= face_ind <= NbFaces()
-  int NbFaceNodes (const int face_ind) const;
-  // 1 <= face_ind <= NbFaces()
-  // 1 <= node_ind <= NbFaceNodes()
-  const SMDS_MeshNode* GetFaceNode (const int face_ind, const int node_ind) const;
+    // 1 <= face_ind <= NbFaces()
+    int NbFaceNodes(const int face_ind) const;
+    // 1 <= face_ind <= NbFaces()
+    // 1 <= node_ind <= NbFaceNodes()
+    const SMDS_MeshNode *GetFaceNode(const int face_ind, const int node_ind) const;
 
-  virtual SMDSAbs_ElementType  GetType() const;
-  virtual vtkIdType            GetVtkType() const;
-  virtual SMDSAbs_EntityType   GetEntityType() const;
-  virtual SMDSAbs_GeometryType GetGeomType() const;
-  virtual const SMDS_MeshNode* GetNode(const int ind) const;
-  virtual int GetNodeIndex( const SMDS_MeshNode* node ) const;
-  virtual bool IsQuadratic() const;
-  virtual bool IsPoly() const;
-  virtual bool IsMediumNode(const SMDS_MeshNode* node) const;
-  virtual int  NbCornerNodes() const;
-  static void gravityCenter(SMDS_UnstructuredGrid* grid,
-                            const vtkIdType *nodeIds,
-                            int nbNodes,
-                            double* result);
-  static bool isForward(double* a,double* b,double* c,double* d);
-  int NbUniqueNodes() const;
-  SMDS_ElemIteratorPtr uniqueNodesIterator() const;
-  std::vector<int> GetQuantities() const;
+    virtual SMDSAbs_ElementType GetType() const;
+    virtual vtkIdType GetVtkType() const;
+    virtual SMDSAbs_EntityType GetEntityType() const;
+    virtual SMDSAbs_GeometryType GetGeomType() const;
+    virtual const SMDS_MeshNode *GetNode(const int ind) const;
+    virtual int GetNodeIndex(const SMDS_MeshNode *node) const;
+    virtual bool IsQuadratic() const;
+    virtual bool IsPoly() const;
+    virtual bool IsMediumNode(const SMDS_MeshNode *node) const;
+    virtual int NbCornerNodes() const;
+    static void gravityCenter(SMDS_UnstructuredGrid *grid, const vtkIdType *nodeIds, int nbNodes,
+                              double *result);
+    static bool isForward(double *a, double *b, double *c, double *d);
+    int NbUniqueNodes() const;
+    SMDS_ElemIteratorPtr uniqueNodesIterator() const;
+    std::vector<int> GetQuantities() const;
 
-  virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
-  virtual SMDS_NodeIteratorPtr nodesIteratorToUNV() const;
-  virtual SMDS_NodeIteratorPtr interlacedNodesIterator() const;
+    virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
+    virtual SMDS_NodeIteratorPtr nodesIteratorToUNV() const;
+    virtual SMDS_NodeIteratorPtr interlacedNodesIterator() const;
 
 protected:
 };

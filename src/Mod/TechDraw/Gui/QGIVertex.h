@@ -25,20 +25,24 @@
 
 #include <Mod/TechDraw/TechDrawGlobal.h>
 
-# include "QGIPrimPath.h"
+#include "QGIPrimPath.h"
 
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGIVertex : public QGIPrimPath
+class TechDrawGuiExport QGIVertex: public QGIPrimPath
 {
 public:
     explicit QGIVertex(int index);
     ~QGIVertex() {}
 
-    enum {Type = QGraphicsItem::UserType + 105};
-    int type() const override { return Type;}
-    virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr ) override;
+    enum
+    {
+        Type = QGraphicsItem::UserType + 105
+    };
+    int type() const override { return Type; }
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr) override;
 
     int getProjIndex() const { return projIndex; }
 
@@ -52,6 +56,6 @@ protected:
 private:
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGRAPHICSITEMVERTEX_H

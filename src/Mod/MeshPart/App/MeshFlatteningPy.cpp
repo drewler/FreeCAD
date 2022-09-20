@@ -21,9 +21,8 @@
  ***************************************************************************/
 
 
-
 #ifdef _MSC_VER
-    #define strdup _strdup
+#define strdup _strdup
 #endif
 
 #include "PreCompiled.h"
@@ -55,62 +54,58 @@
 #include <ShapeFix_Edge.hxx>
 
 
-
 namespace py = pybind11;
 
-const TopoDS_Face& getTopoDSFace(py::object* face)
+const TopoDS_Face &getTopoDSFace(py::object *face)
 {
-    if (PyObject_TypeCheck(face->ptr(), &(Part::TopoShapeFacePy::Type)))
-    {
-        const Part::TopoShapeFacePy* f = static_cast<Part::TopoShapeFacePy*>(face->ptr());
-        const TopoDS_Face& myFace = TopoDS::Face(f->getTopoShapePtr()->getShape());
+    if (PyObject_TypeCheck(face->ptr(), &(Part::TopoShapeFacePy::Type))) {
+        const Part::TopoShapeFacePy *f = static_cast<Part::TopoShapeFacePy *>(face->ptr());
+        const TopoDS_Face &myFace = TopoDS::Face(f->getTopoShapePtr()->getShape());
         return myFace;
     }
     else
         throw std::invalid_argument("must be a face");
 }
 
-const TopoDS_Edge& getTopoDSEdge(py::object* edge)
+const TopoDS_Edge &getTopoDSEdge(py::object *edge)
 {
-    if (PyObject_TypeCheck(edge->ptr(), &(Part::TopoShapeEdgePy::Type)))
-    {
-        const Part::TopoShapeEdgePy* e = static_cast<Part::TopoShapeEdgePy*>(edge->ptr());
-        const TopoDS_Edge& myEdge = TopoDS::Edge(e->getTopoShapePtr()->getShape());
+    if (PyObject_TypeCheck(edge->ptr(), &(Part::TopoShapeEdgePy::Type))) {
+        const Part::TopoShapeEdgePy *e = static_cast<Part::TopoShapeEdgePy *>(edge->ptr());
+        const TopoDS_Edge &myEdge = TopoDS::Edge(e->getTopoShapePtr()->getShape());
         return myEdge;
     }
     else
         throw std::invalid_argument("must be an edge");
 }
 
-Py::Object makeEdge(const TopoDS_Edge& edge)
+Py::Object makeEdge(const TopoDS_Edge &edge)
 {
     return Py::asObject(new Part::TopoShapeEdgePy(new Part::TopoShape(edge)));
 }
 
-py::object makeFace(const TopoDS_Face& face)
+py::object makeFace(const TopoDS_Face &face)
 {
     return py::cast(new Part::TopoShapeFacePy(new Part::TopoShape(face)));
 }
 
 
-FaceUnwrapper* FaceUnwrapper_constructor(py::object* face)
+FaceUnwrapper *FaceUnwrapper_constructor(py::object *face)
 {
-    const TopoDS_Face& myFace = getTopoDSFace(face);
+    const TopoDS_Face &myFace = getTopoDSFace(face);
     return new FaceUnwrapper(myFace);
 }
 
-ColMat<double, 3> interpolateFlatFacePy(FaceUnwrapper& instance, py::object* face)
+ColMat<double, 3> interpolateFlatFacePy(FaceUnwrapper &instance, py::object *face)
 {
-    const TopoDS_Face& myFace = getTopoDSFace(face);
+    const TopoDS_Face &myFace = getTopoDSFace(face);
     return instance.interpolateFlatFace(myFace);
 }
-
 
 
 PYBIND11_MODULE(flatmesh, m)
 {
     m.doc() = "functions to unwrapp faces/ meshes";
-    
+
     py::class_<lscmrelax::LscmRelax>(m, "LscmRelax")
         .def(py::init<ColMat<double, 3>, ColMat<long, 3>, std::vector<long>>())
         .def("lscm", &lscmrelax::LscmRelax::lscm)
@@ -121,7 +116,9 @@ PYBIND11_MODULE(flatmesh, m)
         .def_readonly("MATRIX", &lscmrelax::LscmRelax::MATRIX)
         .def_property_readonly("area", &lscmrelax::LscmRelax::get_area)
         .def_property_readonly("flat_area", &lscmrelax::LscmRelax::get_flat_area)
-        .def_property_readonly("flat_vertices", [](lscmrelax::LscmRelax& L){return L.flat_vertices.transpose();}, py::return_value_policy::copy)
+        .def_property_readonly(
+            "flat_vertices", [](lscmrelax::LscmRelax &L) { return L.flat_vertices.transpose(); },
+            py::return_value_policy::copy)
         .def_property_readonly("flat_vertices_3D", &lscmrelax::LscmRelax::get_flat_vertices_3D);
 
     py::class_<nurbs::NurbsBase2D>(m, "NurbsBase2D")
@@ -129,7 +126,7 @@ PYBIND11_MODULE(flatmesh, m)
         .def_readonly("u_knots", &nurbs::NurbsBase2D::u_knots)
         .def_readonly("weights", &nurbs::NurbsBase2D::weights)
         .def_readonly("degree_u", &nurbs::NurbsBase2D::degree_u)
-//         .def_readonly("v_knots", &nurbs::NurbsBase2D::u_knots)
+        //         .def_readonly("v_knots", &nurbs::NurbsBase2D::u_knots)
         .def_readonly("degree_v", &nurbs::NurbsBase2D::degree_u)
         .def("getUVMesh", &nurbs::NurbsBase2D::getUVMesh)
         .def("computeFirstDerivatives", &nurbs::NurbsBase2D::computeFirstDerivatives)
@@ -167,5 +164,4 @@ PYBIND11_MODULE(flatmesh, m)
         .def_readonly("ze_nodes", &FaceUnwrapper::ze_nodes)
         .def_readonly("ze_poles", &FaceUnwrapper::ze_poles)
         .def_readonly("A", &FaceUnwrapper::A);
-        
 };

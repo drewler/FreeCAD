@@ -37,91 +37,72 @@
 
 class SMESHDS_EXPORT SMESHDS_Script
 {
-  public:
-        SMESHDS_Script(bool theIsEmbeddedMode);
-        ~SMESHDS_Script();
-  
-        void SetModified(bool theModified);
-        bool IsModified();
+public:
+    SMESHDS_Script(bool theIsEmbeddedMode);
+    ~SMESHDS_Script();
 
-        void AddNode(int NewNodeID, double x, double y, double z);
-        void Add0DElement(int New0DElementID, int idnode);
-        void AddEdge(int NewEdgeID, int idnode1, int idnode2);
-        void AddFace(int NewFaceID, int idnode1, int idnode2, int idnode3);
-        void AddFace(int NewFaceID, int idnode1, int idnode2, int idnode3,
-                int idnode4);
-        void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3,
-                int idnode4);
-        void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3,
-                int idnode4, int idnode5);
-        void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3,
-                int idnode4, int idnode5, int idnode6);
-        void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3,
-                int idnode4, int idnode5, int idnode6, int idnode7, int idnode8);
-        void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3,
-                       int idnode4, int idnode5, int idnode6, int idnode7, int idnode8,
-                       int idnode9, int idnode10, int idnode11, int idnode12);
+    void SetModified(bool theModified);
+    bool IsModified();
 
-        void AddPolygonalFace (const int               NewFaceID,
-                               const std::vector<int>& nodes_ids);
-        void AddQuadPolygonalFace (const int               NewFaceID,
-                                        const std::vector<int>& nodes_ids);
-        void AddPolyhedralVolume (const int               NewVolID,
-                                  const std::vector<int>& nodes_ids,
-                                  const std::vector<int>& quantities);
-        void AddBall(int NewBallID, int node, double diameter);
+    void AddNode(int NewNodeID, double x, double y, double z);
+    void Add0DElement(int New0DElementID, int idnode);
+    void AddEdge(int NewEdgeID, int idnode1, int idnode2);
+    void AddFace(int NewFaceID, int idnode1, int idnode2, int idnode3);
+    void AddFace(int NewFaceID, int idnode1, int idnode2, int idnode3, int idnode4);
+    void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3, int idnode4);
+    void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3, int idnode4, int idnode5);
+    void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3, int idnode4, int idnode5,
+                   int idnode6);
+    void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3, int idnode4, int idnode5,
+                   int idnode6, int idnode7, int idnode8);
+    void AddVolume(int NewVolID, int idnode1, int idnode2, int idnode3, int idnode4, int idnode5,
+                   int idnode6, int idnode7, int idnode8, int idnode9, int idnode10, int idnode11,
+                   int idnode12);
 
-        // special methods for quadratic elements
-        void AddEdge(int NewEdgeID, int n1, int n2, int n12);
-        void AddFace(int NewFaceID, int n1, int n2, int n3,
-                     int n12, int n23, int n31);
-        void AddFace(int NewFaceID, int n1, int n2, int n3,
-                     int n12, int n23, int n31, int nCenter);
-        void AddFace(int NewFaceID, int n1, int n2, int n3, int n4,
-                     int n12, int n23, int n34, int n41);
-        void AddFace(int NewFaceID, int n1, int n2, int n3, int n4,
-                     int n12, int n23, int n34, int n41, int nCenter);
-        void AddVolume(int NewVolID, int n1, int n2, int n3, int n4,
-                       int n12, int n23, int n31, int n14, int n24, int n34);
-        void AddVolume(int NewVolID, int n1, int n2, int n3, int n4, int n5,
-                       int n12, int n23, int n34, int n41,
-                       int n15, int n25, int n35, int n45);
-        void AddVolume(int NewVolID, int n1, int n2, int n3,
-                       int n4, int n5, int n6,
-                       int n12, int n23, int n31,
-                       int n45, int n56, int n64,
-                       int n14, int n25, int n36);
-        void AddVolume(int NewVolID, int n1, int n2, int n3, int n4,
-                       int n5, int n6, int n7, int n8,
-                       int n12, int n23, int n34, int n41,
-                       int n56, int n67, int n78, int n85,
-                       int n15, int n26, int n37, int n48);
-        void AddVolume(int NewVolID, int n1, int n2, int n3, int n4,
-                       int n5,  int n6,  int n7,  int n8,
-                       int n12, int n23, int n34, int n41,
-                       int n56, int n67, int n78, int n85,
-                       int n15, int n26, int n37, int n48,
-                       int n1234,int n1256,int n2367,int n3478,
-                       int n1458,int n5678,int nCenter);
-        void MoveNode(int NewNodeID, double x, double y, double z);
-        void RemoveNode(int NodeID);
-        void RemoveElement(int ElementID);
-        void ChangeElementNodes(int ElementID, int nodes[], int nbnodes);
-        void ChangePolyhedronNodes(const int               ElementID,
-                                   const std::vector<int>& nodes_ids,
-                                   const std::vector<int>& quantities);
-        void Renumber (const bool isNodes, const int startID, const int deltaID);
-        void ClearMesh();
-        void Clear();
-        const std::list<SMESHDS_Command*> & GetCommands();
+    void AddPolygonalFace(const int NewFaceID, const std::vector<int> &nodes_ids);
+    void AddQuadPolygonalFace(const int NewFaceID, const std::vector<int> &nodes_ids);
+    void AddPolyhedralVolume(const int NewVolID, const std::vector<int> &nodes_ids,
+                             const std::vector<int> &quantities);
+    void AddBall(int NewBallID, int node, double diameter);
 
-  private:
-        SMESHDS_Command* getCommand(const SMESHDS_CommandType aType);
+    // special methods for quadratic elements
+    void AddEdge(int NewEdgeID, int n1, int n2, int n12);
+    void AddFace(int NewFaceID, int n1, int n2, int n3, int n12, int n23, int n31);
+    void AddFace(int NewFaceID, int n1, int n2, int n3, int n12, int n23, int n31, int nCenter);
+    void AddFace(int NewFaceID, int n1, int n2, int n3, int n4, int n12, int n23, int n34, int n41);
+    void AddFace(int NewFaceID, int n1, int n2, int n3, int n4, int n12, int n23, int n34, int n41,
+                 int nCenter);
+    void AddVolume(int NewVolID, int n1, int n2, int n3, int n4, int n12, int n23, int n31, int n14,
+                   int n24, int n34);
+    void AddVolume(int NewVolID, int n1, int n2, int n3, int n4, int n5, int n12, int n23, int n34,
+                   int n41, int n15, int n25, int n35, int n45);
+    void AddVolume(int NewVolID, int n1, int n2, int n3, int n4, int n5, int n6, int n12, int n23,
+                   int n31, int n45, int n56, int n64, int n14, int n25, int n36);
+    void AddVolume(int NewVolID, int n1, int n2, int n3, int n4, int n5, int n6, int n7, int n8,
+                   int n12, int n23, int n34, int n41, int n56, int n67, int n78, int n85, int n15,
+                   int n26, int n37, int n48);
+    void AddVolume(int NewVolID, int n1, int n2, int n3, int n4, int n5, int n6, int n7, int n8,
+                   int n12, int n23, int n34, int n41, int n56, int n67, int n78, int n85, int n15,
+                   int n26, int n37, int n48, int n1234, int n1256, int n2367, int n3478, int n1458,
+                   int n5678, int nCenter);
+    void MoveNode(int NewNodeID, double x, double y, double z);
+    void RemoveNode(int NodeID);
+    void RemoveElement(int ElementID);
+    void ChangeElementNodes(int ElementID, int nodes[], int nbnodes);
+    void ChangePolyhedronNodes(const int ElementID, const std::vector<int> &nodes_ids,
+                               const std::vector<int> &quantities);
+    void Renumber(const bool isNodes, const int startID, const int deltaID);
+    void ClearMesh();
+    void Clear();
+    const std::list<SMESHDS_Command *> &GetCommands();
 
-        std::list<SMESHDS_Command*> myCommands;
+private:
+    SMESHDS_Command *getCommand(const SMESHDS_CommandType aType);
 
-        bool myIsEmbeddedMode;
-        bool myIsModified;
+    std::list<SMESHDS_Command *> myCommands;
+
+    bool myIsEmbeddedMode;
+    bool myIsModified;
 };
 
 #endif

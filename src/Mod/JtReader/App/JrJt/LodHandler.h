@@ -24,18 +24,11 @@
 #define LodHandler_HEADER
 
 
-
 class LodHandler
 {
 public:
-	virtual void startLod(){};
-
-
-
+    virtual void startLod() {};
 };
 
 
-
 #endif
-
-

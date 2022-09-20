@@ -31,34 +31,30 @@
 
 #include "SMESHDS_GroupBase.hxx"
 #include <TopoDS_Shape.hxx>
-  
+
 class SMESHDS_SubMesh;
 
 class SMESHDS_EXPORT SMESHDS_GroupOnGeom: public SMESHDS_GroupBase
 {
- public:
+public:
+    SMESHDS_GroupOnGeom(const int theID, const SMESHDS_Mesh *theMesh,
+                        const SMDSAbs_ElementType theType, const TopoDS_Shape &theShape);
 
-  SMESHDS_GroupOnGeom (const int                 theID,
-                       const SMESHDS_Mesh*       theMesh,
-                       const SMDSAbs_ElementType theType,
-                       const TopoDS_Shape&       theShape);
+    void SetShape(const TopoDS_Shape &theShape);
 
-  void SetShape( const TopoDS_Shape& theShape);
+    TopoDS_Shape GetShape() const { return myShape; }
 
-  TopoDS_Shape GetShape() const { return myShape; }
+    virtual bool Contains(const int theID);
 
-  virtual bool Contains (const int theID);
+    virtual bool Contains(const SMDS_MeshElement *elem);
 
-  virtual bool Contains (const SMDS_MeshElement* elem);
+    virtual SMDS_ElemIteratorPtr GetElements() const;
 
-  virtual SMDS_ElemIteratorPtr GetElements() const;
+    virtual VTK_MTIME_TYPE GetTic() const;
 
-  virtual VTK_MTIME_TYPE GetTic() const;
-
- private:
-
-  TopoDS_Shape           myShape;
-  const SMESHDS_SubMesh* mySubMesh;
+private:
+    TopoDS_Shape myShape;
+    const SMESHDS_SubMesh *mySubMesh;
 };
 
 #endif

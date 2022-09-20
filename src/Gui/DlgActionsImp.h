@@ -36,8 +36,10 @@ class QLabel;
 class QGridLayout;
 class QLineEdit;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 
 class Ui_DlgCustomActions;
 
@@ -48,27 +50,27 @@ class Ui_DlgCustomActions;
  * @see Command
  * \author Werner Mayer
  */
-class DlgCustomActionsImp : public CustomizeActionPage
+class DlgCustomActionsImp: public CustomizeActionPage
 {
     Q_OBJECT
 
 public:
-    explicit DlgCustomActionsImp( QWidget* parent = nullptr );
+    explicit DlgCustomActionsImp(QWidget *parent = nullptr);
     ~DlgCustomActionsImp() override;
 
 Q_SIGNALS:
-    void addMacroAction( const QByteArray& );
-    void removeMacroAction( const QByteArray& );
-    void modifyMacroAction( const QByteArray& );
+    void addMacroAction(const QByteArray &);
+    void removeMacroAction(const QByteArray &);
+    void modifyMacroAction(const QByteArray &);
 
 protected:
     /** Trigger for reparent event. */
-    bool event(QEvent* e) override;
+    bool event(QEvent *e) override;
     void changeEvent(QEvent *e) override;
 
 protected Q_SLOTS:
     /** Enables/disables buttons for deletion */
-    void on_actionListWidget_itemActivated( QTreeWidgetItem *i );
+    void on_actionListWidget_itemActivated(QTreeWidgetItem *i);
     /** Opens a iconview to select a pixmap */
     void on_buttonChoosePixmap_clicked();
     /** Adds a custom action */
@@ -77,9 +79,9 @@ protected Q_SLOTS:
     void on_buttonRemoveAction_clicked();
     /** Shows the setup of the action */
     void on_buttonReplaceAction_clicked();
-    void onAddMacroAction(const QByteArray&) override;
-    void onRemoveMacroAction(const QByteArray&) override;
-    void onModifyMacroAction(const QByteArray&) override;
+    void onAddMacroAction(const QByteArray &) override;
+    void onRemoveMacroAction(const QByteArray &) override;
+    void onModifyMacroAction(const QByteArray &) override;
 
 private:
     /** Shows all actions and their pixmaps if available  */
@@ -91,15 +93,15 @@ private:
 };
 
 class Ui_DlgChooseIcon;
-class IconDialog : public QDialog
+class IconDialog: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit IconDialog(QWidget* parent);
+    explicit IconDialog(QWidget *parent);
     ~IconDialog() override;
-    void resizeEvent(QResizeEvent*) override;
-    QListWidgetItem* currentItem() const;
+    void resizeEvent(QResizeEvent *) override;
+    QListWidgetItem *currentItem() const;
 
 private Q_SLOTS:
     void onAddIconPath();
@@ -108,12 +110,12 @@ private:
     Ui_DlgChooseIcon *ui;
 };
 
-class IconFolders : public QDialog
+class IconFolders: public QDialog
 {
     Q_OBJECT
 
 public:
-    IconFolders(const QStringList&, QWidget* parent);
+    IconFolders(const QStringList &, QWidget *parent);
     ~IconFolders() override;
     QStringList getPaths() const;
 
@@ -124,10 +126,10 @@ private Q_SLOTS:
 private:
     bool restart;
     int maxLines;
-    QGridLayout* gridLayout;
-    QLabel* textLabel;
-    QPushButton* addButton;
-    QList< QPair<QLineEdit*, QPushButton*> > buttonMap;
+    QGridLayout *gridLayout;
+    QLabel *textLabel;
+    QPushButton *addButton;
+    QList<QPair<QLineEdit *, QPushButton *>> buttonMap;
 };
 
 } // namespace Dialog

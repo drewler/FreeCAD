@@ -31,16 +31,18 @@
 class QListWidgetCustom;
 class QListWidgetItem;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgWorkbenches;
 
-class DlgWorkbenchesImp : public CustomizeActionPage
+class DlgWorkbenchesImp: public CustomizeActionPage
 {
     Q_OBJECT
 
 public:
-    explicit DlgWorkbenchesImp(QWidget* parent = nullptr);
+    explicit DlgWorkbenchesImp(QWidget *parent = nullptr);
     ~DlgWorkbenchesImp() override;
     static QStringList load_enabled_workbenches();
     static QStringList load_disabled_workbenches();
@@ -48,12 +50,12 @@ public:
 
 protected:
     void changeEvent(QEvent *e) override;
-    void hideEvent(QHideEvent * event) override;
+    void hideEvent(QHideEvent *event) override;
 
 protected Q_SLOTS:
-    void onAddMacroAction(const QByteArray&) override;
-    void onRemoveMacroAction(const QByteArray&) override;
-    void onModifyMacroAction(const QByteArray&) override;
+    void onAddMacroAction(const QByteArray &) override;
+    void onRemoveMacroAction(const QByteArray &) override;
+    void onModifyMacroAction(const QByteArray &) override;
     void on_add_to_enabled_workbenches_btn_clicked();
     void on_remove_from_enabled_workbenches_btn_clicked();
     void on_shift_workbench_up_btn_clicked();
@@ -63,9 +65,8 @@ protected Q_SLOTS:
 
 private:
     void set_lw_properties(QListWidgetCustom *lw);
-    void add_workbench(QListWidgetCustom *lw, const QString& it);
-    void move_workbench(QListWidgetCustom *lwc_dest,
-                        QListWidgetItem *wi);
+    void add_workbench(QListWidgetCustom *lw, const QString &it);
+    void move_workbench(QListWidgetCustom *lwc_dest, QListWidgetItem *wi);
     void save_workbenches();
     void shift_workbench(bool up);
 

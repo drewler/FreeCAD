@@ -32,64 +32,49 @@
 using namespace App;
 
 // returns a string which represents the object e.g. when printed in python
-std::string GeoFeaturePy::representation() const
-{
-    return std::string("<GeoFeature object>");
-}
+std::string GeoFeaturePy::representation() const { return std::string("<GeoFeature object>"); }
 
-PyObject* GeoFeaturePy::getPaths(PyObject * /*args*/)
+PyObject *GeoFeaturePy::getPaths(PyObject * /*args*/)
 {
     PyErr_SetString(PyExc_NotImplementedError, "Not yet implemented");
     return nullptr;
 }
 
-PyObject* GeoFeaturePy::getGlobalPlacement(PyObject * args) {
-    
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
-    
+PyObject *GeoFeaturePy::getGlobalPlacement(PyObject *args)
+{
+
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
+
     try {
-        Base::Placement p = static_cast<GeoFeature*>(getDocumentObjectPtr())->globalPlacement();
+        Base::Placement p = static_cast<GeoFeature *>(getDocumentObjectPtr())->globalPlacement();
         return new Base::PlacementPy(new Base::Placement(p));
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         throw Py::RuntimeError(e.what());
     }
 }
 
-PyObject* GeoFeaturePy::getPropertyNameOfGeometry(PyObject * args)
+PyObject *GeoFeaturePy::getPropertyNameOfGeometry(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    GeoFeature* object = this->getGeoFeaturePtr();
-    const PropertyComplexGeoData* prop = object->getPropertyOfGeometry();
-    const char* name = prop ? prop->getName() : nullptr;
-    if (Property::isValidName(name)) {
-        return Py::new_reference_to(Py::String(std::string(name)));
-    }
+    GeoFeature *object = this->getGeoFeaturePtr();
+    const PropertyComplexGeoData *prop = object->getPropertyOfGeometry();
+    const char *name = prop ? prop->getName() : nullptr;
+    if (Property::isValidName(name)) { return Py::new_reference_to(Py::String(std::string(name))); }
     return Py::new_reference_to(Py::None());
 }
 
-PyObject* GeoFeaturePy::getPropertyOfGeometry(PyObject * args)
+PyObject *GeoFeaturePy::getPropertyOfGeometry(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    GeoFeature* object = this->getGeoFeaturePtr();
-    const PropertyComplexGeoData* prop = object->getPropertyOfGeometry();
-    if (prop) {
-        return const_cast<PropertyComplexGeoData*>(prop)->getPyObject();
-    }
+    GeoFeature *object = this->getGeoFeaturePtr();
+    const PropertyComplexGeoData *prop = object->getPropertyOfGeometry();
+    if (prop) { return const_cast<PropertyComplexGeoData *>(prop)->getPyObject(); }
     return Py::new_reference_to(Py::None());
 }
 
-PyObject *GeoFeaturePy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *GeoFeaturePy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int GeoFeaturePy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0; 
-}
+int GeoFeaturePy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

@@ -60,8 +60,8 @@ class TopoDS_Vertex;
 class TopoDS_Wire;
 class gp_XYZ;
 
-typedef std::map< SMESH_subMesh*, std::vector<int> >           MapShapeNbElems;
-typedef std::map< SMESH_subMesh*, std::vector<int> >::iterator MapShapeNbElemsItr;
+typedef std::map<SMESH_subMesh *, std::vector<int>> MapShapeNbElems;
+typedef std::map<SMESH_subMesh *, std::vector<int>>::iterator MapShapeNbElemsItr;
 
 // ==================================================================================
 /*!
@@ -75,64 +75,63 @@ typedef std::map< SMESH_subMesh*, std::vector<int> >::iterator MapShapeNbElemsIt
  */
 // ==================================================================================
 
-class SMESH_EXPORT SMESH_Algo : public SMESH_Hypothesis
+class SMESH_EXPORT SMESH_Algo: public SMESH_Hypothesis
 {
- public:
-  //==================================================================================
-  /*!
+public:
+    //==================================================================================
+    /*!
    * \brief Structure describing algorithm features
    */
-  // --------------------------------------------------------------------------------
-  struct Features
-  {
-    int                            _dim;
-    std::set<SMDSAbs_GeometryType> _inElemTypes;  // acceptable types of input mesh element
-    std::set<SMDSAbs_GeometryType> _outElemTypes; // produced types of mesh elements
-    std::string                    _label;        // GUI type name
+    // --------------------------------------------------------------------------------
+    struct Features {
+        int _dim;
+        std::set<SMDSAbs_GeometryType> _inElemTypes;  // acceptable types of input mesh element
+        std::set<SMDSAbs_GeometryType> _outElemTypes; // produced types of mesh elements
+        std::string _label;                           // GUI type name
 
-    bool IsCompatible( const Features& algo2 ) const;
-  };
-  /*!
+        bool IsCompatible(const Features &algo2) const;
+    };
+    /*!
    * \brief Returns a structure describing algorithm features
    */
-  static const Features& GetFeatures( const std::string& algoType );
-  const Features&        GetFeatures() const { return GetFeatures( _name ); }
+    static const Features &GetFeatures(const std::string &algoType);
+    const Features &GetFeatures() const { return GetFeatures(_name); }
 
- public:
-  //==================================================================================
-  /*!
+public:
+    //==================================================================================
+    /*!
    * \brief Creates algorithm
     * \param hypId - algorithm ID
     * \param studyId - study ID
     * \param gen - SMESH_Gen
    */
-  SMESH_Algo(int hypId, int studyId, SMESH_Gen * gen);
+    SMESH_Algo(int hypId, int studyId, SMESH_Gen *gen);
 
-  /*!
+    /*!
    * \brief Destructor
    */
-  virtual ~ SMESH_Algo();
+    virtual ~SMESH_Algo();
 
-  /*!
+    /*!
    * \brief Saves nothing in a stream
     * \param save - the stream
     * \retval std::ostream & - the stream
    */
-  virtual std::ostream & SaveTo(std::ostream & save);
+    virtual std::ostream &SaveTo(std::ostream &save);
 
-  /*!
+    /*!
    * \brief Loads nothing from a stream
     * \param load - the stream
     * \retval std::ostream & - the stream
    */
-  virtual std::istream & LoadFrom(std::istream & load);
+    virtual std::istream &LoadFrom(std::istream &load);
 
-  /*!
+    /*!
    * \brief Returns all types of compatible hypotheses
    */
-  const std::vector < std::string > & GetCompatibleHypothesis();
+    const std::vector<std::string> &GetCompatibleHypothesis();
 
-  /*!
+    /*!
    * \brief Check hypothesis definition to mesh a shape
     * \param aMesh - the mesh
     * \param aShape - the shape
@@ -141,10 +140,9 @@ class SMESH_EXPORT SMESH_Algo : public SMESH_Hypothesis
     *
     * Textual description of a problem can be stored in _comment field.
    */
-  virtual bool CheckHypothesis(SMESH_Mesh&                          aMesh,
-                               const TopoDS_Shape&                  aShape,
-                               SMESH_Hypothesis::Hypothesis_Status& aStatus) = 0;
-  /*!
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 SMESH_Hypothesis::Hypothesis_Status &aStatus) = 0;
+    /*!
    * \brief Computes mesh on a shape
     * \param aMesh - the mesh
     * \param aShape - the shape
@@ -154,9 +152,9 @@ class SMESH_EXPORT SMESH_Algo : public SMESH_Hypothesis
     * to set SMESH_ComputeError returned by SMESH_submesh::GetComputeError()
     * to report problematic sub-shapes
    */
-  virtual bool Compute(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape) = 0;
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape) = 0;
 
-  /*!
+    /*!
    * \brief Computes mesh without geometry
     * \param aMesh - the mesh
     * \param aHelper - helper that must be used for adding elements to \aaMesh
@@ -164,30 +162,30 @@ class SMESH_EXPORT SMESH_Algo : public SMESH_Hypothesis
     *
     * The method is called if ( !aMesh->HasShapeToMesh() )
    */
-  virtual bool Compute(SMESH_Mesh & aMesh, SMESH_MesherHelper* aHelper);
+    virtual bool Compute(SMESH_Mesh &aMesh, SMESH_MesherHelper *aHelper);
 
-  /*!
+    /*!
    * \brief Sets _computeCanceled to true. It's usage depends on
    *        implementation of a particular mesher.
    */
-  virtual void CancelCompute();
+    virtual void CancelCompute();
 
-  /*!
+    /*!
    * \brief If possible, returns progress of computation [0.,1.]
    */
-  virtual double GetProgress() const;
+    virtual double GetProgress() const;
 
-  /*!
+    /*!
    * \brief evaluates size of prospective mesh on a shape
    *  \param aMesh - the mesh
    *  \param aShape - the shape
    *  \param aResMap - prospective number of elements by SMDSAbs_ElementType by a sub-mesh
    *  \retval bool - is a success
    */
-  virtual bool Evaluate(SMESH_Mesh & aMesh, const TopoDS_Shape & aShape,
-                        MapShapeNbElems& aResMap) = 0;
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                          MapShapeNbElems &aResMap) = 0;
 
-  /*!
+    /*!
    * \brief Returns a list of compatible hypotheses used to mesh a shape
     * \param aMesh - the mesh 
     * \param aShape - the shape
@@ -200,11 +198,10 @@ class SMESH_EXPORT SMESH_Algo : public SMESH_Hypothesis
    *  the algorithm. This method could be surcharged by specific algorithms, in 
    *  case of several hypothesis simultaneously applicable.
    */
-  virtual const std::list <const SMESHDS_Hypothesis *> &
-  GetUsedHypothesis(SMESH_Mesh &         aMesh,
-                    const TopoDS_Shape & aShape,
-                    const bool           ignoreAuxiliary=true) const;
-  /*!
+    virtual const std::list<const SMESHDS_Hypothesis *> &
+    GetUsedHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                      const bool ignoreAuxiliary = true) const;
+    /*!
    * \brief Returns a list of compatible hypotheses assigned to a shape in a mesh
     * \param aMesh - the mesh 
     * \param aShape - the shape
@@ -215,77 +212,76 @@ class SMESH_EXPORT SMESH_Algo : public SMESH_Hypothesis
    *  have a name (type) listed in the algorithm. Hypothesis associated to
    *  father shape -are not- taken into account (see GetUsedHypothesis)
    */
-  const std::list <const SMESHDS_Hypothesis *> &
-  GetAppliedHypothesis(SMESH_Mesh &         aMesh,
-                       const TopoDS_Shape & aShape,
-                       const bool           ignoreAuxiliary=true) const;
-  /*!
+    const std::list<const SMESHDS_Hypothesis *> &
+    GetAppliedHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                         const bool ignoreAuxiliary = true) const;
+    /*!
    * \brief Returns the filter recognizing only compatible hypotheses
    *  \param ignoreAuxiliary - make filter ignore compatible auxiliary hypotheses
    *  \retval SMESH_HypoFilter* - the filter that can be NULL
    */
-  const SMESH_HypoFilter* GetCompatibleHypoFilter(const bool ignoreAuxiliary) const;
+    const SMESH_HypoFilter *GetCompatibleHypoFilter(const bool ignoreAuxiliary) const;
 
-  /*!
+    /*!
    * \brief Just return false as the algorithm does not hold parameters values
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
-  /*!
+    /*!
    * \brief return compute error
    */
-  SMESH_ComputeErrorPtr GetComputeError() const;
-  /*!
+    SMESH_ComputeErrorPtr GetComputeError() const;
+    /*!
    * \brief initialize compute error etc. before call of Compute()
    */
-  void InitComputeError();
-  /*!
+    void InitComputeError();
+    /*!
    * \brief Return compute progress by nb of calls of this method
    */
-  double GetProgressByTic() const;
-  /*!
+    double GetProgressByTic() const;
+    /*!
    * Return a vector of sub-meshes to Compute()
    */
-  std::vector<SMESH_subMesh*>& SubMeshesToCompute() { return _smToCompute; }
+    std::vector<SMESH_subMesh *> &SubMeshesToCompute() { return _smToCompute; }
 
 public:
-  // ==================================================================
-  // Algo features influencing how Compute() is called:
-  // in what turn and with what input shape
-  // ==================================================================
+    // ==================================================================
+    // Algo features influencing how Compute() is called:
+    // in what turn and with what input shape
+    // ==================================================================
 
-  // SMESH_Hypothesis::GetDim();
-  // 1 - dimension of target mesh
+    // SMESH_Hypothesis::GetDim();
+    // 1 - dimension of target mesh
 
-  bool OnlyUnaryInput() const { return _onlyUnaryInput; }
-  // 2 - is collection of tesselatable shapes inacceptable as input;
-  // "collection" means a shape containing shapes of dim equal
-  // to GetDim().
-  // Algo which can process a collection shape should expect
-  // an input temporary shape that is neither MainShape nor
-  // its child.
+    bool OnlyUnaryInput() const { return _onlyUnaryInput; }
+    // 2 - is collection of tesselatable shapes inacceptable as input;
+    // "collection" means a shape containing shapes of dim equal
+    // to GetDim().
+    // Algo which can process a collection shape should expect
+    // an input temporary shape that is neither MainShape nor
+    // its child.
 
-  bool NeedDiscreteBoundary() const { return _requireDiscreteBoundary; }
-  // 3 - is a Dim-1 mesh prerequisite
+    bool NeedDiscreteBoundary() const { return _requireDiscreteBoundary; }
+    // 3 - is a Dim-1 mesh prerequisite
 
-  bool NeedShape() const { return _requireShape; }
-  // 4 - is shape existence required
+    bool NeedShape() const { return _requireShape; }
+    // 4 - is shape existence required
 
-  bool SupportSubmeshes() const { return _supportSubmeshes; }
-  // 5 - whether supports submeshes if !NeedDiscreteBoundary()
+    bool SupportSubmeshes() const { return _supportSubmeshes; }
+    // 5 - whether supports submeshes if !NeedDiscreteBoundary()
 
-  bool NeedLowerHyps(int dim) const { return _neededLowerHyps[ dim ]; }
-  // 6 - if algo !NeedDiscreteBoundary() but requires presence of
-  // hypotheses of dimension <dim> to generate all-dimensional mesh.
-  // This info is used not to issue warnings on hiding of lower global algos.
+    bool NeedLowerHyps(int dim) const { return _neededLowerHyps[dim]; }
+    // 6 - if algo !NeedDiscreteBoundary() but requires presence of
+    // hypotheses of dimension <dim> to generate all-dimensional mesh.
+    // This info is used not to issue warnings on hiding of lower global algos.
 
 public:
-  // ==================================================================
-  // Methods to track non hierarchical dependencies between submeshes 
-  // ==================================================================
+    // ==================================================================
+    // Methods to track non hierarchical dependencies between submeshes
+    // ==================================================================
 
-  /*!
+    /*!
    * \brief Sets event listener to submeshes if necessary
     * \param subMesh - submesh where algo is set
    *
@@ -293,21 +289,21 @@ public:
    * After being set, event listener is notified on each event of a submesh.
    * By default none listener is set
    */
-  virtual void SetEventListener(SMESH_subMesh* subMesh);
-  
-  /*!
+    virtual void SetEventListener(SMESH_subMesh *subMesh);
+
+    /*!
    * \brief Allow algo to do something after persistent restoration
     * \param subMesh - restored submesh
    *
    * This method is called only if a submesh has HYP_OK algo_state.
    */
-  virtual void SubmeshRestored(SMESH_subMesh* subMesh);
-  
+    virtual void SubmeshRestored(SMESH_subMesh *subMesh);
+
 public:
-  // ==================================================================
-  // Common algo utilities
-  // ==================================================================
-  /*!
+    // ==================================================================
+    // Common algo utilities
+    // ==================================================================
+    /*!
    * \brief Fill vector of node parameters on geometrical edge, including vertex nodes
    * \param theMesh - The mesh containing nodes
    * \param theEdge - The geometrical edge of interest
@@ -315,10 +311,9 @@ public:
    * \retval bool - false if not all parameters are OK
    * \warning Nodes moved to other geometry by MergeNodes() are NOT returned.
    */
-  static bool GetNodeParamOnEdge(const SMESHDS_Mesh*     theMesh,
-                                 const TopoDS_Edge&      theEdge,
-                                 std::vector< double > & theParams);
-  /*!
+    static bool GetNodeParamOnEdge(const SMESHDS_Mesh *theMesh, const TopoDS_Edge &theEdge,
+                                   std::vector<double> &theParams);
+    /*!
    * \brief Fill map of node parameter on geometrical edge to node it-self
    * \param theMesh - The mesh containing nodes
    * \param theEdge - The geometrical edge of interest
@@ -328,62 +323,62 @@ public:
    * \retval bool - false if not all parameters are OK
    * \warning Nodes moved to other geometry by MergeNodes() are NOT returned.
    */
-  static bool GetSortedNodesOnEdge(const SMESHDS_Mesh*                        theMesh,
-                                   const TopoDS_Edge&                         theEdge,
-                                   const bool                                 ignoreMediumNodes,
-                                   std::map< double, const SMDS_MeshNode* > & theNodes,
-                                   const SMDSAbs_ElementType                  typeToCheck = SMDSAbs_All);
+    static bool GetSortedNodesOnEdge(const SMESHDS_Mesh *theMesh, const TopoDS_Edge &theEdge,
+                                     const bool ignoreMediumNodes,
+                                     std::map<double, const SMDS_MeshNode *> &theNodes,
+                                     const SMDSAbs_ElementType typeToCheck = SMDSAbs_All);
 
-  /*!
+    /*!
    * \brief Compute length of an edge
     * \param E - the edge
     * \retval double - the length
    */
-  static double EdgeLength(const TopoDS_Edge & E);
+    static double EdgeLength(const TopoDS_Edge &E);
 
-  int NumberOfPoints(SMESH_Mesh& aMesh,const TopoDS_Wire& W);
+    int NumberOfPoints(SMESH_Mesh &aMesh, const TopoDS_Wire &W);
 
-  /*!
+    /*!
    * \brief Return continuity of two edges
     * \param E1 - the 1st edge
     * \param E2 - the 2nd edge
     * \retval GeomAbs_Shape - regularity at the junction between E1 and E2
    */
-  static GeomAbs_Shape Continuity(TopoDS_Edge E1, TopoDS_Edge E2);
+    static GeomAbs_Shape Continuity(TopoDS_Edge E1, TopoDS_Edge E2);
 
-  /*!
+    /*!
    * \brief Return true if an edge can be considered as a continuation of another
    */
-  static bool IsContinuous(const TopoDS_Edge & E1, const TopoDS_Edge & E2) {
-    return ( Continuity( E1, E2 ) >= GeomAbs_G1 );
-  }
-  /*!
+    static bool IsContinuous(const TopoDS_Edge &E1, const TopoDS_Edge &E2)
+    {
+        return (Continuity(E1, E2) >= GeomAbs_G1);
+    }
+    /*!
    * \brief Return true if an edge can be considered straight
    */
-  static bool IsStraight( const TopoDS_Edge & E, const bool degenResult=false );
-  /*!
+    static bool IsStraight(const TopoDS_Edge &E, const bool degenResult = false);
+    /*!
    * \brief Return true if an edge has no 3D curve
    */
-  static bool isDegenerated( const TopoDS_Edge & E );
+    static bool isDegenerated(const TopoDS_Edge &E);
 
-  /*!
+    /*!
    * \brief Return the node built on a vertex
     * \param V - the vertex
     * \param meshDS - mesh data structure
     * \retval const SMDS_MeshNode* - found node or NULL
    */
-  static const SMDS_MeshNode* VertexNode(const TopoDS_Vertex& V, const SMESHDS_Mesh* meshDS);
+    static const SMDS_MeshNode *VertexNode(const TopoDS_Vertex &V, const SMESHDS_Mesh *meshDS);
 
-  /*!
+    /*!
    * \brief Return the node built on a vertex.
    *        A node moved to other geometry by MergeNodes() is also returned.
     * \param V - the vertex
     * \param mesh - mesh
     * \retval const SMDS_MeshNode* - found node or NULL
    */
-  static const SMDS_MeshNode* VertexNode(const TopoDS_Vertex& V, const SMESH_Mesh* mesh);
+    static const SMDS_MeshNode *VertexNode(const TopoDS_Vertex &V, const SMESH_Mesh *mesh);
 
-  /*!
+    /*!
    * \brief Return the node built on a vertex.
    *        A node moved to other geometry by MergeNodes() is also returned.
     * \param V - the vertex
@@ -392,107 +387,106 @@ public:
     * \param checkV - if \c true, presence of a node on the vertex is checked
     * \retval const SMDS_MeshNode* - found node or NULL
    */
-  static const SMDS_MeshNode* VertexNode(const TopoDS_Vertex&   V,
-                                         const SMESHDS_SubMesh* edgeSM,
-                                         const SMESH_Mesh*      mesh,
-                                         const bool             checkV=true);
+    static const SMDS_MeshNode *VertexNode(const TopoDS_Vertex &V, const SMESHDS_SubMesh *edgeSM,
+                                           const SMESH_Mesh *mesh, const bool checkV = true);
 
-  enum EMeshError { MEr_OK = 0, MEr_HOLES, MEr_BAD_ORI, MEr_EMPTY };
+    enum EMeshError
+    {
+        MEr_OK = 0,
+        MEr_HOLES,
+        MEr_BAD_ORI,
+        MEr_EMPTY
+    };
 
-  /*!
+    /*!
    * \brief Finds topological errors of a sub-mesh 
    */
-  static EMeshError GetMeshError(SMESH_subMesh* subMesh);
+    static EMeshError GetMeshError(SMESH_subMesh *subMesh);
 
- protected:
-
-  /*!
+protected:
+    /*!
    * \brief store error and comment and then return ( error == COMPERR_OK )
    */
-  bool error(int error, const SMESH_Comment& comment = "");
-  /*!
+    bool error(int error, const SMESH_Comment &comment = "");
+    /*!
    * \brief store COMPERR_ALGO_FAILED error and comment and then return false
    */
-  bool error(const SMESH_Comment& comment = "")
-  { return error(COMPERR_ALGO_FAILED, comment); }
-  /*!
+    bool error(const SMESH_Comment &comment = "") { return error(COMPERR_ALGO_FAILED, comment); }
+    /*!
    * \brief store error and return error->IsOK()
    */
-  bool error(SMESH_ComputeErrorPtr error);
-  /*!
+    bool error(SMESH_ComputeErrorPtr error);
+    /*!
    * \brief store a bad input element preventing computation,
    *        which may be a temporary one i.e. not residing the mesh,
    *        then it will be deleted by InitComputeError()
    */
-  void addBadInputElement(const SMDS_MeshElement* elem);
+    void addBadInputElement(const SMDS_MeshElement *elem);
 
-  void addBadInputElements(const SMESHDS_SubMesh* sm,
-                           const bool             addNodes=false);
+    void addBadInputElements(const SMESHDS_SubMesh *sm, const bool addNodes = false);
 
 protected:
+    const SMESH_HypoFilter *_compatibleAllHypFilter;
+    const SMESH_HypoFilter *_compatibleNoAuxHypFilter;
+    std::vector<std::string> _compatibleHypothesis;
+    std::list<const SMESHDS_Hypothesis *> _appliedHypList;
+    std::list<const SMESHDS_Hypothesis *> _usedHypList;
 
-  const SMESH_HypoFilter *              _compatibleAllHypFilter;
-  const SMESH_HypoFilter *              _compatibleNoAuxHypFilter;
-  std::vector<std::string>              _compatibleHypothesis;
-  std::list<const SMESHDS_Hypothesis *> _appliedHypList;
-  std::list<const SMESHDS_Hypothesis *> _usedHypList;
-  
 
-  // Algo features influencing which Compute() and how is called:
-  // in what turn and with what input shape.
-  // These fields must be redefined if necessary by each descendant at constructor.
-  bool _onlyUnaryInput;         // mesh one shape of GetDim() at once. Default TRUE
-  bool _requireDiscreteBoundary;// GetDim()-1 mesh must be present. Default TRUE
-  bool _requireShape;           // work with GetDim()-1 mesh bound to geom only. Default TRUE
-  bool _supportSubmeshes;       // if !_requireDiscreteBoundary. Default FALSE
-  bool _neededLowerHyps[4];     // hyp dims needed by algo that !_requireDiscreteBoundary. Df. FALSE
+    // Algo features influencing which Compute() and how is called:
+    // in what turn and with what input shape.
+    // These fields must be redefined if necessary by each descendant at constructor.
+    bool _onlyUnaryInput;          // mesh one shape of GetDim() at once. Default TRUE
+    bool _requireDiscreteBoundary; // GetDim()-1 mesh must be present. Default TRUE
+    bool _requireShape;            // work with GetDim()-1 mesh bound to geom only. Default TRUE
+    bool _supportSubmeshes;        // if !_requireDiscreteBoundary. Default FALSE
+    bool _neededLowerHyps[4]; // hyp dims needed by algo that !_requireDiscreteBoundary. Df. FALSE
 
-  // indicates if quadratic mesh creation is required,
-  // is usually set like this: _quadraticMesh = SMESH_MesherHelper::IsQuadraticSubMesh(shape)
-  bool _quadraticMesh;
+    // indicates if quadratic mesh creation is required,
+    // is usually set like this: _quadraticMesh = SMESH_MesherHelper::IsQuadraticSubMesh(shape)
+    bool _quadraticMesh;
 
-  int         _error;    //!< SMESH_ComputeErrorName or anything algo specific
-  std::string _comment;  //!< any text explaining what is wrong in Compute()
-  std::list<const SMDS_MeshElement*> _badInputElements; //!< to explain COMPERR_BAD_INPUT_MESH
+    int _error;           //!< SMESH_ComputeErrorName or anything algo specific
+    std::string _comment; //!< any text explaining what is wrong in Compute()
+    std::list<const SMDS_MeshElement *> _badInputElements; //!< to explain COMPERR_BAD_INPUT_MESH
 
-  volatile bool _computeCanceled; //!< is set to True while computing to stop it
+    volatile bool _computeCanceled; //!< is set to True while computing to stop it
 
-  double        _progress;        /* progress of Compute() [0.,1.],
+    double _progress; /* progress of Compute() [0.,1.],
                                      to be set by an algo really tracking the progress */
-  int           _progressTic;     // counter of calls from SMESH_Mesh::GetComputeProgress()
-  std::vector<SMESH_subMesh*> _smToCompute; // sub-meshes to Compute()
+    int _progressTic; // counter of calls from SMESH_Mesh::GetComputeProgress()
+    std::vector<SMESH_subMesh *> _smToCompute; // sub-meshes to Compute()
 };
 
 
 class SMESH_EXPORT SMESH_0D_Algo: public SMESH_Algo
 {
 public:
-  SMESH_0D_Algo(int hypId, int studyId,  SMESH_Gen* gen);
+    SMESH_0D_Algo(int hypId, int studyId, SMESH_Gen *gen);
 };
 
 class SMESH_EXPORT SMESH_1D_Algo: public SMESH_Algo
 {
 public:
-  SMESH_1D_Algo(int hypId, int studyId,  SMESH_Gen* gen);
+    SMESH_1D_Algo(int hypId, int studyId, SMESH_Gen *gen);
 };
 
 class SMESH_EXPORT SMESH_2D_Algo: public SMESH_Algo
 {
 public:
-  SMESH_2D_Algo(int hypId, int studyId, SMESH_Gen* gen);
-  /*!
+    SMESH_2D_Algo(int hypId, int studyId, SMESH_Gen *gen);
+    /*!
    * \brief Method in which an algorithm generating a structured mesh
    *        fixes positions of in-face nodes after there movement
    *        due to insertion of viscous layers.
    */
-  virtual bool FixInternalNodes(const SMESH_ProxyMesh& mesh,
-                                const TopoDS_Face&     face);
+    virtual bool FixInternalNodes(const SMESH_ProxyMesh &mesh, const TopoDS_Face &face);
 };
 
 class SMESH_EXPORT SMESH_3D_Algo: public SMESH_Algo
 {
 public:
-  SMESH_3D_Algo(int hypId, int studyId, SMESH_Gen* gen);
+    SMESH_3D_Algo(int hypId, int studyId, SMESH_Gen *gen);
 };
 
 #endif

@@ -31,29 +31,27 @@
 
 using namespace Part;
 
-TYPESYSTEM_SOURCE_ABSTRACT(Part::GeometryExtension,Base::BaseClass)
+TYPESYSTEM_SOURCE_ABSTRACT(Part::GeometryExtension, Base::BaseClass)
 
-GeometryExtension::GeometryExtension()
-{
-}
+GeometryExtension::GeometryExtension() {}
 
-PyObject* GeometryExtension::copyPyObject() const
+PyObject *GeometryExtension::copyPyObject() const
 {
     Py::Tuple tuple;
-    Py::Object obj = Py::asObject(const_cast<GeometryExtension*>(this)->getPyObject());
+    Py::Object obj = Py::asObject(const_cast<GeometryExtension *>(this)->getPyObject());
     return static_cast<GeometryExtensionPy *>(obj.ptr())->copy(tuple.ptr());
 }
 
-void GeometryExtension::copyAttributes(Part::GeometryExtension * cpy) const
+void GeometryExtension::copyAttributes(Part::GeometryExtension *cpy) const
 {
     cpy->setName(this->getName()); // Base Class
 }
 
-TYPESYSTEM_SOURCE_ABSTRACT(Part::GeometryPersistenceExtension,Part::GeometryExtension)
+TYPESYSTEM_SOURCE_ABSTRACT(Part::GeometryPersistenceExtension, Part::GeometryExtension)
 
 void GeometryPersistenceExtension::restoreAttributes(Base::XMLReader &reader)
 {
-    if(reader.hasAttribute("name")) {
+    if (reader.hasAttribute("name")) {
         std::string name = reader.getAttribute("name");
         setName(name);
     }
@@ -62,9 +60,7 @@ void GeometryPersistenceExtension::saveAttributes(Base::Writer &writer) const
 {
     const std::string name = getName();
 
-    if(!name.empty())
-        writer.Stream() << "\" name=\"" << name;
-
+    if (!name.empty()) writer.Stream() << "\" name=\"" << name;
 }
 
 void GeometryPersistenceExtension::Save(Base::Writer &writer) const
@@ -76,7 +72,4 @@ void GeometryPersistenceExtension::Save(Base::Writer &writer) const
     writer.Stream() << "\"/>" << std::endl;
 }
 
-void GeometryPersistenceExtension::Restore(Base::XMLReader &reader)
-{
-    restoreAttributes(reader);
-}
+void GeometryPersistenceExtension::Restore(Base::XMLReader &reader) { restoreAttributes(reader); }

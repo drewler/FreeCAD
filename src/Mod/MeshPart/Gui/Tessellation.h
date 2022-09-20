@@ -32,31 +32,33 @@
 #include <memory>
 #include <QPointer>
 
-namespace App {
+namespace App
+{
 class Document;
 class SubObjectT;
-}
-namespace MeshPartGui {
+} // namespace App
+namespace MeshPartGui
+{
 
 /**
  * Non-modal dialog to mesh a shape.
  * @author Werner Mayer
  */
-class Mesh2ShapeGmsh : public MeshGui::GmshWidget
+class Mesh2ShapeGmsh: public MeshGui::GmshWidget
 {
     Q_OBJECT
 
 public:
-    explicit Mesh2ShapeGmsh(QWidget* parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
+    explicit Mesh2ShapeGmsh(QWidget *parent = nullptr, Qt::WindowFlags fl = Qt::WindowFlags());
     ~Mesh2ShapeGmsh() override;
 
-    void process(App::Document* doc, const std::list<App::SubObjectT>&);
+    void process(App::Document *doc, const std::list<App::SubObjectT> &);
 
 Q_SIGNALS:
     void processed();
 
 protected:
-    bool writeProject(QString& inpFile, QString& outFile) override;
+    bool writeProject(QString &inpFile, QString &outFile) override;
     bool loadOutput() override;
 
 private:
@@ -65,11 +67,12 @@ private:
 };
 
 class Ui_Tessellation;
-class Tessellation : public QWidget
+class Tessellation: public QWidget
 {
     Q_OBJECT
 
-    enum {
+    enum
+    {
         Standard,
         Mefisto,
         Netgen,
@@ -77,20 +80,20 @@ class Tessellation : public QWidget
     };
 
 public:
-    explicit Tessellation(QWidget* parent = nullptr);
+    explicit Tessellation(QWidget *parent = nullptr);
     ~Tessellation() override;
     bool accept();
 
 protected:
     void changeEvent(QEvent *e) override;
-    void process(int method, App::Document* doc, const std::list<App::SubObjectT>&);
+    void process(int method, App::Document *doc, const std::list<App::SubObjectT> &);
     void saveParameters(int method);
-    void setFaceColors(int method, App::Document* doc, App::DocumentObject* obj);
-    QString getMeshingParameters(int method, App::DocumentObject* obj) const;
-    QString getStandardParameters(App::DocumentObject* obj) const;
+    void setFaceColors(int method, App::Document *doc, App::DocumentObject *obj);
+    QString getMeshingParameters(int method, App::DocumentObject *obj) const;
+    QString getStandardParameters(App::DocumentObject *obj) const;
     QString getMefistoParameters() const;
     QString getNetgenParameters() const;
-    std::vector<App::Color> getUniqueColors(const std::vector<App::Color>& colors) const;
+    std::vector<App::Color> getUniqueColors(const std::vector<App::Color> &colors) const;
 
 private Q_SLOTS:
     void meshingMethod(int id);
@@ -106,7 +109,7 @@ private:
     std::unique_ptr<Ui_Tessellation> ui;
 };
 
-class TaskTessellation : public Gui::TaskView::TaskDialog
+class TaskTessellation: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -121,10 +124,12 @@ public:
     bool reject() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok|QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 private:
-    Tessellation* widget;
+    Tessellation *widget;
 };
 
 } // namespace MeshPartGui

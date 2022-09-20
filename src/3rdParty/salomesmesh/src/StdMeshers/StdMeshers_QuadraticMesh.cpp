@@ -35,13 +35,11 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_QuadraticMesh::StdMeshers_QuadraticMesh(int         hypId,
-                                                   int         studyId,
-                                                   SMESH_Gen * gen)
-     :SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_QuadraticMesh::StdMeshers_QuadraticMesh(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "QuadraticMesh";
-  _param_algo_dim = -1; // it means auxiliary, dim = 1
+    _name = "QuadraticMesh";
+    _param_algo_dim = -1; // it means auxiliary, dim = 1
 }
 
 //=============================================================================
@@ -50,9 +48,7 @@ StdMeshers_QuadraticMesh::StdMeshers_QuadraticMesh(int         hypId,
  */
 //=============================================================================
 
-StdMeshers_QuadraticMesh::~StdMeshers_QuadraticMesh()
-{
-}
+StdMeshers_QuadraticMesh::~StdMeshers_QuadraticMesh() {}
 
 //=============================================================================
 /*!
@@ -60,10 +56,7 @@ StdMeshers_QuadraticMesh::~StdMeshers_QuadraticMesh()
  */
 //=============================================================================
 
-ostream & StdMeshers_QuadraticMesh::SaveTo(ostream & save)
-{
-  return save;
-}
+ostream &StdMeshers_QuadraticMesh::SaveTo(ostream &save) { return save; }
 
 //=============================================================================
 /*!
@@ -71,10 +64,7 @@ ostream & StdMeshers_QuadraticMesh::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_QuadraticMesh::LoadFrom(istream & load)
-{
-  return load;
-}
+istream &StdMeshers_QuadraticMesh::LoadFrom(istream &load) { return load; }
 
 //=============================================================================
 /*!
@@ -82,10 +72,7 @@ istream & StdMeshers_QuadraticMesh::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_QuadraticMesh & hyp)
-{
-  return hyp.SaveTo( save );
-}
+ostream &operator<<(ostream &save, StdMeshers_QuadraticMesh &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -93,10 +80,7 @@ ostream & operator <<(ostream & save, StdMeshers_QuadraticMesh & hyp)
  */
 //=============================================================================
 
-istream & operator >>(istream & load, StdMeshers_QuadraticMesh & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+istream &operator>>(istream &load, StdMeshers_QuadraticMesh &hyp) { return hyp.LoadFrom(load); }
 //================================================================================
 /*!
  * \brief Initialize my parameter values by the mesh built on the geometry
@@ -104,9 +88,9 @@ istream & operator >>(istream & load, StdMeshers_QuadraticMesh & hyp)
  */
 //================================================================================
 
-bool StdMeshers_QuadraticMesh::SetParametersByMesh(const SMESH_Mesh*, const TopoDS_Shape&)
+bool StdMeshers_QuadraticMesh::SetParametersByMesh(const SMESH_Mesh *, const TopoDS_Shape &)
 {
-  return false;
+    return false;
 }
 
 //================================================================================
@@ -116,9 +100,8 @@ bool StdMeshers_QuadraticMesh::SetParametersByMesh(const SMESH_Mesh*, const Topo
  */
 //================================================================================
 
-bool StdMeshers_QuadraticMesh::SetParametersByDefaults(const TDefaults&  /*dflts*/,
-                                                       const SMESH_Mesh* /*theMesh*/)
+bool StdMeshers_QuadraticMesh::SetParametersByDefaults(const TDefaults & /*dflts*/,
+                                                       const SMESH_Mesh * /*theMesh*/)
 {
-  return false;
+    return false;
 }
-

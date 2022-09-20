@@ -29,14 +29,13 @@
 
 namespace MED
 {
-  struct TShapeFun;
-  typedef std::vector<double> TDoubleVector;
-  /*!
+struct TShapeFun;
+typedef std::vector<double> TDoubleVector;
+/*!
    * \brief Description of family of integration points
    */
-  struct TGaussDef
-  {
-    int           myType;      //!< element geometry (EGeometrieElement or med_geometrie_element)
+struct TGaussDef {
+    int myType;                //!< element geometry (EGeometrieElement or med_geometrie_element)
     TDoubleVector myRefCoords; //!< description of reference points
     TDoubleVector myCoords;    //!< coordinates of Gauss points
     TDoubleVector myWeights;   //!< weights, len(weights)==<nb of gauss points>
@@ -53,17 +52,17 @@ namespace MED
      * variant == 2 refers to the same doc v6.4 by J.P. LEFEBVRE, X. DESROCHES, 03/07/03
      * variant == 3 refers to the same doc v6.4, second variant for 2D elements
      */
-    MEDWRAPPER_EXPORT TGaussDef(const int geomType, const int nbPoints, const int variant=1);
+    MEDWRAPPER_EXPORT TGaussDef(const int geomType, const int nbPoints, const int variant = 1);
 
-    MEDWRAPPER_EXPORT int dim() const { return myType/100; }
+    MEDWRAPPER_EXPORT int dim() const { return myType / 100; }
     MEDWRAPPER_EXPORT int nbPoints() const { return myWeights.capacity(); }
 
-  private:
+private:
     void add(const double x, const double weight);
     void add(const double x, const double y, const double weight);
     void add(const double x, const double y, const double z, const double weight);
-    void setRefCoords(const TShapeFun& aShapeFun);
-  };
-}
+    void setRefCoords(const TShapeFun &aShapeFun);
+};
+} // namespace MED
 
 #endif

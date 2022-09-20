@@ -26,21 +26,23 @@
 #include <Gui/TaskView/TaskDialog.h>
 #include <Gui/TaskView/TaskView.h>
 
-namespace Gui {
-    class Document;
-    class ViewProvider;
-}
+namespace Gui
+{
+class Document;
+class ViewProvider;
+} // namespace Gui
 
-namespace PartGui { 
+namespace PartGui
+{
 
 class ViewProviderPartExt;
 
-class FaceColors : public QWidget, public Gui::SelectionObserver
+class FaceColors: public QWidget, public Gui::SelectionObserver
 {
     Q_OBJECT
 
 public:
-    explicit FaceColors(ViewProviderPartExt* vp, QWidget* parent = nullptr);
+    explicit FaceColors(ViewProviderPartExt *vp, QWidget *parent = nullptr);
     ~FaceColors() override;
 
     void open();
@@ -53,24 +55,24 @@ private Q_SLOTS:
     void on_boxSelection_toggled(bool checked);
 
 protected:
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     void changeEvent(QEvent *e) override;
-    void slotUndoDocument(const Gui::Document& Doc);
-    void slotDeleteDocument(const Gui::Document&);
-    void slotDeleteObject(const Gui::ViewProvider&);
+    void slotUndoDocument(const Gui::Document &Doc);
+    void slotDeleteDocument(const Gui::Document &);
+    void slotDeleteObject(const Gui::ViewProvider &);
     void updatePanel();
 
 private:
     class Private;
-    Private* d;
+    Private *d;
 };
 
-class TaskFaceColors : public Gui::TaskView::TaskDialog
+class TaskFaceColors: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskFaceColors(ViewProviderPartExt* vp);
+    explicit TaskFaceColors(ViewProviderPartExt *vp);
     ~TaskFaceColors() override;
 
 public:
@@ -80,11 +82,13 @@ public:
     void clicked(int) override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok|QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
 private:
-    FaceColors* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    FaceColors *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace PartGui

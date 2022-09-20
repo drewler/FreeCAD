@@ -32,7 +32,8 @@
 namespace App
 {
 
-class AppExport DocumentObjectGroup : public DocumentObject, public GroupExtension {
+class AppExport DocumentObjectGroup: public DocumentObject, public GroupExtension
+{
 
     PROPERTY_HEADER_WITH_EXTENSIONS(App::DocumentObjectGroup);
 
@@ -42,7 +43,8 @@ public:
     ~DocumentObjectGroup() override;
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
+    const char *getViewProviderName() const override
+    {
         return "Gui::ViewProviderDocumentObjectGroup";
     }
 

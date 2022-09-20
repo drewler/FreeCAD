@@ -22,8 +22,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QEvent>
-# include <QSplitter>
+#include <QEvent>
+#include <QSplitter>
 #endif
 
 #include "ComboView.h"
@@ -40,23 +40,20 @@ using namespace Gui::DockWnd;
 
 /* TRANSLATOR Gui::DockWnd::ComboView */
 
-ComboView::ComboView(bool showModel, Gui::Document* pcDocument, QWidget *parent)
-  : DockWindow(pcDocument,parent)
-  , oldTabIndex(0)
-  , modelIndex(-1)
-  , taskIndex(-1)
+ComboView::ComboView(bool showModel, Gui::Document *pcDocument, QWidget *parent)
+    : DockWindow(pcDocument, parent), oldTabIndex(0), modelIndex(-1), taskIndex(-1)
 {
     setWindowTitle(tr("Combo View"));
 
     auto pLayout = new QGridLayout(this);
-    pLayout->setSpacing( 0 );
-    pLayout->setMargin ( 0 );
+    pLayout->setSpacing(0);
+    pLayout->setMargin(0);
 
     // tabs to switch between Tree/Properties and TaskPanel
-    tabs = new QTabWidget ();
+    tabs = new QTabWidget();
     tabs->setObjectName(QString::fromUtf8("combiTab"));
     tabs->setTabPosition(QTabWidget::North);
-    pLayout->addWidget( tabs, 0, 0 );
+    pLayout->addWidget(tabs, 0, 0);
 
     connect(tabs, SIGNAL(currentChanged(int)), this, SLOT(onCurrentTabChanged(int)));
     if (showModel) {
@@ -64,13 +61,13 @@ ComboView::ComboView(bool showModel, Gui::Document* pcDocument, QWidget *parent)
         auto splitter = new QSplitter();
         splitter->setOrientation(Qt::Vertical);
 
-        tree =  new TreePanel("ComboView", this);
+        tree = new TreePanel("ComboView", this);
         splitter->addWidget(tree);
 
         // property view
         prop = new PropertyView(this);
         splitter->addWidget(prop);
-        modelIndex = tabs->addTab(splitter,tr("Model"));
+        modelIndex = tabs->addTab(splitter, tr("Model"));
     }
     else {
         tree = nullptr;
@@ -86,9 +83,7 @@ ComboView::ComboView(bool showModel, Gui::Document* pcDocument, QWidget *parent)
     //tabs->addTab(projectView, tr("Project"));
 }
 
-ComboView::~ComboView()
-{
-}
+ComboView::~ComboView() {}
 
 void ComboView::showDialog(Gui::TaskView::TaskDialog *dlg)
 {
@@ -103,8 +98,7 @@ void ComboView::showDialog(Gui::TaskView::TaskDialog *dlg)
 
     // force to show the combo view
     if (modelIndex < 0) {
-        if (parentWidget())
-            parentWidget()->raise();
+        if (parentWidget()) parentWidget()->raise();
     }
 }
 
@@ -148,8 +142,7 @@ void ComboView::changeEvent(QEvent *e)
 
 void ComboView::onCurrentTabChanged(int index)
 {
-    if (index != taskIndex)
-        oldTabIndex = index;
+    if (index != taskIndex) oldTabIndex = index;
 }
 
 #include "moc_ComboView.cpp"

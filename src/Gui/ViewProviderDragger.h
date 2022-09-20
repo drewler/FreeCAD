@@ -29,9 +29,13 @@
 class SoDragger;
 class SoTransform;
 
-namespace Base { class Placement;}
+namespace Base
+{
+class Placement;
+}
 
-namespace Gui {
+namespace Gui
+{
 
 class View3DInventorViewer;
 class SoFCCSysDragger;
@@ -41,7 +45,7 @@ class SoFCCSysDragger;
  * of a geometric feature.
  * @author Werner Mayer
  */
-class GuiExport ViewProviderDragger : public ViewProviderDocumentObject
+class GuiExport ViewProviderDragger: public ViewProviderDocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderDragger);
 
@@ -55,10 +59,10 @@ public:
     /** @name Edit methods */
     //@{
     bool doubleClicked() override;
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
-    void updateData(const App::Property*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
+    void updateData(const App::Property *) override;
 
-    ViewProvider *startEditing(int ModNum=0) override;
+    ViewProvider *startEditing(int ModNum = 0) override;
 
     /*! synchronize From FC placement to Coin placement*/
     static void updateTransform(const Base::Placement &from, SoTransform *to);
@@ -66,16 +70,17 @@ public:
 protected:
     bool setEdit(int ModNum) override;
     void unsetEdit(int ModNum) override;
-    void setEditViewer(View3DInventorViewer*, int ModNum) override;
-    void unsetEditViewer(View3DInventorViewer*) override;
+    void setEditViewer(View3DInventorViewer *, int ModNum) override;
+    void unsetEditViewer(View3DInventorViewer *) override;
     //@}
     SoFCCSysDragger *csysDragger = nullptr;
 
 private:
-    static void dragStartCallback(void * data, SoDragger * d);
-    static void dragFinishCallback(void * data, SoDragger * d);
+    static void dragStartCallback(void *data, SoDragger *d);
+    static void dragFinishCallback(void *data, SoDragger *d);
 
-    static void updatePlacementFromDragger(ViewProviderDragger *sudoThis, SoFCCSysDragger *draggerIn);
+    static void updatePlacementFromDragger(ViewProviderDragger *sudoThis,
+                                           SoFCCSysDragger *draggerIn);
 
     bool checkLink();
 
@@ -86,4 +91,3 @@ private:
 
 
 #endif // GUI_VIEWPROVIDER_DRAGGER_H
-

@@ -31,26 +31,25 @@
 #define FC_CONFIG_H
 
 
-
 //**************************************************************************
 // switching the operating systems
 
 // First check for *WIN64* since the *WIN32* are also set on 64-bit platforms
 #if defined(WIN64) || defined(_WIN64) || defined(__WIN64__)
-#   ifndef FC_OS_WIN32
-#   define FC_OS_WIN32
-#   endif
-#   ifndef FC_OS_WIN64
-#   define FC_OS_WIN64
-#   endif
+#ifndef FC_OS_WIN32
+#define FC_OS_WIN32
+#endif
+#ifndef FC_OS_WIN64
+#define FC_OS_WIN64
+#endif
 #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-#   ifndef FC_OS_WIN32
-#   define FC_OS_WIN32
-#   endif
-#   if defined(__MINGW32__)
-#   if HAVE_CONFIG_H
-#   include <config.h>
-#   endif // HAVE_CONFIG_H
+#ifndef FC_OS_WIN32
+#define FC_OS_WIN32
+#endif
+#if defined(__MINGW32__)
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif // HAVE_CONFIG_H
 //# define HAVE_INT8_T
 //# define HAVE_UINT8_T
 //# define HAVE_INT16_T
@@ -61,37 +60,37 @@
 //# define HAVE_UINT64_T
 //# define HAVE_INTPTR_T
 //# define HAVE_UINTPTR_T
-#   endif
+#endif
 #elif defined(__MWERKS__) && defined(__INTEL__)
-#   ifndef FC_OS_WIN32
-#   define FC_OS_WIN32
-#   endif
+#ifndef FC_OS_WIN32
+#define FC_OS_WIN32
+#endif
 #elif defined(__APPLE__)
-#   ifndef FC_OS_MACOSX
-#   define FC_OS_MACOSX
-#   endif
+#ifndef FC_OS_MACOSX
+#define FC_OS_MACOSX
+#endif
 #elif defined(linux) || defined(__linux) || defined(__linux__) || defined(__GLIBC__)
-#   ifndef FC_OS_LINUX
-#   define FC_OS_LINUX
-#   endif
+#ifndef FC_OS_LINUX
+#define FC_OS_LINUX
+#endif
 #elif defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
-#   ifndef FC_OS_BSD
-#   define FC_OS_BSD
-#   endif
+#ifndef FC_OS_BSD
+#define FC_OS_BSD
+#endif
 #elif defined(__CYGWIN__)
-#   ifndef FC_OS_CYGWIN
-#   define FC_OS_CYGWIN
+#ifndef FC_OS_CYGWIN
+#define FC_OS_CYGWIN
 // Avoid conflicts with Inventor
-#   define HAVE_INT8_T
-#   define HAVE_UINT8_T
-#   define HAVE_INT16_T
-#   define HAVE_UINT16_T
-#   define HAVE_INT32_T
-#   define HAVE_UINT32_T
-#   define HAVE_INT64_T
-#   define HAVE_UINT64_T
-#   define HAVE_INTPTR_T
-#   define HAVE_UINTPTR_T
+#define HAVE_INT8_T
+#define HAVE_UINT8_T
+#define HAVE_INT16_T
+#define HAVE_UINT16_T
+#define HAVE_INT32_T
+#define HAVE_UINT32_T
+#define HAVE_INT64_T
+#define HAVE_UINT64_T
+#define HAVE_INTPTR_T
+#define HAVE_UINTPTR_T
 #endif
 //#elif defined(sun) || defined(__sun) || defined(__sun__)
 //# if defined(__SVR4)
@@ -114,13 +113,13 @@
 //#elif defined(__GNU__)
 //# define FC_OS_GNU
 #else
-#   error "FreeCAD is not ported to this OS yet. For help see www.freecadweb.org"
+#error "FreeCAD is not ported to this OS yet. For help see www.freecadweb.org"
 #endif
 
 #ifdef FC_OS_WIN32
-#   define PATHSEP '\\'
+#define PATHSEP '\\'
 #else
-#   define PATHSEP '/'
+#define PATHSEP '/'
 #endif
 
 //**************************************************************************
@@ -128,46 +127,46 @@
 
 #if defined(__MINGW32__)
 // nothing specific here
-#elif defined (FC_OS_WIN64) || defined (FC_OS_WIN32)
+#elif defined(FC_OS_WIN64) || defined(FC_OS_WIN32)
 
 #ifndef HAVE_INT8_T
 #define HAVE_INT8_T
-typedef signed char         int8_t;
+typedef signed char int8_t;
 #endif
 
 #ifndef HAVE_UINT8_T
 #define HAVE_UINT8_T
-typedef unsigned char       uint8_t;
+typedef unsigned char uint8_t;
 #endif
 
 #ifndef HAVE_INT16_T
 #define HAVE_INT16_T
-typedef short               int16_t;
+typedef short int16_t;
 #endif
 
 #ifndef HAVE_UINT16_T
 #define HAVE_UINT16_T
-typedef unsigned short      uint16_t;
+typedef unsigned short uint16_t;
 #endif
 
 #ifndef HAVE_INT32_T
 #define HAVE_INT32_T
-typedef int                 int32_t;
+typedef int int32_t;
 #endif
 
 #ifndef HAVE_UINT32_T
 #define HAVE_UINT32_T
-typedef unsigned int        uint32_t;
+typedef unsigned int uint32_t;
 #endif
 
 #ifndef HAVE_INT64_T
 #define HAVE_INT64_T
-typedef __int64             int64_t;
+typedef __int64 int64_t;
 #endif
 
 #ifndef HAVE_UINT64_T
 #define HAVE_UINT64_T
-typedef unsigned __int64    uint64_t;
+typedef unsigned __int64 uint64_t;
 #endif
 
 /* avoid to redefine the HAVE_* in Coin's inttypes.h file */
@@ -189,20 +188,20 @@ typedef unsigned __int64    uint64_t;
 // Open CasCade
 
 #ifdef _MSC_VER
-#   ifndef WNT
-#   define WNT
-#   endif
-#   ifndef WIN32
-#   define WIN32
-#   endif
-#   ifndef _WINDOWS
-#   define _WINDOWS
-#   endif
+#ifndef WNT
+#define WNT
+#endif
+#ifndef WIN32
+#define WIN32
+#endif
+#ifndef _WINDOWS
+#define _WINDOWS
+#endif
 #endif
 
 #ifdef FC_OS_LINUX
-#   define LIN
-#   define LININTEL
+#define LIN
+#define LININTEL
 //#       define NO_CXX_EXCEPTION
 #endif
 
@@ -210,19 +209,19 @@ typedef unsigned __int64    uint64_t;
 
 /// enables the use of the OCC DocumentBrowser
 #ifndef FC_OS_LINUX
-#   define FC_USE_OCAFBROWSER
+#define FC_USE_OCAFBROWSER
 #endif
 
 
 #ifdef FC_OCC_DEBUG
-#   ifdef FC_DEBUG
-#       define DEBUG 1
-#   else
-#       undef  DEBUG
-#   ifndef NDEBUG
-#       define NDEBUG
-#   endif
-#   endif
+#ifdef FC_DEBUG
+#define DEBUG 1
+#else
+#undef DEBUG
+#ifndef NDEBUG
+#define NDEBUG
+#endif
+#endif
 #endif
 
 
@@ -231,50 +230,50 @@ typedef unsigned __int64    uint64_t;
 
 // Make sure to explicitly use the correct conversion
 #define QT_NO_CAST_FROM_ASCII
-#undef  QT3_SUPPORT
+#undef QT3_SUPPORT
 #define QT_NO_KEYWORDS
 
-#if defined (FC_OS_WIN32) || defined(FC_OS_CYGWIN)
-# ifndef QT_DLL
-#  define QT_DLL
-# endif
+#if defined(FC_OS_WIN32) || defined(FC_OS_CYGWIN)
+#ifndef QT_DLL
+#define QT_DLL
+#endif
 #endif
 
 #ifndef QT_THREAD_SUPPORT
-# define QT_THREAD_SUPPORT
+#define QT_THREAD_SUPPORT
 #endif
 
 #ifndef QT_ALTERNATE_QTSMANIP
-# define QT_ALTERNATE_QTSMANIP
+#define QT_ALTERNATE_QTSMANIP
 #endif
 
 
 //**************************************************************************
 // Coin3D
-#if defined (FC_OS_WIN32) || defined(FC_OS_CYGWIN)
-# ifndef FCGui //COIN_DLL is defined in the FreeCADGui target
-#  ifndef COIN_DLL
-#    define COIN_DLL
-#  endif
-# endif
+#if defined(FC_OS_WIN32) || defined(FC_OS_CYGWIN)
+#ifndef FCGui //COIN_DLL is defined in the FreeCADGui target
+#ifndef COIN_DLL
+#define COIN_DLL
+#endif
+#endif
 #endif
 
 //**************************************************************************
 // SoQt
-#if defined (FC_OS_WIN32) || defined(FC_OS_CYGWIN)
-# ifndef SOQT_DLL
-#   define SOQT_DLL
-# endif
+#if defined(FC_OS_WIN32) || defined(FC_OS_CYGWIN)
+#ifndef SOQT_DLL
+#define SOQT_DLL
+#endif
 #endif
 
 //**************************************************************************
 // Quarter
-#if defined (FC_OS_WIN32) || defined(FC_OS_CYGWIN)
-# ifndef QUARTER_INTERNAL
-#  ifndef QUARTER_DLL
-#   define QUARTER_DLL
-#  endif
-# endif
+#if defined(FC_OS_WIN32) || defined(FC_OS_CYGWIN)
+#ifndef QUARTER_INTERNAL
+#ifndef QUARTER_DLL
+#define QUARTER_DLL
+#endif
+#endif
 #endif
 
 // stops inclusion of the QT 3 header through the SoQT header...
@@ -291,14 +290,19 @@ typedef unsigned __int64    uint64_t;
 
 // Don't catch C++ exceptions in DEBUG!
 #ifdef FC_DEBUG
-# define DONT_CATCH_CXX_EXCEPTIONS 1
-# define DBG_TRY
-# define DBG_CATCH(X)
+#define DONT_CATCH_CXX_EXCEPTIONS 1
+#define DBG_TRY
+#define DBG_CATCH(X)
 #else
 /// used to switch a catch with the debug state
-# define DBG_TRY try {
+#define DBG_TRY try {
 /// see docu DBGTRY
-# define DBG_CATCH(X) } catch (...) { X }
+#define DBG_CATCH(X)                                                                               \
+    }                                                                                              \
+    catch (...)                                                                                    \
+    {                                                                                              \
+        X                                                                                          \
+    }
 #endif
 
 
@@ -309,14 +313,14 @@ typedef unsigned __int64    uint64_t;
 //**************************************************************************
 // here get the warnings of too long specifiers disabled (needed for VC6)
 #ifdef _MSC_VER
-#   pragma warning( disable : 4251 )
+#pragma warning(disable : 4251)
 //#   pragma warning( disable : 4503 )
 //#   pragma warning( disable : 4786 )  // specifier longer then 255 chars
 //#   pragma warning( disable : 4290 )  // not implemented throw specification
-#   pragma warning( disable : 4996 )  // suppress deprecated warning for e.g. open()
+#pragma warning(disable : 4996) // suppress deprecated warning for e.g. open()
 #if defined(WIN64) || defined(_WIN64) || defined(__WIN64__)
-#   pragma warning( disable : 4244 )
-#   pragma warning( disable : 4267 )
+#pragma warning(disable : 4244)
+#pragma warning(disable : 4267)
 #endif
 //#	define _PreComp_                  // use precompiled header
 #endif

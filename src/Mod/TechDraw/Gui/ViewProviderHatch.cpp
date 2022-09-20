@@ -46,9 +46,8 @@ using namespace TechDrawGui;
 //App::PropertyFloatConstraint::Constraints ViewProviderHatch::scaleRange = {Precision::Confusion(),
 //                                                                  std::numeric_limits<double>::max(),
 //                                                                  pow(10, - Base::UnitsApi::getDecimals())};
-App::PropertyFloatConstraint::Constraints ViewProviderHatch::scaleRange = {pow(10, - Base::UnitsApi::getDecimals()),
-                                                                  1000.0,
-                                                                  0.1};
+App::PropertyFloatConstraint::Constraints ViewProviderHatch::scaleRange = {
+    pow(10, -Base::UnitsApi::getDecimals()), 1000.0, 0.1};
 
 
 PROPERTY_SOURCE(TechDrawGui::ViewProviderHatch, Gui::ViewProviderDocumentObject)
@@ -61,15 +60,13 @@ ViewProviderHatch::ViewProviderHatch()
     sPixmap = "TechDraw_TreeHatch";
 
     static const char *vgroup = "Hatch";
-    ADD_PROPERTY_TYPE(HatchColor, (TechDraw::DrawHatch::prefSvgHatchColor()),
-                        vgroup, App::Prop_None, "The color of the hatch pattern");
+    ADD_PROPERTY_TYPE(HatchColor, (TechDraw::DrawHatch::prefSvgHatchColor()), vgroup,
+                      App::Prop_None, "The color of the hatch pattern");
     ADD_PROPERTY_TYPE(HatchScale, (1.0), vgroup, App::Prop_None, "Hatch pattern size adjustment");
     HatchScale.setConstraints(&scaleRange);
 }
 
-ViewProviderHatch::~ViewProviderHatch()
-{
-}
+ViewProviderHatch::~ViewProviderHatch() {}
 
 bool ViewProviderHatch::setEdit(int ModNum)
 {
@@ -92,22 +89,19 @@ bool ViewProviderHatch::doubleClicked()
     return true;
 }
 
-void ViewProviderHatch::onChanged(const App::Property* prop)
+void ViewProviderHatch::onChanged(const App::Property *prop)
 {
-    if ((prop == &HatchScale) ||
-        (prop == &HatchColor)) {
+    if ((prop == &HatchScale) || (prop == &HatchColor)) {
         if (HatchScale.getValue() > 0.0) {
-            TechDraw::DrawViewPart* parent = getViewObject()->getSourceView();
-            if (parent) {
-                parent->requestPaint();
-            }
+            TechDraw::DrawViewPart *parent = getViewObject()->getSourceView();
+            if (parent) { parent->requestPaint(); }
         }
     }
 }
 
-TechDraw::DrawHatch* ViewProviderHatch::getViewObject() const
+TechDraw::DrawHatch *ViewProviderHatch::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawHatch*>(pcObject);
+    return dynamic_cast<TechDraw::DrawHatch *>(pcObject);
 }
 
 bool ViewProviderHatch::canDelete(App::DocumentObject *obj) const
@@ -121,10 +115,8 @@ bool ViewProviderHatch::canDelete(App::DocumentObject *obj) const
 Gui::MDIView *ViewProviderHatch::getMDIView() const
 {
     auto obj = getViewObject();
-    if(!obj)
-        return nullptr;
+    if (!obj) return nullptr;
     auto vp = Gui::Application::Instance->getViewProvider(obj->getSourceView());
-    if(!vp)
-        return nullptr;
+    if (!vp) return nullptr;
     return vp->getMDIView();
 }

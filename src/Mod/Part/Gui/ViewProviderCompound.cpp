@@ -23,8 +23,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <TopExp.hxx>
-# include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #endif
 
 #include <Gui/Application.h>
@@ -35,86 +35,81 @@
 
 using namespace PartGui;
 
-PROPERTY_SOURCE(PartGui::ViewProviderCompound,PartGui::ViewProviderPart)
+PROPERTY_SOURCE(PartGui::ViewProviderCompound, PartGui::ViewProviderPart)
 
-ViewProviderCompound::ViewProviderCompound()
-{
-    sPixmap = "Part_Compound.svg";
-}
+ViewProviderCompound::ViewProviderCompound() { sPixmap = "Part_Compound.svg"; }
 
-ViewProviderCompound::~ViewProviderCompound()
-{
-}
+ViewProviderCompound::~ViewProviderCompound() {}
 
-std::vector<App::DocumentObject*> ViewProviderCompound::claimChildren(void) const
+std::vector<App::DocumentObject *> ViewProviderCompound::claimChildren(void) const
 {
-    return static_cast<Part::Compound*>(getObject())->Links.getValues();
+    return static_cast<Part::Compound *>(getObject())->Links.getValues();
 }
 
 bool ViewProviderCompound::onDelete(const std::vector<std::string> &)
 {
     // get the input shapes
-    Part::Compound* pComp = static_cast<Part::Compound*>(getObject());
-    std::vector<App::DocumentObject*> pLinks = pComp->Links.getValues();
-    for (std::vector<App::DocumentObject*>::iterator it = pLinks.begin(); it != pLinks.end(); ++it) {
-        if (*it)
-            Gui::Application::Instance->showViewProvider(*it);
+    Part::Compound *pComp = static_cast<Part::Compound *>(getObject());
+    std::vector<App::DocumentObject *> pLinks = pComp->Links.getValues();
+    for (std::vector<App::DocumentObject *>::iterator it = pLinks.begin(); it != pLinks.end();
+         ++it) {
+        if (*it) Gui::Application::Instance->showViewProvider(*it);
     }
 
     return true;
 }
 
-void ViewProviderCompound::updateData(const App::Property* prop)
+void ViewProviderCompound::updateData(const App::Property *prop)
 {
     PartGui::ViewProviderPart::updateData(prop);
     if (prop->getTypeId() == Part::PropertyShapeHistory::getClassTypeId()) {
-        const std::vector<Part::ShapeHistory>& hist = static_cast<const Part::PropertyShapeHistory*>
-            (prop)->getValues();
-        Part::Compound* objComp = static_cast<Part::Compound*>(getObject());
-        std::vector<App::DocumentObject*> sources = objComp->Links.getValues();
+        const std::vector<Part::ShapeHistory> &hist =
+            static_cast<const Part::PropertyShapeHistory *>(prop)->getValues();
+        Part::Compound *objComp = static_cast<Part::Compound *>(getObject());
+        std::vector<App::DocumentObject *> sources = objComp->Links.getValues();
 
         if (hist.size() != sources.size()) {
             // avoid duplicates without changing the order
             // See also Compound::execute
-            std::set<App::DocumentObject*> tempSources;
-            std::vector<App::DocumentObject*> filter;
-            for (std::vector<App::DocumentObject*>::iterator it = sources.begin(); it != sources.end(); ++it) {
-                Part::Feature* objBase = dynamic_cast<Part::Feature*>(*it);
+            std::set<App::DocumentObject *> tempSources;
+            std::vector<App::DocumentObject *> filter;
+            for (std::vector<App::DocumentObject *>::iterator it = sources.begin();
+                 it != sources.end(); ++it) {
+                Part::Feature *objBase = dynamic_cast<Part::Feature *>(*it);
                 if (objBase) {
                     auto pos = tempSources.insert(objBase);
-                    if (pos.second) {
-                        filter.push_back(objBase);
-                    }
+                    if (pos.second) { filter.push_back(objBase); }
                 }
             }
 
             sources = filter;
         }
-        if (hist.size() != sources.size())
-            return;
+        if (hist.size() != sources.size()) return;
 
-        const TopoDS_Shape& compShape = objComp->Shape.getValue();
+        const TopoDS_Shape &compShape = objComp->Shape.getValue();
         TopTools_IndexedMapOfShape compMap;
         TopExp::MapShapes(compShape, TopAbs_FACE, compMap);
 
         std::vector<App::Color> compCol;
         compCol.resize(compMap.Extent(), this->ShapeColor.getValue());
 
-        int index=0;
-        for (std::vector<App::DocumentObject*>::iterator it = sources.begin(); it != sources.end(); ++it, ++index) {
-            Part::Feature* objBase = dynamic_cast<Part::Feature*>(Part::Feature::getShapeOwner(*it));
-            if (!objBase)
-                continue;
+        int index = 0;
+        for (std::vector<App::DocumentObject *>::iterator it = sources.begin(); it != sources.end();
+             ++it, ++index) {
+            Part::Feature *objBase =
+                dynamic_cast<Part::Feature *>(Part::Feature::getShapeOwner(*it));
+            if (!objBase) continue;
 
-            const TopoDS_Shape& baseShape = objBase->Shape.getValue();
+            const TopoDS_Shape &baseShape = objBase->Shape.getValue();
 
             TopTools_IndexedMapOfShape baseMap;
             TopExp::MapShapes(baseShape, TopAbs_FACE, baseMap);
 
-            auto vpBase = dynamic_cast<PartGui::ViewProviderPart*>(Gui::Application::Instance->getViewProvider(objBase));
+            auto vpBase = dynamic_cast<PartGui::ViewProviderPart *>(
+                Gui::Application::Instance->getViewProvider(objBase));
             if (vpBase) {
                 std::vector<App::Color> baseCol = vpBase->DiffuseColor.getValues();
-                applyTransparency(vpBase->Transparency.getValue(),baseCol);
+                applyTransparency(vpBase->Transparency.getValue(), baseCol);
                 if (static_cast<int>(baseCol.size()) == baseMap.Extent()) {
                     applyColor(hist[index], baseCol, compCol);
                 }
@@ -127,35 +122,33 @@ void ViewProviderCompound::updateData(const App::Property* prop)
 
         // If the view provider has set a transparency then override the values
         // of the input shapes
-        if (Transparency.getValue() > 0) {
-            applyTransparency(Transparency.getValue(), compCol);
-        }
+        if (Transparency.getValue() > 0) { applyTransparency(Transparency.getValue(), compCol); }
 
         this->DiffuseColor.setValues(compCol);
     }
     else if (prop->getTypeId().isDerivedFrom(App::PropertyLinkList::getClassTypeId())) {
-        const std::vector<App::DocumentObject *>& pBases = static_cast<const App::PropertyLinkList*>(prop)->getValues();
-        for (std::vector<App::DocumentObject *>::const_iterator it = pBases.begin(); it != pBases.end(); ++it) {
+        const std::vector<App::DocumentObject *> &pBases =
+            static_cast<const App::PropertyLinkList *>(prop)->getValues();
+        for (std::vector<App::DocumentObject *>::const_iterator it = pBases.begin();
+             it != pBases.end(); ++it) {
             if (*it) Gui::Application::Instance->hideViewProvider(*it);
         }
     }
 }
 
-bool ViewProviderCompound::canDragObjects() const
-{
-    return true;
-}
+bool ViewProviderCompound::canDragObjects() const { return true; }
 
-bool ViewProviderCompound::canDragObject(App::DocumentObject* obj) const
+bool ViewProviderCompound::canDragObject(App::DocumentObject *obj) const
 {
     return obj->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId());
 }
 
-void ViewProviderCompound::dragObject(App::DocumentObject* obj)
+void ViewProviderCompound::dragObject(App::DocumentObject *obj)
 {
-    Part::Compound* pComp = static_cast<Part::Compound*>(getObject());
-    std::vector<App::DocumentObject*> pShapes = pComp->Links.getValues();
-    for (std::vector<App::DocumentObject*>::iterator it = pShapes.begin(); it != pShapes.end(); ++it) {
+    Part::Compound *pComp = static_cast<Part::Compound *>(getObject());
+    std::vector<App::DocumentObject *> pShapes = pComp->Links.getValues();
+    for (std::vector<App::DocumentObject *>::iterator it = pShapes.begin(); it != pShapes.end();
+         ++it) {
         if (*it == obj) {
             pShapes.erase(it);
             pComp->Links.setValues(pShapes);
@@ -164,21 +157,17 @@ void ViewProviderCompound::dragObject(App::DocumentObject* obj)
     }
 }
 
-bool ViewProviderCompound::canDropObjects() const
-{
-    return true;
-}
+bool ViewProviderCompound::canDropObjects() const { return true; }
 
-bool ViewProviderCompound::canDropObject(App::DocumentObject* obj) const
+bool ViewProviderCompound::canDropObject(App::DocumentObject *obj) const
 {
     return obj->getTypeId().isDerivedFrom(Part::Feature::getClassTypeId());
 }
 
-void ViewProviderCompound::dropObject(App::DocumentObject* obj)
+void ViewProviderCompound::dropObject(App::DocumentObject *obj)
 {
-    Part::Compound* pComp = static_cast<Part::Compound*>(getObject());
-    std::vector<App::DocumentObject*> pShapes = pComp->Links.getValues();
+    Part::Compound *pComp = static_cast<Part::Compound *>(getObject());
+    std::vector<App::DocumentObject *> pShapes = pComp->Links.getValues();
     pShapes.push_back(obj);
     pComp->Links.setValues(pShapes);
 }
-

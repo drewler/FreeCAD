@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <cstdlib>
+#include <cstdlib>
 #endif
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -38,20 +38,17 @@
 
 using namespace Data;
 
-TYPESYSTEM_SOURCE_ABSTRACT(Data::Segment , Base::BaseClass)
+TYPESYSTEM_SOURCE_ABSTRACT(Data::Segment, Base::BaseClass)
 
 
-TYPESYSTEM_SOURCE_ABSTRACT(Data::ComplexGeoData , Base::Persistence)
+TYPESYSTEM_SOURCE_ABSTRACT(Data::ComplexGeoData, Base::Persistence)
 
 
-ComplexGeoData::ComplexGeoData()
-    :Tag(0)
-{
-}
+ComplexGeoData::ComplexGeoData() : Tag(0) {}
 
 ComplexGeoData::~ComplexGeoData() = default;
 
-Data::Segment* ComplexGeoData::getSubElementByName(const char* name) const
+Data::Segment *ComplexGeoData::getSubElementByName(const char *name) const
 {
     int index = 0;
     std::string element;
@@ -66,26 +63,26 @@ Data::Segment* ComplexGeoData::getSubElementByName(const char* name) const
     return getSubElement(element.c_str(), static_cast<unsigned long>(index));
 }
 
-void ComplexGeoData::applyTransform(const Base::Matrix4D& rclTrf)
+void ComplexGeoData::applyTransform(const Base::Matrix4D &rclTrf)
 {
     setTransform(rclTrf * getTransform());
 }
 
-void ComplexGeoData::applyTranslation(const Base::Vector3d& mov)
+void ComplexGeoData::applyTranslation(const Base::Vector3d &mov)
 {
     Base::Matrix4D mat;
     mat.move(mov);
     setTransform(mat * getTransform());
 }
 
-void ComplexGeoData::applyRotation(const Base::Rotation& rot)
+void ComplexGeoData::applyRotation(const Base::Rotation &rot)
 {
     Base::Matrix4D mat;
     rot.getValue(mat);
     setTransform(mat * getTransform());
 }
 
-void ComplexGeoData::setPlacement(const Base::Placement& rclPlacement)
+void ComplexGeoData::setPlacement(const Base::Placement &rclPlacement)
 {
     setTransform(rclPlacement.toMatrix());
 }
@@ -94,27 +91,19 @@ Base::Placement ComplexGeoData::getPlacement() const
 {
     Base::Matrix4D mat = getTransform();
 
-    return Base::Placement(Base::Vector3d(mat[0][3],
-                                          mat[1][3],
-                                          mat[2][3]),
-                           Base::Rotation(mat));
+    return Base::Placement(Base::Vector3d(mat[0][3], mat[1][3], mat[2][3]), Base::Rotation(mat));
 }
 
-double ComplexGeoData::getAccuracy() const
-{
-    return 0.0;
-}
+double ComplexGeoData::getAccuracy() const { return 0.0; }
 
-void ComplexGeoData::getLinesFromSubElement(const Segment*,
-                                            std::vector<Base::Vector3d> &Points,
+void ComplexGeoData::getLinesFromSubElement(const Segment *, std::vector<Base::Vector3d> &Points,
                                             std::vector<Line> &lines) const
 {
     (void)Points;
     (void)lines;
 }
 
-void ComplexGeoData::getFacesFromSubElement(const Segment*,
-                                            std::vector<Base::Vector3d> &Points,
+void ComplexGeoData::getFacesFromSubElement(const Segment *, std::vector<Base::Vector3d> &Points,
                                             std::vector<Base::Vector3d> &PointNormals,
                                             std::vector<Facet> &faces) const
 {
@@ -123,8 +112,8 @@ void ComplexGeoData::getFacesFromSubElement(const Segment*,
     (void)faces;
 }
 
-Base::Vector3d ComplexGeoData::getPointFromLineIntersection(const Base::Vector3f& base,
-                                                            const Base::Vector3f& dir) const
+Base::Vector3d ComplexGeoData::getPointFromLineIntersection(const Base::Vector3f &base,
+                                                            const Base::Vector3f &dir) const
 {
     (void)base;
     (void)dir;
@@ -132,8 +121,8 @@ Base::Vector3d ComplexGeoData::getPointFromLineIntersection(const Base::Vector3f
 }
 
 void ComplexGeoData::getPoints(std::vector<Base::Vector3d> &Points,
-                               std::vector<Base::Vector3d> &Normals,
-                               double Accuracy, uint16_t flags) const
+                               std::vector<Base::Vector3d> &Normals, double Accuracy,
+                               uint16_t flags) const
 {
     (void)Points;
     (void)Normals;
@@ -141,8 +130,7 @@ void ComplexGeoData::getPoints(std::vector<Base::Vector3d> &Points,
     (void)flags;
 }
 
-void ComplexGeoData::getLines(std::vector<Base::Vector3d> &Points,
-                              std::vector<Line> &lines,
+void ComplexGeoData::getLines(std::vector<Base::Vector3d> &Points, std::vector<Line> &lines,
                               double Accuracy, uint16_t flags) const
 {
     (void)Points;
@@ -151,8 +139,7 @@ void ComplexGeoData::getLines(std::vector<Base::Vector3d> &Points,
     (void)flags;
 }
 
-void ComplexGeoData::getFaces(std::vector<Base::Vector3d> &Points,
-                              std::vector<Facet> &faces,
+void ComplexGeoData::getFaces(std::vector<Base::Vector3d> &Points, std::vector<Facet> &faces,
                               double Accuracy, uint16_t flags) const
 {
     (void)Points;
@@ -161,107 +148,100 @@ void ComplexGeoData::getFaces(std::vector<Base::Vector3d> &Points,
     (void)flags;
 }
 
-bool ComplexGeoData::getCenterOfGravity(Base::Vector3d&) const
-{
-    return false;
-}
+bool ComplexGeoData::getCenterOfGravity(Base::Vector3d &) const { return false; }
 
-const std::string &ComplexGeoData::elementMapPrefix() {
+const std::string &ComplexGeoData::elementMapPrefix()
+{
     static std::string prefix(";");
     return prefix;
 }
 
-const char *ComplexGeoData::isMappedElement(const char *name) {
-    if(name && boost::starts_with(name,elementMapPrefix()))
-        return name+elementMapPrefix().size();
+const char *ComplexGeoData::isMappedElement(const char *name)
+{
+    if (name && boost::starts_with(name, elementMapPrefix()))
+        return name + elementMapPrefix().size();
     return nullptr;
 }
 
-std::string ComplexGeoData::newElementName(const char *name) {
-    if(!name)
-        return std::string();
-    const char *dot = strrchr(name,'.');
-    if(!dot || dot==name)
-        return name;
-    const char *c = dot-1;
-    for(;c!=name;--c) {
-        if(*c == '.') {
+std::string ComplexGeoData::newElementName(const char *name)
+{
+    if (!name) return std::string();
+    const char *dot = strrchr(name, '.');
+    if (!dot || dot == name) return name;
+    const char *c = dot - 1;
+    for (; c != name; --c) {
+        if (*c == '.') {
             ++c;
             break;
         }
     }
-    if(isMappedElement(c))
-        return std::string(name,dot-name);
+    if (isMappedElement(c)) return std::string(name, dot - name);
     return name;
 }
 
-std::string ComplexGeoData::oldElementName(const char *name) {
-    if(!name)
-        return std::string();
-    const char *dot = strrchr(name,'.');
-    if(!dot || dot==name)
-        return name;
-    const char *c = dot-1;
-    for(;c!=name;--c) {
-        if(*c == '.') {
+std::string ComplexGeoData::oldElementName(const char *name)
+{
+    if (!name) return std::string();
+    const char *dot = strrchr(name, '.');
+    if (!dot || dot == name) return name;
+    const char *c = dot - 1;
+    for (; c != name; --c) {
+        if (*c == '.') {
             ++c;
             break;
         }
     }
-    if(isMappedElement(c))
-        return std::string(name,c-name)+(dot+1);
+    if (isMappedElement(c)) return std::string(name, c - name) + (dot + 1);
     return name;
 }
 
-std::string ComplexGeoData::noElementName(const char *name) {
-    if(!name)
-        return std::string();
+std::string ComplexGeoData::noElementName(const char *name)
+{
+    if (!name) return std::string();
     auto element = findElementName(name);
-    if(element)
-        return std::string(name,element-name);
+    if (element) return std::string(name, element - name);
     return name;
 }
 
-const char *ComplexGeoData::findElementName(const char *subname) {
-    if(!subname || !subname[0] || isMappedElement(subname))
-        return subname;
-    const char *dot = strrchr(subname,'.');
-    if(!dot)
-        return subname;
-    const char *element = dot+1;
-    if(dot==subname || isMappedElement(element))
-        return element;
-    for(--dot;dot!=subname;--dot) {
-        if(*dot == '.') {
+const char *ComplexGeoData::findElementName(const char *subname)
+{
+    if (!subname || !subname[0] || isMappedElement(subname)) return subname;
+    const char *dot = strrchr(subname, '.');
+    if (!dot) return subname;
+    const char *element = dot + 1;
+    if (dot == subname || isMappedElement(element)) return element;
+    for (--dot; dot != subname; --dot) {
+        if (*dot == '.') {
             ++dot;
             break;
         }
     }
-    if(isMappedElement(dot))
-        return dot;
+    if (isMappedElement(dot)) return dot;
     return element;
 }
 
-const std::string &ComplexGeoData::tagPostfix() {
+const std::string &ComplexGeoData::tagPostfix()
+{
     static std::string postfix(elementMapPrefix() + ":T");
     return postfix;
 }
 
-const std::string &ComplexGeoData::indexPostfix() {
+const std::string &ComplexGeoData::indexPostfix()
+{
     static std::string postfix(elementMapPrefix() + ":I");
     return postfix;
 }
 
-const std::string &ComplexGeoData::missingPrefix() {
+const std::string &ComplexGeoData::missingPrefix()
+{
     static std::string prefix("?");
     return prefix;
 }
 
-bool ComplexGeoData::hasMissingElement(const char *subname) {
-    if(!subname)
-        return false;
-    auto dot = strrchr(subname,'.');
-    if(dot)
-        subname = dot+1;
-    return boost::starts_with(subname,missingPrefix());
+bool ComplexGeoData::hasMissingElement(const char *subname)
+{
+    if (!subname) return false;
+    auto dot = strrchr(subname, '.');
+    if (dot) subname = dot + 1;
+    return boost::starts_with(subname, missingPrefix());
 }

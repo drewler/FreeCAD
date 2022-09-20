@@ -47,35 +47,35 @@
 #include <Mod/TechDraw/App/DrawPage.h>
 #include <Mod/TechDraw/App/DrawView.h>
 #include <Mod/TechDraw/App/DrawUtil.h>
-#include <Mod/TechDraw/App/DrawViewPy.h>  // generated from DrawViewPy.xml
+#include <Mod/TechDraw/App/DrawViewPy.h> // generated from DrawViewPy.xml
 
 #include "MDIViewPage.h"
 #include "QGIView.h"
 #include "ViewProviderPage.h"
 #include "ViewProviderDrawingView.h"
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class Module : public Py::ExtensionModule<Module>
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("TechDrawGui")
     {
-       add_varargs_method("export", &Module::exporter,
-            "TechDraw hook for FC Gui exporter."
-       );
-       add_varargs_method("exportPageAsPdf", &Module::exportPageAsPdf,
-            "exportPageAsPdf(DrawPageObject, FilePath) -- print page as Pdf to file."
-        );
-        add_varargs_method("exportPageAsSvg", &Module::exportPageAsSvg,
-            "exportPageAsSvg(DrawPageObject, FilePath) -- print page as Svg to file."
-        );
-        add_varargs_method("addQGIToView", &Module::addQGIToView,
-            "addQGIToView(View, QGraphicsItem) -- insert graphics item into view's graphic."
-        );
-        add_varargs_method("addQGObjToView", &Module::addQGObjToView,
-            "addQGObjToView(View, QGraphicsObject) -- insert graphics object into view's graphic. Use for QGraphicsItems that have QGraphicsObject as base class."
-        );
+        add_varargs_method("export", &Module::exporter, "TechDraw hook for FC Gui exporter.");
+        add_varargs_method(
+            "exportPageAsPdf", &Module::exportPageAsPdf,
+            "exportPageAsPdf(DrawPageObject, FilePath) -- print page as Pdf to file.");
+        add_varargs_method(
+            "exportPageAsSvg", &Module::exportPageAsSvg,
+            "exportPageAsSvg(DrawPageObject, FilePath) -- print page as Svg to file.");
+        add_varargs_method(
+            "addQGIToView", &Module::addQGIToView,
+            "addQGIToView(View, QGraphicsItem) -- insert graphics item into view's graphic.");
+        add_varargs_method(
+            "addQGObjToView", &Module::addQGObjToView,
+            "addQGObjToView(View, QGraphicsObject) -- insert graphics object into view's graphic. "
+            "Use for QGraphicsItems that have QGraphicsObject as base class.");
         initialize("This is a module for displaying drawings"); // register with Python
     }
     ~Module() override {}
@@ -91,8 +91,10 @@ private:
             Standard_CString msg = e.GetMessageString();
             str += typeid(e).name();
             str += " ";
-            if (msg) {str += msg;}
-            else     {str += "No OCCT Exception Message";}
+            if (msg) { str += msg; }
+            else {
+                str += "No OCCT Exception Message";
+            }
             Base::Console().Error("%s\n", str.c_str());
             throw Py::Exception(Part::PartExceptionOCCError, str);
         }
@@ -115,41 +117,43 @@ private:
         return Py::None(); //only here to prevent warning re no return value
     }
 
-//! hook for FC Gui export function
-    Py::Object exporter(const Py::Tuple& args)
+    //! hook for FC Gui export function
+    Py::Object exporter(const Py::Tuple &args)
     {
-        PyObject* object;
-        char* Name;
-        if (!PyArg_ParseTuple(args.ptr(), "Oet", &object, "utf-8", &Name))
-            throw Py::Exception();
+        PyObject *object;
+        char *Name;
+        if (!PyArg_ParseTuple(args.ptr(), "Oet", &object, "utf-8", &Name)) throw Py::Exception();
 
         std::string EncodedName = std::string(Name);
         PyMem_Free(Name);
 
-        TechDraw::DrawPage* page = nullptr;
+        TechDraw::DrawPage *page = nullptr;
         Py::Sequence list(object);
         for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {
-            PyObject* item = (*it).ptr();
+            PyObject *item = (*it).ptr();
             if (PyObject_TypeCheck(item, &(App::DocumentObjectPy::Type))) {
-                App::DocumentObject* obj = static_cast<App::DocumentObjectPy*>(item)->getDocumentObjectPtr();
+                App::DocumentObject *obj =
+                    static_cast<App::DocumentObjectPy *>(item)->getDocumentObjectPtr();
                 if (obj->getTypeId().isDerivedFrom(TechDraw::DrawPage::getClassTypeId())) {
-                    page = static_cast<TechDraw::DrawPage*>(obj);
-                    Gui::Document* activeGui = Gui::Application::Instance->getDocument(page->getDocument());
-                    Gui::ViewProvider* vp = activeGui->getViewProvider(obj);
-                    ViewProviderPage* dvp = dynamic_cast<ViewProviderPage*>(vp);
-                    if ( !(dvp  && dvp->getMDIViewPage()) ) {
+                    page = static_cast<TechDraw::DrawPage *>(obj);
+                    Gui::Document *activeGui =
+                        Gui::Application::Instance->getDocument(page->getDocument());
+                    Gui::ViewProvider *vp = activeGui->getViewProvider(obj);
+                    ViewProviderPage *dvp = dynamic_cast<ViewProviderPage *>(vp);
+                    if (!(dvp && dvp->getMDIViewPage())) {
                         throw Py::TypeError("TechDraw can not find Page");
                     }
 
                     Base::FileInfo fi_out(EncodedName.c_str());
 
-                    if (fi_out.hasExtension("svg")) {
-                        dvp->getMDIViewPage()->saveSVG(EncodedName);
-                    } else if (fi_out.hasExtension("dxf")) {
+                    if (fi_out.hasExtension("svg")) { dvp->getMDIViewPage()->saveSVG(EncodedName); }
+                    else if (fi_out.hasExtension("dxf")) {
                         dvp->getMDIViewPage()->saveDXF(EncodedName);
-                    } else if (fi_out.hasExtension("pdf")) {
+                    }
+                    else if (fi_out.hasExtension("pdf")) {
                         dvp->getMDIViewPage()->savePDF(EncodedName);
-                    } else {
+                    }
+                    else {
                         throw Py::TypeError("TechDraw can not export this file format");
                     }
                 }
@@ -162,11 +166,11 @@ private:
         return Py::None();
     }
 
-//!exportPageAsPdf(PageObject, FullPath)
-    Py::Object exportPageAsPdf(const Py::Tuple& args)
+    //!exportPageAsPdf(PageObject, FullPath)
+    Py::Object exportPageAsPdf(const Py::Tuple &args)
     {
         PyObject *pageObj;
-        char* name;
+        char *name;
         if (!PyArg_ParseTuple(args.ptr(), "Oet", &pageObj, "utf-8", &name)) {
             throw Py::TypeError("expected (Page, path");
         }
@@ -175,30 +179,29 @@ private:
         PyMem_Free(name);
 
         try {
-           App::DocumentObject* obj = nullptr;
-           Gui::ViewProvider* vp = nullptr;
-           MDIViewPage* mdi = nullptr;
-           if (PyObject_TypeCheck(pageObj, &(App::DocumentObjectPy::Type))) {
-               obj = static_cast<App::DocumentObjectPy*>(pageObj)->getDocumentObjectPtr();
-               vp = Gui::Application::Instance->getViewProvider(obj);
-               if (vp) {
-                   TechDrawGui::ViewProviderPage* vpp = dynamic_cast<TechDrawGui::ViewProviderPage*>(vp);
-                   if (vpp) {
-                       mdi = vpp->getMDIViewPage();
-                       if (mdi) {
-                           mdi->printPdf(filePath);
-                       } else {
-                           vpp->showMDIViewPage();
-                           mdi = vpp->getMDIViewPage();
-                           if (mdi) {
-                               mdi->printPdf(filePath);
-                           } else {
-                               throw Py::TypeError("Page not available! Is it Hidden?");
-                           }
-                       }
-                   }
-               }
-           }
+            App::DocumentObject *obj = nullptr;
+            Gui::ViewProvider *vp = nullptr;
+            MDIViewPage *mdi = nullptr;
+            if (PyObject_TypeCheck(pageObj, &(App::DocumentObjectPy::Type))) {
+                obj = static_cast<App::DocumentObjectPy *>(pageObj)->getDocumentObjectPtr();
+                vp = Gui::Application::Instance->getViewProvider(obj);
+                if (vp) {
+                    TechDrawGui::ViewProviderPage *vpp =
+                        dynamic_cast<TechDrawGui::ViewProviderPage *>(vp);
+                    if (vpp) {
+                        mdi = vpp->getMDIViewPage();
+                        if (mdi) { mdi->printPdf(filePath); }
+                        else {
+                            vpp->showMDIViewPage();
+                            mdi = vpp->getMDIViewPage();
+                            if (mdi) { mdi->printPdf(filePath); }
+                            else {
+                                throw Py::TypeError("Page not available! Is it Hidden?");
+                            }
+                        }
+                    }
+                }
+            }
         }
         catch (Base::Exception &e) {
             e.setPyException();
@@ -208,11 +211,11 @@ private:
         return Py::None();
     }
 
-//!exportPageAsSvg(PageObject, FullPath)
-    Py::Object exportPageAsSvg(const Py::Tuple& args)
+    //!exportPageAsSvg(PageObject, FullPath)
+    Py::Object exportPageAsSvg(const Py::Tuple &args)
     {
         PyObject *pageObj;
-        char* name;
+        char *name;
         if (!PyArg_ParseTuple(args.ptr(), "Oet", &pageObj, "utf-8", &name)) {
             throw Py::TypeError("expected (Page, path");
         }
@@ -221,30 +224,29 @@ private:
         PyMem_Free(name);
 
         try {
-           App::DocumentObject* obj = nullptr;
-           Gui::ViewProvider* vp = nullptr;
-           MDIViewPage* mdi = nullptr;
-           if (PyObject_TypeCheck(pageObj, &(App::DocumentObjectPy::Type))) {
-               obj = static_cast<App::DocumentObjectPy*>(pageObj)->getDocumentObjectPtr();
-               vp = Gui::Application::Instance->getViewProvider(obj);
-               if (vp) {
-                   TechDrawGui::ViewProviderPage* vpp = dynamic_cast<TechDrawGui::ViewProviderPage*>(vp);
-                   if (vpp) {
-                       mdi = vpp->getMDIViewPage();
-                       if (mdi) {
-                           mdi->saveSVG(filePath);
-                       } else {
-                           vpp->showMDIViewPage();
-                           mdi = vpp->getMDIViewPage();
-                           if (mdi) {
-                               mdi->saveSVG(filePath);
-                           } else {
-                               throw Py::TypeError("Page not available! Is it Hidden?");
-                           }
-                       }
-                   }
-               }
-           }
+            App::DocumentObject *obj = nullptr;
+            Gui::ViewProvider *vp = nullptr;
+            MDIViewPage *mdi = nullptr;
+            if (PyObject_TypeCheck(pageObj, &(App::DocumentObjectPy::Type))) {
+                obj = static_cast<App::DocumentObjectPy *>(pageObj)->getDocumentObjectPtr();
+                vp = Gui::Application::Instance->getViewProvider(obj);
+                if (vp) {
+                    TechDrawGui::ViewProviderPage *vpp =
+                        dynamic_cast<TechDrawGui::ViewProviderPage *>(vp);
+                    if (vpp) {
+                        mdi = vpp->getMDIViewPage();
+                        if (mdi) { mdi->saveSVG(filePath); }
+                        else {
+                            vpp->showMDIViewPage();
+                            mdi = vpp->getMDIViewPage();
+                            if (mdi) { mdi->saveSVG(filePath); }
+                            else {
+                                throw Py::TypeError("Page not available! Is it Hidden?");
+                            }
+                        }
+                    }
+                }
+            }
         }
         catch (Base::Exception &e) {
             e.setPyException();
@@ -254,7 +256,7 @@ private:
         return Py::None();
     }
 
-    Py::Object addQGIToView(const Py::Tuple& args)
+    Py::Object addQGIToView(const Py::Tuple &args)
     {
         PyObject *viewPy = nullptr;
         PyObject *qgiPy = nullptr;
@@ -263,28 +265,26 @@ private:
         }
 
         try {
-           App::DocumentObject* obj = nullptr;
-           Gui::ViewProvider* vp = nullptr;
-           QGIView* qgiv = nullptr;
-           obj = static_cast<App::DocumentObjectPy*>(viewPy)->getDocumentObjectPtr();
-           vp = Gui::Application::Instance->getViewProvider(obj);
-           if (vp) {
-               TechDrawGui::ViewProviderDrawingView* vpdv =
-                            dynamic_cast<TechDrawGui::ViewProviderDrawingView*>(vp);
-               if (vpdv) {
-                   qgiv = vpdv->getQView();
-                   if (qgiv) {
-                       Gui::PythonWrapper wrap;
-                       if (!wrap.loadGuiModule()) {
-                           throw Py::RuntimeError("Failed to load Python wrapper for Qt::Gui");
-                       }
-                        QGraphicsItem* item = wrap.toQGraphicsItem(qgiPy);
-                        if (item) {
-                            qgiv->addArbitraryItem(item);
+            App::DocumentObject *obj = nullptr;
+            Gui::ViewProvider *vp = nullptr;
+            QGIView *qgiv = nullptr;
+            obj = static_cast<App::DocumentObjectPy *>(viewPy)->getDocumentObjectPtr();
+            vp = Gui::Application::Instance->getViewProvider(obj);
+            if (vp) {
+                TechDrawGui::ViewProviderDrawingView *vpdv =
+                    dynamic_cast<TechDrawGui::ViewProviderDrawingView *>(vp);
+                if (vpdv) {
+                    qgiv = vpdv->getQView();
+                    if (qgiv) {
+                        Gui::PythonWrapper wrap;
+                        if (!wrap.loadGuiModule()) {
+                            throw Py::RuntimeError("Failed to load Python wrapper for Qt::Gui");
                         }
+                        QGraphicsItem *item = wrap.toQGraphicsItem(qgiPy);
+                        if (item) { qgiv->addArbitraryItem(item); }
                     }
-               }
-           }
+                }
+            }
         }
         catch (Base::Exception &e) {
             e.setPyException();
@@ -295,9 +295,9 @@ private:
     }
 
 
-//!use addQGObjToView for QGraphics items like QGraphicsSvgItem or QGraphicsTextItem that are
-//! derived from QGraphicsObject
-    Py::Object addQGObjToView(const Py::Tuple& args)
+    //!use addQGObjToView for QGraphics items like QGraphicsSvgItem or QGraphicsTextItem that are
+    //! derived from QGraphicsObject
+    Py::Object addQGObjToView(const Py::Tuple &args)
     {
         PyObject *viewPy = nullptr;
         PyObject *qgiPy = nullptr;
@@ -306,28 +306,26 @@ private:
         }
 
         try {
-           App::DocumentObject* obj = nullptr;
-           Gui::ViewProvider* vp = nullptr;
-           QGIView* qgiv = nullptr;
-           obj = static_cast<App::DocumentObjectPy*>(viewPy)->getDocumentObjectPtr();
-           vp = Gui::Application::Instance->getViewProvider(obj);
-           if (vp) {
-               TechDrawGui::ViewProviderDrawingView* vpdv =
-                            dynamic_cast<TechDrawGui::ViewProviderDrawingView*>(vp);
-               if (vpdv) {
-                   qgiv = vpdv->getQView();
-                   if (qgiv) {
-                       Gui::PythonWrapper wrap;
-                       if (!wrap.loadGuiModule()) {
-                           throw Py::RuntimeError("Failed to load Python wrapper for Qt::Gui");
+            App::DocumentObject *obj = nullptr;
+            Gui::ViewProvider *vp = nullptr;
+            QGIView *qgiv = nullptr;
+            obj = static_cast<App::DocumentObjectPy *>(viewPy)->getDocumentObjectPtr();
+            vp = Gui::Application::Instance->getViewProvider(obj);
+            if (vp) {
+                TechDrawGui::ViewProviderDrawingView *vpdv =
+                    dynamic_cast<TechDrawGui::ViewProviderDrawingView *>(vp);
+                if (vpdv) {
+                    qgiv = vpdv->getQView();
+                    if (qgiv) {
+                        Gui::PythonWrapper wrap;
+                        if (!wrap.loadGuiModule()) {
+                            throw Py::RuntimeError("Failed to load Python wrapper for Qt::Gui");
                         }
-                        QGraphicsObject* item = wrap.toQGraphicsObject(qgiPy);
-                        if (item) {
-                            qgiv->addArbitraryItem(item);
-                        }
+                        QGraphicsObject *item = wrap.toQGraphicsObject(qgiPy);
+                        if (item) { qgiv->addArbitraryItem(item); }
                     }
-               }
-           }
+                }
+            }
         }
         catch (Base::Exception &e) {
             e.setPyException();
@@ -338,9 +336,6 @@ private:
     }
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace TechDrawGui

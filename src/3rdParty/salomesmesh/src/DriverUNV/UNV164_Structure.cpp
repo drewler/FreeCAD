@@ -33,51 +33,48 @@ using namespace UNV164;
 
 static string _label_dataset = "164";
 
-void UNV164::Read(std::ifstream& in_stream, TRecord& theUnitsRecord )
+void UNV164::Read(std::ifstream &in_stream, TRecord &theUnitsRecord)
 {
-  if(!in_stream.good())
-    EXCEPTION(runtime_error,"ERROR: Input file not good.");
+    if (!in_stream.good()) EXCEPTION(runtime_error, "ERROR: Input file not good.");
 
-  if(!beginning_of_dataset(in_stream,_label_dataset))
-    return;
+    if (!beginning_of_dataset(in_stream, _label_dataset)) return;
 
-  string num_buf;
-  char line[theMaxLineLen] = "";
+    string num_buf;
+    char line[theMaxLineLen] = "";
 
-  in_stream >> theUnitsRecord.units_code;
-  in_stream.readsome( line, 20 );
-  theUnitsRecord.units_description = line;
-  in_stream >> theUnitsRecord.temp_mode;
+    in_stream >> theUnitsRecord.units_code;
+    in_stream.readsome(line, 20);
+    theUnitsRecord.units_description = line;
+    in_stream >> theUnitsRecord.temp_mode;
 
-  for ( int i = 0; i < 4; i++ )
-  {
-    in_stream >> num_buf;
-    theUnitsRecord.factors[i] = D_to_e(num_buf);
-  }
+    for (int i = 0; i < 4; i++) {
+        in_stream >> num_buf;
+        theUnitsRecord.factors[i] = D_to_e(num_buf);
+    }
 }
 
-void UNV164::Write(std::ofstream& out_stream)
+void UNV164::Write(std::ofstream &out_stream)
 {
-  if(!out_stream.good())
-    EXCEPTION(runtime_error,"ERROR: Output file not good.");
-  
-  out_stream<<"    -1" << endl;
-  out_stream<<"   "<<_label_dataset << endl;
+    if (!out_stream.good()) EXCEPTION(runtime_error, "ERROR: Output file not good.");
 
-  out_stream<<"         1  SI: Meter (newton)         2"                                    << endl;
-  out_stream<<"    1.0000000000000000E+0    1.0000000000000000E+0    1.0000000000000000E+0" << endl;
-  out_stream<<"    2.7314999999999998E+2"                                                   << endl;
+    out_stream << "    -1" << endl;
+    out_stream << "   " << _label_dataset << endl;
 
-  out_stream<<"    -1"  << endl;
+    out_stream << "         1  SI: Meter (newton)         2" << endl;
+    out_stream << "    1.0000000000000000E+0    1.0000000000000000E+0    1.0000000000000000E+0"
+               << endl;
+    out_stream << "    2.7314999999999998E+2" << endl;
+
+    out_stream << "    -1" << endl;
 }
 
 UNV164::TRecord::TRecord()
 {
-  units_code        = 1;
-  units_description = "SI: Meter (newton)";
-  temp_mode         = 2;
-  factors[0]        = 1.0;
-  factors[1]        = 1.0;
-  factors[2]        = 1.0;
-  factors[3]        = 273.15;
+    units_code = 1;
+    units_description = "SI: Meter (newton)";
+    temp_mode = 2;
+    factors[0] = 1.0;
+    factors[1] = 1.0;
+    factors[2] = 1.0;
+    factors[3] = 273.15;
 }

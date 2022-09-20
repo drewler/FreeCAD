@@ -28,18 +28,20 @@
 #include "ViewProviderChamfer.h"
 
 class Ui_TaskChamferParameters;
-namespace PartDesign {
+namespace PartDesign
+{
 class Chamfer;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class TaskChamferParameters : public TaskDressUpParameters
+class TaskChamferParameters: public TaskDressUpParameters
 {
     Q_OBJECT
 
 public:
-    explicit TaskChamferParameters(ViewProviderDressUp *DressUpView, QWidget *parent=nullptr);
+    explicit TaskChamferParameters(ViewProviderDressUp *DressUpView, QWidget *parent = nullptr);
     ~TaskChamferParameters() override;
 
     void apply() override;
@@ -58,7 +60,7 @@ protected:
     void clearButtons(const selectionModes notThis) override;
     bool event(QEvent *e) override;
     void changeEvent(QEvent *e) override;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
 
     int getType(void) const;
     double getSize(void) const;
@@ -67,13 +69,13 @@ protected:
     bool getFlipDirection(void) const;
 
 private:
-    void setUpUI(PartDesign::Chamfer* pcChamfer);
+    void setUpUI(PartDesign::Chamfer *pcChamfer);
 
     std::unique_ptr<Ui_TaskChamferParameters> ui;
 };
 
 /// simulation dialog for the TaskView
-class TaskDlgChamferParameters : public TaskDlgDressUpParameters
+class TaskDlgChamferParameters: public TaskDlgDressUpParameters
 {
     Q_OBJECT
 

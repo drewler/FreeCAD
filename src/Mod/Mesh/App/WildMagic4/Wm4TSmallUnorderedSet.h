@@ -35,46 +35,45 @@
 namespace Wm4
 {
 
-template <class T>
-class TSmallUnorderedSet
+template<class T> class TSmallUnorderedSet
 {
 public:
     // construction and destruction
-    TSmallUnorderedSet ();
-    TSmallUnorderedSet (int iMaxQuantity, int iGrowBy);
-    TSmallUnorderedSet (const TSmallUnorderedSet& rkSet);
-    ~TSmallUnorderedSet ();
+    TSmallUnorderedSet();
+    TSmallUnorderedSet(int iMaxQuantity, int iGrowBy);
+    TSmallUnorderedSet(const TSmallUnorderedSet &rkSet);
+    ~TSmallUnorderedSet();
 
     // assignment
-    TSmallUnorderedSet& operator= (const TSmallUnorderedSet& rkSet);
+    TSmallUnorderedSet &operator=(const TSmallUnorderedSet &rkSet);
 
     // member access
-    int GetMaxQuantity () const;
-    int GetGrowBy () const;
-    int GetQuantity () const;
-    T* GetElements ();
-    const T* GetElements () const;
-    T& operator[] (int i);
-    const T& operator[] (int i) const;
+    int GetMaxQuantity() const;
+    int GetGrowBy() const;
+    int GetQuantity() const;
+    T *GetElements();
+    const T *GetElements() const;
+    T &operator[](int i);
+    const T &operator[](int i) const;
 
     // insertion, removal, searching
-    bool Insert (const T& rkElement);
-    void InsertNoCheck (const T& rkElement);
-    bool Remove (const T& rkElement);
-    bool Exists (const T& rkElement);
+    bool Insert(const T &rkElement);
+    void InsertNoCheck(const T &rkElement);
+    bool Remove(const T &rkElement);
+    bool Exists(const T &rkElement);
 
     // make empty set, keep quantity and growth parameters
-    void Clear ();
+    void Clear();
 
     // make empty set, reallocate using new quantity and growth parameters
-    void Clear (int iMaxQuantity, int iGrowBy);
+    void Clear(int iMaxQuantity, int iGrowBy);
 
 private:
     int m_iQuantity, m_iMaxQuantity, m_iGrowBy;
-    T* m_atElement;
+    T *m_atElement;
 };
 
-}
+} // namespace Wm4
 
 #include "Wm4TSmallUnorderedSet.inl"
 

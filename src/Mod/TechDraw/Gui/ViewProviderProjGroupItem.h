@@ -30,7 +30,8 @@
 #include "ViewProviderViewPart.h"
 
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 
 class TechDrawGuiExport ViewProviderProjGroupItem: public ViewProviderViewPart
@@ -38,28 +39,26 @@ class TechDrawGuiExport ViewProviderProjGroupItem: public ViewProviderViewPart
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderProjGroupItem);
 
 public:
+    ViewProviderProjGroupItem();
+    ~ViewProviderProjGroupItem() override;
 
-     ViewProviderProjGroupItem();
-     ~ViewProviderProjGroupItem() override;
-
-    bool useNewSelectionModel() const override {return false;}
+    bool useNewSelectionModel() const override { return false; }
     /// returns a list of all possible modes
     std::vector<std::string> getDisplayModes() const override;
 
     /// Is called by the tree if the user double click on the object
     bool doubleClicked() override;
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
-    void updateData(const App::Property*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
+    void updateData(const App::Property *) override;
 
-    TechDraw::DrawProjGroupItem* getViewObject() const override;
-    TechDraw::DrawProjGroupItem* getObject() const;
+    TechDraw::DrawProjGroupItem *getViewObject() const override;
+    TechDraw::DrawProjGroupItem *getObject() const;
     void unsetEdit(int ModNum) override;
     bool onDelete(const std::vector<std::string> &) override;
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
 
 protected:
     bool setEdit(int ModNum) override;
-
 };
 
 } // namespace TechDrawGui

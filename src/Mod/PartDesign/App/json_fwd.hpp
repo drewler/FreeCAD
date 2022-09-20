@@ -2,10 +2,10 @@
 #define INCLUDE_NLOHMANN_JSON_FWD_HPP_
 
 #include <cstdint> // int64_t, uint64_t
-#include <map> // map
-#include <memory> // allocator
-#include <string> // string
-#include <vector> // vector
+#include <map>     // map
+#include <memory>  // allocator
+#include <string>  // string
+#include <vector>  // vector
 
 /*
 Licensed under the MIT License <http://opensource.org/licenses/MIT>.
@@ -27,19 +27,14 @@ This serializer ignores the template arguments and uses ADL
 ([argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl))
 for serialization.
 */
-template<typename T = void, typename SFINAE = void>
-struct adl_serializer;
+template<typename T = void, typename SFINAE = void> struct adl_serializer;
 
-template<template<typename U, typename V, typename... Args> class ObjectType =
-         std::map,
+template<template<typename U, typename V, typename... Args> class ObjectType = std::map,
          template<typename U, typename... Args> class ArrayType = std::vector,
          class StringType = std::string, class BooleanType = bool,
-         class NumberIntegerType = std::int64_t,
-         class NumberUnsignedType = std::uint64_t,
-         class NumberFloatType = double,
-         template<typename U> class AllocatorType = std::allocator,
-         template<typename T, typename SFINAE = void> class JSONSerializer =
-         adl_serializer,
+         class NumberIntegerType = std::int64_t, class NumberUnsignedType = std::uint64_t,
+         class NumberFloatType = double, template<typename U> class AllocatorType = std::allocator,
+         template<typename T, typename SFINAE = void> class JSONSerializer = adl_serializer,
          class BinaryType = std::vector<std::uint8_t>>
 class basic_json;
 
@@ -54,8 +49,7 @@ within a JSON document. It can be used with functions `at` and
 
 @since version 2.0.0
 */
-template<typename BasicJsonType>
-class json_pointer;
+template<typename BasicJsonType> class json_pointer;
 
 /*!
 @brief default JSON class
@@ -67,8 +61,7 @@ uses the standard template types.
 */
 using json = basic_json<>;
 
-template<class Key, class T, class IgnoredLess, class Allocator>
-struct ordered_map;
+template<class Key, class T, class IgnoredLess, class Allocator> struct ordered_map;
 
 /*!
 @brief ordered JSON class
@@ -79,6 +72,6 @@ This type preserves the insertion order of object keys.
 */
 using ordered_json = basic_json<nlohmann::ordered_map>;
 
-}  // namespace nlohmann
+} // namespace nlohmann
 
-#endif  // INCLUDE_NLOHMANN_JSON_FWD_HPP_
+#endif // INCLUDE_NLOHMANN_JSON_FWD_HPP_

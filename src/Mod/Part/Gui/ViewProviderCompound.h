@@ -27,9 +27,10 @@
 #include "ViewProvider.h"
 
 
-namespace PartGui {
+namespace PartGui
+{
 
-class PartGuiExport ViewProviderCompound : public ViewProviderPart
+class PartGuiExport ViewProviderCompound: public ViewProviderPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderCompound);
 
@@ -38,19 +39,19 @@ public:
     ViewProviderCompound();
     /// destructor
     ~ViewProviderCompound() override;
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    std::vector<App::DocumentObject *> claimChildren() const override;
     bool onDelete(const std::vector<std::string> &) override;
 
     /// drag and drop
     bool canDragObjects() const override;
-    bool canDragObject(App::DocumentObject*) const override;
-    void dragObject(App::DocumentObject*) override;
+    bool canDragObject(App::DocumentObject *) const override;
+    void dragObject(App::DocumentObject *) override;
     bool canDropObjects() const override;
-    bool canDropObject(App::DocumentObject*) const override;
-    void dropObject(App::DocumentObject*) override;
+    bool canDropObject(App::DocumentObject *) const override;
+    void dropObject(App::DocumentObject *) override;
 
 protected:
-    void updateData(const App::Property*) override;
+    void updateData(const App::Property *) override;
 };
 
 } // namespace PartGui

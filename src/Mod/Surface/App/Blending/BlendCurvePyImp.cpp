@@ -30,12 +30,9 @@
 
 using namespace Surface;
 
-std::string BlendCurvePy::representation() const
-{
-    return "BlendCurve";
-}
+std::string BlendCurvePy::representation() const { return "BlendCurve"; }
 
-PyObject *BlendCurvePy::PyMake(struct _typeobject *, PyObject *, PyObject *)// Python wrapper
+PyObject *BlendCurvePy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     // create a new instance of BlendCurvePy
     return new BlendCurvePy(new BlendCurve);
@@ -46,7 +43,8 @@ int BlendCurvePy::PyInit(PyObject *args, PyObject * /*kwds*/)
     PyObject *b1;
     PyObject *b2;
 
-    if (!PyArg_ParseTuple(args, "O!O!", &(Surface::BlendPointPy::Type), &b1, &(Surface::BlendPointPy::Type), &b2))
+    if (!PyArg_ParseTuple(args, "O!O!", &(Surface::BlendPointPy::Type), &b1,
+                          &(Surface::BlendPointPy::Type), &b2))
         return -1;
 
     std::vector<BlendPoint> bpList;
@@ -58,10 +56,9 @@ int BlendCurvePy::PyInit(PyObject *args, PyObject * /*kwds*/)
     return 0;
 }
 
-PyObject *BlendCurvePy::compute(PyObject * args)
+PyObject *BlendCurvePy::compute(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     BlendCurve *bc = getBlendCurvePtr();
     Handle(Geom_BezierCurve) gc = bc->compute();
@@ -73,9 +70,7 @@ PyObject *BlendCurvePy::setSize(PyObject *args)
     int i;
     double size;
     PyObject *relative = Py_True;
-    if (!PyArg_ParseTuple(args, "idO!", &i, &size, &PyBool_Type, &relative)) {
-        return nullptr;
-    }
+    if (!PyArg_ParseTuple(args, "idO!", &i, &size, &PyBool_Type, &relative)) { return nullptr; }
     try {
         getBlendCurvePtr()->setSize(i, size, Base::asBoolean(relative));
         Py_Return;
@@ -86,12 +81,6 @@ PyObject *BlendCurvePy::setSize(PyObject *args)
     }
 }
 
-PyObject *BlendCurvePy::getCustomAttributes(const char * /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *BlendCurvePy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int BlendCurvePy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
-{
-    return 0;
-}
+int BlendCurvePy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

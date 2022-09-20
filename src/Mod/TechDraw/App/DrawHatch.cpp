@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #include <Precision.hxx>
 #include <cmath>
 
@@ -32,8 +32,8 @@
 
 #include <iomanip>
 
-# include <QFile>
-# include <QFileInfo>
+#include <QFile>
+#include <QFileInfo>
 
 #include <App/Application.h>
 #include <App/Document.h>
@@ -48,7 +48,7 @@
 #include "DrawUtil.h"
 #include "DrawHatch.h"
 
-#include <Mod/TechDraw/App/DrawHatchPy.h>  // generated from DrawHatchPy.xml
+#include <Mod/TechDraw/App/DrawHatchPy.h> // generated from DrawHatchPy.xml
 
 using namespace TechDraw;
 using namespace std;
@@ -60,26 +60,25 @@ DrawHatch::DrawHatch(void)
 {
     static const char *vgroup = "Hatch";
 
-    ADD_PROPERTY_TYPE(Source, (nullptr), vgroup, (App::PropertyType)(App::Prop_None), "The View + Face to be hatched");
+    ADD_PROPERTY_TYPE(Source, (nullptr), vgroup, (App::PropertyType)(App::Prop_None),
+                      "The View + Face to be hatched");
     Source.setScope(App::LinkScope::Global);
-    ADD_PROPERTY_TYPE(HatchPattern, (prefSvgHatch()), vgroup, App::Prop_None, "The hatch pattern file for this area");
+    ADD_PROPERTY_TYPE(HatchPattern, (prefSvgHatch()), vgroup, App::Prop_None,
+                      "The hatch pattern file for this area");
     ADD_PROPERTY_TYPE(SvgIncluded, (""), vgroup, App::Prop_None,
-                                            "Embedded SVG hatch file. System use only.");   // n/a to end users
-    std::string svgFilter("SVG files (*.svg *.SVG);;Bitmap files(*.jpg *.jpeg *.png *.bmp);;All files (*)");
+                      "Embedded SVG hatch file. System use only."); // n/a to end users
+    std::string svgFilter(
+        "SVG files (*.svg *.SVG);;Bitmap files(*.jpg *.jpeg *.png *.bmp);;All files (*)");
     HatchPattern.setFilter(svgFilter);
 }
 
-void DrawHatch::onChanged(const App::Property* prop)
+void DrawHatch::onChanged(const App::Property *prop)
 {
     if (!isRestoring()) {
-        if (prop == &Source) {
-            DrawHatch::execute();
-        }
-        App::Document* doc = getDocument();
+        if (prop == &Source) { DrawHatch::execute(); }
+        App::Document *doc = getDocument();
         if ((prop == &HatchPattern) && doc) {
-            if (!HatchPattern.isEmpty()) {
-                replaceFileIncluded(HatchPattern.getValue());
-            }
+            if (!HatchPattern.isEmpty()) { replaceFileIncluded(HatchPattern.getValue()); }
         }
     }
     App::DocumentObject::onChanged(prop);
@@ -88,30 +87,23 @@ void DrawHatch::onChanged(const App::Property* prop)
 short DrawHatch::mustExecute() const
 {
     short result = 0;
-    if (!isRestoring()) {
-        result  =  (Source.isTouched()  ||
-                    HatchPattern.isTouched());
-    }
+    if (!isRestoring()) { result = (Source.isTouched() || HatchPattern.isTouched()); }
 
-    if (result) {
-        return result;
-    }
+    if (result) { return result; }
     return App::DocumentObject::mustExecute();
 }
 
 App::DocumentObjectExecReturn *DrawHatch::execute(void)
 {
-    DrawViewPart* parent = getSourceView();
-    if (parent) {
-        parent->requestPaint();
-    }
+    DrawViewPart *parent = getSourceView();
+    if (parent) { parent->requestPaint(); }
     return App::DocumentObject::StdReturn;
 }
 
-DrawViewPart* DrawHatch::getSourceView(void) const
+DrawViewPart *DrawHatch::getSourceView(void) const
 {
-    App::DocumentObject* obj = Source.getValue();
-    DrawViewPart* result = dynamic_cast<DrawViewPart*>(obj);
+    App::DocumentObject *obj = Source.getValue();
+    DrawViewPart *result = dynamic_cast<DrawViewPart *>(obj);
     return result;
 }
 
@@ -124,13 +116,13 @@ PyObject *DrawHatch::getPyObject(void)
     return Py::new_reference_to(PythonObject);
 }
 
-bool DrawHatch::faceIsHatched(int i, std::vector<TechDraw::DrawHatch*> hatchObjs)
+bool DrawHatch::faceIsHatched(int i, std::vector<TechDraw::DrawHatch *> hatchObjs)
 {
     bool result = false;
     bool found = false;
-    for (auto& h:hatchObjs) {
+    for (auto &h : hatchObjs) {
         const std::vector<std::string> &sourceNames = h->Source.getSubValues();
-        for (auto& s : sourceNames) {
+        for (auto &s : sourceNames) {
             int fdx = TechDraw::DrawUtil::getIndexFromName(s);
             if (fdx == i) {
                 result = true;
@@ -138,9 +130,7 @@ bool DrawHatch::faceIsHatched(int i, std::vector<TechDraw::DrawHatch*> hatchObjs
                 break;
             }
         }
-        if (found) {
-            break;
-        }
+        if (found) { break; }
     }
     return result;
 }
@@ -150,12 +140,12 @@ bool DrawHatch::affectsFace(int i)
 {
     bool result = false;
     const std::vector<std::string> &sourceNames = Source.getSubValues();
-    for (auto& s : sourceNames) {
+    for (auto &s : sourceNames) {
         int fdx = TechDraw::DrawUtil::getIndexFromName(s);
-            if (fdx == i) {
-                result = true;
-                break;
-            }
+        if (fdx == i) {
+            result = true;
+            break;
+        }
     }
     return result;
 }
@@ -163,27 +153,24 @@ bool DrawHatch::affectsFace(int i)
 //remove a subElement(Face) from Source PropertyLinkSub
 bool DrawHatch::removeSub(std::string toRemove)
 {
-//    Base::Console().Message("DH::removeSub(%s)\n", toRemove.c_str());
+    //    Base::Console().Message("DH::removeSub(%s)\n", toRemove.c_str());
     bool removed = false;
     const std::vector<std::string> &sourceNames = Source.getSubValues();
     std::vector<std::string> newList;
-    App::DocumentObject* sourceFeat = Source.getValue();
-    for (auto& s: sourceNames) {
-        if (s == toRemove) {
-            removed = true;
-        } else {
+    App::DocumentObject *sourceFeat = Source.getValue();
+    for (auto &s : sourceNames) {
+        if (s == toRemove) { removed = true; }
+        else {
             newList.push_back(s);
         }
     }
-    if (removed) {
-        Source.setValue(sourceFeat, newList);
-    }
+    if (removed) { Source.setValue(sourceFeat, newList); }
     return removed;
 }
 
 bool DrawHatch::removeSub(int i)
 {
-//    Base::Console().Message("DH::removeSub(%d)\n", i);
+    //    Base::Console().Message("DH::removeSub(%d)\n", i);
     std::stringstream ss;
     ss << "Face" << i;
     return removeSub(ss.str());
@@ -197,10 +184,9 @@ bool DrawHatch::empty(void)
 
 void DrawHatch::replaceFileIncluded(std::string newSvgFile)
 {
-//    Base::Console().Message("DH::replaceSvgHatch(%s)\n", newSvgFile.c_str());
-    if (SvgIncluded.isEmpty()) {
-        setupFileIncluded();
-    } else {
+    //    Base::Console().Message("DH::replaceSvgHatch(%s)\n", newSvgFile.c_str());
+    if (SvgIncluded.isEmpty()) { setupFileIncluded(); }
+    else {
         std::string tempName = SvgIncluded.getExchangeTempFile();
         DrawUtil::copyFile(newSvgFile, tempName);
         SvgIncluded.setValue(tempName.c_str());
@@ -209,18 +195,16 @@ void DrawHatch::replaceFileIncluded(std::string newSvgFile)
 
 void DrawHatch::onDocumentRestored()
 {
-//if this is a restore, we should be checking for SvgIncluded empty,
-// if it is, set it up from hatchPattern,
-// else, don't do anything
-//    Base::Console().Message("DH::onDocumentRestored()\n");
+    //if this is a restore, we should be checking for SvgIncluded empty,
+    // if it is, set it up from hatchPattern,
+    // else, don't do anything
+    //    Base::Console().Message("DH::onDocumentRestored()\n");
     if (SvgIncluded.isEmpty()) {
         if (!HatchPattern.isEmpty()) {
             std::string svgFileName = HatchPattern.getValue();
             Base::FileInfo tfi(svgFileName);
             if (tfi.isReadable()) {
-                if (SvgIncluded.isEmpty()) {
-                    setupFileIncluded();
-                }
+                if (SvgIncluded.isEmpty()) { setupFileIncluded(); }
             }
         }
     }
@@ -238,8 +222,8 @@ void DrawHatch::setupObject()
 
 void DrawHatch::setupFileIncluded(void)
 {
-//    Base::Console().Message("DH::setupFileIncluded()\n");
-    App::Document* doc = getDocument();
+    //    Base::Console().Message("DH::setupFileIncluded()\n");
+    App::Document *doc = getDocument();
     std::string special = getNameInDocument();
     special += "Hatch.fill";
     std::string dir = doc->TransientDir.getValue();
@@ -259,12 +243,10 @@ void DrawHatch::setupFileIncluded(void)
 
 void DrawHatch::unsetupObject(void)
 {
-//    Base::Console().Message("DH::unsetupObject() - status: %lu  removing: %d \n", getStatus(), isRemoving());
-    App::DocumentObject* source = Source.getValue();
-    DrawView* dv = dynamic_cast<DrawView*>(source);
-    if (dv) {
-        dv->requestPaint();
-    }
+    //    Base::Console().Message("DH::unsetupObject() - status: %lu  removing: %d \n", getStatus(), isRemoving());
+    App::DocumentObject *source = Source.getValue();
+    DrawView *dv = dynamic_cast<DrawView *>(source);
+    if (dv) { dv->requestPaint(); }
     App::DocumentObject::unsetupObject();
 }
 
@@ -272,10 +254,7 @@ bool DrawHatch::isSvgHatch(void) const
 {
     bool result = false;
     Base::FileInfo fi(HatchPattern.getValue());
-    if ((fi.extension() == "svg") ||
-        (fi.extension() == "SVG")) {
-        result = true;
-    }
+    if ((fi.extension() == "svg") || (fi.extension() == "SVG")) { result = true; }
     return result;
 }
 
@@ -283,29 +262,24 @@ bool DrawHatch::isBitmapHatch(void) const
 {
     bool result = false;
     Base::FileInfo fi(HatchPattern.getValue());
-    if ((fi.extension() == "bmp") ||
-        (fi.extension() == "BMP") ||
-        (fi.extension() == "png") ||
-        (fi.extension() == "PNG") ||
-        (fi.extension() == "jpg") ||
-        (fi.extension() == "JPG") ||
-        (fi.extension() == "jpeg") ||
-        (fi.extension() == "JPEG") ) {
+    if ((fi.extension() == "bmp") || (fi.extension() == "BMP") || (fi.extension() == "png")
+        || (fi.extension() == "PNG") || (fi.extension() == "jpg") || (fi.extension() == "JPG")
+        || (fi.extension() == "jpeg") || (fi.extension() == "JPEG")) {
         result = true;
     }
     return result;
 }
 
 //standard preference getters
-std::string DrawHatch::prefSvgHatch(void)
-{
-    return Preferences::svgFile();
-}
+std::string DrawHatch::prefSvgHatch(void) { return Preferences::svgFile(); }
 
 App::Color DrawHatch::prefSvgHatchColor(void)
 {
-    Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter()
-        .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("Mod/TechDraw/Colors");
+    Base::Reference<ParameterGrp> hGrp = App::GetApplication()
+                                             .GetUserParameter()
+                                             .GetGroup("BaseApp")
+                                             ->GetGroup("Preferences")
+                                             ->GetGroup("Mod/TechDraw/Colors");
     App::Color fcColor;
     fcColor.setPackedValue(hGrp->GetUnsigned("Hatch", 0x00FF0000));
     return fcColor;
@@ -313,14 +287,16 @@ App::Color DrawHatch::prefSvgHatchColor(void)
 
 // Python Drawing feature ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(TechDraw::DrawHatchPython, TechDraw::DrawHatch)
-template<> const char* TechDraw::DrawHatchPython::getViewProviderName(void) const {
+template<> const char *TechDraw::DrawHatchPython::getViewProviderName(void) const
+{
     return "TechDrawGui::ViewProviderHatch";
 }
 /// @endcond
 
 // explicit template instantiation
 template class TechDrawExport FeaturePythonT<TechDraw::DrawHatch>;
-}
+} // namespace App

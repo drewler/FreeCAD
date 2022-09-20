@@ -28,15 +28,17 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderThickness,PartDesignGui::ViewProviderDressUp)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderThickness, PartDesignGui::ViewProviderDressUp)
 
 
-const std::string & ViewProviderThickness::featureName() const {
+const std::string &ViewProviderThickness::featureName() const
+{
     static const std::string name = "Thickness";
     return name;
 }
 
 
-TaskDlgFeatureParameters *ViewProviderThickness::getEditDialog() {
-    return new TaskDlgThicknessParameters (this);
+TaskDlgFeatureParameters *ViewProviderThickness::getEditDialog()
+{
+    return new TaskDlgThicknessParameters(this);
 }

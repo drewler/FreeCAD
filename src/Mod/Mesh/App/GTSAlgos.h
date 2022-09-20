@@ -40,32 +40,30 @@ namespace Mesh
 class MeshExport GTSAlgos
 {
 public:
-  //GTSAlgos(MeshCore::MeshKernel* Mesh);
-  GTSAlgos(Mesh::MeshObject& Mesh):_Mesh(Mesh){};
+    //GTSAlgos(MeshCore::MeshKernel* Mesh);
+    GTSAlgos(Mesh::MeshObject &Mesh) : _Mesh(Mesh) {};
 
-  /** Coarsen the mesh
+    /** Coarsen the mesh
   */
-  void coarsen(float f);
+    void coarsen(float f);
 
-  /** makes a boolean add
+    /** makes a boolean add
    * The int Type stears the boolean oberation: 0=add;1=intersection;2=diff
   */
-  void boolean(const Mesh::MeshObject& ToolMesh, int Type=0);
+    void boolean(const Mesh::MeshObject &ToolMesh, int Type = 0);
 
-  /** Creates a GTS Surface from a MeshKernel
+    /** Creates a GTS Surface from a MeshKernel
   */
-  static GtsSurface* createGTSSurface(const Mesh::MeshObject& Mesh);
+    static GtsSurface *createGTSSurface(const Mesh::MeshObject &Mesh);
 
-  /** Creates a GTS Surface from a MeshKernel
+    /** Creates a GTS Surface from a MeshKernel
   */
-  static void fillMeshFromGTSSurface(Mesh::MeshObject& Mesh, GtsSurface* pSurface);
+    static void fillMeshFromGTSSurface(Mesh::MeshObject &Mesh, GtsSurface *pSurface);
 
 private:
-
-  Mesh::MeshObject& _Mesh;
+    Mesh::MeshObject &_Mesh;
 };
 
 
-
 } // namespace Mesh
-#endif 
+#endif

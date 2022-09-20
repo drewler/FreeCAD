@@ -40,34 +40,31 @@ static bool gs_bInitializedTime = false;
 
 char System::ms_acPath[SYSTEM_MAX_PATH];
 char System::ms_acEnvVar[SYSTEM_MAX_ENVVAR];
-std::vector<std::string>* System::ms_pkDirectories = nullptr;
+std::vector<std::string> *System::ms_pkDirectories = nullptr;
 char System::WM4_PATH[SYSTEM_MAX_ENVVAR];
 
 //----------------------------------------------------------------------------
-void System::SwapBytes (int iSize, void* pvValue)
+void System::SwapBytes(int iSize, void *pvValue)
 {
     // size must be even
     assert(iSize >= 2 && (iSize & 1) == 0);
 
-    char* acBytes = (char*) pvValue;
-    for (int i0 = 0, i1 = iSize-1; i0 < iSize/2; i0++, i1--)
-    {
+    char *acBytes = (char *)pvValue;
+    for (int i0 = 0, i1 = iSize - 1; i0 < iSize / 2; i0++, i1--) {
         char cSave = acBytes[i0];
         acBytes[i0] = acBytes[i1];
         acBytes[i1] = cSave;
     }
 }
 //----------------------------------------------------------------------------
-void System::SwapBytes (int iSize, int iQuantity, void* pvValue)
+void System::SwapBytes(int iSize, int iQuantity, void *pvValue)
 {
     // size must be even
     assert(iSize >= 2 && (iSize & 1) == 0);
 
-    char* acBytes = (char*) pvValue;
-    for (int i = 0; i < iQuantity; i++, acBytes += iSize)
-    {
-        for (int i0 = 0, i1 = iSize-1; i0 < iSize/2; i0++, i1--)
-        {
+    char *acBytes = (char *)pvValue;
+    for (int i = 0; i < iQuantity; i++, acBytes += iSize) {
+        for (int i0 = 0, i1 = iSize - 1; i0 < iSize / 2; i0++, i1--) {
             char cSave = acBytes[i0];
             acBytes[i0] = acBytes[i1];
             acBytes[i1] = cSave;
@@ -75,89 +72,83 @@ void System::SwapBytes (int iSize, int iQuantity, void* pvValue)
     }
 }
 //----------------------------------------------------------------------------
-bool System::IsBigEndian ()
+bool System::IsBigEndian()
 {
     int iInt = 1;
-    char* pcChar = (char*)&iInt;
+    char *pcChar = (char *)&iInt;
     return !(*pcChar);
 }
 //----------------------------------------------------------------------------
-void System::EndianCopy (int iSize, const void* pvSrc, void* pvDst)
+void System::EndianCopy(int iSize, const void *pvSrc, void *pvDst)
 {
     size_t uiSize = (size_t)iSize;
-    Memcpy(pvDst,uiSize,pvSrc,uiSize);
+    Memcpy(pvDst, uiSize, pvSrc, uiSize);
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(iSize,pvDst);
+    SwapBytes(iSize, pvDst);
 #endif
 }
 //----------------------------------------------------------------------------
-void System::EndianCopy (int iSize, int iQuantity, const void* pvSrc,
-    void* pvDst)
+void System::EndianCopy(int iSize, int iQuantity, const void *pvSrc, void *pvDst)
 {
-    size_t uiSize = (size_t)(iSize*iQuantity);
-    Memcpy(pvDst,uiSize,pvSrc,uiSize);
+    size_t uiSize = (size_t)(iSize * iQuantity);
+    Memcpy(pvDst, uiSize, pvSrc, uiSize);
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(iSize,iQuantity,pvDst);
+    SwapBytes(iSize, iQuantity, pvDst);
 #endif
 }
 //----------------------------------------------------------------------------
-double System::GetTime ()
+double System::GetTime()
 {
 #if !defined(WIN32)
-    if (!gs_bInitializedTime)
-    {
+    if (!gs_bInitializedTime) {
         gs_bInitializedTime = true;
         gettimeofday(&gs_kInitial, nullptr);
     }
 
     struct timeval kCurrent;
-    gettimeofday(&kCurrent,nullptr);
-    
-    struct timeval kDelta;
-    timersub(&kCurrent,&gs_kInitial,&kDelta);
+    gettimeofday(&kCurrent, nullptr);
 
-    return 0.001*(double)(1000*kDelta.tv_sec + kDelta.tv_usec/1000);
+    struct timeval kDelta;
+    timersub(&kCurrent, &gs_kInitial, &kDelta);
+
+    return 0.001 * (double)(1000 * kDelta.tv_sec + kDelta.tv_usec / 1000);
 #else
     struct timeb kTB;
 
-    if (!gs_bInitializedTime)
-    {
+    if (!gs_bInitializedTime) {
         gs_bInitializedTime = true;
         ftime(&kTB);
         gs_lInitialSec = (long)kTB.time;
-        gs_lInitialUSec = 1000*kTB.millitm;
+        gs_lInitialUSec = 1000 * kTB.millitm;
     }
 
     ftime(&kTB);
     long lCurrentSec = (long)kTB.time;
-    long lCurrentUSec = 1000*kTB.millitm;
+    long lCurrentUSec = 1000 * kTB.millitm;
     long lDeltaSec = lCurrentSec - gs_lInitialSec;
-    long lDeltaUSec = lCurrentUSec -gs_lInitialUSec;
-    if (lDeltaUSec < 0)
-    {
+    long lDeltaUSec = lCurrentUSec - gs_lInitialUSec;
+    if (lDeltaUSec < 0) {
         lDeltaUSec += 1000000;
         lDeltaSec--;
     }
 
-    return 0.001*(double)(1000*lDeltaSec + lDeltaUSec/1000);
+    return 0.001 * (double)(1000 * lDeltaSec + lDeltaUSec / 1000);
 #endif
 }
 //----------------------------------------------------------------------------
-bool System::Load (const char* acFilename, char*& racBuffer, int& riSize)
+bool System::Load(const char *acFilename, char *&racBuffer, int &riSize)
 {
     struct stat kStat;
-    if (stat(acFilename,&kStat) != 0)
-    {
+    if (stat(acFilename, &kStat) != 0) {
         // file does not exist
         racBuffer = nullptr;
         riSize = 0;
         return false;
     }
 
-    FILE* pkFile = System::Fopen(acFilename,"rb");
+    FILE *pkFile = System::Fopen(acFilename, "rb");
     assert(pkFile);
-    if (!pkFile)
-    {
+    if (!pkFile) {
         racBuffer = nullptr;
         riSize = 0;
         return false;
@@ -165,9 +156,8 @@ bool System::Load (const char* acFilename, char*& racBuffer, int& riSize)
 
     riSize = kStat.st_size;
     racBuffer = WM4_NEW char[riSize];
-    int iRead = (int)fread(racBuffer,sizeof(char),riSize,pkFile);
-    if (System::Fclose(pkFile) != 0 || iRead != riSize)
-    {
+    int iRead = (int)fread(racBuffer, sizeof(char), riSize, pkFile);
+    if (System::Fclose(pkFile) != 0 || iRead != riSize) {
         assert(false);
         WM4_DELETE[] racBuffer;
         racBuffer = nullptr;
@@ -178,395 +168,386 @@ bool System::Load (const char* acFilename, char*& racBuffer, int& riSize)
     return true;
 }
 //----------------------------------------------------------------------------
-bool System::Save (const char* acFilename, const char* acBuffer, int iSize)
+bool System::Save(const char *acFilename, const char *acBuffer, int iSize)
 {
-    if (!acBuffer || iSize <= 0)
-    {
+    if (!acBuffer || iSize <= 0) {
         // The input buffer must exist.  It is not possible to verify that
         // the buffer has the specified number of bytes.
         assert(false);
         return false;
     }
 
-    FILE* pkFile = System::Fopen(acFilename,"wb");
-    if (!pkFile)
-    {
-        return false;
-    }
+    FILE *pkFile = System::Fopen(acFilename, "wb");
+    if (!pkFile) { return false; }
 
-    int iWrite = (int)fwrite(acBuffer,sizeof(char),iSize,pkFile);
-    if (System::Fclose(pkFile) != 0 || iWrite != iSize)
-    {
-        assert( false );
+    int iWrite = (int)fwrite(acBuffer, sizeof(char), iSize, pkFile);
+    if (System::Fclose(pkFile) != 0 || iWrite != iSize) {
+        assert(false);
         return false;
     }
 
     return true;
 }
 //----------------------------------------------------------------------------
-bool System::Append (const char* acFilename, char* acBuffer, int iSize)
+bool System::Append(const char *acFilename, char *acBuffer, int iSize)
 {
-    if (!acBuffer || iSize <= 0)
-    {
+    if (!acBuffer || iSize <= 0) {
         // The input buffer must exist.  It is not possible to verify that
         // the buffer has the specified number of bytes.
         assert(false);
         return false;
     }
 
-    FILE* pkFile = System::Fopen(acFilename,"ab");
-    if (!pkFile)
-    {
-        return false;
-    }
+    FILE *pkFile = System::Fopen(acFilename, "ab");
+    if (!pkFile) { return false; }
 
-    int iWrite = (int)fwrite(acBuffer,sizeof(char),iSize,pkFile);
-    if (System::Fclose(pkFile) != 0 || iWrite != iSize)
-    {
-        assert( false );
+    int iWrite = (int)fwrite(acBuffer, sizeof(char), iSize, pkFile);
+    if (System::Fclose(pkFile) != 0 || iWrite != iSize) {
+        assert(false);
         return false;
     }
 
     return true;
 }
 //----------------------------------------------------------------------------
-int System::Read1 (const char* acBuffer, int iQuantity, void* pvData)
+int System::Read1(const char *acBuffer, int iQuantity, void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
     size_t uiSize = (size_t)iQuantity;
-    Memcpy(pvData,uiSize,acBuffer,uiSize);
+    Memcpy(pvData, uiSize, acBuffer, uiSize);
     return iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Write1 (char* acBuffer, int iQuantity, const void* pvData)
+int System::Write1(char *acBuffer, int iQuantity, const void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
     size_t uiSize = (size_t)iQuantity;
-    Memcpy(acBuffer,uiSize,pvData,uiSize);
+    Memcpy(acBuffer, uiSize, pvData, uiSize);
     return iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Read1 (FILE* pkFile, int iQuantity, void* pvData)
+int System::Read1(FILE *pkFile, int iQuantity, void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
-    size_t r = fread(pvData,1,iQuantity,pkFile); (void)r;
+    size_t r = fread(pvData, 1, iQuantity, pkFile);
+    (void)r;
     return iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Write1 (FILE* pkFile, int iQuantity, const void* pvData)
+int System::Write1(FILE *pkFile, int iQuantity, const void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
-    fwrite(pvData,1,iQuantity,pkFile);
+    fwrite(pvData, 1, iQuantity, pkFile);
     return iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Read2le (const char* acBuffer, int iQuantity, void* pvData)
+int System::Read2le(const char *acBuffer, int iQuantity, void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 2*iQuantity;
+    int iNumBytes = 2 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(pvData,uiSize,acBuffer,uiSize);
+    Memcpy(pvData, uiSize, acBuffer, uiSize);
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(2,iQuantity,pvData);
+    SwapBytes(2, iQuantity, pvData);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Read4le (const char* acBuffer, int iQuantity, void* pvData)
+int System::Read4le(const char *acBuffer, int iQuantity, void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 4*iQuantity;
+    int iNumBytes = 4 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(pvData,uiSize,acBuffer,uiSize);
+    Memcpy(pvData, uiSize, acBuffer, uiSize);
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(4,iQuantity,pvData);
+    SwapBytes(4, iQuantity, pvData);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Read8le (const char* acBuffer, int iQuantity, void* pvData)
+int System::Read8le(const char *acBuffer, int iQuantity, void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 8*iQuantity;
+    int iNumBytes = 8 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(pvData,uiSize,acBuffer,uiSize);
+    Memcpy(pvData, uiSize, acBuffer, uiSize);
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(8,iQuantity,pvData);
+    SwapBytes(8, iQuantity, pvData);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Write2le (char* acBuffer, int iQuantity, const void* pvData)
+int System::Write2le(char *acBuffer, int iQuantity, const void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 2*iQuantity;
+    int iNumBytes = 2 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(acBuffer,uiSize,pvData,uiSize);
+    Memcpy(acBuffer, uiSize, pvData, uiSize);
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(2,iQuantity,acBuffer);
+    SwapBytes(2, iQuantity, acBuffer);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Write4le (char* acBuffer, int iQuantity, const void* pvData)
+int System::Write4le(char *acBuffer, int iQuantity, const void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 4*iQuantity;
+    int iNumBytes = 4 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(acBuffer,uiSize,pvData,uiSize);
+    Memcpy(acBuffer, uiSize, pvData, uiSize);
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(4,iQuantity,acBuffer);
+    SwapBytes(4, iQuantity, acBuffer);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Write8le (char* acBuffer, int iQuantity, const void* pvData)
+int System::Write8le(char *acBuffer, int iQuantity, const void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 8*iQuantity;
+    int iNumBytes = 8 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(acBuffer,uiSize,pvData,uiSize);
+    Memcpy(acBuffer, uiSize, pvData, uiSize);
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(8,iQuantity,acBuffer);
+    SwapBytes(8, iQuantity, acBuffer);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Read2le (FILE* pkFile, int iQuantity, void* pvData)
+int System::Read2le(FILE *pkFile, int iQuantity, void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
-    size_t r = fread(pvData,2,iQuantity,pkFile); (void)r;
+    size_t r = fread(pvData, 2, iQuantity, pkFile);
+    (void)r;
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(2,iQuantity,pvData);
+    SwapBytes(2, iQuantity, pvData);
 #endif
-    return 2*iQuantity;
+    return 2 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Read4le (FILE* pkFile, int iQuantity, void* pvData)
+int System::Read4le(FILE *pkFile, int iQuantity, void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
-    size_t r = fread(pvData,4,iQuantity,pkFile); (void)r;
+    size_t r = fread(pvData, 4, iQuantity, pkFile);
+    (void)r;
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(4,iQuantity,pvData);
+    SwapBytes(4, iQuantity, pvData);
 #endif
-    return 4*iQuantity;
+    return 4 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Read8le (FILE* pkFile, int iQuantity, void* pvData)
+int System::Read8le(FILE *pkFile, int iQuantity, void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
-    size_t r = fread(pvData,8,iQuantity,pkFile); (void)r;
+    size_t r = fread(pvData, 8, iQuantity, pkFile);
+    (void)r;
 #ifdef WM4_BIG_ENDIAN
-    SwapBytes(8,iQuantity,pvData);
+    SwapBytes(8, iQuantity, pvData);
 #endif
-    return 8*iQuantity;
+    return 8 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Write2le (FILE* pkFile, int iQuantity, const void* pvData)
+int System::Write2le(FILE *pkFile, int iQuantity, const void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
 #ifdef WM4_BIG_ENDIAN
-    const short* psData = (const short*)pvData;
-    for (int i = 0; i < iQuantity; i++)
-    {
+    const short *psData = (const short *)pvData;
+    for (int i = 0; i < iQuantity; i++) {
         short sTemp = *psData++;
-        SwapBytes(2,&sTemp);
-        fwrite(&sTemp,2,1,pkFile);
+        SwapBytes(2, &sTemp);
+        fwrite(&sTemp, 2, 1, pkFile);
     }
 #else
-    fwrite(pvData,2,iQuantity,pkFile);
+    fwrite(pvData, 2, iQuantity, pkFile);
 #endif
-    return 2*iQuantity;
+    return 2 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Write4le (FILE* pkFile, int iQuantity, const void* pvData)
+int System::Write4le(FILE *pkFile, int iQuantity, const void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
 #ifdef WM4_BIG_ENDIAN
-    const int* piData = (const int*)pvData;
-    for (int i = 0; i < iQuantity; i++)
-    {
+    const int *piData = (const int *)pvData;
+    for (int i = 0; i < iQuantity; i++) {
         int iTemp = *piData++;
-        SwapBytes(4,&iTemp);
-        fwrite(&iTemp,4,1,pkFile);
+        SwapBytes(4, &iTemp);
+        fwrite(&iTemp, 4, 1, pkFile);
     }
 #else
-    fwrite(pvData,4,iQuantity,pkFile);
+    fwrite(pvData, 4, iQuantity, pkFile);
 #endif
-    return 4*iQuantity;
+    return 4 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Write8le (FILE* pkFile, int iQuantity, const void* pvData)
+int System::Write8le(FILE *pkFile, int iQuantity, const void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
 #ifdef WM4_BIG_ENDIAN
-    const double* pdData = (const double*)pvData;
-    for (int i = 0; i < iQuantity; i++)
-    {
+    const double *pdData = (const double *)pvData;
+    for (int i = 0; i < iQuantity; i++) {
         double dTemp = *pdData++;
-        SwapBytes(8,&dTemp);
-        fwrite(&dTemp,8,1,pkFile);
+        SwapBytes(8, &dTemp);
+        fwrite(&dTemp, 8, 1, pkFile);
     }
 #else
-    fwrite(pvData,8,iQuantity,pkFile);
+    fwrite(pvData, 8, iQuantity, pkFile);
 #endif
-    return 8*iQuantity;
+    return 8 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Read2be (const char* acBuffer, int iQuantity, void* pvData)
+int System::Read2be(const char *acBuffer, int iQuantity, void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 2*iQuantity;
+    int iNumBytes = 2 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(pvData,uiSize,acBuffer,uiSize);
+    Memcpy(pvData, uiSize, acBuffer, uiSize);
 #ifndef WM4_BIG_ENDIAN
-    SwapBytes(2,iQuantity,pvData);
+    SwapBytes(2, iQuantity, pvData);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Read4be (const char* acBuffer, int iQuantity, void* pvData)
+int System::Read4be(const char *acBuffer, int iQuantity, void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 4*iQuantity;
+    int iNumBytes = 4 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(pvData,uiSize,acBuffer,uiSize);
+    Memcpy(pvData, uiSize, acBuffer, uiSize);
 #ifndef WM4_BIG_ENDIAN
-    SwapBytes(4,iQuantity,pvData);
+    SwapBytes(4, iQuantity, pvData);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Read8be (const char* acBuffer, int iQuantity, void* pvData)
+int System::Read8be(const char *acBuffer, int iQuantity, void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 8*iQuantity;
+    int iNumBytes = 8 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(pvData,uiSize,acBuffer,uiSize);
+    Memcpy(pvData, uiSize, acBuffer, uiSize);
 #ifndef WM4_BIG_ENDIAN
-    SwapBytes(8,iQuantity,pvData);
+    SwapBytes(8, iQuantity, pvData);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Write2be (char* acBuffer, int iQuantity, const void* pvData)
+int System::Write2be(char *acBuffer, int iQuantity, const void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 2*iQuantity;
+    int iNumBytes = 2 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(acBuffer,uiSize,pvData,uiSize);
+    Memcpy(acBuffer, uiSize, pvData, uiSize);
 #ifndef WM4_BIG_ENDIAN
-    SwapBytes(2,iQuantity,acBuffer);
+    SwapBytes(2, iQuantity, acBuffer);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Write4be (char* acBuffer, int iQuantity, const void* pvData)
+int System::Write4be(char *acBuffer, int iQuantity, const void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 4*iQuantity;
+    int iNumBytes = 4 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(acBuffer,uiSize,pvData,uiSize);
+    Memcpy(acBuffer, uiSize, pvData, uiSize);
 #ifndef WM4_BIG_ENDIAN
-    SwapBytes(4,iQuantity,acBuffer);
+    SwapBytes(4, iQuantity, acBuffer);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Write8be (char* acBuffer, int iQuantity, const void* pvData)
+int System::Write8be(char *acBuffer, int iQuantity, const void *pvData)
 {
     assert(acBuffer && iQuantity > 0 && pvData);
-    int iNumBytes = 8*iQuantity;
+    int iNumBytes = 8 * iQuantity;
     size_t uiSize = (size_t)iNumBytes;
-    Memcpy(acBuffer,uiSize,pvData,uiSize);
+    Memcpy(acBuffer, uiSize, pvData, uiSize);
 #ifndef WM4_BIG_ENDIAN
-    SwapBytes(8,iQuantity,acBuffer);
+    SwapBytes(8, iQuantity, acBuffer);
 #endif
     return iNumBytes;
 }
 //----------------------------------------------------------------------------
-int System::Read2be (FILE* pkFile, int iQuantity, void* pvData)
+int System::Read2be(FILE *pkFile, int iQuantity, void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
-    size_t r = fread(pvData,2,iQuantity,pkFile); (void)r;
+    size_t r = fread(pvData, 2, iQuantity, pkFile);
+    (void)r;
 #ifndef WM4_BIG_ENDIAN
-    SwapBytes(2,iQuantity,pvData);
+    SwapBytes(2, iQuantity, pvData);
 #endif
-    return 2*iQuantity;
+    return 2 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Read4be (FILE* pkFile, int iQuantity, void* pvData)
+int System::Read4be(FILE *pkFile, int iQuantity, void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
-    size_t r = fread(pvData,4,iQuantity,pkFile); (void)r;
+    size_t r = fread(pvData, 4, iQuantity, pkFile);
+    (void)r;
 #ifndef WM4_BIG_ENDIAN
-    SwapBytes(4,iQuantity,pvData);
+    SwapBytes(4, iQuantity, pvData);
 #endif
-    return 4*iQuantity;
+    return 4 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Read8be (FILE* pkFile, int iQuantity, void* pvData)
+int System::Read8be(FILE *pkFile, int iQuantity, void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
-    size_t r = fread(pvData,8,iQuantity,pkFile); (void)r;
+    size_t r = fread(pvData, 8, iQuantity, pkFile);
+    (void)r;
 #ifndef WM4_BIG_ENDIAN
-    SwapBytes(8,iQuantity,pvData);
+    SwapBytes(8, iQuantity, pvData);
 #endif
-    return 8*iQuantity;
+    return 8 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Write2be (FILE* pkFile, int iQuantity, const void* pvData)
+int System::Write2be(FILE *pkFile, int iQuantity, const void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
 #ifndef WM4_BIG_ENDIAN
-    const short* psData = (const short*)pvData;
-    for (int i = 0; i < iQuantity; i++)
-    {
+    const short *psData = (const short *)pvData;
+    for (int i = 0; i < iQuantity; i++) {
         short sTemp = *psData++;
-        SwapBytes(2,&sTemp);
-        fwrite(&sTemp,2,1,pkFile);
+        SwapBytes(2, &sTemp);
+        fwrite(&sTemp, 2, 1, pkFile);
     }
 #else
-    fwrite(pvData,2,iQuantity,pkFile);
+    fwrite(pvData, 2, iQuantity, pkFile);
 #endif
-    return 2*iQuantity;
+    return 2 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Write4be (FILE* pkFile, int iQuantity, const void* pvData)
+int System::Write4be(FILE *pkFile, int iQuantity, const void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
 #ifndef WM4_BIG_ENDIAN
-    const int* piData = (const int*)pvData;
-    for (int i = 0; i < iQuantity; i++)
-    {
+    const int *piData = (const int *)pvData;
+    for (int i = 0; i < iQuantity; i++) {
         int iTemp = *piData++;
-        SwapBytes(4,&iTemp);
-        fwrite(&iTemp,4,1,pkFile);
+        SwapBytes(4, &iTemp);
+        fwrite(&iTemp, 4, 1, pkFile);
     }
 #else
-    fwrite(pvData,4,iQuantity,pkFile);
+    fwrite(pvData, 4, iQuantity, pkFile);
 #endif
-    return 4*iQuantity;
+    return 4 * iQuantity;
 }
 //----------------------------------------------------------------------------
-int System::Write8be (FILE* pkFile, int iQuantity, const void* pvData)
+int System::Write8be(FILE *pkFile, int iQuantity, const void *pvData)
 {
     assert(pkFile && iQuantity > 0 && pvData);
 #ifndef WM4_BIG_ENDIAN
-    const double* pdData = (const double*)pvData;
-    for (int i = 0; i < iQuantity; i++)
-    {
+    const double *pdData = (const double *)pvData;
+    for (int i = 0; i < iQuantity; i++) {
         double dTemp = *pdData++;
-        SwapBytes(8,&dTemp);
-        fwrite(&dTemp,8,1,pkFile);
+        SwapBytes(8, &dTemp);
+        fwrite(&dTemp, 8, 1, pkFile);
     }
 #else
-    fwrite(pvData,8,iQuantity,pkFile);
+    fwrite(pvData, 8, iQuantity, pkFile);
 #endif
-    return 8*iQuantity;
+    return 8 * iQuantity;
 }
 //----------------------------------------------------------------------------
-const char* System::GetPath (const char* acDirectory, const char* acFilename)
+const char *System::GetPath(const char *acDirectory, const char *acFilename)
 {
     // #0000656: WildMagic4 doesn't build on 64-bit Mac OS
 #if defined(__APPLE__) && !defined(__aarch64__) && !defined(__x86_64__)
@@ -587,18 +568,18 @@ const char* System::GetPath (const char* acDirectory, const char* acFilename)
     // to correctly locate the application directory.
 
     OSStatus eError;
-    FSRef kExeRef;    // ${ApplicationPath}/build/WildMagic/executableFile
-    FSRef kWMRef;     // ${ApplicationPath}/build/WildMagic
-    FSRef kBuildRef;  // ${ApplicationPath}/build
-    FSRef kAppRef;    // ${ApplicationPath}
+    FSRef kExeRef;   // ${ApplicationPath}/build/WildMagic/executableFile
+    FSRef kWMRef;    // ${ApplicationPath}/build/WildMagic
+    FSRef kBuildRef; // ${ApplicationPath}/build
+    FSRef kAppRef;   // ${ApplicationPath}
     ProcessSerialNumber kPSN;
 
     MacGetCurrentProcess(&kPSN);
-    eError = GetProcessBundleLocation(&kPSN,&kExeRef);
-    eError = FSGetCatalogInfo(&kExeRef,0,0,0,0,&kWMRef);
-    eError = FSGetCatalogInfo(&kWMRef,0,0,0,0,&kBuildRef);
-    eError = FSGetCatalogInfo(&kBuildRef,0,0,0,0,&kAppRef);
-    eError = FSRefMakePath(&kAppRef,(UInt8*)ms_acPath,SYSTEM_MAX_PATH);
+    eError = GetProcessBundleLocation(&kPSN, &kExeRef);
+    eError = FSGetCatalogInfo(&kExeRef, 0, 0, 0, 0, &kWMRef);
+    eError = FSGetCatalogInfo(&kWMRef, 0, 0, 0, 0, &kBuildRef);
+    eError = FSGetCatalogInfo(&kBuildRef, 0, 0, 0, 0, &kAppRef);
+    eError = FSRefMakePath(&kAppRef, (UInt8 *)ms_acPath, SYSTEM_MAX_PATH);
     eError = chdir(ms_acPath);
 
 #if 0
@@ -621,93 +602,67 @@ const char* System::GetPath (const char* acDirectory, const char* acFilename)
 
     size_t uiDLength = strlen(acDirectory);
     size_t uiFLength = strlen(acFilename);
-    if (uiDLength + uiFLength + 1 <= SYSTEM_MAX_PATH)
-    {
-        System::Strcpy(ms_acPath,SYSTEM_MAX_PATH,acDirectory);
-        System::Strcat(ms_acPath,SYSTEM_MAX_PATH,acFilename);
+    if (uiDLength + uiFLength + 1 <= SYSTEM_MAX_PATH) {
+        System::Strcpy(ms_acPath, SYSTEM_MAX_PATH, acDirectory);
+        System::Strcat(ms_acPath, SYSTEM_MAX_PATH, acFilename);
         return ms_acPath;
     }
     return nullptr;
 }
 //----------------------------------------------------------------------------
-void System::Initialize ()
+void System::Initialize()
 {
     assert(!ms_pkDirectories);
     ms_pkDirectories = WM4_NEW std::vector<std::string>;
 
-    const char* acWm4Path = GetEnv("WM4_PATH");
-    if (acWm4Path)
-    {
-        Strcpy(WM4_PATH,SYSTEM_MAX_ENVVAR,acWm4Path);
-    }
-    else
-    {
+    const char *acWm4Path = GetEnv("WM4_PATH");
+    if (acWm4Path) { Strcpy(WM4_PATH, SYSTEM_MAX_ENVVAR, acWm4Path); }
+    else {
         WM4_PATH[0] = 0;
     }
 }
 //----------------------------------------------------------------------------
-void System::Terminate ()
+void System::Terminate()
 {
     WM4_DELETE ms_pkDirectories;
     ms_pkDirectories = nullptr;
 }
 //----------------------------------------------------------------------------
-int System::GetDirectoryQuantity ()
+int System::GetDirectoryQuantity()
 {
-    if (!ms_pkDirectories)
-    {
-        Initialize();
-    }
+    if (!ms_pkDirectories) { Initialize(); }
 
     return (int)ms_pkDirectories->size();
 }
 //----------------------------------------------------------------------------
-const char* System::GetDirectory (int i)
+const char *System::GetDirectory(int i)
 {
-    if (!ms_pkDirectories)
-    {
-        Initialize();
-    }
+    if (!ms_pkDirectories) { Initialize(); }
 
-    if (0 <= i && i < (int)ms_pkDirectories->size())
-    {
-        return (*ms_pkDirectories)[i].c_str();
-    }
+    if (0 <= i && i < (int)ms_pkDirectories->size()) { return (*ms_pkDirectories)[i].c_str(); }
     return nullptr;
 }
 //----------------------------------------------------------------------------
-bool System::InsertDirectory (const char* acDirectory)
+bool System::InsertDirectory(const char *acDirectory)
 {
-    if (!ms_pkDirectories)
-    {
-        Initialize();
-    }
+    if (!ms_pkDirectories) { Initialize(); }
 
     std::string kDirectory = std::string(acDirectory) + std::string("/");
-    for (int i = 0; i < (int)ms_pkDirectories->size(); i++)
-    {
-        if (kDirectory == (*ms_pkDirectories)[i])
-        {
-            return false;
-        }
+    for (int i = 0; i < (int)ms_pkDirectories->size(); i++) {
+        if (kDirectory == (*ms_pkDirectories)[i]) { return false; }
     }
     ms_pkDirectories->push_back(kDirectory);
     return true;
 }
 //----------------------------------------------------------------------------
-bool System::RemoveDirectory (const char* acDirectory)
+bool System::RemoveDirectory(const char *acDirectory)
 {
-    if (!ms_pkDirectories)
-    {
-        Initialize();
-    }
+    if (!ms_pkDirectories) { Initialize(); }
 
     std::string kDirectory = std::string(acDirectory) + std::string("/");
     std::vector<std::string>::iterator pkIter = ms_pkDirectories->begin();
-    for (/**/; pkIter != ms_pkDirectories->end(); pkIter++)
-    {
-        if (kDirectory == *pkIter)
-        {
+    for (/**/; pkIter != ms_pkDirectories->end(); pkIter++) {
+        if (kDirectory == *pkIter) {
             ms_pkDirectories->erase(pkIter);
             return true;
         }
@@ -715,48 +670,32 @@ bool System::RemoveDirectory (const char* acDirectory)
     return false;
 }
 //----------------------------------------------------------------------------
-void System::RemoveAllDirectories ()
+void System::RemoveAllDirectories()
 {
-    if (!ms_pkDirectories)
-    {
-        Initialize();
-    }
+    if (!ms_pkDirectories) { Initialize(); }
 
     ms_pkDirectories->clear();
 }
 //----------------------------------------------------------------------------
-const char* System::GetPath (const char* acFilename, int eMode)
+const char *System::GetPath(const char *acFilename, int eMode)
 {
-    if (!ms_pkDirectories)
-    {
-        Initialize();
-    }
+    if (!ms_pkDirectories) { Initialize(); }
 
-    for (int i = 0; i < (int)ms_pkDirectories->size(); i++)
-    {
-        const char* acDecorated = System::GetPath(
-            (*ms_pkDirectories)[i].c_str(),acFilename);
-        if (!acDecorated)
-        {
-            return nullptr;
-        }
+    for (int i = 0; i < (int)ms_pkDirectories->size(); i++) {
+        const char *acDecorated = System::GetPath((*ms_pkDirectories)[i].c_str(), acFilename);
+        if (!acDecorated) { return nullptr; }
 
-        FILE* pkFile;
-        if (eMode == SM_READ)
-        {
-            pkFile = System::Fopen(acDecorated,"r");
-        }
-        else if (eMode == SM_WRITE)
-        {
-            pkFile = System::Fopen(acDecorated,"w");
+        FILE *pkFile;
+        if (eMode == SM_READ) { pkFile = System::Fopen(acDecorated, "r"); }
+        else if (eMode == SM_WRITE) {
+            pkFile = System::Fopen(acDecorated, "w");
         }
         else // eMode == SM_READ_WRITE
         {
-            pkFile = System::Fopen(acDecorated,"r+");
+            pkFile = System::Fopen(acDecorated, "r+");
         }
 
-        if (pkFile)
-        {
+        if (pkFile) {
             System::Fclose(pkFile);
             return acDecorated;
         }
@@ -764,8 +703,7 @@ const char* System::GetPath (const char* acFilename, int eMode)
     return nullptr;
 }
 //----------------------------------------------------------------------------
-unsigned int System::MakeRGB (unsigned char ucR, unsigned char ucG,
-    unsigned char ucB)
+unsigned int System::MakeRGB(unsigned char ucR, unsigned char ucG, unsigned char ucB)
 {
 #ifdef WM4_BIG_ENDIAN
     return (0xFF | (ucB << 8) | (ucG << 16) | (ucR << 24));
@@ -774,8 +712,8 @@ unsigned int System::MakeRGB (unsigned char ucR, unsigned char ucG,
 #endif
 }
 //----------------------------------------------------------------------------
-unsigned int System::MakeRGBA (unsigned char ucR, unsigned char ucG,
-    unsigned char ucB, unsigned char ucA)
+unsigned int System::MakeRGBA(unsigned char ucR, unsigned char ucG, unsigned char ucB,
+                              unsigned char ucA)
 {
 #ifdef WM4_BIG_ENDIAN
     return (ucA | (ucB << 8) | (ucG << 16) | (ucR << 24));
@@ -784,170 +722,133 @@ unsigned int System::MakeRGBA (unsigned char ucR, unsigned char ucG,
 #endif
 }
 //----------------------------------------------------------------------------
-FILE* System::Fopen (const char* acFilename, const char* acMode)
+FILE *System::Fopen(const char *acFilename, const char *acMode)
 {
 #ifdef WM4_USING_VC80
-    FILE* pkFile;
-    errno_t uiError = fopen_s(&pkFile,acFilename,acMode);
-    if (uiError == 0)
-    {
-        return pkFile;
-    }
-    else
-    {
+    FILE *pkFile;
+    errno_t uiError = fopen_s(&pkFile, acFilename, acMode);
+    if (uiError == 0) { return pkFile; }
+    else {
         return 0;
     }
 #else
-    return fopen(acFilename,acMode);
+    return fopen(acFilename, acMode);
 #endif
 }
 //----------------------------------------------------------------------------
-int System::Fprintf (FILE* pkFile, const char* acFormat, ...)
+int System::Fprintf(FILE *pkFile, const char *acFormat, ...)
 {
-    if (!pkFile || !acFormat)
-    {
-        return -1;
-    }
+    if (!pkFile || !acFormat) { return -1; }
 
     va_list acArgs;
-    va_start(acArgs,acFormat);
+    va_start(acArgs, acFormat);
 
 #ifdef WM4_USING_VC80
-    int iNumWritten = vfprintf_s(pkFile,acFormat,acArgs);
+    int iNumWritten = vfprintf_s(pkFile, acFormat, acArgs);
 #else
-    int iNumWritten = vfprintf(pkFile,acFormat,acArgs);
+    int iNumWritten = vfprintf(pkFile, acFormat, acArgs);
 #endif
 
     va_end(acArgs);
     return iNumWritten;
 }
 //----------------------------------------------------------------------------
-int System::Fclose (FILE* pkFile)
-{
-    return fclose(pkFile);
-}
+int System::Fclose(FILE *pkFile) { return fclose(pkFile); }
 //----------------------------------------------------------------------------
-const char* System::GetEnv (const char* acEnvVarName)
+const char *System::GetEnv(const char *acEnvVarName)
 {
 #ifdef WM4_USING_VC80
-   size_t uiRequiredSize;
-   errno_t uiError = getenv_s(&uiRequiredSize,0,0,acEnvVarName);
-   if (uiError > 0)
-   {
-       return 0;
-   }
-   getenv_s(&uiRequiredSize,ms_acEnvVar,SYSTEM_MAX_ENVVAR,acEnvVarName);
+    size_t uiRequiredSize;
+    errno_t uiError = getenv_s(&uiRequiredSize, 0, 0, acEnvVarName);
+    if (uiError > 0) { return 0; }
+    getenv_s(&uiRequiredSize, ms_acEnvVar, SYSTEM_MAX_ENVVAR, acEnvVarName);
 #else
-    char* acEnvVar = getenv(acEnvVarName);
-    if (!acEnvVar)
-    {
-        return nullptr;
-    }
-    System::Strcpy(ms_acEnvVar,SYSTEM_MAX_ENVVAR,getenv(acEnvVarName));
+    char *acEnvVar = getenv(acEnvVarName);
+    if (!acEnvVar) { return nullptr; }
+    System::Strcpy(ms_acEnvVar, SYSTEM_MAX_ENVVAR, getenv(acEnvVarName));
 #endif
     return ms_acEnvVar;
 }
 //----------------------------------------------------------------------------
-void* System::Memcpy (void* pvDst, size_t uiDstSize, const void* pvSrc,
-    size_t uiSrcSize)
+void *System::Memcpy(void *pvDst, size_t uiDstSize, const void *pvSrc, size_t uiSrcSize)
 {
 #ifdef WM4_USING_VC80
-    errno_t uiError = memcpy_s(pvDst,uiDstSize,pvSrc,uiSrcSize);
-    if (uiError == 0)
-    {
-        return pvDst;
-    }
-    else
-    {
+    errno_t uiError = memcpy_s(pvDst, uiDstSize, pvSrc, uiSrcSize);
+    if (uiError == 0) { return pvDst; }
+    else {
         return 0;
     }
 #else
-    if (!pvDst || uiDstSize == 0 || !pvSrc || uiSrcSize == 0)
-    {
+    if (!pvDst || uiDstSize == 0 || !pvSrc || uiSrcSize == 0) {
         // Be consistent with the behavior of memcpy_s.
         return nullptr;
     }
 
-    if (uiSrcSize > uiDstSize)
-    {
+    if (uiSrcSize > uiDstSize) {
         // The source memory is too large to copy to the destination.  To
         // be consistent with memcpy_s, return null as an indication that the
         // copy failed.
         return nullptr;
     }
-    memcpy(pvDst,pvSrc,uiSrcSize);
+    memcpy(pvDst, pvSrc, uiSrcSize);
     return pvDst;
 #endif
 }
 //----------------------------------------------------------------------------
-int System::Sprintf (char* acDst, size_t uiDstSize, const char* acFormat, ...)
+int System::Sprintf(char *acDst, size_t uiDstSize, const char *acFormat, ...)
 {
-    if (!acDst || uiDstSize == 0 || !acFormat)
-    {
-        return -1;
-    }
+    if (!acDst || uiDstSize == 0 || !acFormat) { return -1; }
 
     va_list acArgs;
-    va_start(acArgs,acFormat);
+    va_start(acArgs, acFormat);
 
 #ifdef WM4_USING_VC80
-    int iNumWritten = vsprintf_s(acDst,uiDstSize,acFormat,acArgs);
+    int iNumWritten = vsprintf_s(acDst, uiDstSize, acFormat, acArgs);
 #else
-    int iNumWritten = vsprintf(acDst,acFormat,acArgs);
+    int iNumWritten = vsprintf(acDst, acFormat, acArgs);
 #endif
 
     va_end(acArgs);
     return iNumWritten;
 }
 //----------------------------------------------------------------------------
-char* System::Strcpy (char* acDst, size_t uiDstSize, const char* acSrc)
+char *System::Strcpy(char *acDst, size_t uiDstSize, const char *acSrc)
 {
 #ifdef WM4_USING_VC80
-    errno_t uiError = strcpy_s(acDst,uiDstSize,acSrc);
-    if (uiError == 0)
-    {
-        return acDst;
-    }
-    else
-    {
+    errno_t uiError = strcpy_s(acDst, uiDstSize, acSrc);
+    if (uiError == 0) { return acDst; }
+    else {
         return 0;
     }
 #else
-    if (!acDst || uiDstSize == 0 || !acSrc)
-    {
+    if (!acDst || uiDstSize == 0 || !acSrc) {
         // Be consistent with the behavior of strcpy_s.
         return nullptr;
     }
 
     size_t uiSrcLen = strlen(acSrc);
-    if (uiSrcLen + 1 > uiDstSize)
-    {
+    if (uiSrcLen + 1 > uiDstSize) {
         // The source string is too large to copy to the destination.  To
         // be consistent with strcpy_s, return null as an indication that the
         // copy failed.
         return nullptr;
     }
-    strncpy(acDst,acSrc,uiSrcLen);
+    strncpy(acDst, acSrc, uiSrcLen);
     acDst[uiSrcLen] = 0;
     return acDst;
 #endif
 }
 //----------------------------------------------------------------------------
-char* System::Strcat (char* acDst, size_t uiDstSize, const char* acSrc)
+char *System::Strcat(char *acDst, size_t uiDstSize, const char *acSrc)
 {
 #ifdef WM4_USING_VC80
-    errno_t uiError = strcat_s(acDst,uiDstSize,acSrc);
-    if (uiError == 0)
-    {
-        return acDst;
-    }
-    else
-    {
+    errno_t uiError = strcat_s(acDst, uiDstSize, acSrc);
+    if (uiError == 0) { return acDst; }
+    else {
         return 0;
     }
 #else
-    if (!acDst || uiDstSize == 0 || !acSrc)
-    {
+    if (!acDst || uiDstSize == 0 || !acSrc) {
         // Be consistent with the behavior of strcat_s.
         return nullptr;
     }
@@ -955,59 +856,50 @@ char* System::Strcat (char* acDst, size_t uiDstSize, const char* acSrc)
     size_t uiSrcLen = strlen(acSrc);
     size_t uiDstLen = strlen(acDst);
     size_t uiSumLen = uiSrcLen + uiDstLen;
-    if (uiSumLen + 1 > uiDstSize)
-    {
+    if (uiSumLen + 1 > uiDstSize) {
         // The source string is too large to append to the destination.  To
         // be consistent with strcat_s, return null as an indication that
         // the concatenation failed.
         return nullptr;
     }
-    strncat(acDst,acSrc,uiSrcLen);
+    strncat(acDst, acSrc, uiSrcLen);
     acDst[uiSumLen] = 0;
     return acDst;
 #endif
 }
 //----------------------------------------------------------------------------
-char* System::Strncpy (char* acDst, size_t uiDstSize, const char* acSrc,
-    size_t uiSrcSize)
+char *System::Strncpy(char *acDst, size_t uiDstSize, const char *acSrc, size_t uiSrcSize)
 {
 #ifdef WM4_USING_VC80
-    errno_t uiError = strncpy_s(acDst,uiDstSize,acSrc,uiSrcSize);
-    if (uiError == 0)
-    {
-        return acDst;
-    }
-    else
-    {
+    errno_t uiError = strncpy_s(acDst, uiDstSize, acSrc, uiSrcSize);
+    if (uiError == 0) { return acDst; }
+    else {
         return 0;
     }
 #else
-    if (!acDst || uiDstSize == 0 || !acSrc || uiSrcSize == 0)
-    {
+    if (!acDst || uiDstSize == 0 || !acSrc || uiSrcSize == 0) {
         // Be consistent with the behavior of strncpy_s.
         return nullptr;
     }
 
-    if (uiSrcSize + 1 > uiDstSize)
-    {
+    if (uiSrcSize + 1 > uiDstSize) {
         // The source string is too large to copy to the destination.  To
         // be consistent with strncpy_s, return null as an indication that
         // the copy failed.
         return nullptr;
     }
-    strncpy(acDst,acSrc,uiSrcSize);
+    strncpy(acDst, acSrc, uiSrcSize);
     return acDst;
 #endif
 }
 //----------------------------------------------------------------------------
-char* System::Strtok (char* acToken, const char* acDelimiters,
-    char*& racNextToken)
+char *System::Strtok(char *acToken, const char *acDelimiters, char *&racNextToken)
 {
 #ifdef WM4_USING_VC80
-    return strtok_s(acToken,acDelimiters,&racNextToken);
+    return strtok_s(acToken, acDelimiters, &racNextToken);
 #else
-    (void)racNextToken;  // avoid warning in release build
-    return strtok(acToken,acDelimiters);
+    (void)racNextToken; // avoid warning in release build
+    return strtok(acToken, acDelimiters);
 #endif
 }
 //----------------------------------------------------------------------------

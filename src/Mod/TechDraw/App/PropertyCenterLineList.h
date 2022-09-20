@@ -29,7 +29,8 @@
 #include <App/Property.h>
 
 
-namespace Base {
+namespace Base
+{
 class Writer;
 }
 
@@ -50,17 +51,13 @@ public:
 
     /** Sets the property
      */
-    void setValue(CenterLine*);
-    void setValues(const std::vector<CenterLine*>&);
+    void setValue(CenterLine *);
+    void setValues(const std::vector<CenterLine *> &);
 
     /// index operator
-    const CenterLine *operator[] (const int idx) const {
-        return _lValueList[idx];
-    }
+    const CenterLine *operator[](const int idx) const { return _lValueList[idx]; }
 
-    const std::vector<CenterLine*> &getValues(void) const {
-        return _lValueList;
-    }
+    const std::vector<CenterLine *> &getValues(void) const { return _lValueList; }
 
     virtual PyObject *getPyObject(void);
     virtual void setPyObject(PyObject *);
@@ -74,7 +71,7 @@ public:
     virtual unsigned int getMemSize(void) const;
 
 private:
-    std::vector<CenterLine*> _lValueList;
+    std::vector<CenterLine *> _lValueList;
 };
 
 } // namespace TechDraw

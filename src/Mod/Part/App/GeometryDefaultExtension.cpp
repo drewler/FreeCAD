@@ -35,48 +35,48 @@
 using namespace Part;
 
 //---------- Geometry Extension
-template <typename T>
-GeometryDefaultExtension<T>::GeometryDefaultExtension(const T& val, std::string name):value(val)
+template<typename T>
+GeometryDefaultExtension<T>::GeometryDefaultExtension(const T &val, std::string name) : value(val)
 {
     setName(name);
 }
 
 
-template <typename T>
-void GeometryDefaultExtension<T>::copyAttributes(Part::GeometryExtension * cpy) const
+template<typename T>
+void GeometryDefaultExtension<T>::copyAttributes(Part::GeometryExtension *cpy) const
 {
     Part::GeometryPersistenceExtension::copyAttributes(cpy);
     static_cast<GeometryDefaultExtension<T> *>(cpy)->value = this->value;
 }
 
-template <typename T>
-void GeometryDefaultExtension<T>::restoreAttributes(Base::XMLReader &reader)
+template<typename T> void GeometryDefaultExtension<T>::restoreAttributes(Base::XMLReader &reader)
 {
     Part::GeometryPersistenceExtension::restoreAttributes(reader);
 
     value = reader.getAttribute("value");
 }
 
-template <typename T>
-void GeometryDefaultExtension<T>::saveAttributes(Base::Writer &writer) const
+template<typename T> void GeometryDefaultExtension<T>::saveAttributes(Base::Writer &writer) const
 {
     Part::GeometryPersistenceExtension::saveAttributes(writer);
 
     writer.Stream() << "\" value=\"" << value;
 }
 
-template <typename T>
+template<typename T>
 std::unique_ptr<Part::GeometryExtension> GeometryDefaultExtension<T>::copy() const
 {
-    std::unique_ptr<GeometryDefaultExtension<T>> cpy = std::make_unique<GeometryDefaultExtension<T>>();
+    std::unique_ptr<GeometryDefaultExtension<T>> cpy =
+        std::make_unique<GeometryDefaultExtension<T>>();
 
     copyAttributes(cpy.get());
 
-    #if (defined(__GNUC__) && __GNUC__ < 7 ) || defined(_MSC_VER)
-        return std::move(cpy); // GCC 4.8 and MSC do not support automatic move constructor call if the compiler fails to elide
-    #else
-        return cpy; // all the others do automatic move constructor if RVO optimization not possible.
-    #endif
+#if (defined(__GNUC__) && __GNUC__ < 7) || defined(_MSC_VER)
+    return std::move(
+        cpy); // GCC 4.8 and MSC do not support automatic move constructor call if the compiler fails to elide
+#else
+    return cpy; // all the others do automatic move constructor if RVO optimization not possible.
+#endif
     // Advise from Scott Meyers Effective Modern c++:
     //
     // Don't std::move(cpy); RVO optimization Item 25, if the compiler fails to elide, would have to move it anyway
@@ -92,29 +92,29 @@ std::unique_ptr<Part::GeometryExtension> GeometryDefaultExtension<T>::copy() con
     // to 'std::unique_ptr<Part::GeometryDefaultExtension<long int>, std::default_delete<Part::GeometryDefaultExtension<long int> > >&&'
 }
 
-template <typename T>
-PyObject * GeometryDefaultExtension<T>::getPyObject()
+template<typename T> PyObject *GeometryDefaultExtension<T>::getPyObject()
 {
-    THROWM(Base::NotImplementedError,"Python object not implemented for default geometry extension template type. Template Specialisation missing."); // use template specialisation to provide the actual object
+    THROWM(Base::NotImplementedError,
+           "Python object not implemented for default geometry extension template type. Template "
+           "Specialisation missing."); // use template specialisation to provide the actual object
 }
 
-namespace Part {
+namespace Part
+{
 // ----------------------------- Template specialisations----------------------------------------------------
 
 //using GeometryIntExtension = Part::GeometryDefaultExtension<long>;
 //using GeometryStringExtension = Part::GeometryStringExtension<std::string>;
 
 // ---------- GeometryIntExtension ----------
-TYPESYSTEM_SOURCE_TEMPLATE_T(Part::GeometryIntExtension,Part::GeometryPersistenceExtension)
+TYPESYSTEM_SOURCE_TEMPLATE_T(Part::GeometryIntExtension, Part::GeometryPersistenceExtension)
 
-template <>
-PyObject * GeometryDefaultExtension<long>::getPyObject()
+template<> PyObject *GeometryDefaultExtension<long>::getPyObject()
 {
     return new GeometryIntExtensionPy(new GeometryIntExtension(*this));
 }
 
-template <>
-void GeometryDefaultExtension<long>::restoreAttributes(Base::XMLReader &reader)
+template<> void GeometryDefaultExtension<long>::restoreAttributes(Base::XMLReader &reader)
 {
     Part::GeometryPersistenceExtension::restoreAttributes(reader);
 
@@ -122,25 +122,22 @@ void GeometryDefaultExtension<long>::restoreAttributes(Base::XMLReader &reader)
 }
 
 // ---------- GeometryStringExtension ----------
-TYPESYSTEM_SOURCE_TEMPLATE_T(Part::GeometryStringExtension,Part::GeometryPersistenceExtension)
+TYPESYSTEM_SOURCE_TEMPLATE_T(Part::GeometryStringExtension, Part::GeometryPersistenceExtension)
 
-template <>
-PyObject * GeometryDefaultExtension<std::string>::getPyObject()
+template<> PyObject *GeometryDefaultExtension<std::string>::getPyObject()
 {
     return new GeometryStringExtensionPy(new GeometryStringExtension(*this));
 }
 
 // ---------- GeometryBoolExtension ----------
-TYPESYSTEM_SOURCE_TEMPLATE_T(Part::GeometryBoolExtension,Part::GeometryPersistenceExtension)
+TYPESYSTEM_SOURCE_TEMPLATE_T(Part::GeometryBoolExtension, Part::GeometryPersistenceExtension)
 
-template <>
-PyObject * GeometryDefaultExtension<bool>::getPyObject()
+template<> PyObject *GeometryDefaultExtension<bool>::getPyObject()
 {
     return new GeometryBoolExtensionPy(new GeometryBoolExtension(*this));
 }
 
-template <>
-void GeometryDefaultExtension<bool>::restoreAttributes(Base::XMLReader &reader)
+template<> void GeometryDefaultExtension<bool>::restoreAttributes(Base::XMLReader &reader)
 {
     Part::GeometryPersistenceExtension::restoreAttributes(reader);
 
@@ -148,16 +145,14 @@ void GeometryDefaultExtension<bool>::restoreAttributes(Base::XMLReader &reader)
 }
 
 // ---------- GeometryDoubleExtension ----------
-TYPESYSTEM_SOURCE_TEMPLATE_T(Part::GeometryDoubleExtension,Part::GeometryPersistenceExtension)
+TYPESYSTEM_SOURCE_TEMPLATE_T(Part::GeometryDoubleExtension, Part::GeometryPersistenceExtension)
 
-template <>
-PyObject * GeometryDefaultExtension<double>::getPyObject()
+template<> PyObject *GeometryDefaultExtension<double>::getPyObject()
 {
     return new GeometryDoubleExtensionPy(new GeometryDoubleExtension(*this));
 }
 
-template <>
-void GeometryDefaultExtension<double>::restoreAttributes(Base::XMLReader &reader)
+template<> void GeometryDefaultExtension<double>::restoreAttributes(Base::XMLReader &reader)
 {
     Part::GeometryPersistenceExtension::restoreAttributes(reader);
 

@@ -37,27 +37,28 @@ QT_END_NAMESPACE
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGDisplayArea : public QGraphicsItemGroup
+class TechDrawGuiExport QGDisplayArea: public QGraphicsItemGroup
 {
 public:
     explicit QGDisplayArea(void);
     ~QGDisplayArea() {}
 
-    enum {Type = QGraphicsItem::UserType + 137};
-    int type() const { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 137
+    };
+    int type() const { return Type; }
     virtual QRectF boundingRect() const;
 
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr );
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget = nullptr);
     virtual void centerAt(QPointF centerPos);
     virtual void centerAt(double cX, double cY);
 
 protected:
-
 private:
-
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // DRAWINGGUI_QGDISPLAYAREA_H
-

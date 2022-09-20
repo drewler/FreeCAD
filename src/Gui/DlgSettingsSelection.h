@@ -29,8 +29,10 @@
 
 class QDoubleSpinBox;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgSettingsSelection;
 
 /**
@@ -38,12 +40,12 @@ class Ui_DlgSettingsSelection;
  * for the selection.
  * \author Werner Mayer
  */
-class DlgSettingsSelection : public PreferencePage
+class DlgSettingsSelection: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    DlgSettingsSelection(QWidget* parent = nullptr);
+    DlgSettingsSelection(QWidget *parent = nullptr);
     ~DlgSettingsSelection() override;
 
     void saveSettings() override;

@@ -25,11 +25,11 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QMenu>
-# include <QAction>
-# include <QMessageBox>
-# include <TopTools_IndexedMapOfShape.hxx>
-# include <TopExp.hxx>
+#include <QMenu>
+#include <QAction>
+#include <QMessageBox>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
 #endif
 
 #include <Gui/Application.h>
@@ -41,42 +41,43 @@
 
 using namespace PartDesignGui;
 
-PROPERTY_SOURCE(PartDesignGui::ViewProviderDressUp,PartDesignGui::ViewProvider)
+PROPERTY_SOURCE(PartDesignGui::ViewProviderDressUp, PartDesignGui::ViewProvider)
 
 
-void ViewProviderDressUp::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderDressUp::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
-    QAction* act;
-    act = menu->addAction(QObject::tr("Edit %1").arg(QString::fromStdString(featureName())), receiver, member);
+    QAction *act;
+    act = menu->addAction(QObject::tr("Edit %1").arg(QString::fromStdString(featureName())),
+                          receiver, member);
     act->setData(QVariant((int)ViewProvider::Default));
     PartDesignGui::ViewProvider::setupContextMenu(menu, receiver, member);
 }
 
 
-const std::string & ViewProviderDressUp::featureName() const {
+const std::string &ViewProviderDressUp::featureName() const
+{
     static const std::string name = "Undefined";
     return name;
 }
 
 
-bool ViewProviderDressUp::setEdit(int ModNum) {
-    if (ModNum == ViewProvider::Default ) {
+bool ViewProviderDressUp::setEdit(int ModNum)
+{
+    if (ModNum == ViewProvider::Default) {
         // Here we should prevent edit of a Feature with missing base
         // Otherwise it could call unhandled exception.
-        PartDesign::DressUp* dressUp = static_cast<PartDesign::DressUp*>(getObject());
-        assert (dressUp);
-        if (dressUp->getBaseObject (/*silent =*/ true)) {
-            return ViewProvider::setEdit(ModNum);
-        } else {
-            QMessageBox::warning ( nullptr, QObject::tr("Feature error"),
-                    QObject::tr("%1 misses a base feature.\n"
-                           "This feature is broken and can't be edited.")
-                        .arg( QString::fromLatin1(dressUp->getNameInDocument()) )
-                );
+        PartDesign::DressUp *dressUp = static_cast<PartDesign::DressUp *>(getObject());
+        assert(dressUp);
+        if (dressUp->getBaseObject(/*silent =*/true)) { return ViewProvider::setEdit(ModNum); }
+        else {
+            QMessageBox::warning(nullptr, QObject::tr("Feature error"),
+                                 QObject::tr("%1 misses a base feature.\n"
+                                             "This feature is broken and can't be edited.")
+                                     .arg(QString::fromLatin1(dressUp->getNameInDocument())));
             return false;
         }
-
-    } else {
+    }
+    else {
         return ViewProvider::setEdit(ModNum);
     }
 }
@@ -84,14 +85,12 @@ bool ViewProviderDressUp::setEdit(int ModNum) {
 
 void ViewProviderDressUp::highlightReferences(const bool on)
 {
-    PartDesign::DressUp* pcDressUp = static_cast<PartDesign::DressUp*>(getObject());
-    Part::Feature* base = pcDressUp->getBaseObject (/*silent =*/ true);
-    if (!base)
-        return;
-    PartGui::ViewProviderPart* vp = dynamic_cast<PartGui::ViewProviderPart*>(
-                Gui::Application::Instance->getViewProvider(base));
-    if (!vp)
-        return;
+    PartDesign::DressUp *pcDressUp = static_cast<PartDesign::DressUp *>(getObject());
+    Part::Feature *base = pcDressUp->getBaseObject(/*silent =*/true);
+    if (!base) return;
+    PartGui::ViewProviderPart *vp = dynamic_cast<PartGui::ViewProviderPart *>(
+        Gui::Application::Instance->getViewProvider(base));
+    if (!vp) return;
 
     std::vector<std::string> faces = pcDressUp->Base.getSubValuesStartsWith("Face");
     std::vector<std::string> edges = pcDressUp->Base.getSubValuesStartsWith("Edge");
@@ -101,7 +100,8 @@ void ViewProviderDressUp::highlightReferences(const bool on)
             originalFaceColors = vp->DiffuseColor.getValues();
             std::vector<App::Color> colors = originalFaceColors;
 
-            PartGui::ReferenceHighlighter highlighter(base->Shape.getValue(), ShapeColor.getValue());
+            PartGui::ReferenceHighlighter highlighter(base->Shape.getValue(),
+                                                      ShapeColor.getValue());
             highlighter.getFaceColors(faces, colors);
             vp->DiffuseColor.setValues(colors);
         }
@@ -113,7 +113,8 @@ void ViewProviderDressUp::highlightReferences(const bool on)
             highlighter.getEdgeColors(edges, colors);
             vp->LineColorArray.setValues(colors);
         }
-    } else {
+    }
+    else {
         if (!faces.empty() && !originalFaceColors.empty()) {
             vp->DiffuseColor.setValues(originalFaceColors);
             originalFaceColors.clear();
@@ -124,4 +125,3 @@ void ViewProviderDressUp::highlightReferences(const bool on)
         }
     }
 }
-

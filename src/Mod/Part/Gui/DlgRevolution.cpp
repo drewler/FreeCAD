@@ -23,19 +23,19 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QMessageBox>
-# include <gp_Dir.hxx>
-# include <gp_Lin.hxx>
-# include <gp_Pnt.hxx>
-# include <BRepAdaptor_Curve.hxx>
-# include <BRep_Tool.hxx>
-# include <TopExp_Explorer.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Edge.hxx>
-# include <ShapeExtend_Explorer.hxx>
-# include <TopTools_HSequenceOfShape.hxx>
-# include <Inventor/system/inttypes.h>
-# include <Precision.hxx>
+#include <QMessageBox>
+#include <gp_Dir.hxx>
+#include <gp_Lin.hxx>
+#include <gp_Pnt.hxx>
+#include <BRepAdaptor_Curve.hxx>
+#include <BRep_Tool.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <ShapeExtend_Explorer.hxx>
+#include <TopTools_HSequenceOfShape.hxx>
+#include <Inventor/system/inttypes.h>
+#include <Precision.hxx>
 #endif
 
 #include "ui_DlgRevolution.h"
@@ -59,36 +59,27 @@
 #include <Base/UnitsApi.h>
 
 
-
 using namespace PartGui;
 
-class DlgRevolution::EdgeSelection : public Gui::SelectionFilterGate
+class DlgRevolution::EdgeSelection: public Gui::SelectionFilterGate
 {
 public:
     bool canSelect;
 
-    EdgeSelection()
-        : Gui::SelectionFilterGate(nullPointer())
-    {
-        canSelect = false;
-    }
-    bool allow(App::Document* /*pDoc*/, App::DocumentObject*pObj, const char*sSubName) override
+    EdgeSelection() : Gui::SelectionFilterGate(nullPointer()) { canSelect = false; }
+    bool allow(App::Document * /*pDoc*/, App::DocumentObject *pObj, const char *sSubName) override
     {
         this->canSelect = false;
 
-        if (!sSubName || sSubName[0] == '\0')
-            return false;
+        if (!sSubName || sSubName[0] == '\0') return false;
         std::string element(sSubName);
-        if (element.substr(0,4) != "Edge")
-            return false;
+        if (element.substr(0, 4) != "Edge") return false;
         Part::TopoShape part = Part::Feature::getTopoShape(pObj);
-        if (part.isNull()) {
-            return false;
-        }
+        if (part.isNull()) { return false; }
         try {
             TopoDS_Shape sub = part.getSubShape(sSubName);
             if (!sub.IsNull() && sub.ShapeType() == TopAbs_EDGE) {
-                const TopoDS_Edge& edge = TopoDS::Edge(sub);
+                const TopoDS_Edge &edge = TopoDS::Edge(sub);
                 BRepAdaptor_Curve adapt(edge);
                 if (adapt.GetType() == GeomAbs_Line || adapt.GetType() == GeomAbs_Circle) {
                     this->canSelect = true;
@@ -103,23 +94,21 @@ public:
     }
 };
 
-DlgRevolution::DlgRevolution(QWidget* parent, Qt::WindowFlags fl)
-  : QDialog(parent, fl)
-  , ui(new Ui_DlgRevolution)
-  , filter(nullptr)
+DlgRevolution::DlgRevolution(QWidget *parent, Qt::WindowFlags fl)
+    : QDialog(parent, fl), ui(new Ui_DlgRevolution), filter(nullptr)
 {
     ui->setupUi(this);
 
-    ui->xPos->setRange(-DBL_MAX,DBL_MAX);
-    ui->yPos->setRange(-DBL_MAX,DBL_MAX);
-    ui->zPos->setRange(-DBL_MAX,DBL_MAX);
+    ui->xPos->setRange(-DBL_MAX, DBL_MAX);
+    ui->yPos->setRange(-DBL_MAX, DBL_MAX);
+    ui->zPos->setRange(-DBL_MAX, DBL_MAX);
     ui->xPos->setUnit(Base::Unit::Length);
     ui->yPos->setUnit(Base::Unit::Length);
     ui->zPos->setUnit(Base::Unit::Length);
 
-    ui->xDir->setRange(-DBL_MAX,DBL_MAX);
-    ui->yDir->setRange(-DBL_MAX,DBL_MAX);
-    ui->zDir->setRange(-DBL_MAX,DBL_MAX);
+    ui->xDir->setRange(-DBL_MAX, DBL_MAX);
+    ui->yDir->setRange(-DBL_MAX, DBL_MAX);
+    ui->zDir->setRange(-DBL_MAX, DBL_MAX);
     ui->xDir->setUnit(Base::Unit());
     ui->yDir->setUnit(Base::Unit());
     ui->zDir->setUnit(Base::Unit());
@@ -134,7 +123,8 @@ DlgRevolution::DlgRevolution(QWidget* parent, Qt::WindowFlags fl)
     sel.applyFrom(Gui::Selection().getObjectsOfType(App::Link::getClassTypeId()));
     sel.applyFrom(Gui::Selection().getObjectsOfType(App::Part::getClassTypeId()));
 
-    connect(ui->txtAxisLink, SIGNAL(textChanged(QString)), this, SLOT(on_txtAxisLink_textChanged(QString)));
+    connect(ui->txtAxisLink, SIGNAL(textChanged(QString)), this,
+            SLOT(on_txtAxisLink_textChanged(QString)));
 
     autoSolid();
 }
@@ -150,42 +140,37 @@ DlgRevolution::~DlgRevolution()
 
 Base::Vector3d DlgRevolution::getDirection() const
 {
-    return Base::Vector3d(
-                ui->xDir->value().getValue(),
-                ui->yDir->value().getValue(),
-                ui->zDir->value().getValue());
+    return Base::Vector3d(ui->xDir->value().getValue(), ui->yDir->value().getValue(),
+                          ui->zDir->value().getValue());
 }
 
 Base::Vector3d DlgRevolution::getPosition() const
 {
-    return Base::Vector3d(
-                ui->xPos->value().getValueAs(Base::Quantity::MilliMetre),
-                ui->yPos->value().getValueAs(Base::Quantity::MilliMetre),
-                ui->zPos->value().getValueAs(Base::Quantity::MilliMetre));
+    return Base::Vector3d(ui->xPos->value().getValueAs(Base::Quantity::MilliMetre),
+                          ui->yPos->value().getValueAs(Base::Quantity::MilliMetre),
+                          ui->zPos->value().getValueAs(Base::Quantity::MilliMetre));
 }
 
 void DlgRevolution::getAxisLink(App::PropertyLinkSub &lnk) const
 {
     QString text = ui->txtAxisLink->text();
 
-    if (text.length() == 0) {
-        lnk.setValue(nullptr);
-    } else {
+    if (text.length() == 0) { lnk.setValue(nullptr); }
+    else {
         QStringList parts = text.split(QChar::fromLatin1(':'));
-        App::DocumentObject* obj = App::GetApplication().getActiveDocument()->getObject(parts[0].toLatin1());
-        if(!obj){
+        App::DocumentObject *obj =
+            App::GetApplication().getActiveDocument()->getObject(parts[0].toLatin1());
+        if (!obj) {
             throw Base::ValueError(tr("Object not found: %1").arg(parts[0]).toUtf8().constData());
         }
         lnk.setValue(obj);
-        if (parts.size() == 1) {
-            return;
-        } else if (parts.size() == 2) {
+        if (parts.size() == 1) { return; }
+        else if (parts.size() == 2) {
             std::vector<std::string> subs;
             subs.emplace_back(parts[1].toLatin1().constData());
-            lnk.setValue(obj,subs);
+            lnk.setValue(obj, subs);
         }
     }
-
 }
 
 double DlgRevolution::getAngle() const
@@ -207,44 +192,45 @@ void DlgRevolution::setPosition(Base::Vector3d pos)
     ui->zPos->setValue(pos.z);
 }
 
-void DlgRevolution::setAxisLink(const App::PropertyLinkSub& lnk)
+void DlgRevolution::setAxisLink(const App::PropertyLinkSub &lnk)
 {
-    if (!lnk.getValue()){
+    if (!lnk.getValue()) {
         ui->txtAxisLink->clear();
         return;
     }
-    if (lnk.getSubValues().size() == 1){
+    if (lnk.getSubValues().size() == 1) {
         this->setAxisLink(lnk.getValue()->getNameInDocument(), lnk.getSubValues()[0].c_str());
-    } else {
+    }
+    else {
         this->setAxisLink(lnk.getValue()->getNameInDocument(), "");
     }
 }
 
-void DlgRevolution::setAxisLink(const char* objname, const char* subname)
+void DlgRevolution::setAxisLink(const char *objname, const char *subname)
 {
-    if(objname && strlen(objname) > 0){
+    if (objname && strlen(objname) > 0) {
         QString txt = QString::fromLatin1(objname);
-        if (subname && strlen(subname) > 0){
+        if (subname && strlen(subname) > 0) {
             txt = txt + QString::fromLatin1(":") + QString::fromLatin1(subname);
         }
         ui->txtAxisLink->setText(txt);
-    } else {
+    }
+    else {
         ui->txtAxisLink->clear();
     }
 }
 
-std::vector<App::DocumentObject*> DlgRevolution::getShapesToRevolve() const
+std::vector<App::DocumentObject *> DlgRevolution::getShapesToRevolve() const
 {
     QList<QTreeWidgetItem *> items = ui->treeWidget->selectedItems();
-    App::Document* doc = App::GetApplication().getActiveDocument();
-    if (!doc)
-        throw Base::RuntimeError("Document lost");
+    App::Document *doc = App::GetApplication().getActiveDocument();
+    if (!doc) throw Base::RuntimeError("Document lost");
 
-    std::vector<App::DocumentObject*> objects;
+    std::vector<App::DocumentObject *> objects;
     for (int i = 0; i < items.size(); i++) {
-        App::DocumentObject* obj = doc->getObject(items[i]->data(0, Qt::UserRole).toString().toLatin1());
-        if (!obj)
-            throw Base::RuntimeError("Object not found");
+        App::DocumentObject *obj =
+            doc->getObject(items[i]->data(0, Qt::UserRole).toString().toLatin1());
+        if (!obj) throw Base::RuntimeError("Object not found");
         objects.push_back(obj);
     }
     return objects;
@@ -254,42 +240,48 @@ bool DlgRevolution::validate()
 {
     //check source shapes
     if (ui->treeWidget->selectedItems().isEmpty()) {
-        QMessageBox::critical(this, windowTitle(),
-            tr("Select a shape for revolution, first."));
+        QMessageBox::critical(this, windowTitle(), tr("Select a shape for revolution, first."));
         return false;
     }
 
     //check axis link
     bool axisLinkIsValid = false;
     bool axisLinkHasAngle = false;
-    try{
+    try {
         App::PropertyLinkSub lnk;
         this->getAxisLink(lnk);
         double angle_edge = 1e100;
         Base::Vector3d axis, center;
         axisLinkIsValid = Part::Revolution::fetchAxisLink(lnk, center, axis, angle_edge);
         axisLinkHasAngle = angle_edge != 1e100;
-    } catch(Base::Exception &err) {
-        QMessageBox::critical(this, windowTitle(),
+    }
+    catch (Base::Exception &err) {
+        QMessageBox::critical(
+            this, windowTitle(),
             tr("Revolution axis link is invalid.\n\n%1").arg(QString::fromUtf8(err.what())));
         ui->txtAxisLink->setFocus();
         return false;
-    } catch(Standard_Failure &err) {
+    }
+    catch (Standard_Failure &err) {
         QMessageBox::critical(this, windowTitle(),
-            tr("Revolution axis link is invalid.\n\n%1").arg(QString::fromLocal8Bit(err.GetMessageString())));
+                              tr("Revolution axis link is invalid.\n\n%1")
+                                  .arg(QString::fromLocal8Bit(err.GetMessageString())));
         ui->txtAxisLink->setFocus();
         return false;
-    } catch(...) {
-        QMessageBox::critical(this, windowTitle(),
+    }
+    catch (...) {
+        QMessageBox::critical(
+            this, windowTitle(),
             tr("Revolution axis link is invalid.\n\n%1").arg(QString::fromUtf8("Unknown error")));
         ui->txtAxisLink->setFocus();
         return false;
     }
 
     //check axis dir
-    if (!axisLinkIsValid){
-        if(this->getDirection().Length() < Precision::Confusion()){
-            QMessageBox::critical(this, windowTitle(),
+    if (!axisLinkIsValid) {
+        if (this->getDirection().Length() < Precision::Confusion()) {
+            QMessageBox::critical(
+                this, windowTitle(),
                 tr("Revolution axis direction is zero-length. It must be non-zero."));
             ui->xDir->setFocus();
             return false;
@@ -297,10 +289,10 @@ bool DlgRevolution::validate()
     }
 
     //check angle
-    if (!axisLinkHasAngle){
+    if (!axisLinkHasAngle) {
         if (fabs(this->getAngle() / 180.0 * M_PI) < Precision::Angular()) {
             QMessageBox::critical(this, windowTitle(),
-                tr("Revolution angle span is zero. It must be non-zero."));
+                                  tr("Revolution angle span is zero. It must be non-zero."));
             ui->angle->setFocus();
             return false;
         }
@@ -311,15 +303,13 @@ bool DlgRevolution::validate()
 
 void DlgRevolution::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QDialog::changeEvent(e);
     }
 }
 
-void DlgRevolution::keyPressEvent(QKeyEvent* ke)
+void DlgRevolution::keyPressEvent(QKeyEvent *ke)
 {
     // The revolution dialog is embedded into a task panel
     // which is a parent widget and will handle the event
@@ -328,69 +318,67 @@ void DlgRevolution::keyPressEvent(QKeyEvent* ke)
 
 void DlgRevolution::findShapes()
 {
-    App::Document* activeDoc = App::GetApplication().getActiveDocument();
-    if (!activeDoc)
-        return;
-    Gui::Document* activeGui = Gui::Application::Instance->getDocument(activeDoc);
+    App::Document *activeDoc = App::GetApplication().getActiveDocument();
+    if (!activeDoc) return;
+    Gui::Document *activeGui = Gui::Application::Instance->getDocument(activeDoc);
 
-    std::vector<App::DocumentObject*> objs = activeDoc->getObjectsOfType<App::DocumentObject>();
+    std::vector<App::DocumentObject *> objs = activeDoc->getObjectsOfType<App::DocumentObject>();
 
-    for (std::vector<App::DocumentObject*>::iterator it = objs.begin(); it!=objs.end(); ++it) {
+    for (std::vector<App::DocumentObject *>::iterator it = objs.begin(); it != objs.end(); ++it) {
         Part::TopoShape topoShape = Part::Feature::getTopoShape(*it);
-        if (topoShape.isNull()) {
-            continue;
-        }
+        if (topoShape.isNull()) { continue; }
         TopoDS_Shape shape = topoShape.getShape();
         if (shape.IsNull()) continue;
 
         TopExp_Explorer xp;
-        xp.Init(shape,TopAbs_SOLID);
+        xp.Init(shape, TopAbs_SOLID);
         if (xp.More()) continue; // solids not allowed
-        xp.Init(shape,TopAbs_COMPSOLID);
+        xp.Init(shape, TopAbs_COMPSOLID);
         if (xp.More()) continue; // compound solids not allowed
         // So allowed are: vertex, edge, wire, face, shell and compound
-        QTreeWidgetItem* item = new QTreeWidgetItem(ui->treeWidget);
+        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
         item->setText(0, QString::fromUtf8((*it)->Label.getValue()));
         item->setData(0, Qt::UserRole, QString::fromLatin1((*it)->getNameInDocument()));
-        Gui::ViewProvider* vp = activeGui->getViewProvider(*it);
+        Gui::ViewProvider *vp = activeGui->getViewProvider(*it);
         if (vp) item->setIcon(0, vp->getIcon());
     }
 }
 
 void DlgRevolution::accept()
 {
-    if (!this->validate())
-        return;
+    if (!this->validate()) return;
     Gui::WaitCursor wc;
-    App::Document* activeDoc = App::GetApplication().getActiveDocument();
+    App::Document *activeDoc = App::GetApplication().getActiveDocument();
     activeDoc->openTransaction("Revolve");
 
-    try{
+    try {
         QString shape, type, name, solid;
         QList<QTreeWidgetItem *> items = ui->treeWidget->selectedItems();
-        if (ui->checkSolid->isChecked()) {
-            solid = QString::fromLatin1("True");}
+        if (ui->checkSolid->isChecked()) { solid = QString::fromLatin1("True"); }
         else {
-            solid = QString::fromLatin1("False");}
+            solid = QString::fromLatin1("False");
+        }
 
         App::PropertyLinkSub axisLink;
         this->getAxisLink(axisLink);
         QString strAxisLink;
-        if (axisLink.getValue()){
-            strAxisLink = QString::fromLatin1("(App.ActiveDocument.%1, %2)")
+        if (axisLink.getValue()) {
+            strAxisLink =
+                QString::fromLatin1("(App.ActiveDocument.%1, %2)")
                     .arg(QString::fromLatin1(axisLink.getValue()->getNameInDocument()),
-                         axisLink.getSubValues().size() ==  1 ?
-                             QString::fromLatin1("\"%1\"").arg(QString::fromLatin1(axisLink.getSubValues()[0].c_str()))
-                             : QString() );
-        } else {
+                         axisLink.getSubValues().size() == 1 ? QString::fromLatin1("\"%1\"").arg(
+                             QString::fromLatin1(axisLink.getSubValues()[0].c_str()))
+                                                             : QString());
+        }
+        else {
             strAxisLink = QString::fromLatin1("None");
         }
 
         QString symmetric;
-        if (ui->checkSymmetric->isChecked()) {
-            symmetric = QString::fromLatin1("True");}
+        if (ui->checkSymmetric->isChecked()) { symmetric = QString::fromLatin1("True"); }
         else {
-            symmetric = QString::fromLatin1("False");}
+            symmetric = QString::fromLatin1("False");
+        }
 
         for (QList<QTreeWidgetItem *>::iterator it = items.begin(); it != items.end(); ++it) {
             shape = (*it)->data(0, Qt::UserRole).toString();
@@ -400,27 +388,27 @@ void DlgRevolution::accept()
             Base::Vector3d pos = this->getPosition();
 
 
-            QString code = QString::fromLatin1(
-                "FreeCAD.ActiveDocument.addObject(\"%1\",\"%2\")\n"
-                "FreeCAD.ActiveDocument.%2.Source = FreeCAD.ActiveDocument.%3\n"
-                "FreeCAD.ActiveDocument.%2.Axis = (%4,%5,%6)\n"
-                "FreeCAD.ActiveDocument.%2.Base = (%7,%8,%9)\n"
-                "FreeCAD.ActiveDocument.%2.Angle = %10\n"
-                "FreeCAD.ActiveDocument.%2.Solid = %11\n"
-                "FreeCAD.ActiveDocument.%2.AxisLink = %12\n"
-                "FreeCAD.ActiveDocument.%2.Symmetric = %13\n"
-                "FreeCADGui.ActiveDocument.%3.Visibility = False\n")
-                .arg(type, name, shape) //%1, 2, 3
-                .arg(axis.x,0,'f',15) //%4
-                .arg(axis.y,0,'f',15) //%5
-                .arg(axis.z,0,'f',15) //%6
-                .arg(pos.x, 0,'f',15) //%7
-                .arg(pos.y, 0,'f',15) //%8
-                .arg(pos.z, 0,'f',15) //%9
-                .arg(getAngle(),0,'f',15) //%10
-                .arg(solid, //%11
-                     strAxisLink, //%12
-                     symmetric) //%13
+            QString code =
+                QString::fromLatin1("FreeCAD.ActiveDocument.addObject(\"%1\",\"%2\")\n"
+                                    "FreeCAD.ActiveDocument.%2.Source = FreeCAD.ActiveDocument.%3\n"
+                                    "FreeCAD.ActiveDocument.%2.Axis = (%4,%5,%6)\n"
+                                    "FreeCAD.ActiveDocument.%2.Base = (%7,%8,%9)\n"
+                                    "FreeCAD.ActiveDocument.%2.Angle = %10\n"
+                                    "FreeCAD.ActiveDocument.%2.Solid = %11\n"
+                                    "FreeCAD.ActiveDocument.%2.AxisLink = %12\n"
+                                    "FreeCAD.ActiveDocument.%2.Symmetric = %13\n"
+                                    "FreeCADGui.ActiveDocument.%3.Visibility = False\n")
+                    .arg(type, name, shape)      //%1, 2, 3
+                    .arg(axis.x, 0, 'f', 15)     //%4
+                    .arg(axis.y, 0, 'f', 15)     //%5
+                    .arg(axis.z, 0, 'f', 15)     //%6
+                    .arg(pos.x, 0, 'f', 15)      //%7
+                    .arg(pos.y, 0, 'f', 15)      //%8
+                    .arg(pos.z, 0, 'f', 15)      //%9
+                    .arg(getAngle(), 0, 'f', 15) //%10
+                    .arg(solid,                  //%11
+                         strAxisLink,            //%12
+                         symmetric)              //%13
                 ;
             Gui::Command::runCommand(Gui::Command::App, code.toLatin1());
             QByteArray to = name.toLatin1();
@@ -432,12 +420,16 @@ void DlgRevolution::accept()
 
         activeDoc->commitTransaction();
         activeDoc->recompute();
-    } catch (Base::Exception &err) {
-        QMessageBox::critical(this, windowTitle(),
+    }
+    catch (Base::Exception &err) {
+        QMessageBox::critical(
+            this, windowTitle(),
             tr("Creating Revolve failed.\n\n%1").arg(QString::fromUtf8(err.what())));
         return;
-    } catch (...){
-        QMessageBox::critical(this, windowTitle(),
+    }
+    catch (...) {
+        QMessageBox::critical(
+            this, windowTitle(),
             tr("Creating Revolve failed.\n\n%1").arg(QString::fromUtf8("Unknown error")));
         return;
     }
@@ -451,7 +443,8 @@ void DlgRevolution::on_selectLine_clicked()
         filter = new EdgeSelection();
         Gui::Selection().addSelectionGate(filter);
         ui->selectLine->setText(tr("Selecting... (line or arc)"));
-    } else {
+    }
+    else {
         Gui::Selection().rmvSelectionGate();
         filter = nullptr;
         ui->selectLine->setText(tr("Select reference"));
@@ -460,47 +453,44 @@ void DlgRevolution::on_selectLine_clicked()
 
 void DlgRevolution::on_btnX_clicked()
 {
-    setDirection(Base::Vector3d(1,0,0));
-    if (!ui->xDir->isEnabled())
-        ui->txtAxisLink->clear();
+    setDirection(Base::Vector3d(1, 0, 0));
+    if (!ui->xDir->isEnabled()) ui->txtAxisLink->clear();
 }
 
 void DlgRevolution::on_btnY_clicked()
 {
-    setDirection(Base::Vector3d(0,1,0));
-    if (!ui->xDir->isEnabled())
-        ui->txtAxisLink->clear();
+    setDirection(Base::Vector3d(0, 1, 0));
+    if (!ui->xDir->isEnabled()) ui->txtAxisLink->clear();
 }
 
 void DlgRevolution::on_btnZ_clicked()
 {
-    setDirection(Base::Vector3d(0,0,1));
-    if (!ui->xDir->isEnabled())
-        ui->txtAxisLink->clear();
+    setDirection(Base::Vector3d(0, 0, 1));
+    if (!ui->xDir->isEnabled()) ui->txtAxisLink->clear();
 }
 
 void DlgRevolution::on_txtAxisLink_textChanged(QString)
 {
     bool en = true;
-    try{
+    try {
         Base::Vector3d pos, dir;
         double angle_edge = 1e100;
-        App::PropertyLinkSub lnk; this->getAxisLink(lnk);
+        App::PropertyLinkSub lnk;
+        this->getAxisLink(lnk);
         bool fetched = Part::Revolution::fetchAxisLink(lnk, pos, dir, angle_edge);
-        if (fetched){
+        if (fetched) {
             this->setDirection(dir);
             this->setPosition(pos);
-            if (angle_edge != 1e100){
-                ui->angle->setValue(0.0);
-            } else if (fabs(ui->angle->value().getValue()) < 1e-12) {
+            if (angle_edge != 1e100) { ui->angle->setValue(0.0); }
+            else if (fabs(ui->angle->value().getValue()) < 1e-12) {
                 ui->angle->setValue(360.0);
             }
             en = false;
         }
-    } catch (Base::Exception &){
-
-    } catch (...){
-
+    }
+    catch (Base::Exception &) {
+    }
+    catch (...) {
     }
     ui->xDir->setEnabled(en);
     ui->yDir->setEnabled(en);
@@ -510,53 +500,45 @@ void DlgRevolution::on_txtAxisLink_textChanged(QString)
     ui->zPos->setEnabled(en);
 }
 
-void DlgRevolution::onSelectionChanged(const Gui::SelectionChanges& msg)
+void DlgRevolution::onSelectionChanged(const Gui::SelectionChanges &msg)
 {
     if (msg.Type == Gui::SelectionChanges::AddSelection) {
-        if (filter && filter->canSelect) {
-            this->setAxisLink(msg.pObjectName, msg.pSubName);
-        }
+        if (filter && filter->canSelect) { this->setAxisLink(msg.pObjectName, msg.pSubName); }
     }
 }
 
-App::DocumentObject&DlgRevolution::getShapeToRevolve() const
+App::DocumentObject &DlgRevolution::getShapeToRevolve() const
 {
-    std::vector<App::DocumentObject*> objs = this->getShapesToRevolve();
-    if (objs.empty())
-        throw Base::ValueError("No shapes selected");
+    std::vector<App::DocumentObject *> objs = this->getShapesToRevolve();
+    if (objs.empty()) throw Base::ValueError("No shapes selected");
     return *(objs[0]);
 }
 
 void DlgRevolution::autoSolid()
 {
-    try{
+    try {
         App::DocumentObject &dobj = this->getShapeToRevolve();
         Part::TopoShape topoShape = Part::Feature::getTopoShape(&dobj);
-        if (topoShape.isNull()) {
-            return;
-        } else {
+        if (topoShape.isNull()) { return; }
+        else {
             TopoDS_Shape sh = topoShape.getShape();
-            if (sh.IsNull())
-                return;
+            if (sh.IsNull()) return;
             ShapeExtend_Explorer xp;
-            Handle(TopTools_HSequenceOfShape) leaves = xp.SeqFromCompound(sh, /*recursive= */Standard_True);
+            Handle(TopTools_HSequenceOfShape) leaves =
+                xp.SeqFromCompound(sh, /*recursive= */ Standard_True);
             int cntClosedWires = 0;
             for (int i = 0; i < leaves->Length(); i++) {
-                const TopoDS_Shape &leaf = leaves->Value(i+1);
-                if (leaf.IsNull())
-                    return;
-                if (leaf.ShapeType() == TopAbs_WIRE || leaf.ShapeType() == TopAbs_EDGE){
-                    if (BRep_Tool::IsClosed(leaf)){
-                        cntClosedWires++;
-                    }
+                const TopoDS_Shape &leaf = leaves->Value(i + 1);
+                if (leaf.IsNull()) return;
+                if (leaf.ShapeType() == TopAbs_WIRE || leaf.ShapeType() == TopAbs_EDGE) {
+                    if (BRep_Tool::IsClosed(leaf)) { cntClosedWires++; }
                 }
             }
-            ui->checkSolid->setChecked( cntClosedWires == leaves->Length() );
+            ui->checkSolid->setChecked(cntClosedWires == leaves->Length());
         }
-    } catch(...){
-
     }
-
+    catch (...) {
+    }
 }
 
 // ---------------------------------------
@@ -564,9 +546,8 @@ void DlgRevolution::autoSolid()
 TaskRevolution::TaskRevolution()
 {
     widget = new DlgRevolution();
-    taskbox = new Gui::TaskView::TaskBox(
-        Gui::BitmapFactory().pixmap("Part_Revolve"),
-        widget->windowTitle(), true, nullptr);
+    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("Part_Revolve"),
+                                         widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }

@@ -26,30 +26,29 @@
 #include "SMESH_DriverUNV.hxx"
 
 #include <vector>
-#include <fstream>      
+#include <fstream>
 
-namespace UNV2411{
-  
-  typedef int TNodeLab; // type of node label
+namespace UNV2411
+{
 
-  struct MESHDRIVERUNV_EXPORT TRecord{
+typedef int TNodeLab; // type of node label
+
+struct MESHDRIVERUNV_EXPORT TRecord {
     TRecord();
     TNodeLab label;
     int exp_coord_sys_num;  // export coordinate system number
-    int disp_coord_sys_num;  // displacement coordinate system number
-    int color;  // color                                
-    double coord[3];  // node coordinates in the part coordinate system
-  };
-  
-  typedef std::vector<TRecord> TDataSet;
-
-  MESHDRIVERUNV_EXPORT void
-    Read(std::ifstream& in_stream, TDataSet& theDataSet);
-
-  MESHDRIVERUNV_EXPORT void
-    Write(std::ofstream& out_stream, const TDataSet& theDataSet);
-
+    int disp_coord_sys_num; // displacement coordinate system number
+    int color;              // color
+    double coord[3];        // node coordinates in the part coordinate system
 };
+
+typedef std::vector<TRecord> TDataSet;
+
+MESHDRIVERUNV_EXPORT void Read(std::ifstream &in_stream, TDataSet &theDataSet);
+
+MESHDRIVERUNV_EXPORT void Write(std::ofstream &out_stream, const TDataSet &theDataSet);
+
+}; // namespace UNV2411
 
 
 #endif

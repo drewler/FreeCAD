@@ -22,9 +22,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Inventor/nodes/SoSeparator.h>
-# include <QHeaderView>
-# include <QTextStream>
+#include <Inventor/nodes/SoSeparator.h>
+#include <QHeaderView>
+#include <QTextStream>
 #endif
 
 #include "SceneInspector.h"
@@ -40,33 +40,26 @@ using namespace Gui::Dialog;
 
 /* TRANSLATOR Gui::Dialog::SceneModel */
 
-SceneModel::SceneModel(QObject* parent)
-    : QStandardItemModel(parent)
-{
-}
+SceneModel::SceneModel(QObject *parent) : QStandardItemModel(parent) {}
 
-SceneModel::~SceneModel()
-{
-}
+SceneModel::~SceneModel() {}
 
-int SceneModel::columnCount (const QModelIndex & parent) const
+int SceneModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 2;
 }
 
-Qt::ItemFlags SceneModel::flags (const QModelIndex & index) const
+Qt::ItemFlags SceneModel::flags(const QModelIndex &index) const
 {
     return QAbstractItemModel::flags(index);
 }
 
-QVariant SceneModel::headerData (int section, Qt::Orientation orientation, int role) const
+QVariant SceneModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal) {
-        if (role != Qt::DisplayRole)
-            return QVariant();
-        if (section == 0)
-            return tr("Inventor Tree");
+        if (role != Qt::DisplayRole) return QVariant();
+        if (section == 0) return tr("Inventor Tree");
         else if (section == 1)
             return tr("Name");
     }
@@ -74,46 +67,43 @@ QVariant SceneModel::headerData (int section, Qt::Orientation orientation, int r
     return QVariant();
 }
 
-bool SceneModel::setHeaderData (int, Qt::Orientation, const QVariant &, int)
-{
-    return false;
-}
+bool SceneModel::setHeaderData(int, Qt::Orientation, const QVariant &, int) { return false; }
 
-void SceneModel::setNode(SoNode* node)
+void SceneModel::setNode(SoNode *node)
 {
     this->clear();
     this->setHeaderData(0, Qt::Horizontal, tr("Nodes"), Qt::DisplayRole);
 
-    this->insertColumns(0,2);
-    this->insertRows(0,1);
+    this->insertColumns(0, 2);
+    this->insertRows(0, 1);
     setNode(this->index(0, 0), node);
 }
 
-void SceneModel::setNode(QModelIndex index, SoNode* node)
+void SceneModel::setNode(QModelIndex index, SoNode *node)
 {
     this->setData(index, QVariant(QString::fromLatin1(node->getTypeId().getName())));
     if (node->getTypeId().isDerivedFrom(SoGroup::getClassTypeId())) {
-        auto group = static_cast<SoGroup*>(node);
+        auto group = static_cast<SoGroup *>(node);
         // insert SoGroup icon
-        this->insertColumns(0,2,index);
-        this->insertRows(0,group->getNumChildren(), index);
-        for (int i=0; i<group->getNumChildren();i++) {
-            SoNode* child = group->getChild(i);
+        this->insertColumns(0, 2, index);
+        this->insertRows(0, group->getNumChildren(), index);
+        for (int i = 0; i < group->getNumChildren(); i++) {
+            SoNode *child = group->getChild(i);
             setNode(this->index(i, 0, index), child);
 
-            QHash<SoNode*, QString>::iterator it = nodeNames.find(child);
+            QHash<SoNode *, QString>::iterator it = nodeNames.find(child);
             QString name;
             QTextStream stream(&name);
             stream << child << ", ";
-            if(child->isOfType(SoSwitch::getClassTypeId())) {
-                auto pcSwitch = static_cast<SoSwitch*>(child);
+            if (child->isOfType(SoSwitch::getClassTypeId())) {
+                auto pcSwitch = static_cast<SoSwitch *>(child);
                 stream << pcSwitch->whichChild.getValue() << ", ";
-            } else if (child->isOfType(SoSeparator::getClassTypeId())) {
-                auto pcSeparator = static_cast<SoSeparator*>(child);
+            }
+            else if (child->isOfType(SoSeparator::getClassTypeId())) {
+                auto pcSeparator = static_cast<SoSeparator *>(child);
                 stream << pcSeparator->renderCaching.getValue() << ", ";
             }
-            if (it != nodeNames.end())
-                stream << it.value();
+            if (it != nodeNames.end()) stream << it.value();
             else
                 stream << child->getName();
             this->setData(this->index(i, 1, index), QVariant(name));
@@ -122,17 +112,14 @@ void SceneModel::setNode(QModelIndex index, SoNode* node)
     // insert icon
 }
 
-void SceneModel::setNodeNames(const QHash<SoNode*, QString>& names)
-{
-    nodeNames = names;
-}
+void SceneModel::setNodeNames(const QHash<SoNode *, QString> &names) { nodeNames = names; }
 
 // --------------------------------------------------------
 
 /* TRANSLATOR Gui::Dialog::DlgInspector */
 
-DlgInspector::DlgInspector(QWidget* parent, Qt::WindowFlags fl)
-  : QDialog(parent, fl), ui(new Ui_SceneInspector())
+DlgInspector::DlgInspector(QWidget *parent, Qt::WindowFlags fl)
+    : QDialog(parent, fl), ui(new Ui_SceneInspector())
 {
     ui->setupUi(this);
     setWindowTitle(tr("Scene Inspector"));
@@ -151,51 +138,49 @@ DlgInspector::~DlgInspector()
     delete ui;
 }
 
-void DlgInspector::setDocument(Gui::Document* doc)
+void DlgInspector::setDocument(Gui::Document *doc)
 {
     setNodeNames(doc);
 
-    auto view = qobject_cast<View3DInventor*>(doc->getActiveView());
+    auto view = qobject_cast<View3DInventor *>(doc->getActiveView());
     if (view) {
-        View3DInventorViewer* viewer = view->getViewer();
+        View3DInventorViewer *viewer = view->getViewer();
         setNode(viewer->getSceneGraph());
         ui->treeView->expandToDepth(3);
     }
 }
 
-void DlgInspector::setNode(SoNode* node)
+void DlgInspector::setNode(SoNode *node)
 {
-    auto model = static_cast<SceneModel*>(ui->treeView->model());
+    auto model = static_cast<SceneModel *>(ui->treeView->model());
     model->setNode(node);
 
-    QHeaderView* header = ui->treeView->header();
+    QHeaderView *header = ui->treeView->header();
     header->setSectionResizeMode(0, QHeaderView::Stretch);
     header->setSectionsMovable(false);
 }
 
-void DlgInspector::setNodeNames(Gui::Document* doc)
+void DlgInspector::setNodeNames(Gui::Document *doc)
 {
-    std::vector<Gui::ViewProvider*> vps = doc->getViewProvidersOfType
-            (Gui::ViewProviderDocumentObject::getClassTypeId());
-    QHash<SoNode*, QString> nodeNames;
-    for (const auto & it : vps) {
-        auto vp = static_cast<Gui::ViewProviderDocumentObject*>(it);
-        App::DocumentObject* obj = vp->getObject();
+    std::vector<Gui::ViewProvider *> vps =
+        doc->getViewProvidersOfType(Gui::ViewProviderDocumentObject::getClassTypeId());
+    QHash<SoNode *, QString> nodeNames;
+    for (const auto &it : vps) {
+        auto vp = static_cast<Gui::ViewProviderDocumentObject *>(it);
+        App::DocumentObject *obj = vp->getObject();
         if (obj) {
             QString label = QString::fromUtf8(obj->Label.getValue());
             nodeNames[vp->getRoot()] = label;
         }
 
         std::vector<std::string> modes = vp->getDisplayMaskModes();
-        for (const auto & mode : modes) {
-            SoNode* node = vp->getDisplayMaskMode(mode.c_str());
-            if (node) {
-                nodeNames[node] = QString::fromStdString(mode);
-            }
+        for (const auto &mode : modes) {
+            SoNode *node = vp->getDisplayMaskMode(mode.c_str());
+            if (node) { nodeNames[node] = QString::fromStdString(mode); }
         }
     }
 
-    auto model = static_cast<SceneModel*>(ui->treeView->model());
+    auto model = static_cast<SceneModel *>(ui->treeView->model());
     model->setNodeNames(nodeNames);
 }
 
@@ -210,19 +195,19 @@ void DlgInspector::changeEvent(QEvent *e)
 
 void DlgInspector::on_refreshButton_clicked()
 {
-    Gui::Document* doc = Application::Instance->activeDocument();
+    Gui::Document *doc = Application::Instance->activeDocument();
     if (doc) {
         setNodeNames(doc);
 
-        auto view = qobject_cast<View3DInventor*>(doc->getActiveView());
+        auto view = qobject_cast<View3DInventor *>(doc->getActiveView());
         if (view) {
-            View3DInventorViewer* viewer = view->getViewer();
+            View3DInventorViewer *viewer = view->getViewer();
             setNode(viewer->getSceneGraph());
             ui->treeView->expandToDepth(3);
         }
     }
     else {
-        auto model = static_cast<SceneModel*>(ui->treeView->model());
+        auto model = static_cast<SceneModel *>(ui->treeView->model());
         model->clear();
     }
 }

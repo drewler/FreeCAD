@@ -37,28 +37,27 @@ class NETGENPlugin_SimpleHypothesis_3D;
 
 // Simplified NETGEN parameters (3D case)
 
-class NETGENPLUGIN_EXPORT  NETGENPlugin_SimpleHypothesis_3D_i:
-  public virtual POA_NETGENPlugin::NETGENPlugin_SimpleHypothesis_3D,
-  public virtual NETGENPlugin_SimpleHypothesis_2D_i
+class NETGENPLUGIN_EXPORT NETGENPlugin_SimpleHypothesis_3D_i
+    : public virtual POA_NETGENPlugin::NETGENPlugin_SimpleHypothesis_3D,
+      public virtual NETGENPlugin_SimpleHypothesis_2D_i
 {
- public:
-  // Constructor
-  NETGENPlugin_SimpleHypothesis_3D_i (PortableServer::POA_ptr thePOA,
-                                      int                     theStudyId,
-                                      ::SMESH_Gen*            theGenImpl);
-  // Destructor
-  virtual ~NETGENPlugin_SimpleHypothesis_3D_i();
+public:
+    // Constructor
+    NETGENPlugin_SimpleHypothesis_3D_i(PortableServer::POA_ptr thePOA, int theStudyId,
+                                       ::SMESH_Gen *theGenImpl);
+    // Destructor
+    virtual ~NETGENPlugin_SimpleHypothesis_3D_i();
 
-  void LengthFromFaces();
+    void LengthFromFaces();
 
-  void SetMaxElementVolume(CORBA::Double value);
-  CORBA::Double GetMaxElementVolume();
+    void SetMaxElementVolume(CORBA::Double value);
+    CORBA::Double GetMaxElementVolume();
 
-  // Get implementation
-  ::NETGENPlugin_SimpleHypothesis_3D* GetImpl();
-  
-  // Verify whether hypothesis supports given entity type 
-  CORBA::Boolean IsDimSupported( SMESH::Dimension type );
+    // Get implementation
+    ::NETGENPlugin_SimpleHypothesis_3D *GetImpl();
+
+    // Verify whether hypothesis supports given entity type
+    CORBA::Boolean IsDimSupported(SMESH::Dimension type);
 };
 
 #endif

@@ -36,7 +36,7 @@
 namespace TechDraw
 {
 
-class TechDrawExport DrawTileWeld : public TechDraw::DrawTile
+class TechDrawExport DrawTileWeld: public TechDraw::DrawTile
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDraw::DrawTileWeld);
 
@@ -44,10 +44,10 @@ public:
     DrawTileWeld();
     ~DrawTileWeld() override;
 
-    App::PropertyString       LeftText;
-    App::PropertyString       RightText;
-    App::PropertyString       CenterText;
-    App::PropertyFile         SymbolFile;
+    App::PropertyString LeftText;
+    App::PropertyString RightText;
+    App::PropertyString CenterText;
+    App::PropertyFile SymbolFile;
     App::PropertyFileIncluded SymbolIncluded;
 
     short mustExecute() const override;
@@ -55,20 +55,18 @@ public:
     void onDocumentRestored() override;
     void setupObject() override;
 
-    const char* getViewProviderName() const override {
-        return "TechDrawGui::ViewProviderTile";
-    }
+    const char *getViewProviderName() const override { return "TechDrawGui::ViewProviderTile"; }
     PyObject *getPyObject() override;
-    virtual QRectF getRect() const { return { 0, 0, 1, 1}; }
+    virtual QRectF getRect() const { return {0, 0, 1, 1}; }
 
     void replaceSymbolIncluded(std::string newSymbolFile);
     void setupSymbolIncluded();
-//    void replaceSymbol(std::string newSymbolFile);
+    //    void replaceSymbol(std::string newSymbolFile);
 
     std::string prefSymbol();
 
 protected:
-    void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property *prop) override;
 
 private:
 };

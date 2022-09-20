@@ -41,17 +41,16 @@ using namespace TechDrawGui;
 using namespace TechDraw;
 
 
-DlgPrefsTechDrawAnnotationImp::DlgPrefsTechDrawAnnotationImp( QWidget* parent )
-  : PreferencePage( parent )
-  , ui(new Ui_DlgPrefsTechDrawAnnotationImp)
+DlgPrefsTechDrawAnnotationImp::DlgPrefsTechDrawAnnotationImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgPrefsTechDrawAnnotationImp)
 {
     ui->setupUi(this);
     ui->pdsbBalloonKink->setUnit(Base::Unit::Length);
     ui->pdsbBalloonKink->setMinimum(0);
 
     // connect the LineGroup the update the tooltip if index changed
-    connect(ui->pcbLineGroup, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(onLineGroupChanged(int)));
+    connect(ui->pcbLineGroup, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(onLineGroupChanged(int)));
 }
 
 DlgPrefsTechDrawAnnotationImp::~DlgPrefsTechDrawAnnotationImp()
@@ -91,9 +90,7 @@ void DlgPrefsTechDrawAnnotationImp::loadSettings()
     // split collected groups
     std::stringstream ss(lgRecord);
     std::vector<std::string> lgNames;
-    while (std::getline(ss, lgRecord, ',')) {
-        lgNames.push_back(lgRecord);
-    }
+    while (std::getline(ss, lgRecord, ',')) { lgNames.push_back(lgRecord); }
     // fill the combobox with the found names
     for (auto it = lgNames.begin(); it < lgNames.end(); ++it) {
         ui->pcbLineGroup->addItem(tr((*it).c_str()));
@@ -133,10 +130,7 @@ void DlgPrefsTechDrawAnnotationImp::changeEvent(QEvent *e)
     }
 }
 
-int DlgPrefsTechDrawAnnotationImp::prefBalloonArrow() const
-{
-    return Preferences::balloonArrow();
-}
+int DlgPrefsTechDrawAnnotationImp::prefBalloonArrow() const { return Preferences::balloonArrow(); }
 
 /**
  * Updates the tooltip of the LineGroup combobox
@@ -151,15 +145,12 @@ void DlgPrefsTechDrawAnnotationImp::onLineGroupChanged(int index)
     std::string lgRecord = LineGroup::getRecordFromFile(Preferences::lineGroupFile(), index);
     std::stringstream ss(lgRecord);
     std::vector<std::string> lgNames;
-    while (std::getline(ss, lgRecord, ',')) {
-        lgNames.push_back(lgRecord);
-    }
+    while (std::getline(ss, lgRecord, ',')) { lgNames.push_back(lgRecord); }
     ui->pcbLineGroup->setToolTip(
         QObject::tr("%1 defines these line widths:\n thin: %2\n graphic: %3\n "
                     "thick: %4")
             .arg(QString::fromStdString(lgNames.at(0).substr(1)),
-                 QString::fromStdString(lgNames.at(1)),
-                 QString::fromStdString(lgNames.at(2)),
+                 QString::fromStdString(lgNames.at(1)), QString::fromStdString(lgNames.at(2)),
                  QString::fromStdString(lgNames.at(3))));
 }
 

@@ -32,18 +32,18 @@
 // defines
 #define TString std::string
 #define TVector std::vector
-#define TMap    std::map
-#define TPair   std::pair
+#define TMap std::map
+#define TPair std::pair
 
 
 // the command line parser class
-class CCmdLineParser : public CCmdLine
+class CCmdLineParser: public CCmdLine
 {
 public:
-    CCmdLineParser (int argc, char** argv);
-    ~CCmdLineParser () {}
+    CCmdLineParser(int argc, char **argv);
+    ~CCmdLineParser() {}
 
-    CCmdParam  GetArgumentList(const char* pSwitch);
+    CCmdParam GetArgumentList(const char *pSwitch);
 };
 
 // ------------------------------------------------------------
@@ -51,14 +51,10 @@ public:
 class CICException
 {
 public:
-    CICException(const QString& text) 
-      : msg(text) {}
-    CICException(const CICException& e) 
-    { *this = e; }
-    ~CICException()
-    { }
-    QString what() const
-    { return msg; }
+    CICException(const QString &text) : msg(text) {}
+    CICException(const CICException &e) { *this = e; }
+    ~CICException() {}
+    QString what() const { return msg; }
 
 private:
     QString msg;
@@ -69,18 +65,17 @@ private:
 class CImageConvApp
 {
 public:
-    CImageConvApp(const QString& sFile = "Images.cpp");
-    void SetOutputFile(const QString& sFile);
-    void SetNameFilters(const QStringList& nameFilter);
-    bool Save(const QString& fn);
-    bool Load(const QString& fn);
+    CImageConvApp(const QString &sFile = "Images.cpp");
+    void SetOutputFile(const QString &sFile);
+    void SetNameFilters(const QStringList &nameFilter);
+    bool Save(const QString &fn);
+    bool Load(const QString &fn);
     bool ConvertToXPM(bool bAppendToFile = false);
-    bool AppendToFile(const QString& file);
-    void SetUpdateBmpFactory(bool b)
-    { m_bUpdate = b; }
+    bool AppendToFile(const QString &file);
+    void SetUpdateBmpFactory(bool b) { m_bUpdate = b; }
     void CreateBmpFactory();
 
-    const QPixmap& GetPixmap() const;
+    const QPixmap &GetPixmap() const;
 
     static void Usage();
     static void Error();
@@ -88,11 +83,11 @@ public:
 
 private:
     bool m_bUpdate;
-    static QString  m_Executable;
-    static QString  m_BmpFactory;
-    QPixmap  m_clPixmap;      // pixmap
-    QString  m_Output;        // specified output file
-    QDir     m_Dir;           // directory
+    static QString m_Executable;
+    static QString m_BmpFactory;
+    QPixmap m_clPixmap; // pixmap
+    QString m_Output;   // specified output file
+    QDir m_Dir;         // directory
 };
 
 #endif // IMAGECONV_H

@@ -11,11 +11,11 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QFileDialog>
-# include <QImage>
-# include <QImageReader>
-# include <QMessageBox>
-# include <QTextStream>
+#include <QFileDialog>
+#include <QImage>
+#include <QImageReader>
+#include <QMessageBox>
+#include <QTextStream>
 #endif
 
 #include <ctime>
@@ -36,7 +36,7 @@
 
 
 #if HAVE_OPENCV2
-#  include "opencv2/opencv.hpp"
+#include "opencv2/opencv.hpp"
 #endif
 
 
@@ -48,16 +48,15 @@ using namespace ImageGui;
 
 DEF_STD_CMD(CmdImageOpen)
 
-CmdImageOpen::CmdImageOpen()
-  : Command("Image_Open")
+CmdImageOpen::CmdImageOpen() : Command("Image_Open")
 {
-    sAppModule      = "Image";
-    sGroup          = QT_TR_NOOP("Image");
-    sMenuText       = QT_TR_NOOP("Open...");
-    sToolTipText    = QT_TR_NOOP("Open image view");
-    sWhatsThis      = "Image_Open";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Image_Open";
+    sAppModule = "Image";
+    sGroup = QT_TR_NOOP("Image");
+    sMenuText = QT_TR_NOOP("Open...");
+    sToolTipText = QT_TR_NOOP("Open image view");
+    sWhatsThis = "Image_Open";
+    sStatusTip = sToolTipText;
+    sPixmap = "Image_Open";
 }
 
 void CmdImageOpen::activated(int iMsg)
@@ -74,16 +73,17 @@ void CmdImageOpen::activated(int iMsg)
     }
     str << ");;" << QObject::tr("All files") << " (*.*)";
     // Reading an image
-    QString s = QFileDialog::getOpenFileName(Gui::getMainWindow(), QObject::tr("Choose an image file to open"),
-                                             QString(), formats);
+    QString s = QFileDialog::getOpenFileName(
+        Gui::getMainWindow(), QObject::tr("Choose an image file to open"), QString(), formats);
     if (!s.isEmpty()) {
         try {
             s = Base::Tools::escapeEncodeFilename(s);
             // load the file with the module
             Command::doCommand(Command::Gui, "import Image, ImageGui");
-            Command::doCommand(Command::Gui, "ImageGui.open(\"%s\",\"utf-8\")", (const char*)s.toUtf8());
+            Command::doCommand(Command::Gui, "ImageGui.open(\"%s\",\"utf-8\")",
+                               (const char *)s.toUtf8());
         }
-        catch (const Base::PyException& e) {
+        catch (const Base::PyException &e) {
             // Usually thrown if the file is invalid somehow
             e.ReportException();
         }
@@ -93,16 +93,15 @@ void CmdImageOpen::activated(int iMsg)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 DEF_STD_CMD_A(CmdCreateImagePlane)
 
-CmdCreateImagePlane::CmdCreateImagePlane()
-    :Command("Image_CreateImagePlane")
+CmdCreateImagePlane::CmdCreateImagePlane() : Command("Image_CreateImagePlane")
 {
-    sAppModule      = "Image";
-    sGroup          = QT_TR_NOOP("Image");
-    sMenuText       = QT_TR_NOOP("Create image plane...");
-    sToolTipText    = QT_TR_NOOP("Create a planar image in the 3D space");
-    sWhatsThis      = "Image_CreateImagePlane";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Image_CreateImagePlane";
+    sAppModule = "Image";
+    sGroup = QT_TR_NOOP("Image");
+    sMenuText = QT_TR_NOOP("Create image plane...");
+    sToolTipText = QT_TR_NOOP("Create a planar image in the 3D space");
+    sWhatsThis = "Image_CreateImagePlane";
+    sStatusTip = sToolTipText;
+    sPixmap = "Image_CreateImagePlane";
 }
 
 void CmdCreateImagePlane::activated(int iMsg)
@@ -118,22 +117,21 @@ void CmdCreateImagePlane::activated(int iMsg)
     }
     str << ");;" << QObject::tr("All files") << " (*.*)";
     // Reading an image
-    QString s = QFileDialog::getOpenFileName(Gui::getMainWindow(), QObject::tr("Choose an image file to open"),
-                                             QString(), formats);
+    QString s = QFileDialog::getOpenFileName(
+        Gui::getMainWindow(), QObject::tr("Choose an image file to open"), QString(), formats);
     if (!s.isEmpty()) {
 
         QImage impQ(s);
         if (impQ.isNull()) {
             QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Error opening image"),
-                QObject::tr("Could not load the chosen image"));
+                                 QObject::tr("Could not load the chosen image"));
             return;
         }
 
         // ask user for orientation
         ImageOrientationDialog Dlg;
 
-        if (Dlg.exec() != QDialog::Accepted)
-            return; // canceled
+        if (Dlg.exec() != QDialog::Accepted) return; // canceled
         Base::Vector3d p = Dlg.Pos.getPosition();
         Base::Rotation r = Dlg.Pos.getRotation();
 
@@ -148,89 +146,86 @@ void CmdCreateImagePlane::activated(int iMsg)
         QString pyfile = Base::Tools::escapeEncodeFilename(s);
 
         openCommand(QT_TRANSLATE_NOOP("Command", "Create ImagePlane"));
-        doCommand(Doc, "App.activeDocument().addObject('Image::ImagePlane','%s\')", FeatName.c_str());
-        doCommand(Doc, "App.activeDocument().%s.ImageFile = '%s'", FeatName.c_str(), (const char*)pyfile.toUtf8());
+        doCommand(Doc, "App.activeDocument().addObject('Image::ImagePlane','%s\')",
+                  FeatName.c_str());
+        doCommand(Doc, "App.activeDocument().%s.ImageFile = '%s'", FeatName.c_str(),
+                  (const char *)pyfile.toUtf8());
         doCommand(Doc, "App.activeDocument().%s.XSize = %f", FeatName.c_str(), width);
         doCommand(Doc, "App.activeDocument().%s.YSize = %f", FeatName.c_str(), height);
-        doCommand(Doc, "App.activeDocument().%s.Placement = App.Placement(App.Vector(%f,%f,%f),App.Rotation(%f,%f,%f,%f))"
-                     , FeatName.c_str(), p.x, p.y, p.z, r[0], r[1], r[2], r[3]);
-        doCommand(Doc, "App.activeDocument().%s.ViewObject.ShapeColor=(1.,1.,1.)", FeatName.c_str());
+        doCommand(Doc,
+                  "App.activeDocument().%s.Placement = "
+                  "App.Placement(App.Vector(%f,%f,%f),App.Rotation(%f,%f,%f,%f))",
+                  FeatName.c_str(), p.x, p.y, p.z, r[0], r[1], r[2], r[3]);
+        doCommand(Doc, "App.activeDocument().%s.ViewObject.ShapeColor=(1.,1.,1.)",
+                  FeatName.c_str());
         doCommand(Doc, "Gui.SendMsgToActiveView('ViewFit')");
         commitCommand();
     }
 }
 
-bool CmdCreateImagePlane::isActive()
-{
-    return App::GetApplication().getActiveDocument();
-}
+bool CmdCreateImagePlane::isActive() { return App::GetApplication().getActiveDocument(); }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 DEF_STD_CMD(CmdImageScaling)
 
-CmdImageScaling::CmdImageScaling()
-  : Command("Image_Scaling")
+CmdImageScaling::CmdImageScaling() : Command("Image_Scaling")
 {
-    sAppModule      = "Image";
-    sGroup          = QT_TR_NOOP("Image");
-    sMenuText       = QT_TR_NOOP("Scale...");
-    sToolTipText    = QT_TR_NOOP("Image Scaling");
-    sWhatsThis      = "Image_Scaling";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "Image_Scaling";
+    sAppModule = "Image";
+    sGroup = QT_TR_NOOP("Image");
+    sMenuText = QT_TR_NOOP("Scale...");
+    sToolTipText = QT_TR_NOOP("Image Scaling");
+    sWhatsThis = "Image_Scaling";
+    sStatusTip = sToolTipText;
+    sPixmap = "Image_Scaling";
 }
 
 void CmdImageScaling::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     // To Be Defined
-
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #if HAVE_OPENCV2
 DEF_STD_CMD(CmdImageCapturerTest)
 
-CmdImageCapturerTest::CmdImageCapturerTest()
-  : Command("Image_CapturerTest")
+CmdImageCapturerTest::CmdImageCapturerTest() : Command("Image_CapturerTest")
 {
-    sAppModule      = "Image";
-    sGroup          = ("Image");
-    sMenuText       = ("CapturerTest");
-    sToolTipText    = ("test camara capturing");
-    sWhatsThis      = "Image_CapturerTest";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "camera-photo";
+    sAppModule = "Image";
+    sGroup = ("Image");
+    sMenuText = ("CapturerTest");
+    sToolTipText = ("test camara capturing");
+    sWhatsThis = "Image_CapturerTest";
+    sStatusTip = sToolTipText;
+    sPixmap = "camera-photo";
 }
 
 void CmdImageCapturerTest::activated(int iMsg)
 {
-	using namespace cv;
+    using namespace cv;
 
     VideoCapture cap(0); // open the default camera
-    if(!cap.isOpened())  // check if we succeeded
+    if (!cap.isOpened()) // check if we succeeded
         return;
 
     Mat edges;
-    namedWindow("edges",1);
-    for(;;)
-    {
+    namedWindow("edges", 1);
+    for (;;) {
         Mat frame;
         cap >> frame; // get a new frame from camera
         cvtColor(frame, edges, CV_BGR2GRAY);
-        GaussianBlur(edges, edges, Size(7,7), 1.5, 1.5);
+        GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
         Canny(edges, edges, 0, 30, 3);
         imshow("edges", edges);
-        if(waitKey(30) >= 0) break;
+        if (waitKey(30) >= 0) break;
     }
     // the camera will be deinitialized automatically in VideoCapture destructor
-
 }
 #endif
 
 void CreateImageCommands()
 {
-    Gui::CommandManager& rcCmdMgr = Gui::Application::Instance->commandManager();
+    Gui::CommandManager &rcCmdMgr = Gui::Application::Instance->commandManager();
 
     rcCmdMgr.addCommand(new CmdImageOpen());
     rcCmdMgr.addCommand(new CmdCreateImagePlane());

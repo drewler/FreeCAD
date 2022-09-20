@@ -29,12 +29,12 @@ class SMESHDS_Mesh;
 
 class MESHDRIVER_EXPORT Driver_SMESHDS_Mesh: public Driver_Mesh
 {
- public:
-  Driver_SMESHDS_Mesh();
-  void SetMesh(SMESHDS_Mesh *theMesh);
-  
- protected:
-  SMESHDS_Mesh *myMesh;
+public:
+    Driver_SMESHDS_Mesh();
+    void SetMesh(SMESHDS_Mesh *theMesh);
+
+protected:
+    SMESHDS_Mesh *myMesh;
 };
 
 #endif

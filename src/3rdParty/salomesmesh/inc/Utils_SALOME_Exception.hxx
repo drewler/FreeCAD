@@ -26,60 +26,61 @@
 //  Module : SALOME
 //  $Header$
 //
-#if !defined( __Utils_SALOME_Exception_hxx__ )
+#if !defined(__Utils_SALOME_Exception_hxx__)
 #define __Utils_SALOME_Exception_hxx__
 
 //#include "SALOME_Utils.hxx"
 
-# include <exception>
-# include <iostream>
+#include <exception>
+#include <iostream>
 
 #ifdef LOCALIZED
 #undef LOCALIZED
 #endif
 #if defined(_DEBUG_) || defined(_DEBUG)
-# define LOCALIZED(message) #message , __FILE__ , __LINE__
+#define LOCALIZED(message) #message, __FILE__, __LINE__
 #else
-# define LOCALIZED(message) #message
+#define LOCALIZED(message) #message
 #endif
 
 //swig tool on Linux doesn't pass defines from header SALOME_Utils.hxx
 //therefore (temporary solution) defines are placed below
 
 #ifdef WIN32
-# if defined UTILS_EXPORTS || defined OpUtil_EXPORTS
-#  define UTILS_EXPORT __declspec( dllexport )
-# else
-#  define UTILS_EXPORT __declspec( dllimport )
-#  undef LOCALIZED
-#  define LOCALIZED(message) #message
-# endif
+#if defined UTILS_EXPORTS || defined OpUtil_EXPORTS
+#define UTILS_EXPORT __declspec(dllexport)
 #else
-# define UTILS_EXPORT
+#define UTILS_EXPORT __declspec(dllimport)
+#undef LOCALIZED
+#define LOCALIZED(message) #message
+#endif
+#else
+#define UTILS_EXPORT
 #endif
 
 class SALOME_Exception;
 
-UTILS_EXPORT std::ostream& operator<<( std::ostream&, const SALOME_Exception& );
+UTILS_EXPORT std::ostream &operator<<(std::ostream &, const SALOME_Exception &);
 
-UTILS_EXPORT const char *makeText( const char *text, const char *fileName, const unsigned int lineNumber );
+UTILS_EXPORT const char *makeText(const char *text, const char *fileName,
+                                  const unsigned int lineNumber);
 
-class UTILS_EXPORT SALOME_Exception : public std::exception
+class UTILS_EXPORT SALOME_Exception: public std::exception
 {
 
-private :
-        SALOME_Exception( void );
+private:
+    SALOME_Exception(void);
 
-protected :
-        const char* _text ;     // non constant pointer but read only char variable
+protected:
+    const char *_text; // non constant pointer but read only char variable
 
-public :
-        SALOME_Exception( const char *text, const char *fileName=0, const unsigned int lineNumber=0 );
-        SALOME_Exception( const SALOME_Exception &ex );
-        virtual ~SALOME_Exception() throw ();
-        UTILS_EXPORT friend std::ostream & operator<<( std::ostream &os , const SALOME_Exception &ex );
-        virtual const char *what( void ) const throw () ;
-} ;
+public:
+    SALOME_Exception(const char *text, const char *fileName = 0, const unsigned int lineNumber = 0);
+    SALOME_Exception(const SALOME_Exception &ex);
+    virtual ~SALOME_Exception() throw();
+    UTILS_EXPORT friend std::ostream &operator<<(std::ostream &os, const SALOME_Exception &ex);
+    virtual const char *what(void) const throw();
+};
 
 
-#endif          /* #if !defined( __Utils_SALOME_Exception_hxx__ ) */
+#endif /* #if !defined( __Utils_SALOME_Exception_hxx__ ) */

@@ -22,18 +22,10 @@
 
 #include "Driver_Document.h"
 
-Driver_Document::Driver_Document():
-  myDocument(NULL)
-{}
+Driver_Document::Driver_Document() : myDocument(NULL) {}
 
 
-void Driver_Document::SetFile(const std::string& theFileName)
-{
-  myFile = theFileName;
-}
+void Driver_Document::SetFile(const std::string &theFileName) { myFile = theFileName; }
 
 
-void Driver_Document::SetDocument(SMESHDS_Document * theDocument)
-{
-  myDocument = theDocument;
-}
+void Driver_Document::SetDocument(SMESHDS_Document *theDocument) { myDocument = theDocument; }

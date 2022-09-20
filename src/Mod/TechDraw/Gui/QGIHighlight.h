@@ -40,29 +40,31 @@
 namespace TechDrawGui
 {
 
-class TechDrawGuiExport QGIHighlight : public QGIDecoration
+class TechDrawGuiExport QGIHighlight: public QGIDecoration
 {
 public:
     explicit QGIHighlight();
     ~QGIHighlight();
 
-    enum {Type = QGraphicsItem::UserType + 176};
-    int type() const override { return Type;}
+    enum
+    {
+        Type = QGraphicsItem::UserType + 176
+    };
+    int type() const override { return Type; }
 
-    virtual void paint(QPainter * painter,
-                       const QStyleOptionGraphicsItem * option,
-                       QWidget * widget = nullptr ) override;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr) override;
 
     void setBounds(double x1, double y1, double x2, double y2);
-    void setReference(const char* sym);
+    void setReference(const char *sym);
     void setFont(QFont f, double fsize);
     virtual void draw() override;
     void setInteractive(bool state);
 
 protected:
-/*    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;*/
-/*    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;*/
-/*    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;*/
+    /*    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;*/
+    /*    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;*/
+    /*    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;*/
     QColor getHighlightColor();
     Qt::PenStyle getHighlightStyle();
     void makeHighlight();
@@ -70,20 +72,20 @@ protected:
     void setTools();
     int getHoleStyle(void);
 
-/*    bool m_dragging;*/
+    /*    bool m_dragging;*/
 
 private:
-    QString            m_refText;
-    QGraphicsEllipseItem* m_circle;
-    QGCustomRect*      m_rect;
-    QGCustomText*      m_reference;
-    std::string        m_refFontName;
-    QFont              m_refFont;
-    double             m_refSize;
-    QPointF            m_start;
-    QPointF            m_end;
+    QString m_refText;
+    QGraphicsEllipseItem *m_circle;
+    QGCustomRect *m_rect;
+    QGCustomText *m_reference;
+    std::string m_refFontName;
+    QFont m_refFont;
+    double m_refSize;
+    QPointF m_start;
+    QPointF m_end;
 };
 
-}
+} // namespace TechDrawGui
 
 #endif // TECHDRAWGUI_QGIHIGHLIGHT_H

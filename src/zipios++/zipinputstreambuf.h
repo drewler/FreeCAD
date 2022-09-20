@@ -11,56 +11,58 @@
 #include "inflateinputstreambuf.h"
 #include "ziphead.h"
 
-namespace zipios {
+namespace zipios
+{
 
 /** ZipInputStreambuf is a zip input streambuf filter.
  */
-class ZipInputStreambuf : public InflateInputStreambuf {
+class ZipInputStreambuf: public InflateInputStreambuf
+{
 public:
-  /** ZipInputStreambuf constructor.
+    /** ZipInputStreambuf constructor.
       @param inbuf the streambuf to use for input.
       @param s_pos a position to reset the inbuf to before reading. Specify
       -1 to read from the current position.
       @param del_inbuf if true is specified inbuf will be deleted, when 
       the ZipInputStreambuf is destructed.
   */
-  explicit ZipInputStreambuf( streambuf *inbuf, int s_pos = -1, bool del_inbuf = false ) ;
+    explicit ZipInputStreambuf(streambuf *inbuf, int s_pos = -1, bool del_inbuf = false);
 
-  /** Closes the current entry, and positions the stream read pointer at 
+    /** Closes the current entry, and positions the stream read pointer at 
       the beginning of the next entry (if there is one). */
-  void closeEntry() ;
-  /** Closes the streambuf. */
-  void close() ;
+    void closeEntry();
+    /** Closes the streambuf. */
+    void close();
 
-  /** Opens the next entry in the zip archive and returns a const pointer to a 
+    /** Opens the next entry in the zip archive and returns a const pointer to a 
       FileEntry object for the entry.
       @return a const FileEntry * containing information about the (now) current 
       entry.
   */
-  ConstEntryPointer getNextEntry() ;
+    ConstEntryPointer getNextEntry();
 
-  /** Destructor. */
-  virtual ~ZipInputStreambuf() ;
+    /** Destructor. */
+    virtual ~ZipInputStreambuf();
+
 protected:
-  virtual int underflow() ;
+    virtual int underflow();
+
 private:
-  bool _open_entry ;
-  ZipLocalEntry _curr_entry ;
-  int _data_start ; // Don't forget entry header has a length too.
-  int _remain ; // For STORED entry only. the number of bytes that
-  // hasn't been put in the _outvec yet.
+    bool _open_entry;
+    ZipLocalEntry _curr_entry;
+    int _data_start; // Don't forget entry header has a length too.
+    int _remain;     // For STORED entry only. the number of bytes that
+    // hasn't been put in the _outvec yet.
 
-  /** Copy-constructor is private to prevent copying. */
-  ZipInputStreambuf( const ZipInputStreambuf &src ) ;
+    /** Copy-constructor is private to prevent copying. */
+    ZipInputStreambuf(const ZipInputStreambuf &src);
 
-  /** Copy-assignment operator is private to prevent copying.  */
-  const ZipInputStreambuf &operator= ( const ZipInputStreambuf &src ) ;
-
+    /** Copy-assignment operator is private to prevent copying.  */
+    const ZipInputStreambuf &operator=(const ZipInputStreambuf &src);
 };
 
 
-} // namespace
-
+} // namespace zipios
 
 
 #endif

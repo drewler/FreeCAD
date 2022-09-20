@@ -39,13 +39,21 @@ class SbImage;
 #include "Basic.h"
 
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
-namespace QtCoinCompatibility {
-  void QUARTER_DLL_API QImageToSbImage(const QImage &, SbImage & );
-  void QUARTER_DLL_API SbImageToQImage(const SbImage &, QImage & );
-}
+namespace QtCoinCompatibility
+{
+void QUARTER_DLL_API QImageToSbImage(const QImage &, SbImage &);
+void QUARTER_DLL_API SbImageToQImage(const SbImage &, QImage &);
+} // namespace QtCoinCompatibility
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_QTCOINCOMPATIBILITY_H

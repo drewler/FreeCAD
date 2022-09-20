@@ -30,29 +30,27 @@
 
 //=======================================================================
 //function : SMDS_Position
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 SMDS_Position::SMDS_Position()
 {
-  //MESSAGE("########################## SMDS_Position ");
+    //MESSAGE("########################## SMDS_Position ");
 }
 
 //=======================================================================
 //function : GetDim
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 int SMDS_Position::GetDim() const
 {
-//   switch ( GetTypeOfPosition() ) {
-//   case SMDS_TOP_UNSPEC:  return -1;
-//   case SMDS_TOP_VERTEX:  return 0;
-//   case SMDS_TOP_EDGE:    return 1;
-//   case SMDS_TOP_FACE:    return 2;
-//   case SMDS_TOP_3DSPACE: return 3;
-//   }
-  return GetTypeOfPosition();
+    //   switch ( GetTypeOfPosition() ) {
+    //   case SMDS_TOP_UNSPEC:  return -1;
+    //   case SMDS_TOP_VERTEX:  return 0;
+    //   case SMDS_TOP_EDGE:    return 1;
+    //   case SMDS_TOP_FACE:    return 2;
+    //   case SMDS_TOP_3DSPACE: return 3;
+    //   }
+    return GetTypeOfPosition();
 }
-
-     

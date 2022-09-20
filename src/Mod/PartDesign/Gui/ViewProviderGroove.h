@@ -27,9 +27,10 @@
 #include "ViewProviderSketchBased.h"
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderGroove : public ViewProviderSketchBased
+class PartDesignGuiExport ViewProviderGroove: public ViewProviderSketchBased
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderGroove);
 
@@ -39,7 +40,7 @@ public:
     /// destructor
     ~ViewProviderGroove() override;
 
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
 protected:
     /**
@@ -47,7 +48,6 @@ protected:
      * NOTE: as for now groove and revolution share the dialog implementation
      */
     TaskDlgFeatureParameters *getEditDialog() override;
-
 };
 
 

@@ -33,36 +33,25 @@
 #include "I32.h"
 
 
-
 using namespace std;
 
 
-struct Segment_Header
-{
-	Segment_Header(){};
+struct Segment_Header {
+    Segment_Header() {};
 
-	Segment_Header(Context& cont)
-	{
-		read(cont);
-	};
+    Segment_Header(Context &cont) { read(cont); };
 
-	inline void read(Context& cont)
-	{
-		Segment_ID.read(cont);
-		Segment_Type.read(cont);
-		Segment_Length.read(cont);
-	};
+    inline void read(Context &cont)
+    {
+        Segment_ID.read(cont);
+        Segment_Type.read(cont);
+        Segment_Length.read(cont);
+    };
 
-	GUID Segment_ID;
-	I32  Segment_Type;
-	I32  Segment_Length;
-
-
+    GUID Segment_ID;
+    I32 Segment_Type;
+    I32 Segment_Length;
 };
 
 
-
 #endif
-
-
-

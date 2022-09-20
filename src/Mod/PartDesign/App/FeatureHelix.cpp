@@ -23,102 +23,121 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepAdaptor_Surface.hxx>
-# include <BRepAlgoAPI_Common.hxx>
-# include <BRepAlgoAPI_Cut.hxx>
-# include <BRepAlgoAPI_Fuse.hxx>
-# include <BRepBndLib.hxx>
-# include <BRepBuilderAPI_MakeSolid.hxx>
-# include <BRepBuilderAPI_Sewing.hxx>
-# include <BRepClass3d_SolidClassifier.hxx>
-# include <BRepOffsetAPI_MakePipeShell.hxx>
-# include <BRepPrimAPI_MakeRevol.hxx>
-# include <Precision.hxx>
-# include <TopoDS.hxx>
-# include <TopoDS_Face.hxx>
-# include <TopoDS_Wire.hxx>
-# include <gp_Ax1.hxx>
-# include <gp_Ax3.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <BRepAlgoAPI_Common.hxx>
+#include <BRepAlgoAPI_Cut.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
+#include <BRepBndLib.hxx>
+#include <BRepBuilderAPI_MakeSolid.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
+#include <BRepOffsetAPI_MakePipeShell.hxx>
+#include <BRepPrimAPI_MakeRevol.hxx>
+#include <Precision.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Wire.hxx>
+#include <gp_Ax1.hxx>
+#include <gp_Ax3.hxx>
 #endif
 
-# include <Standard_Version.hxx>
-# include <Base/Axis.h>
-# include <Base/Exception.h>
-# include <Base/Placement.h>
-# include <Base/Tools.h>
+#include <Standard_Version.hxx>
+#include <Base/Axis.h>
+#include <Base/Exception.h>
+#include <Base/Placement.h>
+#include <Base/Tools.h>
 
-# include <Mod/Part/App/TopoShape.h>
-# include <Mod/Part/App/FaceMakerCheese.h>
+#include <Mod/Part/App/TopoShape.h>
+#include <Mod/Part/App/FaceMakerCheese.h>
 
-# include "FeatureHelix.h"
+#include "FeatureHelix.h"
 
 using namespace PartDesign;
 
-const char* Helix::ModeEnums[] = { "pitch-height-angle", "pitch-turns-angle", "height-turns-angle", "height-turns-growth", nullptr };
+const char *Helix::ModeEnums[] = {"pitch-height-angle", "pitch-turns-angle", "height-turns-angle",
+                                  "height-turns-growth", nullptr};
 
 PROPERTY_SOURCE(PartDesign::Helix, PartDesign::ProfileBased)
 
 // we purposely use not FLT_MAX because this would not be computable
-const App::PropertyFloatConstraint::Constraints Helix::floatTurns = { Precision::Confusion(), INT_MAX, 1.0 };
-const App::PropertyAngle::Constraints Helix::floatAngle = { -89.0, 89.0, 1.0 };
+const App::PropertyFloatConstraint::Constraints Helix::floatTurns = {Precision::Confusion(),
+                                                                     INT_MAX, 1.0};
+const App::PropertyAngle::Constraints Helix::floatAngle = {-89.0, 89.0, 1.0};
 
 Helix::Helix()
 {
     addSubType = FeatureAddSub::Additive;
     auto initialMode = HelixMode::pitch_height_angle;
 
-    const char* group = "Helix";
-    ADD_PROPERTY_TYPE(Base, (Base::Vector3d(0.0, 0.0, 0.0)), group, App::Prop_ReadOnly,
-        QT_TRANSLATE_NOOP("App::Property", "The center point of the helix' start; derived from the reference axis."));
+    const char *group = "Helix";
+    ADD_PROPERTY_TYPE(
+        Base, (Base::Vector3d(0.0, 0.0, 0.0)), group, App::Prop_ReadOnly,
+        QT_TRANSLATE_NOOP(
+            "App::Property",
+            "The center point of the helix' start; derived from the reference axis."));
     ADD_PROPERTY_TYPE(Axis, (Base::Vector3d(0.0, 1.0, 0.0)), group, App::Prop_ReadOnly,
-        QT_TRANSLATE_NOOP("App::Property", "The helix' direction; derived from the reference axis."));
+                      QT_TRANSLATE_NOOP("App::Property",
+                                        "The helix' direction; derived from the reference axis."));
     ADD_PROPERTY_TYPE(ReferenceAxis, (nullptr), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "The reference axis of the helix."));
-    ADD_PROPERTY_TYPE(Mode, (long(initialMode)), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "The helix input mode specifies which properties are set by the user.\n"
-            "Dependent properties are then calculated."));
+                      QT_TRANSLATE_NOOP("App::Property", "The reference axis of the helix."));
+    ADD_PROPERTY_TYPE(
+        Mode, (long(initialMode)), group, App::Prop_None,
+        QT_TRANSLATE_NOOP("App::Property",
+                          "The helix input mode specifies which properties are set by the user.\n"
+                          "Dependent properties are then calculated."));
     Mode.setEnums(ModeEnums);
     ADD_PROPERTY_TYPE(Pitch, (10.0), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "The axial distance between two turns."));
-    ADD_PROPERTY_TYPE(Height, (30.0), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "The height of the helix' path, not accounting for the extent of the profile."));
+                      QT_TRANSLATE_NOOP("App::Property", "The axial distance between two turns."));
+    ADD_PROPERTY_TYPE(
+        Height, (30.0), group, App::Prop_None,
+        QT_TRANSLATE_NOOP(
+            "App::Property",
+            "The height of the helix' path, not accounting for the extent of the profile."));
     ADD_PROPERTY_TYPE(Turns, (3.0), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "The number of turns in the helix."));
+                      QT_TRANSLATE_NOOP("App::Property", "The number of turns in the helix."));
     Turns.setConstraints(&floatTurns);
-    ADD_PROPERTY_TYPE(Angle, (0.0), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "The angle of the cone that forms a hull around the helix.\n"
-            "Non-zero values turn the helix into a conical spiral.\n"
-            "Positive values make the radius grow, nevatige shrink."));
+    ADD_PROPERTY_TYPE(
+        Angle, (0.0), group, App::Prop_None,
+        QT_TRANSLATE_NOOP("App::Property",
+                          "The angle of the cone that forms a hull around the helix.\n"
+                          "Non-zero values turn the helix into a conical spiral.\n"
+                          "Positive values make the radius grow, nevatige shrink."));
     Angle.setConstraints(&floatAngle);
     ADD_PROPERTY_TYPE(Growth, (0.0), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "The growth of the helix' radius per turn.\n"
-            "Non-zero values turn the helix into a conical spiral."));
+                      QT_TRANSLATE_NOOP("App::Property",
+                                        "The growth of the helix' radius per turn.\n"
+                                        "Non-zero values turn the helix into a conical spiral."));
     ADD_PROPERTY_TYPE(LeftHanded, (false), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "Sets the turning direction to left handed,\n"
-            "i.e. counter-clockwise when moving along its axis."));
-    ADD_PROPERTY_TYPE(Reversed, (false), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "Determines whether the helix points in the opposite direction of the axis."));
+                      QT_TRANSLATE_NOOP("App::Property",
+                                        "Sets the turning direction to left handed,\n"
+                                        "i.e. counter-clockwise when moving along its axis."));
+    ADD_PROPERTY_TYPE(
+        Reversed, (false), group, App::Prop_None,
+        QT_TRANSLATE_NOOP(
+            "App::Property",
+            "Determines whether the helix points in the opposite direction of the axis."));
     ADD_PROPERTY_TYPE(Outside, (false), group, App::Prop_None,
-        QT_TRANSLATE_NOOP("App::Property", "If set, the result will be the intersection of the profile and the preexisting body."));
+                      QT_TRANSLATE_NOOP("App::Property",
+                                        "If set, the result will be the intersection of the "
+                                        "profile and the preexisting body."));
     ADD_PROPERTY_TYPE(HasBeenEdited, (false), group, App::Prop_Hidden,
-        QT_TRANSLATE_NOOP("App::Property", "If false, the tool will propose an initial value for the pitch based on the profile bounding box,\n"
-            "so that self intersection is avoided."));
+                      QT_TRANSLATE_NOOP("App::Property",
+                                        "If false, the tool will propose an initial value for the "
+                                        "pitch based on the profile bounding box,\n"
+                                        "so that self intersection is avoided."));
 
     setReadWriteStatusForMode(initialMode);
 }
 
 short Helix::mustExecute() const
 {
-    if (Placement.isTouched() ||
-        ReferenceAxis.isTouched() ||
-        Axis.isTouched() ||
-        Base.isTouched() ||
-        Angle.isTouched())
+    if (Placement.isTouched() || ReferenceAxis.isTouched() || Axis.isTouched() || Base.isTouched()
+        || Angle.isTouched())
         return 1;
     return ProfileBased::mustExecute();
 }
 
-App::DocumentObjectExecReturn* Helix::execute()
+App::DocumentObjectExecReturn *Helix::execute()
 {
     // Validate and normalize parameters
     HelixMode mode = static_cast<HelixMode>(Mode.getValue());
@@ -150,13 +169,13 @@ App::DocumentObjectExecReturn* Helix::execute()
         if (Turns.getValue() < Precision::Confusion())
             return new App::DocumentObjectExecReturn("Error: turns too small!");
         if ((Height.getValue() < Precision::Confusion())
-            && (abs(Growth.getValue()) < Precision::Confusion())
-            && Turns.getValue() > 1.0)
-            return new App::DocumentObjectExecReturn("Error: either height or growth must not be zero!");
+            && (abs(Growth.getValue()) < Precision::Confusion()) && Turns.getValue() > 1.0)
+            return new App::DocumentObjectExecReturn(
+                "Error: either height or growth must not be zero!");
         Pitch.setValue(Height.getValue() / Turns.getValue());
         if (Height.getValue() > 0) {
-            Angle.setValue(Base::toDegrees(atan(
-                Turns.getValue() * Growth.getValue() / Height.getValue())));
+            Angle.setValue(
+                Base::toDegrees(atan(Turns.getValue() * Growth.getValue() / Height.getValue())));
         }
         else {
             // On purpose, we're doing nothing here; the else-branch is just for this comment.
@@ -173,7 +192,7 @@ App::DocumentObjectExecReturn* Helix::execute()
     try {
         sketchshape = getVerifiedFace();
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 
@@ -195,7 +214,7 @@ App::DocumentObjectExecReturn* Helix::execute()
     try {
         base = getBaseShape();
     }
-    catch (const Base::Exception&) {
+    catch (const Base::Exception &) {
         // fall back to support (for legacy features)
         base = TopoDS_Shape();
     }
@@ -204,7 +223,7 @@ App::DocumentObjectExecReturn* Helix::execute()
     try {
         updateAxis();
     }
-    catch (const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 
@@ -223,18 +242,17 @@ App::DocumentObjectExecReturn* Helix::execute()
         try {
             wires = getProfileWires();
         }
-        catch (const Base::Exception& e) {
+        catch (const Base::Exception &e) {
             return new App::DocumentObjectExecReturn(e.what());
         }
 
         std::vector<std::vector<TopoDS_Wire>> wiresections;
-        for (TopoDS_Wire& wire : wires)
-            wiresections.emplace_back(1, wire);
+        for (TopoDS_Wire &wire : wires) wiresections.emplace_back(1, wire);
 
         //build all shells
         std::vector<TopoDS_Shape> shells;
         std::vector<TopoDS_Wire> frontwires, backwires;
-        for (std::vector<TopoDS_Wire>& wires : wiresections) {
+        for (std::vector<TopoDS_Wire> &wires : wiresections) {
 
             BRepOffsetAPI_MakePipeShell mkPS(TopoDS::Wire(path));
 
@@ -242,15 +260,14 @@ App::DocumentObjectExecReturn* Helix::execute()
             mkPS.SetTransitionMode(BRepBuilderAPI_Transformed);
 
             //mkPS.SetMode(true);  //This is for frenet
-            mkPS.SetMode(TopoDS::Wire(auxpath), true);  // this is for auxiliary
+            mkPS.SetMode(TopoDS::Wire(auxpath), true); // this is for auxiliary
 
-            for (TopoDS_Wire& wire : wires) {
+            for (TopoDS_Wire &wire : wires) {
                 wire.Move(invObjLoc);
                 mkPS.Add(wire);
             }
 
-            if (!mkPS.IsReady())
-                return new App::DocumentObjectExecReturn("Error: Could not build");
+            if (!mkPS.IsReady()) return new App::DocumentObjectExecReturn("Error: Could not build");
 
             shells.push_back(mkPS.Shape());
 
@@ -276,17 +293,14 @@ App::DocumentObjectExecReturn* Helix::execute()
             sewer.Add(front);
             sewer.Add(back);
 
-            for (TopoDS_Shape& s : shells)
-                sewer.Add(s);
+            for (TopoDS_Shape &s : shells) sewer.Add(s);
 
             sewer.Perform();
             mkSolid.Add(TopoDS::Shell(sewer.SewedShape()));
         }
         else {
             // shells are already closed - add them directly
-            for (TopoDS_Shape& s : shells) {
-                mkSolid.Add(TopoDS::Shell(s));
-            }
+            for (TopoDS_Shape &s : shells) { mkSolid.Add(TopoDS::Shell(s)); }
         }
 
         if (!mkSolid.IsDone())
@@ -296,8 +310,7 @@ App::DocumentObjectExecReturn* Helix::execute()
 
         BRepClass3d_SolidClassifier SC(result);
         SC.PerformInfinitePoint(Precision::Confusion());
-        if (SC.State() == TopAbs_IN)
-            result.Reverse();
+        if (SC.State() == TopAbs_IN) result.Reverse();
 
         AddSubShape.setValue(result);
 
@@ -338,12 +351,13 @@ App::DocumentObjectExecReturn* Helix::execute()
 
             TopoDS_Shape boolOp;
 
-            if (Outside.getValue()) {  // are we subtracting the inside or the outside of the profile.
+            if (Outside
+                    .getValue()) { // are we subtracting the inside or the outside of the profile.
                 BRepAlgoAPI_Common mkCom(result, base);
                 if (!mkCom.IsDone())
-                    return new App::DocumentObjectExecReturn("Error: Intersecting the helix failed");
+                    return new App::DocumentObjectExecReturn(
+                        "Error: Intersecting the helix failed");
                 boolOp = this->getSolid(mkCom.Shape());
-
             }
             else {
                 BRepAlgoAPI_Cut mkCut(base, result);
@@ -367,22 +381,22 @@ App::DocumentObjectExecReturn* Helix::execute()
 
         return App::DocumentObject::StdReturn;
     }
-    catch (Standard_Failure& e) {
+    catch (Standard_Failure &e) {
 
         if (std::string(e.GetMessageString()) == "TopoDS::Face")
             return new App::DocumentObjectExecReturn("Error: Could not create face from sketch");
         else
             return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
-    catch (Base::Exception& e) {
+    catch (Base::Exception &e) {
         return new App::DocumentObjectExecReturn(e.what());
     }
 }
 
 void Helix::updateAxis()
 {
-    App::DocumentObject* pcReferenceAxis = ReferenceAxis.getValue();
-    const std::vector<std::string>& subReferenceAxis = ReferenceAxis.getSubValues();
+    App::DocumentObject *pcReferenceAxis = ReferenceAxis.getValue();
+    const std::vector<std::string> &subReferenceAxis = ReferenceAxis.getSubValues();
     Base::Vector3d base;
     Base::Vector3d dir;
     getAxis(pcReferenceAxis, subReferenceAxis, base, dir, ForbiddenAxis::NoCheck);
@@ -400,8 +414,7 @@ TopoDS_Shape Helix::generateHelixPath(double startOffset0)
     double angle = Angle.getValue();
     double growth = Growth.getValue();
 
-    if (fabs(angle) < Precision::Confusion())
-        angle = 0.0;
+    if (fabs(angle) < Precision::Confusion()) angle = 0.0;
 
     // get revolve axis
     Base::Vector3d baseVector = Base.getValue();
@@ -410,7 +423,8 @@ TopoDS_Shape Helix::generateHelixPath(double startOffset0)
     gp_Dir dir(axisVector.x, axisVector.y, axisVector.z);
 
     Base::Vector3d normal = getProfileNormal();
-    Base::Vector3d start = axisVector.Cross(normal);  // pointing towards the desired helix start point.
+    Base::Vector3d start =
+        axisVector.Cross(normal); // pointing towards the desired helix start point.
 
     // if our axis is (nearly) aligned with the profile's normal, we're only interested in the "twist"
     // of the helix. The actual starting point, and thus the radius, isn't important as long as it's
@@ -437,7 +451,8 @@ TopoDS_Shape Helix::generateHelixPath(double startOffset0)
     bool turned = axisOffset < 0;
     // since the factor does not only change the radius but also the path position, we must shift its offset back
     // using the square of the factor
-    double startOffset = 10000.0 * std::fabs(startOffset0 + profileCenter * axisVector - baseVector * axisVector);
+    double startOffset =
+        10000.0 * std::fabs(startOffset0 + profileCenter * axisVector - baseVector * axisVector);
 
     if (radius < Precision::Confusion()) {
         // in this case ensure that axis is not in the sketch plane
@@ -448,14 +463,14 @@ TopoDS_Shape Helix::generateHelixPath(double startOffset0)
 
     bool growthMode = std::string(Mode.getValueAsString()).find("growth") != std::string::npos;
     double radiusTop;
-    if (growthMode)
-        radiusTop = radius + turns * growth;
+    if (growthMode) radiusTop = radius + turns * growth;
     else
         radiusTop = radius + height * tan(Base::toRadians(angle));
 
     //build the helix path
     //TopoShape helix = TopoShape().makeLongHelix(pitch, height, radius, angle, leftHanded);
-    TopoDS_Shape path = TopoShape().makeSpiralHelix(radius, radiusTop, height, turns, 1, leftHanded);
+    TopoDS_Shape path =
+        TopoShape().makeSpiralHelix(radius, radiusTop, height, turns, 1, leftHanded);
 
     /*
      * The helix wire is created with the axis coinciding with z-axis and the start point at (radius, 0, 0)
@@ -464,11 +479,12 @@ TopoDS_Shape Helix::generateHelixPath(double startOffset0)
      */
 
     gp_Pnt origo(0.0, 0.0, 0.0);
-    gp_Dir dir_axis1(0.0, 0.0, 1.0);  // pointing along the helix axis, as created.
-    gp_Dir dir_axis2(1.0, 0.0, 0.0);  // pointing towards the helix start point, as created.
+    gp_Dir dir_axis1(0.0, 0.0, 1.0); // pointing along the helix axis, as created.
+    gp_Dir dir_axis2(1.0, 0.0, 0.0); // pointing towards the helix start point, as created.
     gp_Trsf mov;
 
-    if (abs(startOffset) > 0) {  // translate the helix so that the starting point aligns with the profile
+    if (abs(startOffset)
+        > 0) { // translate the helix so that the starting point aligns with the profile
         mov.SetTranslation(startOffset * gp_Vec(dir_axis1));
         TopLoc_Location loc(mov);
         path.Move(loc);
@@ -482,7 +498,7 @@ TopoDS_Shape Helix::generateHelixPath(double startOffset0)
         path.Move(loc);
     }
 
-    if (turned) {  // turn the helix so that the starting point aligns with the profile
+    if (turned) { // turn the helix so that the starting point aligns with the profile
         mov.SetRotation(gp_Ax1(origo, dir_axis1), M_PI);
         TopLoc_Location loc(mov);
         path.Move(loc);
@@ -505,7 +521,8 @@ TopoDS_Shape Helix::generateHelixPath(double startOffset0)
 double Helix::safePitch()
 {
     Base::Vector3d axisVec = Axis.getValue();
-    Base::Vector3d startVec = axisVec.Cross(getProfileNormal()); // pointing towards the helix start point
+    Base::Vector3d startVec =
+        axisVec.Cross(getProfileNormal()); // pointing towards the helix start point
     HelixMode mode = static_cast<HelixMode>(Mode.getValue());
     double growthValue = Growth.getValue();
     double turnsValue = Turns.getValue();
@@ -515,9 +532,7 @@ double Helix::safePitch()
     // we take the precision into account
     if (startVec.Length() < Precision::Confusion()) {
         // when not in growth mode any pitch > 0 is safe
-        if (mode != HelixMode::height_turns_growth) {
-            return Precision::Confusion();
-        }
+        if (mode != HelixMode::height_turns_growth) { return Precision::Confusion(); }
         // if growth is not zero, there will in many cases be intersections
         // when the turn is >= 1, thus return an 'infinite' pitch
         // Note: The resulting helix body is in this case often garbage since
@@ -525,8 +540,7 @@ double Helix::safePitch()
         // Nevertheless, the result is a valid body so it should be valuable for users
         // to get this correct warning anyway.
         else {
-            if (abs(turnsValue) >= 1.0 && abs(growthValue) > 0.0)
-                return Precision::Infinite();
+            if (abs(turnsValue) >= 1.0 && abs(growthValue) > 0.0) return Precision::Infinite();
         }
     }
 
@@ -554,16 +568,13 @@ double Helix::safePitch()
         // if the distance perpendicular to axisVec
         // between two turns is larger than the bounding box size in this direction
         // the minimal necessary pitch is zero
-        if (abs(growthValue) > abs(boundingBoxVec * directionStart)) {
-            return 0.0;
-        }
+        if (abs(growthValue) > abs(boundingBoxVec * directionStart)) { return 0.0; }
         else {
             // if less than one turn, every pitch is safe
             // Note: at the moment helices with a growth end with a plane
             // whose normal is the final direction of the helix path.
             // In case this might be changed in future, also 1.0 turn would be safe.
-            if (turnsValue < 1.0)
-                return 0.0;
+            if (turnsValue < 1.0) return 0.0;
             else
                 return pitch0;
         }
@@ -607,7 +618,8 @@ Base::Vector3d Helix::getProfileCenterPoint()
     return Base::Vector3d(0.5 * (xmin + xmax), 0.5 * (ymin + ymax), 0.5 * (zmin + zmax));
 }
 
-void Helix::handleChangedPropertyType(Base::XMLReader& reader, const char* TypeName, App::Property* prop)
+void Helix::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                      App::Property *prop)
 {
     // property Turns had the App::PropertyFloat and was changed to App::PropertyFloatConstraint
     if (prop == &Turns && strcmp(TypeName, "App::PropertyFloat") == 0) {
@@ -628,7 +640,7 @@ void Helix::handleChangedPropertyType(Base::XMLReader& reader, const char* TypeN
     }
 }
 
-void Helix::onChanged(const App::Property* prop)
+void Helix::onChanged(const App::Property *prop)
 {
     if (prop == &Mode) {
         // Depending on the mode, the derived properties are set read-only
@@ -641,66 +653,67 @@ void Helix::onChanged(const App::Property* prop)
 
 void Helix::setReadWriteStatusForMode(HelixMode inputMode)
 {
-    switch (inputMode)
-    {
-    case HelixMode::pitch_height_angle:
-        // primary input:
-        Pitch.setStatus(App::Property::ReadOnly, false);
-        Height.setStatus(App::Property::ReadOnly, false);
-        Angle.setStatus(App::Property::ReadOnly, false);
-        // derived props:
-        Turns.setStatus(App::Property::ReadOnly, true);
-        Growth.setStatus(App::Property::ReadOnly, true);
-        break;
+    switch (inputMode) {
+        case HelixMode::pitch_height_angle:
+            // primary input:
+            Pitch.setStatus(App::Property::ReadOnly, false);
+            Height.setStatus(App::Property::ReadOnly, false);
+            Angle.setStatus(App::Property::ReadOnly, false);
+            // derived props:
+            Turns.setStatus(App::Property::ReadOnly, true);
+            Growth.setStatus(App::Property::ReadOnly, true);
+            break;
 
-    case HelixMode::pitch_turns_angle:
-        // primary input:
-        Pitch.setStatus(App::Property::ReadOnly, false);
-        Turns.setStatus(App::Property::ReadOnly, false);
-        Angle.setStatus(App::Property::ReadOnly, false);
-        // derived props:
-        Height.setStatus(App::Property::ReadOnly, true);
-        Growth.setStatus(App::Property::ReadOnly, true);
-        break;
+        case HelixMode::pitch_turns_angle:
+            // primary input:
+            Pitch.setStatus(App::Property::ReadOnly, false);
+            Turns.setStatus(App::Property::ReadOnly, false);
+            Angle.setStatus(App::Property::ReadOnly, false);
+            // derived props:
+            Height.setStatus(App::Property::ReadOnly, true);
+            Growth.setStatus(App::Property::ReadOnly, true);
+            break;
 
-    case HelixMode::height_turns_angle:
-        // primary input:
-        Height.setStatus(App::Property::ReadOnly, false);
-        Turns.setStatus(App::Property::ReadOnly, false);
-        Angle.setStatus(App::Property::ReadOnly, false);
-        // derived props:
-        Pitch.setStatus(App::Property::ReadOnly, true);
-        Growth.setStatus(App::Property::ReadOnly, true);
-        break;
+        case HelixMode::height_turns_angle:
+            // primary input:
+            Height.setStatus(App::Property::ReadOnly, false);
+            Turns.setStatus(App::Property::ReadOnly, false);
+            Angle.setStatus(App::Property::ReadOnly, false);
+            // derived props:
+            Pitch.setStatus(App::Property::ReadOnly, true);
+            Growth.setStatus(App::Property::ReadOnly, true);
+            break;
 
-    case HelixMode::height_turns_growth:
-        // primary input:
-        Height.setStatus(App::Property::ReadOnly, false);
-        Turns.setStatus(App::Property::ReadOnly, false);
-        Growth.setStatus(App::Property::ReadOnly, false);
-        // derived props:
-        Pitch.setStatus(App::Property::ReadOnly, true);
-        Angle.setStatus(App::Property::ReadOnly, true);
-        break;
+        case HelixMode::height_turns_growth:
+            // primary input:
+            Height.setStatus(App::Property::ReadOnly, false);
+            Turns.setStatus(App::Property::ReadOnly, false);
+            Growth.setStatus(App::Property::ReadOnly, false);
+            // derived props:
+            Pitch.setStatus(App::Property::ReadOnly, true);
+            Angle.setStatus(App::Property::ReadOnly, true);
+            break;
 
-    default:
-        Pitch.setStatus(App::Property::ReadOnly, false);
-        Height.setStatus(App::Property::ReadOnly, false);
-        Turns.setStatus(App::Property::ReadOnly, false);
-        Angle.setStatus(App::Property::ReadOnly, false);
-        Growth.setStatus(App::Property::ReadOnly, false);
-        break;
+        default:
+            Pitch.setStatus(App::Property::ReadOnly, false);
+            Height.setStatus(App::Property::ReadOnly, false);
+            Turns.setStatus(App::Property::ReadOnly, false);
+            Angle.setStatus(App::Property::ReadOnly, false);
+            Growth.setStatus(App::Property::ReadOnly, false);
+            break;
     }
 }
 
 PROPERTY_SOURCE(PartDesign::AdditiveHelix, PartDesign::Helix)
-AdditiveHelix::AdditiveHelix() {
+AdditiveHelix::AdditiveHelix()
+{
     addSubType = Additive;
     Outside.setStatus(App::Property::Hidden, true);
 }
 
 PROPERTY_SOURCE(PartDesign::SubtractiveHelix, PartDesign::Helix)
-SubtractiveHelix::SubtractiveHelix() {
+SubtractiveHelix::SubtractiveHelix()
+{
     addSubType = Subtractive;
     Outside.setStatus(App::Property::Hidden, false);
 }

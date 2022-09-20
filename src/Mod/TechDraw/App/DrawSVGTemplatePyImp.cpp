@@ -36,18 +36,15 @@ std::string DrawSVGTemplatePy::representation() const
     return std::string("<DrawSVGTemplate object>");
 }
 
-PyObject *DrawSVGTemplatePy::getCustomAttributes(const char* ) const
-{
-    return nullptr;
-}
+PyObject *DrawSVGTemplatePy::getCustomAttributes(const char *) const { return nullptr; }
 
-int DrawSVGTemplatePy::setCustomAttributes(const char* attr, PyObject* obj)
+int DrawSVGTemplatePy::setCustomAttributes(const char *attr, PyObject *obj)
 {
     // search in PropertyList
     App::Property *prop = getDrawSVGTemplatePtr()->getPropertyByName(attr);
     if (prop) {
         // Read-only attributes must not be set over its Python interface
-        short Type =  getDrawSVGTemplatePtr()->getPropertyType(prop);
+        short Type = getDrawSVGTemplatePtr()->getPropertyType(prop);
         if (Type & App::Prop_ReadOnly) {
             std::stringstream s;
             s << "Object attribute '" << attr << "' is read-only";
@@ -61,30 +58,29 @@ int DrawSVGTemplatePy::setCustomAttributes(const char* attr, PyObject* obj)
     return 0;
 }
 
-PyObject* DrawSVGTemplatePy::getEditFieldContent(PyObject* args)
+PyObject *DrawSVGTemplatePy::getEditFieldContent(PyObject *args)
 {
-    PyObject* result = nullptr;
-    char* fieldName;
+    PyObject *result = nullptr;
+    char *fieldName;
     if (!PyArg_ParseTuple(args, "s", &fieldName)) {
         Base::Console().Error("Error: DrawSVGTemplatePy::getEditFieldNames - Bad Arg\n");
         return nullptr;
     }
     std::string content = getDrawSVGTemplatePtr()->EditableTexts[fieldName];
-    if (!content.empty()) {
-        result = PyUnicode_FromString(content.c_str());
-    }
+    if (!content.empty()) { result = PyUnicode_FromString(content.c_str()); }
     return result;
 }
 
-PyObject* DrawSVGTemplatePy::setEditFieldContent(PyObject* args)
+PyObject *DrawSVGTemplatePy::setEditFieldContent(PyObject *args)
 {
-    PyObject* result = Py_True;
-    char* fieldName;
-    char* newContent;
+    PyObject *result = Py_True;
+    char *fieldName;
+    char *newContent;
     if (!PyArg_ParseTuple(args, "ss", &fieldName, &newContent)) {
         Base::Console().Error("Error: DrawSVGTemplatePy::getEditFieldNames - Bad Args\n");
         result = Py_False;
-    } else {
+    }
+    else {
         try {
             getDrawSVGTemplatePtr()->EditableTexts.setValue(fieldName, newContent);
         }

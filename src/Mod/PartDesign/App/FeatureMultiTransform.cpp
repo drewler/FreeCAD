@@ -23,9 +23,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepGProp.hxx>
-# include <GProp_GProps.hxx>
-# include <Precision.hxx>
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
+#include <Precision.hxx>
 #endif
 
 #include "FeatureMultiTransform.h"
@@ -35,81 +35,83 @@
 
 using namespace PartDesign;
 
-namespace PartDesign {
+namespace PartDesign
+{
 
 
 PROPERTY_SOURCE(PartDesign::MultiTransform, PartDesign::Transformed)
 
 MultiTransform::MultiTransform()
 {
-    ADD_PROPERTY(Transformations,(nullptr));
+    ADD_PROPERTY(Transformations, (nullptr));
     Transformations.setSize(0);
 }
 
 void MultiTransform::positionBySupport()
 {
     PartDesign::Transformed::positionBySupport();
-    std::vector<App::DocumentObject*> transFeatures = Transformations.getValues();
-    for (std::vector<App::DocumentObject*>::const_iterator f = transFeatures.begin();
+    std::vector<App::DocumentObject *> transFeatures = Transformations.getValues();
+    for (std::vector<App::DocumentObject *>::const_iterator f = transFeatures.begin();
          f != transFeatures.end(); ++f) {
         if (!((*f)->getTypeId().isDerivedFrom(PartDesign::Transformed::getClassTypeId())))
             throw Base::TypeError("Transformation features must be subclasses of Transformed");
-        PartDesign::Transformed* transFeature = static_cast<PartDesign::Transformed*>(*f);
+        PartDesign::Transformed *transFeature = static_cast<PartDesign::Transformed *>(*f);
         transFeature->Placement.setValue(this->Placement.getValue());
 
         // To avoid that a linked transform feature stays touched after a recompute
         // we have to purge the touched state
-        if (this->isRecomputing()) {
-            transFeature->purgeTouched();
-        }
+        if (this->isRecomputing()) { transFeature->purgeTouched(); }
     }
 }
 
 short MultiTransform::mustExecute() const
 {
-    if (Transformations.isTouched())
-        return 1;
+    if (Transformations.isTouched()) return 1;
     return Transformed::mustExecute();
 }
 
-const std::list<gp_Trsf> MultiTransform::getTransformations(const std::vector<App::DocumentObject*> originals)
+const std::list<gp_Trsf>
+MultiTransform::getTransformations(const std::vector<App::DocumentObject *> originals)
 {
-    std::vector<App::DocumentObject*> transFeatures = Transformations.getValues();
+    std::vector<App::DocumentObject *> transFeatures = Transformations.getValues();
 
     // Find centre of gravity of first original
     // FIXME: This method will NOT give the expected result for more than one original!
-    Part::Feature* originalFeature = static_cast<Part::Feature*>(originals.front());
+    Part::Feature *originalFeature = static_cast<Part::Feature *>(originals.front());
     TopoDS_Shape original;
 
     if (originalFeature->getTypeId().isDerivedFrom(PartDesign::FeatureAddSub::getClassTypeId())) {
-        PartDesign::FeatureAddSub* addFeature = static_cast<PartDesign::FeatureAddSub*>(originalFeature);
+        PartDesign::FeatureAddSub *addFeature =
+            static_cast<PartDesign::FeatureAddSub *>(originalFeature);
         //if (addFeature->getAddSubType() == FeatureAddSub::Additive)
         //    original = addFeature->AddSubShape.getShape().getShape();
         //else
-            original = addFeature->AddSubShape.getShape().getShape();
+        original = addFeature->AddSubShape.getShape().getShape();
     }
 
     GProp_GProps props;
-    BRepGProp::VolumeProperties(original,props);
+    BRepGProp::VolumeProperties(original, props);
     gp_Pnt cog = props.CentreOfMass();
 
     std::list<gp_Trsf> result;
     std::list<gp_Pnt> cogs;
-    std::vector<App::DocumentObject*>::const_iterator f;
+    std::vector<App::DocumentObject *>::const_iterator f;
 
     for (f = transFeatures.begin(); f != transFeatures.end(); ++f) {
         if (!((*f)->getTypeId().isDerivedFrom(PartDesign::Transformed::getClassTypeId())))
             throw Base::TypeError("Transformation features must be subclasses of Transformed");
-        PartDesign::Transformed* transFeature = static_cast<PartDesign::Transformed*>(*f);
+        PartDesign::Transformed *transFeature = static_cast<PartDesign::Transformed *>(*f);
         std::list<gp_Trsf> newTransformations = transFeature->getTransformations(originals);
 
         if (result.empty()) {
             // First transformation Feature
             result = newTransformations;
-            for (std::list<gp_Trsf>::const_iterator nt = newTransformations.begin(); nt != newTransformations.end(); ++nt) {
+            for (std::list<gp_Trsf>::const_iterator nt = newTransformations.begin();
+                 nt != newTransformations.end(); ++nt) {
                 cogs.push_back(cog.Transformed(*nt));
             }
-        } else {
+        }
+        else {
             // Retain a copy of the first set of transformations for iterator ot
             // We can't iterate through result if we are also adding elements with push_back()!
             std::list<gp_Trsf> oldTransformations;
@@ -128,24 +130,30 @@ const std::list<gp_Trsf> MultiTransform::getTransformations(const std::vector<Ap
                 // oldTransformations vector
 
                 if (newTransformations.empty())
-                    throw Base::ValueError("Number of occurrences must be a divisor of previous number of occurrences");
+                    throw Base::ValueError("Number of occurrences must be a divisor of previous "
+                                           "number of occurrences");
                 if (oldTransformations.size() % newTransformations.size() != 0)
-                    throw Base::ValueError("Number of occurrences must be a divisor of previous number of occurrences");
+                    throw Base::ValueError("Number of occurrences must be a divisor of previous "
+                                           "number of occurrences");
 
                 unsigned sliceLength = oldTransformations.size() / newTransformations.size();
                 std::list<gp_Trsf>::const_iterator ot = oldTransformations.begin();
                 std::list<gp_Pnt>::const_iterator oc = oldCogs.begin();
 
-                for (std::list<gp_Trsf>::const_iterator nt = newTransformations.begin(); nt != newTransformations.end(); ++nt) {
+                for (std::list<gp_Trsf>::const_iterator nt = newTransformations.begin();
+                     nt != newTransformations.end(); ++nt) {
                     for (unsigned s = 0; s < sliceLength; s++) {
                         gp_Trsf trans;
                         double factor = nt->ScaleFactor(); // extract scale factor
 
                         if (factor > Precision::Confusion()) {
-                            trans.SetScale(*oc, factor); // recreate the scaled transformation to use the correct COG
+                            trans.SetScale(
+                                *oc,
+                                factor); // recreate the scaled transformation to use the correct COG
                             trans = trans * (*ot);
                             cogs.push_back(*oc); // Scaling does not affect the COG
-                        } else {
+                        }
+                        else {
                             trans = (*nt) * (*ot);
                             cogs.push_back(oc->Transformed(*nt));
                         }
@@ -154,17 +162,20 @@ const std::list<gp_Trsf> MultiTransform::getTransformations(const std::vector<Ap
                         ++oc;
                     }
                 }
-            } else {
+            }
+            else {
                 // Multiplication method: Combine the new transformations with the old ones.
                 // All old transformations are multiplied with all new ones, so that the length of the
                 // result vector is the length of the old and new transformations multiplied.
                 // a11 a12         b1    a11*b1 a12*b1 a11*b2 a12*b2 a11*b3 a12*b3
                 // a21 a22   mul   b2  = a21*b1 a22*b1 a21*b2 a22*b2 a21*b3 a22*b3
                 //                 b3
-                for (std::list<gp_Trsf>::const_iterator nt = newTransformations.begin(); nt != newTransformations.end(); ++nt) {
+                for (std::list<gp_Trsf>::const_iterator nt = newTransformations.begin();
+                     nt != newTransformations.end(); ++nt) {
                     std::list<gp_Pnt>::const_iterator oc = oldCogs.begin();
 
-                    for (std::list<gp_Trsf>::const_iterator ot = oldTransformations.begin(); ot != oldTransformations.end(); ++ot) {
+                    for (std::list<gp_Trsf>::const_iterator ot = oldTransformations.begin();
+                         ot != oldTransformations.end(); ++ot) {
                         result.push_back((*nt) * (*ot));
                         cogs.push_back(oc->Transformed(*nt));
                         ++oc;
@@ -180,4 +191,4 @@ const std::list<gp_Trsf> MultiTransform::getTransformations(const std::vector<Ap
     return result;
 }
 
-}
+} // namespace PartDesign

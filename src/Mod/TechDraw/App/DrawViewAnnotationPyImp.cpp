@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #endif
 
 #include <App/DocumentObject.h>
@@ -47,12 +47,6 @@ std::string DrawViewAnnotationPy::representation() const
     return std::string("<DrawViewAnnotation object>");
 }
 
-PyObject *DrawViewAnnotationPy::getCustomAttributes(const char* ) const
-{
-    return nullptr;
-}
+PyObject *DrawViewAnnotationPy::getCustomAttributes(const char *) const { return nullptr; }
 
-int DrawViewAnnotationPy::setCustomAttributes(const char* , PyObject *)
-{
-    return 0;
-}
+int DrawViewAnnotationPy::setCustomAttributes(const char *, PyObject *) { return 0; }

@@ -31,12 +31,12 @@ namespace QSint
 {
 
 
-class QSINT_EXPORT FreeCADPanelScheme : public ActionPanelScheme
+class QSINT_EXPORT FreeCADPanelScheme: public ActionPanelScheme
 {
 public:
     explicit FreeCADPanelScheme();
 
-    static ActionPanelScheme* defaultScheme()
+    static ActionPanelScheme *defaultScheme()
     {
         static FreeCADPanelScheme scheme;
         return &scheme;
@@ -54,22 +54,22 @@ private:
     QPixmap builtinUnfoldOver;
 };
 
-class QSINT_EXPORT SystemPanelScheme : public ActionPanelScheme
+class QSINT_EXPORT SystemPanelScheme: public ActionPanelScheme
 {
 public:
     explicit SystemPanelScheme();
 
-    static ActionPanelScheme* defaultScheme()
+    static ActionPanelScheme *defaultScheme()
     {
         static SystemPanelScheme scheme;
         return &scheme;
     }
 
 private:
-    QPixmap drawFoldIcon(const QPalette& p, bool fold) const;
-    QString systemStyle(const QPalette& p) const;
+    QPixmap drawFoldIcon(const QPalette &p, bool fold) const;
+    QString systemStyle(const QPalette &p) const;
 };
 
-}
+} // namespace QSint
 
 #endif // IISFREECADTASKPANELSCHEME_H

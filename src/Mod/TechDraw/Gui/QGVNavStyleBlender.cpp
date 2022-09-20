@@ -32,16 +32,12 @@
 
 using namespace TechDrawGui;
 
-namespace TechDrawGui {
-
-QGVNavStyleBlender::QGVNavStyleBlender(QGVPage* qgvp) :
-    QGVNavStyle(qgvp)
+namespace TechDrawGui
 {
-}
 
-QGVNavStyleBlender::~QGVNavStyleBlender()
-{
-}
+QGVNavStyleBlender::QGVNavStyleBlender(QGVPage *qgvp) : QGVNavStyle(qgvp) {}
+
+QGVNavStyleBlender::~QGVNavStyleBlender() {}
 
 void QGVNavStyleBlender::handleKeyReleaseEvent(QKeyEvent *event)
 {
@@ -54,34 +50,31 @@ void QGVNavStyleBlender::handleKeyReleaseEvent(QKeyEvent *event)
 void QGVNavStyleBlender::handleMousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
-//    Base::Console().Message("QGVNSBlender::handleMousePressEvent() - button: %d buttons: %d\n", event->button(), event->buttons());
+    //    Base::Console().Message("QGVNSBlender::handleMousePressEvent() - button: %d buttons: %d\n", event->button(), event->buttons());
 }
 
 void QGVNavStyleBlender::handleMouseMoveEvent(QMouseEvent *event)
 {
-//    Base::Console().Message("QGVNSBlender::handleMouseMoveEvent() - buttons: %d modifiers: %X\n",
-//                            QGuiApplication::mouseButtons() & Qt::MiddleButton,
-//                            QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier));
+    //    Base::Console().Message("QGVNSBlender::handleMouseMoveEvent() - buttons: %d modifiers: %X\n",
+    //                            QGuiApplication::mouseButtons() & Qt::MiddleButton,
+    //                            QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier));
 
-    if (getViewer()->isBalloonPlacing()) {
-        getViewer()->setBalloonCursorPos(event->pos());
-    }
+    if (getViewer()->isBalloonPlacing()) { getViewer()->setBalloonCursorPos(event->pos()); }
 
-    if ((QGuiApplication::mouseButtons() & Qt::LeftButton) &&
-        (QGuiApplication::mouseButtons() & Qt::RightButton)) {
+    if ((QGuiApplication::mouseButtons() & Qt::LeftButton)
+        && (QGuiApplication::mouseButtons() & Qt::RightButton)) {
         //pan mode 1 - LMB + RMB
-        if (panningActive) {
-            pan(event->pos());
-        } else {
+        if (panningActive) { pan(event->pos()); }
+        else {
             startPan(event->pos());
         }
         event->accept();
-    } else if ((QGuiApplication::mouseButtons() & Qt::MiddleButton) &&
-               (QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) ) {
+    }
+    else if ((QGuiApplication::mouseButtons() & Qt::MiddleButton)
+             && (QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier))) {
         //pan mode 2 - Shift + MMB
-        if (panningActive) {
-            pan(event->pos());
-        } else {
+        if (panningActive) { pan(event->pos()); }
+        else {
             startPan(event->pos());
         }
         event->accept();
@@ -90,16 +83,13 @@ void QGVNavStyleBlender::handleMouseMoveEvent(QMouseEvent *event)
 
 void QGVNavStyleBlender::handleMouseReleaseEvent(QMouseEvent *event)
 {
-//    Base::Console().Message("QGVNSBlender::handleMouseReleaseEvent() - button: %d buttons: %d\n", event->button(), event->buttons());
-    if (getViewer()->isBalloonPlacing()) {
-        placeBalloon(event->pos());
-    }
+    //    Base::Console().Message("QGVNSBlender::handleMouseReleaseEvent() - button: %d buttons: %d\n", event->button(), event->buttons());
+    if (getViewer()->isBalloonPlacing()) { placeBalloon(event->pos()); }
 
     if (panningActive) {
         //pan mode 1 - LMB + RMB + mouse move
         //stop panning if either button released
-        if ( (event->button() == Qt::LeftButton) ||
-             (event->button() == Qt::RightButton)) {
+        if ((event->button() == Qt::LeftButton) || (event->button() == Qt::RightButton)) {
             stopPan();
             event->accept();
         }
@@ -114,7 +104,7 @@ void QGVNavStyleBlender::handleMouseReleaseEvent(QMouseEvent *event)
 
 bool QGVNavStyleBlender::allowContextMenu(QContextMenuEvent *event)
 {
-//    Base::Console().Message("QGVNSBlender::allowContextMenu()\n");
+    //    Base::Console().Message("QGVNSBlender::allowContextMenu()\n");
     if (event->reason() == QContextMenuEvent::Mouse) {
         //must check for a button combination involving context menu button
         if (QGuiApplication::mouseButtons() & Qt::LeftButton) {
@@ -125,4 +115,4 @@ bool QGVNavStyleBlender::allowContextMenu(QContextMenuEvent *event)
     return true;
 }
 
-}  // namespace TechDrawGui
+} // namespace TechDrawGui

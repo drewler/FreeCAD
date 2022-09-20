@@ -62,8 +62,9 @@
 
 #include "FeatureProjection.h"
 
-namespace TechDraw {
-    extern PyObject* initModule();
+namespace TechDraw
+{
+extern PyObject *initModule();
 }
 
 /* Python entry */
@@ -74,72 +75,72 @@ PyMOD_INIT_FUNC(TechDraw)
         Base::Interpreter().loadModule("Part");
         Base::Interpreter().loadModule("Measure");
     }
-    catch(const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         PyErr_SetString(PyExc_ImportError, e.what());
         PyMOD_Return(nullptr);
     }
-    PyObject* mod = TechDraw::initModule();
+    PyObject *mod = TechDraw::initModule();
     Base::Console().Log("Loading TechDraw module... done\n");
 
-    TechDraw::DrawPage            ::init();
-    TechDraw::DrawView            ::init();
-    TechDraw::DrawViewCollection  ::init();
-    TechDraw::DrawViewPart        ::init();
-    TechDraw::DrawViewAnnotation  ::init();
-    TechDraw::DrawViewSymbol      ::init();
+    TechDraw::DrawPage ::init();
+    TechDraw::DrawView ::init();
+    TechDraw::DrawViewCollection ::init();
+    TechDraw::DrawViewPart ::init();
+    TechDraw::DrawViewAnnotation ::init();
+    TechDraw::DrawViewSymbol ::init();
 
-    TechDraw::DrawViewSection     ::init();
-    TechDraw::DrawViewMulti       ::init();
-    TechDraw::DrawViewDimension   ::init();
-    TechDraw::DrawViewDimExtent   ::init();
-    TechDraw::LandmarkDimension     ::init();
-    TechDraw::DrawProjGroup       ::init();
-    TechDraw::DrawProjGroupItem   ::init();
-    TechDraw::DrawViewDetail      ::init();
-    TechDraw::DrawViewBalloon     ::init();
-    TechDraw::DrawLeaderLine      ::init();
-    TechDraw::DrawRichAnno        ::init();
+    TechDraw::DrawViewSection ::init();
+    TechDraw::DrawViewMulti ::init();
+    TechDraw::DrawViewDimension ::init();
+    TechDraw::DrawViewDimExtent ::init();
+    TechDraw::LandmarkDimension ::init();
+    TechDraw::DrawProjGroup ::init();
+    TechDraw::DrawProjGroupItem ::init();
+    TechDraw::DrawViewDetail ::init();
+    TechDraw::DrawViewBalloon ::init();
+    TechDraw::DrawLeaderLine ::init();
+    TechDraw::DrawRichAnno ::init();
 
-    TechDraw::DrawTemplate        ::init();
+    TechDraw::DrawTemplate ::init();
     TechDraw::DrawParametricTemplate::init();
-    TechDraw::DrawSVGTemplate     ::init();
+    TechDraw::DrawSVGTemplate ::init();
 
-    TechDraw::DrawViewClip        ::init();
-    TechDraw::DrawHatch           ::init();
-    TechDraw::DrawGeomHatch       ::init();
-    TechDraw::DrawViewDraft       ::init();
-    TechDraw::DrawViewArch        ::init();
-    TechDraw::DrawViewImage       ::init();
-    TechDraw::DrawTile            ::init();
-    TechDraw::DrawTileWeld        ::init();
-    TechDraw::DrawWeldSymbol      ::init();
+    TechDraw::DrawViewClip ::init();
+    TechDraw::DrawHatch ::init();
+    TechDraw::DrawGeomHatch ::init();
+    TechDraw::DrawViewDraft ::init();
+    TechDraw::DrawViewArch ::init();
+    TechDraw::DrawViewImage ::init();
+    TechDraw::DrawTile ::init();
+    TechDraw::DrawTileWeld ::init();
+    TechDraw::DrawWeldSymbol ::init();
 
     TechDraw::PropertyGeomFormatList::init();
-    TechDraw::GeomFormat            ::init();
+    TechDraw::GeomFormat ::init();
     TechDraw::PropertyCenterLineList::init();
-    TechDraw::CenterLine            ::init();
+    TechDraw::CenterLine ::init();
     TechDraw::PropertyCosmeticEdgeList::init();
-    TechDraw::CosmeticEdge          ::init();
+    TechDraw::CosmeticEdge ::init();
     TechDraw::PropertyCosmeticVertexList::init();
-    TechDraw::CosmeticVertex        ::init();
+    TechDraw::CosmeticVertex ::init();
 
-    TechDraw::CosmeticExtension     ::init();
+    TechDraw::CosmeticExtension ::init();
     TechDraw::CosmeticExtensionPython::init();
 
     TechDraw::FeatureProjection::init();
 
-   // are these python init calls required?  some modules don't have them
-   // Python Types
-    TechDraw::DrawPagePython      ::init();
-    TechDraw::DrawViewPython      ::init();
-    TechDraw::DrawViewPartPython  ::init();
+    // are these python init calls required?  some modules don't have them
+    // Python Types
+    TechDraw::DrawPagePython ::init();
+    TechDraw::DrawViewPython ::init();
+    TechDraw::DrawViewPartPython ::init();
     TechDraw::DrawViewMultiPython ::init();
-    TechDraw::DrawTemplatePython  ::init();
+    TechDraw::DrawTemplatePython ::init();
     TechDraw::DrawViewSymbolPython::init();
     TechDraw::DrawLeaderLinePython::init();
-    TechDraw::DrawRichAnnoPython  ::init();
-    TechDraw::DrawTilePython      ::init();
-    TechDraw::DrawTileWeldPython  ::init();
+    TechDraw::DrawRichAnnoPython ::init();
+    TechDraw::DrawTilePython ::init();
+    TechDraw::DrawTileWeldPython ::init();
     TechDraw::DrawWeldSymbolPython::init();
 
     PyMOD_Return(mod);

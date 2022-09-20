@@ -30,11 +30,12 @@
 
 using namespace PartGui;
 
-DlgSettingsMeasure::DlgSettingsMeasure(QWidget* parent)
-  : PreferencePage(parent) , ui(new Ui_DlgSettingsMeasure)
+DlgSettingsMeasure::DlgSettingsMeasure(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsMeasure)
 {
     ui->setupUi(this);
-    connect(ui->pushButtonRefresh, &QPushButton::clicked, this, &DlgSettingsMeasure::onMeasureRefresh);
+    connect(ui->pushButtonRefresh, &QPushButton::clicked, this,
+            &DlgSettingsMeasure::onMeasureRefresh);
 }
 
 /**
@@ -77,9 +78,7 @@ void DlgSettingsMeasure::loadSettings()
  */
 void DlgSettingsMeasure::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
     else {
         QWidget::changeEvent(e);
     }

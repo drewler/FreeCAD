@@ -36,38 +36,38 @@
 
 class STDMESHERS_EXPORT StdMeshers_LocalLength: public SMESH_Hypothesis
 {
- public:
-  StdMeshers_LocalLength(int hypId, int studyId, SMESH_Gen * gen);
-  virtual ~ StdMeshers_LocalLength();
+public:
+    StdMeshers_LocalLength(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_LocalLength();
 
-  void SetLength(double length);
-  void SetPrecision(double precision);
+    void SetLength(double length);
+    void SetPrecision(double precision);
 
-  double GetLength() const;
-  double GetPrecision() const;
+    double GetLength() const;
+    double GetPrecision() const;
 
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
-  friend std::ostream & operator <<(std::ostream & save, StdMeshers_LocalLength & hyp);
-  friend std::istream & operator >>(std::istream & load, StdMeshers_LocalLength & hyp);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
+    friend std::ostream &operator<<(std::ostream &save, StdMeshers_LocalLength &hyp);
+    friend std::istream &operator>>(std::istream &load, StdMeshers_LocalLength &hyp);
 
-  /*!
+    /*!
    * \brief Initialize segment length by the mesh built on the geometry
    * \param theMesh - the built mesh
    * \param theShape - the geometry of interest
    * \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
- protected:
-  double _length;
-  double _precision;
+protected:
+    double _length;
+    double _precision;
 };
 
 #endif

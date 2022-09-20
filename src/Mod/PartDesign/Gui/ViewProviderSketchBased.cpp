@@ -35,19 +35,17 @@ using namespace PartDesignGui;
 PROPERTY_SOURCE(PartDesignGui::ViewProviderSketchBased, PartDesignGui::ViewProvider)
 
 
-ViewProviderSketchBased::ViewProviderSketchBased()
+ViewProviderSketchBased::ViewProviderSketchBased() {}
+
+
+ViewProviderSketchBased::~ViewProviderSketchBased() {}
+
+
+std::vector<App::DocumentObject *> ViewProviderSketchBased::claimChildren() const
 {
-}
-
-
-ViewProviderSketchBased::~ViewProviderSketchBased()
-{
-}
-
-
-std::vector<App::DocumentObject*> ViewProviderSketchBased::claimChildren() const {
-    std::vector<App::DocumentObject*> temp;
-    App::DocumentObject* sketch = static_cast<PartDesign::ProfileBased*>(getObject())->Profile.getValue();
+    std::vector<App::DocumentObject *> temp;
+    App::DocumentObject *sketch =
+        static_cast<PartDesign::ProfileBased *>(getObject())->Profile.getValue();
     if (sketch && sketch->isDerivedFrom(Part::Part2DObject::getClassTypeId()))
         temp.push_back(sketch);
 
@@ -55,13 +53,14 @@ std::vector<App::DocumentObject*> ViewProviderSketchBased::claimChildren() const
 }
 
 
-bool ViewProviderSketchBased::onDelete(const std::vector<std::string> &s) {
-    PartDesign::ProfileBased* feature = static_cast<PartDesign::ProfileBased*>(getObject());
+bool ViewProviderSketchBased::onDelete(const std::vector<std::string> &s)
+{
+    PartDesign::ProfileBased *feature = static_cast<PartDesign::ProfileBased *>(getObject());
 
     // get the Sketch
     Sketcher::SketchObject *pcSketch = nullptr;
     if (feature->Profile.getValue())
-        pcSketch = static_cast<Sketcher::SketchObject*>(feature->Profile.getValue());
+        pcSketch = static_cast<Sketcher::SketchObject *>(feature->Profile.getValue());
 
     // if abort command deleted the object the sketch is visible again
     if (pcSketch && Gui::Application::Instance->getViewProvider(pcSketch))
@@ -69,4 +68,3 @@ bool ViewProviderSketchBased::onDelete(const std::vector<std::string> &s) {
 
     return ViewProvider::onDelete(s);
 }
-

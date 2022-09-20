@@ -29,10 +29,11 @@
 #include <Gui/ViewProviderGeoFeatureGroupExtension.h>
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderBoolean : public ViewProvider,
-                                                public Gui::ViewProviderGeoFeatureGroupExtension
+class PartDesignGuiExport ViewProviderBoolean: public ViewProvider,
+                                               public Gui::ViewProviderGeoFeatureGroupExtension
 {
     PROPERTY_HEADER_WITH_EXTENSIONS(PartDesignGui::ViewProviderBoolean);
 
@@ -43,19 +44,18 @@ public:
     ~ViewProviderBoolean() override;
 
     App::PropertyEnumeration Display;
-    
+
     /// grouping handling
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
     bool onDelete(const std::vector<std::string> &) override;
-    void attach(App::DocumentObject*) override;
-    void onChanged(const App::Property* prop) override;
+    void attach(App::DocumentObject *) override;
+    void onChanged(const App::Property *prop) override;
 
 protected:
     bool setEdit(int ModNum) override;
-    
-    static const char* DisplayEnum[];
 
+    static const char *DisplayEnum[];
 };
 
 } // namespace PartDesignGui

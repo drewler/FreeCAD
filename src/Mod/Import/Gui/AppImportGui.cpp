@@ -35,8 +35,9 @@
 void CreateImportCommands();
 
 
-namespace ImportGui {
-extern PyObject* initModule();
+namespace ImportGui
+{
+extern PyObject *initModule();
 }
 
 PyMOD_INIT_FUNC(ImportGui)
@@ -49,12 +50,12 @@ PyMOD_INIT_FUNC(ImportGui)
     try {
         Base::Interpreter().loadModule("PartGui");
     }
-    catch(const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         PyErr_SetString(PyExc_ImportError, e.what());
         PyMOD_Return(nullptr);
     }
 
-    PyObject* mod = ImportGui::initModule();
+    PyObject *mod = ImportGui::initModule();
     Base::Console().Log("Loading GUI of Import module... done\n");
 
     CreateImportCommands();

@@ -29,14 +29,16 @@
 
 #include <Gui/ViewProviderDocumentObject.h>
 
-namespace TechDraw{
-    class DrawHatch;
+namespace TechDraw
+{
+class DrawHatch;
 }
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 
-class TechDrawGuiExport ViewProviderHatch : public Gui::ViewProviderDocumentObject
+class TechDrawGuiExport ViewProviderHatch: public Gui::ViewProviderDocumentObject
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderHatch);
 
@@ -46,22 +48,21 @@ public:
     /// destructor
     ~ViewProviderHatch() override;
 
-    App::PropertyColor       HatchColor;
+    App::PropertyColor HatchColor;
     App::PropertyFloatConstraint HatchScale;
 
-    bool useNewSelectionModel() const override {return false;}
-    void onChanged(const App::Property* prop) override;
+    bool useNewSelectionModel() const override { return false; }
+    void onChanged(const App::Property *prop) override;
     bool setEdit(int ModNum) override;
     bool doubleClicked() override;
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
 
-    TechDraw::DrawHatch* getViewObject() const;
+    TechDraw::DrawHatch *getViewObject() const;
 
     Gui::MDIView *getMDIView() const override;
 
 private:
     static App::PropertyFloatConstraint::Constraints scaleRange;
-
 };
 
 } // namespace TechDrawGui

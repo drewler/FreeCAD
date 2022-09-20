@@ -28,12 +28,13 @@
 
 #include <Gui/Workbench.h>
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
 /**
  * @author Werner Mayer
  */
-class TechDrawGuiExport Workbench : public Gui::StdWorkbench
+class TechDrawGuiExport Workbench: public Gui::StdWorkbench
 {
     TYPESYSTEM_HEADER();
 
@@ -42,9 +43,9 @@ public:
     virtual ~Workbench();
 
 protected:
-    Gui::MenuItem* setupMenuBar() const;
-    Gui::ToolBarItem* setupToolBars() const;
-    Gui::ToolBarItem* setupCommandBars() const;
+    Gui::MenuItem *setupMenuBar() const;
+    Gui::ToolBarItem *setupToolBars() const;
+    Gui::ToolBarItem *setupCommandBars() const;
 };
 
 } // namespace TechDrawGui

@@ -26,7 +26,7 @@
 
 class QDesignerFormEditorInterface;
 
-class CustomWidgetPlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
+class CustomWidgetPlugin: public QObject, public QDesignerCustomWidgetCollectionInterface
 {
     Q_OBJECT
     Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
@@ -35,6 +35,5 @@ class CustomWidgetPlugin : public QObject, public QDesignerCustomWidgetCollectio
 #endif // QT_VERSION >= 0x050000
 public:
     CustomWidgetPlugin(QObject *parent = 0);
-    QList<QDesignerCustomWidgetInterface *> customWidgets () const;
+    QList<QDesignerCustomWidgetInterface *> customWidgets() const;
 };
-

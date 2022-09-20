@@ -27,10 +27,10 @@
 #include <FCConfig.h>
 
 #ifdef _MSC_VER
-# pragma warning(disable : 4244)
-# pragma warning(disable : 4275)
-# pragma warning(disable : 4290)
-# pragma warning(disable : 4522)
+#pragma warning(disable : 4244)
+#pragma warning(disable : 4275)
+#pragma warning(disable : 4290)
+#pragma warning(disable : 4522)
 #endif
 
 #ifdef _PreComp_
@@ -112,7 +112,7 @@
 #include <Standard_UUID.hxx>
 #include <Standard_WayOfLife.hxx>
 
- 
+
 #include <TCollection_ExtendedString.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_SequenceOfExtendedString.hxx>
@@ -134,7 +134,7 @@
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
 
 #include <BRepTools.hxx>
-#include <Standard_DefineHandle.hxx> 
+#include <Standard_DefineHandle.hxx>
 #include <GCE2d_MakeSegment.hxx>
 #include <GCPnts_TangentialDeflection.hxx>
 #include <GCPnts_UniformDeflection.hxx>
@@ -226,4 +226,3 @@
 
 #endif // _PreComp_
 #endif
-

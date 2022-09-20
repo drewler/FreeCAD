@@ -28,22 +28,19 @@ using namespace Base;
 
 Axis::Axis() = default;
 
-Axis::Axis(const Axis& that)
+Axis::Axis(const Axis &that)
 {
     this->_base = that._base;
     this->_dir = that._dir;
 }
 
-Axis::Axis(const Vector3d& Orig, const Vector3d& Dir)
+Axis::Axis(const Vector3d &Orig, const Vector3d &Dir)
 {
     this->_base = Orig;
     this->_dir = Dir;
 }
 
-void Axis::reverse()
-{
-    this->_dir = -this->_dir;
-}
+void Axis::reverse() { this->_dir = -this->_dir; }
 
 Axis Axis::reversed() const
 {
@@ -52,39 +49,32 @@ Axis Axis::reversed() const
     return a;
 }
 
-void Axis::move(const Vector3d& MovVec)
-{
-    _base += MovVec;
-}
+void Axis::move(const Vector3d &MovVec) { _base += MovVec; }
 
-bool Axis::operator ==(const Axis& that) const
+bool Axis::operator==(const Axis &that) const
 {
     return (this->_base == that._base) && (this->_dir == that._dir);
 }
 
-bool Axis::operator !=(const Axis& that) const
-{
-    return !(*this == that);
-}
+bool Axis::operator!=(const Axis &that) const { return !(*this == that); }
 
-Axis& Axis::operator *=(const Placement &p)
+Axis &Axis::operator*=(const Placement &p)
 {
     p.multVec(this->_base, this->_base);
     p.getRotation().multVec(this->_dir, this->_dir);
     return *this;
 }
 
-Axis Axis::operator *(const Placement &p) const
+Axis Axis::operator*(const Placement &p) const
 {
     Axis a(*this);
     a *= p;
     return a;
 }
 
-Axis& Axis::operator = (const Axis &New)
+Axis &Axis::operator=(const Axis &New)
 {
     this->_base = New._base;
     this->_dir = New._dir;
     return *this;
 }
-

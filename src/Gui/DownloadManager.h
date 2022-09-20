@@ -35,28 +35,32 @@
 class AutoSaver;
 class QFileIconProvider;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class DownloadItem;
 class DownloadModel;
 class Ui_DownloadManager;
 
-class GuiExport DownloadManager : public QDialog
+class GuiExport DownloadManager: public QDialog
 {
     Q_OBJECT
 
 public:
-    enum RemovePolicy {
+    enum RemovePolicy
+    {
         Never,
         Exit,
         SuccessFullDownload
     };
 
-    Q_PROPERTY(RemovePolicy removePolicy READ removePolicy WRITE setRemovePolicy) // clazy:exclude=qproperty-without-notify
+    Q_PROPERTY(RemovePolicy removePolicy READ removePolicy WRITE
+                   setRemovePolicy) // clazy:exclude=qproperty-without-notify
     Q_ENUM(RemovePolicy)
 
 public:
-    static DownloadManager* getInstance();
+    static DownloadManager *getInstance();
 
 private:
     explicit DownloadManager(QWidget *parent = nullptr);
@@ -64,18 +68,19 @@ private:
 
 public:
     int activeDownloads() const;
-    QNetworkAccessManager * networkAccessManager()
-    { return m_manager; }
+    QNetworkAccessManager *networkAccessManager() { return m_manager; }
 
     RemovePolicy removePolicy() const;
     void setRemovePolicy(RemovePolicy policy);
-    void closeEvent(QCloseEvent* e) override;
-    QUrl redirectUrl(const QUrl&) const;
+    void closeEvent(QCloseEvent *e) override;
+    QUrl redirectUrl(const QUrl &) const;
 
 public Q_SLOTS:
     void download(const QNetworkRequest &request, bool requestFileName = false);
     inline void download(const QUrl &url, bool requestFileName = false)
-        { download(QNetworkRequest(url), requestFileName); }
+    {
+        download(QNetworkRequest(url), requestFileName);
+    }
     void handleUnsupportedContent(QNetworkReply *reply, bool requestFileName = false);
     void cleanup();
 
@@ -92,16 +97,16 @@ private:
     DownloadModel *m_model;
     QNetworkAccessManager *m_manager;
     QFileIconProvider *m_iconProvider;
-    QList<DownloadItem*> m_downloads;
+    QList<DownloadItem *> m_downloads;
     RemovePolicy m_removePolicy;
     friend class DownloadModel;
 
 private:
-    Ui_DownloadManager* ui;
-    static DownloadManager* self;
+    Ui_DownloadManager *ui;
+    static DownloadManager *self;
 };
 
-class DownloadModel : public QAbstractListModel
+class DownloadModel: public QAbstractListModel
 {
     friend class DownloadManager;
     Q_OBJECT
@@ -114,7 +119,6 @@ public:
 
 private:
     DownloadManager *m_downloadManager;
-
 };
 
 } // namespace Dialog

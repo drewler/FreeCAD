@@ -36,34 +36,28 @@
  */
 class STDMESHERS_EXPORT StdMeshers_QuadFromMedialAxis_1D2D: public StdMeshers_Quadrangle_2D
 {
- public:
-  StdMeshers_QuadFromMedialAxis_1D2D(int hypId, int studyId, SMESH_Gen* gen);
-  virtual ~StdMeshers_QuadFromMedialAxis_1D2D();
+public:
+    StdMeshers_QuadFromMedialAxis_1D2D(int hypId, int studyId, SMESH_Gen *gen);
+    virtual ~StdMeshers_QuadFromMedialAxis_1D2D();
 
-  virtual bool CheckHypothesis(SMESH_Mesh&         aMesh,
-                               const TopoDS_Shape& aShape,
-                               Hypothesis_Status&  aStatus);
+    virtual bool CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                 Hypothesis_Status &aStatus);
 
-  virtual bool Compute(SMESH_Mesh&         aMesh,
-                       const TopoDS_Shape& aShape);
+    virtual bool Compute(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape);
 
-  virtual bool Evaluate(SMESH_Mesh &         aMesh,
-                        const TopoDS_Shape & aShape,
-                        MapShapeNbElems&     aResMap);
+    virtual bool Evaluate(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape, MapShapeNbElems &aResMap);
 
-  virtual void SetEventListener(SMESH_subMesh* subMesh);
+    virtual void SetEventListener(SMESH_subMesh *subMesh);
 
-  static bool IsApplicable(const TopoDS_Shape & aShape, bool toCheckAll);
+    static bool IsApplicable(const TopoDS_Shape &aShape, bool toCheckAll);
 
-  class Algo1D;
+    class Algo1D;
 
- private:
+private:
+    bool computeQuads(SMESH_MesherHelper &theHelper, FaceQuadStruct::Ptr theQuad);
 
-  bool computeQuads( SMESH_MesherHelper& theHelper,
-                     FaceQuadStruct::Ptr theQuad);
-
-  Algo1D*                   _regular1D;
-  const SMESHDS_Hypothesis* _hyp2D;
+    Algo1D *_regular1D;
+    const SMESHDS_Hypothesis *_hyp2D;
 };
 
 #endif

@@ -26,10 +26,12 @@
 
 #include "Extension.h"
 
-namespace Base {
+namespace Base
+{
 class Matrix4D;
 }
-namespace App {
+namespace App
+{
 class DocumentObject;
 class DocumentObjectExecReturn;
 
@@ -37,7 +39,7 @@ class DocumentObjectExecReturn;
  * @brief Extension with special document object calls
  *
  */
-class AppExport DocumentObjectExtension : public App::Extension
+class AppExport DocumentObjectExtension: public App::Extension
 {
 
     //The cass does not have properties itself, but it is important to provide the property access
@@ -45,12 +47,11 @@ class AppExport DocumentObjectExtension : public App::Extension
     EXTENSION_PROPERTY_HEADER_WITH_OVERRIDE(App::DocumentObjectExtension);
 
 public:
+    DocumentObjectExtension();
+    ~DocumentObjectExtension() override;
 
-    DocumentObjectExtension ();
-    ~DocumentObjectExtension () override;
-
-    App::DocumentObject*       getExtendedObject();
-    const App::DocumentObject* getExtendedObject() const;
+    App::DocumentObject *getExtendedObject();
+    const App::DocumentObject *getExtendedObject() const;
 
     //override if execution is necessary
     virtual short extensionMustExecute();
@@ -66,19 +67,19 @@ public:
     /// get called when object is going to be removed from the document
     virtual void onExtendedUnsetupObject();
 
-    PyObject* getExtensionPyObject() override;
+    PyObject *getExtensionPyObject() override;
 
     /// returns the type name of the ViewProviderExtension which is automatically attached
     /// to the viewprovider object when it is initiated
-    virtual const char* getViewProviderExtensionName() const {return "";}
+    virtual const char *getViewProviderExtensionName() const { return ""; }
 
     /** Get the sub object by name
      * @sa DocumentObject::getSubObject()
      *
      * @return Return turn if handled, the sub object is returned in \c ret
      */
-    virtual bool extensionGetSubObject(DocumentObject *&ret, const char *subname,
-        PyObject **pyObj, Base::Matrix4D *mat, bool transform, int depth) const;
+    virtual bool extensionGetSubObject(DocumentObject *&ret, const char *subname, PyObject **pyObj,
+                                       Base::Matrix4D *mat, bool transform, int depth) const;
 
     /** Get name references of all sub objects
      * @sa DocumentObject::getSubObjects()
@@ -92,14 +93,14 @@ public:
      *
      * @return Return turn if handled, the linked object is returned in \c ret
      */
-    virtual bool extensionGetLinkedObject(DocumentObject *&ret, bool recursive,
-            Base::Matrix4D *mat, bool transform, int depth) const;
+    virtual bool extensionGetLinkedObject(DocumentObject *&ret, bool recursive, Base::Matrix4D *mat,
+                                          bool transform, int depth) const;
 
-    virtual int extensionSetElementVisible(const char *, bool) {return -1;}
-    virtual int extensionIsElementVisible(const char *) {return -1;}
-    virtual bool extensionHasChildElement() const {return false;}
+    virtual int extensionSetElementVisible(const char *, bool) { return -1; }
+    virtual int extensionIsElementVisible(const char *) { return -1; }
+    virtual bool extensionHasChildElement() const { return false; }
 };
 
-} //App
+} // namespace App
 
 #endif // APP_DOCUMENTOBJECTEXTENSION_H

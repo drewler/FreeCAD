@@ -42,13 +42,12 @@ using namespace std;
  */
 //=============================================================================
 
-StdMeshers_NumberOfLayers::StdMeshers_NumberOfLayers(int hypId, int studyId,
-                                                     SMESH_Gen * gen)
-  : SMESH_Hypothesis(hypId, studyId, gen)
+StdMeshers_NumberOfLayers::StdMeshers_NumberOfLayers(int hypId, int studyId, SMESH_Gen *gen)
+    : SMESH_Hypothesis(hypId, studyId, gen)
 {
-  _name = "NumberOfLayers"; // used by RadialPrism_3D
-  _param_algo_dim = 3; // 3D
-  _nbLayers = 1;
+    _name = "NumberOfLayers"; // used by RadialPrism_3D
+    _param_algo_dim = 3;      // 3D
+    _nbLayers = 1;
 }
 
 //=============================================================================
@@ -61,7 +60,7 @@ StdMeshers_NumberOfLayers::StdMeshers_NumberOfLayers(int hypId, int studyId,
 
 StdMeshers_NumberOfLayers::~StdMeshers_NumberOfLayers()
 {
-  MESSAGE( "StdMeshers_NumberOfLayers::~StdMeshers_NumberOfLayers" );
+    MESSAGE("StdMeshers_NumberOfLayers::~StdMeshers_NumberOfLayers");
 }
 
 //=============================================================================
@@ -74,13 +73,13 @@ StdMeshers_NumberOfLayers::~StdMeshers_NumberOfLayers()
 
 void StdMeshers_NumberOfLayers::SetNumberOfLayers(int numberOfLayers)
 {
-  if ( _nbLayers != numberOfLayers ) {
-    if ( numberOfLayers <= 0 )
-      throw SALOME_Exception(LOCALIZED("numberOfLayers must be positive"));
-    _nbLayers = numberOfLayers;
+    if (_nbLayers != numberOfLayers) {
+        if (numberOfLayers <= 0)
+            throw SALOME_Exception(LOCALIZED("numberOfLayers must be positive"));
+        _nbLayers = numberOfLayers;
 
-    NotifySubMeshesHypothesisModification();
-  }
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -91,9 +90,18 @@ void StdMeshers_NumberOfLayers::SetNumberOfLayers(int numberOfLayers)
  */
 //=============================================================================
 
-int StdMeshers_NumberOfLayers::GetNumberOfLayers() const
+int StdMeshers_NumberOfLayers::GetNumberOfLayers() const { return _nbLayers; }
+
+//=============================================================================
+/*!
+ *  
+ */
+//=============================================================================
+
+ostream &StdMeshers_NumberOfLayers::SaveTo(ostream &save)
 {
-  return _nbLayers;
+    save << _nbLayers;
+    return save;
 }
 
 //=============================================================================
@@ -102,10 +110,12 @@ int StdMeshers_NumberOfLayers::GetNumberOfLayers() const
  */
 //=============================================================================
 
-ostream & StdMeshers_NumberOfLayers::SaveTo(ostream & save)
+istream &StdMeshers_NumberOfLayers::LoadFrom(istream &load)
 {
-  save << _nbLayers;
-  return save;
+    bool isOK = true;
+    isOK = (bool)(load >> _nbLayers);
+    if (!isOK) load.clear(ios::badbit | load.rdstate());
+    return load;
 }
 
 //=============================================================================
@@ -114,14 +124,7 @@ ostream & StdMeshers_NumberOfLayers::SaveTo(ostream & save)
  */
 //=============================================================================
 
-istream & StdMeshers_NumberOfLayers::LoadFrom(istream & load)
-{
-  bool isOK = true;
-  isOK = (bool)(load >> _nbLayers);
-  if (!isOK)
-    load.clear(ios::badbit | load.rdstate());
-  return load;
-}
+ostream &operator<<(ostream &save, StdMeshers_NumberOfLayers &hyp) { return hyp.SaveTo(save); }
 
 //=============================================================================
 /*!
@@ -129,21 +132,7 @@ istream & StdMeshers_NumberOfLayers::LoadFrom(istream & load)
  */
 //=============================================================================
 
-ostream & operator <<(ostream & save, StdMeshers_NumberOfLayers & hyp)
-{
-  return hyp.SaveTo( save );
-}
-
-//=============================================================================
-/*!
- *  
- */
-//=============================================================================
-
-istream & operator >>(istream & load, StdMeshers_NumberOfLayers & hyp)
-{
-  return hyp.LoadFrom( load );
-}
+istream &operator>>(istream &load, StdMeshers_NumberOfLayers &hyp) { return hyp.LoadFrom(load); }
 
 //================================================================================
 /*!
@@ -154,10 +143,9 @@ istream & operator >>(istream & load, StdMeshers_NumberOfLayers & hyp)
  */
 //================================================================================
 
-bool StdMeshers_NumberOfLayers::SetParametersByMesh(const SMESH_Mesh*   ,
-                                                    const TopoDS_Shape& )
+bool StdMeshers_NumberOfLayers::SetParametersByMesh(const SMESH_Mesh *, const TopoDS_Shape &)
 {
-  return false;
+    return false;
 }
 
 //================================================================================
@@ -167,11 +155,11 @@ bool StdMeshers_NumberOfLayers::SetParametersByMesh(const SMESH_Mesh*   ,
  */
 //================================================================================
 
-bool StdMeshers_NumberOfLayers::SetParametersByDefaults(const TDefaults&  dflts,
-                                                        const SMESH_Mesh* theMesh)
+bool StdMeshers_NumberOfLayers::SetParametersByDefaults(const TDefaults &dflts,
+                                                        const SMESH_Mesh *theMesh)
 {
-  if ( dflts._elemLength )
-    return theMesh ? (_nbLayers = int( theMesh->GetShapeDiagonalSize() / dflts._elemLength/ 2.)) : 0;
-  return false;
+    if (dflts._elemLength)
+        return theMesh ? (_nbLayers = int(theMesh->GetShapeDiagonalSize() / dflts._elemLength / 2.))
+                       : 0;
+    return false;
 }
-

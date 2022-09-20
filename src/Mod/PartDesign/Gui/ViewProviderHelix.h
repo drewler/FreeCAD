@@ -27,9 +27,10 @@
 #include "ViewProviderAddSub.h"
 
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
-class PartDesignGuiExport ViewProviderHelix : public ViewProviderAddSub
+class PartDesignGuiExport ViewProviderHelix: public ViewProviderAddSub
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesignGui::ViewProviderHelix);
 
@@ -39,10 +40,10 @@ public:
     /// destructor
     ~ViewProviderHelix() override;
 
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
     /// grouping handling
-    std::vector<App::DocumentObject*> claimChildren(void)const override;
+    std::vector<App::DocumentObject *> claimChildren(void) const override;
 
     bool onDelete(const std::vector<std::string> &) override;
 
@@ -51,7 +52,7 @@ protected:
 
     /// Returns a newly created TaskDlgHelixParameters
     TaskDlgFeatureParameters *getEditDialog() override;
-    bool  setEdit(int ModNum) override;
+    bool setEdit(int ModNum) override;
     void unsetEdit(int ModNum) override;
 };
 

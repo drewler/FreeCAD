@@ -28,9 +28,10 @@
 #include <Mod/Part/Gui/ViewProviderAttachExtension.h>
 
 
-namespace PartGui {
+namespace PartGui
+{
 
-class PartGuiExport ViewProviderPrimitive : public ViewProviderPart
+class PartGuiExport ViewProviderPrimitive: public ViewProviderPart
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderPrimitive);
 
@@ -40,7 +41,7 @@ public:
     /// destructor
     ~ViewProviderPrimitive() override;
 
-    void setupContextMenu(QMenu*, QObject*, const char*) override;
+    void setupContextMenu(QMenu *, QObject *, const char *) override;
 
 protected:
     bool setEdit(int ModNum) override;
@@ -54,4 +55,3 @@ private:
 
 
 #endif // PARTGUI_VIEWPROVIDERPRIMITIVE_H
-

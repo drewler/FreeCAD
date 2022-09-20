@@ -30,7 +30,7 @@
 namespace PartDesign
 {
 
-class PartDesignExport Pipe : public ProfileBased
+class PartDesignExport Pipe: public ProfileBased
 {
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::Pipe);
 
@@ -51,35 +51,39 @@ public:
     App::DocumentObjectExecReturn *execute() override;
     short mustExecute() const override;
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
-        return "PartDesignGui::ViewProviderPipe";
-    }
+    const char *getViewProviderName() const override { return "PartDesignGui::ViewProviderPipe"; }
 
 protected:
     /// get the given edges and all their tangent ones
-    void getContinuousEdges(Part::TopoShape TopShape, std::vector< std::string >& SubNames);
-    void buildPipePath(const Part::TopoShape& input, const  std::vector<std::string>& edges, TopoDS_Shape& result);
-    void setupAlgorithm(BRepOffsetAPI_MakePipeShell& mkPipeShell, TopoDS_Shape& auxshape);
+    void getContinuousEdges(Part::TopoShape TopShape, std::vector<std::string> &SubNames);
+    void buildPipePath(const Part::TopoShape &input, const std::vector<std::string> &edges,
+                       TopoDS_Shape &result);
+    void setupAlgorithm(BRepOffsetAPI_MakePipeShell &mkPipeShell, TopoDS_Shape &auxshape);
     /// handle changed property
-    void handleChangedPropertyType(Base::XMLReader& reader, const char* TypeName, App::Property* prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
 private:
-    static const char* TypeEnums[];
-    static const char* TransitionEnums[];
-    static const char* ModeEnums[];
-    static const char* TransformEnums[];
+    static const char *TypeEnums[];
+    static const char *TransitionEnums[];
+    static const char *ModeEnums[];
+    static const char *TransformEnums[];
 };
 
-class PartDesignExport AdditivePipe : public Pipe {
+class PartDesignExport AdditivePipe: public Pipe
+{
 
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::AdditivePipe);
+
 public:
     AdditivePipe();
 };
 
-class PartDesignExport SubtractivePipe : public Pipe {
+class PartDesignExport SubtractivePipe: public Pipe
+{
 
     PROPERTY_HEADER_WITH_OVERRIDE(PartDesign::SubtractivePipe);
+
 public:
     SubtractivePipe();
 };

@@ -54,8 +54,8 @@ using namespace Gui;
 using namespace TechDraw;
 using namespace TechDrawGui;
 
-TaskBalloon::TaskBalloon(QGIViewBalloon *parent, ViewProviderBalloon *balloonVP) :
-    ui(new Ui_TaskBalloon)
+TaskBalloon::TaskBalloon(QGIViewBalloon *parent, ViewProviderBalloon *balloonVP)
+    : ui(new Ui_TaskBalloon)
 {
     int i = 0;
     m_parent = parent;
@@ -67,7 +67,8 @@ TaskBalloon::TaskBalloon(QGIViewBalloon *parent, ViewProviderBalloon *balloonVP)
     connect(ui->qsbShapeScale, SIGNAL(valueChanged(double)), this, SLOT(onShapeScaleChanged()));
 
     ui->qsbSymbolScale->setValue(parent->getBalloonFeat()->EndTypeScale.getValue());
-    connect(ui->qsbSymbolScale, SIGNAL(valueChanged(double)), this, SLOT(onEndSymbolScaleChanged()));
+    connect(ui->qsbSymbolScale, SIGNAL(valueChanged(double)), this,
+            SLOT(onEndSymbolScaleChanged()));
 
     std::string value = parent->getBalloonFeat()->Text.getValue();
     QString qs = QString::fromUtf8(value.data(), value.size());
@@ -83,7 +84,8 @@ TaskBalloon::TaskBalloon(QGIViewBalloon *parent, ViewProviderBalloon *balloonVP)
 
     i = parent->getBalloonFeat()->BubbleShape.getValue();
     ui->comboBubbleShape->setCurrentIndex(i);
-    connect(ui->comboBubbleShape, SIGNAL(currentIndexChanged(int)), this, SLOT(onBubbleShapeChanged()));
+    connect(ui->comboBubbleShape, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(onBubbleShapeChanged()));
 
     ui->qsbFontSize->setUnit(Base::Unit::Length);
     ui->qsbFontSize->setMinimum(0);
@@ -106,18 +108,17 @@ TaskBalloon::TaskBalloon(QGIViewBalloon *parent, ViewProviderBalloon *balloonVP)
     ui->qsbKinkLength->setValue(parent->getBalloonFeat()->KinkLength.getValue());
 
     connect(ui->qsbFontSize, SIGNAL(valueChanged(double)), this, SLOT(onFontsizeChanged()));
-    connect(ui->comboLineVisible, SIGNAL(currentIndexChanged(int)), this, SLOT(onLineVisibleChanged()));
+    connect(ui->comboLineVisible, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(onLineVisibleChanged()));
     connect(ui->qsbLineWidth, SIGNAL(valueChanged(double)), this, SLOT(onLineWidthChanged()));
     connect(ui->qsbKinkLength, SIGNAL(valueChanged(double)), this, SLOT(onKinkLengthChanged()));
 }
 
-TaskBalloon::~TaskBalloon()
-{
-}
+TaskBalloon::~TaskBalloon() {}
 
 bool TaskBalloon::accept()
 {
-    Gui::Document* doc = m_balloonVP->getDocument();
+    Gui::Document *doc = m_balloonVP->getDocument();
     m_balloonVP->getObject()->purgeTouched();
     doc->commitCommand();
     doc->resetEdit();
@@ -127,7 +128,7 @@ bool TaskBalloon::accept()
 
 bool TaskBalloon::reject()
 {
-    Gui::Document* doc = m_balloonVP->getDocument();
+    Gui::Document *doc = m_balloonVP->getDocument();
     doc->abortCommand();
     recomputeFeature();
     m_parent->updateView(true);
@@ -139,7 +140,7 @@ bool TaskBalloon::reject()
 
 void TaskBalloon::recomputeFeature()
 {
-    App::DocumentObject* objVP = m_balloonVP->getObject();
+    App::DocumentObject *objVP = m_balloonVP->getObject();
     assert(objVP);
     objVP->getDocument()->recomputeFeature(objVP);
 }
@@ -208,19 +209,18 @@ void TaskBalloon::onKinkLengthChanged()
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-TaskDlgBalloon::TaskDlgBalloon(QGIViewBalloon *parent, ViewProviderBalloon *balloonVP) :
-    TaskDialog()
+TaskDlgBalloon::TaskDlgBalloon(QGIViewBalloon *parent, ViewProviderBalloon *balloonVP)
+    : TaskDialog()
 {
-    widget  = new TaskBalloon(parent, balloonVP);
-    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("TechDraw_Balloon"), widget->windowTitle(), true, nullptr);
+    widget = new TaskBalloon(parent, balloonVP);
+    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("TechDraw_Balloon"),
+                                         widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
     setAutoCloseOnTransactionChange(true);
 }
 
-TaskDlgBalloon::~TaskDlgBalloon()
-{
-}
+TaskDlgBalloon::~TaskDlgBalloon() {}
 
 void TaskDlgBalloon::update()
 {
@@ -228,14 +228,9 @@ void TaskDlgBalloon::update()
 }
 
 //==== calls from the TaskView ===============================================================
-void TaskDlgBalloon::open()
-{
-}
+void TaskDlgBalloon::open() {}
 
-void TaskDlgBalloon::clicked(int i)
-{
-    Q_UNUSED(i);
-}
+void TaskDlgBalloon::clicked(int i) { Q_UNUSED(i); }
 
 bool TaskDlgBalloon::accept()
 {

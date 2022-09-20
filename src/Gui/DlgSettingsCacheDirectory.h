@@ -27,8 +27,10 @@
 #include "PropertyPage.h"
 #include <memory>
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgSettingsCacheDirectory;
 
 /**
@@ -36,12 +38,12 @@ class Ui_DlgSettingsCacheDirectory;
  * for the cache directory handling.
  * @author Werner Mayer
  */
-class DlgSettingsCacheDirectory : public PreferencePage
+class DlgSettingsCacheDirectory: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsCacheDirectory(QWidget* parent = nullptr);
+    explicit DlgSettingsCacheDirectory(QWidget *parent = nullptr);
     ~DlgSettingsCacheDirectory() override;
 
     void saveSettings() override;
@@ -53,19 +55,20 @@ protected:
 private:
     void runCheck();
     void openDirectory();
-    void setCurrentCacheSize(const QString&);
+    void setCurrentCacheSize(const QString &);
 
 private:
     static QString currentSize;
     std::unique_ptr<Ui_DlgSettingsCacheDirectory> ui;
 };
 
-class ApplicationCache : public QObject
+class ApplicationCache: public QObject
 {
     Q_OBJECT
 
 public:
-    enum class Period {
+    enum class Period
+    {
         Always,
         Daily,
         Weekly,
@@ -86,7 +89,7 @@ public:
     static qint64 toBytes(unsigned int);
 
 private:
-    void clearDirectory(const QString& path);
+    void clearDirectory(const QString &path);
     qint64 dirSize(QString dirPath) const;
 
 private:

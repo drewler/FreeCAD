@@ -44,22 +44,17 @@ QGCustomImage::QGCustomImage()
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
-QGCustomImage::~QGCustomImage()
-{
-}
+QGCustomImage::~QGCustomImage() {}
 
-void QGCustomImage::centerAt(QPointF centerPos)
-{
-    centerAt(centerPos.x(), centerPos.y());
-}
+void QGCustomImage::centerAt(QPointF centerPos) { centerAt(centerPos.x(), centerPos.y()); }
 
 void QGCustomImage::centerAt(double cX, double cY)
 {
     QRectF br = boundingRect();
     double width = br.width() * scale();
     double height = br.height() * scale();
-    double newX = cX - width/2.;
-    double newY = cY - height/2.;
+    double newX = cX - width / 2.;
+    double newY = cY - height / 2.;
     setPos(newX, newY);
 }
 
@@ -70,7 +65,7 @@ bool QGCustomImage::load(QString fileSpec)
     m_px = px;
     prepareGeometryChange();
     setPixmap(m_px);
-    return(success);
+    return (success);
 }
 
 bool QGCustomImage::load(QPixmap map)
@@ -79,7 +74,7 @@ bool QGCustomImage::load(QPixmap map)
     m_px = map;
     prepareGeometryChange();
     setPixmap(m_px);
-    return(success);
+    return (success);
 }
 
 QSize QGCustomImage::imageSize()
@@ -88,12 +83,13 @@ QSize QGCustomImage::imageSize()
     return result;
 }
 
-void QGCustomImage::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGCustomImage::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                          QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
     //painter->drawRect(boundingRect());          //good for debugging
 
-    QGraphicsPixmapItem::paint (painter, &myOption, widget);
+    QGraphicsPixmapItem::paint(painter, &myOption, widget);
 }
-

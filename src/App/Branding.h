@@ -33,7 +33,8 @@
 
 class QIODevice;
 
-namespace App {
+namespace App
+{
 
 class Branding
 {
@@ -41,15 +42,15 @@ public:
     using XmlConfig = QMap<std::string, std::string>;
     Branding();
 
-    bool readFile(const QString& fn);
+    bool readFile(const QString &fn);
     XmlConfig getUserDefines() const;
 
 private:
     QVector<std::string> filter;
-    bool evaluateXML(QIODevice *device, QDomDocument& xmlDocument);
+    bool evaluateXML(QIODevice *device, QDomDocument &xmlDocument);
     QDomDocument domDocument;
 };
 
-}
+} // namespace App
 
 #endif // APP_BRANDING_H

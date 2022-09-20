@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <xercesc/sax2/XMLReaderFactory.hpp>
+#include <xercesc/sax2/XMLReaderFactory.hpp>
 #endif
 
 #include <locale>
@@ -53,10 +53,9 @@ using namespace std;
 //  Base::XMLReader: Constructors and Destructor
 // ---------------------------------------------------------------------------
 
-Base::XMLReader::XMLReader(const char* FileName, std::istream& str)
-  : DocumentSchema(0), ProgramVersion(""), FileVersion(0), Level(0),
-    CharacterCount(0), ReadType(None), _File(FileName), _valid(false),
-    _verbose(true)
+Base::XMLReader::XMLReader(const char *FileName, std::istream &str)
+    : DocumentSchema(0), ProgramVersion(""), FileVersion(0), Level(0), CharacterCount(0),
+      ReadType(None), _File(FileName), _valid(false), _verbose(true)
 {
 #ifdef _MSC_VER
     str.imbue(std::locale::empty());
@@ -82,16 +81,14 @@ Base::XMLReader::XMLReader(const char* FileName, std::istream& str)
         StdInputSource file(str, _File.filePath().c_str());
         _valid = parser->parseFirst(file, token);
     }
-    catch (const XMLException& toCatch) {
-        char* message = XMLString::transcode(toCatch.getMessage());
-        cerr << "Exception message is: \n"
-             << message << "\n";
+    catch (const XMLException &toCatch) {
+        char *message = XMLString::transcode(toCatch.getMessage());
+        cerr << "Exception message is: \n" << message << "\n";
         XMLString::release(&message);
     }
-    catch (const SAXParseException& toCatch) {
-        char* message = XMLString::transcode(toCatch.getMessage());
-        cerr << "Exception message is: \n"
-             << message << "\n";
+    catch (const SAXParseException &toCatch) {
+        char *message = XMLString::transcode(toCatch.getMessage());
+        cerr << "Exception message is: \n" << message << "\n";
         XMLString::release(&message);
     }
 #ifndef FC_DEBUG
@@ -107,23 +104,18 @@ Base::XMLReader::~XMLReader()
     delete parser;
 }
 
-const char* Base::XMLReader::localName() const
-{
-    return LocalName.c_str();
-}
+const char *Base::XMLReader::localName() const { return LocalName.c_str(); }
 
 unsigned int Base::XMLReader::getAttributeCount() const
 {
     return static_cast<unsigned int>(AttrMap.size());
 }
 
-long Base::XMLReader::getAttributeAsInteger(const char* AttrName) const
+long Base::XMLReader::getAttributeAsInteger(const char *AttrName) const
 {
     AttrMapType::const_iterator pos = AttrMap.find(AttrName);
 
-    if (pos != AttrMap.end()) {
-        return atol(pos->second.c_str());
-    }
+    if (pos != AttrMap.end()) { return atol(pos->second.c_str()); }
     else {
         // wrong name, use hasAttribute if not sure!
         std::ostringstream msg;
@@ -132,13 +124,11 @@ long Base::XMLReader::getAttributeAsInteger(const char* AttrName) const
     }
 }
 
-unsigned long Base::XMLReader::getAttributeAsUnsigned(const char* AttrName) const
+unsigned long Base::XMLReader::getAttributeAsUnsigned(const char *AttrName) const
 {
     AttrMapType::const_iterator pos = AttrMap.find(AttrName);
 
-    if (pos != AttrMap.end()) {
-        return strtoul(pos->second.c_str(),nullptr,10);
-    }
+    if (pos != AttrMap.end()) { return strtoul(pos->second.c_str(), nullptr, 10); }
     else {
         // wrong name, use hasAttribute if not sure!
         std::ostringstream msg;
@@ -147,13 +137,11 @@ unsigned long Base::XMLReader::getAttributeAsUnsigned(const char* AttrName) cons
     }
 }
 
-double Base::XMLReader::getAttributeAsFloat  (const char* AttrName) const
+double Base::XMLReader::getAttributeAsFloat(const char *AttrName) const
 {
     AttrMapType::const_iterator pos = AttrMap.find(AttrName);
 
-    if (pos != AttrMap.end()) {
-        return atof(pos->second.c_str());
-    }
+    if (pos != AttrMap.end()) { return atof(pos->second.c_str()); }
     else {
         // wrong name, use hasAttribute if not sure!
         std::ostringstream msg;
@@ -162,13 +150,11 @@ double Base::XMLReader::getAttributeAsFloat  (const char* AttrName) const
     }
 }
 
-const char*  Base::XMLReader::getAttribute (const char* AttrName) const
+const char *Base::XMLReader::getAttribute(const char *AttrName) const
 {
     AttrMapType::const_iterator pos = AttrMap.find(AttrName);
 
-    if (pos != AttrMap.end()) {
-        return pos->second.c_str();
-    }
+    if (pos != AttrMap.end()) { return pos->second.c_str(); }
     else {
         // wrong name, use hasAttribute if not sure!
         std::ostringstream msg;
@@ -177,7 +163,7 @@ const char*  Base::XMLReader::getAttribute (const char* AttrName) const
     }
 }
 
-bool Base::XMLReader::hasAttribute (const char* AttrName) const
+bool Base::XMLReader::hasAttribute(const char *AttrName) const
 {
     return AttrMap.find(AttrName) != AttrMap.end();
 }
@@ -189,7 +175,7 @@ bool Base::XMLReader::read()
     try {
         parser->parseNext(token);
     }
-    catch (const XMLException& toCatch) {
+    catch (const XMLException &toCatch) {
 #if 0
         char* message = XMLString::transcode(toCatch.getMessage());
         cerr << "Exception message is: \n"
@@ -197,13 +183,13 @@ bool Base::XMLReader::read()
         XMLString::release(&message);
         return false;
 #else
-        char* message = XMLString::transcode(toCatch.getMessage());
+        char *message = XMLString::transcode(toCatch.getMessage());
         std::string what = message;
         XMLString::release(&message);
         throw Base::XMLBaseException(what);
 #endif
     }
-    catch (const SAXParseException& toCatch) {
+    catch (const SAXParseException &toCatch) {
 #if 0
         char* message = XMLString::transcode(toCatch.getMessage());
         cerr << "Exception message is: \n"
@@ -211,7 +197,7 @@ bool Base::XMLReader::read()
         XMLString::release(&message);
         return false;
 #else
-        char* message = XMLString::transcode(toCatch.getMessage());
+        char *message = XMLString::transcode(toCatch.getMessage());
         std::string what = message;
         XMLString::release(&message);
         throw Base::XMLParseException(what);
@@ -229,13 +215,14 @@ bool Base::XMLReader::read()
     return true;
 }
 
-void Base::XMLReader::readElement(const char* ElementName)
+void Base::XMLReader::readElement(const char *ElementName)
 {
     bool ok;
     int currentLevel = Level;
     std::string currentName = LocalName;
     do {
-        ok = read(); if (!ok) break;
+        ok = read();
+        if (!ok) break;
         if (ReadType == EndElement && currentName == LocalName && currentLevel >= Level) {
             // we have reached the end of the element when calling this method
             // thus we must stop reading on.
@@ -245,22 +232,17 @@ void Base::XMLReader::readElement(const char* ElementName)
             // the end of the document has been reached but we still try to continue on reading
             throw Base::XMLParseException("End of document reached");
         }
-    } while ((ReadType != StartElement && ReadType != StartEndElement) ||
-             (ElementName && LocalName != ElementName));
+    } while ((ReadType != StartElement && ReadType != StartEndElement)
+             || (ElementName && LocalName != ElementName));
 }
 
-int Base::XMLReader::level() const {
-    return Level;
-}
+int Base::XMLReader::level() const { return Level; }
 
-void Base::XMLReader::readEndElement(const char* ElementName, int level)
+void Base::XMLReader::readEndElement(const char *ElementName, int level)
 {
     // if we are already at the end of the current element
-    if (ReadType == EndElement
-            && ElementName
-            && LocalName == ElementName
-            && (level<0 || level==Level))
-    {
+    if (ReadType == EndElement && ElementName && LocalName == ElementName
+        && (level < 0 || level == Level)) {
         return;
     }
     else if (ReadType == EndDocument) {
@@ -270,29 +252,25 @@ void Base::XMLReader::readEndElement(const char* ElementName, int level)
 
     bool ok;
     do {
-        ok = read(); if (!ok) break;
-        if (ReadType == EndDocument)
-            break;
+        ok = read();
+        if (!ok) break;
+        if (ReadType == EndDocument) break;
     } while (ReadType != EndElement
-                || (ElementName
-                    && (LocalName != ElementName
-                        || (level>=0 && level!=Level))));
+             || (ElementName && (LocalName != ElementName || (level >= 0 && level != Level))));
 }
 
-void Base::XMLReader::readCharacters()
-{
-}
+void Base::XMLReader::readCharacters() {}
 
-void Base::XMLReader::readBinFile(const char* filename)
+void Base::XMLReader::readBinFile(const char *filename)
 {
     Base::FileInfo fi(filename);
     Base::ofstream to(fi, std::ios::out | std::ios::binary);
-    if (!to)
-        throw Base::FileException("XMLReader::readBinFile() Could not open file!");
+    if (!to) throw Base::FileException("XMLReader::readBinFile() Could not open file!");
 
     bool ok;
     do {
-        ok = read(); if (!ok) break;
+        ok = read();
+        if (!ok) break;
     } while (ReadType != EndCDATA);
 
     to << Base::base64_decode(Characters);
@@ -313,7 +291,7 @@ void Base::XMLReader::readFiles(zipios::ZipInputStream &zipstream) const
     try {
         entry = zipstream.getNextEntry();
     }
-    catch (const std::exception&) {
+    catch (const std::exception &) {
         // There is no further file at all. This can happen if the
         // project file was created without GUI
         return;
@@ -324,24 +302,23 @@ void Base::XMLReader::readFiles(zipios::ZipInputStream &zipstream) const
         std::vector<FileEntry>::const_iterator jt = it;
         // Check if the current entry is registered, otherwise check the next registered files as soon as
         // both file names match
-        while (jt != FileList.end() && entry->getName() != jt->FileName)
-            ++jt;
+        while (jt != FileList.end() && entry->getName() != jt->FileName) ++jt;
         // If this condition is true both file names match and we can read-in the data, otherwise
         // no file name for the current entry in the zip was registered.
         if (jt != FileList.end()) {
             try {
                 Base::Reader reader(zipstream, jt->FileName, FileVersion);
                 jt->Object->RestoreDocFile(reader);
-                if (reader.getLocalReader())
-                    reader.getLocalReader()->readFiles(zipstream);
+                if (reader.getLocalReader()) reader.getLocalReader()->readFiles(zipstream);
             }
-            catch(...) {
+            catch (...) {
                 // For any exception we just continue with the next file.
                 // It doesn't matter if the last reader has read more or
                 // less data than the file size would allow.
                 // All what we need to do is to notify the user about the
                 // failure.
-                Base::Console().Error("Reading failed from embedded file: %s\n", entry->toString().c_str());
+                Base::Console().Error("Reading failed from embedded file: %s\n",
+                                      entry->toString().c_str());
             }
             // Go to the next registered file name
             it = jt + 1;
@@ -353,70 +330,55 @@ void Base::XMLReader::readFiles(zipios::ZipInputStream &zipstream) const
         try {
             entry = zipstream.getNextEntry();
         }
-        catch (const std::exception&) {
+        catch (const std::exception &) {
             // there is no further entry
             break;
         }
     }
 }
 
-const char *Base::XMLReader::addFile(const char* Name, Base::Persistence *Object)
+const char *Base::XMLReader::addFile(const char *Name, Base::Persistence *Object)
 {
     FileEntry temp;
     temp.FileName = Name;
     temp.Object = Object;
 
     FileList.push_back(temp);
-    FileNames.push_back( temp.FileName );
+    FileNames.push_back(temp.FileName);
 
     return Name;
 }
 
-const std::vector<std::string>& Base::XMLReader::getFilenames() const
-{
-    return FileNames;
-}
+const std::vector<std::string> &Base::XMLReader::getFilenames() const { return FileNames; }
 
 bool Base::XMLReader::isRegistered(Base::Persistence *Object) const
 {
     if (Object) {
-        for (std::vector<FileEntry>::const_iterator it = FileList.begin(); it != FileList.end(); ++it) {
-            if (it->Object == Object)
-                return true;
+        for (std::vector<FileEntry>::const_iterator it = FileList.begin(); it != FileList.end();
+             ++it) {
+            if (it->Object == Object) return true;
         }
     }
 
     return false;
 }
 
-void Base::XMLReader::addName(const char*, const char*)
-{
-}
+void Base::XMLReader::addName(const char *, const char *) {}
 
-const char* Base::XMLReader::getName(const char* name) const
-{
-    return name;
-}
+const char *Base::XMLReader::getName(const char *name) const { return name; }
 
-bool Base::XMLReader::doNameMapping() const
-{
-    return false;
-}
+bool Base::XMLReader::doNameMapping() const { return false; }
 
 // ---------------------------------------------------------------------------
 //  Base::XMLReader: Implementation of the SAX DocumentHandler interface
 // ---------------------------------------------------------------------------
-void Base::XMLReader::startDocument()
-{
-    ReadType = StartDocument;
-}
+void Base::XMLReader::startDocument() { ReadType = StartDocument; }
 
-void Base::XMLReader::endDocument()
-{
-    ReadType = EndDocument;
-}
+void Base::XMLReader::endDocument() { ReadType = EndDocument; }
 
-void Base::XMLReader::startElement(const XMLCh* const /*uri*/, const XMLCh* const localname, const XMLCh* const /*qname*/, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
+void Base::XMLReader::startElement(const XMLCh *const /*uri*/, const XMLCh *const localname,
+                                   const XMLCh *const /*qname*/,
+                                   const XERCES_CPP_NAMESPACE_QUALIFIER Attributes &attrs)
 {
     Level++; // new scope
     LocalName = StrX(localname).c_str();
@@ -430,35 +392,29 @@ void Base::XMLReader::startElement(const XMLCh* const /*uri*/, const XMLCh* cons
     ReadType = StartElement;
 }
 
-void Base::XMLReader::endElement  (const XMLCh* const /*uri*/, const XMLCh *const localname, const XMLCh *const /*qname*/)
+void Base::XMLReader::endElement(const XMLCh *const /*uri*/, const XMLCh *const localname,
+                                 const XMLCh *const /*qname*/)
 {
     Level--; // end of scope
     LocalName = StrX(localname).c_str();
 
-    if (ReadType == StartElement)
-        ReadType = StartEndElement;
+    if (ReadType == StartElement) ReadType = StartEndElement;
     else
         ReadType = EndElement;
 }
 
-void Base::XMLReader::startCDATA ()
-{
-    ReadType = StartCDATA;
-}
+void Base::XMLReader::startCDATA() { ReadType = StartCDATA; }
 
-void Base::XMLReader::endCDATA ()
-{
-    ReadType = EndCDATA;
-}
+void Base::XMLReader::endCDATA() { ReadType = EndCDATA; }
 
-void Base::XMLReader::characters(const   XMLCh* const chars, const XMLSize_t length)
+void Base::XMLReader::characters(const XMLCh *const chars, const XMLSize_t length)
 {
     Characters = StrX(chars).c_str();
     ReadType = Chars;
     CharacterCount += length;
 }
 
-void Base::XMLReader::ignorableWhitespace( const   XMLCh* const /*chars*/, const XMLSize_t /*length*/)
+void Base::XMLReader::ignorableWhitespace(const XMLCh *const /*chars*/, const XMLSize_t /*length*/)
 {
     //fSpaceCount += length;
 }
@@ -475,39 +431,34 @@ void Base::XMLReader::resetDocument()
 // ---------------------------------------------------------------------------
 //  Base::XMLReader: Overrides of the SAX ErrorHandler interface
 // ---------------------------------------------------------------------------
-void Base::XMLReader::error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
+void Base::XMLReader::error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException &e)
 {
     // print some details to error output and throw an
     // exception to abort the parsing
-    cerr << "Error at file " << StrX(e.getSystemId())
-         << ", line " << e.getLineNumber()
+    cerr << "Error at file " << StrX(e.getSystemId()) << ", line " << e.getLineNumber() << ", char "
+         << e.getColumnNumber() << endl;
+    throw e;
+}
+
+void Base::XMLReader::fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException &e)
+{
+    // print some details to error output and throw an
+    // exception to abort the parsing
+    cerr << "Fatal Error at file " << StrX(e.getSystemId()) << ", line " << e.getLineNumber()
          << ", char " << e.getColumnNumber() << endl;
     throw e;
 }
 
-void Base::XMLReader::fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
+void Base::XMLReader::warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException &e)
 {
     // print some details to error output and throw an
     // exception to abort the parsing
-    cerr << "Fatal Error at file " << StrX(e.getSystemId())
-         << ", line " << e.getLineNumber()
+    cerr << "Warning at file " << StrX(e.getSystemId()) << ", line " << e.getLineNumber()
          << ", char " << e.getColumnNumber() << endl;
     throw e;
 }
 
-void Base::XMLReader::warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
-{
-    // print some details to error output and throw an
-    // exception to abort the parsing
-   cerr << "Warning at file " << StrX(e.getSystemId())
-        << ", line " << e.getLineNumber()
-        << ", char " << e.getColumnNumber() << endl;
-   throw e;
-}
-
-void Base::XMLReader::resetErrors()
-{
-}
+void Base::XMLReader::resetErrors() {}
 
 bool Base::XMLReader::testStatus(ReaderStatus pos) const
 {
@@ -540,32 +491,19 @@ void Base::XMLReader::clearPartialRestoreProperty()
     setStatus(PartialRestoreInObject, false);
 }
 
-void Base::XMLReader::clearPartialRestoreObject()
-{
-    setStatus(PartialRestoreInObject, false);
-}
+void Base::XMLReader::clearPartialRestoreObject() { setStatus(PartialRestoreInObject, false); }
 
 // ----------------------------------------------------------
 
-Base::Reader::Reader(std::istream& str, const std::string& name, int version)
-  : std::istream(str.rdbuf()), _str(str), _name(name), fileVersion(version)
-{
-}
+Base::Reader::Reader(std::istream &str, const std::string &name, int version)
+    : std::istream(str.rdbuf()), _str(str), _name(name), fileVersion(version)
+{}
 
-std::string Base::Reader::getFileName() const
-{
-    return this->_name;
-}
+std::string Base::Reader::getFileName() const { return this->_name; }
 
-int Base::Reader::getFileVersion() const
-{
-    return fileVersion;
-}
+int Base::Reader::getFileVersion() const { return fileVersion; }
 
-std::istream& Base::Reader::getStream()
-{
-    return this->_str;
-}
+std::istream &Base::Reader::getStream() { return this->_str; }
 
 void Base::Reader::initLocalReader(std::shared_ptr<Base::XMLReader> reader)
 {
@@ -574,5 +512,5 @@ void Base::Reader::initLocalReader(std::shared_ptr<Base::XMLReader> reader)
 
 std::shared_ptr<Base::XMLReader> Base::Reader::getLocalReader() const
 {
-    return(this->localreader);
+    return (this->localreader);
 }

@@ -40,23 +40,22 @@
 using namespace TechDrawGui;
 using namespace Gui;
 
-void Grabber3d::quickView(const QColor bgColor,
-                          QImage &image)
+void Grabber3d::quickView(const QColor bgColor, QImage &image)
 {
-//    Base::Console().Message("G3d::quickView());
+    //    Base::Console().Message("G3d::quickView());
     //get a 3d view
     if (!Gui::getMainWindow()) {
         Base::Console().Warning("G3d::quickView - no Main Window - returning\n");
         return;
     }
-    Gui::MainWindow* mainWindow = Gui::getMainWindow();
-    Gui::MDIView* mdiView = Gui::getMainWindow()->activeWindow();
-    View3DInventor* view3d = qobject_cast<View3DInventor*>(mdiView);
+    Gui::MainWindow *mainWindow = Gui::getMainWindow();
+    Gui::MDIView *mdiView = Gui::getMainWindow()->activeWindow();
+    View3DInventor *view3d = qobject_cast<View3DInventor *>(mdiView);
     if (!view3d) {
         //the active window is not a 3D view, so try to find one
         auto mdiWindows = mainWindow->windows();
-        for (auto& mdi : mdiWindows) {
-            auto mdiView = qobject_cast<View3DInventor*>(mdi);
+        for (auto &mdi : mdiWindows) {
+            auto mdiView = qobject_cast<View3DInventor *>(mdi);
             if (mdiView) {
                 view3d = mdiView;
                 break;
@@ -69,7 +68,7 @@ void Grabber3d::quickView(const QColor bgColor,
         return;
     }
 
-    View3DInventorViewer* viewer = view3d->getViewer();
+    View3DInventorViewer *viewer = view3d->getViewer();
     if (!viewer) {
         Base::Console().Warning("G3d::quickView - could not create viewer - returning\n");
         return;
@@ -81,7 +80,6 @@ void Grabber3d::quickView(const QColor bgColor,
     short height;
     vpSize.getValue(width, height);
 
-    int samples = 8;  //magic number from Gui::View3DInventorViewer
+    int samples = 8; //magic number from Gui::View3DInventorViewer
     viewer->savePicture(width, height, samples, bgColor, image);
 }
-

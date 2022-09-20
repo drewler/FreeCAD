@@ -11,7 +11,7 @@
 //
 #ifdef PYCXX_DEBUG
 extern void bpt();
-extern void printRefCount( PyObject *obj );
+extern void printRefCount(PyObject *obj);
 #endif
 
 #endif

@@ -37,7 +37,7 @@
 
 #include "DrawUtil.h"
 
-#include <Mod/TechDraw/App/DrawTileWeldPy.h>  // generated from DrawTileWeldPy.xml
+#include <Mod/TechDraw/App/DrawTileWeldPy.h> // generated from DrawTileWeldPy.xml
 #include "DrawTileWeld.h"
 
 using namespace TechDraw;
@@ -58,52 +58,43 @@ DrawTileWeld::DrawTileWeld()
     ADD_PROPERTY_TYPE(CenterText, (nullptr), group, App::Prop_None, "Text above/below symbol");
     ADD_PROPERTY_TYPE(SymbolFile, (prefSymbol()), group, App::Prop_None, "Symbol File");
     ADD_PROPERTY_TYPE(SymbolIncluded, (""), group, App::Prop_None,
-                                            "Embedded Symbol. System use only.");   // n/a to end users
+                      "Embedded Symbol. System use only."); // n/a to end users
 
-//    SymbolFile.setStatus(App::Property::ReadOnly, true);
+    //    SymbolFile.setStatus(App::Property::ReadOnly, true);
 
     std::string svgFilter("Symbol files (*.svg *.SVG);;All files (*)");
     SymbolFile.setFilter(svgFilter);
 }
 
-DrawTileWeld::~DrawTileWeld()
-{
-}
+DrawTileWeld::~DrawTileWeld() {}
 
-void DrawTileWeld::onChanged(const App::Property* prop)
+void DrawTileWeld::onChanged(const App::Property *prop)
 {
     if (!isRestoring()) {
-        App::Document* doc = getDocument();
+        App::Document *doc = getDocument();
         if ((prop == &SymbolFile) && doc) {
             if (!SymbolFile.isEmpty()) {
                 Base::FileInfo fi(SymbolFile.getValue());
-                if (fi.isReadable()) {
-                    replaceSymbolIncluded(SymbolFile.getValue());
-                }
+                if (fi.isReadable()) { replaceSymbolIncluded(SymbolFile.getValue()); }
             }
         }
     }
     DrawTile::onChanged(prop);
-
 }
 
-short DrawTileWeld::mustExecute() const
-{
-    return DrawTile::mustExecute();
-}
+short DrawTileWeld::mustExecute() const { return DrawTile::mustExecute(); }
 
 App::DocumentObjectExecReturn *DrawTileWeld::execute()
 {
-//    Base::Console().Message("DTW::execute()\n");
+    //    Base::Console().Message("DTW::execute()\n");
     return DrawTile::execute();
 }
 
 void DrawTileWeld::replaceSymbolIncluded(std::string newSymbolFile)
 {
-//    Base::Console().Message("DTW::replaceSymbolIncluded(%s)\n", newSymbolFile.c_str());
-    if (SymbolIncluded.isEmpty()) {
-        setupSymbolIncluded();
-    } else {
+    //    Base::Console().Message("DTW::replaceSymbolIncluded(%s)\n", newSymbolFile.c_str());
+    if (SymbolIncluded.isEmpty()) { setupSymbolIncluded(); }
+    else {
         std::string tempName = SymbolIncluded.getExchangeTempFile();
         DrawUtil::copyFile(newSymbolFile, tempName);
         SymbolIncluded.setValue(tempName.c_str());
@@ -112,15 +103,13 @@ void DrawTileWeld::replaceSymbolIncluded(std::string newSymbolFile)
 
 void DrawTileWeld::onDocumentRestored()
 {
-//    Base::Console().Message("DTW::onDocumentRestored()\n");
+    //    Base::Console().Message("DTW::onDocumentRestored()\n");
     if (SymbolIncluded.isEmpty()) {
         if (!SymbolFile.isEmpty()) {
             std::string symbolFileName = SymbolFile.getValue();
             Base::FileInfo tfi(symbolFileName);
             if (tfi.isReadable()) {
-                if (SymbolIncluded.isEmpty()) {
-                    setupSymbolIncluded();
-                }
+                if (SymbolIncluded.isEmpty()) { setupSymbolIncluded(); }
             }
         }
     }
@@ -137,8 +126,8 @@ void DrawTileWeld::setupObject()
 
 void DrawTileWeld::setupSymbolIncluded()
 {
-//    Base::Console().Message("DTW::setupSymbolIncluded()\n");
-    App::Document* doc = getDocument();
+    //    Base::Console().Message("DTW::setupSymbolIncluded()\n");
+    App::Document *doc = getDocument();
     std::string special = getNameInDocument();
     special += "Symbol.svg";
     std::string dir = doc->TransientDir.getValue();
@@ -179,15 +168,16 @@ PyObject *DrawTileWeld::getPyObject()
 
 // Python Drawing feature ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(TechDraw::DrawTileWeldPython, TechDraw::DrawTileWeld)
-template<> const char* TechDraw::DrawTileWeldPython::getViewProviderName() const {
+template<> const char *TechDraw::DrawTileWeldPython::getViewProviderName() const
+{
     return "TechDrawGui::ViewProviderTile";
 }
 /// @endcond
 
 // explicit template instantiation
 template class TechDrawExport FeaturePythonT<TechDraw::DrawTileWeld>;
-}
-
+} // namespace App

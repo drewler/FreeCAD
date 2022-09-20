@@ -26,8 +26,10 @@
 
 #include "PropertyPage.h"
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 
 /**
  * The DlgSettingsUnitsImp class implements a preference page to change settings
@@ -35,12 +37,12 @@ namespace Dialog {
  * \author Jürgen Riegel
  */
 class Ui_DlgSettingsUnits;
-class DlgSettingsUnitsImp : public PreferencePage
+class DlgSettingsUnitsImp: public PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsUnitsImp(QWidget* parent = nullptr);
+    explicit DlgSettingsUnitsImp(QWidget *parent = nullptr);
     ~DlgSettingsUnitsImp() override;
 
     void saveSettings() override;
@@ -53,7 +55,7 @@ public Q_SLOTS:
     void on_comboBox_ViewSystem_currentIndexChanged(int index);
 
 private:
-    Ui_DlgSettingsUnits* ui;
+    Ui_DlgSettingsUnits *ui;
 };
 
 } // namespace Dialog

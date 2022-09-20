@@ -26,126 +26,99 @@
 #include <stdexcept>
 
 //#if defined(_DEBUG_)
-#  define MED_TVECTOR_CHECK_RANGE
+#define MED_TVECTOR_CHECK_RANGE
 //#endif
 
 namespace MED
 {
 
-  //! Main purpose to introduce the class was to customize operator [] 
-  template<typename _Tp, typename _Alloc = std::allocator<_Tp> >
-  class TVector : public std::vector<_Tp, _Alloc>
-  {
-  public:
+//! Main purpose to introduce the class was to customize operator []
+template<typename _Tp, typename _Alloc = std::allocator<_Tp>>
+class TVector: public std::vector<_Tp, _Alloc>
+{
+public:
     typedef size_t size_type;
 
     typedef std::vector<_Tp, _Alloc> superclass;
     typedef typename superclass::allocator_type allocator_type;
 
     typedef _Tp value_type;
-    typedef value_type& reference;
-    typedef const value_type& const_reference;
+    typedef value_type &reference;
+    typedef const value_type &const_reference;
 
-  protected:
-    void
-    check_range(size_type __n) const
+protected:
+    void check_range(size_type __n) const
     {
-      if (__n >= this->size())
-        throw std::out_of_range("TVector [] access out of range");
+        if (__n >= this->size()) throw std::out_of_range("TVector [] access out of range");
     }
 
-    const_reference
-    get_value(size_type __n) const
-    {
-      return superclass::operator[](__n);
-    }
+    const_reference get_value(size_type __n) const { return superclass::operator[](__n); }
 
-    reference
-    get_value(size_type __n)
-    {
-      return superclass::operator[](__n);
-    }
+    reference get_value(size_type __n) { return superclass::operator[](__n); }
 
-  public:
-    explicit
-    TVector(const allocator_type& __a = allocator_type()): 
-      superclass(__a) 
-    {}
-    
-    TVector(size_type __n, const value_type& __val,
-            const allocator_type& __a = allocator_type()):
-      superclass(__n, __val, __a)
-    {}
-    
-    explicit
-    TVector(size_type __n):
-      superclass(__n)
+public:
+    explicit TVector(const allocator_type &__a = allocator_type()) : superclass(__a) {}
+
+    TVector(size_type __n, const value_type &__val, const allocator_type &__a = allocator_type())
+        : superclass(__n, __val, __a)
     {}
 
-    TVector(const TVector& __x):
-      superclass(__x)
-    {}
+    explicit TVector(size_type __n) : superclass(__n) {}
+
+    TVector(const TVector &__x) : superclass(__x) {}
 
     template<typename _InputIterator>
     TVector(_InputIterator __first, _InputIterator __last,
-            const allocator_type& __a = allocator_type()):
-      superclass(__first, __last, __a)
+            const allocator_type &__a = allocator_type())
+        : superclass(__first, __last, __a)
     {}
 
     template<typename _Yp, typename _Al>
-    TVector(TVector<_Yp, _Al> __y):
-      superclass(__y.begin(), __y.end())
+    TVector(TVector<_Yp, _Al> __y) : superclass(__y.begin(), __y.end())
     {}
 
-    TVector&
-    operator=(const TVector& __x)
+    TVector &operator=(const TVector &__x)
     {
-      superclass::operator=(__x);
-      return *this;
+        superclass::operator=(__x);
+        return *this;
     }
 
-    template<typename _Yp, typename _Al>
-    TVector&
-    operator=(TVector<_Yp, _Al> __y)
+    template<typename _Yp, typename _Al> TVector &operator=(TVector<_Yp, _Al> __y)
     {
-      this->assign(__y.begin(), __y.end());
-      return *this;
+        this->assign(__y.begin(), __y.end());
+        return *this;
     }
 
-    reference
-    operator[](size_type __n)
+    reference operator[](size_type __n)
     {
 #if defined(MED_TVECTOR_CHECK_RANGE)
-      check_range(__n);
+        check_range(__n);
 #endif
-      return get_value(__n);
+        return get_value(__n);
     }
 
-    const_reference
-    operator[](size_type __n) const
+    const_reference operator[](size_type __n) const
     {
 #if defined(MED_TVECTOR_CHECK_RANGE)
-      check_range(__n);
+        check_range(__n);
 #endif
-      return get_value(__n);
+        return get_value(__n);
     }
 
-    reference
-    at(size_type __n)
+    reference at(size_type __n)
     {
-      check_range(__n);
-      return get_value(__n);
+        check_range(__n);
+        return get_value(__n);
     }
 
-    const_reference
-    at(size_type __n) const
+    const_reference at(size_type __n) const
     {
-      check_range(__n);
-      return get_value(__n);
+        check_range(__n);
+        return get_value(__n);
     }
-  };
+};
 
-}
+} // namespace MED
 
 #undef MED_TVECTOR_CHECK_RANGE
 

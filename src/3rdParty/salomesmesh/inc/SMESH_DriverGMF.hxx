@@ -28,13 +28,13 @@
 #define _SMESH_DriverGMF_HXX_
 
 #ifdef WIN32
- #if defined MESHDriverGMF_EXPORTS || defined MeshDriverGMF_EXPORTS
-  #define MESHDriverGMF_EXPORT __declspec( dllexport )
- #else
-  #define MESHDriverGMF_EXPORT __declspec( dllimport )
- #endif
+#if defined MESHDriverGMF_EXPORTS || defined MeshDriverGMF_EXPORTS
+#define MESHDriverGMF_EXPORT __declspec(dllexport)
 #else
- #define MESHDriverGMF_EXPORT
+#define MESHDriverGMF_EXPORT __declspec(dllimport)
+#endif
+#else
+#define MESHDriverGMF_EXPORT
 #endif
 
 #endif

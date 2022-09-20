@@ -28,15 +28,16 @@
 
 class QButtonGroup;
 
-namespace PartGui {
+namespace PartGui
+{
 
 class Ui_DlgSettingsGeneral;
-class DlgSettingsGeneral : public Gui::Dialog::PreferencePage
+class DlgSettingsGeneral: public Gui::Dialog::PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgSettingsGeneral(QWidget* parent = nullptr);
+    explicit DlgSettingsGeneral(QWidget *parent = nullptr);
     ~DlgSettingsGeneral() override;
 
 protected:
@@ -49,12 +50,12 @@ private:
 };
 
 class Ui_DlgImportExportIges;
-class DlgImportExportIges : public Gui::Dialog::PreferencePage
+class DlgImportExportIges: public Gui::Dialog::PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgImportExportIges(QWidget* parent = nullptr);
+    explicit DlgImportExportIges(QWidget *parent = nullptr);
     ~DlgImportExportIges() override;
 
 protected:
@@ -64,16 +65,16 @@ protected:
 
 private:
     std::unique_ptr<Ui_DlgImportExportIges> ui;
-    QButtonGroup* bg;
+    QButtonGroup *bg;
 };
 
 class Ui_DlgImportExportStep;
-class DlgImportExportStep : public Gui::Dialog::PreferencePage
+class DlgImportExportStep: public Gui::Dialog::PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit DlgImportExportStep(QWidget* parent = nullptr);
+    explicit DlgImportExportStep(QWidget *parent = nullptr);
     ~DlgImportExportStep() override;
 
 protected:
@@ -85,6 +86,6 @@ private:
     std::unique_ptr<Ui_DlgImportExportStep> ui;
 };
 
-} // namespace Gui
+} // namespace PartGui
 
 #endif // PARTGUI_DLGSETTINGSGENERAL_H

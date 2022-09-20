@@ -41,14 +41,12 @@ using namespace std;
  *  
  */
 //=============================================================================
-NETGENPlugin_SimpleHypothesis_3D::NETGENPlugin_SimpleHypothesis_3D (int         hypId,
-                                                                    int         studyId,
-                                                                    SMESH_Gen * gen)
-  : NETGENPlugin_SimpleHypothesis_2D(hypId, studyId, gen),
-  _volume(0)
+NETGENPlugin_SimpleHypothesis_3D::NETGENPlugin_SimpleHypothesis_3D(int hypId, int studyId,
+                                                                   SMESH_Gen *gen)
+    : NETGENPlugin_SimpleHypothesis_2D(hypId, studyId, gen), _volume(0)
 {
-  _name = "NETGEN_SimpleParameters_3D";
-  _param_algo_dim = 3;
+    _name = "NETGEN_SimpleParameters_3D";
+    _param_algo_dim = 3;
 }
 
 //=============================================================================
@@ -58,11 +56,10 @@ NETGENPlugin_SimpleHypothesis_3D::NETGENPlugin_SimpleHypothesis_3D (int         
 //=============================================================================
 void NETGENPlugin_SimpleHypothesis_3D::LengthFromFaces()
 {
-  if (_volume > DBL_MIN )
-  {
-    _volume = 0;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (_volume > DBL_MIN) {
+        _volume = 0;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -72,13 +69,11 @@ void NETGENPlugin_SimpleHypothesis_3D::LengthFromFaces()
 //=============================================================================
 void NETGENPlugin_SimpleHypothesis_3D::SetMaxElementVolume(double value)
 {
-  if ( value < DBL_MIN )
-    value = 0.;
-  if (_volume != value)
-  {
-    _volume = value;
-    NotifySubMeshesHypothesisModification();
-  }
+    if (value < DBL_MIN) value = 0.;
+    if (_volume != value) {
+        _volume = value;
+        NotifySubMeshesHypothesisModification();
+    }
 }
 
 //=============================================================================
@@ -86,12 +81,12 @@ void NETGENPlugin_SimpleHypothesis_3D::SetMaxElementVolume(double value)
  *  
  */
 //=============================================================================
-ostream & NETGENPlugin_SimpleHypothesis_3D::SaveTo(ostream & save)
+ostream &NETGENPlugin_SimpleHypothesis_3D::SaveTo(ostream &save)
 {
-  NETGENPlugin_SimpleHypothesis_2D::SaveTo( save );
-  save << " " << _volume;
+    NETGENPlugin_SimpleHypothesis_2D::SaveTo(save);
+    save << " " << _volume;
 
-  return save;
+    return save;
 }
 
 //=============================================================================
@@ -99,20 +94,19 @@ ostream & NETGENPlugin_SimpleHypothesis_3D::SaveTo(ostream & save)
  *  
  */
 //=============================================================================
-istream & NETGENPlugin_SimpleHypothesis_3D::LoadFrom(istream & load)
+istream &NETGENPlugin_SimpleHypothesis_3D::LoadFrom(istream &load)
 {
-  NETGENPlugin_SimpleHypothesis_2D::LoadFrom(load);
+    NETGENPlugin_SimpleHypothesis_2D::LoadFrom(load);
 
-  bool isOK = true;
-  double val;
+    bool isOK = true;
+    double val;
 
-  isOK = (bool)(load >> val);
-  if (isOK)
-    _volume = val;
-  else
-    load.clear(ios::badbit | load.rdstate());
+    isOK = (bool)(load >> val);
+    if (isOK) _volume = val;
+    else
+        load.clear(ios::badbit | load.rdstate());
 
-  return load;
+    return load;
 }
 
 //================================================================================
@@ -123,28 +117,27 @@ istream & NETGENPlugin_SimpleHypothesis_3D::LoadFrom(istream & load)
  * \retval bool - always false
  */
 //================================================================================
-bool NETGENPlugin_SimpleHypothesis_3D::SetParametersByMesh(const SMESH_Mesh*   theMesh,
-                                                           const TopoDS_Shape& theShape)
+bool NETGENPlugin_SimpleHypothesis_3D::SetParametersByMesh(const SMESH_Mesh *theMesh,
+                                                           const TopoDS_Shape &theShape)
 {
-  if ( NETGENPlugin_SimpleHypothesis_2D::SetParametersByMesh(theMesh, theShape) )
-  {
-    // Find out max volume
-    _volume = 0;
-    SMESH::Controls::Volume volControl;
-    volControl.SetMesh( ((SMESH_Mesh*)theMesh)->GetMeshDS() );
-    const int nbElemToCheck = 100;
-    for ( TopExp_Explorer exp( theShape, TopAbs_SOLID ); exp.More(); exp.Next() ) {
-      SMESH_subMesh* sm = theMesh->GetSubMeshContaining( exp.Current() );
-      if ( sm && !sm->IsEmpty() ) {
-        SMDS_ElemIteratorPtr fIt = sm->GetSubMeshDS()->GetElements();
-        int nbCheckedElems = 0;
-        while ( fIt->more() && nbCheckedElems++ < nbElemToCheck ) {
-          const SMDS_MeshElement* elem = fIt->next();
-          _volume = max( _volume, volControl.GetValue( elem->GetID() ));
+    if (NETGENPlugin_SimpleHypothesis_2D::SetParametersByMesh(theMesh, theShape)) {
+        // Find out max volume
+        _volume = 0;
+        SMESH::Controls::Volume volControl;
+        volControl.SetMesh(((SMESH_Mesh *)theMesh)->GetMeshDS());
+        const int nbElemToCheck = 100;
+        for (TopExp_Explorer exp(theShape, TopAbs_SOLID); exp.More(); exp.Next()) {
+            SMESH_subMesh *sm = theMesh->GetSubMeshContaining(exp.Current());
+            if (sm && !sm->IsEmpty()) {
+                SMDS_ElemIteratorPtr fIt = sm->GetSubMeshDS()->GetElements();
+                int nbCheckedElems = 0;
+                while (fIt->more() && nbCheckedElems++ < nbElemToCheck) {
+                    const SMDS_MeshElement *elem = fIt->next();
+                    _volume = max(_volume, volControl.GetValue(elem->GetID()));
+                }
+            }
         }
-      }
+        return int(_volume);
     }
-    return int( _volume );
-  }
-  return false;
+    return false;
 }

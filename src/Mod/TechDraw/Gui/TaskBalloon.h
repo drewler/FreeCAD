@@ -35,7 +35,7 @@ namespace TechDrawGui
 class QGIViewBalloon;
 class ViewProviderBalloon;
 class Ui_TaskBalloon;
-class TaskBalloon : public QWidget
+class TaskBalloon: public QWidget
 {
     Q_OBJECT
 
@@ -63,10 +63,10 @@ private Q_SLOTS:
 private:
     std::unique_ptr<Ui_TaskBalloon> ui;
     QGIViewBalloon *m_parent;
-    ViewProviderBalloon* m_balloonVP;
+    ViewProviderBalloon *m_balloonVP;
 };
 
-class TaskDlgBalloon : public Gui::TaskView::TaskDialog
+class TaskDlgBalloon: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -84,17 +84,15 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    void helpRequested() override { return;}
-    bool isAllowedAlterDocument() const override
-    { return false; }
+    void helpRequested() override { return; }
+    bool isAllowedAlterDocument() const override { return false; }
 
     void update();
 
 protected:
-
 private:
-    TaskBalloon * widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskBalloon *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

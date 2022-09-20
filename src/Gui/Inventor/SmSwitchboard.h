@@ -37,29 +37,29 @@
 #include <Inventor/nodes/SoGroup.h>
 
 
-class GuiExport SmSwitchboard : public SoGroup {
-  using inherited = SoGroup;
-  SO_NODE_HEADER(SmSwitchboard);
+class GuiExport SmSwitchboard: public SoGroup
+{
+    using inherited = SoGroup;
+    SO_NODE_HEADER(SmSwitchboard);
 
 public:
-  static void initClass();
-  SmSwitchboard();
-  SmSwitchboard(int numchildren);
+    static void initClass();
+    SmSwitchboard();
+    SmSwitchboard(int numchildren);
 
-  SoMFBool enable;
+    SoMFBool enable;
 
-  virtual void doAction(SoAction * action);
-  virtual void callback(SoCallbackAction * action);
-  virtual void GLRender(SoGLRenderAction * action);
-  virtual void pick(SoPickAction * action);
-  virtual void getBoundingBox(SoGetBoundingBoxAction * action);
-  virtual void handleEvent(SoHandleEventAction * action);
-  virtual void getMatrix(SoGetMatrixAction * action);
-  virtual void search(SoSearchAction * action);
+    virtual void doAction(SoAction *action);
+    virtual void callback(SoCallbackAction *action);
+    virtual void GLRender(SoGLRenderAction *action);
+    virtual void pick(SoPickAction *action);
+    virtual void getBoundingBox(SoGetBoundingBoxAction *action);
+    virtual void handleEvent(SoHandleEventAction *action);
+    virtual void getMatrix(SoGetMatrixAction *action);
+    virtual void search(SoSearchAction *action);
 
 protected:
-  virtual ~SmSwitchboard();
-
+    virtual ~SmSwitchboard();
 };
 
 #endif // !SMALLCHANGE_SWITCHBOARD_H

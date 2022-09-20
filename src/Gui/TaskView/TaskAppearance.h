@@ -28,19 +28,22 @@
 #include "TaskView.h"
 
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 
-namespace TaskView {
+namespace TaskView
+{
 
 using TaskAppearance_Connection = boost::signals2::connection;
 class Ui_TaskAppearance;
 
-class TaskAppearance : public TaskBox, public Gui::SelectionSingleton::ObserverType
+class TaskAppearance: public TaskBox, public Gui::SelectionSingleton::ObserverType
 {
     Q_OBJECT
 
@@ -52,8 +55,8 @@ public:
                   Gui::SelectionSingleton::MessageType Reason) override;
 
 private Q_SLOTS:
-    void on_changeMode_activated(const QString&);
-    void on_changePlot_activated(const QString&);
+    void on_changeMode_activated(const QString &);
+    void on_changePlot_activated(const QString &);
     void on_spinTransparency_valueChanged(int);
     void on_spinPointSize_valueChanged(int);
     void on_spinLineWidth_valueChanged(int);
@@ -62,16 +65,16 @@ protected:
     void changeEvent(QEvent *e) override;
 
 private:
-    void slotChangedObject(const Gui::ViewProvider&, const App::Property& Prop);
-    void setDisplayModes(const std::vector<Gui::ViewProvider*>&);
-    void setPointSize(const std::vector<Gui::ViewProvider*>&);
-    void setLineWidth(const std::vector<Gui::ViewProvider*>&);
-    void setTransparency(const std::vector<Gui::ViewProvider*>&);
-    std::vector<Gui::ViewProvider*> getSelection() const;
+    void slotChangedObject(const Gui::ViewProvider &, const App::Property &Prop);
+    void setDisplayModes(const std::vector<Gui::ViewProvider *> &);
+    void setPointSize(const std::vector<Gui::ViewProvider *> &);
+    void setLineWidth(const std::vector<Gui::ViewProvider *> &);
+    void setTransparency(const std::vector<Gui::ViewProvider *> &);
+    std::vector<Gui::ViewProvider *> getSelection() const;
 
 private:
-    QWidget* proxy;
-    Ui_TaskAppearance* ui;
+    QWidget *proxy;
+    Ui_TaskAppearance *ui;
     TaskAppearance_Connection connectChangedObject;
 };
 

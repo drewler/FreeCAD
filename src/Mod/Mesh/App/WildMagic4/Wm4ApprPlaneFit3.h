@@ -28,16 +28,15 @@ namespace Wm4
 // z = A*x + B*y + C.  The return value is 'false' if the 3x3 coefficient
 // matrix in the linear system that defines A, B, and C is (nearly) singular.
 // In this case, A, B, and C are returned as MAX_REAL.
-template <class Real> WM4_FOUNDATION_ITEM
-bool HeightPlaneFit3 (int iQuantity, const Vector3<Real>* akPoint,
-    Real& rfA, Real& rfB, Real& rfC);
+template<class Real>
+WM4_FOUNDATION_ITEM bool HeightPlaneFit3(int iQuantity, const Vector3<Real> *akPoint, Real &rfA,
+                                         Real &rfB, Real &rfC);
 
 // Least-squares fit of a plane to (x,y,z) data by using distance measurements
 // orthogonal to the proposed plane.
-template <class Real> WM4_FOUNDATION_ITEM
-Plane3<Real> OrthogonalPlaneFit3 (int iQuantity,
-    const Vector3<Real>* akPoint);
+template<class Real>
+WM4_FOUNDATION_ITEM Plane3<Real> OrthogonalPlaneFit3(int iQuantity, const Vector3<Real> *akPoint);
 
-}
+} // namespace Wm4
 
 #endif

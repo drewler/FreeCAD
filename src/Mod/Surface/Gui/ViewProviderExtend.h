@@ -29,7 +29,7 @@
 namespace SurfaceGui
 {
 
-class ViewProviderExtend : public PartGui::ViewProviderSpline
+class ViewProviderExtend: public PartGui::ViewProviderSpline
 {
     PROPERTY_HEADER_WITH_OVERRIDE(SurfaceGui::ViewProviderExtend);
 

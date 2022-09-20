@@ -29,8 +29,10 @@
 
 class QTreeWidgetItem;
 
-namespace Gui {
-namespace Dialog {
+namespace Gui
+{
+namespace Dialog
+{
 class Ui_DlgCustomKeyboard;
 
 /** Shows an overview of all available commands of all groups and modules.
@@ -40,32 +42,32 @@ class Ui_DlgCustomKeyboard;
  * customize your own toolbars or commandbars.
  * \author Werner Mayer
  */
-class DlgCustomKeyboardImp : public CustomizeActionPage
+class DlgCustomKeyboardImp: public CustomizeActionPage
 {
     Q_OBJECT
 
 public:
-    explicit DlgCustomKeyboardImp( QWidget* parent = nullptr );
+    explicit DlgCustomKeyboardImp(QWidget *parent = nullptr);
     ~DlgCustomKeyboardImp() override;
 
 protected:
-    void showEvent(QShowEvent* e) override;
+    void showEvent(QShowEvent *e) override;
 
 protected Q_SLOTS:
     void on_categoryBox_activated(int index);
-    void on_commandTreeWidget_currentItemChanged(QTreeWidgetItem*);
+    void on_commandTreeWidget_currentItemChanged(QTreeWidgetItem *);
     void on_buttonAssign_clicked();
     void on_buttonClear_clicked();
     void on_buttonReset_clicked();
     void on_buttonResetAll_clicked();
-    void on_editShortcut_textChanged(const QString&);
-    void onAddMacroAction(const QByteArray&) override;
-    void onRemoveMacroAction(const QByteArray&) override;
-    void onModifyMacroAction(const QByteArray&) override;
+    void on_editShortcut_textChanged(const QString &);
+    void onAddMacroAction(const QByteArray &) override;
+    void onRemoveMacroAction(const QByteArray &) override;
+    void onModifyMacroAction(const QByteArray &) override;
 
 protected:
     void changeEvent(QEvent *e) override;
-    void setShortcutOfCurrentAction(const QString&);
+    void setShortcutOfCurrentAction(const QString &);
 
 private:
     std::unique_ptr<Ui_DlgCustomKeyboard> ui;

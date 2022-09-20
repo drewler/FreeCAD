@@ -22,9 +22,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <BRepBuilderAPI_MakePolygon.hxx>
-# include <gp_Pnt.hxx>
-# include <TopoDS_Wire.hxx>
+#include <BRepBuilderAPI_MakePolygon.hxx>
+#include <gp_Pnt.hxx>
+#include <TopoDS_Wire.hxx>
 #endif
 
 #include "FeaturePartPolygon.h"
@@ -35,18 +35,15 @@ PROPERTY_SOURCE(Part::Polygon, Part::Feature)
 
 Part::Polygon::Polygon()
 {
-    ADD_PROPERTY(Nodes,(Base::Vector3d()));
-    ADD_PROPERTY(Close,(false));
+    ADD_PROPERTY(Nodes, (Base::Vector3d()));
+    ADD_PROPERTY(Close, (false));
 }
 
-Part::Polygon::~Polygon()
-{
-}
+Part::Polygon::~Polygon() {}
 
 short Part::Polygon::mustExecute() const
 {
-    if (Nodes.isTouched() || Close.isTouched())
-        return 1;
+    if (Nodes.isTouched() || Close.isTouched()) return 1;
     return 0;
 }
 
@@ -60,11 +57,11 @@ App::DocumentObjectExecReturn *Part::Polygon::execute()
         poly.Add(pnt);
     }
 
-    if (Close.getValue())
-        poly.Close();
+    if (Close.getValue()) poly.Close();
 
     if (!poly.IsDone())
-        throw Base::CADKernelError("Cannot create polygon because less than two vertices are given");
+        throw Base::CADKernelError(
+            "Cannot create polygon because less than two vertices are given");
     TopoDS_Wire wire = poly.Wire();
     this->Shape.setValue(wire);
 

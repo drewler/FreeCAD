@@ -44,121 +44,74 @@ using namespace zipios;
 //  Writer: Constructors and Destructor
 // ---------------------------------------------------------------------------
 
-Writer::Writer()
-  : indent(0)
-  , indBuf{}
-  , forceXML(false)
-  , fileVersion(1)
-{
-    indBuf[0] = '\0';
-}
+Writer::Writer() : indent(0), indBuf {}, forceXML(false), fileVersion(1) { indBuf[0] = '\0'; }
 
 Writer::~Writer() = default;
 
-void Writer::insertAsciiFile(const char* FileName)
+void Writer::insertAsciiFile(const char *FileName)
 {
     Base::FileInfo fi(FileName);
     Base::ifstream from(fi);
-    if (!from)
-        throw Base::FileException("Writer::insertAsciiFile() Could not open file!");
+    if (!from) throw Base::FileException("Writer::insertAsciiFile() Could not open file!");
 
     Stream() << "<![CDATA[";
     char ch;
-    while (from.get(ch))
-        Stream().put(ch);
+    while (from.get(ch)) Stream().put(ch);
     Stream() << "]]>" << endl;
 }
 
-void Writer::insertBinFile(const char* FileName)
+void Writer::insertBinFile(const char *FileName)
 {
     Base::FileInfo fi(FileName);
     Base::ifstream from(fi, std::ios::in | std::ios::binary | std::ios::ate);
-    if (!from)
-        throw Base::FileException("Writer::insertAsciiFile() Could not open file!");
+    if (!from) throw Base::FileException("Writer::insertAsciiFile() Could not open file!");
 
     Stream() << "<![CDATA[";
     std::ifstream::pos_type fileSize = from.tellg();
     from.seekg(0, std::ios::beg);
     std::vector<unsigned char> bytes(static_cast<size_t>(fileSize));
-    from.read(reinterpret_cast<char*>(&bytes[0]), fileSize);
+    from.read(reinterpret_cast<char *>(&bytes[0]), fileSize);
     Stream() << Base::base64_encode(&bytes[0], static_cast<unsigned int>(fileSize));
     Stream() << "]]>" << endl;
 }
 
-void Writer::setForceXML(bool on)
-{
-    forceXML = on;
-}
+void Writer::setForceXML(bool on) { forceXML = on; }
 
-bool Writer::isForceXML()
-{
-    return forceXML;
-}
+bool Writer::isForceXML() { return forceXML; }
 
-void Writer::setFileVersion(int v)
-{
-    fileVersion = v;
-}
+void Writer::setFileVersion(int v) { fileVersion = v; }
 
-int Writer::getFileVersion() const
-{
-    return fileVersion;
-}
+int Writer::getFileVersion() const { return fileVersion; }
 
-void Writer::setMode(const std::string& mode)
-{
-    Modes.insert(mode);
-}
+void Writer::setMode(const std::string &mode) { Modes.insert(mode); }
 
-void Writer::setModes(const std::set<std::string>& modes)
-{
-    Modes = modes;
-}
+void Writer::setModes(const std::set<std::string> &modes) { Modes = modes; }
 
-bool Writer::getMode(const std::string& mode) const
+bool Writer::getMode(const std::string &mode) const
 {
     std::set<std::string>::const_iterator it = Modes.find(mode);
     return (it != Modes.end());
 }
 
-std::set<std::string> Writer::getModes() const
-{
-    return Modes;
-}
+std::set<std::string> Writer::getModes() const { return Modes; }
 
-void Writer::clearMode(const std::string& mode)
+void Writer::clearMode(const std::string &mode)
 {
     std::set<std::string>::iterator it = Modes.find(mode);
-    if (it != Modes.end())
-        Modes.erase(it);
+    if (it != Modes.end()) Modes.erase(it);
 }
 
-void Writer::clearModes()
-{
-    Modes.clear();
-}
+void Writer::clearModes() { Modes.clear(); }
 
-void Writer::addError(const std::string& msg)
-{
-    Errors.push_back(msg);
-}
+void Writer::addError(const std::string &msg) { Errors.push_back(msg); }
 
-bool Writer::hasErrors() const
-{
-    return (!Errors.empty());
-}
+bool Writer::hasErrors() const { return (!Errors.empty()); }
 
-void Writer::clearErrors()
-{
-    Errors.clear();
-}
+void Writer::clearErrors() { Errors.clear(); }
 
-std::vector<std::string> Writer::getErrors() const
-{
-    return Errors;
-}
+std::vector<std::string> Writer::getErrors() const { return Errors; }
 
-std::string Writer::addFile(const char* Name,const Base::Persistence *Object)
+std::string Writer::addFile(const char *Name, const Base::Persistence *Object)
 {
     // always check isForceXML() before requesting a file!
     assert(!isForceXML());
@@ -169,7 +122,7 @@ std::string Writer::addFile(const char* Name,const Base::Persistence *Object)
 
     FileList.push_back(temp);
 
-    FileNames.push_back( temp.FileName );
+    FileNames.push_back(temp.FileName);
 
     // return the unique file name
     return temp.FileName;
@@ -180,7 +133,7 @@ std::string Writer::getUniqueFileName(const char *Name)
     // name in use?
     std::string CleanName = (Name ? Name : "");
     std::vector<std::string>::const_iterator pos;
-    pos = find(FileNames.begin(),FileNames.end(),CleanName);
+    pos = find(FileNames.begin(), FileNames.end(), CleanName);
 
     if (pos == FileNames.end()) {
         // if not, name is OK
@@ -192,42 +145,35 @@ std::string Writer::getUniqueFileName(const char *Name)
         FileInfo fi(CleanName);
         CleanName = fi.fileNamePure();
         std::string ext = fi.extension();
-        for (pos = FileNames.begin();pos != FileNames.end();++pos) {
+        for (pos = FileNames.begin(); pos != FileNames.end(); ++pos) {
             fi.setFile(*pos);
             std::string FileName = fi.fileNamePure();
-            if (fi.extension() == ext)
-                names.push_back(FileName);
+            if (fi.extension() == ext) names.push_back(FileName);
         }
         std::stringstream str;
         str << Base::Tools::getUniqueName(CleanName, names);
-        if (!ext.empty())
-            str << "." << ext;
+        if (!ext.empty()) str << "." << ext;
         return str.str();
     }
 }
 
-const std::vector<std::string>& Writer::getFilenames() const
-{
-    return FileNames;
-}
+const std::vector<std::string> &Writer::getFilenames() const { return FileNames; }
 
 void Writer::incInd()
 {
     if (indent < 1020) {
-        indBuf[indent  ] = ' ';
-        indBuf[indent+1] = ' ';
-        indBuf[indent+2] = ' ';
-        indBuf[indent+3] = ' ';
-        indBuf[indent+4] = '\0';
+        indBuf[indent] = ' ';
+        indBuf[indent + 1] = ' ';
+        indBuf[indent + 2] = ' ';
+        indBuf[indent + 3] = ' ';
+        indBuf[indent + 4] = '\0';
         indent += 4;
     }
 }
 
 void Writer::decInd()
 {
-    if (indent >= 4) {
-        indent -= 4;
-    }
+    if (indent >= 4) { indent -= 4; }
     else {
         indent = 0;
     }
@@ -236,8 +182,7 @@ void Writer::decInd()
 
 // ----------------------------------------------------------------------------
 
-ZipWriter::ZipWriter(const char* FileName)
-  : ZipStream(FileName)
+ZipWriter::ZipWriter(const char *FileName) : ZipStream(FileName)
 {
 #ifdef _MSC_VER
     ZipStream.imbue(std::locale::empty());
@@ -245,11 +190,10 @@ ZipWriter::ZipWriter(const char* FileName)
     ZipStream.imbue(std::locale::classic());
 #endif
     ZipStream.precision(std::numeric_limits<double>::digits10 + 1);
-    ZipStream.setf(ios::fixed,ios::floatfield);
+    ZipStream.setf(ios::fixed, ios::floatfield);
 }
 
-ZipWriter::ZipWriter(std::ostream& os)
-  : ZipStream(os)
+ZipWriter::ZipWriter(std::ostream &os) : ZipStream(os)
 {
 #ifdef _MSC_VER
     ZipStream.imbue(std::locale::empty());
@@ -257,7 +201,7 @@ ZipWriter::ZipWriter(std::ostream& os)
     ZipStream.imbue(std::locale::classic());
 #endif
     ZipStream.precision(std::numeric_limits<double>::digits10 + 1);
-    ZipStream.setf(ios::fixed,ios::floatfield);
+    ZipStream.setf(ios::fixed, ios::floatfield);
 }
 
 void ZipWriter::writeFiles()
@@ -273,29 +217,21 @@ void ZipWriter::writeFiles()
     }
 }
 
-ZipWriter::~ZipWriter()
-{
-    ZipStream.close();
-}
+ZipWriter::~ZipWriter() { ZipStream.close(); }
 
 // ----------------------------------------------------------------------------
 
-FileWriter::FileWriter(const char* DirName) : DirName(DirName)
-{
-}
+FileWriter::FileWriter(const char *DirName) : DirName(DirName) {}
 
 FileWriter::~FileWriter() = default;
 
-void FileWriter::putNextEntry(const char* file)
+void FileWriter::putNextEntry(const char *file)
 {
     std::string fileName = DirName + "/" + file;
     this->FileStream.open(fileName.c_str(), std::ios::out | std::ios::binary);
 }
 
-bool FileWriter::shouldWrite(const std::string& , const Base::Persistence *) const
-{
-    return true;
-}
+bool FileWriter::shouldWrite(const std::string &, const Base::Persistence *) const { return true; }
 
 void FileWriter::writeFiles()
 {

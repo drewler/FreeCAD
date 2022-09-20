@@ -61,21 +61,21 @@ class ActionFunctionPrivate;
 
   http://www.boost.org/doc/libs/1_57_0/libs/bind/bind.html#with_boost_function
 */
-class GuiExport ActionFunction : public QObject
+class GuiExport ActionFunction: public QObject
 {
     Q_OBJECT
 
 public:
     /// Constructor
-    ActionFunction(QObject*);
+    ActionFunction(QObject *);
     ~ActionFunction() override;
 
     /*!
        Connects the QAction's triggered() signal with the function \a func
      */
-    void trigger(QAction* a, std::function<void()> func);
-    void toggle(QAction* a, std::function<void(bool)> func);
-    void hover(QAction* a, std::function<void()> func);
+    void trigger(QAction *a, std::function<void()> func);
+    void toggle(QAction *a, std::function<void(bool)> func);
+    void hover(QAction *a, std::function<void()> func);
 
 private Q_SLOTS:
     void triggered();
@@ -90,17 +90,17 @@ private:
 
 class TimerFunctionPrivate;
 
-class GuiExport TimerFunction : public QObject
+class GuiExport TimerFunction: public QObject
 {
     Q_OBJECT
 
 public:
     /// Constructor
-    TimerFunction(QObject* = nullptr);
+    TimerFunction(QObject * = nullptr);
     ~TimerFunction() override;
 
     void setFunction(std::function<void()> func);
-    void setFunction(std::function<void(QObject*)> func, QObject* args);
+    void setFunction(std::function<void(QObject *)> func, QObject *args);
     void setFunction(std::function<void(QVariant)> func, QVariant args);
     void setAutoDelete(bool);
 

@@ -42,21 +42,17 @@ std::string DrawViewDimExtentPy::representation() const
 {
     return std::string("<DrawViewDimExtent object>");
 }
-PyObject* DrawViewDimExtentPy::tbd(PyObject* args)
+PyObject *DrawViewDimExtentPy::tbd(PyObject *args)
 {
-    (void) args;
+    (void)args;
     PyObject *pyText = nullptr;
     return pyText;
 }
 
 
+PyObject *DrawViewDimExtentPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-PyObject *DrawViewDimExtentPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
-
-int DrawViewDimExtentPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
+int DrawViewDimExtentPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/)
 {
     return 0;
 }

@@ -83,37 +83,39 @@
 
 namespace UNV2420
 {
-  enum { Cartesian=0, Cylindrical, Spherical };
-
-  typedef int TCSLabel; // type of coord system label
-
-  struct MESHDRIVERUNV_EXPORT TRecord
-  {
-    TCSLabel    coord_sys_label; 
-    int         coord_sys_type;  // { Cartesian=0, Cylindrical, Spherical }
-    int         coord_sys_color;
-    std::string coord_sys_name;
-    double      matrix[4][3];
-
-    bool        isIdentityMatrix() const;
-    void        ApplyMatrix      ( double* coords ) const;
-    static void FromCylindricalCS( double* coords );
-    static void FromSphericalCS  ( double* coords );
-  };
-  
-  typedef std::vector<TRecord> TDataSet;
-
-  MESHDRIVERUNV_EXPORT void
-  Read(std::ifstream& in_stream,
-       std::string&   part_name, // can re-store a mesh name
-       TDataSet&      theDataSet);
-
-  MESHDRIVERUNV_EXPORT void
-  Write(std::ofstream&     out_stream,
-        const std::string& part_name); // can store a mesh name
-  //    const TDataSet&    theDataSet);
-
+enum
+{
+    Cartesian = 0,
+    Cylindrical,
+    Spherical
 };
+
+typedef int TCSLabel; // type of coord system label
+
+struct MESHDRIVERUNV_EXPORT TRecord {
+    TCSLabel coord_sys_label;
+    int coord_sys_type; // { Cartesian=0, Cylindrical, Spherical }
+    int coord_sys_color;
+    std::string coord_sys_name;
+    double matrix[4][3];
+
+    bool isIdentityMatrix() const;
+    void ApplyMatrix(double *coords) const;
+    static void FromCylindricalCS(double *coords);
+    static void FromSphericalCS(double *coords);
+};
+
+typedef std::vector<TRecord> TDataSet;
+
+MESHDRIVERUNV_EXPORT void Read(std::ifstream &in_stream,
+                               std::string &part_name, // can re-store a mesh name
+                               TDataSet &theDataSet);
+
+MESHDRIVERUNV_EXPORT void Write(std::ofstream &out_stream,
+                                const std::string &part_name); // can store a mesh name
+                                                               //    const TDataSet&    theDataSet);
+
+}; // namespace UNV2420
 
 
 #endif

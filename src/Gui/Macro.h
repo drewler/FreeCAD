@@ -30,7 +30,8 @@
 #include <Base/Parameter.h>
 
 
-namespace Gui {
+namespace Gui
+{
 struct ApplicationP;
 class PythonConsole;
 class PythonDebugger;
@@ -40,26 +41,27 @@ class PythonDebugger;
  * a macro file (so far).
  * \author Jürgen Riegel
  */
-class GuiExport MacroManager : public Base::Observer<const char*>
+class GuiExport MacroManager: public Base::Observer<const char *>
 {
 protected:
     MacroManager();
     ~MacroManager() override;
 
 public:
-
     /** Macro type enumeration  */
-    enum MacroType {
+    enum MacroType
+    {
         File, /**< The macro will be saved in a file */
         User, /**< The macro belongs to the Application and will be saved in the UserParameter */
-        Doc   /**< The macro belongs to the Document and will be saved and restored with the Document */
+        Doc /**< The macro belongs to the Document and will be saved and restored with the Document */
     };
 
     /** Line type enumeration  */
-    enum LineType {
-        App,  /**< The line effects only the document and Application (FreeCAD) */
-        Gui,  /**< The line effects the Gui (FreeCADGui) */
-        Cmt,  /**< The line is handled as a comment */
+    enum LineType
+    {
+        App, /**< The line effects only the document and Application (FreeCAD) */
+        Gui, /**< The line effects the Gui (FreeCADGui) */
+        Cmt, /**< The line is handled as a comment */
     };
 
     /** Opens a new Macro recording session
@@ -71,43 +73,43 @@ public:
      * @see commit()
      * @see cancel()
      */
-    void open(MacroType eType,const char *sName);
+    void open(MacroType eType, const char *sName);
     /// close (and save) the recording session
     void commit();
     /// cancels the recording session
     void cancel();
     /// indicates if a macro recording is in progress
-    bool isOpen() const {return openMacro;}
+    bool isOpen() const { return openMacro; }
     /// insert a new line in the macro
-    void addLine(LineType Type,const char* sLine,bool pending=false);
+    void addLine(LineType Type, const char *sLine, bool pending = false);
     /** Set the active module
      * This is normally done by the workbench switch. It sets
      * the actually active application module so when the macro
      * gets started the right import can be issued.
      */
-    void setModule(const char* sModule);
-    void run(MacroType eType,const char *sName);
+    void setModule(const char *sModule);
+    void run(MacroType eType, const char *sName);
     /// Get the Python debugger
-    PythonDebugger* debugger() const;
+    PythonDebugger *debugger() const;
     /** Observes its parameter group. */
-    void OnChange(Base::Subject<const char*> &rCaller, const char * sReason) override;
+    void OnChange(Base::Subject<const char *> &rCaller, const char *sReason) override;
 
     /// Return the added lines regardless of recording or not
-    long getLines() const {return totalLines;}
+    long getLines() const { return totalLines; }
 
 protected:
-    QStringList macroInProgress;    /**< Container for the macro */
-    QString macroName;              /**< name of the macro */
+    QStringList macroInProgress; /**< Container for the macro */
+    QString macroName;           /**< name of the macro */
     bool openMacro;
     bool recordGui;
     bool guiAsComment;
     bool scriptToPyConsole;
     bool localEnv;
-    PythonConsole* pyConsole;       // link to the python console
-    PythonDebugger* pyDebugger;
-    Base::Reference<ParameterGrp> params;  // link to the Macro parameter group
+    PythonConsole *pyConsole; // link to the python console
+    PythonDebugger *pyDebugger;
+    Base::Reference<ParameterGrp> params; // link to the Macro parameter group
     long totalLines;
-    std::vector<std::pair<LineType,std::string> > pendingLine;
+    std::vector<std::pair<LineType, std::string>> pendingLine;
 
     friend struct ApplicationP;
 };

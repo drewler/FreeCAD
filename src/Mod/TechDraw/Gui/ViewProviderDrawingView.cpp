@@ -52,29 +52,30 @@ PROPERTY_SOURCE(TechDrawGui::ViewProviderDrawingView, Gui::ViewProviderDocumentO
 
 ViewProviderDrawingView::ViewProviderDrawingView()
 {
-//    Base::Console().Message("VPDV::VPDV\n");
+    //    Base::Console().Message("VPDV::VPDV\n");
     sPixmap = "TechDraw_TreeView";
     static const char *group = "Base";
 
-    ADD_PROPERTY_TYPE(KeepLabel ,(false), group, App::Prop_None, "Keep Label on Page even if toggled off");
-    ADD_PROPERTY_TYPE(StackOrder,(0),group,App::Prop_None,"Over or under lap relative to other views");
+    ADD_PROPERTY_TYPE(KeepLabel, (false), group, App::Prop_None,
+                      "Keep Label on Page even if toggled off");
+    ADD_PROPERTY_TYPE(StackOrder, (0), group, App::Prop_None,
+                      "Over or under lap relative to other views");
 
     // Do not show in property editor   why? wf  WF: because DisplayMode applies only to coin and we
     // don't use coin.
     DisplayMode.setStatus(App::Property::Hidden, true);
 }
 
-ViewProviderDrawingView::~ViewProviderDrawingView()
-{
-}
+ViewProviderDrawingView::~ViewProviderDrawingView() {}
 
 void ViewProviderDrawingView::attach(App::DocumentObject *pcFeat)
 {
-//    Base::Console().Message("VPDV::attach(%s)\n", pcFeat->getNameInDocument());
+    //    Base::Console().Message("VPDV::attach(%s)\n", pcFeat->getNameInDocument());
     ViewProviderDocumentObject::attach(pcFeat);
 
     auto bnd = boost::bind(&ViewProviderDrawingView::onGuiRepaint, this, bp::_1);
-    auto bndProgressMessage = boost::bind(&ViewProviderDrawingView::onProgressMessage, this, bp::_1, bp::_2, bp::_3);
+    auto bndProgressMessage =
+        boost::bind(&ViewProviderDrawingView::onProgressMessage, this, bp::_1, bp::_2, bp::_3);
     auto feature = getViewObject();
     if (feature) {
         connectGuiRepaint = feature->signalGuiPaint.connect(bnd);
@@ -83,33 +84,31 @@ void ViewProviderDrawingView::attach(App::DocumentObject *pcFeat)
         //      MDIVP or QGVP yet.
         // but parent page might.  we may not be part of the document yet though!
         // :( we're not part of the page yet either!
-    } else {
+    }
+    else {
         Base::Console().Warning("VPDV::attach has no Feature!\n");
     }
 }
 
 void ViewProviderDrawingView::onChanged(const App::Property *prop)
 {
-    App::DocumentObject* obj = getObject();
+    App::DocumentObject *obj = getObject();
     if (!obj || obj->isRestoring()) {
-            Gui::ViewProviderDocumentObject::onChanged(prop);
-            return;
+        Gui::ViewProviderDocumentObject::onChanged(prop);
+        return;
     }
 
     if (prop == &Visibility) {
         //handled by ViewProviderDocumentObject
-    } else if (prop == &KeepLabel) {
-        QGIView* qgiv = getQView();
-        if (qgiv) {
-            qgiv->updateView(true);
-        }
+    }
+    else if (prop == &KeepLabel) {
+        QGIView *qgiv = getQView();
+        if (qgiv) { qgiv->updateView(true); }
     }
 
     if (prop == &StackOrder) {
-        QGIView* qgiv = getQView();
-        if (qgiv) {
-            qgiv->setStack(StackOrder.getValue());
-        }
+        QGIView *qgiv = getQView();
+        if (qgiv) { qgiv->setStack(StackOrder.getValue()); }
     }
 
     Gui::ViewProviderDocumentObject::onChanged(prop);
@@ -117,12 +116,11 @@ void ViewProviderDrawingView::onChanged(const App::Property *prop)
 
 void ViewProviderDrawingView::show()
 {
-    TechDraw::DrawView* obj = getViewObject();
-    if (!obj || obj->isRestoring())
-        return;
+    TechDraw::DrawView *obj = getViewObject();
+    if (!obj || obj->isRestoring()) return;
 
     if (obj->getTypeId().isDerivedFrom(TechDraw::DrawView::getClassTypeId())) {
-        QGIView* qView = getQView();
+        QGIView *qView = getQView();
         if (qView) {
             qView->draw();
             qView->show();
@@ -133,20 +131,19 @@ void ViewProviderDrawingView::show()
 
 void ViewProviderDrawingView::hide()
 {
-    TechDraw::DrawView* obj = getViewObject();
-    if (!obj || obj->isRestoring())
-        return;
+    TechDraw::DrawView *obj = getViewObject();
+    if (!obj || obj->isRestoring()) return;
 
     if (obj->getTypeId().isDerivedFrom(TechDraw::DrawView::getClassTypeId())) {
-        QGIView* qView = getQView();
+        QGIView *qView = getQView();
         if (qView) {
             //note: hiding an item in the scene clears its selection status
             //      this confuses Gui::Selection.
             //      So we block selection changes while we are hiding the qgiv
             //      in FC Tree hiding does not change selection state.
             //      block/unblock selection protects against crash in Gui::SelectionSingleton::setVisible
-            MDIViewPage* mdi = getMDIViewPage();
-            if (mdi) {                  //if there is no mdivp, there is nothing to hide!
+            MDIViewPage *mdi = getMDIViewPage();
+            if (mdi) { //if there is no mdivp, there is nothing to hide!
                 mdi->blockSceneSelection(true);
                 qView->hide();
                 ViewProviderDocumentObject::hide();
@@ -156,22 +153,16 @@ void ViewProviderDrawingView::hide()
     }
 }
 
-QGIView* ViewProviderDrawingView::getQView()
+QGIView *ViewProviderDrawingView::getQView()
 {
-    TechDraw::DrawView* dv = getViewObject();
-    if (!dv) {
-        return nullptr;
-    }
+    TechDraw::DrawView *dv = getViewObject();
+    if (!dv) { return nullptr; }
 
-    Gui::Document* guiDoc = Gui::Application::Instance->getDocument(dv->getDocument());
-    if (!guiDoc) {
-        return nullptr;
-    }
+    Gui::Document *guiDoc = Gui::Application::Instance->getDocument(dv->getDocument());
+    if (!guiDoc) { return nullptr; }
 
-    ViewProviderPage* vpp = getViewProviderPage();
-    if (!vpp) {
-        return nullptr;
-    }
+    ViewProviderPage *vpp = getViewProviderPage();
+    if (!vpp) { return nullptr; }
 
     if (vpp->getQGSPage()) {
         return dynamic_cast<QGIView *>(vpp->getQGSPage()->findQViewForDocObj(getViewObject()));
@@ -180,10 +171,7 @@ QGIView* ViewProviderDrawingView::getQView()
     return nullptr;
 }
 
-bool ViewProviderDrawingView::isShow() const
-{
-    return Visibility.getValue();
-}
+bool ViewProviderDrawingView::isShow() const { return Visibility.getValue(); }
 
 void ViewProviderDrawingView::startRestoring()
 {
@@ -192,131 +180,110 @@ void ViewProviderDrawingView::startRestoring()
 
 void ViewProviderDrawingView::finishRestoring()
 {
-    if (Visibility.getValue()) {
-        show();
-    } else {
+    if (Visibility.getValue()) { show(); }
+    else {
         hide();
     }
     Gui::ViewProviderDocumentObject::finishRestoring();
 }
 
-void ViewProviderDrawingView::updateData(const App::Property* prop)
+void ViewProviderDrawingView::updateData(const App::Property *prop)
 {
     //only move the view on X, Y change
-    if (prop == &(getViewObject()->X)  ||
-        prop == &(getViewObject()->Y) ){
-        QGIView* qgiv = getQView();
-        if (qgiv) {
-            qgiv->QGIView::updateView(true);
-        }
+    if (prop == &(getViewObject()->X) || prop == &(getViewObject()->Y)) {
+        QGIView *qgiv = getQView();
+        if (qgiv) { qgiv->QGIView::updateView(true); }
     }
 
     Gui::ViewProviderDocumentObject::updateData(prop);
 }
 
-ViewProviderPage* ViewProviderDrawingView::getViewProviderPage() const
+ViewProviderPage *ViewProviderDrawingView::getViewProviderPage() const
 {
-    Gui::Document* guiDoc = Gui::Application::Instance->getDocument(getViewObject()->getDocument());
+    Gui::Document *guiDoc = Gui::Application::Instance->getDocument(getViewObject()->getDocument());
     if (guiDoc) {
-        Gui::ViewProvider* vp = guiDoc->getViewProvider(getViewObject()->findParentPage());
-        return dynamic_cast<ViewProviderPage*>(vp);
+        Gui::ViewProvider *vp = guiDoc->getViewProvider(getViewObject()->findParentPage());
+        return dynamic_cast<ViewProviderPage *>(vp);
     }
     return nullptr;
 }
 
-MDIViewPage* ViewProviderDrawingView::getMDIViewPage() const
+MDIViewPage *ViewProviderDrawingView::getMDIViewPage() const
 {
-    ViewProviderPage* vpp = getViewProviderPage();
-    if (vpp) {
-        return vpp->getMDIViewPage();
-    }
+    ViewProviderPage *vpp = getViewProviderPage();
+    if (vpp) { return vpp->getMDIViewPage(); }
     return nullptr;
 }
 
-Gui::MDIView *ViewProviderDrawingView::getMDIView() const
-{
-    return getMDIViewPage();
-}
+Gui::MDIView *ViewProviderDrawingView::getMDIView() const { return getMDIViewPage(); }
 
-void ViewProviderDrawingView::onGuiRepaint(const TechDraw::DrawView* dv)
+void ViewProviderDrawingView::onGuiRepaint(const TechDraw::DrawView *dv)
 {
-//    Base::Console().Message("VPDV::onGuiRepaint(%s) - this: %x\n", dv->getNameInDocument(), this);
-    Gui::Document* guiDoc = Gui::Application::Instance->getDocument(getViewObject()->getDocument());
-    if (guiDoc == nullptr) {
-        return;
-    }
+    //    Base::Console().Message("VPDV::onGuiRepaint(%s) - this: %x\n", dv->getNameInDocument(), this);
+    Gui::Document *guiDoc = Gui::Application::Instance->getDocument(getViewObject()->getDocument());
+    if (guiDoc == nullptr) { return; }
 
-    std::vector<TechDraw::DrawPage*> pages = getViewObject()->findAllParentPages();
-    if (pages.size() > 1) {
-        multiParentPaint(pages);
-    } else if (dv == getViewObject()) {
+    std::vector<TechDraw::DrawPage *> pages = getViewObject()->findAllParentPages();
+    if (pages.size() > 1) { multiParentPaint(pages); }
+    else if (dv == getViewObject()) {
         singleParentPaint(dv);
     }
 }
 
-void ViewProviderDrawingView::multiParentPaint(std::vector<TechDraw::DrawPage*>& pages)
+void ViewProviderDrawingView::multiParentPaint(std::vector<TechDraw::DrawPage *> &pages)
 {
-    for (auto& p : pages) {
-        std::vector<App::DocumentObject*> views = p->Views.getValues();
-        for (auto& v: views) {
-            if (v != getViewObject()) {  //should this be dv from onGuiRepaint?
+    for (auto &p : pages) {
+        std::vector<App::DocumentObject *> views = p->Views.getValues();
+        for (auto &v : views) {
+            if (v != getViewObject()) { //should this be dv from onGuiRepaint?
                 continue;
             }
             //view v belongs to this page p
-            ViewProviderPage* vpPage = getViewProviderPage();
-            if (!vpPage) {
-                continue;
-            }
+            ViewProviderPage *vpPage = getViewProviderPage();
+            if (!vpPage) { continue; }
             if (vpPage->getQGSPage()) {
-                QGIView* qView = dynamic_cast<QGIView *>(vpPage->getQGSPage()->findQViewForDocObj(v));
-                if (qView) {
-                    qView->updateView(true);
-                }
+                QGIView *qView =
+                    dynamic_cast<QGIView *>(vpPage->getQGSPage()->findQViewForDocObj(v));
+                if (qView) { qView->updateView(true); }
             }
         }
     }
 }
 
-void ViewProviderDrawingView::singleParentPaint(const TechDraw::DrawView* dv)
+void ViewProviderDrawingView::singleParentPaint(const TechDraw::DrawView *dv)
 {
     //original logic for 1 view on 1 page
-    if (dv->isRemoving() ||
-        dv->isRestoring()) {
-        return;
-    }
-    QGIView* qgiv = getQView();
-    if (qgiv) {
-        qgiv->updateView(true);
-    } else {       //we are not part of the Gui page yet. ask page to add us.
-        ViewProviderPage* vpPage = getViewProviderPage();
+    if (dv->isRemoving() || dv->isRestoring()) { return; }
+    QGIView *qgiv = getQView();
+    if (qgiv) { qgiv->updateView(true); }
+    else { //we are not part of the Gui page yet. ask page to add us.
+        ViewProviderPage *vpPage = getViewProviderPage();
         if (vpPage) {
-            if (vpPage->getQGSPage()) {
-                vpPage->getQGSPage()->addView(dv);
-            }
+            if (vpPage->getQGSPage()) { vpPage->getQGSPage()->addView(dv); }
         }
     }
 }
 
 //handle status updates from App/DrawView
-void ViewProviderDrawingView::onProgressMessage(const TechDraw::DrawView* dv,
-                                              const std::string featureName,
-                                              const std::string text)
+void ViewProviderDrawingView::onProgressMessage(const TechDraw::DrawView *dv,
+                                                const std::string featureName,
+                                                const std::string text)
 {
-//    Q_UNUSED(featureName)
+    //    Q_UNUSED(featureName)
     Q_UNUSED(dv)
-//    Q_UNUSED(text)
+    //    Q_UNUSED(text)
     showProgressMessage(featureName, text);
 }
 
-void ViewProviderDrawingView::showProgressMessage(const std::string featureName, const std::string text) const
+void ViewProviderDrawingView::showProgressMessage(const std::string featureName,
+                                                  const std::string text) const
 {
-    QString msg = QString::fromUtf8("%1 %2")
-            .arg(Base::Tools::fromStdString(featureName),
-                 Base::Tools::fromStdString(text));
+    QString msg = QString::fromUtf8("%1 %2").arg(Base::Tools::fromStdString(featureName),
+                                                 Base::Tools::fromStdString(text));
     if (Gui::getMainWindow()) {
         //neither of these work! Base::Console().Message() output preempts these messages??
-//        Gui::getMainWindow()->showMessage(msg, 3000);
-//        Gui::getMainWindow()->showStatus(Gui::MainWindow::Msg, msg);
+        //        Gui::getMainWindow()->showMessage(msg, 3000);
+        //        Gui::getMainWindow()->showStatus(Gui::MainWindow::Msg, msg);
         //Temporary implementation. This works, but the messages are queued up and
         //not displayed in the report window in real time??
         Base::Console().Message("%s\n", qPrintable(msg));
@@ -325,7 +292,7 @@ void ViewProviderDrawingView::showProgressMessage(const std::string featureName,
 
 void ViewProviderDrawingView::stackUp()
 {
-    QGIView* v = getQView();
+    QGIView *v = getQView();
     if (v) {
         int z = StackOrder.getValue();
         z++;
@@ -336,7 +303,7 @@ void ViewProviderDrawingView::stackUp()
 
 void ViewProviderDrawingView::stackDown()
 {
-    QGIView* v = getQView();
+    QGIView *v = getQView();
     if (v) {
         int z = StackOrder.getValue();
         z--;
@@ -347,43 +314,37 @@ void ViewProviderDrawingView::stackDown()
 
 void ViewProviderDrawingView::stackTop()
 {
-    Gui::Document* gDoc = getDocument();
-    std::vector<ViewProvider*> vps = gDoc->getViewProvidersOfType(TechDrawGui::ViewProviderDrawingView::getClassTypeId());
+    Gui::Document *gDoc = getDocument();
+    std::vector<ViewProvider *> vps =
+        gDoc->getViewProvidersOfType(TechDrawGui::ViewProviderDrawingView::getClassTypeId());
     int maxZ = 0;
-    for (auto& vp: vps) {
-        ViewProviderDrawingView* vpdv = static_cast<ViewProviderDrawingView*>(vp);
+    for (auto &vp : vps) {
+        ViewProviderDrawingView *vpdv = static_cast<ViewProviderDrawingView *>(vp);
         int z = vpdv->StackOrder.getValue();
-        if (z > maxZ) {
-            maxZ = z;
-        }
+        if (z > maxZ) { maxZ = z; }
     }
     StackOrder.setValue(maxZ + 1);
-    QGIView* v = getQView();
-    if (v) {
-        v->setStack(maxZ + 1);
-    }
+    QGIView *v = getQView();
+    if (v) { v->setStack(maxZ + 1); }
 }
 
 void ViewProviderDrawingView::stackBottom()
 {
-    Gui::Document* gDoc = getDocument();
-    std::vector<ViewProvider*> vps = gDoc->getViewProvidersOfType(TechDrawGui::ViewProviderDrawingView::getClassTypeId());
+    Gui::Document *gDoc = getDocument();
+    std::vector<ViewProvider *> vps =
+        gDoc->getViewProvidersOfType(TechDrawGui::ViewProviderDrawingView::getClassTypeId());
     int minZ = 0;
-    for (auto& vp: vps) {
-        ViewProviderDrawingView* vpdv = static_cast<ViewProviderDrawingView*>(vp);
+    for (auto &vp : vps) {
+        ViewProviderDrawingView *vpdv = static_cast<ViewProviderDrawingView *>(vp);
         int z = vpdv->StackOrder.getValue();
-        if (z < minZ) {
-            minZ = z;
-        }
+        if (z < minZ) { minZ = z; }
     }
     StackOrder.setValue(minZ - 1);
-    QGIView* v = getQView();
-    if (v) {
-        v->setStack(minZ - 1);
-    }
+    QGIView *v = getQView();
+    if (v) { v->setStack(minZ - 1); }
 }
 
-TechDraw::DrawView* ViewProviderDrawingView::getViewObject() const
+TechDraw::DrawView *ViewProviderDrawingView::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawView*>(pcObject);
+    return dynamic_cast<TechDraw::DrawView *>(pcObject);
 }

@@ -23,87 +23,79 @@
 //  SMESH SMDS : implementation of Salome mesh data structure
 //
 #ifdef _MSC_VER
-#pragma warning(disable:4786)
+#pragma warning(disable : 4786)
 #endif
 
 #include "SMDS_IteratorOfElements.hxx"
 
 bool SMDS_IteratorOfElements::subMore()
 {
-        if((t2Iterator.get()==NULL)||(!t2Iterator->more()))
-        {
-                if(t1Iterator->more())
-                {
-                        t2Iterator=t1Iterator->next()->elementsIterator(myType);
-                        return subMore();
-                }
-                else return false;
+    if ((t2Iterator.get() == NULL) || (!t2Iterator->more())) {
+        if (t1Iterator->more()) {
+            t2Iterator = t1Iterator->next()->elementsIterator(myType);
+            return subMore();
         }
-        else return true;
+        else
+            return false;
+    }
+    else
+        return true;
 }
 
-const SMDS_MeshElement * SMDS_IteratorOfElements::subNext()
+const SMDS_MeshElement *SMDS_IteratorOfElements::subNext()
 {
-        if((t2Iterator.get()==NULL)||(!t2Iterator->more()))
-                if(t1Iterator->more())
-                        t2Iterator=t1Iterator->next()->elementsIterator(myType);
-        return t2Iterator->next();
+    if ((t2Iterator.get() == NULL) || (!t2Iterator->more()))
+        if (t1Iterator->more()) t2Iterator = t1Iterator->next()->elementsIterator(myType);
+    return t2Iterator->next();
 }
 
 /////////////////////////////////////////////////////////////////////////////
-/// Create an iterator which look for elements of type type which are linked 
+/// Create an iterator which look for elements of type type which are linked
 /// to the element element. it is the iterator to get connectivity of element
 //////////////////////////////////////////////////////////////////////////////
-SMDS_IteratorOfElements::SMDS_IteratorOfElements(const SMDS_MeshElement * element,
+SMDS_IteratorOfElements::SMDS_IteratorOfElements(const SMDS_MeshElement *element,
                                                  SMDSAbs_ElementType type,
-                                                 const SMDS_ElemIteratorPtr& it)
-     : t1Iterator(it),
-       t2Iterator(SMDS_ElemIteratorPtr((SMDS_ElemIterator*)NULL)),
-       myType(type), myElement(element),
-       myProxyElement(NULL)
+                                                 const SMDS_ElemIteratorPtr &it)
+    : t1Iterator(it), t2Iterator(SMDS_ElemIteratorPtr((SMDS_ElemIterator *)NULL)), myType(type),
+      myElement(element), myProxyElement(NULL)
 {
-        while(subMore())
-                alreadyReturnedElements.insert(subNext());
-        itAlreadyReturned= alreadyReturnedElements.begin();
-        switch(myElement->GetType())
-        {
-        case SMDSAbs_Node: 
-        case SMDSAbs_Edge: myReverseIteration=true; break;
-        case SMDSAbs_Face: myReverseIteration=(type==SMDSAbs_Volume); break;
-        default: myReverseIteration=false;
-        }       
+    while (subMore()) alreadyReturnedElements.insert(subNext());
+    itAlreadyReturned = alreadyReturnedElements.begin();
+    switch (myElement->GetType()) {
+        case SMDSAbs_Node:
+        case SMDSAbs_Edge: myReverseIteration = true; break;
+        case SMDSAbs_Face: myReverseIteration = (type == SMDSAbs_Volume); break;
+        default: myReverseIteration = false;
+    }
 }
 
 bool SMDS_IteratorOfElements::more()
 {
-        if(myProxyElement==NULL)
-        {
-                while(itAlreadyReturned!=alreadyReturnedElements.end())
-                {
-                        myProxyElement=*itAlreadyReturned;
-                        itAlreadyReturned++;    
+    if (myProxyElement == NULL) {
+        while (itAlreadyReturned != alreadyReturnedElements.end()) {
+            myProxyElement = *itAlreadyReturned;
+            itAlreadyReturned++;
 
-                        if(myReverseIteration)
-                        {
-                                SMDS_ElemIteratorPtr it=
-                                        myProxyElement->elementsIterator(myElement->GetType());
-                                while(it->more())
-                                {                               
-                                        if(it->next()==myElement) return true;
-                                }
-                        }
-                        else return true;
+            if (myReverseIteration) {
+                SMDS_ElemIteratorPtr it = myProxyElement->elementsIterator(myElement->GetType());
+                while (it->more()) {
+                    if (it->next() == myElement) return true;
                 }
-                myProxyElement=NULL;
-                return false;
+            }
+            else
+                return true;
         }
-        else return true;
+        myProxyElement = NULL;
+        return false;
+    }
+    else
+        return true;
 }
 
-const SMDS_MeshElement * SMDS_IteratorOfElements::next()
+const SMDS_MeshElement *SMDS_IteratorOfElements::next()
 {
-        more();
-        const SMDS_MeshElement *e=myProxyElement;
-        myProxyElement=NULL;
-        return e;
+    more();
+    const SMDS_MeshElement *e = myProxyElement;
+    myProxyElement = NULL;
+    return e;
 }

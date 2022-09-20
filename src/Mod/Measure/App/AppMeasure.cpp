@@ -29,8 +29,9 @@
 #include "MeasurementPy.h"
 
 
-namespace Measure {
-class Module : public Py::ExtensionModule<Module>
+namespace Measure
+{
+class Module: public Py::ExtensionModule<Module>
 {
 public:
     Module() : Py::ExtensionModule<Module>("Measure")
@@ -43,10 +44,7 @@ public:
 private:
 };
 
-PyObject* initModule()
-{
-    return Base::Interpreter().addModule(new Module);
-}
+PyObject *initModule() { return Base::Interpreter().addModule(new Module); }
 
 } // namespace Measure
 
@@ -58,20 +56,17 @@ PyMOD_INIT_FUNC(Measure)
     try {
         Base::Interpreter().runString("import Part");
     }
-    catch(const Base::Exception& e) {
+    catch (const Base::Exception &e) {
         PyErr_SetString(PyExc_ImportError, e.what());
         PyMOD_Return(nullptr);
     }
-    PyObject* mod = Measure::initModule();
+    PyObject *mod = Measure::initModule();
     // Add Types to module
-    Base::Interpreter().addType(&Measure::MeasurementPy      ::Type,mod,"Measurement");
+    Base::Interpreter().addType(&Measure::MeasurementPy ::Type, mod, "Measurement");
     Base::Console().Log("Loading Measurement module... done\n");
-    Measure::Measurement         ::init();
+    Measure::Measurement ::init();
     PyMOD_Return(mod);
 }
 
-// debug print for sketchsolv 
-void debugprint(const std::string& s)
-{
-    Base::Console().Log("%s", s.c_str());
-}
+// debug print for sketchsolv
+void debugprint(const std::string &s) { Base::Console().Log("%s", s.c_str()); }

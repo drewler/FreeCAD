@@ -31,21 +31,22 @@
 
 class Ui_TaskSectionView;
 
-namespace TechDraw {
-    class DrawViewPart;
-    class DrawViewSection;
-}
+namespace TechDraw
+{
+class DrawViewPart;
+class DrawViewSection;
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
 
-class TaskSectionView : public QWidget
+class TaskSectionView: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TaskSectionView(TechDraw::DrawViewPart* base);
-    explicit TaskSectionView(TechDraw::DrawViewSection* section);
+    explicit TaskSectionView(TechDraw::DrawViewPart *base);
+    explicit TaskSectionView(TechDraw::DrawViewSection *section);
     ~TaskSectionView() = default;
 
     virtual bool accept();
@@ -87,8 +88,8 @@ protected Q_SLOTS:
 
 private:
     std::unique_ptr<Ui_TaskSectionView> ui;
-    TechDraw::DrawViewPart* m_base;
-    TechDraw::DrawViewSection* m_section;
+    TechDraw::DrawViewPart *m_base;
+    TechDraw::DrawViewSection *m_section;
     std::string m_symbol;
     Base::Vector3d m_normal;
     Base::Vector3d m_direction;
@@ -105,7 +106,7 @@ private:
     std::string m_dirName;
     std::string m_sectionName;
     std::string m_baseName;
-    App::Document* m_doc;
+    App::Document *m_doc;
 
     bool m_createMode;
     bool m_saved;
@@ -114,40 +115,39 @@ private:
     std::string m_savePageName;
 
     bool m_abort;
-
 };
 
-class TaskDlgSectionView : public Gui::TaskView::TaskDialog
+class TaskDlgSectionView: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskDlgSectionView(TechDraw::DrawViewPart* base);
-    explicit TaskDlgSectionView(TechDraw::DrawViewSection* section);
+    explicit TaskDlgSectionView(TechDraw::DrawViewPart *base);
+    explicit TaskDlgSectionView(TechDraw::DrawViewSection *section);
     ~TaskDlgSectionView() override;
 
     /// is called the TaskView when the dialog is opened
     void open() override;
     /// is called by the framework if an button is clicked which has no accept or reject role
-/*    virtual void clicked(int);*/
+    /*    virtual void clicked(int);*/
     /// is called by the framework if the dialog is accepted (Ok)
     bool accept() override;
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Cancel; }
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+    }
 
     void update();
 
-    bool isAllowedAlterSelection() const override
-    { return false; }
-    bool isAllowedAlterDocument() const override
-    { return false; }
+    bool isAllowedAlterSelection() const override { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
 
 private:
-    TaskSectionView * widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskSectionView *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

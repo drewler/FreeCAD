@@ -23,7 +23,7 @@
 
 // LeastSquareConformalMapping + fem relaxing
 // ------------------------------------------
-// 
+//
 #ifndef UNWRAP_H
 #define UNWRAP_H
 
@@ -51,29 +51,31 @@ namespace lscmrelax
 
 class NullSpaceProjector: public Eigen::IdentityPreconditioner
 {
-  public:
+public:
     Eigen::MatrixXd null_space_1;
     Eigen::MatrixXd null_space_2;
-    
-    template<typename Rhs>
-    inline Rhs solve(Rhs& b) const { 
+
+    template<typename Rhs> inline Rhs solve(Rhs &b) const
+    {
         return b - this->null_space_1 * (this->null_space_2 * b);
     }
 
-    void setNullSpace(Eigen::MatrixXd null_space) {
+    void setNullSpace(Eigen::MatrixXd null_space)
+    {
         // normalize + orthogonalize the nullspace
         this->null_space_1 = null_space * ((null_space.transpose() * null_space).inverse());
         this->null_space_2 = null_space.transpose();
     }
 };
-    
+
 using Vector3 = Eigen::Vector3d;
 using Vector2 = Eigen::Vector2d;
 
-class LscmRelax{
+class LscmRelax
+{
 private:
-    ColMat<double, 3> q_l_g;  // the position of the 3d triangles at there locale coord sys
-    ColMat<double, 3> q_l_m;  // the mapped position in local coord sys
+    ColMat<double, 3> q_l_g; // the position of the 3d triangles at there locale coord sys
+    ColMat<double, 3> q_l_m; // the mapped position in local coord sys
 
     void set_q_l_g();
     void set_q_l_m();
@@ -92,10 +94,7 @@ private:
 
 public:
     LscmRelax() {}
-    LscmRelax(
-        RowMat<double, 3> vertices, 
-        RowMat<long, 3> triangles,
-        std::vector<long> fixed_pins);
+    LscmRelax(RowMat<double, 3> vertices, RowMat<long, 3> triangles, std::vector<long> fixed_pins);
 
     std::vector<long> fixed_pins;
     RowMat<double, 3> vertices;
@@ -104,8 +103,8 @@ public:
     ColMat<double, 1> rhs;
     Eigen::MatrixXd MATRIX;
 
-    double nue=0.9;
-    double elasticity=1.;
+    double nue = 0.9;
+    double elasticity = 1.;
 
     void lscm();
     void relax(double);
@@ -115,13 +114,12 @@ public:
     ColMat<double, 3> get_flat_vertices_3D();
 
     void rotate_by_min_bound_area();
-    void transform(bool scale=false);
-    
+    void transform(bool scale = false);
+
     double get_area();
     double get_flat_area();
-
 };
 
-}
+} // namespace lscmrelax
 
 #endif

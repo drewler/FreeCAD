@@ -3,12 +3,13 @@
 
 #include "zipios-config.h"
 
-namespace zipios {
+namespace zipios
+{
 
-typedef uint16_t uint16 ;
-typedef uint32_t uint32 ;
+typedef uint16_t uint16;
+typedef uint32_t uint32;
 
-} // namespace
+} // namespace zipios
 
 #endif
 

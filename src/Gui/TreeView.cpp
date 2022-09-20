@@ -23,7 +23,7 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QMouseEvent>
+#include <QMouseEvent>
 #endif
 
 #include "TreeView.h"
@@ -36,11 +36,10 @@
 
 using namespace Gui;
 
-TreeView::TreeView(QWidget* parent)
-  : QTreeView(parent)
+TreeView::TreeView(QWidget *parent) : QTreeView(parent)
 {
     setModel(new DocumentModel(this));
-    QModelIndex root = this->model()->index(0,0,QModelIndex());
+    QModelIndex root = this->model()->index(0, 0, QModelIndex());
     this->setExpanded(root, true);
     this->setDragEnabled(true);
     this->setAcceptDrops(true);
@@ -50,39 +49,35 @@ TreeView::TreeView(QWidget* parent)
     this->setMouseTracking(true); // needed for itemEntered() to work
 }
 
-TreeView::~TreeView()
-{
-}
+TreeView::~TreeView() {}
 
-void TreeView::mouseDoubleClickEvent (QMouseEvent * event)
+void TreeView::mouseDoubleClickEvent(QMouseEvent *event)
 {
     QModelIndex index = indexAt(event->pos());
-    if (!index.isValid() || index.internalPointer() == Application::Instance)
-        return;
-    Base::BaseClass* item = nullptr;
-    item = static_cast<Base::BaseClass*>(index.internalPointer());
+    if (!index.isValid() || index.internalPointer() == Application::Instance) return;
+    Base::BaseClass *item = nullptr;
+    item = static_cast<Base::BaseClass *>(index.internalPointer());
     if (item->getTypeId() == Document::getClassTypeId()) {
         QTreeView::mouseDoubleClickEvent(event);
-        const Gui::Document* doc = static_cast<Gui::Document*>(item);
+        const Gui::Document *doc = static_cast<Gui::Document *>(item);
         MDIView *view = doc->getActiveView();
-        if (!view)
-            return;
+        if (!view) return;
         getMainWindow()->setActiveWindow(view);
     }
     else if (item->getTypeId().isDerivedFrom(ViewProvider::getClassTypeId())) {
-        if (!static_cast<ViewProvider*>(item)->doubleClicked())
+        if (!static_cast<ViewProvider *>(item)->doubleClicked())
             QTreeView::mouseDoubleClickEvent(event);
     }
 }
 
-void TreeView::rowsInserted (const QModelIndex & parent, int start, int end)
+void TreeView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
     QTreeView::rowsInserted(parent, start, end);
     if (parent.isValid()) {
-        auto ptr = static_cast<Base::BaseClass*>(parent.internalPointer());
+        auto ptr = static_cast<Base::BaseClass *>(parent.internalPointer());
         // type is defined in DocumentModel.cpp
         if (ptr->getTypeId() == Base::Type::fromName("Gui::ApplicationIndex")) {
-            for (int i=start; i<=end;i++) {
+            for (int i = start; i <= end; i++) {
                 QModelIndex document = this->model()->index(i, 0, parent);
                 this->expand(document);
             }
@@ -91,4 +86,3 @@ void TreeView::rowsInserted (const QModelIndex & parent, int start, int end)
 }
 
 #include "moc_TreeView.cpp"
-

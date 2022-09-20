@@ -40,10 +40,7 @@
 
 using namespace TechDraw;
 
-LineGroup::LineGroup()
-{
-    init();
-}
+LineGroup::LineGroup() { init(); }
 
 LineGroup::LineGroup(std::string groupName)
 {
@@ -52,67 +49,66 @@ LineGroup::LineGroup(std::string groupName)
 }
 
 
-LineGroup::~LineGroup()
-{
-}
+LineGroup::~LineGroup() {}
 
 void LineGroup::init()
 {
-    m_name    = "Default";
-    m_thin    = 0.35;
+    m_name = "Default";
+    m_thin = 0.35;
     m_graphic = 0.50;
-    m_thick   = 0.70;
-    m_extra   = 1.40;
+    m_thick = 0.70;
+    m_extra = 1.40;
 }
 
 double LineGroup::getWeight(std::string s)
 {
     double result = 0.55;
-    if (s == "Thin") {
-       result = m_thin;
-    } else if (s == "Graphic") {
-       result = m_graphic;
-    } else if (s == "Thick") {
-       result = m_thick;
-    } else if (s == "Extra") {
-       result = m_extra;
+    if (s == "Thin") { result = m_thin; }
+    else if (s == "Graphic") {
+        result = m_graphic;
+    }
+    else if (s == "Thick") {
+        result = m_thick;
+    }
+    else if (s == "Extra") {
+        result = m_extra;
     }
     return result;
 }
 
 void LineGroup::setWeight(std::string s, double weight)
 {
-    if (s == "Thin") {
-       m_thin = weight;
-    } else if (s == "Graphic") {
-       m_graphic = weight;
-    } else if (s == "Thick") {
-       m_thick = weight;
-    } else if (s == "Extra") {
-       m_extra = weight;
+    if (s == "Thin") { m_thin = weight; }
+    else if (s == "Graphic") {
+        m_graphic = weight;
+    }
+    else if (s == "Thick") {
+        m_thick = weight;
+    }
+    else if (s == "Extra") {
+        m_extra = weight;
     }
 }
 
-void LineGroup::dump(const char* title)
+void LineGroup::dump(const char *title)
 {
-    Base::Console().Message( "DUMP: %s\n", title);
-    Base::Console().Message( "Name: %s\n", m_name.c_str());
-    Base::Console().Message( "Thin: %.3f\n", m_thin);
-    Base::Console().Message( "Graphic: %.3f\n", m_graphic);
-    Base::Console().Message( "Thick: %.3f\n", m_thick);
-    Base::Console().Message( "Extra: %.3f\n", m_extra);
+    Base::Console().Message("DUMP: %s\n", title);
+    Base::Console().Message("Name: %s\n", m_name.c_str());
+    Base::Console().Message("Thin: %.3f\n", m_thin);
+    Base::Console().Message("Graphic: %.3f\n", m_graphic);
+    Base::Console().Message("Thick: %.3f\n", m_thick);
+    Base::Console().Message("Extra: %.3f\n", m_extra);
 }
 
 //static support function: split comma separated string of values into vector of numbers
 std::vector<double> LineGroup::split(std::string line)
 {
-    std::vector<double>   result;
-    std::stringstream     lineStream(line);
-    std::string           cell;
+    std::vector<double> result;
+    std::stringstream lineStream(line);
+    std::string cell;
     bool nameCell = true;
 
-    while(std::getline(lineStream, cell, ','))
-    {
+    while (std::getline(lineStream, cell, ',')) {
         if (nameCell) {
             nameCell = false;
             continue;
@@ -120,7 +116,7 @@ std::vector<double> LineGroup::split(std::string line)
         try {
             result.push_back(std::stod(cell));
         }
-        catch (const std::invalid_argument& ia) {
+        catch (const std::invalid_argument &ia) {
             Base::Console().Warning("Invalid number in cell: %s (%s) \n", cell.c_str(), ia.what());
             result.push_back(0.0);
         }
@@ -134,35 +130,35 @@ std::string LineGroup::getRecordFromFile(std::string parmFile, int groupNumber)
     std::string record;
     Base::FileInfo fi(parmFile);
     Base::ifstream inFile(fi, std::ifstream::in);
-    if(!inFile.is_open()) {
-        Base::Console().Message( "Cannot open LineGroup file: %s\n", parmFile.c_str());
+    if (!inFile.is_open()) {
+        Base::Console().Message("Cannot open LineGroup file: %s\n", parmFile.c_str());
         return record;
     }
     // parse file to get the groupNumber'th line
     int counter = 0; // the combobox enums begin with 0
-    while ( inFile.good() ){
-         std::string line;
-         std::getline(inFile, line);
-         std::string nameTag = line.substr(0, 1);
-         if (nameTag == "*") { // we found a definition line
-             if (counter == groupNumber) {
-                 record = line;
-                 return record;
-             }
-             ++counter;
+    while (inFile.good()) {
+        std::string line;
+        std::getline(inFile, line);
+        std::string nameTag = line.substr(0, 1);
+        if (nameTag == "*") { // we found a definition line
+            if (counter == groupNumber) {
+                record = line;
+                return record;
+            }
+            ++counter;
         }
-    }  //endwhile
+    } //endwhile
     // nothing was found
-    Base::Console().Error("LineGroup: the LineGroup file has only %s entries but entry number %s is set\n"
-        , std::to_string(counter).c_str()
-        , std::to_string(groupNumber).c_str());
+    Base::Console().Error(
+        "LineGroup: the LineGroup file has only %s entries but entry number %s is set\n",
+        std::to_string(counter).c_str(), std::to_string(groupNumber).c_str());
     return std::string(); // return an empty string
 }
 
 //static LineGroup maker
-LineGroup* LineGroup::lineGroupFactory(int groupNumber)
+LineGroup *LineGroup::lineGroupFactory(int groupNumber)
 {
-    LineGroup* lg = new LineGroup();
+    LineGroup *lg = new LineGroup();
 
     std::string lgFileName = Preferences::lineGroupFile();
 
@@ -170,8 +166,9 @@ LineGroup* LineGroup::lineGroupFactory(int groupNumber)
 
     std::vector<double> values = LineGroup::split(lgRecord);
     if (values.size() < 4) {
-        Base::Console().Error( "LineGroup::invalid entry in %s\n", lgFileName.c_str() );
-    } else {
+        Base::Console().Error("LineGroup::invalid entry in %s\n", lgFileName.c_str());
+    }
+    else {
         lg->setWeight("Thin", values[0]);
         lg->setWeight("Graphic", values[1]);
         lg->setWeight("Thick", values[2]);
@@ -189,9 +186,7 @@ LineGroup* LineGroup::lineGroupFactory(int groupNumber)
  */
 double LineGroup::getDefaultWidth(std::string weightName, int lineGroupNumber)
 {
-    if (lineGroupNumber == -1) {
-        lineGroupNumber = Preferences::lineGroup();
-    }
+    if (lineGroupNumber == -1) { lineGroupNumber = Preferences::lineGroup(); }
     auto lg = TechDraw::LineGroup::lineGroupFactory(lineGroupNumber);
 
     double weight = lg->getWeight(weightName);
@@ -223,7 +218,7 @@ std::string LineGroup::getGroupNamesFromFile(std::string FileName)
                 record = record + found + ',';
             }
         }
-    }  //endwhile
+    } //endwhile
     if (record.empty()) {
         Base::Console().Message("LineGroup error: no group found in file %s\n", FileName.c_str());
     }

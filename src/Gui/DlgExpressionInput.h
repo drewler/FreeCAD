@@ -28,30 +28,37 @@
 #include <Base/Unit.h>
 #include <memory>
 
-namespace Ui {
+namespace Ui
+{
 class DlgExpressionInput;
 }
 
-namespace Base {
+namespace Base
+{
 class Quantity;
 }
 
-namespace App {
+namespace App
+{
 class Path;
 class Expression;
 class DocumentObject;
-}
+} // namespace App
 
-namespace Gui {
+namespace Gui
+{
 
-namespace Dialog {
+namespace Dialog
+{
 
-class GuiExport DlgExpressionInput : public QDialog
+class GuiExport DlgExpressionInput: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DlgExpressionInput(const App::ObjectIdentifier & _path, std::shared_ptr<const App::Expression> _expression, const Base::Unit &_impliedUnit, QWidget *parent = nullptr);
+    explicit DlgExpressionInput(const App::ObjectIdentifier &_path,
+                                std::shared_ptr<const App::Expression> _expression,
+                                const Base::Unit &_impliedUnit, QWidget *parent = nullptr);
     ~DlgExpressionInput() override;
 
     std::shared_ptr<App::Expression> getExpression() const { return expression; }
@@ -59,7 +66,7 @@ public:
     bool discardedFormula() const { return discarded; }
 
     QPoint expressionPosition() const;
-    void   setExpressionInputSize(int width, int height);
+    void setExpressionInputSize(int width, int height);
 
     bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -67,12 +74,12 @@ public Q_SLOTS:
     void show();
 
 protected:
-    void showEvent(QShowEvent*) override;
-    void mouseReleaseEvent(QMouseEvent*) override;
-    void mousePressEvent(QMouseEvent*) override;
+    void showEvent(QShowEvent *) override;
+    void mouseReleaseEvent(QMouseEvent *) override;
+    void mousePressEvent(QMouseEvent *) override;
 
 private Q_SLOTS:
-    void textChanged(const QString & text);
+    void textChanged(const QString &text);
     void setDiscarded();
 
 private:
@@ -85,7 +92,7 @@ private:
     int minimumWidth;
 };
 
-}
-}
+} // namespace Dialog
+} // namespace Gui
 
 #endif // GUI_DIALOG_EXPRESSIONINPUT_H

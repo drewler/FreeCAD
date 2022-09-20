@@ -27,64 +27,69 @@
 
 namespace Spaceball
 {
-    enum ButtonStateType {BUTTON_NONE = 0, BUTTON_PRESSED, BUTTON_RELEASED};
+enum ButtonStateType
+{
+    BUTTON_NONE = 0,
+    BUTTON_PRESSED,
+    BUTTON_RELEASED
+};
 
-    class EventBase : public QInputEvent
-    {
-    public:
-        bool isHandled(){return handled;}
-        void setHandled(bool sig){handled = sig;}
+class EventBase: public QInputEvent
+{
+public:
+    bool isHandled() { return handled; }
+    void setHandled(bool sig) { handled = sig; }
 
-    protected:
-        explicit EventBase(QEvent::Type event);
-        bool handled;
-    };
+protected:
+    explicit EventBase(QEvent::Type event);
+    bool handled;
+};
 
-    class MotionEvent : public EventBase
-    {
-    public:
-        MotionEvent();
-        MotionEvent(const MotionEvent& in);
-        MotionEvent& operator= (const MotionEvent& in);
-        void translations(int &xTransOut, int &yTransOut, int &zTransOut);
-        void setTranslations(const int &xTransIn, const int &yTransIn, const int &zTransIn);
-        int translationX(){return xTrans;}
-        int translationY(){return yTrans;}
-        int translationZ(){return zTrans;}
+class MotionEvent: public EventBase
+{
+public:
+    MotionEvent();
+    MotionEvent(const MotionEvent &in);
+    MotionEvent &operator=(const MotionEvent &in);
+    void translations(int &xTransOut, int &yTransOut, int &zTransOut);
+    void setTranslations(const int &xTransIn, const int &yTransIn, const int &zTransIn);
+    int translationX() { return xTrans; }
+    int translationY() { return yTrans; }
+    int translationZ() { return zTrans; }
 
-        void rotations(int &xRotOut, int &yRotOut, int &zRotOut);
-        void setRotations(const int &xRotIn, const int &yRotIn, const int &zRotIn);
-        int rotationX(){return xRot;}
-        int rotationY(){return yRot;}
-        int rotationZ(){return zRot;}
+    void rotations(int &xRotOut, int &yRotOut, int &zRotOut);
+    void setRotations(const int &xRotIn, const int &yRotIn, const int &zRotIn);
+    int rotationX() { return xRot; }
+    int rotationY() { return yRot; }
+    int rotationZ() { return zRot; }
 
-        static int MotionEventType;
+    static int MotionEventType;
 
-    private:
-        int xTrans;
-        int yTrans;
-        int zTrans;
-        int xRot;
-        int yRot;
-        int zRot;
-    };
+private:
+    int xTrans;
+    int yTrans;
+    int zTrans;
+    int xRot;
+    int yRot;
+    int zRot;
+};
 
-    class ButtonEvent : public EventBase
-    {
-    public:
-        ButtonEvent();
-        ButtonEvent(const ButtonEvent& in);
-        ButtonEvent& operator= (const ButtonEvent& in);
-        ButtonStateType buttonStatus();
-        void setButtonStatus(const ButtonStateType &buttonStatusIn);
-        int buttonNumber();
-        void setButtonNumber(const int &buttonNumberIn);
+class ButtonEvent: public EventBase
+{
+public:
+    ButtonEvent();
+    ButtonEvent(const ButtonEvent &in);
+    ButtonEvent &operator=(const ButtonEvent &in);
+    ButtonStateType buttonStatus();
+    void setButtonStatus(const ButtonStateType &buttonStatusIn);
+    int buttonNumber();
+    void setButtonNumber(const int &buttonNumberIn);
 
-        static int ButtonEventType;
+    static int ButtonEventType;
 
-    private:
-        ButtonStateType buttonState;
-        int button;
-    };
-}
+private:
+    ButtonStateType buttonState;
+    int button;
+};
+} // namespace Spaceball
 #endif // SPACEBALLEVENT_H

@@ -32,7 +32,7 @@
 
 #include "DrawUtil.h"
 
-#include <Mod/TechDraw/App/DrawTilePy.h>  // generated from DrawTilePy.xml
+#include <Mod/TechDraw/App/DrawTilePy.h> // generated from DrawTilePy.xml
 #include "DrawTile.h"
 
 using namespace TechDraw;
@@ -49,7 +49,8 @@ DrawTile::DrawTile()
 
     ADD_PROPERTY_TYPE(TileParent, (nullptr), group, (App::PropertyType)(App::Prop_None),
                       "Object to which this tile is attached");
-    ADD_PROPERTY_TYPE(TileRow, (0), group, App::Prop_None, "Row in parent object\n 0 for arrow side, -1 for other side");
+    ADD_PROPERTY_TYPE(TileRow, (0), group, App::Prop_None,
+                      "Row in parent object\n 0 for arrow side, -1 for other side");
     ADD_PROPERTY_TYPE(TileColumn, (0), group, App::Prop_None, "Column in parent object");
 
     // there is currently only one column, this don't allow to edit
@@ -62,27 +63,24 @@ DrawTile::DrawTile()
     TileRow.setConstraints(&TileRowConstraints);
 }
 
-void DrawTile::onChanged(const App::Property* prop)
+void DrawTile::onChanged(const App::Property *prop)
 {
     if (!isRestoring()) {
         //nothing in particular
     }
     DocumentObject::onChanged(prop);
-
 }
 
-short DrawTile::mustExecute() const
-{
-    return DocumentObject::mustExecute();
-}
+short DrawTile::mustExecute() const { return DocumentObject::mustExecute(); }
 
 App::DocumentObjectExecReturn *DrawTile::execute()
 {
-//    Base::Console().Message("DT::execute()\n");
+    //    Base::Console().Message("DT::execute()\n");
     return DocumentObject::execute();
 }
 
-void DrawTile::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property *prop)
+void DrawTile::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                         App::Property *prop)
 // transforms properties that had been changed
 {
     // property TileRow had App::PropertyInteger and was changed to App::PropertyIntegerConstraint
@@ -94,10 +92,10 @@ void DrawTile::handleChangedPropertyType(Base::XMLReader &reader, const char *Ty
     }
 }
 
-DrawView* DrawTile::getParent() const
+DrawView *DrawTile::getParent() const
 {
-//    Base::Console().Message("DT::getParent() - %s\n", getNameInDocument());
-    return dynamic_cast<DrawView*>(TileParent.getValue());
+    //    Base::Console().Message("DT::getParent() - %s\n", getNameInDocument());
+    return dynamic_cast<DrawView *>(TileParent.getValue());
 }
 
 PyObject *DrawTile::getPyObject()
@@ -111,15 +109,16 @@ PyObject *DrawTile::getPyObject()
 
 // Python Drawing feature ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(TechDraw::DrawTilePython, TechDraw::DrawTile)
-template<> const char* TechDraw::DrawTilePython::getViewProviderName() const {
+template<> const char *TechDraw::DrawTilePython::getViewProviderName() const
+{
     return "TechDrawGui::ViewProviderTile";
 }
 /// @endcond
 
 // explicit template instantiation
 template class TechDrawExport FeaturePythonT<TechDraw::DrawTile>;
-}
-
+} // namespace App

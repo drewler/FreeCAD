@@ -23,21 +23,16 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <QDragMoveEvent>
-# include <QString>
+#include <QDragMoveEvent>
+#include <QString>
 #endif
 
 #include "QListWidgetCustom.h"
 
 
-QListWidgetCustom::QListWidgetCustom(QWidget * parent)
-  : QListWidget(parent)
-{
-}
+QListWidgetCustom::QListWidgetCustom(QWidget *parent) : QListWidget(parent) {}
 
-QListWidgetCustom::~QListWidgetCustom()
-{
-}
+QListWidgetCustom::~QListWidgetCustom() {}
 
 /* Overridden dragMoveEvent prevents dragging items that originated
  * from the same list for "disabled workbenches". Dragging from outside
@@ -50,15 +45,16 @@ void QListWidgetCustom::dragMoveEvent(QDragMoveEvent *e)
         if (prop.isValid()) {
             QStringList filter = prop.toStringList();
             QString sender = e->source()->objectName();
-            if (!filter.contains(sender)) {
-                e->ignore();
-            } else {
+            if (!filter.contains(sender)) { e->ignore(); }
+            else {
                 e->accept();
             }
-        } else {
+        }
+        else {
             e->accept();
         }
-    } else {
+    }
+    else {
         e->ignore();
     }
 }

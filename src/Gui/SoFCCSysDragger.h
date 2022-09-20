@@ -47,27 +47,28 @@ namespace Gui
  * 'translationIncrement' for a full double
  * precision vector scalar.
  */
-class TDragger : public SoDragger
+class TDragger: public SoDragger
 {
     SO_KIT_HEADER(TDragger);
     SO_KIT_CATALOG_ENTRY_HEADER(translatorSwitch);
     SO_KIT_CATALOG_ENTRY_HEADER(translator);
     SO_KIT_CATALOG_ENTRY_HEADER(translatorActive);
+
 public:
     static void initClass();
     TDragger();
     SoSFVec3f translation; //!< set from outside and used from outside for single precision.
-    SoSFDouble translationIncrement; //!< set from outside and used for rounding.
+    SoSFDouble translationIncrement;     //!< set from outside and used for rounding.
     SoSFInt32 translationIncrementCount; //!< number of steps. used from outside.
-    SoSFFloat autoScaleResult; //!< set from parent dragger.
+    SoSFFloat autoScaleResult;           //!< set from parent dragger.
 
 protected:
     ~TDragger() override;
     SbBool setUpConnections(SbBool onoff, SbBool doitalways = FALSE) override;
 
-    static void startCB(void *, SoDragger * d);
-    static void motionCB(void *, SoDragger * d);
-    static void finishCB(void *, SoDragger * d);
+    static void startCB(void *, SoDragger *d);
+    static void motionCB(void *, SoDragger *d);
+    static void finishCB(void *, SoDragger *d);
     static void fieldSensorCB(void *f, SoSensor *);
     static void valueChangedCB(void *, SoDragger *d);
 
@@ -81,7 +82,7 @@ protected:
 private:
     void buildFirstInstance();
     SbVec3f roundTranslation(const SbVec3f &vecIn, float incrementIn);
-    SoGroup* buildGeometry();
+    SoGroup *buildGeometry();
     using inherited = SoDragger;
 };
 
@@ -92,27 +93,28 @@ private:
  * multiplied with rotationIncrement for full double
  * precision vector scalar.
  */
-class RDragger : public SoDragger
+class RDragger: public SoDragger
 {
     SO_KIT_HEADER(RDragger);
     SO_KIT_CATALOG_ENTRY_HEADER(rotatorSwitch);
     SO_KIT_CATALOG_ENTRY_HEADER(rotator);
     SO_KIT_CATALOG_ENTRY_HEADER(rotatorActive);
+
 public:
     static void initClass();
     RDragger();
-    SoSFRotation rotation; //!< set from outside and used from outside for single precision.
+    SoSFRotation rotation;        //!< set from outside and used from outside for single precision.
     SoSFDouble rotationIncrement; //!< set from outside and used for rounding.
     SoSFInt32 rotationIncrementCount; //!< number of steps. used from outside.
-    SoSFColor color; //!< set from outside. non-active color.
+    SoSFColor color;                  //!< set from outside. non-active color.
 
 protected:
     ~RDragger() override;
     SbBool setUpConnections(SbBool onoff, SbBool doitalways = FALSE) override;
 
-    static void startCB(void *, SoDragger * d);
-    static void motionCB(void *, SoDragger * d);
-    static void finishCB(void *, SoDragger * d);
+    static void startCB(void *, SoDragger *d);
+    static void motionCB(void *, SoDragger *d);
+    static void finishCB(void *, SoDragger *d);
     static void fieldSensorCB(void *f, SoSensor *);
     static void valueChangedCB(void *, SoDragger *d);
 
@@ -127,7 +129,7 @@ protected:
 private:
     void buildFirstInstance();
     int roundIncrement(const float &radiansIn);
-    SoGroup* buildGeometry();
+    SoGroup *buildGeometry();
     using inherited = SoDragger;
 };
 
@@ -143,7 +145,7 @@ private:
  * For autoscale you set the field scale & call setupAutoScale with
  * the viewer camera. @see setUpAutoScale @see scale.
  */
-class GuiExport SoFCCSysDragger : public SoDragger
+class GuiExport SoFCCSysDragger: public SoDragger
 {
     SO_KIT_HEADER(SoFCCSysDragger);
     SO_KIT_CATALOG_ENTRY_HEADER(annotation);
@@ -178,19 +180,20 @@ class GuiExport SoFCCSysDragger : public SoDragger
     SO_KIT_CATALOG_ENTRY_HEADER(xRotatorDragger);
     SO_KIT_CATALOG_ENTRY_HEADER(yRotatorDragger);
     SO_KIT_CATALOG_ENTRY_HEADER(zRotatorDragger);
+
 public:
     static void initClass();
     SoFCCSysDragger();
     ~SoFCCSysDragger();
 
     SoSFVec3f translation; //!< initial translation and reflects single precision movement.
-    SoSFDouble translationIncrement; //!< set from outside used for rounding.
+    SoSFDouble translationIncrement;      //!< set from outside used for rounding.
     SoSFInt32 translationIncrementCountX; //!< used from outside for translation x steps.
     SoSFInt32 translationIncrementCountY; //!< used from outside for translation y steps.
     SoSFInt32 translationIncrementCountZ; //!< used from outside for translation z steps.
 
-    SoSFRotation rotation; //!< initial rotation and reflects single precision movement.
-    SoSFDouble rotationIncrement; //!< radians set from outside and used for rounding.
+    SoSFRotation rotation;             //!< initial rotation and reflects single precision movement.
+    SoSFDouble rotationIncrement;      //!< radians set from outside and used for rounding.
     SoSFInt32 rotationIncrementCountX; //!< used from outside for rotation x steps.
     SoSFInt32 rotationIncrementCountY; //!< used from outside for rotation y steps.
     SoSFInt32 rotationIncrementCountZ; //!< used from outside for rotation z steps.
@@ -204,7 +207,8 @@ public:
      * a traditional scale and a value of 1.0 is a good place to start.
      */
     SoSFFloat draggerSize;
-    SoSFFloat autoScaleResult; //!< result of autoscale calculation and used by childdraggers. Don't use.
+    SoSFFloat
+        autoScaleResult; //!< result of autoscale calculation and used by childdraggers. Don't use.
 
     SoIdleSensor idleSensor; //!< might be overkill, but want to make sure of performance.
     void setUpAutoScale(SoCamera *cameraIn); //!< used to setup the auto scaling of dragger.
@@ -228,23 +232,23 @@ public:
     bool isShownTranslationX(); //!< is x translation dragger shown.
     bool isShownTranslationY(); //!< is y translation dragger shown.
     bool isShownTranslationZ(); //!< is z translation dragger shown.
-    bool isShownRotationX(); //!< is x rotation dragger shown.
-    bool isShownRotationY(); //!< is x rotation dragger shown.
-    bool isShownRotationZ(); //!< is x rotation dragger shown.
+    bool isShownRotationX();    //!< is x rotation dragger shown.
+    bool isShownRotationY();    //!< is x rotation dragger shown.
+    bool isShownRotationZ();    //!< is x rotation dragger shown.
 
     bool isHiddenTranslationX(); //!< is x translation dragger hidden.
     bool isHiddenTranslationY(); //!< is y translation dragger hidden.
     bool isHiddenTranslationZ(); //!< is z translation dragger hidden.
-    bool isHiddenRotationX(); //!< is x rotation dragger hidden.
-    bool isHiddenRotationY(); //!< is x rotation dragger hidden.
-    bool isHiddenRotationZ(); //!< is x rotation dragger hidden.
+    bool isHiddenRotationX();    //!< is x rotation dragger hidden.
+    bool isHiddenRotationY();    //!< is x rotation dragger hidden.
+    bool isHiddenRotationZ();    //!< is x rotation dragger hidden.
     //@}
 
-    virtual void GLRender(SoGLRenderAction * action) override;
+    virtual void GLRender(SoGLRenderAction *action) override;
 
 protected:
     virtual SbBool setUpConnections(SbBool onoff, SbBool doitalways = FALSE) override;
-    virtual void handleEvent(SoHandleEventAction * action) override;
+    virtual void handleEvent(SoHandleEventAction *action) override;
 
     static void translationSensorCB(void *f, SoSensor *);
     static void rotationSensorCB(void *f, SoSensor *);
@@ -270,6 +274,6 @@ private:
     using inherited = SoDragger;
 };
 
-}
+} // namespace Gui
 
 #endif // CSYSDRAGGER_H

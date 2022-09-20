@@ -27,7 +27,8 @@
 #include <Gui/PropertyPage.h>
 #include <memory>
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 class Ui_SketcherSettings;
 class Ui_SketcherSettingsDisplay;
 class Ui_SketcherSettingsColors;
@@ -36,12 +37,12 @@ class SketcherGeneralWidget;
  * The SketcherSettings class implements a preference page to change sketcher settings.
  * @author Werner Mayer
  */
-class SketcherSettings : public Gui::Dialog::PreferencePage
+class SketcherSettings: public Gui::Dialog::PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit SketcherSettings(QWidget* parent = nullptr);
+    explicit SketcherSettings(QWidget *parent = nullptr);
     ~SketcherSettings() override;
 
     void saveSettings() override;
@@ -52,19 +53,19 @@ protected:
 
 private:
     std::unique_ptr<Ui_SketcherSettings> ui;
-    SketcherGeneralWidget* form;
+    SketcherGeneralWidget *form;
 };
 
 /**
  * The SketcherSettings class implements a preference page to change sketcher display settings.
  * @author Werner Mayer
  */
-class SketcherSettingsDisplay : public Gui::Dialog::PreferencePage
+class SketcherSettingsDisplay: public Gui::Dialog::PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit SketcherSettingsDisplay(QWidget* parent = nullptr);
+    explicit SketcherSettingsDisplay(QWidget *parent = nullptr);
     ~SketcherSettingsDisplay() override;
 
     void saveSettings() override;
@@ -84,12 +85,12 @@ private:
  * The SketcherSettings class implements a preference page to change sketcher settings.
  * @author Werner Mayer
  */
-class SketcherSettingsColors : public Gui::Dialog::PreferencePage
+class SketcherSettingsColors: public Gui::Dialog::PreferencePage
 {
     Q_OBJECT
 
 public:
-    explicit SketcherSettingsColors(QWidget* parent = nullptr);
+    explicit SketcherSettingsColors(QWidget *parent = nullptr);
     ~SketcherSettingsColors() override;
 
     void saveSettings() override;

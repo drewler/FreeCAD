@@ -10,16 +10,18 @@
 #include "ziphead.h"
 #include "virtualseeker.h"
 
-namespace zipios {
+namespace zipios
+{
 
-using std::ifstream ;
+using std::ifstream;
 
 /** \anchor zipfile_anchor
     ZipFile is a FileCollection, where the files are stored
  in a .zip file.  */
-class BaseExport ZipFile : public FileCollection {
+class BaseExport ZipFile: public FileCollection
+{
 public:
-  /** \anchor zipfile_openembeddedzipfile
+    /** \anchor zipfile_openembeddedzipfile
       Opens a Zip archive embedded in another file, by writing the zip
       archive to the end of the file followed by the start offset of
       the zip file. The offset must be written in zip-file byte-order
@@ -30,15 +32,15 @@ public:
       archive.
       @throw IOException Thrown if an I/O problem is encountered, while the directory
       of the specified zip archive is being read. */
-  static ZipFile openEmbeddedZipFile( const string &name ) ;
+    static ZipFile openEmbeddedZipFile(const string &name);
 
-  /** Default constructor.
+    /** Default constructor.
    */
-  ZipFile() {}
+    ZipFile() {}
 
-  /* Default Copy constructor and copy assignment operator are sufficient. */
+    /* Default Copy constructor and copy assignment operator are sufficient. */
 
-  /** Constructor. Opens the zip file name. If the zip "file" is
+    /** Constructor. Opens the zip file name. If the zip "file" is
       embedded in a file that contains other data, e.g. a binary
       program, the offset of the zip file start and end must be
       specified. 
@@ -52,31 +54,31 @@ public:
       archive.
       @throw IOException Thrown if an I/O problem is encountered, while the directory
       of the specified zip archive is being read. */
-  explicit ZipFile( const string &name, int s_off = 0, int e_off = 0
-		    /* , ios::open_mode mode  = ios::in | ios::binary */ ) ;
+    explicit ZipFile(const string &name, int s_off = 0, int e_off = 0
+                     /* , ios::open_mode mode  = ios::in | ios::binary */);
 
-  virtual FileCollection *clone() const ;
+    virtual FileCollection *clone() const;
 
-  /** Destructor. */
-  virtual ~ZipFile() ;
+    /** Destructor. */
+    virtual ~ZipFile();
 
-  virtual void close() ;
+    virtual void close();
 
-  virtual istream *getInputStream( const ConstEntryPointer &entry ) ;
-  virtual istream *getInputStream( const string &entry_name, 
-				     MatchPath matchpath = MATCH ) ;
+    virtual istream *getInputStream(const ConstEntryPointer &entry);
+    virtual istream *getInputStream(const string &entry_name, MatchPath matchpath = MATCH);
+
 private:
-  VirtualSeeker _vs ;
-  EndOfCentralDirectory  _eocd ;
+    VirtualSeeker _vs;
+    EndOfCentralDirectory _eocd;
 
-  bool init( istream &_zipfile ) ;
-  bool readCentralDirectory( istream &_zipfile ) ;
-  bool readEndOfCentralDirectory( istream &_zipfile ) ;
-  bool confirmLocalHeaders( istream &_zipfile ) ;
-  void setError( string error_str ) ;
+    bool init(istream &_zipfile);
+    bool readCentralDirectory(istream &_zipfile);
+    bool readEndOfCentralDirectory(istream &_zipfile);
+    bool confirmLocalHeaders(istream &_zipfile);
+    void setError(string error_str);
 };
 
-}
+} // namespace zipios
 
 #endif
 

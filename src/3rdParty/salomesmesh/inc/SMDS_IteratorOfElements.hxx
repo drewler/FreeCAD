@@ -29,29 +29,28 @@
 #include <set>
 
 
-class SMDS_EXPORT SMDS_IteratorOfElements:public SMDS_ElemIterator
+class SMDS_EXPORT SMDS_IteratorOfElements: public SMDS_ElemIterator
 {
-  public:
-/////////////////////////////////////////////////////////////////////////////
-/// Create an iterator which look for elements of type type which are linked 
-/// to the element element. it is the iterator to get connectivity of element
-//////////////////////////////////////////////////////////////////////////////
-        SMDS_IteratorOfElements(const SMDS_MeshElement * element,
-                                SMDSAbs_ElementType type,
-                                const SMDS_ElemIteratorPtr& it);
-        bool more();
-        const SMDS_MeshElement * next();
+public:
+    /////////////////////////////////////////////////////////////////////////////
+    /// Create an iterator which look for elements of type type which are linked
+    /// to the element element. it is the iterator to get connectivity of element
+    //////////////////////////////////////////////////////////////////////////////
+    SMDS_IteratorOfElements(const SMDS_MeshElement *element, SMDSAbs_ElementType type,
+                            const SMDS_ElemIteratorPtr &it);
+    bool more();
+    const SMDS_MeshElement *next();
 
-  private:
-        SMDS_ElemIteratorPtr t2Iterator;
-        SMDS_ElemIteratorPtr t1Iterator;
-        SMDSAbs_ElementType myType;     
-        const SMDS_MeshElement * myProxyElement;
-        const SMDS_MeshElement * myElement;             
-        bool myReverseIteration;
+private:
+    SMDS_ElemIteratorPtr t2Iterator;
+    SMDS_ElemIteratorPtr t1Iterator;
+    SMDSAbs_ElementType myType;
+    const SMDS_MeshElement *myProxyElement;
+    const SMDS_MeshElement *myElement;
+    bool myReverseIteration;
 
-        std::set<const SMDS_MeshElement*> alreadyReturnedElements;
-        std::set<const SMDS_MeshElement*>::iterator itAlreadyReturned;  
-        bool subMore();
-        const SMDS_MeshElement * subNext();
+    std::set<const SMDS_MeshElement *> alreadyReturnedElements;
+    std::set<const SMDS_MeshElement *>::iterator itAlreadyReturned;
+    bool subMore();
+    const SMDS_MeshElement *subNext();
 };

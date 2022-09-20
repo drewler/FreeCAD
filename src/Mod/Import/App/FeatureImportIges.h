@@ -21,7 +21,6 @@
  ***************************************************************************/
 
 
-
 #ifndef __FeatureImportIges_H__
 #define __FeatureImportIges_H__
 
@@ -32,27 +31,23 @@ namespace Import
 {
 
 
-class FeatureImportIges :public Part::Feature
+class FeatureImportIges: public Part::Feature
 {
 public:
+    virtual void InitLabel(const TDF_Label &rcLabel);
 
-	virtual void InitLabel(const TDF_Label &rcLabel);
+    //	virtual bool MustExecute(void);
 
-//	virtual bool MustExecute(void);
+    virtual Standard_Integer Execute(void);
 
-	virtual Standard_Integer Execute(void);
+    //	virtual void Validate(void);
 
-//	virtual void Validate(void);
-
-  /// Returns the Name/Type of the feature
-  virtual const char *Type(void){return "PartImportIges";};
+    /// Returns the Name/Type of the feature
+    virtual const char *Type(void) { return "PartImportIges"; };
 };
 
 
-
-}
-
-
+} // namespace Import
 
 
 #endif // __FeaturePartImportIges_H__

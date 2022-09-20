@@ -38,147 +38,211 @@
 #include "MED_SliceArray.hxx"
 
 #ifdef WIN32
-#pragma warning(disable:4099)
+#pragma warning(disable : 4099)
 #endif
 
-namespace MED{
+namespace MED
+{
 
-  enum EVersion {eVUnknown = -1, eV2_1, eV2_2};
-  
-  typedef enum {eFAUX, eVRAI} EBooleen ; 
-  typedef double TFloat;
+enum EVersion
+{
+    eVUnknown = -1,
+    eV2_1,
+    eV2_2
+};
+
+typedef enum
+{
+    eFAUX,
+    eVRAI
+} EBooleen;
+typedef double TFloat;
 #if defined(HAVE_F77INT64)
-  typedef long TInt;
+typedef long TInt;
 #else
-  typedef int TInt;
-#endif 
-  typedef hid_t TIdt;
-  typedef herr_t TErr;
+typedef int TInt;
+#endif
+typedef hid_t TIdt;
+typedef herr_t TErr;
 
-  typedef enum {eFULL_INTERLACE, eNO_INTERLACE} EModeSwitch;
+typedef enum
+{
+    eFULL_INTERLACE,
+    eNO_INTERLACE
+} EModeSwitch;
 
-  typedef enum {eFLOAT64=6, eINT=24, eLONG=26 } ETypeChamp;
+typedef enum
+{
+    eFLOAT64 = 6,
+    eINT = 24,
+    eLONG = 26
+} ETypeChamp;
 
-  typedef enum {eNON_STRUCTURE, eSTRUCTURE} EMaillage;
+typedef enum
+{
+    eNON_STRUCTURE,
+    eSTRUCTURE
+} EMaillage;
 
-  typedef enum {eCART, eCYL, eSPHER} ERepere; 
+typedef enum
+{
+    eCART,
+    eCYL,
+    eSPHER
+} ERepere;
 
-  typedef enum {eNOD, eDESC} EConnectivite ; 
+typedef enum
+{
+    eNOD,
+    eDESC
+} EConnectivite;
 
-  typedef enum {ePOINT1=1, eSEG2=102, eSEG3=103, eTRIA3=203,
-                eQUAD4=204, eTRIA6=206, eTRIA7=207, eQUAD8=208, eQUAD9=209,eTETRA4=304,
-                ePYRA5=305, ePENTA6=306, eHEXA8=308, eOCTA12=312, eTETRA10=310, 
-                ePYRA13=313, ePENTA15=315, eHEXA20=320, eHEXA27=327,
-                ePOLYGONE=400, ePOLYGON2=420, ePOLYEDRE=500, eNONE=0, 
-                eBALL=1101 /*no such a type in med.h, it's just a trick*/,
-                eAllGeoType=-1 } EGeometrieElement;
+typedef enum
+{
+    ePOINT1 = 1,
+    eSEG2 = 102,
+    eSEG3 = 103,
+    eTRIA3 = 203,
+    eQUAD4 = 204,
+    eTRIA6 = 206,
+    eTRIA7 = 207,
+    eQUAD8 = 208,
+    eQUAD9 = 209,
+    eTETRA4 = 304,
+    ePYRA5 = 305,
+    ePENTA6 = 306,
+    eHEXA8 = 308,
+    eOCTA12 = 312,
+    eTETRA10 = 310,
+    ePYRA13 = 313,
+    ePENTA15 = 315,
+    eHEXA20 = 320,
+    eHEXA27 = 327,
+    ePOLYGONE = 400,
+    ePOLYGON2 = 420,
+    ePOLYEDRE = 500,
+    eNONE = 0,
+    eBALL = 1101 /*no such a type in med.h, it's just a trick*/,
+    eAllGeoType = -1
+} EGeometrieElement;
 
-  typedef enum {eMAILLE, eFACE, eARETE, eNOEUD, eNOEUD_ELEMENT, eSTRUCT_ELEMENT} EEntiteMaillage; 
+typedef enum
+{
+    eMAILLE,
+    eFACE,
+    eARETE,
+    eNOEUD,
+    eNOEUD_ELEMENT,
+    eSTRUCT_ELEMENT
+} EEntiteMaillage;
 
-  typedef enum {eNO_PFLMOD, eGLOBAL, eCOMPACT}  EModeProfil; 
+typedef enum
+{
+    eNO_PFLMOD,
+    eGLOBAL,
+    eCOMPACT
+} EModeProfil;
 
-  typedef enum {eGRILLE_CARTESIENNE, eGRILLE_POLAIRE, eGRILLE_STANDARD} EGrilleType;
+typedef enum
+{
+    eGRILLE_CARTESIENNE,
+    eGRILLE_POLAIRE,
+    eGRILLE_STANDARD
+} EGrilleType;
 
-  typedef enum {eCOOR, eCONN, eNOM, eNUM, eFAM, eCOOR_IND1, eCOOR_IND2, eCOOR_IND3} ETable;
+typedef enum
+{
+    eCOOR,
+    eCONN,
+    eNOM,
+    eNUM,
+    eFAM,
+    eCOOR_IND1,
+    eCOOR_IND2,
+    eCOOR_IND3
+} ETable;
 
-  typedef TVector<TFloat> TFloatVector;
-  typedef TVector<std::string> TStringVector;
-  typedef TVector<TInt> TIntVector;
-  typedef std::set<std::string> TStringSet;
-  
-  typedef std::map<EGeometrieElement,TInt> TGeom2Size;
-  typedef std::map<EEntiteMaillage,TGeom2Size> TEntityInfo;
+typedef TVector<TFloat> TFloatVector;
+typedef TVector<std::string> TStringVector;
+typedef TVector<TInt> TIntVector;
+typedef std::set<std::string> TStringSet;
 
-  typedef std::set<EGeometrieElement> TGeomSet;
-  typedef std::map<EEntiteMaillage,TGeomSet> TEntity2GeomSet;
+typedef std::map<EGeometrieElement, TInt> TGeom2Size;
+typedef std::map<EEntiteMaillage, TGeom2Size> TEntityInfo;
 
-  MEDWRAPPER_EXPORT 
-  const TEntity2GeomSet& 
-  GetEntity2GeomSet();
+typedef std::set<EGeometrieElement> TGeomSet;
+typedef std::map<EEntiteMaillage, TGeomSet> TEntity2GeomSet;
 
-  template<EVersion>
-  TInt MEDWRAPPER_EXPORT
-  GetDESCLength();
-  
-  template<EVersion>
-  TInt MEDWRAPPER_EXPORT
-  GetIDENTLength();
-  
-  template<EVersion>
-  TInt MEDWRAPPER_EXPORT
-  GetNOMLength();
-  
-  template<EVersion>
-  TInt MEDWRAPPER_EXPORT
-  GetLNOMLength();
-  
-  template<EVersion>
-  TInt MEDWRAPPER_EXPORT
-  GetPNOMLength();
-  
-  template<EVersion>
-  void MEDWRAPPER_EXPORT
-  GetVersionRelease(TInt& majeur, TInt& mineur, TInt& release);
-  
-  template<EVersion>
-  MEDWRAPPER_EXPORT
-  TInt
-  GetNbConn(EGeometrieElement typmai,
-            EEntiteMaillage typent,
-            TInt mdim);
-  
-  MEDWRAPPER_EXPORT
-  TInt 
-  GetNbNodes(EGeometrieElement typmai);
+MEDWRAPPER_EXPORT
+const TEntity2GeomSet &GetEntity2GeomSet();
 
-  struct TNameInfo;
-  typedef SharedPtr<TNameInfo> PNameInfo;
-  
-  struct TMeshInfo;
-  typedef SharedPtr<TMeshInfo> PMeshInfo;
-  
-  struct TFamilyInfo;
-  typedef SharedPtr<TFamilyInfo> PFamilyInfo;
+template<EVersion> TInt MEDWRAPPER_EXPORT GetDESCLength();
 
-  struct TElemInfo;
-  typedef SharedPtr<TElemInfo> PElemInfo;
+template<EVersion> TInt MEDWRAPPER_EXPORT GetIDENTLength();
 
-  struct TNodeInfo;
-  typedef SharedPtr<TNodeInfo> PNodeInfo;
+template<EVersion> TInt MEDWRAPPER_EXPORT GetNOMLength();
 
-  struct TPolygoneInfo;
-  typedef SharedPtr<TPolygoneInfo> PPolygoneInfo;
+template<EVersion> TInt MEDWRAPPER_EXPORT GetLNOMLength();
 
-  struct TPolyedreInfo;
-  typedef SharedPtr<TPolyedreInfo> PPolyedreInfo;
+template<EVersion> TInt MEDWRAPPER_EXPORT GetPNOMLength();
 
-  struct TCellInfo;
-  typedef SharedPtr<TCellInfo> PCellInfo;
+template<EVersion>
+void MEDWRAPPER_EXPORT GetVersionRelease(TInt &majeur, TInt &mineur, TInt &release);
 
-  struct TBallInfo;
-  typedef SharedPtr<TBallInfo> PBallInfo;
+template<EVersion>
+MEDWRAPPER_EXPORT TInt GetNbConn(EGeometrieElement typmai, EEntiteMaillage typent, TInt mdim);
 
-  struct TFieldInfo;
-  typedef SharedPtr<TFieldInfo> PFieldInfo;
+MEDWRAPPER_EXPORT
+TInt GetNbNodes(EGeometrieElement typmai);
 
-  struct TTimeStampInfo;
-  typedef SharedPtr<TTimeStampInfo> PTimeStampInfo;
+struct TNameInfo;
+typedef SharedPtr<TNameInfo> PNameInfo;
 
-  struct TProfileInfo;
-  typedef SharedPtr<TProfileInfo> PProfileInfo;
-  
-  struct TGaussInfo;
-  typedef SharedPtr<TGaussInfo> PGaussInfo;
-  
-  struct TGrilleInfo;
-  typedef SharedPtr<TGrilleInfo> PGrilleInfo;
+struct TMeshInfo;
+typedef SharedPtr<TMeshInfo> PMeshInfo;
 
-  struct TTimeStampValueBase;
-  typedef SharedPtr<TTimeStampValueBase> PTimeStampValueBase;
+struct TFamilyInfo;
+typedef SharedPtr<TFamilyInfo> PFamilyInfo;
 
-  struct TWrapper;
-  typedef SharedPtr<TWrapper> PWrapper;
-}
+struct TElemInfo;
+typedef SharedPtr<TElemInfo> PElemInfo;
+
+struct TNodeInfo;
+typedef SharedPtr<TNodeInfo> PNodeInfo;
+
+struct TPolygoneInfo;
+typedef SharedPtr<TPolygoneInfo> PPolygoneInfo;
+
+struct TPolyedreInfo;
+typedef SharedPtr<TPolyedreInfo> PPolyedreInfo;
+
+struct TCellInfo;
+typedef SharedPtr<TCellInfo> PCellInfo;
+
+struct TBallInfo;
+typedef SharedPtr<TBallInfo> PBallInfo;
+
+struct TFieldInfo;
+typedef SharedPtr<TFieldInfo> PFieldInfo;
+
+struct TTimeStampInfo;
+typedef SharedPtr<TTimeStampInfo> PTimeStampInfo;
+
+struct TProfileInfo;
+typedef SharedPtr<TProfileInfo> PProfileInfo;
+
+struct TGaussInfo;
+typedef SharedPtr<TGaussInfo> PGaussInfo;
+
+struct TGrilleInfo;
+typedef SharedPtr<TGrilleInfo> PGrilleInfo;
+
+struct TTimeStampValueBase;
+typedef SharedPtr<TTimeStampValueBase> PTimeStampValueBase;
+
+struct TWrapper;
+typedef SharedPtr<TWrapper> PWrapper;
+} // namespace MED
 
 
 #endif

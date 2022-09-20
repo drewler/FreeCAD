@@ -42,9 +42,7 @@
 
 using namespace TechDrawGui;
 
-QGIVertex::QGIVertex(int index) :
-    projIndex(index),
-    m_radius(2)
+QGIVertex::QGIVertex(int index) : projIndex(index), m_radius(2)
 {
     QColor vertexColor = PreferencesGui::vertexQColor();
     setFill(vertexColor, Qt::SolidPattern);
@@ -56,7 +54,7 @@ void QGIVertex::setRadius(float r)
 {
     m_radius = r;
     QPainterPath p;
-    p.addEllipse(-r/2.0, -r/2.0, r, r);
+    p.addEllipse(-r / 2.0, -r / 2.0, r, r);
     setPath(p);
 }
 
@@ -65,11 +63,11 @@ void QGIVertex::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
-//    painter->setPen(Qt::blue);
-//    painter->drawRect(boundingRect());          //good for debugging
+    //    painter->setPen(Qt::blue);
+    //    painter->drawRect(boundingRect());          //good for debugging
 
-//    m_brush.setColor(m_colCurrent);
-//    m_brush.setStyle(m_fill);
-//    setBrush(m_brush);
-    QGIPrimPath::paint (painter, &myOption, widget);
+    //    m_brush.setColor(m_colCurrent);
+    //    m_brush.setStyle(m_fill);
+    //    setBrush(m_brush);
+    QGIPrimPath::paint(painter, &myOption, widget);
 }

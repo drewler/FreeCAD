@@ -34,61 +34,65 @@
 
 
 XERCES_CPP_NAMESPACE_BEGIN
-  class BinInputStream;
+class BinInputStream;
 XERCES_CPP_NAMESPACE_END
 
 namespace Base
 {
 
 
-class BaseExport StdInputStream : public XERCES_CPP_NAMESPACE_QUALIFIER BinInputStream
+class BaseExport StdInputStream: public XERCES_CPP_NAMESPACE_QUALIFIER BinInputStream
 {
-public :
-  StdInputStream ( std::istream& Stream, XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager* const manager = XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::fgMemoryManager );
-  ~StdInputStream() override;
+public:
+    StdInputStream(std::istream &Stream,
+                   XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager *const manager =
+                       XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::fgMemoryManager);
+    ~StdInputStream() override;
 
-  // -----------------------------------------------------------------------
-  //  Implementation of the input stream interface
-  // -----------------------------------------------------------------------
-  XMLFilePos curPos() const override;
-  XMLSize_t readBytes( XMLByte* const toFill, const XMLSize_t maxToRead ) override;
-  const XMLCh* getContentType() const override {return nullptr;}
-
-private :
-  // -----------------------------------------------------------------------
-  //  Unimplemented constructors and operators
-  // -----------------------------------------------------------------------
-  StdInputStream(const StdInputStream&);
-  StdInputStream& operator=(const StdInputStream&);
-
-  // -----------------------------------------------------------------------
-  //  Private data members
-  //
-  //  fSource
-  //      The source file that we represent. The FileHandle type is defined
-  //      per platform.
-  // -----------------------------------------------------------------------
-  std::istream            &stream;
-  XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager* const    fMemoryManager;
-  QTextCodec::ConverterState state;
-};
-
-
-class BaseExport StdInputSource : public XERCES_CPP_NAMESPACE_QUALIFIER InputSource
-{
-public :
-  StdInputSource ( std::istream& Stream, const char* filePath, XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager* const manager = XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::fgMemoryManager );
-   ~StdInputSource() override;
-
-  XERCES_CPP_NAMESPACE_QUALIFIER BinInputStream* makeStream() const override;
+    // -----------------------------------------------------------------------
+    //  Implementation of the input stream interface
+    // -----------------------------------------------------------------------
+    XMLFilePos curPos() const override;
+    XMLSize_t readBytes(XMLByte *const toFill, const XMLSize_t maxToRead) override;
+    const XMLCh *getContentType() const override { return nullptr; }
 
 private:
-  StdInputSource(const StdInputSource&);
-  StdInputSource& operator=(const StdInputSource&);
+    // -----------------------------------------------------------------------
+    //  Unimplemented constructors and operators
+    // -----------------------------------------------------------------------
+    StdInputStream(const StdInputStream &);
+    StdInputStream &operator=(const StdInputStream &);
 
-  std::istream   &stream;
+    // -----------------------------------------------------------------------
+    //  Private data members
+    //
+    //  fSource
+    //      The source file that we represent. The FileHandle type is defined
+    //      per platform.
+    // -----------------------------------------------------------------------
+    std::istream &stream;
+    XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager *const fMemoryManager;
+    QTextCodec::ConverterState state;
 };
 
-}
+
+class BaseExport StdInputSource: public XERCES_CPP_NAMESPACE_QUALIFIER InputSource
+{
+public:
+    StdInputSource(std::istream &Stream, const char *filePath,
+                   XERCES_CPP_NAMESPACE_QUALIFIER MemoryManager *const manager =
+                       XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::fgMemoryManager);
+    ~StdInputSource() override;
+
+    XERCES_CPP_NAMESPACE_QUALIFIER BinInputStream *makeStream() const override;
+
+private:
+    StdInputSource(const StdInputSource &);
+    StdInputSource &operator=(const StdInputSource &);
+
+    std::istream &stream;
+};
+
+} // namespace Base
 
 #endif // BASE_IINPUTSOURCE_H

@@ -36,37 +36,30 @@
 using namespace Points;
 
 // returns a string which represents the object e.g. when printed in python
-std::string PointsPy::representation() const
-{
-    return std::string("<PointKernel object>");
-}
+std::string PointsPy::representation() const { return std::string("<PointKernel object>"); }
 
-PyObject *PointsPy::PyMake(struct _typeobject *, PyObject *, PyObject *)  // Python wrapper
+PyObject *PointsPy::PyMake(struct _typeobject *, PyObject *, PyObject *) // Python wrapper
 {
     // create a new instance of PointsPy and the Twin object
     return new PointsPy(new PointKernel);
 }
 
 // constructor method
-int PointsPy::PyInit(PyObject* args, PyObject* /*kwd*/)
+int PointsPy::PyInit(PyObject *args, PyObject * /*kwd*/)
 {
-    PyObject *pcObj=nullptr;
-    if (!PyArg_ParseTuple(args, "|O", &pcObj))
-        return -1;
+    PyObject *pcObj = nullptr;
+    if (!PyArg_ParseTuple(args, "|O", &pcObj)) return -1;
 
     // if no mesh is given
-    if (!pcObj)
-        return 0;
+    if (!pcObj) return 0;
     if (PyObject_TypeCheck(pcObj, &(PointsPy::Type))) {
-        *getPointKernelPtr() = *(static_cast<PointsPy*>(pcObj)->getPointKernelPtr());
+        *getPointKernelPtr() = *(static_cast<PointsPy *>(pcObj)->getPointKernelPtr());
     }
     else if (PyList_Check(pcObj)) {
-        if (!addPoints(args))
-            return -1;
+        if (!addPoints(args)) return -1;
     }
     else if (PyTuple_Check(pcObj)) {
-        if (!addPoints(args))
-            return -1;
+        if (!addPoints(args)) return -1;
     }
     else if (PyUnicode_Check(pcObj)) {
         getPointKernelPtr()->load(PyUnicode_AsUTF8(pcObj));
@@ -79,54 +72,48 @@ int PointsPy::PyInit(PyObject* args, PyObject* /*kwd*/)
     return 0;
 }
 
-PyObject* PointsPy::copy(PyObject *args)
+PyObject *PointsPy::copy(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
-    PointKernel* kernel = new PointKernel();
+    PointKernel *kernel = new PointKernel();
     // assign data
     *kernel = *getPointKernelPtr();
     return new PointsPy(kernel);
 }
 
-PyObject* PointsPy::read(PyObject * args)
+PyObject *PointsPy::read(PyObject *args)
 {
-    const char* Name;
-    if (!PyArg_ParseTuple(args, "s",&Name))
-        return nullptr;
+    const char *Name;
+    if (!PyArg_ParseTuple(args, "s", &Name)) return nullptr;
 
-    PY_TRY {
-        getPointKernelPtr()->load(Name);
-    } PY_CATCH;
+    PY_TRY { getPointKernelPtr()->load(Name); }
+    PY_CATCH;
 
     Py_Return;
 }
 
-PyObject* PointsPy::write(PyObject * args)
+PyObject *PointsPy::write(PyObject *args)
 {
-    const char* Name;
-    if (!PyArg_ParseTuple(args, "s",&Name))
-        return nullptr;
+    const char *Name;
+    if (!PyArg_ParseTuple(args, "s", &Name)) return nullptr;
 
-    PY_TRY {
-        getPointKernelPtr()->save(Name);
-    } PY_CATCH;
+    PY_TRY { getPointKernelPtr()->save(Name); }
+    PY_CATCH;
 
     Py_Return;
 }
 
-PyObject* PointsPy::writeInventor(PyObject * args)
+PyObject *PointsPy::writeInventor(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     std::stringstream result;
     Base::InventorBuilder builder(result);
     builder.beginPoints();
-    PointKernel* kernel = getPointKernelPtr();
+    PointKernel *kernel = getPointKernelPtr();
     for (Points::PointKernel::const_iterator it = kernel->begin(); it != kernel->end(); ++it)
-        builder.addPoint((float)it->x,(float)it->y,(float)it->z);
+        builder.addPoint((float)it->x, (float)it->y, (float)it->z);
     builder.endPoints();
     builder.addPointSet();
     builder.close();
@@ -134,11 +121,10 @@ PyObject* PointsPy::writeInventor(PyObject * args)
     return Py::new_reference_to(Py::String(result.str()));
 }
 
-PyObject* PointsPy::addPoints(PyObject * args)
+PyObject *PointsPy::addPoints(PyObject *args)
 {
     PyObject *obj;
-    if (!PyArg_ParseTuple(args, "O", &obj))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "O", &obj)) return nullptr;
 
     try {
         Py::Sequence list(obj);
@@ -159,87 +145,75 @@ PyObject* PointsPy::addPoints(PyObject * args)
             }
         }
     }
-    catch (const Py::Exception&) {
-        PyErr_SetString(PyExc_TypeError, "either expect\n"
-            "-- [Vector,...] \n"
-            "-- [(x,y,z),...]");
+    catch (const Py::Exception &) {
+        PyErr_SetString(PyExc_TypeError,
+                        "either expect\n"
+                        "-- [Vector,...] \n"
+                        "-- [(x,y,z),...]");
         return nullptr;
     }
 
     Py_Return;
 }
 
-PyObject* PointsPy::fromSegment(PyObject * args)
+PyObject *PointsPy::fromSegment(PyObject *args)
 {
     PyObject *obj;
-    if (!PyArg_ParseTuple(args, "O", &obj))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "O", &obj)) return nullptr;
 
     try {
-        const PointKernel* points = getPointKernelPtr();
+        const PointKernel *points = getPointKernelPtr();
         Py::Sequence list(obj);
         std::unique_ptr<PointKernel> pts(new PointKernel());
         pts->reserve(list.size());
         int numPoints = static_cast<int>(points->size());
         for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {
             long index = static_cast<long>(Py::Long(*it));
-            if (index >= 0 && index < numPoints)
-                pts->push_back(points->getPoint(index));
+            if (index >= 0 && index < numPoints) pts->push_back(points->getPoint(index));
         }
 
         return new PointsPy(pts.release());
     }
-    catch (const Py::Exception&) {
+    catch (const Py::Exception &) {
         PyErr_SetString(PyExc_TypeError, "expect a list of int");
         return nullptr;
     }
 }
 
-PyObject* PointsPy::fromValid(PyObject * args)
+PyObject *PointsPy::fromValid(PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, ""))
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "")) return nullptr;
 
     try {
-        const PointKernel* points = getPointKernelPtr();
+        const PointKernel *points = getPointKernelPtr();
         std::unique_ptr<PointKernel> pts(new PointKernel());
         pts->reserve(points->size());
         for (PointKernel::const_iterator it = points->begin(); it != points->end(); ++it) {
-            if (!boost::math::isnan(it->x) && !boost::math::isnan(it->y) && !boost::math::isnan(it->z))
+            if (!boost::math::isnan(it->x) && !boost::math::isnan(it->y)
+                && !boost::math::isnan(it->z))
                 pts->push_back(*it);
         }
 
         return new PointsPy(pts.release());
     }
-    catch (const Py::Exception&) {
+    catch (const Py::Exception &) {
         PyErr_SetString(PyExc_TypeError, "expect a list of int");
         return nullptr;
     }
 }
 
-Py::Long PointsPy::getCountPoints() const
-{
-    return Py::Long((long)getPointKernelPtr()->size());
-}
+Py::Long PointsPy::getCountPoints() const { return Py::Long((long)getPointKernelPtr()->size()); }
 
 Py::List PointsPy::getPoints() const
 {
     Py::List PointList;
-    const PointKernel* points = getPointKernelPtr();
+    const PointKernel *points = getPointKernelPtr();
     for (PointKernel::const_point_iterator it = points->begin(); it != points->end(); ++it) {
         PointList.append(Py::asObject(new Base::VectorPy(*it)));
     }
     return PointList;
 }
 
-PyObject *PointsPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *PointsPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int PointsPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
-
-
+int PointsPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

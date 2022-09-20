@@ -37,23 +37,23 @@ namespace Gui
 
 class GraphvizWorker;
 
-class GuiExport GraphvizView : public MDIView
+class GuiExport GraphvizView: public MDIView
 {
     Q_OBJECT
 
 public:
-    explicit GraphvizView(App::Document &_doc, QWidget* parent=nullptr);
+    explicit GraphvizView(App::Document &_doc, QWidget *parent = nullptr);
     ~GraphvizView() override;
 
-    QByteArray exportGraph(const QString& filter);
+    QByteArray exportGraph(const QString &filter);
 
     /// Message handler
-    bool onMsg(const char* pMsg,const char** ppReturn) override;
+    bool onMsg(const char *pMsg, const char **ppReturn) override;
     /// Message handler test
-    bool onHasMsg(const char* pMsg) const override;
+    bool onHasMsg(const char *pMsg) const override;
     /** @name Printing */
     //@{
-    void print(QPrinter* printer) override;
+    void print(QPrinter *printer) override;
     /** Print content of view */
     void print() override;
     /** Print to PDF file */
@@ -63,7 +63,7 @@ public:
     //@}
 
 private Q_SLOTS:
-    void svgFileRead(const QByteArray & data);
+    void svgFileRead(const QByteArray &data);
     void error();
     void done();
 
@@ -71,14 +71,14 @@ private:
     void updateSvgItem(const App::Document &doc);
     void disconnectSignals();
 
-    const App::Document& doc;
+    const App::Document &doc;
     std::string graphCode;
-    QGraphicsScene* scene;
-    QGraphicsView* view;
-    GraphicsViewZoom* zoomer;
-    QGraphicsSvgItem* svgItem;
-    QSvgRenderer* renderer;
-    GraphvizWorker* thread;
+    QGraphicsScene *scene;
+    QGraphicsView *view;
+    GraphicsViewZoom *zoomer;
+    QGraphicsSvgItem *svgItem;
+    QSvgRenderer *renderer;
+    GraphvizWorker *thread;
     int nPending;
 
     using Connection = boost::signals2::scoped_connection;

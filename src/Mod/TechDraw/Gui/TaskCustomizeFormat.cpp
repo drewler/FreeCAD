@@ -61,7 +61,7 @@
 #include "ViewProviderViewPart.h"
 #include "Rez.h"
 
-# include "TaskCustomizeFormat.h"
+#include "TaskCustomizeFormat.h"
 
 using namespace Gui;
 using namespace TechDraw;
@@ -71,11 +71,8 @@ using namespace TechDrawGui;
 // TaskCustomizeFormat
 //===========================================================================
 
-TaskCustomizeFormat::TaskCustomizeFormat(App::DocumentObject * object) :
-    selectedObject(object),
-    isDimension(true),
-    dimRawValue(0.0),
-    ui(new Ui_TaskCustomizeFormat)
+TaskCustomizeFormat::TaskCustomizeFormat(App::DocumentObject *object)
+    : selectedObject(object), isDimension(true), dimRawValue(0.0), ui(new Ui_TaskCustomizeFormat)
 {
 
     ui->setupUi(this);
@@ -83,38 +80,31 @@ TaskCustomizeFormat::TaskCustomizeFormat(App::DocumentObject * object) :
     setUiEdit();
 }
 
-TaskCustomizeFormat::~TaskCustomizeFormat()
-{
-
-}
+TaskCustomizeFormat::~TaskCustomizeFormat() {}
 
 void TaskCustomizeFormat::updateTask()
 {
-//    blockUpdate = true;
+    //    blockUpdate = true;
 
-//    blockUpdate = false;
+    //    blockUpdate = false;
 }
 
 
 void TaskCustomizeFormat::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
 }
 
 void TaskCustomizeFormat::setUiEdit()
 {
     setWindowTitle(tr("Customize Format"));
-    if (auto dim = dynamic_cast<TechDraw::DrawViewDimension*>(selectedObject))
-    {
+    if (auto dim = dynamic_cast<TechDraw::DrawViewDimension *>(selectedObject)) {
         isDimension = true;
         std::string dimText = dim->FormatSpec.getStrValue();
         dimRawValue = dim->getDimValue();
         ui->leFormat->setText(Base::Tools::fromStdString(dimText));
     }
-    else if (auto balloon = dynamic_cast<TechDraw::DrawViewBalloon*>(selectedObject))
-    {
+    else if (auto balloon = dynamic_cast<TechDraw::DrawViewBalloon *>(selectedObject)) {
         isDimension = false;
         std::string balloonText = balloon->Text.getStrValue();
         ui->leFormat->setText(Base::Tools::fromStdString(balloonText));
@@ -186,10 +176,9 @@ void TaskCustomizeFormat::setUiEdit()
 void TaskCustomizeFormat::onSymbolClicked()
 {
     // Slot: a symbol PushButton has been clicked
-    QObject* senderObj(this->sender());
-    QPushButton* pressedButton = qobject_cast<QPushButton*>(senderObj);
-    if (pressedButton)
-    {
+    QObject *senderObj(this->sender());
+    QPushButton *pressedButton = qobject_cast<QPushButton *>(senderObj);
+    if (pressedButton) {
         QString pbText = pressedButton->text();
         ui->leFormat->insert(pbText);
     }
@@ -199,8 +188,7 @@ void TaskCustomizeFormat::onFormatChanged()
 {
     // Slot: the LineEdit field has been changed
     QString formatPreview = ui->leFormat->text();
-    if (isDimension)
-    {
+    if (isDimension) {
         constexpr int size(80);
         char buffer[size];
         std::string formatString = formatPreview.toUtf8().constData();
@@ -216,56 +204,45 @@ bool TaskCustomizeFormat::accept()
     QString formatPreview = ui->leFormat->text();
     std::string formatString = formatPreview.toUtf8().constData();
     Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Customize Format"));
-    if (isDimension)
-    {
-        auto dim = dynamic_cast<TechDraw::DrawViewDimension*>(selectedObject);
+    if (isDimension) {
+        auto dim = dynamic_cast<TechDraw::DrawViewDimension *>(selectedObject);
         dim->FormatSpec.setValue(formatString);
     }
-    else
-    {
-        auto balloon = dynamic_cast<TechDraw::DrawViewBalloon*>(selectedObject);
+    else {
+        auto balloon = dynamic_cast<TechDraw::DrawViewBalloon *>(selectedObject);
         balloon->Text.setValue(formatString);
     }
     Gui::Command::commitCommand();
     return true;
 }
 
-bool TaskCustomizeFormat::reject()
-{
-    return true;
-}
+bool TaskCustomizeFormat::reject() { return true; }
 
 //===========================================================================
 // TaskDlgCustomizeFormat
 //===========================================================================
 
-TaskDlgCustomizeFormat::TaskDlgCustomizeFormat(App::DocumentObject * object)
-    : TaskDialog()
+TaskDlgCustomizeFormat::TaskDlgCustomizeFormat(App::DocumentObject *object) : TaskDialog()
 {
-    widget  = new TaskCustomizeFormat(object);
-    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("TechDraw_ExtensionCustomizeFormat"),
-                                             widget->windowTitle(), true, nullptr);
+    widget = new TaskCustomizeFormat(object);
+    taskbox =
+        new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("TechDraw_ExtensionCustomizeFormat"),
+                                   widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
 
-TaskDlgCustomizeFormat::~TaskDlgCustomizeFormat()
-{
-}
+TaskDlgCustomizeFormat::~TaskDlgCustomizeFormat() {}
 
 void TaskDlgCustomizeFormat::update()
 {
-//    widget->updateTask();
+    //    widget->updateTask();
 }
 
 //==== calls from the TaskView ===============================================================
-void TaskDlgCustomizeFormat::open()
-{
-}
+void TaskDlgCustomizeFormat::open() {}
 
-void TaskDlgCustomizeFormat::clicked(int)
-{
-}
+void TaskDlgCustomizeFormat::clicked(int) {}
 
 bool TaskDlgCustomizeFormat::accept()
 {

@@ -57,11 +57,8 @@ using namespace TechDraw;
 using namespace TechDrawGui;
 
 //ctor for creation
-TaskHatch::TaskHatch(TechDraw::DrawViewPart* inDvp, std::vector<std::string> subs) :
-    ui(new Ui_TaskHatch),
-    m_hatch(nullptr),
-    m_dvp(inDvp),
-    m_subs(subs)
+TaskHatch::TaskHatch(TechDraw::DrawViewPart *inDvp, std::vector<std::string> subs)
+    : ui(new Ui_TaskHatch), m_hatch(nullptr), m_dvp(inDvp), m_subs(subs)
 {
     ui->setupUi(this);
 
@@ -73,15 +70,13 @@ TaskHatch::TaskHatch(TechDraw::DrawViewPart* inDvp, std::vector<std::string> sub
 }
 
 //ctor for edit
-TaskHatch::TaskHatch(TechDrawGui::ViewProviderHatch* inVp) :
-    ui(new Ui_TaskHatch),
-    m_vp(inVp)
+TaskHatch::TaskHatch(TechDrawGui::ViewProviderHatch *inVp) : ui(new Ui_TaskHatch), m_vp(inVp)
 {
-//    Base::Console().Message("TH::TH() - edit\n");
+    //    Base::Console().Message("TH::TH() - edit\n");
     ui->setupUi(this);
     m_hatch = m_vp->getViewObject();
-    App::DocumentObject* obj = m_hatch->Source.getValue();
-    m_dvp = static_cast<TechDraw::DrawViewPart*>(obj);
+    App::DocumentObject *obj = m_hatch->Source.getValue();
+    m_dvp = static_cast<TechDraw::DrawViewPart *>(obj);
 
     connect(ui->fcFile, SIGNAL(fileNameSelected(QString)), this, SLOT(onFileChanged()));
     connect(ui->sbScale, SIGNAL(valueChanged(double)), this, SLOT(onScaleChanged()));
@@ -90,16 +85,14 @@ TaskHatch::TaskHatch(TechDrawGui::ViewProviderHatch* inVp) :
     saveHatchState();
     setUiEdit();
 }
-TaskHatch::~TaskHatch()
-{
-}
+TaskHatch::~TaskHatch() {}
 
 void TaskHatch::setUiPrimary()
 {
     setWindowTitle(QObject::tr("Create Face Hatch"));
     ui->fcFile->setFileName(Base::Tools::fromStdString(DrawHatch::prefSvgHatch()));
     ui->fcFile->setFilter(QString::fromUtf8(
-            "SVG files (*.svg *.SVG);;Bitmap files(*.jpg *.jpeg *.png *.bmp);;All files (*)"));
+        "SVG files (*.svg *.SVG);;Bitmap files(*.jpg *.jpeg *.png *.bmp);;All files (*)"));
     ui->sbScale->setValue(1.0);
     ui->sbScale->setSingleStep(0.1);
     ui->ccColor->setColor(TechDraw::DrawHatch::prefSvgHatchColor().asValue<QColor>());
@@ -110,7 +103,7 @@ void TaskHatch::setUiEdit()
     setWindowTitle(QObject::tr("Edit Face Hatch"));
     ui->fcFile->setFileName(Base::Tools::fromStdString(m_saveFile));
     ui->fcFile->setFilter(QString::fromUtf8(
-            "SVG files (*.svg *.SVG);;Bitmap files(*.jpg *.jpeg *.png *.bmp);;All files (*)"));
+        "SVG files (*.svg *.SVG);;Bitmap files(*.jpg *.jpeg *.png *.bmp);;All files (*)"));
     ui->sbScale->setValue(m_saveScale);
     ui->sbScale->setSingleStep(0.1);
     ui->ccColor->setColor(m_saveColor.asValue<QColor>());
@@ -126,7 +119,7 @@ void TaskHatch::saveHatchState()
 //restore the start conditions
 void TaskHatch::restoreHatchState()
 {
-//    Base::Console().Message("TH::restoreHatchState()\n");
+    //    Base::Console().Message("TH::restoreHatchState()\n");
     if (m_hatch) {
         m_hatch->HatchPattern.setValue(m_saveFile);
         m_vp->HatchScale.setValue(m_saveScale);
@@ -155,17 +148,13 @@ void TaskHatch::onColorChanged()
 void TaskHatch::apply(bool forceUpdate)
 {
     Q_UNUSED(forceUpdate)
-//    Base::Console().Message("TH::apply() - m_hatch: %X\n", m_hatch);
-    if (!m_hatch) {
-        createHatch();
-    }
-    if (m_hatch) {
-        updateHatch();
-    }
+    //    Base::Console().Message("TH::apply() - m_hatch: %X\n", m_hatch);
+    if (!m_hatch) { createHatch(); }
+    if (m_hatch) { updateHatch(); }
 
     if (m_dvp) {
         //only need requestPaint to hatch the face
-//        m_dvp->requestPaint();
+        //        m_dvp->requestPaint();
         //need a recompute in order to claimChildren in tree
         m_dvp->recomputeFeature();
     }
@@ -173,34 +162,36 @@ void TaskHatch::apply(bool forceUpdate)
 
 void TaskHatch::createHatch()
 {
-//    Base::Console().Message("TH::createHatch()\n");
-    App::Document* doc = m_dvp->getDocument();
+    //    Base::Console().Message("TH::createHatch()\n");
+    App::Document *doc = m_dvp->getDocument();
     std::string FeatName = doc->getUniqueObjectName("Hatch");
     std::stringstream featLabel;
-    featLabel << FeatName << "F" <<
-                    TechDraw::DrawUtil::getIndexFromName(m_subs.at(0)); //use 1st face# for label
+    featLabel << FeatName << "F"
+              << TechDraw::DrawUtil::getIndexFromName(m_subs.at(0)); //use 1st face# for label
 
     Command::openCommand(QT_TRANSLATE_NOOP("Command", "Create Hatch"));
 
-    Command::doCommand(Command::Doc, "App.activeDocument().addObject('TechDraw::DrawHatch', '%s')", FeatName.c_str());
-    Command::doCommand(Command::Doc, "App.activeDocument().%s.Label = '%s'", FeatName.c_str(), featLabel.str().c_str());
+    Command::doCommand(Command::Doc, "App.activeDocument().addObject('TechDraw::DrawHatch', '%s')",
+                       FeatName.c_str());
+    Command::doCommand(Command::Doc, "App.activeDocument().%s.Label = '%s'", FeatName.c_str(),
+                       featLabel.str().c_str());
 
     m_hatch = static_cast<TechDraw::DrawHatch *>(doc->getObject(FeatName.c_str()));
     m_hatch->Source.setValue(m_dvp, m_subs);
 
     Command::doCommand(Command::Doc, "App.activeDocument().%s.HatchPattern = '%s'",
-                       FeatName.c_str(),
-                       Base::Tools::toStdString(ui->fcFile->fileName()).c_str());
+                       FeatName.c_str(), Base::Tools::toStdString(ui->fcFile->fileName()).c_str());
 
     //view provider properties
-    Gui::ViewProvider* vp = Gui::Application::Instance->getDocument(doc)->getViewProvider(m_hatch);
-    m_vp = dynamic_cast<TechDrawGui::ViewProviderHatch*>(vp);
+    Gui::ViewProvider *vp = Gui::Application::Instance->getDocument(doc)->getViewProvider(m_hatch);
+    m_vp = dynamic_cast<TechDrawGui::ViewProviderHatch *>(vp);
     if (m_vp) {
         App::Color ac;
         ac.setValue<QColor>(ui->ccColor->color());
         m_vp->HatchColor.setValue(ac);
         m_vp->HatchScale.setValue(ui->sbScale->value().getValue());
-    } else {
+    }
+    else {
         Base::Console().Error("TaskHatch - Hatch has no ViewProvider\n");
     }
     Command::commitCommand();
@@ -208,14 +199,13 @@ void TaskHatch::createHatch()
 
 void TaskHatch::updateHatch()
 {
-//    Base::Console().Message("TH::updateHatch()\n");
+    //    Base::Console().Message("TH::updateHatch()\n");
     std::string FeatName = m_hatch->getNameInDocument();
 
     Command::openCommand(QT_TRANSLATE_NOOP("Command", "Update Hatch"));
 
     Command::doCommand(Command::Doc, "App.activeDocument().%s.HatchPattern = '%s'",
-                       FeatName.c_str(),
-                       Base::Tools::toStdString(ui->fcFile->fileName()).c_str());
+                       FeatName.c_str(), Base::Tools::toStdString(ui->fcFile->fileName()).c_str());
 
     App::Color ac;
     ac.setValue<QColor>(ui->ccColor->color());
@@ -226,7 +216,7 @@ void TaskHatch::updateHatch()
 
 bool TaskHatch::accept()
 {
-//    Base::Console().Message("TH::accept()\n");
+    //    Base::Console().Message("TH::accept()\n");
     apply(true);
 
     Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
@@ -236,7 +226,7 @@ bool TaskHatch::accept()
 
 bool TaskHatch::reject()
 {
-//    Base::Console().Message("TH::reject()\n");
+    //    Base::Console().Message("TH::reject()\n");
     restoreHatchState();
     Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
     return false;
@@ -244,35 +234,30 @@ bool TaskHatch::reject()
 
 void TaskHatch::changeEvent(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
+    if (e->type() == QEvent::LanguageChange) { ui->retranslateUi(this); }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-TaskDlgHatch::TaskDlgHatch(TechDraw::DrawViewPart* inDvp, std::vector<std::string> subs) :
-    TaskDialog()
+TaskDlgHatch::TaskDlgHatch(TechDraw::DrawViewPart *inDvp, std::vector<std::string> subs)
+    : TaskDialog()
 {
-    widget  = new TaskHatch(inDvp, subs);
+    widget = new TaskHatch(inDvp, subs);
     taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("TechDraw_TreeHatch"),
                                          widget->windowTitle(), true, 0);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
 
-TaskDlgHatch::TaskDlgHatch(TechDrawGui::ViewProviderHatch* inVp) :
-    TaskDialog()
+TaskDlgHatch::TaskDlgHatch(TechDrawGui::ViewProviderHatch *inVp) : TaskDialog()
 {
-    widget  = new TaskHatch(inVp);
+    widget = new TaskHatch(inVp);
     taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("TechDraw_TreeHatch"),
                                          widget->windowTitle(), true, 0);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
 }
 
-TaskDlgHatch::~TaskDlgHatch()
-{
-}
+TaskDlgHatch::~TaskDlgHatch() {}
 
 void TaskDlgHatch::update()
 {
@@ -280,14 +265,9 @@ void TaskDlgHatch::update()
 }
 
 //==== calls from the TaskView ===============================================================
-void TaskDlgHatch::open()
-{
-}
+void TaskDlgHatch::open() {}
 
-void TaskDlgHatch::clicked(int i)
-{
-    Q_UNUSED(i);
-}
+void TaskDlgHatch::clicked(int i) { Q_UNUSED(i); }
 
 bool TaskDlgHatch::accept()
 {

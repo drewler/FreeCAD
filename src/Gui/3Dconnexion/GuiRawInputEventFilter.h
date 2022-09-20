@@ -27,22 +27,21 @@
 
 namespace Gui
 {
-    class RawInputEventFilter : public QAbstractNativeEventFilter
+class RawInputEventFilter: public QAbstractNativeEventFilter
+{
+public:
+    using EventFilter = bool (*)(void *message, long *result);
+    RawInputEventFilter(EventFilter filter) : eventFilter(filter) {}
+    virtual ~RawInputEventFilter() {}
+
+    virtual bool nativeEventFilter(const QByteArray & /*eventType*/, void *message, long *result)
     {
-    public:
-        using EventFilter = bool (*)(void *message, long *result);
-        RawInputEventFilter(EventFilter filter) : eventFilter(filter) {
-        }
-        virtual ~RawInputEventFilter() {
-        }
+        return eventFilter(message, result);
+    }
 
-        virtual bool nativeEventFilter(const QByteArray & /*eventType*/, void *message, long *result) {
-            return eventFilter(message, result);
-        }
-
-    private:
-        EventFilter eventFilter;
-    };
+private:
+    EventFilter eventFilter;
+};
 } //namespace Gui
 
 #endif //GUIRAWNATIVEINPUTEVENTFILTER_H

@@ -24,9 +24,9 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <cassert>
-# include <QFile>
-# include <QTextStream>
+#include <cassert>
+#include <QFile>
+#include <QTextStream>
 #endif
 
 #include <App/Application.h>
@@ -45,17 +45,12 @@ using namespace Gui;
 
 
 MacroManager::MacroManager()
-  : openMacro(false),
-    recordGui(true),
-    guiAsComment(true),
-    scriptToPyConsole(true),
-    localEnv(true),
-    pyConsole(nullptr),
-    pyDebugger(new PythonDebugger()),
-    totalLines(0)
+    : openMacro(false), recordGui(true), guiAsComment(true), scriptToPyConsole(true),
+      localEnv(true), pyConsole(nullptr), pyDebugger(new PythonDebugger()), totalLines(0)
 {
     // Attach to the Parametergroup regarding macros
-    this->params = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Macro");
+    this->params =
+        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Macro");
     this->params->Attach(this);
     this->params->NotifyAll();
 }
@@ -66,14 +61,14 @@ MacroManager::~MacroManager()
     this->params->Detach(this);
 }
 
-void MacroManager::OnChange(Base::Subject<const char*> &rCaller, const char * sReason)
+void MacroManager::OnChange(Base::Subject<const char *> &rCaller, const char *sReason)
 {
     (void)rCaller;
     (void)sReason;
-    this->recordGui         = this->params->GetBool("RecordGui", true);
-    this->guiAsComment      = this->params->GetBool("GuiAsComment", true);
+    this->recordGui = this->params->GetBool("RecordGui", true);
+    this->guiAsComment = this->params->GetBool("GuiAsComment", true);
     this->scriptToPyConsole = this->params->GetBool("ScriptToPyConsole", true);
-    this->localEnv          = this->params->GetBool("LocalEnvironment", true);
+    this->localEnv = this->params->GetBool("LocalEnvironment", true);
 }
 
 void MacroManager::open(MacroType eType, const char *sName)
@@ -100,8 +95,7 @@ void MacroManager::open(MacroType eType, const char *sName)
 void MacroManager::commit()
 {
     QFile file(this->macroName);
-    if (file.open(QFile::WriteOnly))
-    {
+    if (file.open(QFile::WriteOnly)) {
         // sort import lines and avoid duplicates
         QTextStream str(&file);
         QStringList import;
@@ -109,16 +103,12 @@ void MacroManager::commit()
         QStringList body;
 
         QStringList::Iterator it;
-        for (it = this->macroInProgress.begin(); it != this->macroInProgress.end(); ++it )
-        {
-            if ((*it).startsWith(QLatin1String("import ")) ||
-                (*it).startsWith(QLatin1String("#import ")))
-            {
-                if (import.indexOf(*it) == -1)
-                    import.push_back(*it);
+        for (it = this->macroInProgress.begin(); it != this->macroInProgress.end(); ++it) {
+            if ((*it).startsWith(QLatin1String("import "))
+                || (*it).startsWith(QLatin1String("#import "))) {
+                if (import.indexOf(*it) == -1) import.push_back(*it);
             }
-            else
-            {
+            else {
                 body.push_back(*it);
             }
         }
@@ -135,14 +125,12 @@ void MacroManager::commit()
 
         // write the data to the text file
         str << header;
-        for (it = import.begin(); it != import.end(); ++it)
-            str << (*it) << QLatin1Char('\n');
+        for (it = import.begin(); it != import.end(); ++it) str << (*it) << QLatin1Char('\n');
         str << QLatin1Char('\n');
-        for (it = body.begin(); it != body.end(); ++it)
-            str << (*it) << QLatin1Char('\n');
+        for (it = body.begin(); it != body.end(); ++it) str << (*it) << QLatin1Char('\n');
         str << footer;
 
-        Base::Console().Log("Commit macro: %s\n",(const char*)this->macroName.toUtf8());
+        Base::Console().Log("Commit macro: %s\n", (const char *)this->macroName.toUtf8());
 
         this->macroInProgress.clear();
         this->macroName.clear();
@@ -150,52 +138,47 @@ void MacroManager::commit()
     }
     else {
         Base::Console().Error("Cannot open file to write macro: %s\n",
-            (const char*)this->macroName.toUtf8());
+                              (const char *)this->macroName.toUtf8());
         cancel();
     }
 }
 
 void MacroManager::cancel()
 {
-    Base::Console().Log("Cancel macro: %s\n",(const char*)this->macroName.toUtf8());
+    Base::Console().Log("Cancel macro: %s\n", (const char *)this->macroName.toUtf8());
 
     this->macroInProgress.clear();
     this->macroName.clear();
     this->openMacro = false;
 }
 
-void MacroManager::addLine(LineType Type, const char* sLine, bool pending)
+void MacroManager::addLine(LineType Type, const char *sLine, bool pending)
 {
-    if(pending) {
-        if(!sLine)
-            pendingLine.clear();
+    if (pending) {
+        if (!sLine) pendingLine.clear();
         else
-            pendingLine.emplace_back(Type,sLine);
+            pendingLine.emplace_back(Type, sLine);
         return;
     }
-    if(!sLine)
-        return;
+    if (!sLine) return;
 
-    if(!pendingLine.empty()) {
-        if(Type == Cmt) {
-            pendingLine.emplace_back(Type,sLine);
+    if (!pendingLine.empty()) {
+        if (Type == Cmt) {
+            pendingLine.emplace_back(Type, sLine);
             return;
         }
         decltype(pendingLine) lines;
         lines.swap(pendingLine);
-        for(auto &v : lines)
-            addLine(v.first,v.second.c_str());
+        for (auto &v : lines) addLine(v.first, v.second.c_str());
     }
 
-    if(Type != Cmt)
-        ++totalLines;
+    if (Type != Cmt) ++totalLines;
 
     bool comment = (Type == Cmt);
     bool record = this->openMacro;
 
     if (record && Type == Gui) {
-        if (this->recordGui && this->guiAsComment)
-            comment = true;
+        if (this->recordGui && this->guiAsComment) comment = true;
         else if (!this->recordGui)
             record = false;
     }
@@ -203,87 +186,86 @@ void MacroManager::addLine(LineType Type, const char* sLine, bool pending)
     QStringList lines = QString::fromUtf8(sLine).split(QLatin1String("\n"));
     if (comment) {
         for (auto &line : lines) {
-            if(!line.startsWith(QLatin1String("#")))
-                line.prepend(QLatin1String("# "));
+            if (!line.startsWith(QLatin1String("#"))) line.prepend(QLatin1String("# "));
         }
     }
 
-    if(record)
-        this->macroInProgress.append(lines);
+    if (record) this->macroInProgress.append(lines);
 
     if (this->scriptToPyConsole) {
         // search for the Python console
         if (!this->pyConsole)
-            this->pyConsole = Gui::getMainWindow()->findChild<Gui::PythonConsole*>();
+            this->pyConsole = Gui::getMainWindow()->findChild<Gui::PythonConsole *>();
         // Python console found?
         if (this->pyConsole) {
-            for(auto &line : lines)
-                this->pyConsole->printStatement(line);
+            for (auto &line : lines) this->pyConsole->printStatement(line);
         }
     }
 }
 
-void MacroManager::setModule(const char* sModule)
+void MacroManager::setModule(const char *sModule)
 {
-    if (this->openMacro && sModule && *sModule != '\0')
-    {
-        this->macroInProgress.append(QString::fromLatin1("import %1").arg(QString::fromLatin1(sModule)));
+    if (this->openMacro && sModule && *sModule != '\0') {
+        this->macroInProgress.append(
+            QString::fromLatin1("import %1").arg(QString::fromLatin1(sModule)));
     }
 }
 
-namespace Gui {
-    class PythonRedirector
+namespace Gui
+{
+class PythonRedirector
+{
+public:
+    PythonRedirector(const char *type, PyObject *obj) : std_out(type), out(obj), old(nullptr)
     {
-    public:
-        PythonRedirector(const char* type, PyObject* obj) : std_out(type), out(obj), old(nullptr)
-        {
-            if (out) {
-                Base::PyGILStateLocker lock;
-                old = PySys_GetObject(std_out);
-                PySys_SetObject(std_out, out);
-            }
+        if (out) {
+            Base::PyGILStateLocker lock;
+            old = PySys_GetObject(std_out);
+            PySys_SetObject(std_out, out);
         }
-        ~PythonRedirector()
-        {
-            if (out) {
-                Base::PyGILStateLocker lock;
-                PySys_SetObject(std_out, old);
-                Py_DECREF(out);
-            }
+    }
+    ~PythonRedirector()
+    {
+        if (out) {
+            Base::PyGILStateLocker lock;
+            PySys_SetObject(std_out, old);
+            Py_DECREF(out);
         }
-    private:
-        const char* std_out;
-        PyObject* out;
-        PyObject* old;
-    };
-}
+    }
+
+private:
+    const char *std_out;
+    PyObject *out;
+    PyObject *old;
+};
+} // namespace Gui
 
 void MacroManager::run(MacroType eType, const char *sName)
 {
     Q_UNUSED(eType);
 
     try {
-        ParameterGrp::handle hGrp = App::GetApplication().GetUserParameter()
-            .GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("OutputWindow");
-        PyObject* pyout = hGrp->GetBool("RedirectPythonOutput",true) ? new OutputStdout : nullptr;
-        PyObject* pyerr = hGrp->GetBool("RedirectPythonErrors",true) ? new OutputStderr : nullptr;
-        PythonRedirector std_out("stdout",pyout);
-        PythonRedirector std_err("stderr",pyerr);
+        ParameterGrp::handle hGrp = App::GetApplication()
+                                        .GetUserParameter()
+                                        .GetGroup("BaseApp")
+                                        ->GetGroup("Preferences")
+                                        ->GetGroup("OutputWindow");
+        PyObject *pyout = hGrp->GetBool("RedirectPythonOutput", true) ? new OutputStdout : nullptr;
+        PyObject *pyerr = hGrp->GetBool("RedirectPythonErrors", true) ? new OutputStderr : nullptr;
+        PythonRedirector std_out("stdout", pyout);
+        PythonRedirector std_err("stderr", pyerr);
         //The given path name is expected to be Utf-8
         Base::Interpreter().runFile(sName, this->localEnv);
     }
-    catch (const Base::SystemExitException&) {
+    catch (const Base::SystemExitException &) {
         throw;
     }
-    catch (const Base::PyException& e) {
+    catch (const Base::PyException &e) {
         e.ReportException();
     }
-    catch (const Base::Exception& e) {
-        qWarning("%s",e.what());
+    catch (const Base::Exception &e) {
+        qWarning("%s", e.what());
     }
 }
 
-PythonDebugger* MacroManager::debugger() const
-{
-    return pyDebugger;
-}
+PythonDebugger *MacroManager::debugger() const { return pyDebugger; }

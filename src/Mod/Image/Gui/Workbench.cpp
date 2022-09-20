@@ -35,20 +35,17 @@ using namespace ImageGui;
 /// @namespace ImageGui @class Workbench
 TYPESYSTEM_SOURCE(ImageGui::Workbench, Gui::StdWorkbench)
 
-Workbench::Workbench()
-{
-}
+Workbench::Workbench() {}
 
-Workbench::~Workbench()
-{
-}
+Workbench::~Workbench() {}
 
-Gui::ToolBarItem* Workbench::setupToolBars() const
+Gui::ToolBarItem *Workbench::setupToolBars() const
 {
-    Gui::ToolBarItem* root = StdWorkbench::setupToolBars();
-    Gui::ToolBarItem* part = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *root = StdWorkbench::setupToolBars();
+    Gui::ToolBarItem *part = new Gui::ToolBarItem(root);
     part->setCommand("Image");
-    *part << "Image_Open" << "Image_CreateImagePlane";
+    *part << "Image_Open"
+          << "Image_CreateImagePlane";
 #if HAVE_OPENCV2
     *part << "Image_CapturerTest";
 #endif
@@ -56,10 +53,10 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
     return root;
 }
 
-Gui::ToolBarItem* Workbench::setupCommandBars() const
+Gui::ToolBarItem *Workbench::setupCommandBars() const
 {
-    Gui::ToolBarItem* root = new Gui::ToolBarItem;
-    Gui::ToolBarItem* img = new Gui::ToolBarItem(root);
+    Gui::ToolBarItem *root = new Gui::ToolBarItem;
+    Gui::ToolBarItem *img = new Gui::ToolBarItem(root);
     img->setCommand("Image");
     *img << "Image_Open";
 #if HAVE_OPENCV2

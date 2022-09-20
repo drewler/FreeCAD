@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <sstream>
+#include <sstream>
 #endif
 
 #include <QDomDocument>
@@ -40,7 +40,7 @@
 #include "DrawPage.h"
 #include "DrawViewSymbol.h"
 
-#include <Mod/TechDraw/App/DrawViewSymbolPy.h>  // generated from DrawViewSymbolPy.xml
+#include <Mod/TechDraw/App/DrawViewSymbolPy.h> // generated from DrawViewSymbolPy.xml
 
 using namespace TechDraw;
 using namespace std;
@@ -57,23 +57,23 @@ DrawViewSymbol::DrawViewSymbol()
     static const char *vgroup = "Drawing view";
 
     ADD_PROPERTY_TYPE(Symbol, (""), vgroup, App::Prop_None, "The SVG code defining this symbol");
-    ADD_PROPERTY_TYPE(EditableTexts, (""), vgroup, App::Prop_None, "Substitution values for the editable strings in this symbol");
+    ADD_PROPERTY_TYPE(EditableTexts, (""), vgroup, App::Prop_None,
+                      "Substitution values for the editable strings in this symbol");
     ScaleType.setValue("Custom");
     Symbol.setStatus(App::Property::Hidden, true);
 }
 
-DrawViewSymbol::~DrawViewSymbol()
-{
-}
+DrawViewSymbol::~DrawViewSymbol() {}
 
-void DrawViewSymbol::onChanged(const App::Property* prop)
+void DrawViewSymbol::onChanged(const App::Property *prop)
 {
     if (prop == &Symbol) {
         if (!isRestoring() && !Symbol.isEmpty()) {
             std::vector<std::string> editables = getEditableFields();
             EditableTexts.setValues(editables);
         }
-    } else if (prop == &EditableTexts) {
+    }
+    else if (prop == &EditableTexts) {
         //this will change Symbol, which will call onChanged(Symbol),
         //which will change EditableTexts, but the loop stops after
         //1 cycle
@@ -92,13 +92,13 @@ App::DocumentObjectExecReturn *DrawViewSymbol::execute()
 
 QRectF DrawViewSymbol::getRect() const
 {
-        double w = 64.0;         //must default to something
-        double h = 64.0;
-        return (QRectF(0, 0,w, h));
+    double w = 64.0; //must default to something
+    double h = 64.0;
+    return (QRectF(0, 0, w, h));
 }
 
 //!Assume all svg files fit the page and/or the user will scale manually
-bool DrawViewSymbol::checkFit(TechDraw::DrawPage* p) const
+bool DrawViewSymbol::checkFit(TechDraw::DrawPage *p) const
 {
     (void)p;
     bool result = true;
@@ -121,15 +121,15 @@ std::vector<std::string> DrawViewSymbol::getEditableFields()
 
         // XPath query to select all <tspan> nodes whose <text> parent
         // has "freecad:editable" attribute
-        query.setQuery(QString::fromUtf8(
-            "declare default element namespace \"" SVG_NS_URI "\"; "
-            "declare namespace freecad=\"" FREECAD_SVG_NS_URI "\"; "
-            "//text[@freecad:editable]/tspan"));
+        query.setQuery(QString::fromUtf8("declare default element namespace \"" SVG_NS_URI "\"; "
+                                         "declare namespace freecad=\"" FREECAD_SVG_NS_URI "\"; "
+                                         "//text[@freecad:editable]/tspan"));
 
         query.evaluateTo(&queryResult);
 
         while (!queryResult.next().isNull()) {
-            QDomElement tspan = model.toDomNode(queryResult.current().toNodeModelIndex()).toElement();
+            QDomElement tspan =
+                model.toDomNode(queryResult.current().toNodeModelIndex()).toElement();
             QString editableValue = tspan.firstChild().nodeValue();
             editables.emplace_back(editableValue.toUtf8().constData());
         }
@@ -140,10 +140,8 @@ std::vector<std::string> DrawViewSymbol::getEditableFields()
 //replace editable field in symbol with values from property
 void DrawViewSymbol::updateFieldsInSymbol()
 {
-    const std::vector<std::string>& editText = EditableTexts.getValues();
-    if (editText.empty()) {
-        return;
-    }
+    const std::vector<std::string> &editText = EditableTexts.getValues();
+    if (editText.empty()) { return; }
 
     QDomDocument symbolDocument;
     QXmlResultItems queryResult;
@@ -157,19 +155,19 @@ void DrawViewSymbol::updateFieldsInSymbol()
 
         // XPath query to select all <tspan> nodes whose <text> parent
         // has "freecad:editable" attribute
-        query.setQuery(QString::fromUtf8(
-            "declare default element namespace \"" SVG_NS_URI "\"; "
-            "declare namespace freecad=\"" FREECAD_SVG_NS_URI "\"; "
-            "//text[@freecad:editable]/tspan"));
+        query.setQuery(QString::fromUtf8("declare default element namespace \"" SVG_NS_URI "\"; "
+                                         "declare namespace freecad=\"" FREECAD_SVG_NS_URI "\"; "
+                                         "//text[@freecad:editable]/tspan"));
         query.evaluateTo(&queryResult);
 
         unsigned int count = 0;
-        while (!queryResult.next().isNull())
-        {
-            QDomElement tspanElement = model.toDomNode(queryResult.current().toNodeModelIndex()).toElement();
+        while (!queryResult.next().isNull()) {
+            QDomElement tspanElement =
+                model.toDomNode(queryResult.current().toNodeModelIndex()).toElement();
 
             // Keep all spaces in the text node
-            tspanElement.setAttribute(QString::fromUtf8("xml:space"), QString::fromUtf8("preserve"));
+            tspanElement.setAttribute(QString::fromUtf8("xml:space"),
+                                      QString::fromUtf8("preserve"));
 
             // Remove all child nodes (if any)
             while (!tspanElement.lastChild().isNull()) {
@@ -177,8 +175,8 @@ void DrawViewSymbol::updateFieldsInSymbol()
             }
 
             // Finally append text node with editable replacement as the only <tspan> descendant
-            tspanElement.appendChild(symbolDocument.createTextNode(
-                             QString::fromUtf8(editText[count].c_str())));
+            tspanElement.appendChild(
+                symbolDocument.createTextNode(QString::fromUtf8(editText[count].c_str())));
             ++count;
         }
         Symbol.setValue(symbolDocument.toString(1).toStdString());
@@ -186,9 +184,9 @@ void DrawViewSymbol::updateFieldsInSymbol()
 }
 
 //load QDomDocument
-bool DrawViewSymbol::loadQDomDocument(QDomDocument& symbolDocument)
+bool DrawViewSymbol::loadQDomDocument(QDomDocument &symbolDocument)
 {
-    const char* symbol = Symbol.getValue();
+    const char *symbol = Symbol.getValue();
     QByteArray qba(symbol);
     QString errorMsg;
     int errorLine;
@@ -199,8 +197,8 @@ bool DrawViewSymbol::loadQDomDocument(QDomDocument& symbolDocument)
         //invalid SVG message
         Base::Console().Warning("DrawViewSymbol - %s - SVG for Symbol is not valid. See log.\n");
         Base::Console().Log("DrawViewSymbol - %s - len: %d rc: %d error: %s line: %d col: %d\n",
-                             getNameInDocument(), strlen(symbol), rc,
-                             qPrintable(errorMsg), errorLine, errorCol);
+                            getNameInDocument(), strlen(symbol), rc, qPrintable(errorMsg),
+                            errorLine, errorCol);
     }
     return rc;
 }
@@ -216,14 +214,16 @@ PyObject *DrawViewSymbol::getPyObject()
 
 // Python Drawing feature ---------------------------------------------------------
 
-namespace App {
+namespace App
+{
 /// @cond DOXERR
 PROPERTY_SOURCE_TEMPLATE(TechDraw::DrawViewSymbolPython, TechDraw::DrawViewSymbol)
-template<> const char* TechDraw::DrawViewSymbolPython::getViewProviderName() const {
+template<> const char *TechDraw::DrawViewSymbolPython::getViewProviderName() const
+{
     return "TechDrawGui::ViewProviderSymbol";
 }
 /// @endcond
 
 // explicit template instantiation
 template class TechDrawExport FeaturePythonT<TechDraw::DrawViewSymbol>;
-}
+} // namespace App

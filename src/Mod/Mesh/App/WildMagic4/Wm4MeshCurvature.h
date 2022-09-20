@@ -24,45 +24,44 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM MeshCurvature
+template<class Real> class WM4_FOUNDATION_ITEM MeshCurvature
 {
 public:
     // The caller is responsible for deleting the input arrays.
-    MeshCurvature (int iVQuantity, const Vector3<Real>* akVertex,
-        int iTQuantity, const int* aiIndex);
+    MeshCurvature(int iVQuantity, const Vector3<Real> *akVertex, int iTQuantity,
+                  const int *aiIndex);
 
-    virtual ~MeshCurvature ();
+    virtual ~MeshCurvature();
 
     // input values from the constructor
-    int GetVQuantity () const;
-    const Vector3<Real>* GetVertices () const;
-    int GetTQuantity () const;
-    const int* GetIndices () const;
+    int GetVQuantity() const;
+    const Vector3<Real> *GetVertices() const;
+    int GetTQuantity() const;
+    const int *GetIndices() const;
 
     // derived quantites from the input mesh
-    const Vector3<Real>* GetNormals () const;
-    const Real* GetMinCurvatures () const;
-    const Real* GetMaxCurvatures () const;
-    const Vector3<Real>* GetMinDirections () const;
-    const Vector3<Real>* GetMaxDirections () const;
+    const Vector3<Real> *GetNormals() const;
+    const Real *GetMinCurvatures() const;
+    const Real *GetMaxCurvatures() const;
+    const Vector3<Real> *GetMinDirections() const;
+    const Vector3<Real> *GetMaxDirections() const;
 
 protected:
     int m_iVQuantity;
-    const Vector3<Real>* m_akVertex;
+    const Vector3<Real> *m_akVertex;
     int m_iTQuantity;
-    const int* m_aiIndex;
+    const int *m_aiIndex;
 
-    Vector3<Real>* m_akNormal;
-    Real* m_afMinCurvature;
-    Real* m_afMaxCurvature;
-    Vector3<Real>* m_akMinDirection;
-    Vector3<Real>* m_akMaxDirection;
+    Vector3<Real> *m_akNormal;
+    Real *m_afMinCurvature;
+    Real *m_afMaxCurvature;
+    Vector3<Real> *m_akMinDirection;
+    Vector3<Real> *m_akMaxDirection;
 };
 
 typedef MeshCurvature<float> MeshCurvaturef;
 typedef MeshCurvature<double> MeshCurvatured;
 
-}
+} // namespace Wm4
 
 #endif

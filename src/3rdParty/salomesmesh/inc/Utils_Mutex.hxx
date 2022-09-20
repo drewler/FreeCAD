@@ -36,27 +36,27 @@
 class UTILS_EXPORT Utils_Mutex
 {
 public:
-  Utils_Mutex();
-  ~Utils_Mutex();
+    Utils_Mutex();
+    ~Utils_Mutex();
 
-  void lock();
-  void unlock();
-    
+    void lock();
+    void unlock();
+
 private:
-  pthread_mutex_t myMutex;
-  pthread_mutex_t myHelperMutex;
-  pthread_t       myThread;
-  int             myCount;
+    pthread_mutex_t myMutex;
+    pthread_mutex_t myHelperMutex;
+    pthread_t myThread;
+    int myCount;
 };
 
 class UTILS_EXPORT Utils_Locker
 {
 public:
-  Utils_Locker( Utils_Mutex* );
-  virtual ~Utils_Locker();
+    Utils_Locker(Utils_Mutex *);
+    virtual ~Utils_Locker();
 
 private:
-  Utils_Mutex* myMutex;
+    Utils_Mutex *myMutex;
 };
 
 #endif

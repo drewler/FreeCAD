@@ -32,17 +32,21 @@
 #include <Mod/Sketcher/App/SketchAnalysis.h>
 
 class SoGroup;
-namespace Sketcher { class SketchObject; } 
+namespace Sketcher
+{
+class SketchObject;
+}
 
-namespace SketcherGui {
+namespace SketcherGui
+{
 
 class Ui_TaskSketcherValidation;
-class SketcherValidation : public QWidget
+class SketcherValidation: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SketcherValidation(Sketcher::SketchObject* Obj, QWidget* parent = nullptr);
+    explicit SketcherValidation(Sketcher::SketchObject *Obj, QWidget *parent = nullptr);
     ~SketcherValidation() override;
 
 protected:
@@ -63,25 +67,27 @@ private Q_SLOTS:
     void on_fixDegenerated_clicked();
 
 private:
-    void showPoints(const std::vector<Base::Vector3d>&);
+    void showPoints(const std::vector<Base::Vector3d> &);
     void hidePoints();
 
 private:
     std::unique_ptr<Ui_TaskSketcherValidation> ui;
     App::WeakPtrT<Sketcher::SketchObject> sketch;
     Sketcher::SketchAnalysis sketchAnalyser;
-    SoGroup* coincidenceRoot;
+    SoGroup *coincidenceRoot;
 };
 
-class TaskSketcherValidation : public Gui::TaskView::TaskDialog
+class TaskSketcherValidation: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskSketcherValidation(Sketcher::SketchObject* Obj);
+    explicit TaskSketcherValidation(Sketcher::SketchObject *Obj);
     ~TaskSketcherValidation() override;
     QDialogButtonBox::StandardButtons getStandardButtons(void) const override
-    { return QDialogButtonBox::Close; }
+    {
+        return QDialogButtonBox::Close;
+    }
 };
 
 } //namespace SketcherGui

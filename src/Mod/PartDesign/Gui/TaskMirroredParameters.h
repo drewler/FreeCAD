@@ -29,31 +29,35 @@
 
 class Ui_TaskMirroredParameters;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 class TaskMultiTransformParameters;
 
-class TaskMirroredParameters : public TaskTransformedParameters
+class TaskMirroredParameters: public TaskTransformedParameters
 {
     Q_OBJECT
 
 public:
     /// Constructor for task with ViewProvider
-    explicit TaskMirroredParameters(ViewProviderTransformed *TransformedView, QWidget *parent = nullptr);
+    explicit TaskMirroredParameters(ViewProviderTransformed *TransformedView,
+                                    QWidget *parent = nullptr);
     /// Constructor for task with parent task (MultiTransform mode)
     TaskMirroredParameters(TaskMultiTransformParameters *parentTask, QLayout *layout);
 
     ~TaskMirroredParameters() override;
 
-    void getMirrorPlane(App::DocumentObject*& obj, std::vector<std::string>& sub) const;
+    void getMirrorPlane(App::DocumentObject *&obj, std::vector<std::string> &sub) const;
 
     void apply() override;
 
@@ -63,10 +67,10 @@ private Q_SLOTS:
     void onFeatureDeleted() override;
 
 protected:
-    void addObject(App::DocumentObject*) override;
-    void removeObject(App::DocumentObject*) override;
+    void addObject(App::DocumentObject *) override;
+    void removeObject(App::DocumentObject *) override;
     void changeEvent(QEvent *e) override;
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     void clearButtons() override;
 
 private:
@@ -80,7 +84,7 @@ private:
 
 
 /// simulation dialog for the TaskView
-class TaskDlgMirroredParameters : public TaskDlgTransformedParameters
+class TaskDlgMirroredParameters: public TaskDlgTransformedParameters
 {
     Q_OBJECT
 

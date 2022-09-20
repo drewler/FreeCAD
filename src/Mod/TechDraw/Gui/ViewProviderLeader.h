@@ -33,14 +33,16 @@
 
 #include "ViewProviderDrawingView.h"
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawRichAnno;
 class DrawLeaderLine;
-}
+} // namespace TechDraw
 
-namespace TechDrawGui {
+namespace TechDrawGui
+{
 
-class TechDrawGuiExport ViewProviderLeader : public ViewProviderDrawingView
+class TechDrawGuiExport ViewProviderLeader: public ViewProviderDrawingView
 {
     PROPERTY_HEADER_WITH_OVERRIDE(TechDrawGui::ViewProviderLeader);
 
@@ -50,35 +52,35 @@ public:
     /// destructor
     ~ViewProviderLeader() override;
 
-    App::PropertyLength             LineWidth;
-    App::PropertyEnumeration        LineStyle;
-    App::PropertyColor              Color;
+    App::PropertyLength LineWidth;
+    App::PropertyEnumeration LineStyle;
+    App::PropertyColor Color;
 
-/*    virtual void setDisplayMode(const char* ModeName);*/
-    bool useNewSelectionModel() const override {return false;}
-/*    virtual std::vector<std::string> getDisplayModes(void) const;*/
-    void updateData(const App::Property*) override;
-    void onChanged(const App::Property* p) override;
+    /*    virtual void setDisplayMode(const char* ModeName);*/
+    bool useNewSelectionModel() const override { return false; }
+    /*    virtual std::vector<std::string> getDisplayModes(void) const;*/
+    void updateData(const App::Property *) override;
+    void onChanged(const App::Property *p) override;
     bool setEdit(int ModNum) override;
     bool doubleClicked() override;
     bool onDelete(const std::vector<std::string> &) override;
-    bool canDelete(App::DocumentObject* obj) const override;
+    bool canDelete(App::DocumentObject *obj) const override;
 
-    static const char* LineStyleEnums[];
+    static const char *LineStyleEnums[];
 
-    std::vector<App::DocumentObject*> claimChildren() const override;
+    std::vector<App::DocumentObject *> claimChildren() const override;
 
-    TechDraw::DrawLeaderLine* getViewObject() const override;
-    TechDraw::DrawLeaderLine* getFeature()  const;
+    TechDraw::DrawLeaderLine *getViewObject() const override;
+    TechDraw::DrawLeaderLine *getFeature() const;
 
 protected:
     double getDefLineWeight();
     App::Color getDefLineColor();
-    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property * prop) override;
+    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName,
+                                   App::Property *prop) override;
 
 private:
     static App::PropertyIntegerConstraint::Constraints LineStyleRange;
-
 };
 
 } // namespace TechDrawGui

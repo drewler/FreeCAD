@@ -35,14 +35,14 @@ namespace Base
 class BaseExport BindingManager
 {
 public:
-    static BindingManager& instance();
+    static BindingManager &instance();
 
     bool hasWrapper(const void *cptr);
 
-    void registerWrapper(const void* cptr, PyObject* pyObj);
-    void releaseWrapper(const void* cptr, PyObject* pyObj);
+    void registerWrapper(const void *cptr, PyObject *pyObj);
+    void releaseWrapper(const void *cptr, PyObject *pyObj);
 
-    PyObject* retrieveWrapper(const void* cptr);
+    PyObject *retrieveWrapper(const void *cptr);
 
 private:
     BindingManager();
@@ -52,6 +52,6 @@ private:
     std::unique_ptr<BindingManagerPrivate> p;
 };
 
-}
+} // namespace Base
 
 #endif // BASE_BINDINGMANAGER_H

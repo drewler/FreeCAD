@@ -11,83 +11,84 @@
 #include "deflateoutputstreambuf.h"
 #include "ziphead.h"
 
-namespace zipios {
+namespace zipios
+{
 
 /** ZipOutputStreambuf is a zip output streambuf filter.  */
-class ZipOutputStreambuf : public DeflateOutputStreambuf {
+class ZipOutputStreambuf: public DeflateOutputStreambuf
+{
 public:
+    enum CompressionLevels
+    {
+        NO_COMPRESSION = Z_NO_COMPRESSION,
+        BEST_SPEED = Z_BEST_SPEED,
+        BEST_COMPRESSION = Z_BEST_COMPRESSION,
+        DEFAULT_COMPRESSION = Z_DEFAULT_COMPRESSION
+    };
 
-  enum CompressionLevels { NO_COMPRESSION      = Z_NO_COMPRESSION, 
-			   BEST_SPEED          = Z_BEST_SPEED,
-			   BEST_COMPRESSION    = Z_BEST_COMPRESSION,
-                           DEFAULT_COMPRESSION = Z_DEFAULT_COMPRESSION  } ;
-
-  /** ZipOutputStreambuf constructor. A newly constructed ZipOutputStreambuf
+    /** ZipOutputStreambuf constructor. A newly constructed ZipOutputStreambuf
       is not ready to accept data, putNextEntry() must be invoked first.
       @param outbuf the streambuf to use for input.
       @param del_outbuf if true is specified outbuf will be deleted, when 
       the ZipOutputStreambuf is destructed.  */
-  explicit ZipOutputStreambuf( streambuf *outbuf, bool del_outbuf = false ) ;
+    explicit ZipOutputStreambuf(streambuf *outbuf, bool del_outbuf = false);
 
-  /** Closes the current entry, and positions the stream read pointer at 
+    /** Closes the current entry, and positions the stream read pointer at 
       the beginning of the next entry (if there is one). */
-  void closeEntry() ;
+    void closeEntry();
 
-  /** Calls finish. */
-  void close() ;
+    /** Calls finish. */
+    void close();
 
-  /** Closes the current entry (if one is open), then writes the Zip
+    /** Closes the current entry (if one is open), then writes the Zip
       Central Directory Structure closing the ZipOutputStream. The
       output stream that the zip archive is being written to is not
       closed. */
-  void finish() ;
+    void finish();
 
-  /** Begins writing the next entry.
+    /** Begins writing the next entry.
       Opens the next entry in the zip archive and returns a const pointer to a 
       FileEntry object for the entry.
       @return a const FileEntry * containing information about the (now) current 
       entry. */
-  void putNextEntry( const ZipCDirEntry &entry ) ;
+    void putNextEntry(const ZipCDirEntry &entry);
 
-  /** Sets the global comment for the Zip archive. */
-  void setComment( const string &comment ) ;
+    /** Sets the global comment for the Zip archive. */
+    void setComment(const string &comment);
 
-  /** Sets the compression level to be used for subsequent entries. */
-  void setLevel( int level ) ;
+    /** Sets the compression level to be used for subsequent entries. */
+    void setLevel(int level);
 
-  /** Sets the compression method to be used. only STORED and DEFLATED are
+    /** Sets the compression method to be used. only STORED and DEFLATED are
       supported. */
-  void setMethod( StorageMethod method ) ;
+    void setMethod(StorageMethod method);
 
-  /** Destructor. */
-  virtual ~ZipOutputStreambuf() ;
+    /** Destructor. */
+    virtual ~ZipOutputStreambuf();
 
 protected:
-  virtual int overflow( int c = EOF ) ;
-  virtual int sync() ;
+    virtual int overflow(int c = EOF);
+    virtual int sync();
 
-  void setEntryClosedState() ;
-  void updateEntryHeaderInfo() ;
+    void setEntryClosedState();
+    void updateEntryHeaderInfo();
 
-  // Should/could be moved to zipheadio.h ?!
-  static void writeCentralDirectory( const vector< ZipCDirEntry > &entries, 
-				     EndOfCentralDirectory eocd,
-				     ostream &os ) ;
-
+    // Should/could be moved to zipheadio.h ?!
+    static void writeCentralDirectory(const vector<ZipCDirEntry> &entries,
+                                      EndOfCentralDirectory eocd, ostream &os);
 
 
 private:
-  string _zip_comment ;
-  vector< ZipCDirEntry > _entries ;
-  bool _open_entry ;
-  bool _open ;
-  StorageMethod _method ;
-  int _level ;
+    string _zip_comment;
+    vector<ZipCDirEntry> _entries;
+    bool _open_entry;
+    bool _open;
+    StorageMethod _method;
+    int _level;
 };
 
 
-} // namespace
-
+} // namespace zipios
 
 
 #endif

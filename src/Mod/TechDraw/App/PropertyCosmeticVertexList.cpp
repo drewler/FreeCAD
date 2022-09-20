@@ -24,7 +24,7 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-#   include <cassert>
+#include <cassert>
 #endif
 
 /// Here the FreeCAD includes sorted by Base, App, Gui......
@@ -56,28 +56,19 @@ TYPESYSTEM_SOURCE(TechDraw::PropertyCosmeticVertexList, App::PropertyLists)
 // Construction/Destruction
 
 
-PropertyCosmeticVertexList::PropertyCosmeticVertexList()
-{
+PropertyCosmeticVertexList::PropertyCosmeticVertexList() {}
 
-}
-
-PropertyCosmeticVertexList::~PropertyCosmeticVertexList()
-{
-}
+PropertyCosmeticVertexList::~PropertyCosmeticVertexList() {}
 
 void PropertyCosmeticVertexList::setSize(int newSize)
 {
-    for (unsigned int i = newSize; i < _lValueList.size(); i++)
-        delete _lValueList[i];
+    for (unsigned int i = newSize; i < _lValueList.size(); i++) delete _lValueList[i];
     _lValueList.resize(newSize);
 }
 
-int PropertyCosmeticVertexList::getSize() const
-{
-    return static_cast<int>(_lValueList.size());
-}
+int PropertyCosmeticVertexList::getSize() const { return static_cast<int>(_lValueList.size()); }
 
-void PropertyCosmeticVertexList::setValue(CosmeticVertex* lValue)
+void PropertyCosmeticVertexList::setValue(CosmeticVertex *lValue)
 {
     if (lValue) {
         aboutToSetValue();
@@ -87,20 +78,18 @@ void PropertyCosmeticVertexList::setValue(CosmeticVertex* lValue)
     }
 }
 
-void PropertyCosmeticVertexList::setValues(const std::vector<CosmeticVertex*>& lValue)
+void PropertyCosmeticVertexList::setValues(const std::vector<CosmeticVertex *> &lValue)
 {
     aboutToSetValue();
     _lValueList.resize(lValue.size());
-    for (unsigned int i = 0; i < lValue.size(); i++)
-        _lValueList[i] = lValue[i];
+    for (unsigned int i = 0; i < lValue.size(); i++) _lValueList[i] = lValue[i];
     hasSetValue();
 }
 
 PyObject *PropertyCosmeticVertexList::getPyObject()
 {
-    PyObject* list = PyList_New(getSize());
-    for (int i = 0; i < getSize(); i++)
-        PyList_SetItem( list, i, _lValueList[i]->getPyObject());
+    PyObject *list = PyList_New(getSize());
+    for (int i = 0; i < getSize(); i++) PyList_SetItem(list, i, _lValueList[i]->getPyObject());
     return list;
 }
 
@@ -110,28 +99,29 @@ void PropertyCosmeticVertexList::setPyObject(PyObject *value)
 
     if (PySequence_Check(value)) {
         Py_ssize_t nSize = PySequence_Size(value);
-        std::vector<CosmeticVertex*> values;
+        std::vector<CosmeticVertex *> values;
         values.resize(nSize);
 
-        for (Py_ssize_t i=0; i < nSize; ++i) {
-            PyObject* item = PySequence_GetItem(value, i);
+        for (Py_ssize_t i = 0; i < nSize; ++i) {
+            PyObject *item = PySequence_GetItem(value, i);
             if (!PyObject_TypeCheck(item, &(CosmeticVertexPy::Type))) {
                 std::string error = std::string("types in list must be 'CosmeticVertex', not ");
                 error += item->ob_type->tp_name;
                 throw Base::TypeError(error);
             }
 
-            values[i] = static_cast<CosmeticVertexPy*>(item)->getCosmeticVertexPtr();
+            values[i] = static_cast<CosmeticVertexPy *>(item)->getCosmeticVertexPtr();
         }
 
         setValues(values);
     }
     else if (PyObject_TypeCheck(value, &(CosmeticVertexPy::Type))) {
-        CosmeticVertexPy  *pcObject = static_cast<CosmeticVertexPy*>(value);
+        CosmeticVertexPy *pcObject = static_cast<CosmeticVertexPy *>(value);
         setValue(pcObject->getCosmeticVertexPtr());
     }
     else {
-        std::string error = std::string("type must be 'CosmeticVertex' or list of 'CosmeticVertex', not ");
+        std::string error =
+            std::string("type must be 'CosmeticVertex' or list of 'CosmeticVertex', not ");
         error += value->ob_type->tp_name;
         throw Base::TypeError(error);
     }
@@ -139,7 +129,7 @@ void PropertyCosmeticVertexList::setPyObject(PyObject *value)
 
 void PropertyCosmeticVertexList::Save(Writer &writer) const
 {
-    writer.Stream() << writer.ind() << "<CosmeticVertexList count=\"" << getSize() <<"\">" << endl;
+    writer.Stream() << writer.ind() << "<CosmeticVertexList count=\"" << getSize() << "\">" << endl;
     writer.incInd();
     for (int i = 0; i < getSize(); i++) {
         writer.Stream() << writer.ind() << "<CosmeticVertex  type=\""
@@ -150,7 +140,7 @@ void PropertyCosmeticVertexList::Save(Writer &writer) const
         writer.Stream() << writer.ind() << "</CosmeticVertex>" << endl;
     }
     writer.decInd();
-    writer.Stream() << writer.ind() << "</CosmeticVertexList>" << endl ;
+    writer.Stream() << writer.ind() << "</CosmeticVertexList>" << endl;
 }
 
 void PropertyCosmeticVertexList::Restore(Base::XMLReader &reader)
@@ -160,17 +150,19 @@ void PropertyCosmeticVertexList::Restore(Base::XMLReader &reader)
     reader.readElement("CosmeticVertexList");
     // get the value of my attribute
     int count = reader.getAttributeAsInteger("count");
-    std::vector<CosmeticVertex*> values;
+    std::vector<CosmeticVertex *> values;
     values.reserve(count);
     for (int i = 0; i < count; i++) {
         reader.readElement("CosmeticVertex");
-        const char* TypeName = reader.getAttribute("type");
+        const char *TypeName = reader.getAttribute("type");
         CosmeticVertex *newG = (CosmeticVertex *)Base::Type::fromName(TypeName).createInstance();
         newG->Restore(reader);
 
-        if(reader.testStatus(Base::XMLReader::ReaderStatus::PartialRestoreInObject)) {
-            Base::Console().Error("CosmeticVertex \"%s\" within a PropertyCosmeticVertexList was subject to a partial restore.\n", reader.localName());
-            if(isOrderRelevant()) {
+        if (reader.testStatus(Base::XMLReader::ReaderStatus::PartialRestoreInObject)) {
+            Base::Console().Error("CosmeticVertex \"%s\" within a PropertyCosmeticVertexList was "
+                                  "subject to a partial restore.\n",
+                                  reader.localName());
+            if (isOrderRelevant()) {
                 // Pushes the best try by the CosmeticVertex class
                 values.push_back(newG);
             }
@@ -201,14 +193,14 @@ App::Property *PropertyCosmeticVertexList::Copy() const
 
 void PropertyCosmeticVertexList::Paste(const Property &from)
 {
-    const PropertyCosmeticVertexList& FromList = dynamic_cast<const PropertyCosmeticVertexList&>(from);
+    const PropertyCosmeticVertexList &FromList =
+        dynamic_cast<const PropertyCosmeticVertexList &>(from);
     setValues(FromList._lValueList);
 }
 
 unsigned int PropertyCosmeticVertexList::getMemSize() const
 {
     int size = sizeof(PropertyCosmeticVertexList);
-    for (int i = 0; i < getSize(); i++)
-        size += _lValueList[i]->getMemSize();
+    for (int i = 0; i < getSize(); i++) size += _lValueList[i]->getMemSize();
     return size;
 }

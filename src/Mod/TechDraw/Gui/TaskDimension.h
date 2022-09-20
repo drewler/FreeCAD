@@ -34,7 +34,7 @@ namespace TechDrawGui
 class QGIViewDimension;
 class ViewProviderDimension;
 class Ui_TaskDimension;
-class TaskDimension : public QWidget
+class TaskDimension: public QWidget
 {
     Q_OBJECT
 
@@ -76,7 +76,7 @@ private:
     std::pair<double, bool> getAngleFromSelection();
 };
 
-class TaskDlgDimension : public Gui::TaskView::TaskDialog
+class TaskDlgDimension: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
@@ -94,17 +94,15 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    void helpRequested() override { return;}
-    bool isAllowedAlterDocument() const override
-    { return false; }
+    void helpRequested() override { return; }
+    bool isAllowedAlterDocument() const override { return false; }
 
     void update();
 
 protected:
-
 private:
-    TaskDimension* widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskDimension *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

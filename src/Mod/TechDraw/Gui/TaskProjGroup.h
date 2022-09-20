@@ -32,10 +32,11 @@
 #include <Gui/TaskView/TaskDialog.h>
 #include <Gui/TaskView/TaskView.h>
 
-namespace TechDraw {
+namespace TechDraw
+{
 class DrawProjGroup;
 class DrawPage;
-}
+} // namespace TechDraw
 
 namespace TechDrawGui
 {
@@ -43,27 +44,25 @@ class MDIViewPage;
 class Ui_TaskProjGroup;
 class ViewProviderProjGroup;
 
-class TaskProjGroup : public QWidget
+class TaskProjGroup: public QWidget
 {
     Q_OBJECT
 
 public:
-    TaskProjGroup(TechDraw::DrawProjGroup* featView, bool mode);
+    TaskProjGroup(TechDraw::DrawProjGroup *featView, bool mode);
     ~TaskProjGroup() = default;
 
     virtual bool accept();
     virtual bool reject();
     virtual bool apply();
-    void modifyStandardButtons(QDialogButtonBox* box);
-    void saveButtons(QPushButton* btnOK,
-                     QPushButton* btnCancel,
-                     QPushButton* btnApply);
+    void modifyStandardButtons(QDialogButtonBox *box);
+    void saveButtons(QPushButton *btnOK, QPushButton *btnCancel, QPushButton *btnApply);
 
     void updateTask();
     std::pair<int, int> nearestFraction(double val, long int maxDenom = 999) const;
     // Sets the numerator and denominator widgets to match newScale
     void setFractionalScale(double newScale);
-    void setCreateMode(bool mode) { m_createMode = mode;}
+    void setCreateMode(bool mode) { m_createMode = mode; }
     bool getCreateMode() const { return m_createMode; }
 
 protected:
@@ -95,46 +94,48 @@ protected Q_SLOTS:
     void scaleManuallyChanged(int unused);
 
 private:
-    TechDraw::DrawPage* m_page;
-    MDIViewPage* m_mdi;
+    TechDraw::DrawPage *m_page;
+    MDIViewPage *m_mdi;
 
     std::unique_ptr<Ui_TaskProjGroup> ui;
-    TechDraw::DrawProjGroup* multiView;
+    TechDraw::DrawProjGroup *multiView;
     bool m_createMode;
 
     bool blockUpdate;
     /// Translate a view checkbox index into represented view string, depending on projection type
-    const char * viewChkIndexToCStr(int index);
+    const char *viewChkIndexToCStr(int index);
 
-    QPushButton* m_btnOK;
-    QPushButton* m_btnCancel;
-    QPushButton* m_btnApply;
+    QPushButton *m_btnOK;
+    QPushButton *m_btnCancel;
+    QPushButton *m_btnApply;
 
-    std::vector<App::DocumentObject*> m_saveSource;
-    std::string    m_saveProjType;
-    std::string    m_saveScaleType;
-    double         m_saveScale;
-    bool           m_saveAutoDistribute;
-    double         m_saveSpacingX;
-    double         m_saveSpacingY;
+    std::vector<App::DocumentObject *> m_saveSource;
+    std::string m_saveProjType;
+    std::string m_saveScaleType;
+    double m_saveScale;
+    bool m_saveAutoDistribute;
+    double m_saveSpacingX;
+    double m_saveSpacingY;
     Base::Vector3d m_saveDirection;
     std::vector<std::string> m_saveViewNames;
 };
 
-class TaskDlgProjGroup : public Gui::TaskView::TaskDialog
+class TaskDlgProjGroup: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    TaskDlgProjGroup(TechDraw::DrawProjGroup* featView, bool mode);
+    TaskDlgProjGroup(TechDraw::DrawProjGroup *featView, bool mode);
     ~TaskDlgProjGroup() override;
 
-    const ViewProviderProjGroup * getViewProvider() const { return viewProvider; }
-    TechDraw::DrawProjGroup * getMultiView() const { return multiView; }
+    const ViewProviderProjGroup *getViewProvider() const { return viewProvider; }
+    TechDraw::DrawProjGroup *getMultiView() const { return multiView; }
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override
-    { return QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel; }
-    void modifyStandardButtons(QDialogButtonBox* box) override;
+    {
+        return QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel;
+    }
+    void modifyStandardButtons(QDialogButtonBox *box) override;
 
     /// is called the TaskView when the dialog is opened
     void open() override;
@@ -145,8 +146,7 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    bool isAllowedAlterDocument() const override
-    { return false; }
+    bool isAllowedAlterDocument() const override { return false; }
     void setCreateMode(bool mode);
 
     void update();
@@ -156,8 +156,8 @@ protected:
     TechDraw::DrawProjGroup *multiView;
 
 private:
-    TaskProjGroup * widget;
-    Gui::TaskView::TaskBox* taskbox;
+    TaskProjGroup *widget;
+    Gui::TaskView::TaskBox *taskbox;
 };
 
 } //namespace TechDrawGui

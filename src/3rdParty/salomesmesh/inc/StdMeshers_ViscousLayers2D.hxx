@@ -31,29 +31,27 @@ class TopoDS_Face;
 /*!
  * \brief Hypothesis defining parameters of viscous layers
  */
-class STDMESHERS_EXPORT StdMeshers_ViscousLayers2D : public StdMeshers_ViscousLayers
+class STDMESHERS_EXPORT StdMeshers_ViscousLayers2D: public StdMeshers_ViscousLayers
 {
 public:
-  StdMeshers_ViscousLayers2D(int hypId, int studyId, SMESH_Gen* gen);
-  /*!
+    StdMeshers_ViscousLayers2D(int hypId, int studyId, SMESH_Gen *gen);
+    /*!
    * \brief Computes temporary 2D mesh to be used by 2D algorithm.
    *        Return SMESH_ProxyMesh for the given FACE, or NULL in case of error
    */
-  static SMESH_ProxyMesh::Ptr Compute(SMESH_Mesh&        theMesh,
-                                      const TopoDS_Face& theShape);
-  /*!
+    static SMESH_ProxyMesh::Ptr Compute(SMESH_Mesh &theMesh, const TopoDS_Face &theShape);
+    /*!
    * \brief At study restoration, restore event listeners used to clear an inferior
    *  dim sub-mesh modified by viscous layers
    */
-  void RestoreListeners() const;
+    void RestoreListeners() const;
 
-  /*!
+    /*!
    * \brief Checks compatibility of assigned StdMeshers_ViscousLayers2D hypotheses
    */
-  static SMESH_ComputeErrorPtr CheckHypothesis(SMESH_Mesh&         aMesh,
-                                               const TopoDS_Shape& aShape,
-                                               Hypothesis_Status&  aStatus);
-  /*!
+    static SMESH_ComputeErrorPtr CheckHypothesis(SMESH_Mesh &aMesh, const TopoDS_Shape &aShape,
+                                                 Hypothesis_Status &aStatus);
+    /*!
    * \brief Initialize my parameter values by the mesh built on the geometry
    * \param theMesh - the built mesh
    * \param theShape - the geometry of interest
@@ -61,18 +59,20 @@ public:
    *
    * Just return false as this hypothesis does not have parameters values
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    *  \retval bool - true if parameter values have been successfully defined
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0)
-  { return false; }
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0)
+    {
+        return false;
+    }
 
-  static const char* GetHypType() { return "ViscousLayers2D"; }
+    static const char *GetHypType() { return "ViscousLayers2D"; }
 
- private:
+private:
 };
 
 #endif

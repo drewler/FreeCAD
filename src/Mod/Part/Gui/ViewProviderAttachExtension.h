@@ -30,7 +30,7 @@
 namespace PartGui
 {
 
-class PartGuiExport ViewProviderAttachExtension : public Gui::ViewProviderExtension
+class PartGuiExport ViewProviderAttachExtension: public Gui::ViewProviderExtension
 {
     EXTENSION_PROPERTY_HEADER_WITH_OVERRIDE(PartGui::ViewProviderAttachExtension);
 
@@ -39,17 +39,18 @@ public:
     ViewProviderAttachExtension();
     ~ViewProviderAttachExtension() override = default;
 
-    QIcon extensionMergeColorfullOverlayIcons (const QIcon & orig) const override;
+    QIcon extensionMergeColorfullOverlayIcons(const QIcon &orig) const override;
 
-    void extensionUpdateData(const App::Property*) override;
-    void extensionSetupContextMenu(QMenu*, QObject*, const char*) override;
+    void extensionUpdateData(const App::Property *) override;
+    void extensionSetupContextMenu(QMenu *, QObject *, const char *) override;
 
 private:
     void showAttachmentEditor();
 };
 
-using ViewProviderAttachExtensionPython = Gui::ViewProviderExtensionPythonT<PartGui::ViewProviderAttachExtension>;
+using ViewProviderAttachExtensionPython =
+    Gui::ViewProviderExtensionPythonT<PartGui::ViewProviderAttachExtension>;
 
-} //namespace Part::Gui
+} // namespace PartGui
 
 #endif // GUI_VIEWPROVIDERATTACHMENTEXTENSION_H

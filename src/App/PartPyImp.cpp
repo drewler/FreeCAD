@@ -30,18 +30,8 @@
 using namespace App;
 
 // returns a string which represents the object e.g. when printed in python
-std::string PartPy::representation() const
-{
-    return std::string("<Part object>");
-}
+std::string PartPy::representation() const { return std::string("<Part object>"); }
 
-PyObject *PartPy::getCustomAttributes(const char* /*attr*/) const
-{
-    return nullptr;
-}
+PyObject *PartPy::getCustomAttributes(const char * /*attr*/) const { return nullptr; }
 
-int PartPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
-{
-    return 0;
-}
-
+int PartPy::setCustomAttributes(const char * /*attr*/, PyObject * /*obj*/) { return 0; }

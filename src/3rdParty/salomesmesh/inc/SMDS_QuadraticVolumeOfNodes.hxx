@@ -34,98 +34,69 @@
 class SMDS_EXPORT SMDS_QuadraticVolumeOfNodes: public SMDS_MeshVolume
 {
 public:
-  // tetrahedron of 10 nodes
-  SMDS_QuadraticVolumeOfNodes (const SMDS_MeshNode * n1,
-                               const SMDS_MeshNode * n2,
-                               const SMDS_MeshNode * n3,
-                               const SMDS_MeshNode * n4,
-                               const SMDS_MeshNode * n12,
-                               const SMDS_MeshNode * n23,
-                               const SMDS_MeshNode * n31,
-                               const SMDS_MeshNode * n14, 
-                               const SMDS_MeshNode * n24,
-                               const SMDS_MeshNode * n34);
+    // tetrahedron of 10 nodes
+    SMDS_QuadraticVolumeOfNodes(const SMDS_MeshNode *n1, const SMDS_MeshNode *n2,
+                                const SMDS_MeshNode *n3, const SMDS_MeshNode *n4,
+                                const SMDS_MeshNode *n12, const SMDS_MeshNode *n23,
+                                const SMDS_MeshNode *n31, const SMDS_MeshNode *n14,
+                                const SMDS_MeshNode *n24, const SMDS_MeshNode *n34);
 
-  // pyramid of 13 nodes
-  SMDS_QuadraticVolumeOfNodes(const SMDS_MeshNode * n1,
-                              const SMDS_MeshNode * n2,
-                              const SMDS_MeshNode * n3,
-                              const SMDS_MeshNode * n4,
-                              const SMDS_MeshNode * n5,
-                              const SMDS_MeshNode * n12,
-                              const SMDS_MeshNode * n23,
-                              const SMDS_MeshNode * n34,
-                              const SMDS_MeshNode * n41, 
-                              const SMDS_MeshNode * n15,
-                              const SMDS_MeshNode * n25,
-                              const SMDS_MeshNode * n35,
-                              const SMDS_MeshNode * n45);
+    // pyramid of 13 nodes
+    SMDS_QuadraticVolumeOfNodes(const SMDS_MeshNode *n1, const SMDS_MeshNode *n2,
+                                const SMDS_MeshNode *n3, const SMDS_MeshNode *n4,
+                                const SMDS_MeshNode *n5, const SMDS_MeshNode *n12,
+                                const SMDS_MeshNode *n23, const SMDS_MeshNode *n34,
+                                const SMDS_MeshNode *n41, const SMDS_MeshNode *n15,
+                                const SMDS_MeshNode *n25, const SMDS_MeshNode *n35,
+                                const SMDS_MeshNode *n45);
 
-  //  Pentahedron with 15 nodes
-  SMDS_QuadraticVolumeOfNodes(const SMDS_MeshNode * n1,
-                              const SMDS_MeshNode * n2,
-                              const SMDS_MeshNode * n3,
-                              const SMDS_MeshNode * n4,
-                              const SMDS_MeshNode * n5,
-                              const SMDS_MeshNode * n6, 
-                              const SMDS_MeshNode * n12,
-                              const SMDS_MeshNode * n23,
-                              const SMDS_MeshNode * n31, 
-                              const SMDS_MeshNode * n45,
-                              const SMDS_MeshNode * n56,
-                              const SMDS_MeshNode * n64, 
-                              const SMDS_MeshNode * n14,
-                              const SMDS_MeshNode * n25,
-                              const SMDS_MeshNode * n36);
+    //  Pentahedron with 15 nodes
+    SMDS_QuadraticVolumeOfNodes(const SMDS_MeshNode *n1, const SMDS_MeshNode *n2,
+                                const SMDS_MeshNode *n3, const SMDS_MeshNode *n4,
+                                const SMDS_MeshNode *n5, const SMDS_MeshNode *n6,
+                                const SMDS_MeshNode *n12, const SMDS_MeshNode *n23,
+                                const SMDS_MeshNode *n31, const SMDS_MeshNode *n45,
+                                const SMDS_MeshNode *n56, const SMDS_MeshNode *n64,
+                                const SMDS_MeshNode *n14, const SMDS_MeshNode *n25,
+                                const SMDS_MeshNode *n36);
 
-  // Hexahedrons with 20 nodes
-  SMDS_QuadraticVolumeOfNodes(const SMDS_MeshNode * n1,
-                              const SMDS_MeshNode * n2,
-                              const SMDS_MeshNode * n3,
-                              const SMDS_MeshNode * n4,
-                              const SMDS_MeshNode * n5,
-                              const SMDS_MeshNode * n6,
-                              const SMDS_MeshNode * n7,
-                              const SMDS_MeshNode * n8, 
-                              const SMDS_MeshNode * n12,
-                              const SMDS_MeshNode * n23,
-                              const SMDS_MeshNode * n34,
-                              const SMDS_MeshNode * n41, 
-                              const SMDS_MeshNode * n56,
-                              const SMDS_MeshNode * n67,
-                              const SMDS_MeshNode * n78,
-                              const SMDS_MeshNode * n85, 
-                              const SMDS_MeshNode * n15,
-                              const SMDS_MeshNode * n26,
-                              const SMDS_MeshNode * n37,
-                              const SMDS_MeshNode * n48);
+    // Hexahedrons with 20 nodes
+    SMDS_QuadraticVolumeOfNodes(const SMDS_MeshNode *n1, const SMDS_MeshNode *n2,
+                                const SMDS_MeshNode *n3, const SMDS_MeshNode *n4,
+                                const SMDS_MeshNode *n5, const SMDS_MeshNode *n6,
+                                const SMDS_MeshNode *n7, const SMDS_MeshNode *n8,
+                                const SMDS_MeshNode *n12, const SMDS_MeshNode *n23,
+                                const SMDS_MeshNode *n34, const SMDS_MeshNode *n41,
+                                const SMDS_MeshNode *n56, const SMDS_MeshNode *n67,
+                                const SMDS_MeshNode *n78, const SMDS_MeshNode *n85,
+                                const SMDS_MeshNode *n15, const SMDS_MeshNode *n26,
+                                const SMDS_MeshNode *n37, const SMDS_MeshNode *n48);
 
-  virtual SMDSAbs_EntityType   GetEntityType() const;
-  virtual bool IsQuadratic() const { return true; }
+    virtual SMDSAbs_EntityType GetEntityType() const;
+    virtual bool IsQuadratic() const { return true; }
 
-  virtual bool IsMediumNode(const SMDS_MeshNode* node) const;
+    virtual bool IsMediumNode(const SMDS_MeshNode *node) const;
 
-  bool ChangeNodes(const SMDS_MeshNode* nodes[],
-                   const int            nbNodes);
+    bool ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes);
 
-  virtual int NbNodes() const;
-  virtual int NbEdges() const;
-  virtual int NbFaces() const;
+    virtual int NbNodes() const;
+    virtual int NbEdges() const;
+    virtual int NbFaces() const;
 
-  virtual void Print (std::ostream & OS) const;
+    virtual void Print(std::ostream &OS) const;
 
-  /*!
+    /*!
    * \brief Return node by its index
     * \param ind - node index
     * \retval const SMDS_MeshNode* - the node
    */
-  virtual const SMDS_MeshNode* GetNode(const int ind) const;
+    virtual const SMDS_MeshNode *GetNode(const int ind) const;
 
- protected:
-  virtual SMDS_ElemIteratorPtr elementsIterator (SMDSAbs_ElementType type) const;
+protected:
+    virtual SMDS_ElemIteratorPtr elementsIterator(SMDSAbs_ElementType type) const;
 
- private:
-  std::vector<const SMDS_MeshNode *> myNodes;
+private:
+    std::vector<const SMDS_MeshNode *> myNodes;
 };
 
 #endif

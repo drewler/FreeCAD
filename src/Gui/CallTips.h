@@ -28,17 +28,27 @@
 
 class QPlainTextEdit;
 
-namespace Py {
+namespace Py
+{
 class Object;
 class List;
-}
-namespace Gui {
+} // namespace Py
+namespace Gui
+{
 
 class CallTip
 {
 public:
-    enum Type {Unknown, Module, Class, Method, Member, Property};
-    CallTip():type(Unknown) {}
+    enum Type
+    {
+        Unknown,
+        Module,
+        Class,
+        Method,
+        Member,
+        Property
+    };
+    CallTip() : type(Unknown) {}
     QString name;
     QString description;
     QString parameter;
@@ -48,37 +58,37 @@ public:
 /**
  * @author Werner Mayer
  */
-class CallTipsList : public QListWidget
+class CallTipsList: public QListWidget
 {
     Q_OBJECT
 
 public:
     /// Construction
-    CallTipsList(QPlainTextEdit* parent);
+    CallTipsList(QPlainTextEdit *parent);
     /// Destruction
     ~CallTipsList() override;
 
-    void keyboardSearch (const QString&) override;
-    void showTips(const QString&);
+    void keyboardSearch(const QString &) override;
+    void showTips(const QString &);
     void validateCursor();
 
 protected:
     bool eventFilter(QObject *, QEvent *) override;
-    void showEvent(QShowEvent*) override;
-    void hideEvent(QHideEvent*) override;
+    void showEvent(QShowEvent *) override;
+    void hideEvent(QHideEvent *) override;
 
 private Q_SLOTS:
     void callTipItemActivated(QListWidgetItem *item);
 
 private:
-    QString extractContext(const QString&) const;
-    QMap<QString, CallTip> extractTips(const QString&) const;
-    void extractTipsFromObject(Py::Object&, Py::List&, QMap<QString, CallTip>&) const;
-    void extractTipsFromProperties(Py::Object&, QMap<QString, CallTip>&) const;
-    QString stripWhiteSpace(const QString&) const;
+    QString extractContext(const QString &) const;
+    QMap<QString, CallTip> extractTips(const QString &) const;
+    void extractTipsFromObject(Py::Object &, Py::List &, QMap<QString, CallTip> &) const;
+    void extractTipsFromProperties(Py::Object &, QMap<QString, CallTip> &) const;
+    QString stripWhiteSpace(const QString &) const;
 
 private:
-    QPlainTextEdit* textEdit;
+    QPlainTextEdit *textEdit;
     int cursorPos;
     mutable bool validObject;
     bool doCallCompletion;

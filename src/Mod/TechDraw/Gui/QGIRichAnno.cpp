@@ -46,7 +46,7 @@
 #include <QDialog>
 
 
-# include <cmath>
+#include <cmath>
 #endif
 
 #include <App/Application.h>
@@ -87,8 +87,7 @@ using namespace TechDrawGui;
 
 
 //**************************************************************
-QGIRichAnno::QGIRichAnno() :
-    m_isExporting(false), m_hasHover(false)
+QGIRichAnno::QGIRichAnno() : m_isExporting(false), m_hasHover(false)
 {
     setHandlesChildEvents(false);
     setAcceptHoverEvents(false);
@@ -109,7 +108,6 @@ QGIRichAnno::QGIRichAnno() :
     m_rect->centerAt(0.0, 0.0);
 
     setZValue(ZVALUE::DIMENSION);
-
 }
 
 //void QGIRichAnno::select(bool state)
@@ -126,50 +124,48 @@ QGIRichAnno::QGIRichAnno() :
 
 void QGIRichAnno::updateView(bool update)
 {
-//    Base::Console().Message("QGIRA::updateView() - %s\n", getViewName());
+    //    Base::Console().Message("QGIRA::updateView() - %s\n", getViewName());
     Q_UNUSED(update);
-    auto annoFeat( dynamic_cast<TechDraw::DrawRichAnno*>(getViewObject()) );
+    auto annoFeat(dynamic_cast<TechDraw::DrawRichAnno *>(getViewObject()));
     if (!annoFeat) {
         Base::Console().Log("QGIRA::updateView - no feature!\n");
         return;
     }
 
-    auto vp = static_cast<ViewProviderRichAnno*>(getViewProvider(getViewObject()));
-    if (!vp)
-        return;
-    if (annoFeat->X.isTouched() ||
-        annoFeat->Y.isTouched()) {
+    auto vp = static_cast<ViewProviderRichAnno *>(getViewProvider(getViewObject()));
+    if (!vp) return;
+    if (annoFeat->X.isTouched() || annoFeat->Y.isTouched()) {
         float x = Rez::guiX(annoFeat->X.getValue());
         float y = Rez::guiX(annoFeat->Y.getValue());
         m_text->centerAt(x, -y);
         m_rect->centerAt(x, -y);
-     }
+    }
 
     draw();
 }
 
 void QGIRichAnno::drawBorder()
 {
-////Leaders have no border!
-//    QGIView::drawBorder();   //good for debugging
+    ////Leaders have no border!
+    //    QGIView::drawBorder();   //good for debugging
 }
 
 
 void QGIRichAnno::draw()
 {
-//    Base::Console().Log("QGIRA::draw() - %s - parent: %X\n", getFeature()->getNameInDocument(), parentItem());
+    //    Base::Console().Log("QGIRA::draw() - %s - parent: %X\n", getFeature()->getNameInDocument(), parentItem());
     if (!isVisible())
-//        Base::Console().Message("QGIRA::draw - not visible\n");
+        //        Base::Console().Message("QGIRA::draw - not visible\n");
         return;
 
-    TechDraw::DrawRichAnno* annoFeat = getFeature();
+    TechDraw::DrawRichAnno *annoFeat = getFeature();
     if (!annoFeat)
-//        Base::Console().Message("QGIRA::draw - no feature\n");
+        //        Base::Console().Message("QGIRA::draw - no feature\n");
         return;
 
-    auto vp = static_cast<ViewProviderRichAnno*>(getViewProvider(getFeature()));
+    auto vp = static_cast<ViewProviderRichAnno *>(getViewProvider(getFeature()));
     if (!vp) {
-//        Base::Console().Message("QGIRA::draw - no viewprovider\n");
+        //        Base::Console().Message("QGIRA::draw - no viewprovider\n");
         return;
     }
 
@@ -180,8 +176,8 @@ void QGIRichAnno::draw()
 
 void QGIRichAnno::setTextItem()
 {
-//    Base::Console().Message("QGIRA::setTextItem() - %s\n", getViewName());
-    TechDraw::DrawRichAnno* annoFeat = getFeature();
+    //    Base::Console().Message("QGIRA::setTextItem() - %s\n", getViewName());
+    TechDraw::DrawRichAnno *annoFeat = getFeature();
     QString inHtml = QString::fromUtf8(annoFeat->AnnoText.getValue());
 
     //don't do this multiplication if exporting to SVG as other apps interpret
@@ -210,25 +206,27 @@ void QGIRichAnno::setTextItem()
         QString outHtml = inHtml;
         int iRepl = 0;
         //TODO: check list for duplicates?
-        for ( ; iRepl < findList.size(); iRepl++) {
+        for (; iRepl < findList.size(); iRepl++) {
             outHtml = outHtml.replace(findList[iRepl], replList[iRepl]);
         }
 
         m_text->setTextWidth(Rez::guiX(annoFeat->MaxWidth.getValue()));
         m_text->setHtml(outHtml);
-//        setLineSpacing(50);    //this has no effect on the display?!
-//        m_text->update();
+        //        setLineSpacing(50);    //this has no effect on the display?!
+        //        m_text->update();
 
         if (annoFeat->ShowFrame.getValue()) {
-            QRectF r = m_text->boundingRect().adjusted(1, 1,-1, -1);
+            QRectF r = m_text->boundingRect().adjusted(1, 1, -1, -1);
             m_rect->setPen(rectPen());
             m_rect->setBrush(Qt::NoBrush);
             m_rect->setRect(r);
             m_rect->show();
-        } else {
+        }
+        else {
             m_rect->hide();
         }
-    } else {
+    }
+    else {
         // don't force line wrap & strip formatting that doesn't export well!
         double realWidth = m_text->boundingRect().width();
         m_text->setTextWidth(realWidth);
@@ -238,9 +236,9 @@ void QGIRichAnno::setTextItem()
         f.setPointSizeF(ptSize);
         m_text->setFont(f);
 
-        QString plainText = QTextDocumentFragment::fromHtml( inHtml ).toPlainText();
+        QString plainText = QTextDocumentFragment::fromHtml(inHtml).toPlainText();
         m_text->setPlainText(plainText);
-        setLineSpacing(100);       //this doesn't appear in the generated Svg, but does space the lines!
+        setLineSpacing(100); //this doesn't appear in the generated Svg, but does space the lines!
         m_rect->hide();
         m_rect->update();
     }
@@ -257,10 +255,10 @@ void QGIRichAnno::setLineSpacing(int lineSpacing)
     for (; block.isValid(); block = block.next()) {
         QTextCursor tc = QTextCursor(block);
         QTextBlockFormat fmt = block.blockFormat();
-//        fmt.setTopMargin(lineSpacing);            //no effect???
-        fmt.setBottomMargin(lineSpacing);           //spaces out the lines!
+        //        fmt.setTopMargin(lineSpacing);            //no effect???
+        fmt.setBottomMargin(lineSpacing); //spaces out the lines!
         tc.setBlockFormat(fmt);
-//        }
+        //        }
     }
 }
 
@@ -271,10 +269,9 @@ void QGIRichAnno::setLineSpacing(int lineSpacing)
 //}
 
 
-TechDraw::DrawRichAnno* QGIRichAnno::getFeature()
+TechDraw::DrawRichAnno *QGIRichAnno::getFeature()
 {
-    TechDraw::DrawRichAnno* result =
-         static_cast<TechDraw::DrawRichAnno*>(getViewObject());
+    TechDraw::DrawRichAnno *result = static_cast<TechDraw::DrawRichAnno *>(getViewObject());
     return result;
 }
 
@@ -284,27 +281,26 @@ QRectF QGIRichAnno::boundingRect() const
     return rect.adjusted(-10., -10., 10., 10.);
 }
 
-void QGIRichAnno::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void QGIRichAnno::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
     QStyleOptionGraphicsItem myOption(*option);
     myOption.state &= ~QStyle::State_Selected;
 
-//    painter->drawRect(boundingRect());          //good for debugging
+    //    painter->drawRect(boundingRect());          //good for debugging
 
-    QGIView::paint (painter, &myOption, widget);
+    QGIView::paint(painter, &myOption, widget);
 }
 
 QPen QGIRichAnno::rectPen() const
 {
     QPen pen;
-    const auto sym( dynamic_cast<TechDraw::DrawRichAnno*>(getViewObject()) );
-    if (!sym)
-        return pen;
-    auto vp = static_cast<ViewProviderRichAnno*>(getViewProvider(getViewObject()));
-    if (!vp)
-        return pen;
+    const auto sym(dynamic_cast<TechDraw::DrawRichAnno *>(getViewObject()));
+    if (!sym) return pen;
+    auto vp = static_cast<ViewProviderRichAnno *>(getViewProvider(getViewObject()));
+    if (!vp) return pen;
 
     double rectWeight = Rez::guiX(vp->LineWidth.getValue());
-    Qt::PenStyle rectStyle = (Qt::PenStyle) vp->LineStyle.getValue();
+    Qt::PenStyle rectStyle = (Qt::PenStyle)vp->LineStyle.getValue();
     App::Color temp = vp->LineColor.getValue();
     QColor rectColor = temp.asValue<QColor>();
 
@@ -314,29 +310,26 @@ QPen QGIRichAnno::rectPen() const
     return pen;
 }
 
-QFont QGIRichAnno::prefFont()
-{
-    return PreferencesGui::labelFontQFont();
-}
+QFont QGIRichAnno::prefFont() { return PreferencesGui::labelFontQFont(); }
 
 double QGIRichAnno::prefPointSize()
 {
-//    Base::Console().Message("QGIRA::prefPointSize()\n");
+    //    Base::Console().Message("QGIRA::prefPointSize()\n");
     double fontSize = Preferences::dimFontSizeMM();
     //this conversion is only approximate. the factor changes for different fonts.
-//    double mmToPts = 2.83;  //theoretical value
-    double mmToPts = 2.00;  //practical value. seems to be reasonable for common fonts.
+    //    double mmToPts = 2.83;  //theoretical value
+    double mmToPts = 2.00; //practical value. seems to be reasonable for common fonts.
 
     double ptsSize = round(fontSize * mmToPts);
     return ptsSize;
 }
 
-void QGIRichAnno::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
+void QGIRichAnno::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
     Q_UNUSED(event);
 
     TechDraw::DrawRichAnno *annotation = dynamic_cast<TechDraw::DrawRichAnno *>(getViewObject());
-    if (!annotation)
-        return;
+    if (!annotation) return;
 
     QString text = QString::fromUtf8(annotation->AnnoText.getValue());
 

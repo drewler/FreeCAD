@@ -23,9 +23,9 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <cstring>
-# include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/nodes/SoSwitch.h>
+#include <cstring>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoSwitch.h>
 #endif
 
 #include <Base/Exception.h>
@@ -35,8 +35,8 @@
 #include "SoFCSelection.h"
 
 
-using std::vector;
 using std::string;
+using std::vector;
 
 
 using namespace Gui;
@@ -44,30 +44,24 @@ using namespace Gui;
 PROPERTY_SOURCE(Gui::ViewProviderExtern, Gui::ViewProvider)
 
 
-ViewProviderExtern::ViewProviderExtern()
-{
+ViewProviderExtern::ViewProviderExtern() {}
 
-}
+ViewProviderExtern::~ViewProviderExtern() {}
 
-ViewProviderExtern::~ViewProviderExtern()
-{
-
-}
-
-void ViewProviderExtern::setModeByString(const char* name, const char* ivFragment)
+void ViewProviderExtern::setModeByString(const char *name, const char *ivFragment)
 {
     SoInput in;
-    in.setBuffer((void*)ivFragment,std::strlen(ivFragment));
-    setModeBySoInput(name,in);
+    in.setBuffer((void *)ivFragment, std::strlen(ivFragment));
+    setModeBySoInput(name, in);
 }
 
-void ViewProviderExtern::setModeByFile(const char* name, const char* ivFileName)
+void ViewProviderExtern::setModeByFile(const char *name, const char *ivFileName)
 {
     SoInput in;
     Base::ifstream file(ivFileName, std::ios::in | std::ios::binary);
-    if (file){
+    if (file) {
         std::streamoff size = 0;
-        std::streambuf* buf = file.rdbuf();
+        std::streambuf *buf = file.rdbuf();
         if (buf) {
             std::streamoff curr;
             curr = buf->pubseekoff(0, std::ios::cur, std::ios::in);
@@ -79,22 +73,21 @@ void ViewProviderExtern::setModeByFile(const char* name, const char* ivFileName)
         std::vector<unsigned char> content;
         content.reserve(size);
         unsigned char c;
-        while (file.get((char&)c)) {
-            content.push_back(c);
-        }
+        while (file.get((char &)c)) { content.push_back(c); }
 
         file.close();
-        in.setBuffer(&(content[0]),content.size());
-        setModeBySoInput(name,in);
+        in.setBuffer(&(content[0]), content.size());
+        setModeBySoInput(name, in);
     }
 }
 
-void ViewProviderExtern::setModeBySoInput(const char* name, SoInput &ivFileInput)
+void ViewProviderExtern::setModeBySoInput(const char *name, SoInput &ivFileInput)
 {
-    SoSeparator * root = SoDB::readAll(&ivFileInput);
+    SoSeparator *root = SoDB::readAll(&ivFileInput);
     if (root) {
-        std::vector<std::string>::iterator pos = std::find<std::vector<std::string>
-           ::iterator,string>(modes.begin(),modes.end(),string(name));
+        std::vector<std::string>::iterator pos =
+            std::find<std::vector<std::string>::iterator, string>(modes.begin(), modes.end(),
+                                                                  string(name));
         if (pos == modes.end()) {
             // new mode
             modes.emplace_back(name);
@@ -115,35 +108,32 @@ void ViewProviderExtern::setModeBySoInput(const char* name, SoInput &ivFileInput
     return;
 }
 
-void ViewProviderExtern::adjustDocumentName(const char* docname)
+void ViewProviderExtern::adjustDocumentName(const char *docname)
 {
-    for (int i=0; i<this->pcModeSwitch->getNumChildren(); i++) {
-        SoNode* child = this->pcModeSwitch->getChild(i);
+    for (int i = 0; i < this->pcModeSwitch->getNumChildren(); i++) {
+        SoNode *child = this->pcModeSwitch->getChild(i);
         adjustRecursiveDocumentName(child, docname);
     }
 }
 
-void ViewProviderExtern::adjustRecursiveDocumentName(SoNode* child, const char* docname)
+void ViewProviderExtern::adjustRecursiveDocumentName(SoNode *child, const char *docname)
 {
     if (child->getTypeId().isDerivedFrom(SoFCSelection::getClassTypeId())) {
-        static_cast<SoFCSelection*>(child)->documentName = docname;
+        static_cast<SoFCSelection *>(child)->documentName = docname;
     }
-    else if (child->getTypeId().isDerivedFrom( SoGroup::getClassTypeId())) {
-        SoGroup* group = (SoGroup*)child;
-        for (int i=0; i<group->getNumChildren(); i++) {
-            SoNode* subchild = group->getChild(i);
+    else if (child->getTypeId().isDerivedFrom(SoGroup::getClassTypeId())) {
+        SoGroup *group = (SoGroup *)child;
+        for (int i = 0; i < group->getNumChildren(); i++) {
+            SoNode *subchild = group->getChild(i);
             adjustRecursiveDocumentName(subchild, docname);
         }
     }
 }
 
-const char* ViewProviderExtern::getDefaultDisplayMode() const
+const char *ViewProviderExtern::getDefaultDisplayMode() const
 {
     // returns the first item of the available modes
     return (modes.empty() ? "" : modes.front().c_str());
 }
 
-std::vector<std::string> ViewProviderExtern::getDisplayModes() const
-{
-    return modes;
-}
+std::vector<std::string> ViewProviderExtern::getDisplayModes() const { return modes; }

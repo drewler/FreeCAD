@@ -45,22 +45,22 @@ class Bnd_Box;
  */
 // =========================================================
 
-class STDMESHERS_EXPORT StdMeshers_CartesianParameters3D:  public SMESH_Hypothesis
+class STDMESHERS_EXPORT StdMeshers_CartesianParameters3D: public SMESH_Hypothesis
 {
 public:
-  // Constructor
-  StdMeshers_CartesianParameters3D( int hypId, int studyId, SMESH_Gen * gen );
+    // Constructor
+    StdMeshers_CartesianParameters3D(int hypId, int studyId, SMESH_Gen *gen);
 
-  /*!
+    /*!
    * Sets coordinates of node positions along an axis (countered from 0)
    */
-  void SetGrid(std::vector<double>& xNodes, int axis);
-  /*!
+    void SetGrid(std::vector<double> &xNodes, int axis);
+    /*!
    * Return coordinates of node positions along the three axes
    */
-  void GetGrid(std::vector<double>& xNodes, int axis) const;
+    void GetGrid(std::vector<double> &xNodes, int axis) const;
 
-  /*!
+    /*!
    * \brief Set grid spacing along the three axes
    *  \param spaceFunctions - functions defining spacing values at given point on axis
    *  \param internalPoints - points dividing a grid into parts along each direction
@@ -68,24 +68,22 @@ public:
    * Parameter t of spaceFunction f(t) is a position [0,1] withing bounding box of
    * the shape to mesh
    */
-  void SetGridSpacing(std::vector<std::string>& spaceFunctions,
-                      std::vector<double>&      internalPoints,
-                      const int                 axis);
+    void SetGridSpacing(std::vector<std::string> &spaceFunctions,
+                        std::vector<double> &internalPoints, const int axis);
 
-  void GetGridSpacing(std::vector<std::string>& spaceFunctions,
-                      std::vector<double>&      internalPoints,
-                      const int                 axis) const;
+    void GetGridSpacing(std::vector<std::string> &spaceFunctions,
+                        std::vector<double> &internalPoints, const int axis) const;
 
-  bool IsGridBySpacing(const int axis) const;
+    bool IsGridBySpacing(const int axis) const;
 
-  /*!
+    /*!
    * Set/unset a fixed point, at which a node will be created provided that grid
    * is defined by spacing in all directions
    */
-  void SetFixedPoint(const double p[3], bool toUnset);
-  bool GetFixedPoint(double p[3]) const;
+    void SetFixedPoint(const double p[3], bool toUnset);
+    bool GetFixedPoint(double p[3]) const;
 
-  /*!
+    /*!
    * \brief Computes node coordinates by spacing functions
    *  \param x0 - lower coordinate
    *  \param x1 - upper coordinate
@@ -93,85 +91,77 @@ public:
    *  \param points - internal points
    *  \param coords - the computed coordinates
    */
-  static void ComputeCoordinates(const double              x0,
-                                 const double              x1,
-                                 std::vector<std::string>& spaceFuns,
-                                 std::vector<double>&      points,
-                                 std::vector<double>&      coords,
-                                 const std::string&        axis,
-                                 const double*             xForced=0);
-  /*!
+    static void ComputeCoordinates(const double x0, const double x1,
+                                   std::vector<std::string> &spaceFuns, std::vector<double> &points,
+                                   std::vector<double> &coords, const std::string &axis,
+                                   const double *xForced = 0);
+    /*!
    * Return coordinates of node positions along the three axes.
    * If the grid is defined by spacing functions, the coordinates are computed
    */
-  void GetCoordinates(std::vector<double>& xNodes,
-                      std::vector<double>& yNodes,
-                      std::vector<double>& zNodes,
-                      const Bnd_Box&       bndBox) const;
+    void GetCoordinates(std::vector<double> &xNodes, std::vector<double> &yNodes,
+                        std::vector<double> &zNodes, const Bnd_Box &bndBox) const;
 
-  /*!
+    /*!
    * \brief Set custom direction of axes
    */
-  void SetAxisDirs(const double* the9DirComps);
-  const double* GetAxisDirs() const { return _axisDirs; }
-  /*!
+    void SetAxisDirs(const double *the9DirComps);
+    const double *GetAxisDirs() const { return _axisDirs; }
+    /*!
    * \brief Returns axes at which number of hexahedra is maximal
    */
-  static void ComputeOptimalAxesDirs(const TopoDS_Shape& shape,
-                                     const bool          isOrthogonal,
-                                     double              dirCoords[9]);
-  /*!
+    static void ComputeOptimalAxesDirs(const TopoDS_Shape &shape, const bool isOrthogonal,
+                                       double dirCoords[9]);
+    /*!
    * Set size threshold. A polyhedral cell got by cutting an initial
    * hexahedron by geometry boundary is considered small and is removed if
    * it's size is \athreshold times less than the size of the initial hexahedron.
    */
-  void SetSizeThreshold(const double threshold);
-  /*!
+    void SetSizeThreshold(const double threshold);
+    /*!
    * \brief Return size threshold
    */
-  double GetSizeThreshold() const;
+    double GetSizeThreshold() const;
 
-  /*!
+    /*!
    * \brief Enables implementation of geometrical edges into the mesh. If this feature
    *        is disabled, sharp edges of the shape are lost ("smoothed") in the mesh if
    *        they don't coincide with the grid lines
    */
-  void SetToAddEdges(bool toAdd);
-  bool GetToAddEdges() const;
+    void SetToAddEdges(bool toAdd);
+    bool GetToAddEdges() const;
 
-  /*!
+    /*!
    * \brief Return true if parameters are well defined
    */
-  bool IsDefined() const;
+    bool IsDefined() const;
 
-  /*!
+    /*!
    * \brief Persistence methods
    */
-  virtual std::ostream & SaveTo(std::ostream & save);
-  virtual std::istream & LoadFrom(std::istream & load);
+    virtual std::ostream &SaveTo(std::ostream &save);
+    virtual std::istream &LoadFrom(std::istream &load);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by the mesh built on the geometry
    */
-  virtual bool SetParametersByMesh(const SMESH_Mesh* theMesh, const TopoDS_Shape& theShape);
+    virtual bool SetParametersByMesh(const SMESH_Mesh *theMesh, const TopoDS_Shape &theShape);
 
-  /*!
+    /*!
    * \brief Initialize my parameter values by default parameters.
    */
-  virtual bool SetParametersByDefaults(const TDefaults& dflts, const SMESH_Mesh* theMesh=0);
+    virtual bool SetParametersByDefaults(const TDefaults &dflts, const SMESH_Mesh *theMesh = 0);
 
- protected:
+protected:
+    std::vector<double> _coords[3];
+    std::vector<std::string> _spaceFunctions[3];
+    std::vector<double> _internalPoints[3];
 
-  std::vector<double>      _coords[3];
-  std::vector<std::string> _spaceFunctions[3];
-  std::vector<double>      _internalPoints[3];
+    double _axisDirs[9];
+    double _fixedPoint[3];
 
-  double _axisDirs  [9];
-  double _fixedPoint[3];
-
-  double _sizeThreshold;
-  bool   _toAddEdges;
+    double _sizeThreshold;
+    bool _toAddEdges;
 };
 
 #endif
-

@@ -22,24 +22,24 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <Inventor/SbSphere.h>
-# include <Inventor/SbString.h>
-# include <Inventor/SoInteraction.h>
-# include <Inventor/actions/SoGetBoundingBoxAction.h>
-# include <Inventor/actions/SoToVRML2Action.h>
-# include <Inventor/actions/SoWriteAction.h>
-# include <Inventor/fields/SoMFNode.h>
-# include <Inventor/fields/SoSFNode.h>
-# include <Inventor/nodes/SoGroup.h>
-# include <Inventor/VRMLnodes/SoVRMLGroup.h>
-# include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
-# include <Inventor/VRMLnodes/SoVRMLNormal.h>
-# include <Inventor/VRMLnodes/SoVRMLParent.h>
-# include <Inventor/VRMLnodes/SoVRMLShape.h>
-# include <QDir>
-# include <QProcess>
-# include <QTemporaryFile>
-# include <sstream>
+#include <Inventor/SbSphere.h>
+#include <Inventor/SbString.h>
+#include <Inventor/SoInteraction.h>
+#include <Inventor/actions/SoGetBoundingBoxAction.h>
+#include <Inventor/actions/SoToVRML2Action.h>
+#include <Inventor/actions/SoWriteAction.h>
+#include <Inventor/fields/SoMFNode.h>
+#include <Inventor/fields/SoSFNode.h>
+#include <Inventor/nodes/SoGroup.h>
+#include <Inventor/VRMLnodes/SoVRMLGroup.h>
+#include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
+#include <Inventor/VRMLnodes/SoVRMLNormal.h>
+#include <Inventor/VRMLnodes/SoVRMLParent.h>
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
+#include <QDir>
+#include <QProcess>
+#include <QTemporaryFile>
+#include <sstream>
 #endif
 
 #include <Base/FileInfo.h>
@@ -83,119 +83,116 @@ using namespace Gui::PropertyEditor;
 static SbBool init_done = false;
 static SoGroup *storage = nullptr;
 
-SbBool Gui::SoFCDB::isInitialized()
-{
-    return init_done;
-}
+SbBool Gui::SoFCDB::isInitialized() { return init_done; }
 
 void Gui::SoFCDB::init()
 {
-    SoInteraction                   ::init();
-    RotTransDragger                 ::initClass();
-    SoGLRenderActionElement         ::initClass();
-    SoFCInteractiveElement          ::initClass();
-    SoGLWidgetElement               ::initClass();
-    SoFCColorBarBase                ::initClass();
-    SoFCColorBar                    ::initClass();
-    SoFCColorLegend                 ::initClass();
-    SoFCColorGradient               ::initClass();
-    SoFCBackgroundGradient          ::initClass();
-    SoFCBoundingBox                 ::initClass();
-    SoFCSelection                   ::initClass();
-    SoFCUnifiedSelection            ::initClass();
-    SoFCHighlightAction             ::initClass();
-    SoFCSelectionAction             ::initClass();
-    SoFCDocumentAction              ::initClass();
-    SoGLWidgetNode                  ::initClass();
-    SoGLVBOActivatedElement         ::initClass();
-    SoFCEnableSelectionAction       ::initClass();
-    SoFCEnableHighlightAction       ::initClass();
-    SoFCSelectionColorAction        ::initClass();
-    SoFCHighlightColorAction        ::initClass();
-    SoFCDocumentObjectAction        ::initClass();
-    SoGLSelectAction                ::initClass();
-    SoVisibleFaceAction             ::initClass();
-    SoUpdateVBOAction               ::initClass();
-    SoBoxSelectionRenderAction      ::initClass();
-    SoFCVectorizeSVGAction          ::initClass();
-    SoFCVectorizeU3DAction          ::initClass();
-    SoHighlightElementAction        ::initClass();
-    SoSelectionElementAction        ::initClass();
-    SoVRMLAction                    ::initClass();
-    SoSkipBoundingGroup             ::initClass();
-    SoTextLabel                     ::initClass();
-    SoColorBarLabel                 ::initClass();
-    SoStringLabel                   ::initClass();
-    SoFrameLabel                    ::initClass();
-    TranslateManip                  ::initClass();
-    SoShapeScale                    ::initClass();
-    SoAxisCrossKit                  ::initClass();
-    SoRegPoint                      ::initClass();
-    SoDrawingGrid                   ::initClass();
-    SoAutoZoomTranslation           ::initClass();
-    MarkerBitmaps                   ::initClass();
-    SoFCCSysDragger                 ::initClass();
-    SmSwitchboard                   ::initClass();
-    SoFCSeparator                   ::initClass();
-    SoFCSelectionRoot               ::initClass();
-    SoFCPathAnnotation              ::initClass();
-    SoMouseWheelEvent               ::initClass();
+    SoInteraction ::init();
+    RotTransDragger ::initClass();
+    SoGLRenderActionElement ::initClass();
+    SoFCInteractiveElement ::initClass();
+    SoGLWidgetElement ::initClass();
+    SoFCColorBarBase ::initClass();
+    SoFCColorBar ::initClass();
+    SoFCColorLegend ::initClass();
+    SoFCColorGradient ::initClass();
+    SoFCBackgroundGradient ::initClass();
+    SoFCBoundingBox ::initClass();
+    SoFCSelection ::initClass();
+    SoFCUnifiedSelection ::initClass();
+    SoFCHighlightAction ::initClass();
+    SoFCSelectionAction ::initClass();
+    SoFCDocumentAction ::initClass();
+    SoGLWidgetNode ::initClass();
+    SoGLVBOActivatedElement ::initClass();
+    SoFCEnableSelectionAction ::initClass();
+    SoFCEnableHighlightAction ::initClass();
+    SoFCSelectionColorAction ::initClass();
+    SoFCHighlightColorAction ::initClass();
+    SoFCDocumentObjectAction ::initClass();
+    SoGLSelectAction ::initClass();
+    SoVisibleFaceAction ::initClass();
+    SoUpdateVBOAction ::initClass();
+    SoBoxSelectionRenderAction ::initClass();
+    SoFCVectorizeSVGAction ::initClass();
+    SoFCVectorizeU3DAction ::initClass();
+    SoHighlightElementAction ::initClass();
+    SoSelectionElementAction ::initClass();
+    SoVRMLAction ::initClass();
+    SoSkipBoundingGroup ::initClass();
+    SoTextLabel ::initClass();
+    SoColorBarLabel ::initClass();
+    SoStringLabel ::initClass();
+    SoFrameLabel ::initClass();
+    TranslateManip ::initClass();
+    SoShapeScale ::initClass();
+    SoAxisCrossKit ::initClass();
+    SoRegPoint ::initClass();
+    SoDrawingGrid ::initClass();
+    SoAutoZoomTranslation ::initClass();
+    MarkerBitmaps ::initClass();
+    SoFCCSysDragger ::initClass();
+    SmSwitchboard ::initClass();
+    SoFCSeparator ::initClass();
+    SoFCSelectionRoot ::initClass();
+    SoFCPathAnnotation ::initClass();
+    SoMouseWheelEvent ::initClass();
 
-    PropertyItem                    ::init();
-    PropertySeparatorItem           ::init();
-    PropertyStringItem              ::init();
-    PropertyFontItem                ::init();
-    PropertyIntegerItem             ::init();
-    PropertyIntegerConstraintItem   ::init();
-    PropertyFloatItem               ::init();
-    PropertyUnitItem                ::init();
-    PropertyFloatConstraintItem     ::init();
-    PropertyPrecisionItem           ::init();
-    PropertyUnitConstraintItem      ::init();
-    PropertyAngleItem               ::init();
-    PropertyBoolItem                ::init();
-    PropertyVectorItem              ::init();
-    PropertyVectorListItem          ::init();
-    PropertyVectorDistanceItem      ::init();
-    PropertyPositionItem            ::init();
-    PropertyDirectionItem           ::init();
-    PropertyMatrixItem              ::init();
-    PropertyPlacementItem           ::init();
-    PropertyRotationItem            ::init();
-    PropertyEnumItem                ::init();
-    PropertyStringListItem          ::init();
-    PropertyFloatListItem           ::init();
-    PropertyIntegerListItem         ::init();
-    PropertyColorItem               ::init();
-    PropertyMaterialItem            ::init();
-    PropertyMaterialListItem        ::init();
-    PropertyFileItem                ::init();
-    PropertyPathItem                ::init();
-    PropertyTransientFileItem       ::init();
-    PropertyLinkItem                ::init();
-    PropertyLinkListItem            ::init();
+    PropertyItem ::init();
+    PropertySeparatorItem ::init();
+    PropertyStringItem ::init();
+    PropertyFontItem ::init();
+    PropertyIntegerItem ::init();
+    PropertyIntegerConstraintItem ::init();
+    PropertyFloatItem ::init();
+    PropertyUnitItem ::init();
+    PropertyFloatConstraintItem ::init();
+    PropertyPrecisionItem ::init();
+    PropertyUnitConstraintItem ::init();
+    PropertyAngleItem ::init();
+    PropertyBoolItem ::init();
+    PropertyVectorItem ::init();
+    PropertyVectorListItem ::init();
+    PropertyVectorDistanceItem ::init();
+    PropertyPositionItem ::init();
+    PropertyDirectionItem ::init();
+    PropertyMatrixItem ::init();
+    PropertyPlacementItem ::init();
+    PropertyRotationItem ::init();
+    PropertyEnumItem ::init();
+    PropertyStringListItem ::init();
+    PropertyFloatListItem ::init();
+    PropertyIntegerListItem ::init();
+    PropertyColorItem ::init();
+    PropertyMaterialItem ::init();
+    PropertyMaterialListItem ::init();
+    PropertyFileItem ::init();
+    PropertyPathItem ::init();
+    PropertyTransientFileItem ::init();
+    PropertyLinkItem ::init();
+    PropertyLinkListItem ::init();
 
-    NavigationStyle                 ::init();
-    UserNavigationStyle             ::init();
-    InventorNavigationStyle         ::init();
-    CADNavigationStyle              ::init();
-    RevitNavigationStyle            ::init();
-    BlenderNavigationStyle          ::init();
-    MayaGestureNavigationStyle      ::init();
-    TouchpadNavigationStyle         ::init();
-    GestureNavigationStyle          ::init();
-    OpenCascadeNavigationStyle      ::init();
-    TinkerCADNavigationStyle        ::init();
+    NavigationStyle ::init();
+    UserNavigationStyle ::init();
+    InventorNavigationStyle ::init();
+    CADNavigationStyle ::init();
+    RevitNavigationStyle ::init();
+    BlenderNavigationStyle ::init();
+    MayaGestureNavigationStyle ::init();
+    TouchpadNavigationStyle ::init();
+    GestureNavigationStyle ::init();
+    OpenCascadeNavigationStyle ::init();
+    TinkerCADNavigationStyle ::init();
 
-    GLGraphicsItem                  ::init();
-    GLFlagWindow                    ::init();
+    GLGraphicsItem ::init();
+    GLFlagWindow ::init();
 
-    SelectionObject                 ::init();
+    SelectionObject ::init();
 
     qRegisterMetaType<Base::Vector3f>("Base::Vector3f");
     qRegisterMetaType<Base::Vector3d>("Base::Vector3d");
     qRegisterMetaType<Base::Quantity>("Base::Quantity");
-    qRegisterMetaType<QList<Base::Quantity> >("Base::QuantityList");
+    qRegisterMetaType<QList<Base::Quantity>>("Base::QuantityList");
     init_done = true;
 
     assert(!storage);
@@ -208,25 +205,25 @@ void Gui::SoFCDB::finish()
     // Coin doesn't provide a mechanism to free static members of own data types.
     // Hence, we need to define a static method e.g. 'finish()' for all new types
     // to invoke the private member function 'atexit_cleanup()'.
-    SoFCColorBarBase                ::finish();
-    SoFCColorBar                    ::finish();
-    SoFCColorLegend                 ::finish();
-    SoFCColorGradient               ::finish();
-    SoFCBackgroundGradient          ::finish();
-    SoFCBoundingBox                 ::finish();
-    SoFCSelection                   ::finish();
-    SoFCHighlightAction             ::finish();
-    SoFCSelectionAction             ::finish();
-    SoFCDocumentAction              ::finish();
-    SoFCDocumentObjectAction        ::finish();
-    SoFCEnableSelectionAction       ::finish();
-    SoFCEnableHighlightAction       ::finish();
-    SoFCSelectionColorAction        ::finish();
-    SoUpdateVBOAction               ::finish();
-    SoFCHighlightColorAction        ::finish();
-    SoFCSeparator                   ::finish();
-    SoFCSelectionRoot               ::finish();
-    SoFCPathAnnotation              ::finish();
+    SoFCColorBarBase ::finish();
+    SoFCColorBar ::finish();
+    SoFCColorLegend ::finish();
+    SoFCColorGradient ::finish();
+    SoFCBackgroundGradient ::finish();
+    SoFCBoundingBox ::finish();
+    SoFCSelection ::finish();
+    SoFCHighlightAction ::finish();
+    SoFCSelectionAction ::finish();
+    SoFCDocumentAction ::finish();
+    SoFCDocumentObjectAction ::finish();
+    SoFCEnableSelectionAction ::finish();
+    SoFCEnableHighlightAction ::finish();
+    SoFCSelectionColorAction ::finish();
+    SoUpdateVBOAction ::finish();
+    SoFCHighlightColorAction ::finish();
+    SoFCSeparator ::finish();
+    SoFCSelectionRoot ::finish();
+    SoFCPathAnnotation ::finish();
 
     storage->unref();
     storage = nullptr;
@@ -234,18 +231,18 @@ void Gui::SoFCDB::finish()
 
 // buffer acrobatics for inventor ****************************************************
 
-namespace {
+namespace
+{
 static std::vector<char> static_buffer;
 
-static void *
-buffer_realloc(void * /*bufptr*/, std::size_t size)
+static void *buffer_realloc(void * /*bufptr*/, std::size_t size)
 {
     static_buffer.resize(size);
     return static_buffer.data();
 }
-}
+} // namespace
 
-const std::string& Gui::SoFCDB::writeNodesToString(SoNode * root)
+const std::string &Gui::SoFCDB::writeNodesToString(SoNode *root)
 {
     SoOutput out;
     static_buffer.resize(1024);
@@ -261,36 +258,30 @@ const std::string& Gui::SoFCDB::writeNodesToString(SoNode * root)
     return cReturnString;
 }
 
-SoNode* replaceSwitches(SoNodeList* children, SoGroup* parent)
+SoNode *replaceSwitches(SoNodeList *children, SoGroup *parent)
 {
-    if (!children) {
-        return parent;
-    }
+    if (!children) { return parent; }
 
-    for (int i=0; i<children->getLength(); i++) {
-        SoNode* node = (*children)[i];
+    for (int i = 0; i < children->getLength(); i++) {
+        SoNode *node = (*children)[i];
         if (node->getTypeId().isDerivedFrom(SoGroup::getClassTypeId())) {
             if (node->getTypeId().isDerivedFrom(SoSwitch::getClassTypeId())) {
-                auto group = static_cast<SoSwitch*>(node);
+                auto group = static_cast<SoSwitch *>(node);
                 int which = group->whichChild.getValue();
-                if (which == SO_SWITCH_NONE)
-                    continue;
+                if (which == SO_SWITCH_NONE) continue;
                 auto newParent = new SoGroup();
                 SoNodeList c;
-                if (which >= 0) {
-                    c.append(group->getChild(which));
-                }
+                if (which >= 0) { c.append(group->getChild(which)); }
                 else {
                     // SO_SWITCH_INHERIT or SO_SWITCH_ALL
-                    for (int i=0; i<group->getNumChildren(); i++)
-                        c.append(group->getChild(i));
+                    for (int i = 0; i < group->getNumChildren(); i++) c.append(group->getChild(i));
                 }
 
                 replaceSwitches(&c, newParent);
                 parent->addChild(newParent);
             }
             else {
-                auto newParent = static_cast<SoGroup*>(node->getTypeId().createInstance());
+                auto newParent = static_cast<SoGroup *>(node->getTypeId().createInstance());
                 replaceSwitches(node->getChildren(), newParent);
                 parent->addChild(newParent);
             }
@@ -303,7 +294,7 @@ SoNode* replaceSwitches(SoNodeList* children, SoGroup* parent)
     return parent;
 }
 
-SoNode* replaceSwitchesInSceneGraph(SoNode* node)
+SoNode *replaceSwitchesInSceneGraph(SoNode *node)
 {
     if (node->getTypeId().isDerivedFrom(SoGroup::getClassTypeId())) {
         return replaceSwitches(node->getChildren(), new SoSeparator);
@@ -312,21 +303,18 @@ SoNode* replaceSwitchesInSceneGraph(SoNode* node)
     return node;
 }
 
-SoNode* Gui::SoFCDB::replaceSwitches(SoNode* node)
-{
-    return replaceSwitchesInSceneGraph(node);
-}
+SoNode *Gui::SoFCDB::replaceSwitches(SoNode *node) { return replaceSwitchesInSceneGraph(node); }
 
-void Gui::SoFCDB::writeToVRML(SoNode* node, std::string& buffer)
+void Gui::SoFCDB::writeToVRML(SoNode *node, std::string &buffer)
 {
-    SoNode* noSwitches = replaceSwitchesInSceneGraph(node);
+    SoNode *noSwitches = replaceSwitchesInSceneGraph(node);
     noSwitches->ref();
     SoVRMLAction vrml2;
     vrml2.setOverrideMode(true);
     vrml2.apply(noSwitches);
     SoToVRML2Action tovrml2;
     tovrml2.apply(noSwitches);
-    SoVRMLGroup* vrmlRoot = tovrml2.getVRML2SceneGraph();
+    SoVRMLGroup *vrmlRoot = tovrml2.getVRML2SceneGraph();
 
     vrmlRoot->setInstancePrefix(SbString("o"));
     vrmlRoot->ref();
@@ -339,7 +327,7 @@ void Gui::SoFCDB::writeToVRML(SoNode* node, std::string& buffer)
     noSwitches->unref();
 }
 
-bool Gui::SoFCDB::writeToVRML(SoNode* node, const char* filename, bool binary)
+bool Gui::SoFCDB::writeToVRML(SoNode *node, const char *filename, bool binary)
 {
     std::string buffer;
     writeToVRML(node, buffer);
@@ -374,7 +362,7 @@ bool Gui::SoFCDB::writeToVRML(SoNode* node, const char* filename, bool binary)
     return false;
 }
 
-bool Gui::SoFCDB::writeToX3D(SoNode* node, const char* filename, bool binary)
+bool Gui::SoFCDB::writeToX3D(SoNode *node, const char *filename, bool binary)
 {
     std::string buffer;
     writeToX3D(node, false, buffer);
@@ -403,16 +391,16 @@ bool Gui::SoFCDB::writeToX3D(SoNode* node, const char* filename, bool binary)
     return false;
 }
 
-bool Gui::SoFCDB::writeToX3D(SoNode* node, bool exportViewpoints, std::string& buffer)
+bool Gui::SoFCDB::writeToX3D(SoNode *node, bool exportViewpoints, std::string &buffer)
 {
-    SoNode* noSwitches = replaceSwitchesInSceneGraph(node);
+    SoNode *noSwitches = replaceSwitchesInSceneGraph(node);
     noSwitches->ref();
     SoVRMLAction vrml2;
     vrml2.setOverrideMode(true);
     vrml2.apply(noSwitches);
     SoToVRML2Action tovrml2;
     tovrml2.apply(noSwitches);
-    SoVRMLGroup* vrmlRoot = tovrml2.getVRML2SceneGraph();
+    SoVRMLGroup *vrmlRoot = tovrml2.getVRML2SceneGraph();
 
     vrmlRoot->setInstancePrefix(SbString("o"));
     vrmlRoot->ref();
@@ -424,20 +412,20 @@ bool Gui::SoFCDB::writeToX3D(SoNode* node, bool exportViewpoints, std::string& b
         sa.setInterest(SoSearchAction::ALL);
         sa.setSearchingAll(true);
         sa.apply(vrmlRoot);
-        SoPathList& paths = sa.getPaths();
-        for (int i=0; i<paths.getLength(); i++) {
-            SoPath* path = paths[i];
-            auto shape = static_cast<SoVRMLShape*>(path->getTail());
-            SoNode* geom = shape->geometry.getValue();
+        SoPathList &paths = sa.getPaths();
+        for (int i = 0; i < paths.getLength(); i++) {
+            SoPath *path = paths[i];
+            auto shape = static_cast<SoVRMLShape *>(path->getTail());
+            SoNode *geom = shape->geometry.getValue();
             if (geom && geom->getTypeId() == SoVRMLIndexedFaceSet::getClassTypeId()) {
-                SoNode* norm = static_cast<SoVRMLIndexedFaceSet*>(geom)->normal.getValue();
+                SoNode *norm = static_cast<SoVRMLIndexedFaceSet *>(geom)->normal.getValue();
                 if (norm && norm->getTypeId() == SoVRMLNormal::getClassTypeId()) {
                     // if empty then nullify the normal field node
-                    if (static_cast<SoVRMLNormal*>(norm)->vector.getNum() == 0)
-                        static_cast<SoVRMLIndexedFaceSet*>(geom)->normal.setValue(nullptr);
+                    if (static_cast<SoVRMLNormal *>(norm)->vector.getNum() == 0)
+                        static_cast<SoVRMLIndexedFaceSet *>(geom)->normal.setValue(nullptr);
                 }
                 else {
-                    static_cast<SoVRMLIndexedFaceSet*>(geom)->creaseAngle.setValue(0.5f);
+                    static_cast<SoVRMLIndexedFaceSet *>(geom)->creaseAngle.setValue(0.5f);
                 }
             }
         }
@@ -458,8 +446,8 @@ bool Gui::SoFCDB::writeToX3D(SoNode* node, bool exportViewpoints, std::string& b
     return true;
 }
 
-void Gui::SoFCDB::writeX3DFields(SoNode* node, std::map<SoNode*, std::string>& nodeMap,
-                                 bool isRoot, int& numDEF, int spaces, std::ostream& out)
+void Gui::SoFCDB::writeX3DFields(SoNode *node, std::map<SoNode *, std::string> &nodeMap,
+                                 bool isRoot, int &numDEF, int spaces, std::ostream &out)
 {
     // remove the VRML prefix from the type name
     std::string type(node->getTypeId().getName().getString());
@@ -469,8 +457,7 @@ void Gui::SoFCDB::writeX3DFields(SoNode* node, std::map<SoNode*, std::string>& n
     if (node->getRefCount() > 1 && !isRoot) {
         SbName name = node->getName();
         std::stringstream str;
-        if (name.getLength() == 0)
-            str << "o" << numDEF++;
+        if (name.getLength() == 0) str << "o" << numDEF++;
         else
             str << name.getString();
 
@@ -478,16 +465,16 @@ void Gui::SoFCDB::writeX3DFields(SoNode* node, std::map<SoNode*, std::string>& n
         out << " DEF=\"" << str.str() << "\"";
     }
 
-    const SoFieldData* fielddata = node->getFieldData();
+    const SoFieldData *fielddata = node->getFieldData();
     if (fielddata) {
         int numFieldNodes = 0;
 
         // process non-SoSFNode and non-SoMFNode fields
-        for (int i=0; i<fielddata->getNumFields(); i++) {
-            SoField* field = fielddata->getField(node, i);
+        for (int i = 0; i < fielddata->getNumFields(); i++) {
+            SoField *field = fielddata->getField(node, i);
             if (!field->isDefault()) {
-                if (!field->isOfType(SoSFNode::getClassTypeId()) &&
-                    !field->isOfType(SoMFNode::getClassTypeId())) {
+                if (!field->isOfType(SoSFNode::getClassTypeId())
+                    && !field->isOfType(SoMFNode::getClassTypeId())) {
                     SbString value;
                     field->get(value);
                     QByteArray ba(value.getString(), value.getLength());
@@ -498,7 +485,9 @@ void Gui::SoFCDB::writeX3DFields(SoNode* node, std::map<SoNode*, std::string>& n
                         ba = ba.simplified();
                     }
 
-                    out << '\n' << Base::blanks(spaces+2) << fielddata->getFieldName(i).getString() << "=\"" << ba.data() << "\" ";
+                    out << '\n'
+                        << Base::blanks(spaces + 2) << fielddata->getFieldName(i).getString()
+                        << "=\"" << ba.data() << "\" ";
                 }
                 else {
                     numFieldNodes++;
@@ -506,47 +495,40 @@ void Gui::SoFCDB::writeX3DFields(SoNode* node, std::map<SoNode*, std::string>& n
             }
         }
 
-        if (numFieldNodes > 0) {
-            out << ">\n";
-        }
+        if (numFieldNodes > 0) { out << ">\n"; }
         else {
             out << "/>\n";
         }
 
         // process SoSFNode or SoMFNode fields
-        for (int i=0; i<fielddata->getNumFields(); i++) {
-            SoField* field = fielddata->getField(node, i);
+        for (int i = 0; i < fielddata->getNumFields(); i++) {
+            SoField *field = fielddata->getField(node, i);
             if (!field->isDefault()) {
                 if (field->isOfType(SoSFNode::getClassTypeId())) {
-                    auto sfNode = static_cast<SoSFNode*>(field);
-                    writeX3DChild(sfNode->getValue(), nodeMap, numDEF, spaces+2, out);
+                    auto sfNode = static_cast<SoSFNode *>(field);
+                    writeX3DChild(sfNode->getValue(), nodeMap, numDEF, spaces + 2, out);
                 }
                 else if (field->isOfType(SoMFNode::getClassTypeId())) {
-                    auto mfNode = static_cast<SoMFNode*>(field);
-                    for (int j=0; j<mfNode->getNum(); j++) {
-                        writeX3DChild(mfNode->getNode(j), nodeMap, numDEF, spaces+2, out);
+                    auto mfNode = static_cast<SoMFNode *>(field);
+                    for (int j = 0; j < mfNode->getNum(); j++) {
+                        writeX3DChild(mfNode->getNode(j), nodeMap, numDEF, spaces + 2, out);
                     }
                 }
             }
         }
 
-        if (numFieldNodes > 0) {
-            out << Base::blanks(spaces) << "</" << type << ">\n";
-        }
+        if (numFieldNodes > 0) { out << Base::blanks(spaces) << "</" << type << ">\n"; }
     }
 }
 
-void Gui::SoFCDB::writeX3DChild(SoNode* node, std::map<SoNode*, std::string>& nodeMap,
-                                int& numDEF, int spaces, std::ostream& out)
+void Gui::SoFCDB::writeX3DChild(SoNode *node, std::map<SoNode *, std::string> &nodeMap, int &numDEF,
+                                int spaces, std::ostream &out)
 {
-    if (!node)
-        return;
+    if (!node) return;
 
     // check if the node is already used
     auto mapIt = nodeMap.find(node);
-    if (mapIt == nodeMap.end()) {
-        writeX3DFields(node, nodeMap, false, numDEF, spaces, out);
-    }
+    if (mapIt == nodeMap.end()) { writeX3DFields(node, nodeMap, false, numDEF, spaces, out); }
     else {
         // remove the VRML prefix from the type name
         std::string sftype(node->getTypeId().getName().getString());
@@ -555,19 +537,22 @@ void Gui::SoFCDB::writeX3DChild(SoNode* node, std::map<SoNode*, std::string>& no
     }
 }
 
-void Gui::SoFCDB::writeX3D(SoVRMLGroup* node, bool exportViewpoints, std::ostream& out)
+void Gui::SoFCDB::writeX3D(SoVRMLGroup *node, bool exportViewpoints, std::ostream &out)
 {
     out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-    out << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
-    out << "<X3D profile=\"Immersive\" version=\"3.2\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema-instance\" "
-           "xsd:noNamespaceSchemaLocation=\"http://www.web3d.org/specifications/x3d-3.2.xsd\" width=\"1280px\"  height=\"1024px\">\n";
+    out << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" "
+           "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
+    out << "<X3D profile=\"Immersive\" version=\"3.2\" "
+           "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema-instance\" "
+           "xsd:noNamespaceSchemaLocation=\"http://www.web3d.org/specifications/x3d-3.2.xsd\" "
+           "width=\"1280px\"  height=\"1024px\">\n";
     out << "  <head>\n"
            "    <meta name=\"generator\" content=\"FreeCAD\"/>\n"
            "    <meta name=\"author\" content=\"\"/>\n"
            "    <meta name=\"company\" content=\"\"/>\n"
            "  </head>\n";
 
-    std::map<SoNode*, std::string> nodeMap;
+    std::map<SoNode *, std::string> nodeMap;
     out << "  <Scene>\n";
 
     // compute a sensible view point
@@ -576,30 +561,37 @@ void Gui::SoFCDB::writeX3D(SoVRMLGroup* node, bool exportViewpoints, std::ostrea
     SbBox3f bbox = bboxAction.getBoundingBox();
     SbSphere bs;
     bs.circumscribe(bbox);
-    const SbVec3f& cnt = bs.getCenter();
+    const SbVec3f &cnt = bs.getCenter();
     float dist = 2.4f * bs.getRadius();
     float dist3 = 0.577350f * dist; // sqrt(1/3) * dist
 
     if (exportViewpoints) {
-        auto viewpoint = [&out](const char* text, const SbVec3f& cnt,
-                                const SbVec3f& pos, const SbRotation& rot) {
-            SbVec3f axis; float angle;
+        auto viewpoint = [&out](const char *text, const SbVec3f &cnt, const SbVec3f &pos,
+                                const SbRotation &rot) {
+            SbVec3f axis;
+            float angle;
             rot.getValue(axis, angle);
-            out << "    <Viewpoint id=\"" << text
-                << "\" centerOfRotation=\"" << cnt[0] << " " << cnt[1] << " " << cnt[2]
-                << "\" position=\"" << pos[0] << " " << pos[1] << " " << pos[2]
-                << "\" orientation=\"" << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle
-                << "\" description=\"camera\" fieldOfView=\"0.9\">"
+            out << "    <Viewpoint id=\"" << text << "\" centerOfRotation=\"" << cnt[0] << " "
+                << cnt[1] << " " << cnt[2] << "\" position=\"" << pos[0] << " " << pos[1] << " "
+                << pos[2] << "\" orientation=\"" << axis[0] << " " << axis[1] << " " << axis[2]
+                << " " << angle << "\" description=\"camera\" fieldOfView=\"0.9\">"
                 << "</Viewpoint>\n";
         };
 
-        viewpoint("Iso", cnt, SbVec3f(cnt[0] + dist3, cnt[1] - dist3, cnt[2] + dist3), Camera::rotation(Camera::Isometric));
-        viewpoint("Front", cnt, SbVec3f(cnt[0], cnt[1] - dist, cnt[2]), Camera::rotation(Camera::Front));
-        viewpoint("Back", cnt, SbVec3f(cnt[0], cnt[1] + dist, cnt[2]), Camera::rotation(Camera::Rear));
-        viewpoint("Right", cnt, SbVec3f(cnt[0] + dist, cnt[1], cnt[2]), Camera::rotation(Camera::Right));
-        viewpoint("Left", cnt, SbVec3f(cnt[0] - dist, cnt[1], cnt[2]), Camera::rotation(Camera::Left));
-        viewpoint("Top", cnt, SbVec3f(cnt[0], cnt[1], cnt[2] + dist), Camera::rotation(Camera::Top));
-        viewpoint("Bottom", cnt, SbVec3f(cnt[0], cnt[1], cnt[2] - dist), Camera::rotation(Camera::Bottom));
+        viewpoint("Iso", cnt, SbVec3f(cnt[0] + dist3, cnt[1] - dist3, cnt[2] + dist3),
+                  Camera::rotation(Camera::Isometric));
+        viewpoint("Front", cnt, SbVec3f(cnt[0], cnt[1] - dist, cnt[2]),
+                  Camera::rotation(Camera::Front));
+        viewpoint("Back", cnt, SbVec3f(cnt[0], cnt[1] + dist, cnt[2]),
+                  Camera::rotation(Camera::Rear));
+        viewpoint("Right", cnt, SbVec3f(cnt[0] + dist, cnt[1], cnt[2]),
+                  Camera::rotation(Camera::Right));
+        viewpoint("Left", cnt, SbVec3f(cnt[0] - dist, cnt[1], cnt[2]),
+                  Camera::rotation(Camera::Left));
+        viewpoint("Top", cnt, SbVec3f(cnt[0], cnt[1], cnt[2] + dist),
+                  Camera::rotation(Camera::Top));
+        viewpoint("Bottom", cnt, SbVec3f(cnt[0], cnt[1], cnt[2] - dist),
+                  Camera::rotation(Camera::Bottom));
     }
 
     int numDEF = 0;
@@ -608,11 +600,10 @@ void Gui::SoFCDB::writeX3D(SoVRMLGroup* node, bool exportViewpoints, std::ostrea
     out << "</X3D>\n";
 }
 
-bool Gui::SoFCDB::writeToX3DOM(SoNode* node, std::string& buffer)
+bool Gui::SoFCDB::writeToX3DOM(SoNode *node, std::string &buffer)
 {
     std::string x3d;
-    if (!writeToX3D(node, true, x3d))
-        return false;
+    if (!writeToX3D(node, true, x3d)) return false;
 
     // remove the first two lines from the x3d output as this duplicates
     // the xml and doctype header
@@ -622,15 +613,19 @@ bool Gui::SoFCDB::writeToX3DOM(SoNode* node, std::string& buffer)
 
     std::stringstream out;
     out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
+        << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" "
+           "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
     out << "<html xmlns='http://www.w3.org/1999/xhtml'>\n"
         << "  <head>\n"
-        << "    <script type='text/javascript' src='http://www.x3dom.org/download/x3dom.js'> </script>\n"
-        << "    <link rel='stylesheet' type='text/css' href='http://www.x3dom.org/download/x3dom.css'></link>\n"
+        << "    <script type='text/javascript' src='http://www.x3dom.org/download/x3dom.js'> "
+           "</script>\n"
+        << "    <link rel='stylesheet' type='text/css' "
+           "href='http://www.x3dom.org/download/x3dom.css'></link>\n"
         << "  </head>\n";
 
-    auto onclick = [&out](const char* text) {
-        out << "  <button onclick=\"document.getElementById('" << text << "').setAttribute('set_bind','true');\">" << text << "</button>\n";
+    auto onclick = [&out](const char *text) {
+        out << "  <button onclick=\"document.getElementById('" << text
+            << "').setAttribute('set_bind','true');\">" << text << "</button>\n";
     };
 
     onclick("Iso");
@@ -650,7 +645,7 @@ bool Gui::SoFCDB::writeToX3DOM(SoNode* node, std::string& buffer)
     return true;
 }
 
-bool Gui::SoFCDB::writeToFile(SoNode* node, const char* filename, bool binary)
+bool Gui::SoFCDB::writeToFile(SoNode *node, const char *filename, bool binary)
 {
     bool ret = false;
     Base::FileInfo fi(filename);
@@ -658,15 +653,13 @@ bool Gui::SoFCDB::writeToFile(SoNode* node, const char* filename, bool binary)
     // Write VRML V2.0
     if (fi.hasExtension("wrl") || fi.hasExtension("vrml") || fi.hasExtension("wrz")) {
         // If 'wrz' is set then force compression
-        if (fi.hasExtension("wrz"))
-            binary = true;
+        if (fi.hasExtension("wrz")) binary = true;
 
         ret = SoFCDB::writeToVRML(node, filename, binary);
     }
     else if (fi.hasExtension("x3d") || fi.hasExtension("x3dz")) {
         // If 'x3dz' is set then force compression
-        if (fi.hasExtension("x3dz"))
-            binary = true;
+        if (fi.hasExtension("x3dz")) binary = true;
 
         ret = SoFCDB::writeToX3D(node, filename, binary);
     }
@@ -697,8 +690,8 @@ bool Gui::SoFCDB::writeToFile(SoNode* node, const char* filename, bool binary)
     return ret;
 }
 
-SoGroup* Gui::SoFCDB::getStorage()
+SoGroup *Gui::SoFCDB::getStorage()
 {
-  assert(storage); //call init first.
-  return storage;
+    assert(storage); //call init first.
+    return storage;
 }

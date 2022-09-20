@@ -22,12 +22,12 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# ifdef FC_OS_WIN32
-#  include <windows.h>
-# endif
-# include <QMenu>
-# include <QMessageBox>
-# include <QTextStream>
+#ifdef FC_OS_WIN32
+#include <windows.h>
+#endif
+#include <QMenu>
+#include <QMessageBox>
+#include <QTextStream>
 #endif
 
 #include <App/DocumentObject.h>
@@ -50,14 +50,9 @@ PROPERTY_SOURCE(TechDrawGui::ViewProviderProjGroup, TechDrawGui::ViewProviderDra
 //**************************************************************************
 // Construction/Destruction
 
-ViewProviderProjGroup::ViewProviderProjGroup()
-{
-    sPixmap = "TechDraw_TreeProjGroup";
-}
+ViewProviderProjGroup::ViewProviderProjGroup() { sPixmap = "TechDraw_TreeProjGroup"; }
 
-ViewProviderProjGroup::~ViewProviderProjGroup()
-{
-}
+ViewProviderProjGroup::~ViewProviderProjGroup() {}
 
 std::vector<std::string> ViewProviderProjGroup::getDisplayModes() const
 {
@@ -67,7 +62,7 @@ std::vector<std::string> ViewProviderProjGroup::getDisplayModes() const
     return StrList;
 }
 
-void ViewProviderProjGroup::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
+void ViewProviderProjGroup::setupContextMenu(QMenu *menu, QObject *receiver, const char *member)
 {
     Q_UNUSED(menu);
     Q_UNUSED(receiver);
@@ -92,7 +87,8 @@ bool ViewProviderProjGroup::setEdit(int ModNum)
     if (projDlg) {
         projDlg->setCreateMode(false);
         Gui::Control().showDialog(projDlg);
-    } else {
+    }
+    else {
         Gui::Control().showDialog(new TaskDlgProjGroup(getObject(), false));
     }
 
@@ -111,7 +107,7 @@ bool ViewProviderProjGroup::onDelete(const std::vector<std::string> &)
 
     QString bodyMessage;
     QTextStream bodyMessageStream(&bodyMessage);
-    TechDraw::DrawProjGroupItem* Item = nullptr;
+    TechDraw::DrawProjGroupItem *Item = nullptr;
     std::vector<std::string> ViewList;
 
     // get the items in the group
@@ -120,7 +116,7 @@ bool ViewProviderProjGroup::onDelete(const std::vector<std::string> &)
     // iterate over all item to check which ones have a section or detail view
     for (auto ObjectIterator : objs) {
         // get item
-        Item = static_cast<TechDraw::DrawProjGroupItem*>(ObjectIterator);
+        Item = static_cast<TechDraw::DrawProjGroupItem *>(ObjectIterator);
         // get its section views
         auto viewSection = Item->getSectionRefs();
         // add names to a list
@@ -147,32 +143,33 @@ bool ViewProviderProjGroup::onDelete(const std::vector<std::string> &)
 
     // if there are section or detail views we cannot delete because this would break them
     if (!ViewList.empty()) {
-        bodyMessageStream << qApp->translate("Std_Delete",
-            "The group cannot be deleted because its items have the following\nsection or detail views, or leader lines that would get broken:");
+        bodyMessageStream << qApp->translate(
+            "Std_Delete",
+            "The group cannot be deleted because its items have the following\nsection or detail "
+            "views, or leader lines that would get broken:");
         bodyMessageStream << '\n';
-        for (const auto& ListIterator : ViewList)
+        for (const auto &ListIterator : ViewList)
             bodyMessageStream << '\n' << QString::fromUtf8(ListIterator.c_str());
         QMessageBox::warning(Gui::getMainWindow(),
-            qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
-            QMessageBox::Ok);
+                             qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
+                             QMessageBox::Ok);
         return false;
     }
 
-    if (!objs.empty())
-    {
+    if (!objs.empty()) {
         // generate dialog
         bodyMessageStream << qApp->translate("Std_Delete",
-            "The projection group is not empty, therefore\nthe following referencing objects might be lost:");
+                                             "The projection group is not empty, therefore\nthe "
+                                             "following referencing objects might be lost:");
         bodyMessageStream << '\n';
         for (auto ObjIterator : objs)
             bodyMessageStream << '\n' << QString::fromUtf8(ObjIterator->Label.getValue());
         bodyMessageStream << "\n\n" << QObject::tr("Are you sure you want to continue?");
         // show and evaluate dialog
-        int DialogResult = QMessageBox::warning(Gui::getMainWindow(),
-            qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
+        int DialogResult = QMessageBox::warning(
+            Gui::getMainWindow(), qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
             QMessageBox::Yes, QMessageBox::No);
-        if (DialogResult == QMessageBox::Yes)
-            return true;
+        if (DialogResult == QMessageBox::Yes) return true;
         else
             return false;
     }
@@ -189,28 +186,27 @@ bool ViewProviderProjGroup::canDelete(App::DocumentObject *obj) const
     return true;
 }
 
-std::vector<App::DocumentObject*> ViewProviderProjGroup::claimChildren() const
+std::vector<App::DocumentObject *> ViewProviderProjGroup::claimChildren() const
 {
     // Collect any child fields
-    std::vector<App::DocumentObject*> temp;
+    std::vector<App::DocumentObject *> temp;
     const std::vector<App::DocumentObject *> &views = getObject()->Views.getValues();
     try {
-      for (std::vector<App::DocumentObject *>::const_iterator it = views.begin(); it != views.end(); ++it) {
-          temp.push_back(*it);
-      }
-      return temp;
-    } catch (...) {
-        std::vector<App::DocumentObject*> tmp;
+        for (std::vector<App::DocumentObject *>::const_iterator it = views.begin();
+             it != views.end(); ++it) {
+            temp.push_back(*it);
+        }
+        return temp;
+    }
+    catch (...) {
+        std::vector<App::DocumentObject *> tmp;
         return tmp;
     }
 }
 
-TechDraw::DrawProjGroup* ViewProviderProjGroup::getViewObject() const
+TechDraw::DrawProjGroup *ViewProviderProjGroup::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawProjGroup*>(pcObject);
+    return dynamic_cast<TechDraw::DrawProjGroup *>(pcObject);
 }
 
-TechDraw::DrawProjGroup* ViewProviderProjGroup::getObject() const
-{
-    return getViewObject();
-}
+TechDraw::DrawProjGroup *ViewProviderProjGroup::getObject() const { return getViewObject(); }

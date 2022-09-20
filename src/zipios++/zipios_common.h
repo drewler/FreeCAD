@@ -5,26 +5,23 @@
 
 #include <vector>
 
-namespace zipios {
+namespace zipios
+{
 
 using std::vector;
 
-static const char separator = '/' ;
+static const char separator = '/';
 
-template< class Type >
-void operator += ( vector< Type > &v1, const vector< Type > &v2 ) {
-  typename std::vector<Type>::const_iterator cit ;
-  for ( cit = v2.begin() ; cit != v2.end() ; ++cit )
-    v1.push_back( *cit ) ;
+template<class Type> void operator+=(vector<Type> &v1, const vector<Type> &v2)
+{
+    typename std::vector<Type>::const_iterator cit;
+    for (cit = v2.begin(); cit != v2.end(); ++cit) v1.push_back(*cit);
 }
 
-template< class T >
-inline const T& min( const T& a, const T& b ) {
-  return b < a ? b : a ;
-}
+template<class T> inline const T &min(const T &a, const T &b) { return b < a ? b : a; }
 
 
-} // namespace
+} // namespace zipios
 
 #endif
 

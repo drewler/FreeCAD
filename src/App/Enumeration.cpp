@@ -22,8 +22,8 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <cassert>
-# include <cstring>
+#include <cassert>
+#include <cstring>
 #endif
 
 #include <Base/Exception.h>
@@ -32,46 +32,30 @@
 
 using namespace App;
 
-namespace {
-struct StringCopy : public Enumeration::Object {
-    explicit StringCopy(const char* str) : d(str) {
-    }
-    const char* data() const override {
-        return d.data();
-    }
-    bool isEqual(const char* str) const override {
-        return d == str;
-    }
-    bool isCustom() const override {
-        return true;
-    }
+namespace
+{
+struct StringCopy: public Enumeration::Object {
+    explicit StringCopy(const char *str) : d(str) {}
+    const char *data() const override { return d.data(); }
+    bool isEqual(const char *str) const override { return d == str; }
+    bool isCustom() const override { return true; }
 
 private:
     std::string d;
 };
 
-struct StringView : public Enumeration::Object {
-    explicit StringView(const char* str) : d(str) {
-    }
-    const char* data() const override {
-        return d.data();
-    }
-    bool isEqual(const char* str) const override {
-        return d == str;
-    }
-    bool isCustom() const override {
-        return false;
-    }
+struct StringView: public Enumeration::Object {
+    explicit StringView(const char *str) : d(str) {}
+    const char *data() const override { return d.data(); }
+    bool isEqual(const char *str) const override { return d == str; }
+    bool isCustom() const override { return false; }
 
 private:
     std::string_view d;
 };
-}
+} // namespace
 
-Enumeration::Enumeration()
-    : _index(0)
-{
-}
+Enumeration::Enumeration() : _index(0) {}
 
 Enumeration::Enumeration(const Enumeration &other)
 {
@@ -79,15 +63,13 @@ Enumeration::Enumeration(const Enumeration &other)
     _index = other._index;
 }
 
-Enumeration::Enumeration(const char *valStr)
-    : _index(0)
+Enumeration::Enumeration(const char *valStr) : _index(0)
 {
     enumArray.push_back(std::make_shared<StringCopy>(valStr));
     setValue(valStr);
 }
 
-Enumeration::Enumeration(const char **list, const char *valStr)
-    : _index(0)
+Enumeration::Enumeration(const char **list, const char *valStr) : _index(0)
 {
     while (list && *list) {
         enumArray.push_back(std::make_shared<StringView>(*list));
@@ -96,19 +78,15 @@ Enumeration::Enumeration(const char **list, const char *valStr)
     setValue(valStr);
 }
 
-Enumeration::~Enumeration()
-{
-    enumArray.clear();
-}
+Enumeration::~Enumeration() { enumArray.clear(); }
 
 void Enumeration::setEnums(const char **plEnums)
 {
     std::string oldValue;
     bool preserve = (isValid() && plEnums != nullptr);
     if (preserve) {
-        const char* str = getCStr();
-        if (str)
-            oldValue = str;
+        const char *str = getCStr();
+        if (str) oldValue = str;
     }
 
     enumArray.clear();
@@ -118,11 +96,8 @@ void Enumeration::setEnums(const char **plEnums)
     }
 
     // set _index
-    if (_index < 0)
-        _index = 0;
-    if (preserve) {
-        setValue(oldValue);
-    }
+    if (_index < 0) _index = 0;
+    if (preserve) { setValue(oldValue); }
 }
 
 void Enumeration::setEnums(const std::vector<std::string> &values)
@@ -135,9 +110,8 @@ void Enumeration::setEnums(const std::vector<std::string> &values)
     std::string oldValue;
     bool preserve = isValid();
     if (preserve) {
-        const char* str = getCStr();
-        if (str)
-            oldValue = str;
+        const char *str = getCStr();
+        if (str) oldValue = str;
     }
 
     enumArray.clear();
@@ -146,11 +120,8 @@ void Enumeration::setEnums(const std::vector<std::string> &values)
     }
 
     // set _index
-    if (_index < 0)
-        _index = 0;
-    if (preserve) {
-        setValue(oldValue);
-    }
+    if (_index < 0) _index = 0;
+    if (preserve) { setValue(oldValue); }
 }
 
 void Enumeration::setValue(const char *value)
@@ -166,12 +137,10 @@ void Enumeration::setValue(const char *value)
 
 void Enumeration::setValue(long value, bool checkRange)
 {
-    if (value >= 0 && value < countItems()) {
-        _index = value;
-    } else {
-        if (checkRange) {
-            throw Base::ValueError("Out of range");
-        } else {
+    if (value >= 0 && value < countItems()) { _index = value; }
+    else {
+        if (checkRange) { throw Base::ValueError("Out of range"); }
+        else {
             _index = value;
         }
     }
@@ -181,41 +150,33 @@ bool Enumeration::isValue(const char *value) const
 {
     int i = getInt();
 
-    if (i == -1) {
-        return false;
-    } else {
+    if (i == -1) { return false; }
+    else {
         return enumArray[i]->isEqual(value);
     }
 }
 
 bool Enumeration::contains(const char *value) const
 {
-    if (!isValid()) {
-        return false;
-    }
+    if (!isValid()) { return false; }
 
-    for (const auto& it : enumArray) {
-        if (it->isEqual(value))
-            return true;
+    for (const auto &it : enumArray) {
+        if (it->isEqual(value)) return true;
     }
 
     return false;
 }
 
-const char * Enumeration::getCStr() const
+const char *Enumeration::getCStr() const
 {
-    if (!isValid() || _index < 0 || _index >= countItems()) {
-        return nullptr;
-    }
+    if (!isValid() || _index < 0 || _index >= countItems()) { return nullptr; }
 
     return enumArray[_index]->data();
 }
 
 int Enumeration::getInt() const
 {
-    if (!isValid() || _index < 0 || _index >= countItems()) {
-        return -1;
-    }
+    if (!isValid() || _index < 0 || _index >= countItems()) { return -1; }
 
     return _index;
 }
@@ -223,15 +184,11 @@ int Enumeration::getInt() const
 std::vector<std::string> Enumeration::getEnumVector() const
 {
     std::vector<std::string> list;
-    for (const auto& it : enumArray)
-        list.emplace_back(it->data());
+    for (const auto &it : enumArray) list.emplace_back(it->data());
     return list;
 }
 
-bool Enumeration::hasEnums() const
-{
-    return (!enumArray.empty());
-}
+bool Enumeration::hasEnums() const { return (!enumArray.empty()); }
 
 bool Enumeration::isValid() const
 {
@@ -241,24 +198,21 @@ bool Enumeration::isValid() const
 int Enumeration::maxValue() const
 {
     int num = -1;
-    if (!enumArray.empty())
-        num = static_cast<int>(enumArray.size()) - 1;
+    if (!enumArray.empty()) num = static_cast<int>(enumArray.size()) - 1;
     return num;
 }
 
 bool Enumeration::isCustom() const
 {
-    for (const auto& it : enumArray) {
-        if (it->isCustom())
-            return true;
+    for (const auto &it : enumArray) {
+        if (it->isCustom()) return true;
     }
     return false;
 }
 
-Enumeration & Enumeration::operator=(const Enumeration &other)
+Enumeration &Enumeration::operator=(const Enumeration &other)
 {
-    if (this == &other)
-        return *this;
+    if (this == &other) return *this;
 
     enumArray = other.enumArray;
     _index = other._index;
@@ -268,30 +222,20 @@ Enumeration & Enumeration::operator=(const Enumeration &other)
 
 bool Enumeration::operator==(const Enumeration &other) const
 {
-    if (_index != other._index || enumArray.size() != other.enumArray.size()) {
-        return false;
-    }
+    if (_index != other._index || enumArray.size() != other.enumArray.size()) { return false; }
     for (size_t i = 0; i < enumArray.size(); ++i) {
-        if (enumArray[i]->data() == other.enumArray[i]->data())
-            continue;
-        if (!enumArray[i]->data() || !other.enumArray[i]->data())
-            return false;
-        if (!enumArray[i]->isEqual(other.enumArray[i]->data()))
-            return false;
+        if (enumArray[i]->data() == other.enumArray[i]->data()) continue;
+        if (!enumArray[i]->data() || !other.enumArray[i]->data()) return false;
+        if (!enumArray[i]->isEqual(other.enumArray[i]->data())) return false;
     }
     return true;
 }
 
 bool Enumeration::operator==(const char *other) const
 {
-    if (!getCStr()) {
-        return false;
-    }
+    if (!getCStr()) { return false; }
 
     return (strcmp(getCStr(), other) == 0);
 }
 
-int Enumeration::countItems() const
-{
-    return static_cast<int>(enumArray.size());
-}
+int Enumeration::countItems() const { return static_cast<int>(enumArray.size()); }

@@ -23,8 +23,8 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <QPixmap>
-# include <QDialog>
+#include <QPixmap>
+#include <QDialog>
 #endif
 
 #include <Gui/BitmapFactory.h>
@@ -38,14 +38,14 @@
 using namespace SketcherGui;
 
 ConstraintMultiFilterDialog::ConstraintMultiFilterDialog()
-  : QDialog(Gui::getMainWindow()), ui(new Ui_ConstraintMultiFilterDialog)
+    : QDialog(Gui::getMainWindow()), ui(new Ui_ConstraintMultiFilterDialog)
 {
     ui->setupUi(this);
 
     // make filter items checkable
     ui->listMultiFilter->blockSignals(true);
-    for(int i = 0; i < ui->listMultiFilter->count(); i++) {
-        QListWidgetItem* item = ui->listMultiFilter->item(i);
+    for (int i = 0; i < ui->listMultiFilter->count(); i++) {
+        QListWidgetItem *item = ui->listMultiFilter->item(i);
 
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 
@@ -56,18 +56,15 @@ ConstraintMultiFilterDialog::ConstraintMultiFilterDialog()
     QMetaObject::connectSlotsByName(this);
 }
 
-ConstraintMultiFilterDialog::~ConstraintMultiFilterDialog()
-{
-}
+ConstraintMultiFilterDialog::~ConstraintMultiFilterDialog() {}
 
-void ConstraintMultiFilterDialog::setMultiFilter(const FilterValueBitset & bitset)
+void ConstraintMultiFilterDialog::setMultiFilter(const FilterValueBitset &bitset)
 {
     ui->listMultiFilter->blockSignals(true);
-    for(int i = 0; i < ui->listMultiFilter->count(); i++) {
-        QListWidgetItem* item = ui->listMultiFilter->item(i);
+    for (int i = 0; i < ui->listMultiFilter->count(); i++) {
+        QListWidgetItem *item = ui->listMultiFilter->item(i);
 
-        if(bitset[i])
-            item->setCheckState(Qt::Checked);
+        if (bitset[i]) item->setCheckState(Qt::Checked);
         else
             item->setCheckState(Qt::Unchecked);
     }
@@ -78,18 +75,16 @@ FilterValueBitset ConstraintMultiFilterDialog::getMultiFilter()
 {
     FilterValueBitset tmpBitset;
 
-    for(int i = 0; i < ui->listMultiFilter->count(); i++) {
-        QListWidgetItem* item = ui->listMultiFilter->item(i);
+    for (int i = 0; i < ui->listMultiFilter->count(); i++) {
+        QListWidgetItem *item = ui->listMultiFilter->item(i);
 
-        if(item->checkState() == Qt::Checked)
-            tmpBitset.set(i);
+        if (item->checkState() == Qt::Checked) tmpBitset.set(i);
     }
 
     return tmpBitset;
-
 }
 
-void ConstraintMultiFilterDialog::on_listMultiFilter_itemChanged(QListWidgetItem * item)
+void ConstraintMultiFilterDialog::on_listMultiFilter_itemChanged(QListWidgetItem *item)
 {
     int filterindex = ui->listMultiFilter->row(item);
 
@@ -97,35 +92,33 @@ void ConstraintMultiFilterDialog::on_listMultiFilter_itemChanged(QListWidgetItem
 
     ui->listMultiFilter->blockSignals(true);
 
-    for(int i = 0; i < ui->listMultiFilter->count(); i++) {
+    for (int i = 0; i < ui->listMultiFilter->count(); i++) {
         // any filter comprised on the filter of the activated item, gets the same check state
-        if(itemAggregate[i])
-            ui->listMultiFilter->item(i)->setCheckState(item->checkState());
+        if (itemAggregate[i]) ui->listMultiFilter->item(i)->setCheckState(item->checkState());
 
         // if unchecking, in addition uncheck any group comprising the unchecked item
-        if(item->checkState() == Qt::Unchecked) {
-            if(filterAggregates[i][filterindex])
-                 ui->listMultiFilter->item(i)->setCheckState(Qt::Unchecked);
+        if (item->checkState() == Qt::Unchecked) {
+            if (filterAggregates[i][filterindex])
+                ui->listMultiFilter->item(i)->setCheckState(Qt::Unchecked);
         }
     }
 
     // Now that all filters are correctly updated to match dependencies,
     // if checking, in addition check any group comprising all items that are checked, and check it if all checked.
-    if(item->checkState() == Qt::Checked) {
-        for(int i = 0; i < ui->listMultiFilter->count(); i++) {
-            if(filterAggregates[i][filterindex]) { // only for groups comprising the changed filter
+    if (item->checkState() == Qt::Checked) {
+        for (int i = 0; i < ui->listMultiFilter->count(); i++) {
+            if (filterAggregates[i][filterindex]) { // only for groups comprising the changed filter
                 bool mustBeChecked = true;
 
-                for(int j = 0; j < FilterValueLength; j++) {
-                    if (i == j)
-                        continue;
+                for (int j = 0; j < FilterValueLength; j++) {
+                    if (i == j) continue;
 
                     if (filterAggregates[i][j]) // if it is in group
-                        mustBeChecked = mustBeChecked && ui->listMultiFilter->item(j)->checkState() == Qt::Checked;
+                        mustBeChecked = mustBeChecked
+                            && ui->listMultiFilter->item(j)->checkState() == Qt::Checked;
                 }
 
-                if(mustBeChecked)
-                    ui->listMultiFilter->item(i)->setCheckState(Qt::Checked);
+                if (mustBeChecked) ui->listMultiFilter->item(i)->setCheckState(Qt::Checked);
             }
         }
     }
@@ -136,16 +129,13 @@ void ConstraintMultiFilterDialog::on_listMultiFilter_itemChanged(QListWidgetItem
 void ConstraintMultiFilterDialog::setCheckStateAll(Qt::CheckState state)
 {
     ui->listMultiFilter->blockSignals(true);
-    for(int i = 0; i < ui->listMultiFilter->count(); i++) {
-       ui->listMultiFilter->item(i)->setCheckState(state);
+    for (int i = 0; i < ui->listMultiFilter->count(); i++) {
+        ui->listMultiFilter->item(i)->setCheckState(state);
     }
     ui->listMultiFilter->blockSignals(false);
 }
 
-void ConstraintMultiFilterDialog::on_checkAllButton_clicked(bool)
-{
-    setCheckStateAll(Qt::Checked);
-}
+void ConstraintMultiFilterDialog::on_checkAllButton_clicked(bool) { setCheckStateAll(Qt::Checked); }
 
 void ConstraintMultiFilterDialog::on_uncheckAllButton_clicked(bool)
 {

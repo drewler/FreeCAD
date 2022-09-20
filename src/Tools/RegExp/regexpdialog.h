@@ -30,11 +30,11 @@
 
 class RegExpSyntaxHighlighter;
 class Ui_RegExpDialog;
-class RegExpDialog : public QDialog
+class RegExpDialog: public QDialog
 {
     Q_OBJECT
 public:
-    RegExpDialog(QWidget* parent = 0);
+    RegExpDialog(QWidget *parent = 0);
     ~RegExpDialog();
 
     void about();
@@ -43,21 +43,21 @@ protected Q_SLOTS:
     void performRegExp();
 
 private:
-    RegExpSyntaxHighlighter* rxhilighter;
-    Ui_RegExpDialog* ui;
+    RegExpSyntaxHighlighter *rxhilighter;
+    Ui_RegExpDialog *ui;
 };
 
 // -------------------------------------------------------------
 
-class RegExpSyntaxHighlighter : public QSyntaxHighlighter
+class RegExpSyntaxHighlighter: public QSyntaxHighlighter
 {
 public:
-    RegExpSyntaxHighlighter (QTextEdit * textEdit);
+    RegExpSyntaxHighlighter(QTextEdit *textEdit);
     ~RegExpSyntaxHighlighter();
 
-    void highlightBlock (const QString & text);
+    void highlightBlock(const QString &text);
     //int highlightParagraph ( const QString & text, int endStateOfLastPara );
-    void highlightMatchedText( const QRegExp& );
+    void highlightMatchedText(const QRegExp &);
     void resethighlight();
 
 private:

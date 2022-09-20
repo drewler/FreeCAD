@@ -28,22 +28,26 @@
 #include <Eigen/Eigenvalues>
 
 // -------------------------------------------------------------------------------
-namespace MeshCoreFit {
+namespace MeshCoreFit
+{
 
-using Matrix5x5 = Eigen::Matrix<double,5,5,Eigen::RowMajor>;
+using Matrix5x5 = Eigen::Matrix<double, 5, 5, Eigen::RowMajor>;
 
 /**
  * Best-fit cylinder for a given set of points. 
  * Doesn't expect points on any top or bottom end-planes, only points on the side surface
  */
-class MeshExport CylinderFit : public MeshCore::Approximation
+class MeshExport CylinderFit: public MeshCore::Approximation
 {
 protected:
-	// Solution 'direction' enumeration
-	enum SolutionD	{solL = 0,	// solution L: L is biggest axis component and L = f(M,N)
-					 solM = 1,	// solution M: M is biggest axis component and M = f(L,N)
-					 solN = 2	// solution N: N is biggest axis component and N = f(L,M)
-					};
+    // Solution 'direction' enumeration
+    enum SolutionD
+    {
+        solL = 0, // solution L: L is biggest axis component and L = f(M,N)
+        solM = 1, // solution M: M is biggest axis component and M = f(L,N)
+        solN = 2  // solution N: N is biggest axis component and N = f(L,M)
+    };
+
 public:
     /**
      * Construction
@@ -62,12 +66,13 @@ public:
      * Set approximations before calling Fit(). This version computes the radius
 	 * using the given axis and the existing surface points.
      */
-	void SetApproximations(const Base::Vector3d &base, const Base::Vector3d &axis);
+    void SetApproximations(const Base::Vector3d &base, const Base::Vector3d &axis);
     /**
 	 * Set iteration convergence criteria for the fit if special values are needed.
 	 * The default values set in the constructor are suitable for most uses
      */
-	void SetConvergenceCriteria(double posConvLimit, double dirConvLimit, double vConvLimit, int maxIter);
+    void SetConvergenceCriteria(double posConvLimit, double dirConvLimit, double vConvLimit,
+                                int maxIter);
     /**
      * Returns the radius of the fitted cylinder. If Fit() has not been called then zero is returned.
      */
@@ -83,7 +88,7 @@ public:
     /**
      * Returns the number of iterations that Fit() needed to converge. If Fit() has not been called then zero is returned.
      */
-	int GetNumIterations() const;
+    int GetNumIterations() const;
     /**
      * Fit a cylinder into the given points. If the fit fails FLOAT_MAX is returned.
      */
@@ -107,62 +112,67 @@ protected:
     /**
 	 * Compute approximations for the parameters using all points using the line fit method
      */
-	void ComputeApproximationsLine();
-   /**
+    void ComputeApproximationsLine();
+    /**
 	 * Checks initial parameter values and defines the best solution direction to use
      */
-	void findBestSolDirection(SolutionD &solDir);
+    void findBestSolDirection(SolutionD &solDir);
     /**
 	 * Compute the mean X-value of all of the points (observed/input surface points)
      */
-	double meanXObs();
+    double meanXObs();
     /**
 	 * Compute the mean Y-value of all of the points (observed/input surface points)
      */
-	double meanYObs();
+    double meanYObs();
     /**
 	 * Compute the mean Z-value of all of the points (observed/input surface points)
      */
-	double meanZObs();
-   /**
+    double meanZObs();
+    /**
 	 * Set up the normal equations
      */
-	void setupNormalEquationMatrices(SolutionD solDir, const std::vector< Base::Vector3d > &residuals, Matrix5x5 &atpa, Eigen::VectorXd &atpl) const;
-	/**
+    void setupNormalEquationMatrices(SolutionD solDir, const std::vector<Base::Vector3d> &residuals,
+                                     Matrix5x5 &atpa, Eigen::VectorXd &atpl) const;
+    /**
 	 * Sets up contributions of given observation to the normal equation matrices.
      */
-	void setupObservation(SolutionD solDir, const Base::Vector3f &point, const Base::Vector3d &residual, double a[5], double &f0, double &qw, double b[3]) const;
-   /**
+    void setupObservation(SolutionD solDir, const Base::Vector3f &point,
+                          const Base::Vector3d &residual, double a[5], double &f0, double &qw,
+                          double b[3]) const;
+    /**
 	 * Computes contribution of the given observation equation on the normal equation matrices
      */
-	void addObservationU(double a[5], double li, double pi, Matrix5x5 &atpa, Eigen::VectorXd &atpl) const;
-   /**
+    void addObservationU(double a[5], double li, double pi, Matrix5x5 &atpa,
+                         Eigen::VectorXd &atpl) const;
+    /**
 	 * Set the lower part of the normal matrix equal to the upper part
      */
-	void setLowerPart(Matrix5x5 &atpa) const;
+    void setLowerPart(Matrix5x5 &atpa) const;
 
-   /**
+    /**
 	 * Compute the residuals and sigma0 and check the residual convergence
      */
-	bool computeResiduals(SolutionD solDir, const Eigen::VectorXd &x, std::vector< Base::Vector3d > &residuals, double &sigma0, double vConvLimit, bool &vConverged) const;
-   /**
+    bool computeResiduals(SolutionD solDir, const Eigen::VectorXd &x,
+                          std::vector<Base::Vector3d> &residuals, double &sigma0, double vConvLimit,
+                          bool &vConverged) const;
+    /**
 	 * Update the parameters after solving the normal equations
      */
-	bool updateParameters(SolutionD solDir, const Eigen::VectorXd &x);
+    bool updateParameters(SolutionD solDir, const Eigen::VectorXd &x);
 
 protected:
-    Base::Vector3d _vBase;	/**< Base vector of the cylinder (point on axis). */
-    Base::Vector3d _vAxis;	/**< Axis of the cylinder. */
-    double _dRadius;		/**< Radius of the cylinder. */
-	int _numIter;			/**< Number of iterations for solution to converge. */
-	double _posConvLimit;	/**< Position and radius parameter convergence threshold. */
-	double _dirConvLimit;	/**< Direction parameter convergence threshold. */
-	double _vConvLimit;		/**< Residual convergence threshold. */
-	int _maxIter;			/**< Maximum number of iterations. */
-
+    Base::Vector3d _vBase; /**< Base vector of the cylinder (point on axis). */
+    Base::Vector3d _vAxis; /**< Axis of the cylinder. */
+    double _dRadius;       /**< Radius of the cylinder. */
+    int _numIter;          /**< Number of iterations for solution to converge. */
+    double _posConvLimit;  /**< Position and radius parameter convergence threshold. */
+    double _dirConvLimit;  /**< Direction parameter convergence threshold. */
+    double _vConvLimit;    /**< Residual convergence threshold. */
+    int _maxIter;          /**< Maximum number of iterations. */
 };
 
 
-} // namespace MeshCore
+} // namespace MeshCoreFit
 
 #endif // MESH_CYLINDER_FIT_H

@@ -40,9 +40,11 @@ class SoCoordinateElement;
 class SoGLCoordinateElement;
 class SoTextureCoordinateBundle;
 
-namespace PartGui {
+namespace PartGui
+{
 
-class PartGuiExport SoBrepPointSet : public SoPointSet {
+class PartGuiExport SoBrepPointSet: public SoPointSet
+{
     using inherited = SoPointSet;
 
     SO_NODE_HEADER(SoBrepPointSet);
@@ -54,16 +56,16 @@ public:
 protected:
     ~SoBrepPointSet() override {}
     void GLRender(SoGLRenderAction *action) override;
-    void GLRenderBelowPath(SoGLRenderAction * action) override;
-    void doAction(SoAction* action) override;
+    void GLRenderBelowPath(SoGLRenderAction *action) override;
+    void doAction(SoAction *action) override;
 
-    void getBoundingBox(SoGetBoundingBoxAction * action) override;
+    void getBoundingBox(SoGetBoundingBoxAction *action) override;
 
 private:
     using SelContext = Gui::SoFCSelectionContext;
     using SelContextPtr = Gui::SoFCSelectionContextPtr;
     void renderHighlight(SoGLRenderAction *action, SelContextPtr);
-    void renderSelection(SoGLRenderAction *action, SelContextPtr, bool push=true);
+    void renderSelection(SoGLRenderAction *action, SelContextPtr, bool push = true);
 
 private:
     SelContextPtr selContext;
@@ -76,4 +78,3 @@ private:
 
 
 #endif // PARTGUI_SOBREPPOINTSET_H
-

@@ -29,24 +29,26 @@
 
 class Ui_TaskRevolutionParameters;
 
-namespace App {
+namespace App
+{
 class Property;
 }
 
-namespace Gui {
+namespace Gui
+{
 class ViewProvider;
 }
 
-namespace PartDesignGui {
+namespace PartDesignGui
+{
 
 
-
-class TaskRevolutionParameters : public TaskSketchBasedParameters
+class TaskRevolutionParameters: public TaskSketchBasedParameters
 {
     Q_OBJECT
 
 public:
-    explicit TaskRevolutionParameters(ViewProvider* RevolutionView,QWidget *parent = nullptr);
+    explicit TaskRevolutionParameters(ViewProvider *RevolutionView, QWidget *parent = nullptr);
     ~TaskRevolutionParameters() override;
 
     void apply() override;
@@ -68,7 +70,7 @@ private Q_SLOTS:
     void onReversed(bool);
 
 protected:
-    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void onSelectionChanged(const Gui::SelectionChanges &msg) override;
     void changeEvent(QEvent *e) override;
     bool updateView() const;
     void getReferenceAxis(App::DocumentObject *&obj, std::vector<std::string> &sub) const;
@@ -78,17 +80,17 @@ protected:
 
     //mirrors of revolution's or groove's properties
     //should have been done by inheriting revolution and groove from common class...
-    App::PropertyAngle* propAngle;
-    App::PropertyBool* propReversed;
-    App::PropertyBool* propMidPlane;
-    App::PropertyLinkSub* propReferenceAxis;
+    App::PropertyAngle *propAngle;
+    App::PropertyBool *propReversed;
+    App::PropertyBool *propMidPlane;
+    App::PropertyLinkSub *propReferenceAxis;
 
 private:
     void connectSignals();
     void updateUI();
 
 private:
-    QWidget* proxy;
+    QWidget *proxy;
     std::unique_ptr<Ui_TaskRevolutionParameters> ui;
 
     /**
@@ -99,19 +101,18 @@ private:
      * It is a list of pointers, because properties prohibit assignment. Use new
      * when adding stuff, and delete when removing stuff.
      */
-    std::vector<App::PropertyLinkSub*> axesInList;
+    std::vector<App::PropertyLinkSub *> axesInList;
 };
 
 /// simulation dialog for the TaskView
-class TaskDlgRevolutionParameters : public TaskDlgSketchBasedParameters
+class TaskDlgRevolutionParameters: public TaskDlgSketchBasedParameters
 {
     Q_OBJECT
 
 public:
     explicit TaskDlgRevolutionParameters(PartDesignGui::ViewProvider *RevolutionView);
 
-    ViewProvider* getRevolutionView() const
-    { return vp; }
+    ViewProvider *getRevolutionView() const { return vp; }
 };
 
 } //namespace PartDesignGui

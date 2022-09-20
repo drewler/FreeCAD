@@ -34,18 +34,18 @@
 
 class SMDS_Position;
 //typedef boost::shared_ptr<SMDS_Position> SMDS_PositionPtr;
-typedef SMDS_Position* SMDS_PositionPtr;
+typedef SMDS_Position *SMDS_PositionPtr;
 
 class SMDS_EXPORT SMDS_Position
 {
 
-  public:
-        virtual SMDS_TypeOfPosition GetTypeOfPosition() const = 0;
-        virtual int GetDim() const;
-        virtual ~SMDS_Position() {}
+public:
+    virtual SMDS_TypeOfPosition GetTypeOfPosition() const = 0;
+    virtual int GetDim() const;
+    virtual ~SMDS_Position() {}
 
-  protected:
-          SMDS_Position();
+protected:
+    SMDS_Position();
 };
 
 

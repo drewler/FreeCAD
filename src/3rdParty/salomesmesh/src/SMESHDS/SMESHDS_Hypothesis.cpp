@@ -39,8 +39,8 @@ using namespace std;
 
 SMESHDS_Hypothesis::SMESHDS_Hypothesis(int hypId)
 {
-  _hypId = hypId;
-  _name = "generic";
+    _hypId = hypId;
+    _name = "generic";
 }
 
 //=============================================================================
@@ -49,9 +49,7 @@ SMESHDS_Hypothesis::SMESHDS_Hypothesis(int hypId)
  */
 //=============================================================================
 
-SMESHDS_Hypothesis::~SMESHDS_Hypothesis()
-{
-}
+SMESHDS_Hypothesis::~SMESHDS_Hypothesis() {}
 
 //=============================================================================
 /*!
@@ -59,10 +57,7 @@ SMESHDS_Hypothesis::~SMESHDS_Hypothesis()
  */
 //=============================================================================
 
-const char* SMESHDS_Hypothesis::GetName() const
-{
-  return _name.c_str();
-}
+const char *SMESHDS_Hypothesis::GetName() const { return _name.c_str(); }
 
 //=============================================================================
 /*!
@@ -70,10 +65,7 @@ const char* SMESHDS_Hypothesis::GetName() const
  */
 //=============================================================================
 
-int SMESHDS_Hypothesis::GetID() const
-{
-  return _hypId;
-}
+int SMESHDS_Hypothesis::GetID() const { return _hypId; }
 
 //=============================================================================
 /*!
@@ -81,10 +73,7 @@ int SMESHDS_Hypothesis::GetID() const
  */
 //=============================================================================
 
-int SMESHDS_Hypothesis::GetType() const
-{
-  return _type;
-}
+int SMESHDS_Hypothesis::GetType() const { return _type; }
 
 //=============================================================================
 /*!
@@ -92,16 +81,14 @@ int SMESHDS_Hypothesis::GetType() const
  */
 //=============================================================================
 
-bool SMESHDS_Hypothesis::operator==(const SMESHDS_Hypothesis& other) const
+bool SMESHDS_Hypothesis::operator==(const SMESHDS_Hypothesis &other) const
 {
-  if ( this == &other )
-    return true;
-  if ( _name != other._name )
-    return false;
-  ostringstream mySave, otherSave;
-  ((SMESHDS_Hypothesis*)this  )->SaveTo(mySave);
-  ((SMESHDS_Hypothesis*)&other)->SaveTo(otherSave);
-  return mySave.str() == otherSave.str();
+    if (this == &other) return true;
+    if (_name != other._name) return false;
+    ostringstream mySave, otherSave;
+    ((SMESHDS_Hypothesis *)this)->SaveTo(mySave);
+    ((SMESHDS_Hypothesis *)&other)->SaveTo(otherSave);
+    return mySave.str() == otherSave.str();
 }
 
 //================================================================================
@@ -110,7 +97,7 @@ bool SMESHDS_Hypothesis::operator==(const SMESHDS_Hypothesis& other) const
  */
 //================================================================================
 
-bool SMESHDS_Hypothesis::IsSameName( const SMESHDS_Hypothesis& other) const
+bool SMESHDS_Hypothesis::IsSameName(const SMESHDS_Hypothesis &other) const
 {
-  return _name == other._name;
+    return _name == other._name;
 }

@@ -25,32 +25,30 @@
 namespace Wm4
 {
 
-template <class Real>
-class WM4_FOUNDATION_ITEM IntrSegment3Box3
-    : public Intersector<Real,Vector3<Real> >
+template<class Real>
+class WM4_FOUNDATION_ITEM IntrSegment3Box3: public Intersector<Real, Vector3<Real>>
 {
 public:
-    IntrSegment3Box3 (const Segment3<Real>& rkSegment,
-        const Box3<Real>& rkBox, bool bSolid);
+    IntrSegment3Box3(const Segment3<Real> &rkSegment, const Box3<Real> &rkBox, bool bSolid);
 
     // object access
-    const Segment3<Real>& GetSegment () const;
-    const Box3<Real>& GetBox () const;
+    const Segment3<Real> &GetSegment() const;
+    const Box3<Real> &GetBox() const;
 
     // static intersection queries
-    virtual bool Test ();
-    virtual bool Find ();
+    virtual bool Test();
+    virtual bool Find();
 
     // the intersection set
-    int GetQuantity () const;
-    const Vector3<Real>& GetPoint (int i) const;
+    int GetQuantity() const;
+    const Vector3<Real> &GetPoint(int i) const;
 
 private:
-    using Intersector<Real,Vector3<Real> >::m_iIntersectionType;
+    using Intersector<Real, Vector3<Real>>::m_iIntersectionType;
 
     // the objects to intersect
-    const Segment3<Real>& m_rkSegment;
-    const Box3<Real>& m_rkBox;
+    const Segment3<Real> &m_rkSegment;
+    const Box3<Real> &m_rkBox;
     bool m_bSolid;
 
     // information about the intersection set
@@ -61,6 +59,6 @@ private:
 typedef IntrSegment3Box3<float> IntrSegment3Box3f;
 typedef IntrSegment3Box3<double> IntrSegment3Box3d;
 
-}
+} // namespace Wm4
 
 #endif

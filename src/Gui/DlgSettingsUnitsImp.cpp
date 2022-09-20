@@ -22,9 +22,9 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
-# include <cmath>
-# include <limits>
-# include <QApplication>
+#include <cmath>
+#include <limits>
+#include <QApplication>
 #endif
 
 #include <App/Application.h>
@@ -56,27 +56,27 @@ using namespace Base;
  *  Constructs a DlgSettingsUnitsImp which is a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'
  */
-DlgSettingsUnitsImp::DlgSettingsUnitsImp(QWidget* parent)
-    : PreferencePage( parent ), ui(new Ui_DlgSettingsUnits)
+DlgSettingsUnitsImp::DlgSettingsUnitsImp(QWidget *parent)
+    : PreferencePage(parent), ui(new Ui_DlgSettingsUnits)
 {
     ui->setupUi(this);
     ui->spinBoxDecimals->setMaximum(std::numeric_limits<double>::digits10 + 1);
 
     int num = static_cast<int>(Base::UnitSystem::NumUnitSystemTypes);
     for (int i = 0; i < num; i++) {
-        QString item = qApp->translate("Gui::Dialog::DlgSettingsUnits", Base::UnitsApi::getDescription(static_cast<Base::UnitSystem>(i)));
+        QString item =
+            qApp->translate("Gui::Dialog::DlgSettingsUnits",
+                            Base::UnitsApi::getDescription(static_cast<Base::UnitSystem>(i)));
         ui->comboBox_ViewSystem->addItem(item, i);
     }
 
     ui->tableWidget->setVisible(false);
     //
     // Enable/disable the fractional inch option depending on system
-    if( UnitsApi::getSchema() == UnitSystem::ImperialBuilding )
-    {
+    if (UnitsApi::getSchema() == UnitSystem::ImperialBuilding) {
         ui->comboBox_FracInch->setEnabled(true);
     }
-    else
-    {
+    else {
         ui->comboBox_FracInch->setEnabled(false);
     }
 }
@@ -92,16 +92,13 @@ DlgSettingsUnitsImp::~DlgSettingsUnitsImp()
 
 void DlgSettingsUnitsImp::on_comboBox_ViewSystem_currentIndexChanged(int index)
 {
-    if (index < 0)
-        return; // happens when clearing the combo box in retranslateUi()
+    if (index < 0) return; // happens when clearing the combo box in retranslateUi()
 
     // Enable/disable the fractional inch option depending on system
-    if( (UnitSystem)index == UnitSystem::ImperialBuilding )
-    {
+    if ((UnitSystem)index == UnitSystem::ImperialBuilding) {
         ui->comboBox_FracInch->setEnabled(true);
     }
-    else
-    {
+    else {
         ui->comboBox_FracInch->setEnabled(false);
     }
 }
@@ -110,11 +107,11 @@ void DlgSettingsUnitsImp::saveSettings()
 {
     // must be done as very first because we create a new instance of NavigatorStyle
     // where we set some attributes afterwards
-    int FracInch;  // minimum fractional inch to display
+    int FracInch;        // minimum fractional inch to display
     int viewSystemIndex; // currently selected View System (unit system)
 
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/Units");
+    ParameterGrp::handle hGrp =
+        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Units");
     hGrp->SetInt("UserSchema", ui->comboBox_ViewSystem->currentIndex());
     hGrp->SetInt("Decimals", ui->spinBoxDecimals->value());
 
@@ -143,10 +140,10 @@ void DlgSettingsUnitsImp::loadSettings()
     int FracInch;
     int cbIndex;
 
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/Units");
-    ui->comboBox_ViewSystem->setCurrentIndex(hGrp->GetInt("UserSchema",0));
-    ui->spinBoxDecimals->setValue(hGrp->GetInt("Decimals",Base::UnitsApi::getDecimals()));
+    ParameterGrp::handle hGrp =
+        App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Units");
+    ui->comboBox_ViewSystem->setCurrentIndex(hGrp->GetInt("UserSchema", 0));
+    ui->spinBoxDecimals->setValue(hGrp->GetInt("Decimals", Base::UnitsApi::getDecimals()));
 
     // Get the current user setting for the minimum fractional inch
     FracInch = hGrp->GetInt("FracInch", Base::QuantityFormat::getDefaultDenominator());

@@ -29,7 +29,8 @@
 #include <Gui/TaskView/TaskView.h>
 
 
-namespace App {
+namespace App
+{
 class DocumentObject;
 }
 
@@ -40,7 +41,7 @@ class DrawView;
 class DrawViewPart;
 class CosmeticEdge;
 class LineFormat;
-}
+} // namespace TechDraw
 
 namespace TechDraw
 {
@@ -57,12 +58,12 @@ class MDIViewPage;
 class ViewProviderViewPart;
 class Ui_TaskCustomizeFormat;
 
-class TaskCustomizeFormat : public QWidget
+class TaskCustomizeFormat: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TaskCustomizeFormat(App::DocumentObject * object);
+    explicit TaskCustomizeFormat(App::DocumentObject *object);
     ~TaskCustomizeFormat() override;
 
     virtual bool accept();
@@ -79,18 +80,18 @@ protected:
     void setUiEdit();
 
 private:
-    App::DocumentObject* selectedObject;
+    App::DocumentObject *selectedObject;
     bool isDimension;
     double dimRawValue;
     std::unique_ptr<Ui_TaskCustomizeFormat> ui;
 }; // class TaskCustomizeFormat
 
-class TaskDlgCustomizeFormat : public Gui::TaskView::TaskDialog
+class TaskDlgCustomizeFormat: public Gui::TaskView::TaskDialog
 {
     Q_OBJECT
 
 public:
-    explicit TaskDlgCustomizeFormat(App::DocumentObject * object);
+    explicit TaskDlgCustomizeFormat(App::DocumentObject *object);
     ~TaskDlgCustomizeFormat() override;
 
 public:
@@ -103,20 +104,17 @@ public:
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
     /// is called by the framework if the user presses the help button
-    void helpRequested() override { return;}
-    bool isAllowedAlterDocument() const override
-                        { return false; }
+    void helpRequested() override { return; }
+    bool isAllowedAlterDocument() const override { return false; }
     void update();
 
 protected:
-
 private:
-    TaskCustomizeFormat* widget;
+    TaskCustomizeFormat *widget;
 
-    Gui::TaskView::TaskBox* taskbox;
+    Gui::TaskView::TaskBox *taskbox;
 }; // class TaskDlgCustomizeFormat
 
 } // namespace TechDrawGui
 
 #endif // #ifndef TECHDRAWGUI_TASKCUSTOMIZEFORMAT_H
-

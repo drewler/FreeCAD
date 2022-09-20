@@ -36,33 +36,23 @@
 
 using namespace TechDrawGui;
 
-namespace TechDrawGui {
-
-QGVNavStyleTinkerCAD::QGVNavStyleTinkerCAD(QGVPage *qgvp) :
-    QGVNavStyle(qgvp)
+namespace TechDrawGui
 {
-}
 
-QGVNavStyleTinkerCAD::~QGVNavStyleTinkerCAD()
-{
-}
+QGVNavStyleTinkerCAD::QGVNavStyleTinkerCAD(QGVPage *qgvp) : QGVNavStyle(qgvp) {}
 
-void QGVNavStyleTinkerCAD::handleMousePressEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event)
-}
+QGVNavStyleTinkerCAD::~QGVNavStyleTinkerCAD() {}
+
+void QGVNavStyleTinkerCAD::handleMousePressEvent(QMouseEvent *event) { Q_UNUSED(event) }
 
 void QGVNavStyleTinkerCAD::handleMouseMoveEvent(QMouseEvent *event)
 {
-    if (getViewer()->isBalloonPlacing()) {
-        getViewer()->setBalloonCursorPos(event->pos());
-    }
+    if (getViewer()->isBalloonPlacing()) { getViewer()->setBalloonCursorPos(event->pos()); }
 
     //pan mode - MMB + move
     if (QGuiApplication::mouseButtons() & Qt::MiddleButton) {
-        if (panningActive) {
-            pan(event->pos());
-        } else {
+        if (panningActive) { pan(event->pos()); }
+        else {
             startPan(event->pos());
         }
         event->accept();
@@ -71,9 +61,7 @@ void QGVNavStyleTinkerCAD::handleMouseMoveEvent(QMouseEvent *event)
 
 void QGVNavStyleTinkerCAD::handleMouseReleaseEvent(QMouseEvent *event)
 {
-    if (getViewer()->isBalloonPlacing()) {
-        placeBalloon(event->pos());
-    }
+    if (getViewer()->isBalloonPlacing()) { placeBalloon(event->pos()); }
 
     if (event->button() == Qt::MiddleButton) {
         if (panningActive) {
@@ -83,4 +71,4 @@ void QGVNavStyleTinkerCAD::handleMouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-}  // namespace TechDrawGui
+} // namespace TechDrawGui

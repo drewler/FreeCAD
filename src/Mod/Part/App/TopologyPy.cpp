@@ -25,21 +25,21 @@
 #include "PreCompiled.h"
 #if 0
 #ifndef _PreComp_
-# include <assert.h>
-# include <sstream>
-# include <BRepTools.hxx>
-# include <BRep_Builder.hxx>
-# include <BRepCheck_Analyzer.hxx>
-# include <BRepCheck_Result.hxx>
-# include <BRepCheck_ListIteratorOfListOfStatus.hxx>
-# include <IGESControl_Controller.hxx>
-# include <IGESControl_Writer.hxx>
-# include <IGESControl_Reader.hxx>
-# include <STEPControl_Writer.hxx>
-# include <STEPControl_Reader.hxx>
-# include <StlAPI_Writer.hxx>
-# include <Interface_Static.hxx>
-# include <TopoDS_Iterator.hxx>
+#include <assert.h>
+#include <sstream>
+#include <BRepTools.hxx>
+#include <BRep_Builder.hxx>
+#include <BRepCheck_Analyzer.hxx>
+#include <BRepCheck_Result.hxx>
+#include <BRepCheck_ListIteratorOfListOfStatus.hxx>
+#include <IGESControl_Controller.hxx>
+#include <IGESControl_Writer.hxx>
+#include <IGESControl_Reader.hxx>
+#include <STEPControl_Writer.hxx>
+#include <STEPControl_Reader.hxx>
+#include <StlAPI_Writer.hxx>
+#include <Interface_Static.hxx>
+#include <TopoDS_Iterator.hxx>
 #endif
 
 #include <Base/Exception.h>
@@ -48,10 +48,10 @@
 #include <Base/Sequencer.h>
 #include "TopologyPy.h"
 
-# include <BRepOffsetAPI_MakeOffsetShape.hxx>
-# include <BRepAlgoAPI_Cut.hxx>
+#include <BRepOffsetAPI_MakeOffsetShape.hxx>
+#include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Section.hxx>
-# include <GeomAPI_IntSS.hxx>
+#include <GeomAPI_IntSS.hxx>
 
 using Base::Console;
 

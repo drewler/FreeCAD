@@ -29,7 +29,7 @@
 namespace Part
 {
 
-class Chamfer : public Part::FilletBase
+class Chamfer: public Part::FilletBase
 {
     PROPERTY_HEADER_WITH_OVERRIDE(Part::Chamfer);
 
@@ -41,9 +41,7 @@ public:
     /// recalculate the feature
     App::DocumentObjectExecReturn *execute() override;
     /// returns the type name of the view provider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderChamfer";
-    }
+    const char *getViewProviderName() const override { return "PartGui::ViewProviderChamfer"; }
     //@}
 };
 
@@ -51,4 +49,3 @@ public:
 
 
 #endif // PART_FEATURECHAMFER_H
-

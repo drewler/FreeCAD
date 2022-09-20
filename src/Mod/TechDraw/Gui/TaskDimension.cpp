@@ -57,8 +57,8 @@ using namespace Gui;
 using namespace TechDraw;
 using namespace TechDrawGui;
 
-TaskDimension::TaskDimension(QGIViewDimension *parent, ViewProviderDimension *dimensionVP) :
-    ui(new Ui_TaskDimension)
+TaskDimension::TaskDimension(QGIViewDimension *parent, ViewProviderDimension *dimensionVP)
+    : ui(new Ui_TaskDimension)
 {
     m_parent = parent;
     m_dimensionVP = dimensionVP;
@@ -67,7 +67,8 @@ TaskDimension::TaskDimension(QGIViewDimension *parent, ViewProviderDimension *di
 
     // Tolerancing
     ui->cbTheoreticallyExact->setChecked(parent->getDimFeat()->TheoreticalExact.getValue());
-    connect(ui->cbTheoreticallyExact, SIGNAL(stateChanged(int)), this, SLOT(onTheoreticallyExactChanged()));
+    connect(ui->cbTheoreticallyExact, SIGNAL(stateChanged(int)), this,
+            SLOT(onTheoreticallyExactChanged()));
     // if TheoreticalExact disable tolerances
     if (parent->getDimFeat()->TheoreticalExact.getValue()) {
         ui->cbEqualTolerance->setDisabled(true);
@@ -79,10 +80,9 @@ TaskDimension::TaskDimension(QGIViewDimension *parent, ViewProviderDimension *di
     ui->cbEqualTolerance->setChecked(parent->getDimFeat()->EqualTolerance.getValue());
     connect(ui->cbEqualTolerance, SIGNAL(stateChanged(int)), this, SLOT(onEqualToleranceChanged()));
     // if EqualTolerance overtolernace must not be negative
-    if (parent->getDimFeat()->EqualTolerance.getValue())
-        ui->qsbOvertolerance->setMinimum(0.0);
-    if ((parent->getDimFeat()->Type.isValue("Angle")) ||
-        (parent->getDimFeat()->Type.isValue("Angle3Pt"))) {
+    if (parent->getDimFeat()->EqualTolerance.getValue()) ui->qsbOvertolerance->setMinimum(0.0);
+    if ((parent->getDimFeat()->Type.isValue("Angle"))
+        || (parent->getDimFeat()->Type.isValue("Angle3Pt"))) {
         ui->qsbOvertolerance->setUnit(Base::Unit::Angle);
         ui->qsbUndertolerance->setUnit(Base::Unit::Angle);
     }
@@ -92,8 +92,10 @@ TaskDimension::TaskDimension(QGIViewDimension *parent, ViewProviderDimension *di
     }
     ui->qsbOvertolerance->setValue(parent->getDimFeat()->OverTolerance.getValue());
     ui->qsbUndertolerance->setValue(parent->getDimFeat()->UnderTolerance.getValue());
-    connect(ui->qsbOvertolerance, SIGNAL(valueChanged(double)), this, SLOT(onOvertoleranceChanged()));
-    connect(ui->qsbUndertolerance, SIGNAL(valueChanged(double)), this, SLOT(onUndertoleranceChanged()));
+    connect(ui->qsbOvertolerance, SIGNAL(valueChanged(double)), this,
+            SLOT(onOvertoleranceChanged()));
+    connect(ui->qsbUndertolerance, SIGNAL(valueChanged(double)), this,
+            SLOT(onUndertoleranceChanged()));
     // undertolerance is disabled when EqualTolerance is true
     if (ui->cbEqualTolerance->isChecked()) {
         ui->qsbUndertolerance->setDisabled(true);
@@ -104,7 +106,8 @@ TaskDimension::TaskDimension(QGIViewDimension *parent, ViewProviderDimension *di
     std::string StringValue = parent->getDimFeat()->FormatSpec.getValue();
     QString qs = QString::fromUtf8(StringValue.data(), StringValue.size());
     ui->leFormatSpecifier->setText(qs);
-    connect(ui->leFormatSpecifier, SIGNAL(textChanged(QString)), this, SLOT(onFormatSpecifierChanged()));
+    connect(ui->leFormatSpecifier, SIGNAL(textChanged(QString)), this,
+            SLOT(onFormatSpecifierChanged()));
     ui->cbArbitrary->setChecked(parent->getDimFeat()->Arbitrary.getValue());
     connect(ui->cbArbitrary, SIGNAL(stateChanged(int)), this, SLOT(onArbitraryChanged()));
     StringValue = parent->getDimFeat()->FormatSpecOverTolerance.getValue();
@@ -113,10 +116,13 @@ TaskDimension::TaskDimension(QGIViewDimension *parent, ViewProviderDimension *di
     StringValue = parent->getDimFeat()->FormatSpecUnderTolerance.getValue();
     qs = QString::fromUtf8(StringValue.data(), StringValue.size());
     ui->leFormatSpecifierUnderTolerance->setText(qs);
-    connect(ui->leFormatSpecifierOverTolerance, SIGNAL(textChanged(QString)), this, SLOT(onFormatSpecifierOverToleranceChanged()));
-    connect(ui->leFormatSpecifierUnderTolerance, SIGNAL(textChanged(QString)), this, SLOT(onFormatSpecifierUnderToleranceChanged()));
+    connect(ui->leFormatSpecifierOverTolerance, SIGNAL(textChanged(QString)), this,
+            SLOT(onFormatSpecifierOverToleranceChanged()));
+    connect(ui->leFormatSpecifierUnderTolerance, SIGNAL(textChanged(QString)), this,
+            SLOT(onFormatSpecifierUnderToleranceChanged()));
     ui->cbArbitraryTolerances->setChecked(parent->getDimFeat()->ArbitraryTolerances.getValue());
-    connect(ui->cbArbitraryTolerances, SIGNAL(stateChanged(int)), this, SLOT(onArbitraryTolerancesChanged()));
+    connect(ui->cbArbitraryTolerances, SIGNAL(stateChanged(int)), this,
+            SLOT(onArbitraryTolerancesChanged()));
 
     // Display Style
     if (dimensionVP) {
@@ -129,7 +135,8 @@ TaskDimension::TaskDimension(QGIViewDimension *parent, ViewProviderDimension *di
         ui->qsbFontSize->setMinimum(0);
         connect(ui->qsbFontSize, SIGNAL(valueChanged(double)), this, SLOT(onFontsizeChanged()));
         ui->comboDrawingStyle->setCurrentIndex(dimensionVP->StandardAndStyle.getValue());
-        connect(ui->comboDrawingStyle, SIGNAL(currentIndexChanged(int)), this, SLOT(onDrawingStyleChanged()));
+        connect(ui->comboDrawingStyle, SIGNAL(currentIndexChanged(int)), this,
+                SLOT(onDrawingStyleChanged()));
     }
 
     // Lines
@@ -144,17 +151,15 @@ TaskDimension::TaskDimension(QGIViewDimension *parent, ViewProviderDimension *di
     connect(ui->pbExtUseDefault, SIGNAL(clicked()), this, SLOT(onExtUseDefaultClicked()));
     connect(ui->pbExtUseSelection, SIGNAL(clicked()), this, SLOT(onExtUseSelectionClicked()));
 
-    Gui::Document* doc = m_dimensionVP->getDocument();
+    Gui::Document *doc = m_dimensionVP->getDocument();
     doc->openCommand("TaskDimension");
 }
 
-TaskDimension::~TaskDimension()
-{
-}
+TaskDimension::~TaskDimension() {}
 
 bool TaskDimension::accept()
 {
-    Gui::Document* doc = m_dimensionVP->getDocument();
+    Gui::Document *doc = m_dimensionVP->getDocument();
     m_dimensionVP->getObject()->purgeTouched();
     doc->commitCommand();
     doc->resetEdit();
@@ -164,7 +169,7 @@ bool TaskDimension::accept()
 
 bool TaskDimension::reject()
 {
-    Gui::Document* doc = m_dimensionVP->getDocument();
+    Gui::Document *doc = m_dimensionVP->getDocument();
     doc->abortCommand();
     recomputeFeature();
     m_parent->updateView(true);
@@ -176,7 +181,7 @@ bool TaskDimension::reject()
 
 void TaskDimension::recomputeFeature()
 {
-    App::DocumentObject* objVP = m_dimensionVP->getObject();
+    App::DocumentObject *objVP = m_dimensionVP->getObject();
     assert(objVP);
     objVP->getDocument()->recomputeFeature(objVP);
 }
@@ -216,8 +221,7 @@ void TaskDimension::onEqualToleranceChanged()
     // then also the OverTolerance must be positive
     if (ui->cbEqualTolerance->isChecked()) {
         // if OverTolerance is negative or zero, first set it to zero
-        if (ui->qsbOvertolerance->value().getValue() < 0)
-            ui->qsbOvertolerance->setValue(0.0);
+        if (ui->qsbOvertolerance->value().getValue() < 0) ui->qsbOvertolerance->setValue(0.0);
         ui->qsbOvertolerance->setMinimum(0.0);
         ui->qsbUndertolerance->setValue(-1.0 * ui->qsbOvertolerance->value().getValue());
         ui->qsbUndertolerance->setUnit(ui->qsbOvertolerance->value().getUnit());
@@ -265,20 +269,24 @@ void TaskDimension::onArbitraryChanged()
 
 void TaskDimension::onFormatSpecifierOverToleranceChanged()
 {
-    m_parent->getDimFeat()->FormatSpecOverTolerance.setValue(ui->leFormatSpecifierOverTolerance->text().toUtf8().constData());
+    m_parent->getDimFeat()->FormatSpecOverTolerance.setValue(
+        ui->leFormatSpecifierOverTolerance->text().toUtf8().constData());
     if (!ui->cbArbitraryTolerances->isChecked()) {
         ui->leFormatSpecifierUnderTolerance->setText(ui->leFormatSpecifierOverTolerance->text());
-        m_parent->getDimFeat()->FormatSpecUnderTolerance.setValue(ui->leFormatSpecifierUnderTolerance->text().toUtf8().constData());
+        m_parent->getDimFeat()->FormatSpecUnderTolerance.setValue(
+            ui->leFormatSpecifierUnderTolerance->text().toUtf8().constData());
     }
     recomputeFeature();
 }
 
 void TaskDimension::onFormatSpecifierUnderToleranceChanged()
 {
-    m_parent->getDimFeat()->FormatSpecUnderTolerance.setValue(ui->leFormatSpecifierUnderTolerance->text().toUtf8().constData());
+    m_parent->getDimFeat()->FormatSpecUnderTolerance.setValue(
+        ui->leFormatSpecifierUnderTolerance->text().toUtf8().constData());
     if (!ui->cbArbitraryTolerances->isChecked()) {
         ui->leFormatSpecifierOverTolerance->setText(ui->leFormatSpecifierUnderTolerance->text());
-        m_parent->getDimFeat()->FormatSpecOverTolerance.setValue(ui->leFormatSpecifierOverTolerance->text().toUtf8().constData());
+        m_parent->getDimFeat()->FormatSpecOverTolerance.setValue(
+            ui->leFormatSpecifierOverTolerance->text().toUtf8().constData());
     }
     recomputeFeature();
 }
@@ -319,7 +327,6 @@ void TaskDimension::onOverrideToggled()
 {
     m_parent->getDimFeat()->AngleOverride.setValue(ui->rbOverride->isChecked());
     recomputeFeature();
-
 }
 
 void TaskDimension::onDimAngleChanged()
@@ -347,9 +354,7 @@ void TaskDimension::onDimUseDefaultClicked()
 void TaskDimension::onDimUseSelectionClicked()
 {
     std::pair<double, bool> result = getAngleFromSelection();
-    if (result.second) {
-        ui->dsbDimAngle->setValue(result.first * 180.0 / M_PI);
-    }
+    if (result.second) { ui->dsbDimAngle->setValue(result.first * 180.0 / M_PI); }
 }
 
 void TaskDimension::onExtUseDefaultClicked()
@@ -366,9 +371,7 @@ void TaskDimension::onExtUseDefaultClicked()
 void TaskDimension::onExtUseSelectionClicked()
 {
     std::pair<double, bool> result = getAngleFromSelection();
-    if (result.second) {
-        ui->dsbExtAngle->setValue(result.first * 180.0 / M_PI);
-    }
+    if (result.second) { ui->dsbExtAngle->setValue(result.first * 180.0 / M_PI); }
 }
 
 std::pair<double, bool> TaskDimension::getAngleFromSelection()
@@ -377,17 +380,17 @@ std::pair<double, bool> TaskDimension::getAngleFromSelection()
     result.first = 0.0;
     result.second = true;
     std::vector<Gui::SelectionObject> selection = Gui::Selection().getSelectionEx();
-    TechDraw::DrawViewPart * objFeat = nullptr;
+    TechDraw::DrawViewPart *objFeat = nullptr;
     std::vector<std::string> SubNames;
     if (!selection.empty()) {
-        objFeat = static_cast<TechDraw::DrawViewPart*> (selection.front().getObject());
+        objFeat = static_cast<TechDraw::DrawViewPart *>(selection.front().getObject());
         SubNames = selection.front().getSubNames();
-        if (SubNames.size() == 2) {             //expecting Vertices
+        if (SubNames.size() == 2) { //expecting Vertices
             std::string geomName0 = DrawUtil::getGeomTypeFromName(SubNames[0]);
             int geomIndex0 = DrawUtil::getIndexFromName(SubNames[0]);
             std::string geomName1 = DrawUtil::getGeomTypeFromName(SubNames[1]);
             int geomIndex1 = DrawUtil::getIndexFromName(SubNames[1]);
-            if ((geomName0 == "Vertex") && (geomName1 == "Vertex"))  {
+            if ((geomName0 == "Vertex") && (geomName1 == "Vertex")) {
                 TechDraw::VertexPtr v0 = objFeat->getProjVertexByIndex(geomIndex0);
                 TechDraw::VertexPtr v1 = objFeat->getProjVertexByIndex(geomIndex1);
                 Base::Vector2d v02(v0->point().x, -v0->point().y);
@@ -395,7 +398,8 @@ std::pair<double, bool> TaskDimension::getAngleFromSelection()
                 result.first = (v12 - v02).Angle();
                 return result;
             }
-        } else if (SubNames.size() == 1) {      //expecting Edge
+        }
+        else if (SubNames.size() == 1) { //expecting Edge
             std::string geomName0 = DrawUtil::getGeomTypeFromName(SubNames[0]);
             int geomIndex0 = DrawUtil::getIndexFromName(SubNames[0]);
             if (geomName0 == "Edge") {
@@ -409,39 +413,31 @@ std::pair<double, bool> TaskDimension::getAngleFromSelection()
     }
 
     QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Incorrect Selection"),
-                                               QObject::tr("Select 2 Vertexes or 1 Edge"));
+                         QObject::tr("Select 2 Vertexes or 1 Edge"));
     result.second = false;
     return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-TaskDlgDimension::TaskDlgDimension(QGIViewDimension *parent, ViewProviderDimension *dimensionVP) :
-    TaskDialog()
+TaskDlgDimension::TaskDlgDimension(QGIViewDimension *parent, ViewProviderDimension *dimensionVP)
+    : TaskDialog()
 {
-    widget  = new TaskDimension(parent, dimensionVP);
-    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("TechDraw_Dimension"), widget->windowTitle(), true, nullptr);
+    widget = new TaskDimension(parent, dimensionVP);
+    taskbox = new Gui::TaskView::TaskBox(Gui::BitmapFactory().pixmap("TechDraw_Dimension"),
+                                         widget->windowTitle(), true, nullptr);
     taskbox->groupLayout()->addWidget(widget);
     Content.push_back(taskbox);
     setAutoCloseOnTransactionChange(true);
 }
 
-TaskDlgDimension::~TaskDlgDimension()
-{
-}
+TaskDlgDimension::~TaskDlgDimension() {}
 
-void TaskDlgDimension::update()
-{
-}
+void TaskDlgDimension::update() {}
 
 //==== calls from the TaskView ===============================================================
-void TaskDlgDimension::open()
-{
-}
+void TaskDlgDimension::open() {}
 
-void TaskDlgDimension::clicked(int i)
-{
-    Q_UNUSED(i);
-}
+void TaskDlgDimension::clicked(int i) { Q_UNUSED(i); }
 
 bool TaskDlgDimension::accept()
 {

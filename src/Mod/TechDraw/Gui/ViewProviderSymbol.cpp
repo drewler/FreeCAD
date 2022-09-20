@@ -33,32 +33,28 @@ PROPERTY_SOURCE(TechDrawGui::ViewProviderSymbol, TechDrawGui::ViewProviderDrawin
 //**************************************************************************
 // Construction/Destruction
 
-ViewProviderSymbol::ViewProviderSymbol()
-{
-    sPixmap = "TechDraw_TreeSymbol";
-}
+ViewProviderSymbol::ViewProviderSymbol() { sPixmap = "TechDraw_TreeSymbol"; }
 
-ViewProviderSymbol::~ViewProviderSymbol()
-{
-}
+ViewProviderSymbol::~ViewProviderSymbol() {}
 
-void ViewProviderSymbol::updateData(const App::Property* prop)
+void ViewProviderSymbol::updateData(const App::Property *prop)
 {
-    if (prop == &getViewObject()->Scale) {
+    if (prop == &getViewObject()->Scale) { onGuiRepaint(getViewObject()); }
+    else if (prop == &getViewObject()->Rotation) {
         onGuiRepaint(getViewObject());
-    } else if (prop == &getViewObject()->Rotation) {
+    }
+    else if (prop == &getViewObject()->Symbol) {
         onGuiRepaint(getViewObject());
-    } else if (prop == &getViewObject()->Symbol) {
-        onGuiRepaint(getViewObject());
-    } else if (prop == &getViewObject()->EditableTexts) {
+    }
+    else if (prop == &getViewObject()->EditableTexts) {
         onGuiRepaint(getViewObject());
     }
     ViewProviderDrawingView::updateData(prop);
 }
 
-TechDraw::DrawViewSymbol* ViewProviderSymbol::getViewObject() const
+TechDraw::DrawViewSymbol *ViewProviderSymbol::getViewObject() const
 {
-    return dynamic_cast<TechDraw::DrawViewSymbol*>(pcObject);
+    return dynamic_cast<TechDraw::DrawViewSymbol *>(pcObject);
 }
 
 //**************************************************************************
@@ -67,14 +63,9 @@ TechDraw::DrawViewSymbol* ViewProviderSymbol::getViewObject() const
 PROPERTY_SOURCE(TechDrawGui::ViewProviderDraft, TechDrawGui::ViewProviderSymbol)
 
 
-ViewProviderDraft::ViewProviderDraft()
-{
-    sPixmap = "actions/TechDraw_DraftView.svg";
-}
+ViewProviderDraft::ViewProviderDraft() { sPixmap = "actions/TechDraw_DraftView.svg"; }
 
-ViewProviderDraft::~ViewProviderDraft()
-{
-}
+ViewProviderDraft::~ViewProviderDraft() {}
 
 //**************************************************************************
 // Arch view
@@ -82,11 +73,6 @@ ViewProviderDraft::~ViewProviderDraft()
 PROPERTY_SOURCE(TechDrawGui::ViewProviderArch, TechDrawGui::ViewProviderSymbol)
 
 
-ViewProviderArch::ViewProviderArch()
-{
-    sPixmap = "actions/TechDraw_ArchView.svg";
-}
+ViewProviderArch::ViewProviderArch() { sPixmap = "actions/TechDraw_ArchView.svg"; }
 
-ViewProviderArch::~ViewProviderArch()
-{
-}
+ViewProviderArch::~ViewProviderArch() {}

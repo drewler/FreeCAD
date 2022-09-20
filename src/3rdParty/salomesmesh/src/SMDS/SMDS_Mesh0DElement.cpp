@@ -22,7 +22,7 @@
 //  Module : SMESH
 //
 #ifdef _MSC_VER
-#pragma warning(disable:4786)
+#pragma warning(disable : 4786)
 #endif
 
 #include "SMDS_Mesh0DElement.hxx"
@@ -38,51 +38,36 @@ using namespace std;
 //function : SMDS_Mesh0DElement
 //purpose  :
 //=======================================================================
-SMDS_Mesh0DElement::SMDS_Mesh0DElement (const SMDS_MeshNode * node)
-{
-  myNode = node;
-}
+SMDS_Mesh0DElement::SMDS_Mesh0DElement(const SMDS_MeshNode *node) { myNode = node; }
 
 //=======================================================================
 //function : Print
 //purpose  :
 //=======================================================================
-void SMDS_Mesh0DElement::Print (ostream & OS) const
+void SMDS_Mesh0DElement::Print(ostream &OS) const
 {
-  OS << "0D Element <" << GetID() << "> : (" << myNode << ") " << endl;
+    OS << "0D Element <" << GetID() << "> : (" << myNode << ") " << endl;
 }
 
 //=======================================================================
 //function : NbNodes
 //purpose  :
 //=======================================================================
-int SMDS_Mesh0DElement::NbNodes() const
-{
-  return 1;
-}
+int SMDS_Mesh0DElement::NbNodes() const { return 1; }
 
 //=======================================================================
 //function : NbEdges
 //purpose  :
 //=======================================================================
-int SMDS_Mesh0DElement::NbEdges() const
-{
-  return 0;
-}
+int SMDS_Mesh0DElement::NbEdges() const { return 0; }
 
 //=======================================================================
 //function : GetType
 //purpose  :
 //=======================================================================
-SMDSAbs_ElementType SMDS_Mesh0DElement::GetType() const
-{
-  return SMDSAbs_0DElement;
-}
+SMDSAbs_ElementType SMDS_Mesh0DElement::GetType() const { return SMDSAbs_0DElement; }
 
-vtkIdType SMDS_Mesh0DElement::GetVtkType() const
-{
-  return VTK_VERTEX;
-}
+vtkIdType SMDS_Mesh0DElement::GetVtkType() const { return VTK_VERTEX; }
 
 //=======================================================================
 //function : elementsIterator
@@ -90,39 +75,32 @@ vtkIdType SMDS_Mesh0DElement::GetVtkType() const
 //=======================================================================
 class SMDS_Mesh0DElement_MyNodeIterator: public SMDS_ElemIterator
 {
-  const SMDS_MeshNode * myNode;
-  int myIndex;
- public:
-  SMDS_Mesh0DElement_MyNodeIterator(const SMDS_MeshNode * node):
-    myNode(node),myIndex(0) {}
+    const SMDS_MeshNode *myNode;
+    int myIndex;
 
-  bool more()
-  {
-    return myIndex < 1;
-  }
+public:
+    SMDS_Mesh0DElement_MyNodeIterator(const SMDS_MeshNode *node) : myNode(node), myIndex(0) {}
 
-  const SMDS_MeshElement* next()
-  {
-    myIndex++;
-    if (myIndex == 1)
-      return myNode;
-    return NULL;
-  }
+    bool more() { return myIndex < 1; }
+
+    const SMDS_MeshElement *next()
+    {
+        myIndex++;
+        if (myIndex == 1) return myNode;
+        return NULL;
+    }
 };
 
-SMDS_ElemIteratorPtr SMDS_Mesh0DElement::elementsIterator (SMDSAbs_ElementType type) const
+SMDS_ElemIteratorPtr SMDS_Mesh0DElement::elementsIterator(SMDSAbs_ElementType type) const
 {
-  switch(type)
-  {
-  case SMDSAbs_0DElement:
-    return SMDS_MeshElement::elementsIterator(SMDSAbs_0DElement);
-  case SMDSAbs_Node:
-    return SMDS_ElemIteratorPtr(new SMDS_Mesh0DElement_MyNodeIterator(myNode));
-  default:
-    return SMDS_ElemIteratorPtr
-      (new SMDS_IteratorOfElements
-       (this,type, SMDS_ElemIteratorPtr(new SMDS_Mesh0DElement_MyNodeIterator(myNode))));
-  }
+    switch (type) {
+        case SMDSAbs_0DElement: return SMDS_MeshElement::elementsIterator(SMDSAbs_0DElement);
+        case SMDSAbs_Node:
+            return SMDS_ElemIteratorPtr(new SMDS_Mesh0DElement_MyNodeIterator(myNode));
+        default:
+            return SMDS_ElemIteratorPtr(new SMDS_IteratorOfElements(
+                this, type, SMDS_ElemIteratorPtr(new SMDS_Mesh0DElement_MyNodeIterator(myNode))));
+    }
 }
 
 /*!
@@ -130,47 +108,45 @@ SMDS_ElemIteratorPtr SMDS_Mesh0DElement::elementsIterator (SMDSAbs_ElementType t
  * \param ind - node index
  * \retval const SMDS_MeshNode* - the node
  */
-const SMDS_MeshNode* SMDS_Mesh0DElement::GetNode(const int ind) const
+const SMDS_MeshNode *SMDS_Mesh0DElement::GetNode(const int ind) const
 {
-  if (ind == 0)
-    return myNode;
-  return NULL;
+    if (ind == 0) return myNode;
+    return NULL;
 }
 
 //=======================================================================
 //function : ChangeNode
 //purpose  :
 //=======================================================================
-bool SMDS_Mesh0DElement::ChangeNodes(const SMDS_MeshNode* nodes[], const int nbNodes)
+bool SMDS_Mesh0DElement::ChangeNodes(const SMDS_MeshNode *nodes[], const int nbNodes)
 {
-  if ( nbNodes == 1 )
-  {
-    vtkUnstructuredGrid* grid = SMDS_Mesh::_meshList[myMeshId]->getGrid();
+    if (nbNodes == 1) {
+        vtkUnstructuredGrid *grid = SMDS_Mesh::_meshList[myMeshId]->getGrid();
 #ifdef VTK_CELL_ARRAY_V2
-    vtkNew<vtkIdList> cellPoints;
-    grid->GetCellPoints(myVtkID, cellPoints.GetPointer());
-    if (nbNodes != cellPoints->GetNumberOfIds())
-    {
-      MESSAGE("ChangeNodes problem: not the same number of nodes " << cellPoints->GetNumberOfIds() << " -> " << nbNodes);
-      return false;
-    }
-    myNode = nodes[0];
-    cellPoints->SetId(0, myNode->getVtkId());
+        vtkNew<vtkIdList> cellPoints;
+        grid->GetCellPoints(myVtkID, cellPoints.GetPointer());
+        if (nbNodes != cellPoints->GetNumberOfIds()) {
+            MESSAGE("ChangeNodes problem: not the same number of nodes "
+                    << cellPoints->GetNumberOfIds() << " -> " << nbNodes);
+            return false;
+        }
+        myNode = nodes[0];
+        cellPoints->SetId(0, myNode->getVtkId());
 #else
-    vtkIdType npts = 0;
-    vtkIdType* pts = 0;
-    grid->GetCellPoints(myVtkID, npts, pts);
-    if (nbNodes != npts)
-    {
-      MESSAGE("ChangeNodes problem: not the same number of nodes " << npts << " -> " << nbNodes);
-      return false;
-    }
-    myNode = nodes[0];
-    pts[0] = myNode->getVtkId();
+        vtkIdType npts = 0;
+        vtkIdType *pts = 0;
+        grid->GetCellPoints(myVtkID, npts, pts);
+        if (nbNodes != npts) {
+            MESSAGE("ChangeNodes problem: not the same number of nodes " << npts << " -> "
+                                                                         << nbNodes);
+            return false;
+        }
+        myNode = nodes[0];
+        pts[0] = myNode->getVtkId();
 #endif
 
-    SMDS_Mesh::_meshList[myMeshId]->setMyModified();
-    return true;
-  }
-  return false;
+        SMDS_Mesh::_meshList[myMeshId]->setMyModified();
+        return true;
+    }
+    return false;
 }

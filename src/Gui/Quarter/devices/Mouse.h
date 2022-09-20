@@ -39,21 +39,29 @@
 class QEvent;
 class SoEvent;
 
-namespace SIM { namespace Coin3D { namespace Quarter {
+namespace SIM
+{
+namespace Coin3D
+{
+namespace Quarter
+{
 
-class QUARTER_DLL_API Mouse : public InputDevice {
+class QUARTER_DLL_API Mouse: public InputDevice
+{
 public:
-  Mouse(QuarterWidget* quarter);
-  Mouse();
-  virtual ~Mouse();
+    Mouse(QuarterWidget *quarter);
+    Mouse();
+    virtual ~Mouse();
 
-  virtual const SoEvent * translateEvent(QEvent * event);
+    virtual const SoEvent *translateEvent(QEvent *event);
 
 private:
-  friend class MouseP;
-  class MouseP * pimpl;
+    friend class MouseP;
+    class MouseP *pimpl;
 };
 
-}}} // namespace
+} // namespace Quarter
+} // namespace Coin3D
+} // namespace SIM
 
 #endif // QUARTER_MOUSEHANDLER_H
