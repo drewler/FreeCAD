@@ -140,7 +140,7 @@ void removeRedundantHorizontalVertical(Sketcher::SketchObject *psketch,
 void ConstraintToAttachment(Sketcher::GeoElementId element, Sketcher::GeoElementId attachment,
                             double distance, App::DocumentObject *obj);
 
-//convenience functions for cursor coodinates
+//convenience functions for cursor coordinates
 bool hideUnits();
 bool showCursorCoords();
 bool useSystemDecimals();

@@ -4220,7 +4220,7 @@ bool StdMeshers_Sweeper::ComputeNodes(SMESH_MesherHelper &helper, const double t
     const size_t zSrc = 0, zTgt = zSize - 1;
     if (zSize < 3) return true;
 
-    vector<vector<gp_XYZ>> intPntsOfLayer(zSize); // node coodinates to compute
+    vector<vector<gp_XYZ>> intPntsOfLayer(zSize); // node coordinates to compute
     // set coordinates of src and tgt nodes
     for (size_t z = 0; z < intPntsOfLayer.size(); ++z)
         intPntsOfLayer[z].resize(myIntColumns.size());
