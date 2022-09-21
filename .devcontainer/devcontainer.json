@@ -1,0 +1,13 @@
+{
+	"build": {
+		"dockerfile": "../docker/development.Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"xaver.clang-format",
+				"notskm.clang-tidy"
+			]
+		}
+	}
+}
