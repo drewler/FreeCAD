@@ -804,8 +804,8 @@ void Command::recreateTooltip(const char *context, Action *action)
         action->setToolTip(ttip);
 
         // show shortcut inside status tip
-        QString stip = QString::fromLatin1("(%1)\t%2").arg(accel, action->statusTip());
-        action->setStatusTip(stip);
+        QString statusTip = QString::fromLatin1("(%1)\t%2").arg(accel, action->statusTip());
+        action->setStatusTip(statusTip);
     }
 
     if (sStatusTip) action->setStatusTip(QCoreApplication::translate(context, getStatusTip()));
@@ -1058,8 +1058,8 @@ Action *MacroCommand::createAction()
         pcAction->setToolTip(ttip);
 
         // show shortcut inside status tip
-        QString stip = QString::fromLatin1("(%1)\t%2").arg(accel, pcAction->statusTip());
-        pcAction->setStatusTip(stip);
+        QString statusTip = QString::fromLatin1("(%1)\t%2").arg(accel, pcAction->statusTip());
+        pcAction->setStatusTip(statusTip);
     }
 
     return pcAction;

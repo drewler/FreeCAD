@@ -319,8 +319,8 @@ void DlgCustomActionsImp::on_buttonReplaceAction_clicked()
             action->setToolTip(ttip);
 
             // show shortcut inside status tip
-            QString stip = QString::fromLatin1("(%1)\t%2").arg(accel, action->statusTip());
-            action->setStatusTip(stip);
+            QString statusTip = QString::fromLatin1("(%1)\t%2").arg(accel, action->statusTip());
+            action->setStatusTip(statusTip);
         }
     }
 

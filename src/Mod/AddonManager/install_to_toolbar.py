@@ -240,7 +240,7 @@ def install_macro_to_toolbar(repo: Addon, toolbar: object) -> None:
         whatsThisText = translate(
             "AddonsInstaller", "A macro installed with the FreeCAD Addon Manager"
         )
-    statustipText = (
+    statusTipText = (
         translate("AddonsInstaller", "Run", "Indicates a macro that can be 'run'")
         + " "
         + repo.display_name
@@ -268,7 +268,7 @@ def install_macro_to_toolbar(repo: Addon, toolbar: object) -> None:
         menuText,
         tooltipText,
         whatsThisText,
-        statustipText,
+        statusTipText,
         pixmapText,
     )
     toolbar.SetString(command_name, "FreeCAD")
