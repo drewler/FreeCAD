@@ -1,0 +1,33 @@
+name: Formatting Checks
+on: [push, pull_request]
+
+jobs:
+  formatting-checks:
+    name: Formatting Checks
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Pylint
+        uses: cclauss/GitHub-Action-for-pylint@0.7.0
+
+      - name: Black (Python)
+        uses: psf/black@stable
+        with:
+          options: "--check --verbose"
+          src: "./src"
+          version: "22.8.0"
+
+      - name: Clang-format
+        uses: jidicula/clang-format-action@v4.9.0
+        with:
+           clang-format-version: '15'
+           check-path: 'src'
+
+      - name: Codespell
+        uses: codespell-project/actions-codespell@master
+
+      - name: Clang-tidy
+        uses: ZedThree/clang-tidy-review@v0.9.0
