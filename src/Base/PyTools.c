@@ -27,76 +27,72 @@ is provided on an as is basis, without warranties of any kind.
  * there is no module to reload here: assumes a known object;
  *****************************************************************************/
 
-int
-PP_Run_Method(PyObject *pobject,  const char *method,
-                  const char *resfmt,   void *cresult,        /* convert to c/c++ */
-                  const char *argfmt,   ... /* arg,... */ )   /* convert to python */
+int PP_Run_Method(PyObject *pobject, const char *method, const char *resfmt,
+                  void *cresult,                         /* convert to c/c++ */
+                  const char *argfmt, ... /* arg,... */) /* convert to python */
 {
     PyObject *pmeth, *pargs, *presult;
-    va_list argslist;                              /* "pobject.method(args)" */
+    va_list argslist; /* "pobject.method(args)" */
     va_start(argslist, argfmt);
 
-    Py_Initialize();                               /* init if first time */
-    pmeth = PyObject_GetAttrString(pobject, method);  
-    if (pmeth == NULL) {                           /* get callable object */
+    Py_Initialize(); /* init if first time */
+    pmeth = PyObject_GetAttrString(pobject, method);
+    if (pmeth == NULL) { /* get callable object */
         va_end(argslist);
-        return -1;                                 /* bound method? has self */
+        return -1; /* bound method? has self */
     }
-	/* handle zero args different */
-//	if(resfmt == 0 || strcmp(resfmt,"") == 0)
-//		pargs = Py_BuildValue("()");
-//	else
-    pargs = Py_VaBuildValue(argfmt, argslist);     /* args: c->python */
+    /* handle zero args different */
+    //	if(resfmt == 0 || strcmp(resfmt,"") == 0)
+    //		pargs = Py_BuildValue("()");
+    //	else
+    pargs = Py_VaBuildValue(argfmt, argslist); /* args: c->python */
     va_end(argslist);
 
     if (pargs == NULL) {
         Py_DECREF(pmeth);
         return -1;
     }
-    if (PP_DEBUG)                                    /* debug it too? */ 
-        presult = PP_Debug_Function(pmeth, pargs); 
-    else 
+    if (PP_DEBUG) /* debug it too? */
+        presult = PP_Debug_Function(pmeth, pargs);
+    else
 #if PY_VERSION_HEX < 0x03090000
-        presult = PyEval_CallObject(pmeth, pargs);   /* run interpreter */
+        presult = PyEval_CallObject(pmeth, pargs); /* run interpreter */
 #else
-        presult = PyObject_CallObject(pmeth, pargs);   /* run interpreter */
+        presult = PyObject_CallObject(pmeth, pargs); /* run interpreter */
 #endif
 
     Py_DECREF(pmeth);
     Py_DECREF(pargs);
-//	if(cresult != 0 && resfmt != 0)
-		return PP_Convert_Result(presult, resfmt, cresult);    /* to C format */
-//	else 
-//		return 0;
+    //	if(cresult != 0 && resfmt != 0)
+    return PP_Convert_Result(presult, resfmt, cresult); /* to C format */
+    //	else
+    //		return 0;
 }
- 
 
-int
-PP_Get_Member(PyObject *pobject, const char *attrname,
-                  const char *resfmt,  void *cresult)         /* convert to c/c++ */
+
+int PP_Get_Member(PyObject *pobject, const char *attrname, const char *resfmt,
+                  void *cresult) /* convert to c/c++ */
 {
-    PyObject *pmemb;                                    /* "pobject.attrname" */
-    Py_Initialize();                        
-    pmemb = PyObject_GetAttrString(pobject, attrname);  /* incref'd */
-    return PP_Convert_Result(pmemb, resfmt, cresult);   /* to C form, decrefs */
+    PyObject *pmemb; /* "pobject.attrname" */
+    Py_Initialize();
+    pmemb = PyObject_GetAttrString(pobject, attrname); /* incref'd */
+    return PP_Convert_Result(pmemb, resfmt, cresult);  /* to C form, decrefs */
 }
- 
 
-int
-PP_Set_Member(PyObject *pobject, const char *attrname,
-                  const char *argfmt,  ... /* arg,... */ )    /* convert to python */
+
+int PP_Set_Member(PyObject *pobject, const char *attrname, const char *argfmt,
+                  ... /* arg,... */) /* convert to python */
 {
     int result;
     PyObject *pval;
-    va_list argslist;                             /* "pobject.attrname = v" */
+    va_list argslist; /* "pobject.attrname = v" */
     va_start(argslist, argfmt);
-    Py_Initialize();                              /* init if first time */
-    pval = Py_VaBuildValue(argfmt, argslist);     /* input: C->Python */
+    Py_Initialize();                          /* init if first time */
+    pval = Py_VaBuildValue(argfmt, argslist); /* input: C->Python */
     va_end(argslist);
-    if (pval == NULL)
-        return -1;
-    result = PyObject_SetAttrString(pobject, attrname, pval);     /* setattr */
-    Py_DECREF(pval); 
+    if (pval == NULL) return -1;
+    result = PyObject_SetAttrString(pobject, attrname, pval); /* setattr */
+    Py_DECREF(pval);
     return result;
 }
 
@@ -111,34 +107,33 @@ PP_Set_Member(PyObject *pobject, const char *attrname,
  * New tools: support for calling known Python objects directly;
  *****************************************************************************/
 
-int
-PP_Run_Function(const char *modname, const char *funcname,          /* load from module */
-                const char *resfmt,  void *cresult,           /* convert to c/c++ */
-                const char *argfmt,  ... /* arg, arg... */ )  /* convert to python */
+int PP_Run_Function(const char *modname, const char *funcname, /* load from module */
+                    const char *resfmt, void *cresult,         /* convert to c/c++ */
+                    const char *argfmt, ... /* arg, arg... */) /* convert to python */
 {
     /* call a function or class in a module */
     PyObject *func, *args, *presult;
     va_list argslist;
-    va_start(argslist, argfmt);                   /* "modname.funcname(args)" */
+    va_start(argslist, argfmt); /* "modname.funcname(args)" */
 
-    func = PP_Load_Attribute(modname, funcname);  /* may reload; incref'd */
-    if (func == NULL) {                           /* func or class or C type */
+    func = PP_Load_Attribute(modname, funcname); /* may reload; incref'd */
+    if (func == NULL) {                          /* func or class or C type */
         va_end(argslist);
         return -1;
     }
-    args = Py_VaBuildValue(argfmt, argslist);     /* convert args to python */
+    args = Py_VaBuildValue(argfmt, argslist); /* convert args to python */
     va_end(argslist);
-    if (args == NULL) {                           /* args incref'd */
+    if (args == NULL) { /* args incref'd */
         Py_DECREF(func);
         return -1;
     }
-    if (PP_DEBUG && strcmp(modname, "pdb") != 0)    /* debug this call? */
-        presult = PP_Debug_Function(func, args);    /* run in pdb; incref'd */
+    if (PP_DEBUG && strcmp(modname, "pdb") != 0) /* debug this call? */
+        presult = PP_Debug_Function(func, args); /* run in pdb; incref'd */
     else
 #if PY_VERSION_HEX < 0x03090000
-        presult = PyEval_CallObject(func, args);    /* run function; incref'd */
+        presult = PyEval_CallObject(func, args); /* run function; incref'd */
 #else
-        presult = PyObject_CallObject(func, args);    /* run function; incref'd */
+        presult = PyObject_CallObject(func, args);   /* run function; incref'd */
 #endif
 
     Py_DECREF(func);
@@ -147,8 +142,7 @@ PP_Run_Function(const char *modname, const char *funcname,          /* load from
 }
 
 
-PyObject *
-PP_Debug_Function(PyObject *func, PyObject *args)
+PyObject *PP_Debug_Function(PyObject *func, PyObject *args)
 {
     int oops, res;
     PyObject *presult;
@@ -156,41 +150,38 @@ PP_Debug_Function(PyObject *func, PyObject *args)
     /* expand tuple at front */
     // it seems that some versions of python want just 2 arguments; in that
     // case, remove trailing 1
-    oops = _PyTuple_Resize(&args, (1 + PyTuple_Size(args))); 
-    oops |= PyTuple_SetItem(args, 0, func);   
-    if (oops) 
-        return NULL;                        /* "args = (funcobj,) + (arg,..)" */
+    oops = _PyTuple_Resize(&args, (1 + PyTuple_Size(args)));
+    oops |= PyTuple_SetItem(args, 0, func);
+    if (oops) return NULL; /* "args = (funcobj,) + (arg,..)" */
 
-    res = PP_Run_Function(                  /* "pdb.runcall(funcobj, arg,..)" */
-                 "pdb",  "runcall",         /* recursive run_function */
-                 "O",    &presult,
-                 "O",     args);            /* args already is a tuple */
-    return (res != 0) ? NULL : presult;     /* errors in run_function? */
-}                                           /* presult not yet decref'd */
+    res = PP_Run_Function(                           /* "pdb.runcall(funcobj, arg,..)" */
+                          "pdb", "runcall",          /* recursive run_function */
+                          "O", &presult, "O", args); /* args already is a tuple */
+    return (res != 0) ? NULL : presult;              /* errors in run_function? */
+} /* presult not yet decref'd */
 
 
-int
-PP_Run_Known_Callable(PyObject *object,               /* func|class|method */
-                      const char *resfmt, void *cresult,    /* skip module fetch */
-                      const char *argfmt, ... /* arg,.. */) /* convert args, result */
+int PP_Run_Known_Callable(PyObject *object,                     /* func|class|method */
+                          const char *resfmt, void *cresult,    /* skip module fetch */
+                          const char *argfmt, ... /* arg,.. */) /* convert args, result */
 {
     /* call a known callable object */
     PyObject *args, *presult;
     va_list argslist;
-    va_start(argslist, argfmt);                     /* "return object(args)" */
+    va_start(argslist, argfmt); /* "return object(args)" */
 
-    Py_Initialize(); 
-    args = Py_VaBuildValue(argfmt, argslist);       /* convert args to python */
+    Py_Initialize();
+    args = Py_VaBuildValue(argfmt, argslist); /* convert args to python */
     va_end(argslist);
-    if (args == NULL)                               /* args incref'd */
+    if (args == NULL) /* args incref'd */
         return -1;
-    if (PP_DEBUG)                                   /* debug this call? */
-        presult = PP_Debug_Function(object, args);  /* run in pdb; incref'd */
+    if (PP_DEBUG)                                  /* debug this call? */
+        presult = PP_Debug_Function(object, args); /* run in pdb; incref'd */
     else
 #if PY_VERSION_HEX < 0x03090000
-        presult = PyEval_CallObject(object, args);  /* run function; incref'd */
+        presult = PyEval_CallObject(object, args); /* run function; incref'd */
 #else
-        presult = PyObject_CallObject(object, args);  /* run function; incref'd */
+        presult = PyObject_CallObject(object, args); /* run function; incref'd */
 #endif
 
     Py_DECREF(args);                                    /* result may be None */
@@ -220,13 +211,13 @@ FC_OS_LINUX: This is dangerous. How about PY_EXCEPT_MAX?
 */
 
 /* exception text is here after PP_Fetch_Error_Text call */
-char PP_last_error_type[MAX];               /* exception name text */
-char PP_last_error_info[MAX];               /* exception data text */
-char PP_last_error_trace[MAX];              /* exception traceback text */
+char PP_last_error_type[MAX];  /* exception name text */
+char PP_last_error_info[MAX];  /* exception data text */
+char PP_last_error_trace[MAX]; /* exception traceback text */
 
-PyObject *PP_last_traceback = NULL;         /* saved exception traceback object */
-PyObject *PP_PyDict_Object = NULL;          /* saved exception dictionary object */
-PyObject *PP_last_exception_type = NULL;    /* saved exception python type */
+PyObject *PP_last_traceback = NULL;      /* saved exception traceback object */
+PyObject *PP_PyDict_Object = NULL;       /* saved exception dictionary object */
+PyObject *PP_last_exception_type = NULL; /* saved exception python type */
 
 
 void PP_Fetch_Error_Text()
@@ -240,82 +231,74 @@ void PP_Fetch_Error_Text()
     /* get latest python exception information */
     /* this also clears the current exception  */
 
-    PyErr_Fetch(&errobj, &errdata, &errtraceback);       /* all 3 incref'd */
+    PyErr_Fetch(&errobj, &errdata, &errtraceback); /* all 3 incref'd */
 
 
     /* convert type and data to strings */
     /* calls str() on both to stringify */
 
     pystring = NULL;
-    if (errobj != NULL &&
-       (pystring = PyObject_Str(errobj)) != NULL &&      /* str(errobj) */
-       (PyUnicode_Check(pystring)) )                      /* str() increfs */
+    if (errobj != NULL && (pystring = PyObject_Str(errobj)) != NULL && /* str(errobj) */
+        (PyUnicode_Check(pystring)))                                   /* str() increfs */
     {
         strncpy(PP_last_error_type, PyUnicode_AsUTF8(pystring), MAX); /*Py->C*/
-        PP_last_error_type[MAX-1] = '\0';
+        PP_last_error_type[MAX - 1] = '\0';
     }
-    else
-    {
+    else {
         /* strcpy(PP_last_error_type, "<unknown exception type>"); */
         PP_last_error_type[0] = '\0';
     }
-    
+
     Py_XDECREF(pystring);
 
 
     pystring = NULL;
     pydict = NULL;
-    if (errdata != NULL &&
-        (PyDict_Check(errdata)) )                      /* str() increfs */
+    if (errdata != NULL && (PyDict_Check(errdata))) /* str() increfs */
     {
         // PyDict_GetItemString returns a borrowed reference
         // so we must make sure not to decrement the reference
-        PyObject* value = PyDict_GetItemString(errdata,"swhat");
-        
-        if (value!=NULL) {
+        PyObject *value = PyDict_GetItemString(errdata, "swhat");
+
+        if (value != NULL) {
             strncpy(PP_last_error_info, PyUnicode_AsUTF8(value), MAX);
-            PP_last_error_info[MAX-1] = '\0';
+            PP_last_error_info[MAX - 1] = '\0';
         }
 
         pydict = errdata;
         Py_INCREF(pydict);
     }
-    else if (errdata != NULL &&
-       (pystring = PyObject_Str(errdata)) != NULL &&     /* str(): increfs */
-       (PyUnicode_Check(pystring)) )
-    {
+    else if (errdata != NULL && (pystring = PyObject_Str(errdata)) != NULL && /* str(): increfs */
+             (PyUnicode_Check(pystring))) {
         strncpy(PP_last_error_info, PyUnicode_AsUTF8(pystring), MAX); /*Py->C*/
-        PP_last_error_info[MAX-1] = '\0';
+        PP_last_error_info[MAX - 1] = '\0';
     }
-    else 
+    else
         strcpy(PP_last_error_info, "<unknown exception data>");
-    
+
     Py_XDECREF(pystring);
 
-    /* convert traceback to string */ 
+    /* convert traceback to string */
     /* print text to a StringIO.StringIO() internal file object, then */
     /* fetch by calling object's .getvalue() method (see lib manual); */
 
     pystring = NULL;
-    if (errtraceback != NULL &&
-       (PP_Run_Function("io", "StringIO", "O", &pystring, "()") == 0) &&
+    if (errtraceback != NULL && (PP_Run_Function("io", "StringIO", "O", &pystring, "()") == 0) &&
 
-       (PyTraceBack_Print(errtraceback, pystring) == 0) &&
-       (PP_Run_Method(pystring, "getvalue", "s", &tempstr, "()") == 0) )
-    {
-        strncpy(PP_last_error_trace, tempstr, MAX); 
-        PP_last_error_trace[MAX-1] = '\0';
-        free(tempstr);  /* it's a strdup */
+        (PyTraceBack_Print(errtraceback, pystring) == 0)
+        && (PP_Run_Method(pystring, "getvalue", "s", &tempstr, "()") == 0)) {
+        strncpy(PP_last_error_trace, tempstr, MAX);
+        PP_last_error_trace[MAX - 1] = '\0';
+        free(tempstr); /* it's a strdup */
     }
     else {
-        PyFrameObject* frame = PyEval_GetFrame();
-        if(!frame) 
-            return;
+        PyFrameObject *frame = PyEval_GetFrame();
+        if (!frame) return;
         int line = PyFrame_GetLineNumber(frame);
 #if PY_VERSION_HEX < 0x030b0000
         const char *file = PyUnicode_AsUTF8(frame->f_code->co_filename);
 #else
-        PyCodeObject* code = PyFrame_GetCode(frame);
+        PyCodeObject *code = PyFrame_GetCode(frame);
         const char *file = PyUnicode_AsUTF8(code->co_filename);
         Py_DECREF(code);
 #endif
@@ -325,21 +308,23 @@ void PP_Fetch_Error_Text()
         const char *_f = strstr(file, "/src/");
 #endif
         /* strcpy(PP_last_error_trace, "<unknown exception traceback>");  */
-        snprintf(PP_last_error_trace,sizeof(PP_last_error_trace),"%s(%d)",(_f?_f+5:file),line);
+        snprintf(PP_last_error_trace, sizeof(PP_last_error_trace), "%s(%d)", (_f ? _f + 5 : file),
+                 line);
     }
     Py_XDECREF(pystring);
 
     Py_XDECREF(PP_last_exception_type);
-    if(errobj) {
+    if (errobj) {
         PP_last_exception_type = errobj;
         Py_INCREF(errobj);
-    }else
+    }
+    else
         PP_last_exception_type = 0;
     Py_XDECREF(errobj);
-    Py_XDECREF(errdata);               /* this function owns all 3 objects */
-    Py_XDECREF(PP_last_traceback);     /* they've been NULL'd out in Python */ 
+    Py_XDECREF(errdata);           /* this function owns all 3 objects */
+    Py_XDECREF(PP_last_traceback); /* they've been NULL'd out in Python */
     Py_XDECREF(PP_PyDict_Object);
-    PP_last_traceback = errtraceback;  /* save/export raw traceback object */
+    PP_last_traceback = errtraceback; /* save/export raw traceback object */
     PP_PyDict_Object = pydict;
 }
 
@@ -358,26 +343,23 @@ void PP_Fetch_Error_Text()
  *****************************************************************************/
 
 
-int
-PP_Convert_Result(PyObject *presult, const char *resFormat, void *resTarget)
+int PP_Convert_Result(PyObject *presult, const char *resFormat, void *resTarget)
 {
-    if (presult == NULL)                /* error when run: fail */
+    if (presult == NULL) /* error when run: fail */
         return -1;
-    else
-    if (resTarget == NULL) {            /* passed target=NULL: ignore result */
-        Py_DECREF(presult);             /* procedures and stmts return None  */
+    else if (resTarget == NULL) { /* passed target=NULL: ignore result */
+        Py_DECREF(presult);       /* procedures and stmts return None  */
         return 0;
     }
-    else
-    if (! PyArg_Parse(presult, resFormat, resTarget)) {  /* convert Python->C */
-        Py_DECREF(presult);                              /* need not be tuple */
-        return -1;                                       /* error in convert  */
+    else if (!PyArg_Parse(presult, resFormat, resTarget)) { /* convert Python->C */
+        Py_DECREF(presult);                                 /* need not be tuple */
+        return -1;                                          /* error in convert  */
     }
     else {
         if (strcmp(resFormat, "O") != 0) {     /* free object unless exported */
             if (strcmp(resFormat, "s") == 0) { /* copy string: caller owns it */
-                char **target = (char**) resTarget;
-#if defined (__GNUC__)
+                char **target = (char **)resTarget;
+#if defined(__GNUC__)
                 *target = strdup(*target);
 #else
                 *target = _strdup(*target);
@@ -385,41 +367,38 @@ PP_Convert_Result(PyObject *presult, const char *resFormat, void *resTarget)
             }
             Py_DECREF(presult);
         }
-        return 0;                     /* returns 0=success, -1=failure */
-    }                                 /* if 0: C result in *resTarget  */
-}                                     /* caller must decref if fmt="O" */
-                                      /* caller must free() if fmt="s" */
+        return 0; /* returns 0=success, -1=failure */
+    }             /* if 0: C result in *resTarget  */
+} /* caller must decref if fmt="O" */
+  /* caller must free() if fmt="s" */
 
-int
-PP_Get_Global(const char *modname, const char *varname, const char *resfmt, void *cresult)
+int PP_Get_Global(const char *modname, const char *varname, const char *resfmt, void *cresult)
 {
-    PyObject *var;                                   /* "x = modname.varname" */
-    var = PP_Load_Attribute(modname, varname);       /* var is incref'd */
-    return PP_Convert_Result(var, resfmt, cresult);  /* convert var to C form */
+    PyObject *var;                                  /* "x = modname.varname" */
+    var = PP_Load_Attribute(modname, varname);      /* var is incref'd */
+    return PP_Convert_Result(var, resfmt, cresult); /* convert var to C form */
 }
 
 
-int
-PP_Set_Global(const char *modname, const char *varname, const char *valfmt, ... /* cval(s) */) 
+int PP_Set_Global(const char *modname, const char *varname, const char *valfmt, ... /* cval(s) */)
 {
     int result;
-    PyObject *module, *val;                     /* "modname.varname = val" */
+    PyObject *module, *val; /* "modname.varname = val" */
     va_list cvals;
-    va_start(cvals, valfmt);                    /* C args after valfmt */
+    va_start(cvals, valfmt); /* C args after valfmt */
 
-    module = PP_Load_Module(modname);           /* get/load module */
+    module = PP_Load_Module(modname); /* get/load module */
     if (module == NULL) {
         va_end(cvals);
         return -1;
     }
-    val = Py_VaBuildValue(valfmt, cvals);       /* convert input to Python */
+    val = Py_VaBuildValue(valfmt, cvals); /* convert input to Python */
     va_end(cvals);
-    if (val == NULL) 
-        return -1;
-    result = PyObject_SetAttrString(module, varname, val); 
-    Py_DECREF(val);                             /* set global module var */
-    return result;                              /* decref val: var owns it */
-}                                               /* 0=success, varname set */
+    if (val == NULL) return -1;
+    result = PyObject_SetAttrString(module, varname, val);
+    Py_DECREF(val); /* set global module var */
+    return result;  /* decref val: var owns it */
+} /* 0=success, varname set */
 
 
 /*****************************************************************************
@@ -433,37 +412,37 @@ PP_Set_Global(const char *modname, const char *varname, const char *valfmt, ... 
  *****************************************************************************/
 
 
-int PP_RELOAD = 0;    /* reload modules dynamically? */
-int PP_DEBUG  = 0;    /* debug embedded code with pdb? */
+int PP_RELOAD = 0; /* reload modules dynamically? */
+int PP_DEBUG = 0;  /* debug embedded code with pdb? */
 
 
-const char *PP_Init(const char *modname) {
-    Py_Initialize();                               /* init python if needed */
-//#ifdef FC_OS_LINUX /* cannot convert `const char *' to `char *' in assignment */
-    if (modname!=NULL) return modname;
+const char *PP_Init(const char *modname)
+{
+    Py_Initialize(); /* init python if needed */
+    //#ifdef FC_OS_LINUX /* cannot convert `const char *' to `char *' in assignment */
+    if (modname != NULL) return modname;
     { /* we assume here that the caller frees allocated memory */
-      // #0000716: strange assignment and a memory leak
-      return "__main__";
-      //char* __main__=(char *)malloc(sizeof("__main__"));
-      //return __main__="__main__";
+        // #0000716: strange assignment and a memory leak
+        return "__main__";
+        //char* __main__=(char *)malloc(sizeof("__main__"));
+        //return __main__="__main__";
     }
-//#else    
-//    return modname == NULL ? "__main__" : modname;  /* default to '__main__' */
-//#endif    
+    //#else
+    //    return modname == NULL ? "__main__" : modname;  /* default to '__main__' */
+    //#endif
 }
 
 
-int
-PP_Make_Dummy_Module(const char *modname)   /* namespace for strings, if no file */
-{                                     /* instead of sharing __main__ for all */
-    PyObject *module, *dict;          /* note: __main__ is created in py_init */
+int PP_Make_Dummy_Module(const char *modname) /* namespace for strings, if no file */
+{                                             /* instead of sharing __main__ for all */
+    PyObject *module, *dict;                  /* note: __main__ is created in py_init */
     Py_Initialize();
-    module = PyImport_AddModule(modname);    /* fetch or make, no load */
-    if (module == NULL)                      /* module not incref'd */
-        return -1;                  
-    else {                                            /* module.__dict__ */
-        dict = PyModule_GetDict(module);              /* ['__dummy__'] = None */
-        PyDict_SetItemString(dict, "__dummy__", Py_None); 
+    module = PyImport_AddModule(modname); /* fetch or make, no load */
+    if (module == NULL)                   /* module not incref'd */
+        return -1;
+    else {                               /* module.__dict__ */
+        dict = PyModule_GetDict(module); /* ['__dummy__'] = None */
+        PyDict_SetItemString(dict, "__dummy__", Py_None);
         PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
         return 0;
     }
@@ -471,7 +450,7 @@ PP_Make_Dummy_Module(const char *modname)   /* namespace for strings, if no file
 
 
 PyObject *                          /* returns module object named modname  */
-PP_Load_Module(const char *modname)       /* modname can be "package.module" form */
+PP_Load_Module(const char *modname) /* modname can be "package.module" form */
 {                                   /* reload just resets C extension mods  */
     /* 
      * 4 cases:
@@ -481,56 +460,51 @@ PP_Load_Module(const char *modname)       /* modname can be "package.module" for
      * - not loaded yet, or loaded but reload=off: "import" to fetch or load 
      */
 
-    PyObject *module, *sysmods;                  
-    modname = PP_Init(modname);                       /* default to __main__ */
+    PyObject *module, *sysmods;
+    modname = PP_Init(modname); /* default to __main__ */
 
-    if (strcmp(modname, "__main__") == 0)             /* main: no file */
-        return PyImport_AddModule(modname);           /* not increfd */
+    if (strcmp(modname, "__main__") == 0)   /* main: no file */
+        return PyImport_AddModule(modname); /* not increfd */
 
-    sysmods = PyImport_GetModuleDict();               /* get sys.modules dict */
-    module  = PyDict_GetItemString(sysmods, modname); /* mod in sys.modules? */
-    
-    if (module != NULL &&                             /* dummy: no file */
-        PyModule_Check(module) && 
-        PyDict_GetItemString(PyModule_GetDict(module), "__dummy__")) {
-        return module;                                /* not increfd */
+    sysmods = PyImport_GetModuleDict();              /* get sys.modules dict */
+    module = PyDict_GetItemString(sysmods, modname); /* mod in sys.modules? */
+
+    if (module != NULL && /* dummy: no file */
+        PyModule_Check(module) && PyDict_GetItemString(PyModule_GetDict(module), "__dummy__")) {
+        return module; /* not increfd */
     }
-    else
-    if (PP_RELOAD && module != NULL && PyModule_Check(module)) {
-        module = PyImport_ReloadModule(module);       /* reload file,run code */
-        Py_XDECREF(module);                           /* still on sys.modules */
-        return module;                                /* not increfd */
+    else if (PP_RELOAD && module != NULL && PyModule_Check(module)) {
+        module = PyImport_ReloadModule(module); /* reload file,run code */
+        Py_XDECREF(module);                     /* still on sys.modules */
+        return module;                          /* not increfd */
     }
-    else {  
-        module = PyImport_ImportModule(modname);      /* fetch or load module */
-        Py_XDECREF(module);                           /* still on sys.modules */
-        return module;                                /* not increfd */
+    else {
+        module = PyImport_ImportModule(modname); /* fetch or load module */
+        Py_XDECREF(module);                      /* still on sys.modules */
+        return module;                           /* not increfd */
     }
 }
 
 
-PyObject *
-PP_Load_Attribute(const char *modname, const char *attrname)
+PyObject *PP_Load_Attribute(const char *modname, const char *attrname)
 {
-    PyObject *module;                         /* fetch "module.attr" */
-    modname = PP_Init(modname);               /* use before PyEval_CallObject */
-    module  = PP_Load_Module(modname);        /* not incref'd, may reload */
-    if (module == NULL)
-        return NULL;
-    return PyObject_GetAttrString(module, attrname);  /* func, class, var,.. */
-}                                                     /* caller must xdecref */
+    PyObject *module;                 /* fetch "module.attr" */
+    modname = PP_Init(modname);       /* use before PyEval_CallObject */
+    module = PP_Load_Module(modname); /* not incref'd, may reload */
+    if (module == NULL) return NULL;
+    return PyObject_GetAttrString(module, attrname); /* func, class, var,.. */
+} /* caller must xdecref */
 
 
 /* extra ops */
-int
-PP_Run_Command_Line(const char *prompt)
+int PP_Run_Command_Line(const char *prompt)
 {
-    int res;               /* interact with python, in "__main__" */
-    Py_Initialize();       /* in the program's "stdio" window     */
+    int res;         /* interact with python, in "__main__" */
+    Py_Initialize(); /* in the program's "stdio" window     */
     if (prompt != NULL)
-#if defined (FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX)
+#if defined(FC_OS_LINUX) || defined(FC_OS_CYGWIN) || defined(FC_OS_MACOSX)
         printf("[%s <Use Ctrl-D (i.e. EOF) to exit.>]\n", prompt);
-#elif defined (FC_OS_WIN32)
+#elif defined(FC_OS_WIN32)
         printf("[%s <Use Ctrl-Z plus Return to exit.>]\n", prompt);
 #endif
     res = PyRun_InteractiveLoop(stdin, "<stdin>");
@@ -546,76 +520,67 @@ PP_Run_Command_Line(const char *prompt)
  *****************************************************************************/
 
 
-
-int
-PP_Run_Codestr(PPStringModes mode, const char *code,  /* expr or stmt string */
-               const char *modname,                   /* loads module if needed */
-               const char *resfmt, void *cresult)     /* converts expr result to C */
+int PP_Run_Codestr(PPStringModes mode, const char *code, /* expr or stmt string */
+                   const char *modname,                  /* loads module if needed */
+                   const char *resfmt, void *cresult)    /* converts expr result to C */
 {
     /* run a string of Python code */
-    int parse_mode;                             /* "eval(code, d, d)", or */
-    PyObject *module, *dict, *presult;          /* "exec code in d, d" */
+    int parse_mode;                    /* "eval(code, d, d)", or */
+    PyObject *module, *dict, *presult; /* "exec code in d, d" */
 
-    module = PP_Load_Module(modname);           /* get module, init python */
-    if (module == NULL)                         /* not incref'd */
+    module = PP_Load_Module(modname); /* get module, init python */
+    if (module == NULL)               /* not incref'd */
         return -1;
-    dict = PyModule_GetDict(module);            /* get dict namespace */
-    if (dict == NULL)                           /* not incref'd */
+    dict = PyModule_GetDict(module); /* get dict namespace */
+    if (dict == NULL)                /* not incref'd */
         return -1;
 
     parse_mode = (mode == PP_EXPRESSION ? Py_eval_input : Py_file_input);
-    if (PP_DEBUG) 
-        presult = PP_Debug_Codestr(mode, code, dict);         /* run in pdb */
-    else 
+    if (PP_DEBUG) presult = PP_Debug_Codestr(mode, code, dict); /* run in pdb */
+    else
         presult = PyRun_String(code, parse_mode, dict, dict); /* eval direct */
                                                               /* increfs res */
     if (mode == PP_STATEMENT) {
-        int result = (presult == NULL? -1 : 0);          /* stmt: 'None' */
-        Py_XDECREF(presult);                             /* ignore result */
+        int result = (presult == NULL ? -1 : 0); /* stmt: 'None' */
+        Py_XDECREF(presult);                     /* ignore result */
         return result;
     }
-    return PP_Convert_Result(presult, resfmt, cresult);  /* expr val to C */
+    return PP_Convert_Result(presult, resfmt, cresult); /* expr val to C */
 }
 
 
-PyObject *
-PP_Compile_Codestr(PPStringModes mode,    /* precompile string to bytecode */
-                   const char *codestr)         /* pass result to PP_Run_Bytecode */
+PyObject *PP_Compile_Codestr(PPStringModes mode,  /* precompile string to bytecode */
+                             const char *codestr) /* pass result to PP_Run_Bytecode */
 {
     int start;
     Py_Initialize();
     switch (mode) {
-    case PP_STATEMENT:
-        start = Py_file_input; break;
-    case PP_EXPRESSION:
-        start = Py_eval_input; break;
-    default:
-        start = Py_single_input;  /* prints expr results */
+        case PP_STATEMENT: start = Py_file_input; break;
+        case PP_EXPRESSION: start = Py_eval_input; break;
+        default: start = Py_single_input; /* prints expr results */
     }
     return Py_CompileString(codestr, "<PP_Compile_Codestr>", start);
 }
 
 
-int
-PP_Run_Bytecode(PyObject *codeobj,           /* run compiled bytecode object */
-                const char     *modname,           /* in named module's namespace */
-                const char     *resfmt, void *restarget)
+int PP_Run_Bytecode(PyObject *codeobj,   /* run compiled bytecode object */
+                    const char *modname, /* in named module's namespace */
+                    const char *resfmt, void *restarget)
 {
     PyObject *presult, *module, *dict;
 
-    if (! PyCode_Check(codeobj))             /* make sure it's bytecode */
+    if (!PyCode_Check(codeobj)) /* make sure it's bytecode */
         return -1;
-    module = PP_Load_Module(modname);        /* get module, init python */
-    if (module == NULL)                      /* not incref'd */
+    module = PP_Load_Module(modname); /* get module, init python */
+    if (module == NULL)               /* not incref'd */
         return -1;
-    dict = PyModule_GetDict(module);         /* get dict namespace */
-    if (dict == NULL)                        /* not incref'd */
+    dict = PyModule_GetDict(module); /* get dict namespace */
+    if (dict == NULL)                /* not incref'd */
         return -1;
-    if (PP_DEBUG)
-        presult = PP_Debug_Bytecode(codeobj, dict);        /* run in pdb */
+    if (PP_DEBUG) presult = PP_Debug_Bytecode(codeobj, dict); /* run in pdb */
     else
-        presult = PyEval_EvalCode((PyObject*)codeobj, dict, dict);
-    return PP_Convert_Result(presult, resfmt, restarget);  /* expr val to C */
+        presult = PyEval_EvalCode((PyObject *)codeobj, dict, dict);
+    return PP_Convert_Result(presult, resfmt, restarget); /* expr val to C */
 }
 
 
@@ -648,39 +613,33 @@ PP_Run_Bytecode(PyObject *codeobj,           /* run compiled bytecode object */
  **************************************************************************/
 
 
-static void fixPdbRetval(PyObject *moddict) 
-    { if (PyDict_DelItemString(moddict, "__return__")) PyErr_Clear(); }
+static void fixPdbRetval(PyObject *moddict)
+{
+    if (PyDict_DelItemString(moddict, "__return__")) PyErr_Clear();
+}
 
 
-PyObject *
-PP_Debug_Codestr(PPStringModes mode, const char *codestring, PyObject *moddict)
+PyObject *PP_Debug_Codestr(PPStringModes mode, const char *codestring, PyObject *moddict)
 {
     int res;
     PyObject *presult;
     const char *pdbname = (mode == PP_EXPRESSION ? "runeval" : "run");
     fixPdbRetval(moddict);
-                                      /* pass code to a pbd.py function    */
-    res = PP_Run_Function(            /* "pdb.run(stmt, gdict, ldict)"     */
-             "pdb",    pdbname,       /* "pdb.runeval(expr, gdict, ldict)" */
-             "O",      &presult,
-             "(sOO)",  codestring, moddict, moddict); 
-    return (res != 0) ? NULL : presult;     /* return null or increfd object */
+    /* pass code to a pbd.py function    */
+    res = PP_Run_Function(                /* "pdb.run(stmt, gdict, ldict)"     */
+                          "pdb", pdbname, /* "pdb.runeval(expr, gdict, ldict)" */
+                          "O", &presult, "(sOO)", codestring, moddict, moddict);
+    return (res != 0) ? NULL : presult; /* return null or increfd object */
 }
 
 
-PyObject *
-PP_Debug_Bytecode(PyObject *codeobject, PyObject *moddict)
+PyObject *PP_Debug_Bytecode(PyObject *codeobject, PyObject *moddict)
 {
     int res;
     PyObject *presult;
     fixPdbRetval(moddict);
-    res = PP_Run_Function(            /* "pdb.runeval(codeobj, gdict, ldict)" */
-             "pdb",    "runeval",     /* accepts string|code, code=stmt|expr  */
-             "O",      &presult,
-             "(OOO)",  codeobject, moddict, moddict); 
-    return (res != 0) ? NULL : presult;     /* null if error in run_function */
+    res = PP_Run_Function(                  /* "pdb.runeval(codeobj, gdict, ldict)" */
+                          "pdb", "runeval", /* accepts string|code, code=stmt|expr  */
+                          "O", &presult, "(OOO)", codeobject, moddict, moddict);
+    return (res != 0) ? NULL : presult; /* null if error in run_function */
 }
-
-
-
-
