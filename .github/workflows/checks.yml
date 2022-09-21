@@ -10,9 +10,6 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Pylint
-        uses: cclauss/GitHub-Action-for-pylint@0.7.0
-
       - name: Black (Python)
         uses: psf/black@stable
         with:
