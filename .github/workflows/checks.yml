@@ -34,9 +34,6 @@ jobs:
            clang-format-version: '15'
            check-path: 'src'
 
-      - name: Clang-tidy
-        uses: ZedThree/clang-tidy-review@v0.9.0
-
   spelling-checks:
     name: Spelling
     runs-on: ubuntu-20.04
