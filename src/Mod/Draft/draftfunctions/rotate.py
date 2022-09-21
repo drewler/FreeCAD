@@ -39,8 +39,9 @@ import draftmake.make_line as make_line
 import draftmake.make_copy as make_copy
 
 
-def rotate(objectslist, angle, center=App.Vector(0, 0, 0),
-           axis=App.Vector(0, 0, 1), copy=False):
+def rotate(
+    objectslist, angle, center=App.Vector(0, 0, 0), axis=App.Vector(0, 0, 1), copy=False
+):
     """rotate(objects,angle,[center,axis,copy])
 
     Rotates the objects contained in objects (that can be a list of objects
@@ -67,8 +68,9 @@ def rotate(objectslist, angle, center=App.Vector(0, 0, 0),
     The objects (or their copies) are returned.
     """
     import Part
-    utils.type_check([(copy,bool)], "rotate")
-    if not isinstance(objectslist,list):
+
+    utils.type_check([(copy, bool)], "rotate")
+    if not isinstance(objectslist, list):
         objectslist = [objectslist]
 
     objectslist.extend(groups.get_movable_children(objectslist))
@@ -79,10 +81,13 @@ def rotate(objectslist, angle, center=App.Vector(0, 0, 0),
     if copy:
         doc = App.ActiveDocument
         for obj in objectslist:
-            if obj.isDerivedFrom("App::DocumentObjectGroup") \
-                    and obj.Name not in newgroups.keys():
-                newgroups[obj.Name] = doc.addObject(obj.TypeId,
-                                                    utils.get_real_name(obj.Name))
+            if (
+                obj.isDerivedFrom("App::DocumentObjectGroup")
+                and obj.Name not in newgroups.keys()
+            ):
+                newgroups[obj.Name] = doc.addObject(
+                    obj.TypeId, utils.get_real_name(obj.Name)
+                )
 
     for obj in objectslist:
         newobj = None
@@ -148,7 +153,9 @@ def rotate(objectslist, angle, center=App.Vector(0, 0, 0),
                 newobj = obj
             # Workaround for `faulty` implementation of Base.Placement.rotate(center, axis, angle).
             # See: https://forum.freecadweb.org/viewtopic.php?p=613196#p613196
-            offset_rotation = App.Placement(App.Vector(0, 0, 0), App.Rotation(real_axis, angle), real_center)
+            offset_rotation = App.Placement(
+                App.Vector(0, 0, 0), App.Rotation(real_axis, angle), real_center
+            )
             newobj.Placement = offset_rotation * newobj.Placement
 
         elif hasattr(obj, "Shape"):
@@ -164,11 +171,12 @@ def rotate(objectslist, angle, center=App.Vector(0, 0, 0),
             newobjlist.append(newobj)
             if copy:
                 for parent in obj.InList:
-                    if parent.isDerivedFrom("App::DocumentObjectGroup") \
-                            and (parent in objectslist):
+                    if parent.isDerivedFrom("App::DocumentObjectGroup") and (
+                        parent in objectslist
+                    ):
                         newgroups[parent.Name].addObject(newobj)
                     if utils.get_type(parent) == "Layer":
-                        parent.Proxy.addObject(parent ,newobj)
+                        parent.Proxy.addObject(parent, newobj)
 
     if copy and utils.get_param("selectBaseObjects", False):
         gui_utils.select(objectslist)
@@ -192,8 +200,9 @@ def rotate_vertex(object, vertex_index, angle, center, axis):
     points = object.Points
     points[vertex_index] = object.Placement.inverse().multVec(
         rotate_vector_from_center(
-            object.Placement.multVec(points[vertex_index]),
-            angle, axis, center))
+            object.Placement.multVec(points[vertex_index]), angle, axis, center
+        )
+    )
     object.Points = points
 
 
@@ -222,7 +231,7 @@ def rotate_edge(object, edge_index, angle, center, axis):
     if utils.isClosedEdge(edge_index, object):
         rotateVertex(object, 0, angle, center, axis)
     else:
-        rotateVertex(object, edge_index+1, angle, center, axis)
+        rotateVertex(object, edge_index + 1, angle, center, axis)
 
 
 rotateEdge = rotate_edge
@@ -235,8 +244,11 @@ def copy_rotated_edges(arguments):
     """
     copied_edges = []
     for argument in arguments:
-        copied_edges.append(copy_rotated_edge(argument[0], argument[1],
-            argument[2], argument[3], argument[4]))
+        copied_edges.append(
+            copy_rotated_edge(
+                argument[0], argument[1], argument[2], argument[3], argument[4]
+            )
+        )
     join.join_wires(copied_edges)
 
 
@@ -249,16 +261,17 @@ def copy_rotated_edge(object, edge_index, angle, center, axis):
     Implemented by Dion Moult during 0.19 dev cycle (works only with Draft Wire).
     """
     vertex1 = rotate_vector_from_center(
-        object.Placement.multVec(object.Points[edge_index]),
-        angle, axis, center)
+        object.Placement.multVec(object.Points[edge_index]), angle, axis, center
+    )
     if utils.isClosedEdge(edge_index, object):
         vertex2 = rotate_vector_from_center(
-            object.Placement.multVec(object.Points[0]),
-            angle, axis, center)
+            object.Placement.multVec(object.Points[0]), angle, axis, center
+        )
     else:
         vertex2 = rotate_vector_from_center(
-            object.Placement.multVec(object.Points[edge_index+1]),
-            angle, axis, center)
+            object.Placement.multVec(object.Points[edge_index + 1]), angle, axis, center
+        )
     return make_line.make_line(vertex1, vertex2)
+
 
 ## @}

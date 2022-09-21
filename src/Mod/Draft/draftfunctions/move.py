@@ -58,7 +58,7 @@ def move(objectslist, vector, copy=False):
     ----------
     The objects (or their copies) are returned.
     """
-    utils.type_check([(vector, App.Vector), (copy,bool)], "move")
+    utils.type_check([(vector, App.Vector), (copy, bool)], "move")
     if not isinstance(objectslist, list):
         objectslist = [objectslist]
 
@@ -70,10 +70,13 @@ def move(objectslist, vector, copy=False):
     if copy:
         doc = App.ActiveDocument
         for obj in objectslist:
-            if obj.isDerivedFrom("App::DocumentObjectGroup") \
-                    and obj.Name not in newgroups.keys():
-                newgroups[obj.Name] = doc.addObject(obj.TypeId,
-                                                    utils.get_real_name(obj.Name))
+            if (
+                obj.isDerivedFrom("App::DocumentObjectGroup")
+                and obj.Name not in newgroups.keys()
+            ):
+                newgroups[obj.Name] = doc.addObject(
+                    obj.TypeId, utils.get_real_name(obj.Name)
+                )
 
     for obj in objectslist:
         newobj = None
@@ -152,11 +155,12 @@ def move(objectslist, vector, copy=False):
             newobjlist.append(newobj)
             if copy:
                 for parent in obj.InList:
-                    if parent.isDerivedFrom("App::DocumentObjectGroup") \
-                            and (parent in objectslist):
+                    if parent.isDerivedFrom("App::DocumentObjectGroup") and (
+                        parent in objectslist
+                    ):
                         newgroups[parent.Name].addObject(newobj)
                     if utils.get_type(parent) == "Layer":
-                        parent.Proxy.addObject(parent ,newobj)
+                        parent.Proxy.addObject(parent, newobj)
 
     if copy and utils.get_param("selectBaseObjects", False):
         gui_utils.select(objectslist)
@@ -194,7 +198,7 @@ def move_edge(object, edge_index, vector):
     if utils.isClosedEdge(edge_index, object):
         moveVertex(object, 0, vector)
     else:
-        moveVertex(object, edge_index+1, vector)
+        moveVertex(object, edge_index + 1, vector)
 
 
 moveEdge = move_edge
@@ -223,7 +227,8 @@ def copy_moved_edge(object, edge_index, vector):
     if utils.isClosedEdge(edge_index, object):
         vertex2 = object.Placement.multVec(object.Points[0]).add(vector)
     else:
-        vertex2 = object.Placement.multVec(object.Points[edge_index+1]).add(vector)
+        vertex2 = object.Placement.multVec(object.Points[edge_index + 1]).add(vector)
     return make_line.make_line(vertex1, vertex2)
+
 
 ## @}

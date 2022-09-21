@@ -47,9 +47,7 @@ class DrawHatchTest(unittest.TestCase):
         hatch.Source = (self.view, ["Face0"])
         hatchFileSpec = self.path + "/TestHatch.svg"
         # comment out to use default from preferences
-        hatch.HatchPattern = (
-            hatchFileSpec
-        )
+        hatch.HatchPattern = hatchFileSpec
         print("adding hatch to page")
         self.page.addView(hatch)
         print("finished hatch")

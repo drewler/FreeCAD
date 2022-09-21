@@ -66,7 +66,9 @@ class AddonGitInterface:
             try:
                 AddonGitInterface.git_manager = GitManager()
             except NoGitFound:
-                FreeCAD.Console.PrintLog("No git found, Addon Manager Developer Mode disabled.")
+                FreeCAD.Console.PrintLog(
+                    "No git found, Addon Manager Developer Mode disabled."
+                )
                 return
 
         self.path = path
@@ -96,13 +98,14 @@ class AddonGitInterface:
             return AddonGitInterface.git_manager.get_last_authors(self.path, 10)
         return []
 
-#pylint: disable=too-many-instance-attributes
+
+# pylint: disable=too-many-instance-attributes
+
 
 class DeveloperMode:
     """The main Developer Mode dialog, for editing package.xml metadata graphically."""
 
     def __init__(self):
-
 
         # In the UI we want to show a translated string for the person type, but the underlying
         # string must be the one expected by the metadata parser, in English

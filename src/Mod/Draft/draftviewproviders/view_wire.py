@@ -62,33 +62,39 @@ class ViewProviderWire(ViewProviderDraft):
 
         if not hasattr(vobj, "EndArrow"):
             _tip = "Displays a Dimension symbol at the end of the wire."
-            vobj.addProperty("App::PropertyBool",
-                             "EndArrow",
-                             "Draft",
-                             QT_TRANSLATE_NOOP("App::Property", _tip))
+            vobj.addProperty(
+                "App::PropertyBool",
+                "EndArrow",
+                "Draft",
+                QT_TRANSLATE_NOOP("App::Property", _tip),
+            )
             vobj.EndArrow = False
 
         if not hasattr(vobj, "ArrowSize"):
             _tip = "Arrow size"
-            vobj.addProperty("App::PropertyLength",
-                             "ArrowSize",
-                             "Draft",
-                             QT_TRANSLATE_NOOP("App::Property", _tip))
+            vobj.addProperty(
+                "App::PropertyLength",
+                "ArrowSize",
+                "Draft",
+                QT_TRANSLATE_NOOP("App::Property", _tip),
+            )
             vobj.ArrowSize = utils.get_param("arrowsize", 0.1)
 
         if not hasattr(vobj, "ArrowType"):
             _tip = "Arrow type"
-            vobj.addProperty("App::PropertyEnumeration",
-                             "ArrowType",
-                             "Draft",
-                             QT_TRANSLATE_NOOP("App::Property", _tip))
+            vobj.addProperty(
+                "App::PropertyEnumeration",
+                "ArrowType",
+                "Draft",
+                QT_TRANSLATE_NOOP("App::Property", _tip),
+            )
             vobj.ArrowType = utils.ARROW_TYPES
             vobj.ArrowType = utils.ARROW_TYPES[utils.get_param("dimsymbol", 0)]
 
     def attach(self, vobj):
         self.Object = vobj.Object
         col = coin.SoBaseColor()
-        col.rgb.setValue(vobj.LineColor[0],vobj.LineColor[1],vobj.LineColor[2])
+        col.rgb.setValue(vobj.LineColor[0], vobj.LineColor[1], vobj.LineColor[2])
         self.coords = coin.SoTransform()
         self.pt = coin.SoSeparator()
         self.pt.addChild(col)
@@ -96,38 +102,40 @@ class ViewProviderWire(ViewProviderDraft):
         self.symbol = gui_utils.dim_symbol()
         self.pt.addChild(self.symbol)
         super(ViewProviderWire, self).attach(vobj)
-        self.onChanged(vobj,"EndArrow")
+        self.onChanged(vobj, "EndArrow")
 
     def updateData(self, obj, prop):
         if prop == "Points":
             if obj.Points:
                 p = obj.Points[-1]
-                if hasattr(self,"coords"):
-                    self.coords.translation.setValue((p.x,p.y,p.z))
+                if hasattr(self, "coords"):
+                    self.coords.translation.setValue((p.x, p.y, p.z))
                     if len(obj.Points) >= 2:
                         v1 = obj.Points[-2].sub(obj.Points[-1])
                         if not DraftVecUtils.isNull(v1):
                             v1.normalize()
                             _rot = coin.SbRotation()
-                            _rot.setValue(coin.SbVec3f(1, 0, 0), coin.SbVec3f(v1[0], v1[1], v1[2]))
+                            _rot.setValue(
+                                coin.SbVec3f(1, 0, 0), coin.SbVec3f(v1[0], v1[1], v1[2])
+                            )
                             self.coords.rotation.setValue(_rot)
         return
 
     def onChanged(self, vobj, prop):
-        if prop in ["EndArrow","ArrowSize","ArrowType","Visibility"]:
+        if prop in ["EndArrow", "ArrowSize", "ArrowType", "Visibility"]:
             rn = vobj.RootNode
-            if hasattr(self,"pt") and hasattr(vobj,"EndArrow"):
+            if hasattr(self, "pt") and hasattr(vobj, "EndArrow"):
                 if vobj.EndArrow and vobj.Visibility:
                     self.pt.removeChild(self.symbol)
                     s = utils.ARROW_TYPES.index(vobj.ArrowType)
                     self.symbol = gui_utils.dim_symbol(s)
                     self.pt.addChild(self.symbol)
-                    self.updateData(vobj.Object,"Points")
-                    if hasattr(vobj,"ArrowSize"):
+                    self.updateData(vobj.Object, "Points")
+                    if hasattr(vobj, "ArrowSize"):
                         s = vobj.ArrowSize
                     else:
-                        s = utils.get_param("arrowsize",0.1)
-                    self.coords.scaleFactor.setValue((s,s,s))
+                        s = utils.get_param("arrowsize", 0.1)
+                    self.coords.scaleFactor.setValue((s, s, s))
                     rn.addChild(self.pt)
                 else:
                     if self.symbol:
@@ -138,26 +146,26 @@ class ViewProviderWire(ViewProviderDraft):
 
         if prop in ["LineColor"]:
             if hasattr(self, "pt"):
-                self.pt[0].rgb.setValue(vobj.LineColor[0],vobj.LineColor[1],vobj.LineColor[2])
+                self.pt[0].rgb.setValue(
+                    vobj.LineColor[0], vobj.LineColor[1], vobj.LineColor[2]
+                )
 
         super(ViewProviderWire, self).onChanged(vobj, prop)
         return
 
     def claimChildren(self):
-        if hasattr(self.Object,"Base"):
-            return [self.Object.Base,self.Object.Tool]
+        if hasattr(self.Object, "Base"):
+            return [self.Object.Base, self.Object.Tool]
         return []
 
     def setupContextMenu(self, vobj, menu):
-        action1 = QtGui.QAction(QtGui.QIcon(":/icons/Draft_Edit.svg"),
-                                translate("draft", "Flatten"),
-                                menu)
-        QtCore.QObject.connect(action1,
-                               QtCore.SIGNAL("triggered()"),
-                               self.flatten)
+        action1 = QtGui.QAction(
+            QtGui.QIcon(":/icons/Draft_Edit.svg"), translate("draft", "Flatten"), menu
+        )
+        QtCore.QObject.connect(action1, QtCore.SIGNAL("triggered()"), self.flatten)
         menu.addAction(action1)
 
-    def flatten(self): # Only to be used for Draft_Wires.
+    def flatten(self):  # Only to be used for Draft_Wires.
         if not hasattr(self, "Object"):
             return
 
@@ -172,9 +180,9 @@ class ViewProviderWire(ViewProviderDraft):
             origin = App.Vector(0, 0, 0)
             normal = App.Vector(0, 0, 1)
 
-        flat_wire = wires.flattenWire(self.Object.Shape.Wires[0],
-                                      origin=origin,
-                                      normal=normal)
+        flat_wire = wires.flattenWire(
+            self.Object.Shape.Wires[0], origin=origin, normal=normal
+        )
 
         doc = App.ActiveDocument
         doc.openTransaction(translate("draft", "Flatten"))

@@ -28,8 +28,8 @@ import os
 import codecs
 import tempfile
 
-class TestMetadata(unittest.TestCase):
 
+class TestMetadata(unittest.TestCase):
     def setUp(self):
         self.test_dir = os.path.join(FreeCAD.getHomePath(), "Mod", "Test", "TestData")
 
@@ -40,15 +40,24 @@ class TestMetadata(unittest.TestCase):
         except Exception:
             self.fail("Metadata construction from XML file failed")
 
-        with self.assertRaises(FreeCAD.Base.XMLBaseException, msg="Metadata construction from XML file with bad root node did not raise an exception"):
+        with self.assertRaises(
+            FreeCAD.Base.XMLBaseException,
+            msg="Metadata construction from XML file with bad root node did not raise an exception",
+        ):
             filename = os.path.join(self.test_dir, "bad_root_node.xml")
             md = FreeCAD.Metadata(filename)
 
-        with self.assertRaises(FreeCAD.Base.XMLBaseException, msg="Metadata construction from invalid XML file did not raise an exception"):
+        with self.assertRaises(
+            FreeCAD.Base.XMLBaseException,
+            msg="Metadata construction from invalid XML file did not raise an exception",
+        ):
             filename = os.path.join(self.test_dir, "bad_xml.xml")
             md = FreeCAD.Metadata(filename)
 
-        with self.assertRaises(FreeCAD.Base.XMLBaseException, msg="Metadata construction from XML file with invalid version did not raise an exception"):
+        with self.assertRaises(
+            FreeCAD.Base.XMLBaseException,
+            msg="Metadata construction from XML file with invalid version did not raise an exception",
+        ):
             filename = os.path.join(self.test_dir, "bad_version.xml")
             md = FreeCAD.Metadata(filename)
 
@@ -60,13 +69,13 @@ class TestMetadata(unittest.TestCase):
         self.assertEqual(md.Name, "Test Workbench")
         self.assertEqual(md.Description, "A package.xml file for unit testing.")
         self.assertEqual(md.Version, "1.0.1")
-        #self.assertEqual(md.Date, "2022-01-07")
+        # self.assertEqual(md.Date, "2022-01-07")
         self.assertEqual(md.Icon, "Resources/icons/PackageIcon.svg")
 
         # Tags that are lists of elements:
         maintainers = md.Maintainer
         self.assertEqual(len(maintainers), 2)
-        
+
         authors = md.Author
         self.assertEqual(len(authors), 3)
 
@@ -112,9 +121,12 @@ class TestMetadata(unittest.TestCase):
     def test_file_path(self):
         # Issue 7112
         try:
-            filename = os.path.join(tempfile.gettempdir(), b'H\xc3\xa5vard.xml'.decode("utf-8"))
+            filename = os.path.join(
+                tempfile.gettempdir(), b"H\xc3\xa5vard.xml".decode("utf-8")
+            )
             xmlfile = codecs.open(filename, mode="w", encoding="utf-8")
-            xmlfile.write(r"""<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+            xmlfile.write(
+                r"""<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
   <name>test</name>
   <description>Text</description>
@@ -125,14 +137,15 @@ class TestMetadata(unittest.TestCase):
       <classname>Workbench</classname>
     </workbench>
   </content>
-</package>""")
+</package>"""
+            )
             xmlfile.close()
             md = FreeCAD.Metadata(filename)
             self.assertEqual(md.Name, "test")
             self.assertEqual(md.Description, "Text")
             self.assertEqual(md.Version, "1.0.0")
         except UnicodeEncodeError as e:
-            print ("Ignore UnicodeEncodeError in test_file_path:\n{}".format(str(e)))
+            print("Ignore UnicodeEncodeError in test_file_path:\n{}".format(str(e)))
 
     def test_content_item_tags(self):
         pass

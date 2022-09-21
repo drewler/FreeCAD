@@ -49,8 +49,10 @@ def concatenate(shape):
         wires = [Part.Wire(edges) for edges in sorted_edges]
         face = Part.makeFace(wires, "Part::FaceMakerBullseye")
     except Base.FreeCADError:
-        print("DraftGeomUtils: Fails to join faces into one. "
-              + "The precision of the faces would be insufficient")
+        print(
+            "DraftGeomUtils: Fails to join faces into one. "
+            + "The precision of the faces would be insufficient"
+        )
         return shape
     else:
         if not wires[0].isClosed():
@@ -107,6 +109,7 @@ def is_coplanar(faces, tol=-1):
 
     return True
 
+
 isCoplanar = is_coplanar
 
 
@@ -122,10 +125,10 @@ def bind(w1, w2, per_segment=False):
 
     def create_face(w1, w2):
         try:
-            w3 = Part.LineSegment(w1.Vertexes[0].Point,
-                                  w2.Vertexes[0].Point).toShape()
-            w4 = Part.LineSegment(w1.Vertexes[-1].Point,
-                                  w2.Vertexes[-1].Point).toShape()
+            w3 = Part.LineSegment(w1.Vertexes[0].Point, w2.Vertexes[0].Point).toShape()
+            w4 = Part.LineSegment(
+                w1.Vertexes[-1].Point, w2.Vertexes[-1].Point
+            ).toShape()
             return Part.Face(Part.Wire(w1.Edges + [w3] + w2.Edges + [w4]))
         except Part.OCCError:
             print("DraftGeomUtils: unable to bind wires")
@@ -135,9 +138,7 @@ def bind(w1, w2, per_segment=False):
         print("DraftGeomUtils: unable to bind wires")
         return None
 
-    if (per_segment
-            and len(w1.Edges) > 1
-            and len(w1.Edges) == len(w2.Edges)):
+    if per_segment and len(w1.Edges) > 1 and len(w1.Edges) == len(w2.Edges):
         faces = []
         for (edge1, edge2) in zip(w1.Edges, w2.Edges):
             face = create_face(edge1, edge2)
@@ -298,5 +299,6 @@ def removeSplitter(shape):
             return face
 
     return None
+
 
 ## @}

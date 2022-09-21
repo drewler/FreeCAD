@@ -41,7 +41,9 @@ if App.GuiUp:
     from draftviewproviders.view_base import ViewProviderDraft
 
 
-def make_circle(radius, placement=None, face=None, startangle=None, endangle=None, support=None):
+def make_circle(
+    radius, placement=None, face=None, startangle=None, endangle=None, support=None
+):
     """make_circle(radius, [placement, face, startangle, endangle])
     or make_circle(edge,[face]):
 
@@ -76,7 +78,7 @@ def make_circle(radius, placement=None, face=None, startangle=None, endangle=Non
         return
 
     if placement:
-        utils.type_check([(placement,App.Placement)], "make_circle")
+        utils.type_check([(placement, App.Placement)], "make_circle")
 
     if startangle != endangle:
         _name = "Arc"
@@ -90,7 +92,7 @@ def make_circle(radius, placement=None, face=None, startangle=None, endangle=Non
     if face is not None:
         obj.MakeFace = face
 
-    if isinstance(radius,Part.Edge):
+    if isinstance(radius, Part.Edge):
         edge = radius
         if DraftGeomUtils.geomType(edge) == "Circle":
             obj.Radius = edge.Curve.Radius
@@ -98,7 +100,9 @@ def make_circle(radius, placement=None, face=None, startangle=None, endangle=Non
             delta = edge.Curve.Center.sub(placement.Base)
             placement.move(delta)
             # Rotation of the edge
-            rotOk = App.Rotation(edge.Curve.XAxis, edge.Curve.YAxis, edge.Curve.Axis, "ZXY")
+            rotOk = App.Rotation(
+                edge.Curve.XAxis, edge.Curve.YAxis, edge.Curve.Axis, "ZXY"
+            )
             placement.Rotation = rotOk
             if len(edge.Vertexes) > 1:
                 v0 = edge.Curve.XAxis
@@ -113,7 +117,8 @@ def make_circle(radius, placement=None, face=None, startangle=None, endangle=Non
     else:
         obj.Radius = radius
         if (startangle is not None) and (endangle is not None):
-            if startangle == -0: startangle = 0
+            if startangle == -0:
+                startangle = 0
             obj.FirstAngle = startangle
             obj.LastAngle = endangle
 

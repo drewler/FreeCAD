@@ -102,9 +102,13 @@ class Plane:
         A placeholder for a stored state.
     """
 
-    def __init__(self,
-                 u=Vector(1, 0, 0), v=Vector(0, 1, 0), w=Vector(0, 0, 1),
-                 pos=Vector(0, 0, 0)):
+    def __init__(
+        self,
+        u=Vector(1, 0, 0),
+        v=Vector(0, 1, 0),
+        w=Vector(0, 0, 1),
+        pos=Vector(0, 0, 0),
+    ):
 
         # keep track of active document.  Reset view when doc changes.
         self.doc = None
@@ -267,11 +271,11 @@ class Plane:
         if abs(cos) <= float_info.epsilon:
             if force_projection:
                 cos = math.copysign(float_info.epsilon, delta_ax_proj)
-                dir = axis.cross(dir).cross(axis) - cos*axis
+                dir = axis.cross(dir).cross(axis) - cos * axis
             else:
                 return None
 
-        proj = p - delta_ax_proj/cos*dir
+        proj = p - delta_ax_proj / cos * dir
 
         return proj
 
@@ -301,7 +305,7 @@ class Plane:
         t = Vector(direction)
         # t.normalize()
         a = round(t.getAngle(self.axis), DraftVecUtils.precision())
-        pp = round((math.pi)/2, DraftVecUtils.precision())
+        pp = round((math.pi) / 2, DraftVecUtils.precision())
         if a == pp:
             return p
         t.multiply(self.offsetToPoint(p, direction))
@@ -352,7 +356,7 @@ class Plane:
         else:
             self.v = axis.cross(Vector(1, 0, 0))
             self.v.normalize()
-            self.u = DraftVecUtils.rotate(self.v, -math.pi/2, self.axis)
+            self.u = DraftVecUtils.rotate(self.v, -math.pi / 2, self.axis)
             self.u.normalize()
         offsetVector = Vector(axis)
         offsetVector.multiply(offset)
@@ -426,44 +430,44 @@ class Plane:
         self.axis.normalize()
         ref_vec = Vector(0.0, 1.0, 0.0)
 
-        if ((abs(axis.x) > abs(axis.y)) and (abs(axis.y) > abs(axis.z))):
-            ref_vec = Vector(0.0, 0., 1.0)
+        if (abs(axis.x) > abs(axis.y)) and (abs(axis.y) > abs(axis.z)):
+            ref_vec = Vector(0.0, 0.0, 1.0)
             self.u = axis.negative().cross(ref_vec)
             self.u.normalize()
-            self.v = DraftVecUtils.rotate(self.u, math.pi/2, self.axis)
+            self.v = DraftVecUtils.rotate(self.u, math.pi / 2, self.axis)
             # projcase = "Case new"
 
-        elif ((abs(axis.y) > abs(axis.z)) and (abs(axis.z) >= abs(axis.x))):
+        elif (abs(axis.y) > abs(axis.z)) and (abs(axis.z) >= abs(axis.x)):
             ref_vec = Vector(1.0, 0.0, 0.0)
             self.u = axis.negative().cross(ref_vec)
             self.u.normalize()
-            self.v = DraftVecUtils.rotate(self.u, math.pi/2, self.axis)
+            self.v = DraftVecUtils.rotate(self.u, math.pi / 2, self.axis)
             # projcase = "Y>Z, View Y"
 
-        elif ((abs(axis.y) >= abs(axis.x)) and (abs(axis.x) > abs(axis.z))):
-            ref_vec = Vector(0.0, 0., 1.0)
+        elif (abs(axis.y) >= abs(axis.x)) and (abs(axis.x) > abs(axis.z)):
+            ref_vec = Vector(0.0, 0.0, 1.0)
             self.u = axis.cross(ref_vec)
             self.u.normalize()
-            self.v = DraftVecUtils.rotate(self.u, math.pi/2, self.axis)
+            self.v = DraftVecUtils.rotate(self.u, math.pi / 2, self.axis)
             # projcase = "ehem. XY, Case XY"
 
-        elif ((abs(axis.x) > abs(axis.z)) and (abs(axis.z) >= abs(axis.y))):
+        elif (abs(axis.x) > abs(axis.z)) and (abs(axis.z) >= abs(axis.y)):
             self.u = axis.cross(ref_vec)
             self.u.normalize()
-            self.v = DraftVecUtils.rotate(self.u, math.pi/2, self.axis)
+            self.v = DraftVecUtils.rotate(self.u, math.pi / 2, self.axis)
             # projcase = "X>Z, View X"
 
-        elif ((abs(axis.z) >= abs(axis.y)) and (abs(axis.y) > abs(axis.x))):
-            ref_vec = Vector(1.0, 0., 0.0)
+        elif (abs(axis.z) >= abs(axis.y)) and (abs(axis.y) > abs(axis.x)):
+            ref_vec = Vector(1.0, 0.0, 0.0)
             self.u = axis.cross(ref_vec)
             self.u.normalize()
-            self.v = DraftVecUtils.rotate(self.u, math.pi/2, self.axis)
+            self.v = DraftVecUtils.rotate(self.u, math.pi / 2, self.axis)
             # projcase = "Y>X, Case YZ"
 
         else:
             self.u = axis.negative().cross(ref_vec)
             self.u.normalize()
-            self.v = DraftVecUtils.rotate(self.u, math.pi/2, self.axis)
+            self.v = DraftVecUtils.rotate(self.u, math.pi / 2, self.axis)
             # projcase = "else"
 
         # spat_vec = self.u.cross(self.v)
@@ -497,10 +501,10 @@ class Plane:
         """
         if shape.isNull():
             return False
-        elif shape.ShapeType == 'Edge':
+        elif shape.ShapeType == "Edge":
             # ??? TODO: process curve here.  look at shape.edges[0].Curve
             return False
-        elif shape.ShapeType == 'Wire':
+        elif shape.ShapeType == "Wire":
             # ??? TODO: determine if edges define a plane
             return False
         else:
@@ -576,7 +580,7 @@ class Plane:
         alignToPointAndAxis
         """
         # Set face to the unique selected face, if found
-        if shape.ShapeType == 'Face':
+        if shape.ShapeType == "Face":
             if parent:
                 place = parent.getGlobalPlacement()
             else:
@@ -587,7 +591,7 @@ class Plane:
             nor = rot.multVec(shape.normalAt(0, 0))
             self.alignToPointAndAxis(cen, nor, offset)
 
-            pmr = shape.ParameterRange # (uMin, uMax, vMin, vMax)
+            pmr = shape.ParameterRange  # (uMin, uMax, vMin, vMax)
             u = shape.valueAt(pmr[1], 0).sub(shape.valueAt(pmr[0], 0))
             v = shape.valueAt(0, pmr[3]).sub(shape.valueAt(0, pmr[2]))
             self.u = rot.multVec(u).normalize()
@@ -634,6 +638,7 @@ class Plane:
             `True` if the operation was successful, and `False` otherwise.
         """
         import Part
+
         w = Part.makePolygon([p1, p2, p3, p1])
         f = Part.Face(w)
         return self.alignToFace(f, offset)
@@ -675,16 +680,26 @@ class Plane:
                 if isinstance(geom, Part.Shape):
                     geom_is_shape = True
             if not geom_is_shape:
-                FreeCAD.Console.PrintError(translate(
-                    "draft",
-                    "Object without Part.Shape geometry:'{}'".format(
-                        obj.ObjectName)) + "\n")
+                FreeCAD.Console.PrintError(
+                    translate(
+                        "draft",
+                        "Object without Part.Shape geometry:'{}'".format(
+                            obj.ObjectName
+                        ),
+                    )
+                    + "\n"
+                )
                 return False
             if geom.isNull():
-                FreeCAD.Console.PrintError(translate(
-                    "draft",
-                    "Object with null Part.Shape geometry:'{}'".format(
-                        obj.ObjectName)) + "\n")
+                FreeCAD.Console.PrintError(
+                    translate(
+                        "draft",
+                        "Object with null Part.Shape geometry:'{}'".format(
+                            obj.ObjectName
+                        ),
+                    )
+                    + "\n"
+                )
                 return False
             if obj.HasSubObjects:
                 shapes.extend(obj.SubObjects)
@@ -696,8 +711,10 @@ class Plane:
         normal = None
         for n in range(len(shapes)):
             if not DraftGeomUtils.is_planar(shapes[n]):
-                FreeCAD.Console.PrintError(translate(
-                   "draft", "'{}' object is not planar".format(names[n])) + "\n")
+                FreeCAD.Console.PrintError(
+                    translate("draft", "'{}' object is not planar".format(names[n]))
+                    + "\n"
+                )
                 return False
             if not normal:
                 normal = DraftGeomUtils.get_normal(shapes[n])
@@ -707,9 +724,15 @@ class Plane:
         if normal:
             for n in range(len(shapes)):
                 if not DraftGeomUtils.are_coplanar(shapes[shape_ref], shapes[n]):
-                    FreeCAD.Console.PrintError(translate(
-                        "draft", "{} and {} aren't coplanar".format(
-                        names[shape_ref],names[n])) + "\n")
+                    FreeCAD.Console.PrintError(
+                        translate(
+                            "draft",
+                            "{} and {} aren't coplanar".format(
+                                names[shape_ref], names[n]
+                            ),
+                        )
+                        + "\n"
+                    )
                     return False
         else:
             # suppose all geometries are straight lines or points
@@ -717,25 +740,27 @@ class Plane:
             if len(points) >= 3:
                 poly = Part.makePolygon(points)
                 if not DraftGeomUtils.is_planar(poly):
-                    FreeCAD.Console.PrintError(translate(
-                        "draft", "All Shapes must be coplanar") + "\n")
+                    FreeCAD.Console.PrintError(
+                        translate("draft", "All Shapes must be coplanar") + "\n"
+                    )
                     return False
                 normal = DraftGeomUtils.get_normal(poly)
             else:
                 normal = None
 
         if not normal:
-            FreeCAD.Console.PrintError(translate(
-                "draft", "Selected Shapes must define a plane") + "\n")
+            FreeCAD.Console.PrintError(
+                translate("draft", "Selected Shapes must define a plane") + "\n"
+            )
             return False
 
         # set center of mass
-        ctr_mass = FreeCAD.Vector(0,0,0)
-        ctr_pts = FreeCAD.Vector(0,0,0)
+        ctr_mass = FreeCAD.Vector(0, 0, 0)
+        ctr_pts = FreeCAD.Vector(0, 0, 0)
         mass = 0
         for shape in shapes:
             if hasattr(shape, "CenterOfMass"):
-                ctr_mass += shape.CenterOfMass*shape.Mass
+                ctr_mass += shape.CenterOfMass * shape.Mass
                 mass += shape.Mass
             else:
                 ctr_pts += shape.Point
@@ -743,7 +768,7 @@ class Plane:
             ctr_mass /= mass
         # all shapes are vertexes
         else:
-            ctr_mass = ctr_pts/len(shapes)
+            ctr_mass = ctr_pts / len(shapes)
 
         self.alignToPointAndAxis(ctr_mass, normal, offset)
 
@@ -789,6 +814,7 @@ class Plane:
                 try:
                     import FreeCADGui
                     from pivy import coin
+
                     view = FreeCADGui.ActiveDocument.ActiveView
                     camera = view.getCameraNode()
                     rot = camera.getField("orientation").getValue()
@@ -800,8 +826,9 @@ class Plane:
                     # don't change the plane if the axis is already
                     # antiparallel to the current view
                     if abs(math.pi - angle) > Part.Precision.angular():
-                        self.alignToPointAndAxis(Vector(0, 0, 0),
-                                                 vdir.negative(), 0, upvec)
+                        self.alignToPointAndAxis(
+                            Vector(0, 0, 0), vdir.negative(), 0, upvec
+                        )
                 except Exception:
                     pass
             if force:
@@ -819,35 +846,44 @@ class Plane:
 
     def setTop(self):
         """sets the WP to top position and updates the GUI"""
-        self.alignToPointAndAxis(FreeCAD.Vector(0.0, 0.0, 0.0), FreeCAD.Vector(0, 0, 1), 0.0)
+        self.alignToPointAndAxis(
+            FreeCAD.Vector(0.0, 0.0, 0.0), FreeCAD.Vector(0, 0, 1), 0.0
+        )
         if FreeCAD.GuiUp:
             import FreeCADGui
             from draftutils.translate import translate
-            if hasattr(FreeCADGui,"Snapper"):
+
+            if hasattr(FreeCADGui, "Snapper"):
                 FreeCADGui.Snapper.setGrid()
-            if hasattr(FreeCADGui,"draftToolBar"):
+            if hasattr(FreeCADGui, "draftToolBar"):
                 FreeCADGui.draftToolBar.wplabel.setText(translate("draft", "Top"))
 
     def setFront(self):
         """sets the WP to front position and updates the GUI"""
-        self.alignToPointAndAxis(FreeCAD.Vector(0.0, 0.0, 0.0), FreeCAD.Vector(0, 1, 0), 0.0)
+        self.alignToPointAndAxis(
+            FreeCAD.Vector(0.0, 0.0, 0.0), FreeCAD.Vector(0, 1, 0), 0.0
+        )
         if FreeCAD.GuiUp:
             import FreeCADGui
             from draftutils.translate import translate
-            if hasattr(FreeCADGui,"Snapper"):
+
+            if hasattr(FreeCADGui, "Snapper"):
                 FreeCADGui.Snapper.setGrid()
-            if hasattr(FreeCADGui,"draftToolBar"):
+            if hasattr(FreeCADGui, "draftToolBar"):
                 FreeCADGui.draftToolBar.wplabel.setText(translate("draft", "Front"))
 
     def setSide(self):
         """sets the WP to top position and updates the GUI"""
-        self.alignToPointAndAxis(FreeCAD.Vector(0.0, 0.0, 0.0), FreeCAD.Vector(-1, 0, 0), 0.0)
+        self.alignToPointAndAxis(
+            FreeCAD.Vector(0.0, 0.0, 0.0), FreeCAD.Vector(-1, 0, 0), 0.0
+        )
         if FreeCAD.GuiUp:
             import FreeCADGui
             from draftutils.translate import translate
-            if hasattr(FreeCADGui,"Snapper"):
+
+            if hasattr(FreeCADGui, "Snapper"):
                 FreeCADGui.Snapper.setGrid()
-            if hasattr(FreeCADGui,"draftToolBar"):
+            if hasattr(FreeCADGui, "draftToolBar"):
                 FreeCADGui.draftToolBar.wplabel.setText(translate("draft", "Side"))
 
     def getRotation(self):
@@ -882,16 +918,42 @@ class Plane:
         """
         if rotated:
             m = FreeCAD.Matrix(
-                self.u.x, self.axis.x, -self.v.x, self.position.x,
-                self.u.y, self.axis.y, -self.v.y, self.position.y,
-                self.u.z, self.axis.z, -self.v.z, self.position.z,
-                0.0, 0.0, 0.0, 1.0)
+                self.u.x,
+                self.axis.x,
+                -self.v.x,
+                self.position.x,
+                self.u.y,
+                self.axis.y,
+                -self.v.y,
+                self.position.y,
+                self.u.z,
+                self.axis.z,
+                -self.v.z,
+                self.position.z,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+            )
         else:
             m = FreeCAD.Matrix(
-                self.u.x, self.v.x, self.axis.x, self.position.x,
-                self.u.y, self.v.y, self.axis.y, self.position.y,
-                self.u.z, self.v.z, self.axis.z, self.position.z,
-                0.0, 0.0, 0.0, 1.0)
+                self.u.x,
+                self.v.x,
+                self.axis.x,
+                self.position.x,
+                self.u.y,
+                self.v.y,
+                self.axis.y,
+                self.position.y,
+                self.u.z,
+                self.v.z,
+                self.axis.z,
+                self.position.z,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+            )
         p = FreeCAD.Placement(m)
         return p
 
@@ -1224,9 +1286,16 @@ class Plane:
             are orthogonal with the global axis `+Y`.
             Otherwise it returns `False`.
         """
-        ortho = [0, -1.570796, 1.570796,
-                 -3.141593, 3.141593,
-                 -4.712389, 4.712389, 6.283185]
+        ortho = [
+            0,
+            -1.570796,
+            1.570796,
+            -3.141593,
+            3.141593,
+            -4.712389,
+            4.712389,
+            6.283185,
+        ]
         # Shouldn't the angle difference be calculated with
         # the other global axes `+X` and `+Z` as well?
         if round(self.u.getAngle(Vector(0, 1, 0)), 6) in ortho:
@@ -1272,7 +1341,13 @@ class Plane:
             dictionary of the form:
             {"position":position, "u":x, "v":v, "axis":axis, "weak":weak}
         """
-        return {"position":self.position, "u":self.u, "v":self.v, "axis":self.axis, "weak":self.weak}
+        return {
+            "position": self.position,
+            "u": self.u,
+            "v": self.v,
+            "axis": self.axis,
+            "weak": self.weak,
+        }
 
     def setFromParameters(self, data):
         """Set the plane according to data.
@@ -1282,7 +1357,7 @@ class Plane:
         data: dict
             dictionary of the form:
             {"position":position, "u":x, "v":v, "axis":axis, "weak":weak}
-       """
+        """
         self.position = data["position"]
         self.u = data["u"]
         self.v = data["v"]
@@ -1290,6 +1365,7 @@ class Plane:
         self.weak = data["weak"]
 
         return None
+
 
 plane = Plane
 
@@ -1330,10 +1406,10 @@ def getPlacementFromPoints(points):
     pl = plane()
     try:
         pl.position = points[0]
-        pl.u = (points[1].sub(points[0]).normalize())
-        pl.v = (points[2].sub(points[0]).normalize())
+        pl.u = points[1].sub(points[0]).normalize()
+        pl.v = points[2].sub(points[0]).normalize()
         if len(points) == 4:
-            pl.axis = (points[3].sub(points[0]).normalize())
+            pl.axis = points[3].sub(points[0]).normalize()
         else:
             pl.axis = ((pl.u).cross(pl.v)).normalize()
     except Exception:

@@ -38,6 +38,7 @@ try:
         QRegularExpressionValidator,
     )
     from PySide2.QtCore import QRegularExpression
+
     RegexWrapper = QRegularExpression
     RegexValidatorWrapper = QRegularExpressionValidator
 except ImportError:
@@ -45,6 +46,7 @@ except ImportError:
         QRegExpValidator,
     )
     from PySide2.QtCore import QRegExp
+
     RegexWrapper = QRegExp
     RegexValidatorWrapper = QRegExpValidator
 

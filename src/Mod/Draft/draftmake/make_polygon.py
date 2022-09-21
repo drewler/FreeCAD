@@ -34,7 +34,9 @@ from draftobjects.polygon import Polygon
 from draftviewproviders.view_base import ViewProviderDraft
 
 
-def make_polygon(nfaces, radius=1, inscribed=True, placement=None, face=None, support=None):
+def make_polygon(
+    nfaces, radius=1, inscribed=True, placement=None, face=None, support=None
+):
     """makePolgon(edges,[radius],[inscribed],[placement],[face])
 
     Creates a polygon object with the given number of edges and radius.
@@ -63,8 +65,9 @@ def make_polygon(nfaces, radius=1, inscribed=True, placement=None, face=None, su
     if not App.ActiveDocument:
         App.Console.PrintError("No active document. Aborting\n")
         return
-    if nfaces < 3: return None
-    obj = App.ActiveDocument.addObject("Part::Part2DObjectPython","Polygon")
+    if nfaces < 3:
+        return None
+    obj = App.ActiveDocument.addObject("Part::Part2DObjectPython", "Polygon")
     Polygon(obj)
     obj.FacesNumber = nfaces
     obj.Radius = radius
@@ -75,7 +78,8 @@ def make_polygon(nfaces, radius=1, inscribed=True, placement=None, face=None, su
     else:
         obj.DrawMode = "circumscribed"
     obj.Support = support
-    if placement: obj.Placement = placement
+    if placement:
+        obj.Placement = placement
     if App.GuiUp:
         ViewProviderDraft(obj.ViewObject)
         gui_utils.format_object(obj)
